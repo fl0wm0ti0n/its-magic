@@ -233,7 +233,8 @@ if [ -f "$CLI_ENTRY" ] && command -v node >/dev/null 2>&1; then
   mkdir -p "$CLI_TMP/src"
   echo "cli-marker" > "$CLI_TMP/src/keep.txt"
   run_with_timeout node "$CLI_ENTRY" --clean-repo --target "$CLI_TMP" --yes < /dev/null >/dev/null
-  assert_true "CLI clean-repo removes framework artifacts" "[ ! -d \"$CLI_TMP/.cursor\" ] && [ ! -d \"$CLI_TMP/docs/engineering\" ] && [ ! -d \"$CLI_TMP/docs/user-guides\" ] && [ ! -f \"$CLI_TMP/scripts/validate-and-push.ps1\" ] && [ ! -f \"$CLI_TMP/scripts/validate-and-push.sh\" ] && [ ! -f \"$CLI_TMP/.github/workflows/ci.yml\" ] && [ ! -f \"$CLI_TMP/.github/workflows/deploy.yml\" ] && [ ! -d \"$CLI_TMP/its_magic\" ] && [ ! -f \"$CLI_TMP/.its-magic-version\" ]"
+  assert_true "CLI clean-repo removes framework artifacts" "[ ! -d \"$CLI_TMP/.cursor/commands\" ] && [ ! -f \"$CLI_TMP/.cursor/scratchpad.md\" ] && [ ! -f \"$CLI_TMP/.cursor/scratchpad.local.example.md\" ] && [ ! -d \"$CLI_TMP/docs/engineering\" ] && [ ! -d \"$CLI_TMP/docs/user-guides\" ] && [ ! -f \"$CLI_TMP/scripts/validate-and-push.ps1\" ] && [ ! -f \"$CLI_TMP/scripts/validate-and-push.sh\" ] && [ ! -f \"$CLI_TMP/.github/workflows/ci.yml\" ] && [ ! -f \"$CLI_TMP/.github/workflows/deploy.yml\" ] && [ ! -d \"$CLI_TMP/its_magic\" ] && [ ! -f \"$CLI_TMP/.its-magic-version\" ]"
+  assert_true "CLI clean-repo preserves scratchpad.local.md (US-0132)" "grep -q 'cli-local-marker=keep' \"$CLI_TMP/.cursor/scratchpad.local.md\""
   assert_true "CLI clean-repo preserves non-framework marker" "[ -f \"$CLI_TMP/src/keep.txt\" ]"
 
   set +e
@@ -1549,6 +1550,16 @@ US0131_CONTRACT_PY=$?
 set -e
 assert_true "check_intake_template_parity --scope=us-0131 passes (US-0131)" "[ \"$US0131_PARITY_PY\" -eq 0 ]"
 assert_true "US-0131 contract tests pass" "[ \"$US0131_CONTRACT_PY\" -eq 0 ]"
+
+# 26AF) US-0132 — Cursor/OpenCode model configuration contract
+set +e
+"$PY" "$ROOT/scripts/check_intake_template_parity.py" --scope=us-0132 >/dev/null 2>&1
+US0132_PARITY_PY=$?
+"$PY" -m pytest tests/us0132_contract_test.py -q >/dev/null 2>&1
+US0132_CONTRACT_PY=$?
+set -e
+assert_true "check_intake_template_parity --scope=us-0132 passes (US-0132)" "[ \"$US0132_PARITY_PY\" -eq 0 ]"
+assert_true "US-0132 contract tests pass" "[ \"$US0132_CONTRACT_PY\" -eq 0 ]"
 
 timestamp=$(date -u +"%Y-%m-%dT%H:%M:%SZ")
 {

@@ -157,7 +157,7 @@
 - [x] US-0129: Architecture hot-surface rollover linkage guard — `arch_linkage_guard.py`, `ARCH_LINKAGE_ROLLOVER_BLOCKED`, optional auto-repair, `/refresh-context` wiring, US-0126 B-1 regression, template parity (6 ACs)
 - [x] US-0130: Operator-pinned sovereign-critic model — `MODEL_SOVEREIGN-CRITIC` + optional catalog `roles.critic`, `select_critic_model` precedence, keep degraded same-slug fallback, one global critic, example/installer compose, `test_us0130_*`, US-0104 schema unchanged (9 ACs)
 - [x] US-0131: Cross-host Its-Magic runtime configuration and parity — host-neutral shared config, Cursor scratchpad compatibility, OpenCode-only operation without `.cursor/`, shared validator/runtime behavior, installer preservation, and cross-host contract tests (8 ACs)
-- [ ] US-0132: Explicit Cursor/OpenCode model configuration contract — canonical ownership and precedence for model catalogs, `opencode.json`, scratchpad model keys, installed-agent materialization, local-file protection, and fail-closed validation (8 ACs)
+- [x] US-0132: Explicit Cursor/OpenCode model configuration contract — canonical ownership and precedence for model catalogs, `opencode.json`, scratchpad model keys, installed-agent materialization, local-file protection, and fail-closed validation (8 ACs)
 
 ## Bug acceptance (canonical)
 

@@ -1,3 +1,123 @@
+## Plan-verify RE-ATTEST PASS handoff — US-0132 / S0134 — sovereign-critic then `/execute` (fresh)
+
+- sprint_id: S0134
+- story_id: US-0132 (Status OPEN — authority docs/product/backlog.md)
+- companion_dec: DEC-0132 Accepted
+- research_anchor: R-0117 (DQ1–DQ10 LOCKED)
+- architecture_anchor: docs/engineering/architecture.md # US-0132
+- approach: A1 LOCKED
+- orchestrator_run_id: auto-20260909-us0132
+- plan_verify_fresh_context_marker: qa-US0132-plan-verify-reattest-20260909T185821Z-fresh
+- plan_verify_timestamp: 2026-09-09T18:58:21Z (UTC)
+- model_id: cursor-grok-4.6 (CROSS_MODEL_REVIEW=1 — required on isolation)
+- plan_verify_verdict: RE_ATTEST_PASS / PLAN_VERIFY_PASS
+- reattest_kind: RE-ATTEST_ONLY
+- reattest_reason: RUNTIME_PROOF_STALE
+- decision_gate: false
+- task_count: 10 (T-anch + T-001..T-009; within SPRINT_MAX_TASKS=12; no split)
+- ac_surjective_map: AC-1->T-001,T-008,T-009(m1); AC-2->T-002,T-009(m2,m3); AC-3->T-003,T-004,T-009(m4,m5,m8); AC-4->T-007,T-009(m6); AC-5->T-006,T-008,T-009(m1,m5,m10); AC-6->T-005,T-009(m7); AC-7->T-005,T-009(m7,m9); AC-8->T-008,T-009(all10); DC->T-anch
+- sprint_task_content_rewritten: false
+- plan-verify.json: PASS / RE-ATTEST at sprints/S0134/plan-verify.json
+- critic_nb_execute_awareness:
+  - T-005: explicit `.opencode/model-catalog.local.json` gitignore (root + template) + exclude-from-clean named locals (not copy-aside)
+  - T-004/T-009: host-JSON malformed present → `MODEL_CATALOG_INVALID` `scope=opencode-host` stays inside T-004/T-009; marker 5 remains catalog-centric; do not add an 11th marker
+  - T-005: touch installer.py / installer.ps1 / installer.sh + manifest (files-to-touch listed Installer generically)
+  - T-anch: NO-OP verification; do not mutate architecture.md / DEC-0132 in execute
+- runtime_proof_id: rp-auto-20260909-us0132-plan-verify-qa-20260909T185821Z-US-0132-reattest
+- proof_hash: 90D9E2E7D70999806756EC900A9A67E00A4112D8303EC8DD8BCA0F63E8162034
+- proof_ttl: 2026-09-09T19:58:21Z
+- prior_stale_plan_verify_proof: rp-auto-20260908-us0132-plan-verify-qa-20260908T213933Z-US-0132 / D1CCD3C93B3B6C8F7ED71E5095E4F6A3946D14CD500809686139DC56205E1167 — RUNTIME_PROOF_STALE; not forged; not live-consumed
+- prior_sprint_plan_proof: rp-auto-20260908-us0132-sprint-plan-techlead-20260908T212407Z-US-0132 recorded superseded/expired — not live-consumed
+- next_scheduled_phase: sovereign-critic of this RE-ATTEST then /execute (role=tech-lead critic then dev)
+- stop_condition: STOP after plan-verify RE-ATTEST. Orchestrator MUST spawn sovereign-critic then /execute in fresh subagents (BUG-0006). Do NOT spawn critic or execute from plan-verify qa. Do NOT mark US-0132 DONE. Do NOT reopen US-0131.
+
+## Plan-verify PASS handoff — US-0132 / S0134 — `/execute` next (fresh dev)
+
+- sprint_id: S0134
+- story_id: US-0132 (Status OPEN — authority docs/product/backlog.md)
+- bug_id: (none)
+- companion_dec: DEC-0132 Accepted
+- research_anchor: R-0117 (DQ1–DQ10 LOCKED)
+- architecture_anchor: docs/engineering/architecture.md # US-0132
+- approach: A1 LOCKED — four surfaces; reject generic `model.json`; Cursor vs OpenCode schemas stay separate; `opencode.json{,c}` is host file not kit SOT; per-host `provenance=` diagnostics; `HOST_COLLISION` distinct both-host row; extend `model_tier_validate.py --scope model-config`; exclude-from-clean locals including `.opencode/model-catalog.local.json`
+- orchestrator_run_id: auto-20260908-us0132
+- plan_verify_fresh_context_marker: qa-US0132-plan-verify-20260908T213933Z-fresh
+- plan_verify_timestamp: 2026-09-08T21:39:33Z (UTC)
+- model_id: cursor-grok-4.6 (CROSS_MODEL_REVIEW=1 — required on isolation)
+- plan_verify_verdict: PASS
+- decision_gate: false
+- sprint_status: PLANNED → execute-ready (backlog OPEN per US-0045 — not mutated; AC-1..AC-8 unchecked)
+- task_count: 10 (T-anch + T-001..T-009; within SPRINT_MAX_TASKS=12; no split)
+- ac_surjective_map: AC-1->T-001,T-008,T-009(m1); AC-2->T-002,T-009(m2,m3); AC-3->T-003,T-004,T-009(m4,m5,m8); AC-4->T-007,T-009(m6); AC-5->T-006,T-008,T-009(m1,m5,m10); AC-6->T-005,T-009(m7); AC-7->T-005,T-009(m7,m9); AC-8->T-008,T-009(all10); DC->T-anch
+- task_order: T-anch -> T-001 -> T-002 -> T-003 -> T-004 -> T-005 -> T-006 -> T-007 -> T-008 -> T-009
+- plan-verify.json: PASS at sprints/S0134/plan-verify.json
+- compose_guards (non-negotiable): DO NOT reopen US-0131 / DEC-0131; DO NOT alias `model.json`; DO NOT dump kit keys into opencode.json; DO NOT amend DEC-0086/0087/0123; DO NOT reopen BUG-0015/0016; DO NOT scan home-dir model.json; DO NOT add live OpenCode CI probe; DO NOT mark US-0132 DONE; DO NOT tick ACs; DO NOT mutate intake JSON; DO NOT rewrite architecture.md / DEC-0132
+- critic_nb_execute_awareness:
+  - T-005: explicit `.opencode/model-catalog.local.json` gitignore (root + template) + exclude-from-clean named locals (not copy-aside)
+  - T-004/T-009: host-JSON malformed present → `MODEL_CATALOG_INVALID` `scope=opencode-host` stays inside T-004/T-009; marker 5 remains catalog-centric; do not add an 11th marker
+  - T-005: touch installer.py / installer.ps1 / installer.sh + manifest (files-to-touch listed Installer generically)
+  - T-anch: NO-OP verification; do not mutate architecture.md / DEC-0132 in execute
+- first_execute_task: T-anch (NO-OP / verification)
+- key_locked_artifacts:
+  - four surfaces: `.cursor/model-catalog.local.json` + `MODEL_*`; `.opencode/model-catalog.local.json`; host `opencode.json{,c}`
+  - reject `model.json{,c}` at repo root / `.cursor/` / `.opencode/` only
+  - `--scope model-config` on `scripts/model_tier_validate.py`
+  - 10 `test_us0132_*` markers (static/fixture; no live OpenCode probe)
+  - US-0131 boundary: kit governance stays out of `opencode.json`; host-neutral resolver still ignores `MODEL_*`
+- runtime_proof_id: rp-auto-20260908-us0132-plan-verify-qa-20260908T213933Z-US-0132
+- proof_hash: D1CCD3C93B3B6C8F7ED71E5095E4F6A3946D14CD500809686139DC56205E1167
+- proof_ttl: 2026-09-08T22:39:33Z
+- consumed_sprint_plan_proof: rp-auto-20260908-us0132-sprint-plan-techlead-20260908T212407Z-US-0132 / 3DF869CD3FDFF4C0A76093193B1550F4DE9082EB8AFD37091AD37A4C98392E89 — RUNTIME_PROOF_VALID
+- next_scheduled_phase: /execute (role=dev)
+- next_scheduled_role: dev
+- stop_condition: STOP after plan-verify. Orchestrator may critic plan-verify then spawn /execute in fresh dev (BUG-0006). Do NOT spawn execute from plan-verify qa. Do NOT mark US-0132 DONE. Do NOT reopen US-0131.
+
+---
+
+## Sprint-plan handoff — US-0132 / S0134 — `/plan-verify` next (fresh qa)
+
+- sprint_id: S0134
+- story_id: US-0132 (Status OPEN — authority docs/product/backlog.md)
+- bug_id: (none)
+- companion_dec: DEC-0132 Accepted
+- research_anchor: R-0117 (DQ1–DQ10 LOCKED)
+- architecture_anchor: docs/engineering/architecture.md # US-0132
+- approach: A1 LOCKED — four surfaces; reject generic `model.json`; Cursor vs OpenCode schemas stay separate; `opencode.json{,c}` is host file not kit SOT; per-host `provenance=` diagnostics; `HOST_COLLISION` distinct both-host row; extend `model_tier_validate.py --scope model-config`; exclude-from-clean locals including `.opencode/model-catalog.local.json`
+- orchestrator_run_id: auto-20260908-us0132
+- fresh_context_marker: tl-US0132-sprint-plan-20260908T212407Z-fresh
+- timestamp: 2026-09-08T21:24:07Z (UTC)
+- model_id: cursor-grok-4.6 (CROSS_MODEL_REVIEW=1 — required on isolation)
+- sprint_plan_verdict: PASS
+- decision_gate: false
+- sprint_status: PLANNED (backlog OPEN per US-0045 — not mutated; AC-1..AC-8 unchecked)
+- task_count: 10 (T-anch + T-001..T-009; within SPRINT_MAX_TASKS=12; no split)
+- ac_surjective_map: AC-1->T-001,T-008,T-009(m1); AC-2->T-002,T-009(m2,m3); AC-3->T-003,T-004,T-009(m4,m5,m8); AC-4->T-007,T-009(m6); AC-5->T-006,T-008,T-009(m1,m5,m10); AC-6->T-005,T-009(m7); AC-7->T-005,T-009(m7,m9); AC-8->T-008,T-009(all10); DC->T-anch
+- task_order: T-anch -> T-001 -> T-002 -> T-003 -> T-004 -> T-005 -> T-006 -> T-007 -> T-008 -> T-009
+- plan-verify.json: PENDING at sprints/S0134/plan-verify.json (`AWAITING_QA_PLAN_VERIFY`)
+- compose_guards (non-negotiable): DO NOT reopen US-0131 / DEC-0131; DO NOT alias `model.json`; DO NOT dump kit keys into opencode.json; DO NOT amend DEC-0086/0087/0123; DO NOT reopen BUG-0015/0016; DO NOT scan home-dir model.json; DO NOT add live OpenCode CI probe; DO NOT mark US-0132 DONE; DO NOT tick ACs; DO NOT mutate intake JSON; DO NOT rewrite architecture.md / DEC-0132
+- critic_nb_execute_awareness:
+  - architecture_notes relocated from ### BUG-0016 onto ## US-0132 (form-feed removed); BUG-0016 not reopened
+  - T-005: explicit `.opencode/model-catalog.local.json` gitignore + exclude-from-clean (not copy-aside)
+  - T-006: `--host both` + model.json → PATH_UNKNOWN **and** HOST_COLLISION (never pick a host)
+  - T-anch: NO-OP verification; do not mutate architecture.md / DEC-0132 in execute
+- architecture_pointers: docs/engineering/architecture.md # US-0132 (approach A1, 10-marker table, seeds T-anch + T-001..T-009). Do not rewrite.
+- first_execute_task: T-anch (NO-OP / verification) — after plan-verify PASS
+- key_locked_artifacts:
+  - four surfaces: `.cursor/model-catalog.local.json` + `MODEL_*`; `.opencode/model-catalog.local.json`; host `opencode.json{,c}`
+  - reject `model.json{,c}` at repo root / `.cursor/` / `.opencode/` only
+  - `--scope model-config` on `scripts/model_tier_validate.py`
+  - 10 `test_us0132_*` markers (static/fixture; no live OpenCode probe)
+  - US-0131 boundary: kit governance stays out of `opencode.json`; host-neutral resolver still ignores `MODEL_*`
+- runtime_proof_id: rp-auto-20260908-us0132-sprint-plan-techlead-20260908T212407Z-US-0132
+- proof_hash: 3DF869CD3FDFF4C0A76093193B1550F4DE9082EB8AFD37091AD37A4C98392E89
+- proof_ttl: 2026-09-08T22:24:07Z
+- consumed_architecture_proof: rp-auto-20260908-us0132-architecture-techlead-20260908T210500Z-US-0132 / 8255C22FCC78F2CFF74AD41A08D9FFF875AE09C205A82BEC78C4B4D03CD13013 — RUNTIME_PROOF_VALID
+- next_scheduled_phase: /plan-verify (role=qa)
+- next_scheduled_role: qa
+- stop_condition: STOP after sprint-plan. Orchestrator MUST spawn /plan-verify in fresh qa (BUG-0006). Do NOT spawn plan-verify from this tech-lead. Do NOT spawn critic. Do NOT mark US-0132 DONE. Do NOT reopen US-0131.
+
+---
+
 ## Plan-verify PASS handoff — US-0131 / S0133 — `/execute` next (fresh dev)
 
 - sprint_id: S0133

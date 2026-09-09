@@ -401,6 +401,13 @@ compatibility adapter. OpenCode-only installs do not require `.cursor/`. Operato
 details: `docs/engineering/runbook.md` → **Cross-host runtime configuration (US-0131)**.
 Model catalogs / `MODEL_*` remain US-0132.
 
+### Cursor/OpenCode model configuration contract (US-0132)
+
+Four supported surfaces: Cursor `.cursor/model-catalog.local.json` + `MODEL_*`,
+OpenCode `.opencode/model-catalog.local.json`, and host `opencode.json{,c}`.
+Generic `model.json` is rejected. Operator details: `docs/engineering/runbook.md`
+→ **Cursor/OpenCode model configuration contract (US-0132)**.
+
 ### OpenCode Layer-1 role permissions vs kit duties (BUG-0016)
 
 OpenCode Layer-1 agent frontmatter (`bash: ask` for po/tech-lead/curator; real

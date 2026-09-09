@@ -673,6 +673,34 @@ US0131_PAIRS: tuple[tuple[str, str], ...] = (
     ),
 )
 
+# US-0132 additive: model-config contract surfaces.
+US0132_PAIRS: tuple[tuple[str, str], ...] = (
+    (
+        "scripts/model_tier_validate.py",
+        "template/scripts/model_tier_validate.py",
+    ),
+    (
+        "scripts/model_tier_lib.py",
+        "template/scripts/model_tier_lib.py",
+    ),
+    (
+        "tests/us0132_contract_test.py",
+        "template/tests/us0132_contract_test.py",
+    ),
+    (
+        "docs/engineering/runbook.md",
+        "template/docs/engineering/runbook.md",
+    ),
+    (
+        "docs/engineering/context/installer-owned-paths.manifest",
+        "template/docs/engineering/context/installer-owned-paths.manifest",
+    ),
+    (
+        "README.md",
+        "template/README.md",
+    ),
+)
+
 SCOPES: dict[str, tuple[tuple[str, str], ...]] = {
     "intake": INTAKE_TEMPLATE_PAIRS,
     "caveman-compress": CAVEMAN_COMPRESS_PAIRS,
@@ -702,6 +730,7 @@ SCOPES: dict[str, tuple[tuple[str, str], ...]] = {
     "bug-0015": BUG0015_PAIRS,
     "bug-0016": BUG0016_PAIRS,
     "us-0131": US0131_PAIRS,
+    "us-0132": US0132_PAIRS,
     "all": (
         INTAKE_TEMPLATE_PAIRS
         + CAVEMAN_COMPRESS_PAIRS
@@ -730,6 +759,7 @@ SCOPES: dict[str, tuple[tuple[str, str], ...]] = {
         + BUG0015_PAIRS
         + BUG0016_PAIRS
         + US0131_PAIRS
+        + US0132_PAIRS
     ),
 }
 

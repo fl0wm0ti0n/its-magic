@@ -1,3 +1,40 @@
+# Sprint S0133 — Context Pack / Refresh Summary (US-0131)
+
+**sprint_id**: S0133  
+**story_id**: US-0131 (Status **DONE**)  
+**phase_id**: refresh-context  
+**role**: curator  
+**orchestrator_run_id**: auto-20260907-us0131  
+**delivery_mode**: ultra_lean  
+**macro_phase**: ship (terminal)  
+**fresh_context_marker**: `cur-US0131-refresh-context-20260908T203000Z-fresh`  
+**timestamp**: 2026-09-08T20:30:00Z (UTC)  
+**model_id**: composer-2.5 (CROSS_MODEL_REVIEW=1)  
+**verdict**: REFRESH_CONTEXT_PASS  
+**segment_closed**: true  
+
+## Segment outcome
+
+| Gate | Result |
+|---|---|
+| Release | PASS — queue S0133=released; notes `handoffs/releases/S0133-release-notes.md` |
+| Closure | PASS — Status OPEN→DONE; acceptance L159 [x] |
+| Sovereign-critic (closure) | PASS — `critic-US0131-closure-20260907T213800Z-fresh` |
+| Refresh-context | PASS — this pack; triad pre-rollover → `state-pack-20260908.md`; retrospective `S0133.md` |
+
+## Runtime proof (refresh-context)
+
+- **runtime_proof_id**: `rp-auto-20260907-us0131-refresh-context-curator-20260908T203000Z-US-0131`
+- **proof_hash**: `9FF76B1664AFBA0D1DFFFD14A80927E983B4988367F14D8AB7E2599BCC3439EC`
+- **proof_ttl**: 2026-09-08T21:30:00Z
+
+## Drain pointer
+
+- **next_eligible_open_story**: **US-0132** (P1 OPEN — orchestrator-owned drain-advance)
+- **drain_advance_action**: orchestrator-owned (curator STOP)
+
+---
+
 # Sprint S0133 — Closure PASS (US-0131)
 
 **sprint_id**: S0133  

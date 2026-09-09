@@ -17,6 +17,10 @@ setup stays in the root `README.md` (user channel).
 - Use `.cursor/scratchpad.local.md` for personal overrides; never commit secrets.
 - **US-0124** — OpenCode orchestrator plugin spawn-only `/auto`; traceability:
   runbook `## OpenCode orchestrator plugin reason codes (US-0124)`, architecture `# US-0124`, `decisions/DEC-0124.md`.
+- **US-0131** — Cross-host Its-Magic runtime configuration (host-neutral `.its-magic/config*`); traceability:
+  runbook `## Cross-host runtime configuration (US-0131)`, architecture `# US-0131`, `decisions/DEC-0131.md`.
+- **US-0132** — Cursor/OpenCode model configuration contract (four surfaces; reject generic `model.json`); traceability:
+  runbook `## Cursor/OpenCode model configuration contract (US-0132)`, architecture `# US-0132`, `decisions/DEC-0132.md`.
 
 ## Quality gates
 
@@ -38,6 +42,10 @@ setup stays in the root `README.md` (user channel).
   runbook `## OpenCode host operator runbook (US-0126)`, architecture `# US-0126`.
 - **US-0130** — Operator-pinned sovereign-critic model (`MODEL_SOVEREIGN-CRITIC` + catalog `roles.critic`); traceability:
   runbook **Degraded fallback troubleshooting**, architecture `# US-0130`, `decisions/DEC-0130.md`.
+- **US-0131** — Cross-host Its-Magic runtime configuration and parity; traceability:
+  runbook `## Cross-host runtime configuration (US-0131)`, architecture `# US-0131`, `decisions/DEC-0131.md`.
+- **US-0132** — Cursor/OpenCode model configuration contract; traceability:
+  runbook `## Cursor/OpenCode model configuration contract (US-0132)`, architecture `# US-0132`, `decisions/DEC-0132.md`.
 
 ## Architecture notes
 

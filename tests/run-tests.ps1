@@ -364,7 +364,9 @@ if ((Test-Path $cli -PathType Leaf) -and $nodeCmd) {
     $markerFile = Join-Path $markerDir "keep.txt"
     Set-Content -Path $markerFile -Value "cli-marker"
     & node $cli --clean-repo --target $cliTemp --yes | Out-Null
-    $cliFrameworkRemoved = -not (Test-Path (Join-Path $cliTemp ".cursor") -PathType Container) -and
+    $cliFrameworkRemoved = -not (Test-Path (Join-Path $cliTemp ".cursor\commands") -PathType Container) -and
+      -not (Test-Path (Join-Path $cliTemp ".cursor\scratchpad.md") -PathType Leaf) -and
+      -not (Test-Path (Join-Path $cliTemp ".cursor\scratchpad.local.example.md") -PathType Leaf) -and
       -not (Test-Path (Join-Path $cliTemp "docs\engineering") -PathType Container) -and
       -not (Test-Path (Join-Path $cliTemp "docs\user-guides") -PathType Container) -and
       -not (Test-Path (Join-Path $cliTemp "scripts\validate-and-push.ps1") -PathType Leaf) -and
@@ -374,8 +376,12 @@ if ((Test-Path $cli -PathType Leaf) -and $nodeCmd) {
       -not (Test-Path (Join-Path $cliTemp "its_magic") -PathType Container) -and
       -not (Test-Path (Join-Path $cliTemp ".its-magic-version") -PathType Leaf)
     $cliMarkerPreserved = Test-Path $markerFile -PathType Leaf
+    $cliScratchpadLocal = Join-Path $cliTemp ".cursor\scratchpad.local.md"
+    $cliLocalPreserved = (Test-Path $cliScratchpadLocal -PathType Leaf) -and
+      ((Get-Content -Path $cliScratchpadLocal -Raw) -match "cli-local-marker=keep")
     Assert-True "CLI clean-repo removes framework artifacts" $cliFrameworkRemoved
     Assert-True "CLI clean-repo preserves non-framework marker" $cliMarkerPreserved
+    Assert-True "CLI clean-repo preserves scratchpad.local.md (US-0132)" $cliLocalPreserved
   } catch {
     Assert-True "CLI lifecycle tests" $false $_.Exception.Message
   }
@@ -1676,6 +1682,12 @@ $us0131Parity = Start-Process python -ArgumentList @((Join-Path $root "scripts\c
 Assert-True "check_intake_template_parity --scope=us-0131 passes (US-0131)" ($us0131Parity.ExitCode -eq 0)
 $us0131Contract = Start-Process python -ArgumentList @("-m", "pytest", "tests\us0131_contract_test.py", "-q") -PassThru -NoNewWindow -Wait -WorkingDirectory $root
 Assert-True "US-0131 contract tests pass" ($us0131Contract.ExitCode -eq 0)
+
+# 26AF) US-0132 — Cursor/OpenCode model configuration contract
+$us0132Parity = Start-Process python -ArgumentList @((Join-Path $root "scripts\check_intake_template_parity.py"), "--scope=us-0132") -PassThru -NoNewWindow -Wait -WorkingDirectory $root
+Assert-True "check_intake_template_parity --scope=us-0132 passes (US-0132)" ($us0132Parity.ExitCode -eq 0)
+$us0132Contract = Start-Process python -ArgumentList @("-m", "pytest", "tests\us0132_contract_test.py", "-q") -PassThru -NoNewWindow -Wait -WorkingDirectory $root
+Assert-True "US-0132 contract tests pass" ($us0132Contract.ExitCode -eq 0)
 
 # Cleanup
 if (Test-Path (Join-Path $root "tests\.tmp-install")) {

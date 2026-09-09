@@ -115,8 +115,21 @@ template/.opencode/model-catalog.local.example.json
 template/.opencode/plugins/orchestrator.ts
 scripts/opencode_model_catalog_apply.py
 
+# [opencode_clean_paths] still lists `.opencode` so framework files are removed.
+# Named operator locals listed in [model_config_preserve_paths] are
+# exclude-from-clean (US-0132 / DEC-0132; not copy-aside).
+
 [opencode_clean_paths]
 .opencode
+
+[model_config_preserve_paths]
+.cursor/model-catalog.local.json
+.cursor/scratchpad.local.md
+.opencode/model-catalog.local.json
+.opencode/opencode.json
+.opencode/opencode.jsonc
+opencode.json
+opencode.jsonc
 
 [required_install_script_paths]
 scripts/validate-and-push.ps1

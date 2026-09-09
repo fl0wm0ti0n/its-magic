@@ -1,3 +1,1887 @@
+# Resume Brief — US-0132 segment complete; sovereign-loop terminal_converged (DEC-0069 / US-0095)
+
+- **orchestrator_run_id**: auto-20260909-us0132
+- **prior_orchestrator_run_id**: auto-20260908-us0132
+- **story_id**: US-0132
+- **sprint_id**: S0134
+- **delivery_mode**: ultra_lean
+- **resolved_phase_plan**: [spec, plan, build+verify, ship]
+- **reinstatement_mode**: none
+- **memory_layer**: pack
+- **macro_phase**: ship
+- **last_completed_phase**: refresh-context (+ sovereign-critic PASS)
+- **intended_resume_phase**: (none)
+- **next_scheduled_phase**: (none)
+- **next_scheduled_role**: (none)
+- **resolution_source**: advance_sovereign_loop terminal_converged
+- **wall_clock**: 2026-09-09T20:53:22Z
+- **segment_closed**: true
+- **backlog_drain_active**: 1
+- **drain_terminated**: true (no_open_stories)
+- **drain_advance_action**: not_applicable
+- **AUTO_FLOW_MODE**: full_autonomy
+- **native_chain_active**: true
+- **native_chain_continuing**: false
+- **stop_phase**: refresh-context
+- **stop_reason**: converged
+- **status**: DONE
+- **acceptance_L160**: [x]
+- **independent_open_story_count**: 0
+- **independent_open_bug_count**: 0
+- **queue_status**: S0134=released
+- **publish**: skipped (`RELEASE_PUBLISH_MODE=confirm`)
+- **stop_condition**: Native chain has nothing further schedulable. Sovereign loop converged. Do not mandate re-/auto. Do not reopen US-0131 / US-0132 / BUG-0015 / BUG-0016.
+
+## Current status
+
+- **Active story**: **US-0132** — **DONE** (S0134 released; segment_closed=true)
+- **Portfolio**: **0 OPEN** stories / **0 OPEN** bugs
+- **Sovereign loop**: **converged** (all five conjuncts pass)
+
+## Latest orchestration pointer
+
+- **stop_phase**: refresh-context
+- **stop_reason**: converged
+- **next_phase**: (none)
+- **next_role**: (none)
+
+## Intended resume phase
+
+(none — portfolio empty; sovereign loop converged)
+
+---
+# Resume Brief — US-0132 sovereign-critic of refresh-context PASS → segment complete (DEC-0069 / US-0095)
+
+- **orchestrator_run_id**: auto-20260909-us0132
+- **prior_orchestrator_run_id**: auto-20260908-us0132
+- **story_id**: US-0132
+- **bug_id**: (none)
+- **sprint_id**: S0134
+- **delivery_mode**: ultra_lean
+- **resolved_phase_plan**: [spec, plan, build+verify, ship]
+- **reinstatement_mode**: none
+- **memory_layer**: pack
+- **macro_phase**: ship
+- **last_completed_phase**: sovereign-critic (refresh-context)
+- **intended_resume_phase**: (segment complete)
+- **next_scheduled_phase**: (segment complete — orchestrator owns sovereign-loop advance)
+- **next_scheduled_role**: (orchestrator; do not spawn PO)
+- **resolution_source**: sovereign-critic PASS of refresh-context (tech-lead / cursor-grok-4.6)
+- **wall_clock**: 2026-09-09T20:47:00Z
+- **segment_work_item_kind**: story
+- **segment_closed**: true
+- **backlog_drain_active**: 1
+- **drain_terminated**: true (no_open_stories)
+- **next_eligible_open_story**: none
+- **AUTO_FLOW_MODE**: full_autonomy
+- **native_chain_active**: true
+- **native_chain_continuing**: true
+- **drain_advance_action**: orchestrator-owned sovereign-loop advance (critic STOP; do not drain; do not spawn PO)
+- **CROSS_MODEL_REVIEW**: 1
+- **verdict**: PASS
+- **blocking_count**: 0
+- **anti_slop_aggregate**: 10
+- **finding_ids**: us0132rc-challenger-001, us0132rc-architect-002, us0132rc-subtractor-003
+- **decision_gate**: false
+- **status**: DONE
+- **acceptance_L160**: [x]
+- **independent_open_story_count**: 0
+- **independent_open_bug_count**: 0
+- **sibling_done**: US-0131 DONE (not reopened); BUG-0015/BUG-0016 DONE (not reopened)
+- **research_id**: R-0117 (delivered)
+- **approach**: A1 LOCKED
+- **companion_dec**: DEC-0132 Accepted
+- **task_count**: 10 (T-anch + T-001..T-009; all ticked)
+- **queue_status**: S0134=released (unchanged)
+- **publish**: skipped (`RELEASE_PUBLISH_MODE=confirm`; `RELEASE_PUBLISH_AUTO_CONFIRM=0` — not executed)
+- **producer_runtime_proof_id**: rp-auto-20260909-us0132-refresh-context-curator-20260909T204500Z-US-0132
+- **producer_proof_hash**: FDF220CB5032584CF4E627D88590DC4CEC0451F8E6790650DC40058C6052318D
+- **proof_consume**: RUNTIME_PROOF_VALID (MATCH before ttl 2026-09-09T21:45:00Z; consumed 2026-09-09T20:47:00Z; ~3480s remaining)
+- **producer_fresh_context_marker**: cur-US0132-refresh-context-20260909T204500Z-fresh
+- **fresh_context_marker**: critic-US0132-refresh-context-20260909T204700Z-fresh
+- **model_id**: cursor-grok-4.6
+- **degraded_mode**: false
+- **evidence_ref**: handoffs/sovereign_critic_findings.jsonl (us0132rc-*); docs/engineering/state.md critic checkpoint; docs/product/backlog.md ## US-0132 DONE; docs/product/acceptance.md L160 [x]; docs/engineering/runbook.md L4359; docs/engineering/sovereign-memory/retrospectives/S0134.md
+- **stop_condition**: STOP after sovereign-critic PASS. Orchestrator owns sovereign-loop advance. Do NOT drain. Do NOT spawn PO. Do NOT reopen US-0131. Do NOT reopen BUG-0015/BUG-0016. Do not npm-publish.
+
+## Current status
+
+- **Active story**: **US-0132** — **DONE** (segment_closed=true; lifecycle terminal at refresh-context + critic PASS)
+- **Portfolio**: **0 OPEN** stories / **0 OPEN** bugs (`drain_terminated=true`)
+
+## Latest orchestration pointer
+
+- **stop_phase**: sovereign-critic
+- **stop_reason**: completed
+- **next_phase**: (segment complete — orchestrator owns sovereign-loop advance)
+- **next_role**: (orchestrator; do not spawn PO)
+
+## Intended resume phase
+
+(segment complete — orchestrator owns sovereign-loop advance; critic STOP)
+
+---
+
+# Resume Brief — US-0132 refresh-context PASS → segment complete (DEC-0069 / US-0095)
+
+- **orchestrator_run_id**: auto-20260909-us0132
+- **prior_orchestrator_run_id**: auto-20260908-us0132
+- **story_id**: US-0132
+- **bug_id**: (none)
+- **sprint_id**: S0134
+- **delivery_mode**: ultra_lean
+- **resolved_phase_plan**: [spec, plan, build+verify, ship]
+- **reinstatement_mode**: none
+- **memory_layer**: pack
+- **macro_phase**: ship
+- **last_completed_phase**: refresh-context
+- **intended_resume_phase**: (segment complete)
+- **next_scheduled_phase**: sovereign-critic of refresh-context (orchestrator-owned; when CROSS_MODEL_REVIEW=1)
+- **next_scheduled_role**: tech-lead (critic)
+- **resolution_source**: curator REFRESH_CONTEXT_PASS (curator / composer-2.5)
+- **wall_clock**: 2026-09-09T20:45:00Z
+- **segment_work_item_kind**: story
+- **segment_closed**: true
+- **backlog_drain_active**: 1
+- **drain_terminated**: true (no_open_stories)
+- **next_eligible_open_story**: none
+- **AUTO_FLOW_MODE**: full_autonomy
+- **native_chain_active**: true
+- **native_chain_continuing**: true
+- **drain_advance_action**: orchestrator-owned sovereign-loop advance (curator STOP; do not spawn drain)
+- **CROSS_MODEL_REVIEW**: 1
+- **verdict**: REFRESH_CONTEXT_PASS
+- **status**: DONE
+- **acceptance_L160**: [x]
+- **sibling_done**: US-0131 DONE (not reopened); BUG-0015/BUG-0016 DONE (not reopened)
+- **research_id**: R-0117 (delivered)
+- **approach**: A1 LOCKED
+- **companion_dec**: DEC-0132 Accepted
+- **task_count**: 10 (T-anch + T-001..T-009; all ticked)
+- **queue_status**: S0134=released (unchanged)
+- **publish**: skipped (`RELEASE_PUBLISH_MODE=confirm`; `RELEASE_PUBLISH_AUTO_CONFIRM=0` — not executed)
+- **producer_runtime_proof_id**: rp-auto-20260909-us0132-closure-qe-20260909T203300Z-US-0132
+- **producer_proof_hash**: 112DEFB4816C16554C126909AE5AF5D4A6B2114A9D7D8494BDC9A09AB522A04B
+- **proof_consume**: RUNTIME_PROOF_VALID (MATCH before ttl 2026-09-09T21:33:00Z; consumed 2026-09-09T20:45:00Z)
+- **producer_fresh_context_marker**: qe-US0132-closure-20260909T203300Z-fresh
+- **runtime_proof_id**: rp-auto-20260909-us0132-refresh-context-curator-20260909T204500Z-US-0132
+- **proof_hash**: FDF220CB5032584CF4E627D88590DC4CEC0451F8E6790650DC40058C6052318D
+- **proof_ttl**: 2026-09-09T21:45:00Z
+- **fresh_context_marker**: cur-US0132-refresh-context-20260909T204500Z-fresh
+- **model_id**: composer-2.5
+- **degraded_mode**: false
+- **evidence_ref**: sprints/S0134/summary.md; docs/engineering/sovereign-memory/retrospectives/S0134.md; docs/engineering/decisions.md; docs/engineering/runbook.md L4359; docs/engineering/state.md refresh-context checkpoint
+- **stop_condition**: STOP after refresh-context PASS. Orchestrator MAY spawn critic of refresh-context then sovereign-loop advance. Do NOT spawn critic/drain from this curator. Do NOT reopen US-0131. Do NOT reopen BUG-0015/BUG-0016. Do not npm-publish.
+
+## Current status
+
+- **Active story**: **US-0132** — **DONE** (segment_closed=true; lifecycle terminal at refresh-context)
+- **Portfolio**: **0 OPEN** stories / **0 OPEN** bugs (`drain_terminated=true`)
+
+## Latest orchestration pointer
+
+- **stop_phase**: refresh-context
+- **stop_reason**: completed
+- **next_phase**: sovereign-critic of refresh-context (orchestrator-owned)
+- **next_role**: tech-lead (critic)
+
+## Intended resume phase
+
+(segment complete — orchestrator owns critic then sovereign-loop advance)
+
+---
+
+# Resume Brief — US-0132 sovereign-critic of closure PASS → `/refresh-context` (DEC-0069 / US-0095)
+
+- **orchestrator_run_id**: auto-20260909-us0132
+- **prior_orchestrator_run_id**: auto-20260908-us0132
+- **story_id**: US-0132
+- **bug_id**: (none)
+- **sprint_id**: S0134
+- **delivery_mode**: ultra_lean
+- **resolved_phase_plan**: [spec, plan, build+verify, ship]
+- **reinstatement_mode**: none
+- **memory_layer**: pack
+- **macro_phase**: ship
+- **last_completed_phase**: sovereign-critic (closure)
+- **intended_resume_phase**: refresh-context
+- **next_scheduled_phase**: refresh-context
+- **next_scheduled_role**: curator
+- **resolution_source**: sovereign-critic PASS of closure (tech-lead / cursor-grok-4.6)
+- **wall_clock**: 2026-09-09T20:39:00Z
+- **segment_work_item_kind**: story
+- **backlog_drain_active**: 1
+- **AUTO_FLOW_MODE**: full_autonomy
+- **native_chain_active**: true
+- **native_chain_continuing**: true
+- **drain_advance_action**: not_applicable
+- **CROSS_MODEL_REVIEW**: 1
+- **verdict**: PASS
+- **blocking_count**: 0
+- **anti_slop_aggregate**: 10
+- **finding_ids**: us0132clo-challenger-001, us0132clo-architect-002, us0132clo-subtractor-003
+- **decision_gate**: false
+- **status**: DONE
+- **acceptance_L160**: [x]
+- **sibling_done**: US-0131 DONE (not reopened); BUG-0015/BUG-0016 DONE (not reopened)
+- **research_id**: R-0117
+- **approach**: A1 LOCKED
+- **companion_dec**: DEC-0132 Accepted
+- **task_count**: 10 (T-anch + T-001..T-009; all ticked)
+- **queue_status**: S0134=released (unchanged)
+- **publish**: skipped (`RELEASE_PUBLISH_MODE=confirm`; `RELEASE_PUBLISH_AUTO_CONFIRM=0` — not executed)
+- **producer_runtime_proof_id**: rp-auto-20260909-us0132-closure-qe-20260909T203300Z-US-0132
+- **producer_proof_hash**: 112DEFB4816C16554C126909AE5AF5D4A6B2114A9D7D8494BDC9A09AB522A04B
+- **proof_consume**: RUNTIME_PROOF_VALID (MATCH before ttl 2026-09-09T21:33:00Z; consumed 2026-09-09T20:39:00Z; ~3240s remaining)
+- **producer_fresh_context_marker**: qe-US0132-closure-20260909T203300Z-fresh
+- **fresh_context_marker**: critic-US0132-closure-20260909T203900Z-fresh
+- **model_id**: cursor-grok-4.6
+- **degraded_mode**: false
+- **evidence_ref**: handoffs/sovereign_critic_findings.jsonl (us0132clo-*); sprints/S0134/closure-verification.md; docs/product/backlog.md ## US-0132 DONE; docs/product/acceptance.md L160 [x]; docs/engineering/state.md critic checkpoint
+- **stop_condition**: STOP after sovereign-critic PASS. Orchestrator MUST Task-spawn `/refresh-context` in a fresh curator subagent (BUG-0006 / DEC-0082). Do NOT spawn /refresh-context from this critic. Do NOT reopen US-0131. Do NOT reopen BUG-0015/BUG-0016. Do not npm-publish.
+
+## Current status
+
+- **Active story**: **US-0132** — **DONE** (closure + critic PASS; awaiting /refresh-context)
+- **Prior segment**: **US-0131** — **DONE** / S0133 released (compose only; not reopened)
+
+## Latest orchestration pointer
+
+- **stop_phase**: sovereign-critic
+- **stop_reason**: completed
+- **next_phase**: refresh-context
+- **next_role**: curator
+
+## Intended resume phase
+
+refresh-context
+
+---
+
+# Resume Brief — US-0132 CLOSURE_PASS → `/refresh-context` (DEC-0069 / US-0095)
+
+- **orchestrator_run_id**: auto-20260909-us0132
+- **prior_orchestrator_run_id**: auto-20260908-us0132
+- **story_id**: US-0132
+- **bug_id**: (none)
+- **sprint_id**: S0134
+- **delivery_mode**: ultra_lean
+- **resolved_phase_plan**: [spec, plan, build+verify, ship]
+- **reinstatement_mode**: none
+- **memory_layer**: pack
+- **macro_phase**: ship
+- **last_completed_phase**: closure
+- **intended_resume_phase**: refresh-context
+- **next_scheduled_phase**: refresh-context
+- **next_scheduled_role**: curator
+- **resolution_source**: /closure PASS (qe / cursor-grok-4.6)
+- **wall_clock**: 2026-09-09T20:33:00Z
+- **segment_work_item_kind**: story
+- **backlog_drain_active**: 1
+- **AUTO_FLOW_MODE**: full_autonomy
+- **native_chain_active**: true
+- **native_chain_continuing**: true
+- **drain_advance_action**: not_applicable
+- **CROSS_MODEL_REVIEW**: 1
+- **verdict**: CLOSURE_PASS
+- **blocking_count**: 0
+- **decision_gate**: false
+- **status**: DONE
+- **acceptance_L160**: [x]
+- **sibling_done**: US-0131 DONE (not reopened); BUG-0015/BUG-0016 DONE (not reopened)
+- **research_id**: R-0117
+- **approach**: A1 LOCKED
+- **companion_dec**: DEC-0132 Accepted
+- **task_count**: 10 (T-anch + T-001..T-009; all ticked)
+- **queue_status**: S0134=released (unchanged)
+- **publish**: skipped (`RELEASE_PUBLISH_MODE=confirm`; `RELEASE_PUBLISH_AUTO_CONFIRM=0` — not executed)
+- **producer_runtime_proof_id**: rp-auto-20260909-us0132-release-release-20260909T201800Z-US-0132
+- **producer_proof_hash**: 1D77E47A2D6783A6872A184A9A55601FB3D7A50B7D96AF49BED0D101EA53329F
+- **proof_consume**: RUNTIME_PROOF_VALID (MATCH before ttl 2026-09-09T21:18:00Z; consumed 2026-09-09T20:33:00Z; ~2677s remaining)
+- **producer_fresh_context_marker**: release-US0132-release-20260909T201800Z-fresh
+- **fresh_context_marker**: qe-US0132-closure-20260909T203300Z-fresh
+- **closure_runtime_proof_id**: rp-auto-20260909-us0132-closure-qe-20260909T203300Z-US-0132
+- **closure_proof_hash**: 112DEFB4816C16554C126909AE5AF5D4A6B2114A9D7D8494BDC9A09AB522A04B
+- **closure_proof_ttl**: 2026-09-09T21:33:00Z
+- **model_id**: cursor-grok-4.6
+- **degraded_mode**: false
+- **evidence_ref**: sprints/S0134/closure-verification.md; docs/product/backlog.md ## US-0132 DONE; docs/product/acceptance.md L160 [x]; docs/engineering/state.md closure checkpoint; handoffs/release_queue.md (S0134 released)
+- **stop_condition**: STOP after /closure PASS. Orchestrator MUST Task-spawn `/refresh-context` in a fresh curator subagent (BUG-0006 / DEC-0082). Do NOT spawn /refresh-context from this closure. Do NOT spawn critic. Do NOT reopen US-0131. Do NOT reopen BUG-0015/BUG-0016. Do not npm-publish.
+
+## Current status
+
+- **Active story**: **US-0132** — **DONE** (closure PASS; awaiting /refresh-context)
+- **Prior segment**: **US-0131** — **DONE** / S0133 released (compose only; not reopened)
+
+## Latest orchestration pointer
+
+- **stop_phase**: closure
+- **stop_reason**: completed
+- **next_phase**: refresh-context
+- **next_role**: curator
+
+## Intended resume phase
+
+refresh-context
+
+---
+
+# Resume Brief — US-0132 sovereign-critic of release PASS → `/closure` (DEC-0069 / US-0095)
+
+- **orchestrator_run_id**: auto-20260909-us0132
+- **prior_orchestrator_run_id**: auto-20260908-us0132
+- **story_id**: US-0132
+- **bug_id**: (none)
+- **sprint_id**: S0134
+- **delivery_mode**: ultra_lean
+- **resolved_phase_plan**: [spec, plan, build+verify, ship]
+- **reinstatement_mode**: none
+- **memory_layer**: pack
+- **macro_phase**: ship
+- **last_completed_phase**: sovereign-critic (release)
+- **intended_resume_phase**: closure
+- **next_scheduled_phase**: closure
+- **next_scheduled_role**: qe
+- **resolution_source**: sovereign-critic PASS of release (tech-lead / cursor-grok-4.6)
+- **wall_clock**: 2026-09-09T20:28:00Z
+- **segment_work_item_kind**: story
+- **backlog_drain_active**: 1
+- **AUTO_FLOW_MODE**: full_autonomy
+- **native_chain_active**: true
+- **native_chain_continuing**: true
+- **drain_advance_action**: not_applicable
+- **CROSS_MODEL_REVIEW**: 1
+- **verdict**: PASS
+- **blocking_count**: 0
+- **anti_slop_aggregate**: 10
+- **finding_ids**: us0132rel-challenger-001, us0132rel-architect-002, us0132rel-subtractor-003
+- **decision_gate**: false
+- **status**: OPEN (US-0045 — NOT DONE)
+- **acceptance_L160**: unchecked
+- **sibling_done**: US-0131 DONE (do not reopen DEC-0131)
+- **research_id**: R-0117
+- **approach**: A1 LOCKED
+- **companion_dec**: DEC-0132 Accepted
+- **architecture_anchor**: docs/engineering/architecture.md # US-0132
+- **task_count**: 10 (T-anch + T-001..T-009; all ticked)
+- **tests**: pytest tests/us0132_contract_test.py -q → 10/10 PASS (critic independent re-run; 10 passed in 0.76s)
+- **harness**: tests/report.md @ 2026-09-09T20:17:05Z Pass:856 / Fail:0 (856 [PASS] rows; zero [FAIL]; US-0132 contract + us-0132 parity + CLI clean-repo preserve local present)
+- **parity**: check_intake_template_parity.py --scope=us-0132 OK
+- **metadata**: check-user-visible-metadata.py --repo . exit 0
+- **readme_3f**: validate_readme_feature_coverage.py --enforce OK (coverage_missing=[]; US-0131 present; US-0132 OPEN excluded)
+- **queue_status**: S0134=released
+- **publish**: skipped (`RELEASE_PUBLISH_MODE=confirm`; `RELEASE_PUBLISH_AUTO_CONFIRM=0`)
+- **producer_runtime_proof_id**: rp-auto-20260909-us0132-release-release-20260909T201800Z-US-0132
+- **producer_proof_hash**: 1D77E47A2D6783A6872A184A9A55601FB3D7A50B7D96AF49BED0D101EA53329F
+- **proof_consume**: RUNTIME_PROOF_VALID (MATCH before ttl 2026-09-09T21:18:00Z; consumed 2026-09-09T20:28:00Z; ~3000s remaining)
+- **producer_fresh_context_marker**: release-US0132-release-20260909T201800Z-fresh
+- **fresh_context_marker**: critic-US0132-release-20260909T202800Z-fresh
+- **model_id**: cursor-grok-4.6
+- **degraded_mode**: false
+- **nb_carry_forwards**: model_id provenance delta (orchestrator composer-2.5 vs producer isolation cursor-grok-4.6) informational; isolation L1147 omits critic-of-verify-work (release-findings includes it); marker 6 tautology / FORBIDDEN_WRITE_RELPATHS unused / extra --host opencode PATH_UNKNOWN-only; US-0132 README bullets while OPEN are extra not required; no 11th marker
+- **evidence_ref**: handoffs/sovereign_critic_findings.jsonl (us0132rel-*); handoffs/releases/S0134-release-notes.md; sprints/S0134/release-findings.md; handoffs/release_queue.md (S0134 released); tests/report.md @ 2026-09-09T20:17:05Z; docs/engineering/state.md release + this critic checkpoint; docs/product/backlog.md ## US-0132 OPEN; docs/product/acceptance.md L160 unchecked
+- **stop_condition**: STOP after sovereign-critic PASS. Orchestrator MUST Task-spawn `/closure` in a fresh qe subagent (BUG-0006 / DEC-0082). Do NOT spawn /closure from this critic. Do NOT mark US-0132 DONE. Do NOT tick acceptance L160. Do NOT reopen US-0131.
+
+## Current status
+
+- **Active story**: **US-0132** — **OPEN** (sovereign-critic of release PASS; awaiting /closure)
+- **Prior segment**: **US-0131** — **DONE** / S0133 released (compose only)
+
+## Latest orchestration pointer
+
+- **stop_phase**: sovereign-critic
+- **stop_reason**: completed
+- **next_phase**: closure
+- **next_role**: qe
+
+## Intended resume phase
+
+closure
+
+---
+
+# Resume Brief — US-0132 RELEASE_PASS → `/closure` (DEC-0069 / US-0095)
+
+- **orchestrator_run_id**: auto-20260909-us0132
+- **prior_orchestrator_run_id**: auto-20260908-us0132
+- **story_id**: US-0132
+- **bug_id**: (none)
+- **sprint_id**: S0134
+- **delivery_mode**: ultra_lean
+- **resolved_phase_plan**: [spec, plan, build+verify, ship]
+- **reinstatement_mode**: none
+- **memory_layer**: pack
+- **macro_phase**: ship
+- **last_completed_phase**: release
+- **intended_resume_phase**: closure
+- **next_scheduled_phase**: closure
+- **next_scheduled_role**: qe
+- **resolution_source**: /release PASS (release / cursor-grok-4.6)
+- **wall_clock**: 2026-09-09T20:18:00Z
+- **segment_work_item_kind**: story
+- **backlog_drain_active**: 1
+- **AUTO_FLOW_MODE**: full_autonomy
+- **native_chain_active**: true
+- **native_chain_continuing**: true
+- **drain_advance_action**: not_applicable
+- **CROSS_MODEL_REVIEW**: 1
+- **verdict**: RELEASE_PASS
+- **queue_status**: S0134=released
+- **publish**: skipped (`RELEASE_PUBLISH_MODE=confirm`; `RELEASE_PUBLISH_AUTO_CONFIRM=0`)
+- **blocking_count**: 0
+- **decision_gate**: false
+- **status**: OPEN (US-0045 — NOT DONE)
+- **acceptance_L160**: unchecked
+- **sibling_done**: US-0131 DONE (do not reopen DEC-0131)
+- **research_id**: R-0117
+- **approach**: A1 LOCKED
+- **companion_dec**: DEC-0132 Accepted
+- **architecture_anchor**: docs/engineering/architecture.md # US-0132
+- **task_count**: 10 (T-anch + T-001..T-009; all ticked)
+- **tests**: pytest tests/us0132_contract_test.py -v → 10/10 PASS; harness tests/report.md @ 2026-09-09T20:17:05Z Pass:856 / Fail:0
+- **parity**: check_intake_template_parity.py --scope=us-0132 OK
+- **metadata**: check-user-visible-metadata.py --repo . exit 0
+- **readme_3f**: validate_readme_feature_coverage.py --enforce OK (coverage_missing=[])
+- **producer_runtime_proof_id**: rp-auto-20260909-us0132-verify-work-qa-20260909T195316Z-US-0132
+- **producer_proof_hash**: 9DA355C4FD58FDFE56669C4CA9BF4FB26361276BD2DADB3D983ACB1172B75FB5
+- **proof_consume**: RUNTIME_PROOF_VALID (MATCH before ttl 2026-09-09T20:53:16Z; consumed 2026-09-09T20:18:00Z)
+- **producer_fresh_context_marker**: qa-US0132-verify-work-20260909T195316Z-fresh
+- **fresh_context_marker**: release-US0132-release-20260909T201800Z-fresh
+- **release_runtime_proof_id**: rp-auto-20260909-us0132-release-release-20260909T201800Z-US-0132
+- **release_proof_hash**: 1D77E47A2D6783A6872A184A9A55601FB3D7A50B7D96AF49BED0D101EA53329F
+- **proof_ttl**: 2026-09-09T21:18:00Z
+- **model_id**: cursor-grok-4.6
+- **degraded_mode**: false
+- **nb_carry_forwards**: marker 6 tautological `or True`; FORBIDDEN_WRITE_RELPATHS unused as runtime guard; extra --host opencode PATH_UNKNOWN-only; no 11th marker
+- **evidence_ref**: handoffs/releases/S0134-release-notes.md; sprints/S0134/release-findings.md; handoffs/release_queue.md (S0134 released); tests/report.md @ 2026-09-09T20:17:05Z; docs/engineering/state.md release checkpoint; docs/product/backlog.md ## US-0132 OPEN
+- **stop_condition**: STOP after /release PASS. Orchestrator MUST Task-spawn `/closure` in a fresh qe subagent (BUG-0006 / DEC-0082). Do NOT spawn /closure from this release. Do NOT mark US-0132 DONE. Do NOT tick acceptance L160. Do NOT reopen US-0131. Do NOT spawn critic.
+
+## Current status
+
+- **Active story**: **US-0132** — **OPEN** (RELEASE_PASS; awaiting /closure)
+- **Prior segment**: **US-0131** — **DONE** / S0133 released (compose only)
+
+## Latest orchestration pointer
+
+- **stop_phase**: release
+- **stop_reason**: completed
+- **next_phase**: closure
+- **next_role**: qe
+
+## Intended resume phase
+
+closure
+
+---
+
+# Resume Brief — US-0132 sovereign-critic of verify-work PASS → `/release` (DEC-0069 / US-0095)
+
+- **orchestrator_run_id**: auto-20260909-us0132
+- **prior_orchestrator_run_id**: auto-20260908-us0132
+- **story_id**: US-0132
+- **bug_id**: (none)
+- **sprint_id**: S0134
+- **delivery_mode**: ultra_lean
+- **resolved_phase_plan**: [spec, plan, build+verify, ship]
+- **reinstatement_mode**: none
+- **memory_layer**: pack
+- **macro_phase**: build+verify
+- **last_completed_phase**: sovereign-critic (verify-work)
+- **intended_resume_phase**: release
+- **next_scheduled_phase**: release
+- **next_scheduled_role**: release
+- **resolution_source**: sovereign-critic PASS of verify-work (tech-lead / cursor-grok-4.6)
+- **wall_clock**: 2026-09-09T20:02:00Z
+- **segment_work_item_kind**: story
+- **backlog_drain_active**: 1
+- **AUTO_FLOW_MODE**: full_autonomy
+- **native_chain_active**: true
+- **native_chain_continuing**: true
+- **drain_advance_action**: not_applicable
+- **CROSS_MODEL_REVIEW**: 1
+- **verdict**: PASS
+- **blocking_count**: 0
+- **anti_slop_aggregate**: 10
+- **finding_ids**: us0132vwc-challenger-001, us0132vwc-architect-002, us0132vwc-subtractor-003
+- **decision_gate**: false
+- **status**: OPEN (US-0045 — NOT DONE)
+- **acceptance_L160**: unchecked
+- **sibling_done**: US-0131 DONE (do not reopen DEC-0131)
+- **research_id**: R-0117
+- **approach**: A1 LOCKED
+- **companion_dec**: DEC-0132 Accepted
+- **architecture_anchor**: docs/engineering/architecture.md # US-0132
+- **task_count**: 10 (T-anch + T-001..T-009; all ticked)
+- **tests**: pytest tests/us0132_contract_test.py -v → 10/10 PASS (critic independent re-run; 10 passed in 0.78s)
+- **parity**: check_intake_template_parity.py --scope=us-0132 OK
+- **metadata**: check-user-visible-metadata.py --repo . exit 0
+- **operator_cli**: model_tier_validate.py --scope model-config --host both --repo . → [MODEL_TIER_VALIDATION_OK]
+- **extra_host_opencode**: PATH_UNKNOWN x3 only CONFIRMED (no HOST_COLLISION; producer uat.json said x2 — count discrepancy informational)
+- **producer_runtime_proof_id**: rp-auto-20260909-us0132-verify-work-qa-20260909T195316Z-US-0132
+- **producer_proof_hash**: 9DA355C4FD58FDFE56669C4CA9BF4FB26361276BD2DADB3D983ACB1172B75FB5
+- **proof_consume**: RUNTIME_PROOF_VALID (MATCH before ttl 2026-09-09T20:53:16Z; consumed 2026-09-09T20:02:00Z)
+- **producer_fresh_context_marker**: qa-US0132-verify-work-20260909T195316Z-fresh
+- **fresh_context_marker**: critic-US0132-verify-work-20260909T200200Z-fresh
+- **model_id**: cursor-grok-4.6
+- **degraded_mode**: false
+- **nb_carry_forwards**: marker 6 tautological `or True`; leftover tests/report.md evidence_ref CLEANED; FORBIDDEN_WRITE_RELPATHS unused as runtime guard; extra --host opencode PATH_UNKNOWN x3 vs producer x2 count
+- **evidence_ref**: handoffs/sovereign_critic_findings.jsonl (us0132vwc-*); sprints/S0134/uat.json; sprints/S0134/uat.md; docs/engineering/state.md critic checkpoint; docs/product/backlog.md ## US-0132 OPEN
+- **stop_condition**: STOP after sovereign-critic PASS. Orchestrator MUST Task-spawn `/release` in a fresh release subagent (BUG-0006). Do NOT spawn /release from this critic. Do NOT mark US-0132 DONE. Do NOT tick acceptance L160. Do NOT reopen US-0131.
+
+## Current status
+
+- **Active story**: **US-0132** — **OPEN** (VERIFY_WORK_PASS + critic PASS; awaiting /release)
+- **Prior segment**: **US-0131** — **DONE** / S0133 released (compose only)
+
+## Latest orchestration pointer
+
+- **stop_phase**: sovereign-critic
+- **stop_reason**: completed
+- **next_phase**: release
+- **next_role**: release
+
+## Intended resume phase
+
+release
+
+---
+
+# Resume Brief — US-0132 VERIFY_WORK_PASS → `/release` (DEC-0069 / US-0095)
+
+- **orchestrator_run_id**: auto-20260909-us0132
+- **prior_orchestrator_run_id**: auto-20260908-us0132
+- **story_id**: US-0132
+- **bug_id**: (none)
+- **sprint_id**: S0134
+- **delivery_mode**: ultra_lean
+- **resolved_phase_plan**: [spec, plan, build+verify, ship]
+- **reinstatement_mode**: none
+- **memory_layer**: pack
+- **macro_phase**: build+verify
+- **last_completed_phase**: verify-work
+- **intended_resume_phase**: release
+- **next_scheduled_phase**: release
+- **next_scheduled_role**: release
+- **resolution_source**: verify-work PASS (qa / cursor-grok-4.6)
+- **wall_clock**: 2026-09-09T19:53:16Z
+- **segment_work_item_kind**: story
+- **backlog_drain_active**: 1
+- **AUTO_FLOW_MODE**: full_autonomy
+- **native_chain_active**: true
+- **native_chain_continuing**: true
+- **drain_advance_action**: not_applicable
+- **CROSS_MODEL_REVIEW**: 1
+- **verdict**: PASS
+- **blocking_count**: 0
+- **uat_total**: 9
+- **uat_passed**: 9
+- **uat_failed**: 0
+- **decision_gate**: false
+- **status**: OPEN (US-0045 — NOT DONE)
+- **acceptance_L160**: unchecked
+- **sibling_done**: US-0131 DONE (do not reopen DEC-0131)
+- **research_id**: R-0117
+- **approach**: A1 LOCKED
+- **companion_dec**: DEC-0132 Accepted
+- **architecture_anchor**: docs/engineering/architecture.md # US-0132
+- **task_count**: 10 (T-anch + T-001..T-009; all ticked)
+- **tests**: pytest tests/us0132_contract_test.py -v → 10/10 PASS (verify-work independent re-run; 10 passed in 0.87s)
+- **parity**: check_intake_template_parity.py --scope=us-0132 OK; 6/6 IDENTICAL
+- **metadata**: check-user-visible-metadata.py --repo . exit 0
+- **operator_cli**: model_tier_validate.py --scope model-config --host both --repo . → [MODEL_TIER_VALIDATION_OK]
+- **extra_host_opencode**: PATH_UNKNOWN-only CONFIRMED (no HOST_COLLISION)
+- **producer_runtime_proof_id**: rp-auto-20260909-us0132-qa-qa-20260909T194000Z-US-0132
+- **producer_proof_hash**: D3CBDC44FD3794BE97AD421AF703B65B06BBFD407462B7FCE8DB395B91907DD7
+- **proof_consume**: RUNTIME_PROOF_VALID (MATCH before ttl 2026-09-09T20:40:00Z; consumed 2026-09-09T19:53:16Z)
+- **producer_fresh_context_marker**: qa-US0132-qa-20260909T194000Z-fresh
+- **fresh_context_marker**: qa-US0132-verify-work-20260909T195316Z-fresh
+- **runtime_proof_id**: rp-auto-20260909-us0132-verify-work-qa-20260909T195316Z-US-0132
+- **proof_hash**: 9DA355C4FD58FDFE56669C4CA9BF4FB26361276BD2DADB3D983ACB1172B75FB5
+- **proof_ttl**: 2026-09-09T20:53:16Z
+- **model_id**: cursor-grok-4.6
+- **degraded_mode**: false
+- **nb_carry_forwards**: marker 6 tautological `or True` (informational); leftover tests/report.md evidence_ref CLEANED this UAT; FORBIDDEN_WRITE_RELPATHS unused as runtime guard
+- **evidence_ref**: sprints/S0134/uat.json; sprints/S0134/uat.md; sprints/S0134/qa-findings.md; sprints/S0134/progress.md; docs/engineering/state.md verify-work checkpoint; docs/product/backlog.md ## US-0132 OPEN
+- **stop_condition**: Orchestrator MAY critic verify-work then MUST Task-spawn `/release` in a fresh release subagent (BUG-0006). Do NOT spawn critic or /release from this qa. Do NOT mark US-0132 DONE. Do NOT tick acceptance L160. Do NOT reopen US-0131.
+
+## Current status
+
+- **Active story**: **US-0132** — **OPEN** (VERIFY_WORK_PASS; awaiting /release)
+- **Prior segment**: **US-0131** — **DONE** / S0133 released (compose only)
+
+## Latest orchestration pointer
+
+- **stop_phase**: verify-work
+- **stop_reason**: completed
+- **next_phase**: release
+- **next_role**: release
+
+## Intended resume phase
+
+release
+
+---
+
+# Resume Brief — US-0132 sovereign-critic of qa PASS → `/verify-work` (DEC-0069 / US-0095)
+
+- **orchestrator_run_id**: auto-20260909-us0132
+- **prior_orchestrator_run_id**: auto-20260908-us0132
+- **story_id**: US-0132
+- **bug_id**: (none)
+- **sprint_id**: S0134
+- **delivery_mode**: ultra_lean
+- **resolved_phase_plan**: [spec, plan, build+verify, ship]
+- **reinstatement_mode**: none
+- **memory_layer**: pack
+- **macro_phase**: build+verify
+- **last_completed_phase**: sovereign-critic (qa)
+- **intended_resume_phase**: verify-work
+- **next_scheduled_phase**: verify-work
+- **next_scheduled_role**: qa
+- **resolution_source**: sovereign-critic PASS of qa (tech-lead / cursor-grok-4.6)
+- **wall_clock**: 2026-09-09T19:46:00Z
+- **segment_work_item_kind**: story
+- **backlog_drain_active**: 1
+- **AUTO_FLOW_MODE**: full_autonomy
+- **native_chain_active**: true
+- **native_chain_continuing**: true
+- **drain_advance_action**: not_applicable
+- **CROSS_MODEL_REVIEW**: 1
+- **verdict**: PASS
+- **blocking_count**: 0
+- **anti_slop_aggregate**: 10
+- **finding_ids**: us0132qac-challenger-001, us0132qac-architect-002, us0132qac-subtractor-003
+- **decision_gate**: false
+- **status**: OPEN (US-0045 — NOT DONE)
+- **sibling_done**: US-0131 DONE (do not reopen DEC-0131)
+- **research_id**: R-0117
+- **approach**: A1 LOCKED
+- **companion_dec**: DEC-0132 Accepted
+- **architecture_anchor**: docs/engineering/architecture.md # US-0132
+- **task_count**: 10 (T-anch + T-001..T-009; all ticked)
+- **tests**: pytest tests/us0132_contract_test.py -v → 10/10 PASS (critic independent re-run; 10 passed in 0.81s)
+- **parity**: check_intake_template_parity.py --scope=us-0132 OK
+- **metadata**: check-user-visible-metadata.py --repo . exit 0
+- **producer_runtime_proof_id**: rp-auto-20260909-us0132-qa-qa-20260909T194000Z-US-0132
+- **producer_proof_hash**: D3CBDC44FD3794BE97AD421AF703B65B06BBFD407462B7FCE8DB395B91907DD7
+- **proof_consume**: RUNTIME_PROOF_VALID (MATCH before ttl 2026-09-09T20:40:00Z; consumed 2026-09-09T19:46:00Z)
+- **producer_fresh_context_marker**: qa-US0132-qa-20260909T194000Z-fresh
+- **fresh_context_marker**: critic-US0132-qa-20260909T194600Z-fresh
+- **model_id**: cursor-grok-4.6
+- **producer_model_id**: composer-2.5
+- **degraded_mode**: false
+- **nb_carry_forwards**: marker 1 extra `--host opencode` PATH_UNKNOWN-only CONFIRMED; marker 6 tautological `or True` (informational); FORBIDDEN_WRITE_RELPATHS unused as runtime guard; uat.json `tests/report.md` leftover evidence_ref (file absent; surrogate is contract_test_failed=0)
+- **evidence_ref**: handoffs/sovereign_critic_findings.jsonl; docs/engineering/state.md sovereign-critic checkpoint; sprints/S0134/qa-findings.md; sprints/S0134/uat.json; tests/us0132_contract_test.py; docs/product/backlog.md ## US-0132
+- **stop_condition**: Orchestrator MUST Task-spawn `/verify-work` in a fresh qa subagent (BUG-0006). Do NOT spawn /verify-work from this critic. Do NOT mark US-0132 DONE. Do NOT tick acceptance L160. Do NOT reopen US-0131.
+
+## Current status
+
+- **Active story**: **US-0132** — **OPEN** (QA_PASS + sovereign-critic PASS; awaiting /verify-work)
+- **Prior segment**: **US-0131** — **DONE** / S0133 released (compose only)
+
+## Latest orchestration pointer
+
+- **stop_phase**: sovereign-critic
+- **stop_reason**: completed
+- **next_phase**: verify-work
+- **next_role**: qa
+
+## Intended resume phase
+
+verify-work
+
+---
+
+# Resume Brief — US-0132 QA_PASS → `/verify-work` (DEC-0069 / US-0095)
+
+- **orchestrator_run_id**: auto-20260909-us0132
+- **prior_orchestrator_run_id**: auto-20260908-us0132
+- **story_id**: US-0132
+- **bug_id**: (none)
+- **sprint_id**: S0134
+- **delivery_mode**: ultra_lean
+- **resolved_phase_plan**: [spec, plan, build+verify, ship]
+- **reinstatement_mode**: none
+- **memory_layer**: pack
+- **macro_phase**: build+verify
+- **last_completed_phase**: qa
+- **intended_resume_phase**: verify-work
+- **next_scheduled_phase**: verify-work
+- **next_scheduled_role**: qa
+- **resolution_source**: /qa PASS (fresh qa)
+- **wall_clock**: 2026-09-09T19:40:00Z
+- **segment_work_item_kind**: story
+- **backlog_drain_active**: 1
+- **AUTO_FLOW_MODE**: full_autonomy
+- **native_chain_active**: true
+- **native_chain_continuing**: true
+- **drain_advance_action**: not_applicable
+- **CROSS_MODEL_REVIEW**: 1
+- **verdict**: QA_PASS
+- **blocking_count**: 0
+- **anti_slop_aggregate**: 10 (producer critic; qa did not spawn critic)
+- **finding_ids**: (none blocking); informational carry-forwards us0132exc-challenger-001, us0132exc-architect-002, us0132exc-subtractor-003
+- **decision_gate**: false
+- **status**: OPEN (US-0045 — NOT DONE; AC-1..AC-8 unchecked; acceptance L160 unchecked)
+- **sibling_done**: US-0131 DONE (do not reopen DEC-0131)
+- **research_id**: R-0117
+- **approach**: A1 LOCKED
+- **companion_dec**: DEC-0132 Accepted
+- **architecture_anchor**: docs/engineering/architecture.md # US-0132
+- **task_count**: 10 (T-anch + T-001..T-009; all ticked)
+- **tests**: pytest tests/us0132_contract_test.py -v → 10/10 PASS (qa independent re-run; 10 passed in 0.87s)
+- **parity**: check_intake_template_parity.py --scope=us-0132 OK; 6/6 pairs IDENTICAL
+- **metadata**: check-user-visible-metadata.py --repo . exit 0 (US-0132 only in allowlisted `#` comments in installer.py:274 / installer.sh:298)
+- **producer_runtime_proof_id**: rp-auto-20260909-us0132-execute-dev-20260909T192520Z-US-0132
+- **producer_proof_hash**: 21431725A12CD3D170463E990B46EFD68649D71D05DEC571DFBB33C144FE967E
+- **proof_consume**: RUNTIME_PROOF_VALID (MATCH before ttl 2026-09-09T20:25:20Z; consumed 2026-09-09T19:40:00Z)
+- **producer_fresh_context_marker**: dev-US0132-execute-20260909T191200Z-fresh
+- **fresh_context_marker**: qa-US0132-qa-20260909T194000Z-fresh
+- **model_id**: cursor-grok-4.6
+- **qa_runtime_proof_id**: rp-auto-20260909-us0132-qa-qa-20260909T194000Z-US-0132
+- **qa_proof_hash**: D3CBDC44FD3794BE97AD421AF703B65B06BBFD407462B7FCE8DB395B91907DD7
+- **qa_proof_ttl**: 2026-09-09T20:40:00Z
+- **degraded_mode**: false
+- **nb_carry_forwards**: marker 1 extra `--host opencode` PATH_UNKNOWN-only (informational); marker 6 tautological `or True` (informational); FORBIDDEN_WRITE_RELPATHS unused as runtime guard (informational)
+- **evidence_ref**: sprints/S0134/qa-findings.md; sprints/S0134/uat.json; sprints/S0134/uat.md; docs/engineering/state.md qa checkpoint; tests/us0132_contract_test.py; docs/product/backlog.md ## US-0132
+- **stop_condition**: Orchestrator MUST Task-spawn sovereign-critic of qa then fresh qa for `/verify-work` (BUG-0006). Do NOT spawn /verify-work or /execute from this qa. Do NOT mark US-0132 DONE. Do NOT tick acceptance L160. Do NOT reopen US-0131.
+
+## Current status
+
+- **Active story**: **US-0132** — **OPEN** (QA_PASS; awaiting /verify-work)
+- **Prior segment**: **US-0131** — **DONE** / S0133 released (compose only)
+
+## Latest orchestration pointer
+
+- **stop_phase**: qa
+- **stop_reason**: completed
+- **next_phase**: verify-work
+- **next_role**: qa
+
+## Intended resume phase
+
+verify-work
+
+---
+
+# Resume Brief — US-0132 sovereign-critic of execute PASS → `/qa` (DEC-0069 / US-0095)
+
+- **orchestrator_run_id**: auto-20260909-us0132
+- **prior_orchestrator_run_id**: auto-20260908-us0132
+- **story_id**: US-0132
+- **bug_id**: (none)
+- **sprint_id**: S0134
+- **delivery_mode**: ultra_lean
+- **resolved_phase_plan**: [spec, plan, build+verify, ship]
+- **reinstatement_mode**: none
+- **memory_layer**: pack
+- **macro_phase**: build+verify
+- **last_completed_phase**: sovereign-critic (execute)
+- **intended_resume_phase**: qa
+- **next_scheduled_phase**: qa
+- **next_scheduled_role**: qa
+- **resolution_source**: sovereign-critic PASS of execute (tech-lead / cursor-grok-4.6)
+- **wall_clock**: 2026-09-09T19:32:00Z
+- **segment_work_item_kind**: story
+- **backlog_drain_active**: 1
+- **AUTO_FLOW_MODE**: full_autonomy
+- **native_chain_active**: true
+- **native_chain_continuing**: true
+- **drain_advance_action**: not_applicable
+- **CROSS_MODEL_REVIEW**: 1
+- **verdict**: PASS
+- **blocking_count**: 0
+- **anti_slop_aggregate**: 10
+- **finding_ids**: us0132exc-challenger-001, us0132exc-architect-002, us0132exc-subtractor-003
+- **decision_gate**: false
+- **status**: OPEN (US-0045 — NOT DONE)
+- **sibling_done**: US-0131 DONE (do not reopen DEC-0131)
+- **research_id**: R-0117
+- **approach**: A1 LOCKED
+- **companion_dec**: DEC-0132 Accepted
+- **architecture_anchor**: docs/engineering/architecture.md # US-0132
+- **task_count**: 10 (T-anch + T-001..T-009; all ticked)
+- **tests**: pytest tests/us0132_contract_test.py -v → 10/10 PASS (critic independent re-run)
+- **producer_runtime_proof_id**: rp-auto-20260909-us0132-execute-dev-20260909T192520Z-US-0132
+- **producer_proof_hash**: 21431725A12CD3D170463E990B46EFD68649D71D05DEC571DFBB33C144FE967E
+- **proof_consume**: RUNTIME_PROOF_VALID (MATCH before ttl 2026-09-09T20:25:20Z; consumed 2026-09-09T19:32:00Z)
+- **producer_fresh_context_marker**: dev-US0132-execute-20260909T191200Z-fresh
+- **fresh_context_marker**: critic-US0132-execute-20260909T193200Z-fresh
+- **model_id**: cursor-grok-4.6
+- **producer_model_id**: composer-2.5
+- **degraded_mode**: false
+- **nb_carry_forwards**: marker 1 does not separately assert --host opencode + model.json (same PATH_UNKNOWN-only branch as cursor); marker 6 tautological `or True` source-scan — QA may tighten without an 11th marker; FORBIDDEN_WRITE_RELPATHS unused as runtime guard
+- **evidence_ref**: handoffs/sovereign_critic_findings.jsonl; docs/engineering/state.md sovereign-critic checkpoint; sprints/S0134/progress.md; tests/us0132_contract_test.py; docs/product/backlog.md ## US-0132
+- **stop_condition**: Orchestrator MUST Task-spawn fresh qa for `/qa` (BUG-0006). Do NOT spawn /qa from this critic. Do NOT mark US-0132 DONE. Do NOT tick acceptance L160. Do NOT reopen US-0131.
+
+## Current status
+
+- **Active story**: **US-0132** — **OPEN** (execute PASS + sovereign-critic PASS; awaiting /qa)
+- **Prior segment**: **US-0131** — **DONE** / S0133 released (compose only)
+
+## Latest orchestration pointer
+
+- **stop_phase**: sovereign-critic
+- **stop_reason**: completed
+- **next_phase**: qa
+- **next_role**: qa
+
+## Intended resume phase
+
+qa
+
+---
+
+
+# Resume Brief — US-0132 execute PASS → `/qa` (DEC-0069 / US-0095)
+
+- **orchestrator_run_id**: auto-20260909-us0132
+- **prior_orchestrator_run_id**: auto-20260908-us0132
+- **story_id**: US-0132
+- **bug_id**: (none)
+- **sprint_id**: S0134
+- **delivery_mode**: ultra_lean
+- **resolved_phase_plan**: [spec, plan, build+verify, ship]
+- **reinstatement_mode**: none
+- **memory_layer**: pack
+- **macro_phase**: build+verify
+- **last_completed_phase**: execute
+- **intended_resume_phase**: qa
+- **next_scheduled_phase**: qa
+- **next_scheduled_role**: qa
+- **resolution_source**: execute PASS (dev / cursor-grok-4.6)
+- **wall_clock**: 2026-09-09T19:25:20Z
+- **segment_work_item_kind**: story
+- **backlog_drain_active**: 1
+- **AUTO_FLOW_MODE**: full_autonomy
+- **native_chain_active**: true
+- **native_chain_continuing**: true
+- **drain_advance_action**: not_applicable
+- **CROSS_MODEL_REVIEW**: 1
+- **verdict**: EXECUTE_PASS
+- **decision_gate**: false
+- **status**: OPEN (US-0045 — NOT DONE)
+- **sibling_done**: US-0131 DONE (do not reopen DEC-0131)
+- **research_id**: R-0117
+- **approach**: A1 LOCKED
+- **companion_dec**: DEC-0132 Accepted
+- **architecture_anchor**: docs/engineering/architecture.md # US-0132
+- **task_count**: 10 (T-anch + T-001..T-009; all ticked)
+- **tests**: pytest tests/us0132_contract_test.py -v → 10/10 PASS
+- **plan-verify consume**: rp-auto-20260909-us0132-plan-verify-qa-20260909T185821Z-US-0132-reattest / 90D9E2E7D70999806756EC900A9A67E00A4112D8303EC8DD8BCA0F63E8162034 — RUNTIME_PROOF_VALID (consumed 2026-09-09T19:12:00Z before ttl 2026-09-09T19:58:21Z)
+- **stale_tuple_not_consumed**: rp-auto-20260908-us0132-plan-verify-qa-20260908T213933Z-US-0132 (RUNTIME_PROOF_STALE)
+- **runtime_proof_id**: rp-auto-20260909-us0132-execute-dev-20260909T192520Z-US-0132
+- **proof_hash**: 21431725A12CD3D170463E990B46EFD68649D71D05DEC571DFBB33C144FE967E
+- **proof_ttl**: 2026-09-09T20:25:20Z
+- **fresh_context_marker**: dev-US0132-execute-20260909T191200Z-fresh
+- **model_id**: cursor-grok-4.6
+- **evidence_ref**: sprints/S0134/summary.md; handoffs/dev_to_qa.md; tests/us0132_contract_test.py; sprints/S0134/t-anch-verification.md
+- **stop_condition**: Orchestrator MUST Task-spawn fresh qa for `/qa` (BUG-0006). Do NOT spawn /qa from this execute. Do NOT spawn critic. Do NOT mark US-0132 DONE. Do NOT tick acceptance L160. Do NOT reopen US-0131.
+
+## Current status
+
+- **Active story**: **US-0132** — **OPEN** (execute PASS; awaiting /qa)
+- **Prior segment**: **US-0131** — **DONE** / S0133 released (compose only)
+
+## Latest orchestration pointer
+
+- **stop_phase**: execute
+- **stop_reason**: completed
+- **next_phase**: qa
+- **next_role**: qa
+
+## Intended resume phase
+
+qa
+
+---
+
+
+- **orchestrator_run_id**: auto-20260909-us0132
+- **prior_orchestrator_run_id**: auto-20260908-us0132
+- **story_id**: US-0132
+- **bug_id**: (none)
+- **sprint_id**: S0134
+- **delivery_mode**: ultra_lean
+- **resolved_phase_plan**: [spec, plan, build+verify, ship]
+- **reinstatement_mode**: none
+- **memory_layer**: pack
+- **macro_phase**: plan
+- **last_completed_phase**: sovereign-critic (plan-verify RE-ATTEST)
+- **intended_resume_phase**: execute
+- **next_scheduled_phase**: execute
+- **next_scheduled_role**: dev
+- **resolution_source**: sovereign-critic PASS of plan-verify RE-ATTEST (tech-lead / cursor-grok-4.6)
+- **wall_clock**: 2026-09-09T19:07:00Z
+- **segment_work_item_kind**: story
+- **backlog_drain_active**: 1
+- **AUTO_FLOW_MODE**: full_autonomy
+- **native_chain_active**: true
+- **native_chain_continuing**: true
+- **drain_advance_action**: not_applicable
+- **CROSS_MODEL_REVIEW**: 1
+- **verdict**: PASS
+- **blocking_count**: 0
+- **anti_slop_aggregate**: 10
+- **finding_ids**: us0132pvr-challenger-001, us0132pvr-architect-002, us0132pvr-subtractor-003
+- **decision_gate**: false
+- **status**: OPEN (US-0045 — NOT DONE)
+- **sibling_done**: US-0131 DONE (do not reopen DEC-0131)
+- **research_id**: R-0117 (do not extend R-0116)
+- **approach**: A1 LOCKED
+- **companion_dec**: DEC-0132 Accepted
+- **architecture_anchor**: docs/engineering/architecture.md # US-0132
+- **task_count**: 10 (T-anch + T-001..T-009; within SPRINT_MAX_TASKS=12; no split)
+- **ac_coverage**: 8/8 surjective (independent remap; no PLAN_AC_COVERAGE_GAP)
+- **plan-verify.json**: PASS / RE-ATTEST (sprints/S0134/plan-verify.json)
+- **reattest_kind**: RE-ATTEST_ONLY
+- **producer_runtime_proof_id**: rp-auto-20260909-us0132-plan-verify-qa-20260909T185821Z-US-0132-reattest
+- **producer_proof_hash**: 90D9E2E7D70999806756EC900A9A67E00A4112D8303EC8DD8BCA0F63E8162034
+- **proof_consume**: RUNTIME_PROOF_VALID (MATCH before ttl 2026-09-09T19:58:21Z; consumed 2026-09-09T19:07:00Z)
+- **stale_tuple_not_consumed**: rp-auto-20260908-us0132-plan-verify-qa-20260908T213933Z-US-0132 (RUNTIME_PROOF_STALE; identity-checked; not live-consumed)
+- **fresh_context_marker**: critic-US0132-plan-verify-reattest-20260909T190700Z-fresh
+- **model_id**: cursor-grok-4.6
+- **producer_model_id**: composer-2.5
+- **degraded_mode**: false
+- **nb_carry_forwards**: T-005 gitignore/clean execute; T-004 host-JSON vs marker 5 (no 11th marker); generic Installer file list → installer.py/ps1/sh in T-005; sprint.md 2026-09-08 plan_verified_at is stale — execute consumes the RE-ATTEST tuple
+- **evidence_ref**: handoffs/sovereign_critic_findings.jsonl; docs/engineering/state.md sovereign-critic checkpoint; sprints/S0134/plan-verify.json; sprints/S0134/sprint.md; sprints/S0134/tasks.md; docs/product/backlog.md ## US-0132
+- **stop_condition**: Orchestrator MUST Task-spawn fresh dev for `/execute` (BUG-0006). Do NOT spawn /execute from this critic. Do NOT mark US-0132 DONE. Do NOT tick acceptance L160. Do NOT reopen US-0131.
+
+## Current status
+
+- **Active story**: **US-0132** — **OPEN** (plan-verify RE-ATTEST + sovereign-critic PASS; awaiting execute)
+- **Prior segment**: **US-0131** — **DONE** / S0133 released (compose only)
+
+## Latest orchestration pointer
+
+- **stop_phase**: sovereign-critic
+- **stop_reason**: completed
+- **next_phase**: execute
+- **next_role**: dev
+
+## Intended resume phase
+
+execute
+
+---
+# Resume Brief — US-0132 plan-verify RE-ATTEST PASS → sovereign-critic then `/execute` (DEC-0069 / US-0095)
+
+- **orchestrator_run_id**: auto-20260909-us0132
+- **prior_orchestrator_run_id**: auto-20260908-us0132
+- **story_id**: US-0132
+- **bug_id**: (none)
+- **sprint_id**: S0134
+- **delivery_mode**: ultra_lean
+- **resolved_phase_plan**: [spec, plan, build+verify, ship]
+- **reinstatement_mode**: none
+- **memory_layer**: pack
+- **macro_phase**: plan
+- **last_completed_phase**: plan-verify RE-ATTEST (role=qa)
+- **intended_resume_phase**: sovereign-critic of this plan-verify RE-ATTEST then `/execute`
+- **next_scheduled_phase**: sovereign-critic of plan-verify RE-ATTEST
+- **next_scheduled_role**: tech-lead (critic) then dev
+- **resolution_source**: plan-verify RE-ATTEST PASS (qa / cursor-grok-4.6)
+- **wall_clock**: 2026-09-09T18:58:21Z
+- **segment_work_item_kind**: story
+- **backlog_drain_active**: 1
+- **AUTO_FLOW_MODE**: full_autonomy
+- **native_chain_active**: true
+- **native_chain_continuing**: true
+- **drain_advance_action**: not_applicable
+- **CROSS_MODEL_REVIEW**: 1
+- **verdict**: RE_ATTEST_PASS / PLAN_VERIFY_PASS
+- **decision_gate**: false
+- **status**: OPEN (US-0045 — NOT DONE)
+- **sibling_done**: US-0131 DONE (do not reopen DEC-0131)
+- **research_id**: R-0117 (do not extend R-0116)
+- **approach**: A1 LOCKED
+- **companion_dec**: DEC-0132 Accepted
+- **architecture_anchor**: docs/engineering/architecture.md # US-0132
+- **task_count**: 10 (T-anch + T-001..T-009; within SPRINT_MAX_TASKS=12; no split)
+- **ac_coverage**: 8/8 surjective (independent remap this run; no PLAN_AC_COVERAGE_GAP)
+- **uncovered_acs**: []
+- **plan-verify.json**: PASS / RE-ATTEST (sprints/S0134/plan-verify.json)
+- **reattest_kind**: RE-ATTEST_ONLY
+- **reattest_reason**: RUNTIME_PROOF_STALE
+- **sprint_task_content_rewritten**: false
+- **prior_stale_runtime_proof_id**: rp-auto-20260908-us0132-plan-verify-qa-20260908T213933Z-US-0132
+- **prior_stale_proof_hash**: D1CCD3C93B3B6C8F7ED71E5095E4F6A3946D14CD500809686139DC56205E1167
+- **prior_stale_proof_ttl**: 2026-09-08T22:39:33Z
+- **prior_stale_proof_consume**: NOT live-consumed (RUNTIME_PROOF_STALE; identity-checked; not forged)
+- **prior_sprint_plan_proof**: rp-auto-20260908-us0132-sprint-plan-techlead-20260908T212407Z-US-0132 recorded as prior-run superseded/expired — NOT consumed as live RUNTIME_PROOF_VALID
+- **runtime_proof_id**: rp-auto-20260909-us0132-plan-verify-qa-20260909T185821Z-US-0132-reattest
+- **proof_hash**: 90D9E2E7D70999806756EC900A9A67E00A4112D8303EC8DD8BCA0F63E8162034
+- **proof_ttl**: 2026-09-09T19:58:21Z
+- **proof_issued_at**: 2026-09-09T18:58:21Z
+- **hash_recompute_confirmation**: true
+- **fresh_context_marker**: qa-US0132-plan-verify-reattest-20260909T185821Z-fresh
+- **model_id**: cursor-grok-4.6
+- **degraded_mode**: false
+- **nb_carry_forwards**: T-005 gitignore/clean execute; T-004 host-JSON vs marker 5 (no 11th marker); generic Installer file list → installer.py/ps1/sh in T-005
+- **evidence_ref**: sprints/S0134/plan-verify.json; sprints/S0134/sprint.md; sprints/S0134/tasks.md; docs/engineering/state.md plan-verify RE-ATTEST checkpoint; docs/product/backlog.md ## US-0132; docs/product/acceptance.md L160; handoffs/qa_plan_verify.md; handoffs/tl_to_dev.md
+- **stop_condition**: Orchestrator MUST Task-spawn sovereign-critic of this RE-ATTEST then `/execute` in fresh subagents (BUG-0006). Do NOT spawn critic or execute from this plan-verify qa. Do NOT mark US-0132 DONE. Do NOT tick acceptance L160. Do NOT reopen US-0131.
+
+## Current status
+
+- **Active story**: **US-0132** — **OPEN** (plan-verify RE-ATTEST PASS; awaiting sovereign-critic then execute)
+- **Prior segment**: **US-0131** — **DONE** / S0133 released (compose only)
+
+## Latest orchestration pointer
+
+- **stop_phase**: plan-verify RE-ATTEST
+- **stop_reason**: completed
+- **next_phase**: sovereign-critic of plan-verify RE-ATTEST
+- **next_role**: tech-lead (critic)
+
+## Intended resume phase
+
+sovereign-critic of plan-verify RE-ATTEST then `/execute`
+
+---
+# Resume Brief — US-0132 plan-verify RE-ATTEST (RUNTIME_PROOF_STALE divert) (DEC-0069 / US-0095)
+
+- **orchestrator_run_id**: auto-20260909-us0132
+- **prior_orchestrator_run_id**: auto-20260908-us0132
+- **story_id**: US-0132
+- **bug_id**: (none)
+- **sprint_id**: S0134
+- **delivery_mode**: ultra_lean
+- **resolved_phase_plan**: [spec, plan, build+verify, ship]
+- **reinstatement_mode**: none
+- **memory_layer**: pack
+- **macro_phase**: plan
+- **last_completed_phase**: plan-verify (PASS 2026-09-08; proof STALE)
+- **intended_resume_phase**: plan-verify RE-ATTEST
+- **next_scheduled_phase**: plan-verify RE-ATTEST
+- **next_scheduled_role**: qa
+- **resolution_source**: resume_brief + RUNTIME_PROOF_STALE divert
+- **wall_clock**: 2026-09-09T18:55:50Z
+- **segment_work_item_kind**: story
+- **backlog_drain_active**: 1
+- **AUTO_FLOW_MODE**: full_autonomy
+- **native_chain_active**: true
+- **native_chain_continuing**: true
+- **drain_advance_action**: not_applicable
+- **CROSS_MODEL_REVIEW**: 1
+- **decision_gate**: false
+- **status**: OPEN (US-0045 — NOT DONE)
+- **sibling_done**: US-0131 DONE (do not reopen DEC-0131)
+- **stale_runtime_proof_id**: rp-auto-20260908-us0132-plan-verify-qa-20260908T213933Z-US-0132
+- **stale_proof_hash**: D1CCD3C93B3B6C8F7ED71E5095E4F6A3946D14CD500809686139DC56205E1167
+- **stale_proof_ttl**: 2026-09-08T22:39:33Z
+- **stop_condition**: Orchestrator MUST Task-spawn fresh qa for plan-verify RE-ATTEST. Do not forge the stale proof. Do not consume into critic or execute until RE-ATTEST mints a new unique tuple. Do not mark US-0132 DONE.
+
+## Current status
+
+- **Active story**: **US-0132** — **OPEN** (plan-verify PASS artifacts intact; proof STALE → RE-ATTEST)
+- **Prior segment**: **US-0131** — **DONE** / S0133 released (compose only)
+
+## Latest orchestration pointer
+
+- **stop_phase**: orchestrator materialization
+- **stop_reason**: completed
+- **next_phase**: plan-verify RE-ATTEST
+- **next_role**: qa
+
+## Intended resume phase
+
+plan-verify RE-ATTEST
+
+---
+# Resume Brief — US-0132 plan-verify PASS → execute (DEC-0069 / US-0095)
+
+- **orchestrator_run_id**: auto-20260908-us0132
+- **prior_orchestrator_run_id**: auto-20260907-us0131
+- **story_id**: US-0132
+- **bug_id**: (none)
+- **sprint_id**: S0134
+- **delivery_mode**: ultra_lean
+- **resolved_phase_plan**: [spec, plan, build+verify, ship]
+- **reinstatement_mode**: none
+- **memory_layer**: pack
+- **macro_phase**: plan
+- **last_completed_phase**: plan-verify
+- **intended_resume_phase**: execute
+- **next_scheduled_phase**: execute
+- **next_scheduled_role**: dev
+- **resolution_source**: plan-verify PASS (qa / cursor-grok-4.6)
+- **wall_clock**: 2026-09-08T21:39:33Z
+- **segment_work_item_kind**: story
+- **backlog_drain_active**: 1
+- **AUTO_FLOW_MODE**: full_autonomy
+- **native_chain_active**: true
+- **native_chain_continuing**: true
+- **CROSS_MODEL_REVIEW**: 1
+- **verdict**: PASS
+- **decision_gate**: false
+- **status**: OPEN (US-0045 — NOT DONE)
+- **sibling_done**: US-0131 DONE (do not reopen DEC-0131)
+- **research_id**: R-0117 (do not extend R-0116)
+- **approach**: A1 LOCKED
+- **companion_dec**: DEC-0132 Accepted
+- **architecture_anchor**: docs/engineering/architecture.md # US-0132
+- **task_count**: 10 (T-anch + T-001..T-009; within SPRINT_MAX_TASKS=12; no split)
+- **ac_coverage**: 8/8 surjective
+- **plan-verify.json**: PASS (sprints/S0134/plan-verify.json)
+- **producer_runtime_proof_id**: rp-auto-20260908-us0132-sprint-plan-techlead-20260908T212407Z-US-0132
+- **producer_proof_hash**: 3DF869CD3FDFF4C0A76093193B1550F4DE9082EB8AFD37091AD37A4C98392E89
+- **proof_consume**: RUNTIME_PROOF_VALID (MATCH before ttl 2026-09-08T22:24:07Z; consumed 2026-09-08T21:39:33Z)
+- **runtime_proof_id**: rp-auto-20260908-us0132-plan-verify-qa-20260908T213933Z-US-0132
+- **proof_hash**: D1CCD3C93B3B6C8F7ED71E5095E4F6A3946D14CD500809686139DC56205E1167
+- **proof_ttl**: 2026-09-08T22:39:33Z
+- **fresh_context_marker**: qa-US0132-plan-verify-20260908T213933Z-fresh
+- **model_id**: cursor-grok-4.6
+- **degraded_mode**: false
+- **nb_carry_forwards**: T-005 gitignore/clean execute; T-004 host-JSON vs marker 5 (no 11th marker); generic Installer file list → installer.py/ps1/sh in T-005
+- **evidence_ref**: sprints/S0134/plan-verify.json; sprints/S0134/sprint.md; sprints/S0134/tasks.md; docs/engineering/state.md plan-verify checkpoint; docs/product/backlog.md ## US-0132; handoffs/qa_plan_verify.md; handoffs/tl_to_dev.md
+- **stop_condition**: Orchestrator MUST Task-spawn fresh dev for /execute (BUG-0006). Do NOT spawn /execute from this plan-verify qa. Do NOT spawn critic. Do NOT mark US-0132 DONE. Do NOT reopen US-0131.
+
+## Current status
+
+- **Active story**: **US-0132** — **OPEN** (plan-verify PASS; awaiting execute)
+- **Prior segment**: **US-0131** — **DONE** / S0133 released (compose only)
+
+## Latest orchestration pointer
+
+- **stop_phase**: plan-verify
+- **stop_reason**: completed
+- **next_phase**: execute
+- **next_role**: dev
+
+## Intended resume phase
+
+execute
+
+---
+# Resume Brief — US-0132 sovereign-critic of sprint-plan PASS → plan-verify (DEC-0069 / US-0095)
+
+- **orchestrator_run_id**: auto-20260908-us0132
+- **prior_orchestrator_run_id**: auto-20260907-us0131
+- **story_id**: US-0132
+- **bug_id**: (none)
+- **sprint_id**: S0134
+- **delivery_mode**: ultra_lean
+- **resolved_phase_plan**: [spec, plan, build+verify, ship]
+- **reinstatement_mode**: none
+- **memory_layer**: pack
+- **macro_phase**: plan
+- **last_completed_phase**: sovereign-critic (sprint-plan)
+- **intended_resume_phase**: plan-verify
+- **next_scheduled_phase**: plan-verify
+- **next_scheduled_role**: qa
+- **resolution_source**: sovereign-critic PASS of sprint-plan (tech-lead / cursor-grok-4.6)
+- **wall_clock**: 2026-09-08T21:33:51Z
+- **segment_work_item_kind**: story
+- **backlog_drain_active**: 1
+- **AUTO_FLOW_MODE**: full_autonomy
+- **native_chain_active**: true
+- **native_chain_continuing**: true
+- **CROSS_MODEL_REVIEW**: 1
+- **verdict**: PASS
+- **blocking_count**: 0
+- **anti_slop_aggregate**: 10
+- **finding_ids**: us0132spc-challenger-001, us0132spc-architect-002, us0132spc-subtractor-003
+- **decision_gate**: false
+- **status**: OPEN (US-0045 — NOT DONE)
+- **sibling_done**: US-0131 DONE (do not reopen DEC-0131)
+- **research_id**: R-0117 (do not extend R-0116)
+- **approach**: A1 LOCKED
+- **companion_dec**: DEC-0132 Accepted
+- **architecture_anchor**: docs/engineering/architecture.md # US-0132
+- **task_count**: 10 (T-anch + T-001..T-009; within SPRINT_MAX_TASKS=12; no split)
+- **plan-verify.json**: PENDING (AWAITING_QA_PLAN_VERIFY)
+- **producer_runtime_proof_id**: rp-auto-20260908-us0132-sprint-plan-techlead-20260908T212407Z-US-0132
+- **producer_proof_hash**: 3DF869CD3FDFF4C0A76093193B1550F4DE9082EB8AFD37091AD37A4C98392E89
+- **proof_consume**: RUNTIME_PROOF_VALID (MATCH before ttl 2026-09-08T22:24:07Z; consumed 2026-09-08T21:33:51Z)
+- **fresh_context_marker**: critic-US0132-sprint-plan-20260908T213351Z-fresh
+- **model_id**: cursor-grok-4.6
+- **producer_model_id**: composer-2.5
+- **degraded_mode**: false
+- **evidence_ref**: handoffs/sovereign_critic_findings.jsonl; docs/engineering/state.md sovereign-critic checkpoint; sprints/S0134/sprint.md; sprints/S0134/tasks.md; docs/product/backlog.md ## US-0132
+- **stop_condition**: Orchestrator MUST Task-spawn fresh qa for /plan-verify (BUG-0006). Do NOT execute plan-verify in-band. Do NOT spawn /plan-verify from this critic. Do NOT mark US-0132 DONE. Do NOT reopen US-0131.
+
+## Current status
+
+- **Active story**: **US-0132** — **OPEN** (sprint-plan + sovereign-critic PASS; awaiting plan-verify)
+- **Prior segment**: **US-0131** — **DONE** / S0133 released (compose only)
+
+## Latest orchestration pointer
+
+- **stop_phase**: sovereign-critic
+- **stop_reason**: completed
+- **next_phase**: plan-verify
+- **next_role**: qa
+
+## Intended resume phase
+
+plan-verify
+
+---
+# Resume Brief — US-0132 sprint-plan PASS → plan-verify (DEC-0069 / US-0095)
+
+- **orchestrator_run_id**: auto-20260908-us0132
+- **prior_orchestrator_run_id**: auto-20260907-us0131
+- **story_id**: US-0132
+- **bug_id**: (none)
+- **sprint_id**: S0134
+- **delivery_mode**: ultra_lean
+- **resolved_phase_plan**: [spec, plan, build+verify, ship]
+- **reinstatement_mode**: none
+- **memory_layer**: pack
+- **macro_phase**: plan
+- **last_completed_phase**: sprint-plan
+- **intended_resume_phase**: plan-verify
+- **next_scheduled_phase**: plan-verify
+- **next_scheduled_role**: qa
+- **resolution_source**: sprint-plan PASS (tech-lead / cursor-grok-4.6)
+- **wall_clock**: 2026-09-08T21:24:07Z
+- **segment_work_item_kind**: story
+- **backlog_drain_active**: 1
+- **AUTO_FLOW_MODE**: full_autonomy
+- **native_chain_active**: true
+- **native_chain_continuing**: true
+- **CROSS_MODEL_REVIEW**: 1
+- **verdict**: PASS
+- **decision_gate**: false
+- **status**: OPEN (US-0045 — NOT DONE)
+- **sibling_done**: US-0131 DONE (do not reopen DEC-0131)
+- **research_id**: R-0117 (do not extend R-0116)
+- **approach**: A1 LOCKED
+- **companion_dec**: DEC-0132 Accepted
+- **architecture_anchor**: docs/engineering/architecture.md # US-0132
+- **task_count**: 10 (T-anch + T-001..T-009; within SPRINT_MAX_TASKS=12; no split)
+- **plan-verify.json**: PENDING (AWAITING_QA_PLAN_VERIFY)
+- **producer_runtime_proof_id**: rp-auto-20260908-us0132-architecture-techlead-20260908T210500Z-US-0132
+- **producer_proof_hash**: 8255C22FCC78F2CFF74AD41A08D9FFF875AE09C205A82BEC78C4B4D03CD13013
+- **proof_consume**: RUNTIME_PROOF_VALID (MATCH before ttl 2026-09-08T22:05:00Z; consumed 2026-09-08T21:24:07Z)
+- **runtime_proof_id**: rp-auto-20260908-us0132-sprint-plan-techlead-20260908T212407Z-US-0132
+- **proof_hash**: 3DF869CD3FDFF4C0A76093193B1550F4DE9082EB8AFD37091AD37A4C98392E89
+- **proof_ttl**: 2026-09-08T22:24:07Z
+- **fresh_context_marker**: tl-US0132-sprint-plan-20260908T212407Z-fresh
+- **model_id**: cursor-grok-4.6
+- **degraded_mode**: false
+- **nb_closures**: architecture_notes relocated from BUG-0016 onto ## US-0132 (form-feed removed; BUG-0016 not reopened); T-005 gitignore/clean; HOST_COLLISION distinct; T-anch NO-OP
+- **evidence_ref**: sprints/S0134/sprint.md; sprints/S0134/tasks.md; sprints/S0134/plan-verify.json; docs/engineering/state.md sprint-plan checkpoint; docs/product/backlog.md ## US-0132; handoffs/tl_to_dev.md
+- **stop_condition**: Orchestrator MUST Task-spawn fresh qa for /plan-verify (BUG-0006). Do NOT execute plan-verify in-band. Do NOT spawn critic or plan-verify from this sprint-plan. Do NOT mark US-0132 DONE. Do NOT reopen US-0131.
+
+## Current status
+
+- **Active story**: **US-0132** — **OPEN** (sprint-plan PASS; awaiting plan-verify)
+- **Prior segment**: **US-0131** — **DONE** / S0133 released (compose only)
+
+## Latest orchestration pointer
+
+- **stop_phase**: sprint-plan
+- **stop_reason**: completed
+- **next_phase**: plan-verify
+- **next_role**: qa
+
+## Intended resume phase
+
+plan-verify
+
+---
+# Resume Brief — US-0132 sovereign-critic of architecture PASS → sprint-plan (DEC-0069 / US-0095)
+
+- **orchestrator_run_id**: auto-20260908-us0132
+- **prior_orchestrator_run_id**: auto-20260907-us0131
+- **story_id**: US-0132
+- **bug_id**: (none)
+- **sprint_id**: S0134 (preview; sprint-plan owns folder)
+- **delivery_mode**: ultra_lean
+- **resolved_phase_plan**: [spec, plan, build+verify, ship]
+- **reinstatement_mode**: none
+- **memory_layer**: pack
+- **macro_phase**: plan
+- **last_completed_phase**: sovereign-critic (architecture)
+- **intended_resume_phase**: sprint-plan
+- **next_scheduled_phase**: sprint-plan
+- **next_scheduled_role**: tech-lead
+- **resolution_source**: sovereign-critic PASS of architecture (tech-lead / cursor-grok-4.6)
+- **wall_clock**: 2026-09-08T21:18:28Z
+- **segment_work_item_kind**: story
+- **backlog_drain_active**: 1
+- **AUTO_FLOW_MODE**: full_autonomy
+- **native_chain_active**: true
+- **native_chain_continuing**: true
+- **CROSS_MODEL_REVIEW**: 1
+- **verdict**: PASS
+- **blocking_count**: 0
+- **anti_slop_aggregate**: 10
+- **finding_ids**: us0132arc-challenger-001, us0132arc-architect-002, us0132arc-subtractor-003
+- **decision_gate**: false
+- **status**: OPEN (US-0045 — NOT DONE)
+- **sibling_done**: US-0131 DONE (do not reopen DEC-0131)
+- **research_id**: R-0117 (do not extend R-0116)
+- **approach**: A1 LOCKED
+- **dq_locked**: DQ1–DQ10 (deferred glob/read/collision/clean CLOSED)
+- **companion_dec**: DEC-0132 Accepted
+- **architecture_anchor**: docs/engineering/architecture.md # US-0132
+- **producer_runtime_proof_id**: rp-auto-20260908-us0132-architecture-techlead-20260908T210500Z-US-0132
+- **producer_proof_hash**: 8255C22FCC78F2CFF74AD41A08D9FFF875AE09C205A82BEC78C4B4D03CD13013
+- **proof_consume**: RUNTIME_PROOF_VALID (MATCH before ttl 2026-09-08T22:05:00Z)
+- **fresh_context_marker**: critic-US0132-architecture-20260908T211828Z-fresh
+- **model_id**: cursor-grok-4.6
+- **producer_model_id**: composer-2.5
+- **degraded_mode**: false
+- **evidence_ref**: handoffs/sovereign_critic_findings.jsonl; docs/engineering/state.md sovereign-critic checkpoint; decisions/DEC-0132.md; docs/engineering/architecture.md # US-0132; docs/product/backlog.md ## US-0132
+- **stop_condition**: Orchestrator MUST Task-spawn fresh tech-lead for /sprint-plan (BUG-0006). Do NOT execute sprint-plan in-band. Do NOT spawn /sprint-plan from this critic. Do NOT mark US-0132 DONE. Do NOT reopen US-0131.
+
+## Current status
+
+- **Active story**: **US-0132** — **OPEN** (architecture + sovereign-critic PASS; awaiting sprint-plan)
+- **Prior segment**: **US-0131** — **DONE** / S0133 released (compose only)
+
+## Latest orchestration pointer
+
+- **stop_phase**: sovereign-critic
+- **stop_reason**: completed
+- **next_phase**: sprint-plan
+- **next_role**: tech-lead
+
+## Intended resume phase
+
+sprint-plan
+
+---
+# Resume Brief — US-0132 architecture PASS → sprint-plan (DEC-0069 / US-0095)
+
+- **orchestrator_run_id**: auto-20260908-us0132
+- **prior_orchestrator_run_id**: auto-20260907-us0131
+- **story_id**: US-0132
+- **bug_id**: (none)
+- **sprint_id**: S0134 (preview; sprint-plan owns folder)
+- **delivery_mode**: ultra_lean
+- **resolved_phase_plan**: [spec, plan, build+verify, ship]
+- **reinstatement_mode**: none
+- **memory_layer**: pack
+- **macro_phase**: plan
+- **last_completed_phase**: architecture
+- **intended_resume_phase**: sprint-plan
+- **next_scheduled_phase**: sprint-plan
+- **next_scheduled_role**: tech-lead
+- **resolution_source**: architecture PASS (tech-lead / cursor-grok-4.6)
+- **wall_clock**: 2026-09-08T21:05:00Z
+- **segment_work_item_kind**: story
+- **backlog_drain_active**: 1
+- **AUTO_FLOW_MODE**: full_autonomy
+- **native_chain_active**: true
+- **native_chain_continuing**: true
+- **CROSS_MODEL_REVIEW**: 1
+- **verdict**: PASS
+- **decision_gate**: false
+- **status**: OPEN (US-0045 — NOT DONE)
+- **sibling_done**: US-0131 DONE (do not reopen DEC-0131)
+- **research_id**: R-0117 (do not extend R-0116)
+- **approach**: A1 LOCKED
+- **dq_locked**: DQ1–DQ10 (deferred glob/read/collision/clean CLOSED)
+- **companion_dec**: DEC-0132 Accepted
+- **architecture_anchor**: docs/engineering/architecture.md # US-0132
+- **runtime_proof_id**: rp-auto-20260908-us0132-architecture-techlead-20260908T210500Z-US-0132
+- **proof_hash**: 8255C22FCC78F2CFF74AD41A08D9FFF875AE09C205A82BEC78C4B4D03CD13013
+- **proof_ttl**: 2026-09-08T22:05:00Z
+- **proof_consume_prior**: RUNTIME_PROOF_VALID (research A67C61DF7B083A9AC9DC39326FACD9B4E897F43D6B47515EC301AF894E7B0FD5 MATCH before ttl 2026-09-08T21:55:00Z)
+- **fresh_context_marker**: tl-US0132-architecture-20260908T210500Z-fresh
+- **model_id**: cursor-grok-4.6
+- **degraded_mode**: false
+- **evidence_ref**: decisions/DEC-0132.md; docs/engineering/architecture.md # US-0132; docs/engineering/research.md ## R-0117; docs/product/backlog.md ## US-0132; docs/engineering/state.md architecture checkpoint
+- **stop_condition**: Orchestrator MUST Task-spawn fresh tech-lead for /sprint-plan after critic of architecture (CROSS_MODEL_REVIEW=1). Do NOT execute sprint-plan in-band. Do NOT spawn /sprint-plan from this architecture subagent. Do NOT mark US-0132 DONE. Do NOT reopen US-0131.
+
+## Current status
+
+- **Active story**: **US-0132** — **OPEN** (architecture PASS; awaiting sprint-plan)
+- **Prior segment**: **US-0131** — **DONE** / S0133 released (compose only)
+
+## Latest orchestration pointer
+
+- **stop_phase**: architecture
+- **stop_reason**: completed
+- **next_phase**: sprint-plan
+- **next_role**: tech-lead
+
+## Intended resume phase
+
+sprint-plan
+
+---
+# Resume Brief — US-0132 sovereign-critic of research PASS → architecture (DEC-0069 / US-0095)
+
+- **orchestrator_run_id**: auto-20260908-us0132
+- **prior_orchestrator_run_id**: auto-20260907-us0131
+- **story_id**: US-0132
+- **bug_id**: (none)
+- **sprint_id**: S0134 (research preview; sprint-plan owns folder)
+- **delivery_mode**: ultra_lean
+- **resolved_phase_plan**: [spec, plan, build+verify, ship]
+- **reinstatement_mode**: none
+- **memory_layer**: pack
+- **macro_phase**: plan
+- **last_completed_phase**: sovereign-critic (research)
+- **intended_resume_phase**: architecture
+- **next_scheduled_phase**: architecture
+- **next_scheduled_role**: tech-lead
+- **resolution_source**: sovereign-critic PASS of research (tech-lead / cursor-grok-4.6)
+- **wall_clock**: 2026-09-08T21:02:26Z
+- **segment_work_item_kind**: story
+- **backlog_drain_active**: 1
+- **AUTO_FLOW_MODE**: full_autonomy
+- **native_chain_active**: true
+- **native_chain_continuing**: true
+- **CROSS_MODEL_REVIEW**: 1
+- **verdict**: PASS
+- **blocking_count**: 0
+- **anti_slop_aggregate**: 10
+- **finding_ids**: us0132rsc-challenger-001, us0132rsc-architect-002, us0132rsc-subtractor-003
+- **decision_gate**: false
+- **status**: OPEN (US-0045 — NOT DONE)
+- **sibling_done**: US-0131 DONE (do not reopen)
+- **research_id**: R-0117 (do not extend R-0116)
+- **approach**: A1
+- **dq_locked**: DQ1–DQ10 (critic concurred)
+- **companion_dec**: DEC-0132 (Required in /architecture)
+- **producer_runtime_proof_id**: rp-auto-20260908-us0132-research-techlead-20260908T205500Z-US-0132
+- **producer_proof_hash**: A67C61DF7B083A9AC9DC39326FACD9B4E897F43D6B47515EC301AF894E7B0FD5
+- **proof_consume**: RUNTIME_PROOF_VALID (MATCH before ttl 2026-09-08T21:55:00Z)
+- **fresh_context_marker**: critic-US0132-research-20260908T210226Z-fresh
+- **model_id**: cursor-grok-4.6
+- **producer_model_id**: composer-2.5
+- **degraded_mode**: false
+- **evidence_ref**: handoffs/sovereign_critic_findings.jsonl; docs/engineering/state.md sovereign-critic checkpoint; docs/engineering/research.md ## R-0117; docs/product/backlog.md ## US-0132
+- **stop_condition**: Orchestrator MUST Task-spawn fresh tech-lead for /architecture (BUG-0006). Do NOT execute architecture in-band. Do NOT spawn /architecture from this critic. Do NOT mark US-0132 DONE. Do NOT reopen US-0131.
+
+## Current status
+
+- **Active story**: **US-0132** — **OPEN** (research + sovereign-critic PASS; awaiting architecture)
+- **Prior segment**: **US-0131** — **DONE** / S0133 released (compose only)
+
+## Latest orchestration pointer
+
+- **stop_phase**: sovereign-critic
+- **stop_reason**: completed
+- **next_phase**: architecture
+- **next_role**: tech-lead
+
+## Intended resume phase
+
+architecture
+
+---
+# Resume Brief — US-0132 research PASS → architecture (DEC-0069 / US-0095)
+
+- **orchestrator_run_id**: auto-20260908-us0132
+- **prior_orchestrator_run_id**: auto-20260907-us0131
+- **story_id**: US-0132
+- **bug_id**: (none)
+- **sprint_id**: S0134
+- **delivery_mode**: ultra_lean
+- **resolved_phase_plan**: [spec, plan, build+verify, ship]
+- **reinstatement_mode**: none
+- **memory_layer**: pack
+- **macro_phase**: plan
+- **last_completed_phase**: research
+- **intended_resume_phase**: architecture
+- **next_scheduled_phase**: architecture
+- **next_scheduled_role**: tech-lead
+- **resolution_source**: research PASS (tech-lead / cursor-grok-4.6)
+- **wall_clock**: 2026-09-08T20:55:00Z
+- **segment_work_item_kind**: story
+- **backlog_drain_active**: 1
+- **AUTO_FLOW_MODE**: full_autonomy
+- **native_chain_active**: true
+- **native_chain_continuing**: true
+- **CROSS_MODEL_REVIEW**: 1
+- **verdict**: PASS
+- **decision_gate**: false
+- **status**: OPEN (US-0045 — NOT DONE)
+- **sibling_done**: US-0131 DONE (do not reopen)
+- **research_id**: R-0117 (do not extend R-0116)
+- **approach**: A1
+- **dq_locked**: DQ1–DQ10
+- **companion_dec**: DEC-0132 (Required in /architecture)
+- **runtime_proof_id**: rp-auto-20260908-us0132-research-techlead-20260908T205500Z-US-0132
+- **proof_hash**: A67C61DF7B083A9AC9DC39326FACD9B4E897F43D6B47515EC301AF894E7B0FD5
+- **proof_ttl**: 2026-09-08T21:55:00Z
+- **producer_consumed**: rp-auto-20260908-us0132-discovery-po-20260908T205000Z-US-0132 (MATCH)
+- **fresh_context_marker**: tl-US0132-research-20260908T205500Z-fresh
+- **model_id**: cursor-grok-4.6
+- **evidence_ref**: docs/engineering/research.md ## R-0117; docs/engineering/state.md research checkpoint; handoffs/po_to_tl.md ## Research handoff — US-0132; docs/product/backlog.md ## US-0132
+- **stop_condition**: Orchestrator MUST Task-spawn fresh tech-lead for /architecture (BUG-0006). Do NOT execute architecture in-band. Do NOT spawn critic from this research. Do NOT mark US-0132 DONE. Do NOT reopen US-0131.
+
+## Current status
+
+- **Active story**: **US-0132** — **OPEN** (research PASS; awaiting architecture)
+- **Prior segment**: **US-0131** — **DONE** / S0133 released (compose only)
+
+## Latest orchestration pointer
+
+- **stop_phase**: research
+- **stop_reason**: completed
+- **next_phase**: architecture
+- **next_role**: tech-lead
+
+## Intended resume phase
+
+architecture
+
+---
+# Resume Brief — US-0132 sovereign-critic of discovery PASS → research (DEC-0069 / US-0095)
+
+- **orchestrator_run_id**: auto-20260908-us0132
+- **prior_orchestrator_run_id**: auto-20260907-us0131
+- **story_id**: US-0132
+- **bug_id**: (none)
+- **sprint_id**: (none yet)
+- **delivery_mode**: ultra_lean
+- **resolved_phase_plan**: [spec, plan, build+verify, ship]
+- **reinstatement_mode**: none
+- **memory_layer**: pack
+- **macro_phase**: spec
+- **last_completed_phase**: sovereign-critic (discovery)
+- **intended_resume_phase**: research
+- **next_scheduled_phase**: research
+- **next_scheduled_role**: tech-lead
+- **resolution_source**: sovereign-critic PASS of discovery (tech-lead / cursor-grok-4.6)
+- **wall_clock**: 2026-09-08T20:49:26Z
+- **segment_work_item_kind**: story
+- **backlog_drain_active**: 1
+- **AUTO_FLOW_MODE**: full_autonomy
+- **native_chain_active**: true
+- **native_chain_continuing**: true
+- **CROSS_MODEL_REVIEW**: 1
+- **verdict**: PASS
+- **blocking_count**: 0
+- **anti_slop_aggregate**: 10
+- **finding_ids**: us0132dsc-challenger-001, us0132dsc-architect-002, us0132dsc-subtractor-003
+- **decision_gate**: false
+- **status**: OPEN (US-0045 — NOT DONE)
+- **sibling_done**: US-0131 DONE (do not reopen)
+- **discovery_locks**: D1–D10 (critic concurred)
+- **research_stub**: expect R-0117 (tech-lead owns allocation; do not extend R-0116)
+- **producer_runtime_proof_id**: rp-auto-20260908-us0132-discovery-po-20260908T205000Z-US-0132
+- **producer_proof_hash**: 411E974B49A6636F4F73515A31EB7D67D792A95420251A54F35B03CA547537F8
+- **proof_consume**: RUNTIME_PROOF_VALID (MATCH before ttl 2026-09-08T21:50:00Z)
+- **fresh_context_marker**: critic-US0132-discovery-20260908T204926Z-fresh
+- **model_id**: cursor-grok-4.6
+- **producer_model_id**: composer-2.5
+- **degraded_mode**: false
+- **evidence_ref**: handoffs/sovereign_critic_findings.jsonl; docs/engineering/state.md sovereign-critic checkpoint; docs/product/backlog.md ## US-0132; handoffs/po_to_tl.md ## Discovery handoff — US-0132
+- **stop_condition**: Orchestrator MUST Task-spawn fresh tech-lead for /research (BUG-0006). Do NOT execute research in-band. Do NOT spawn /research from this critic. Do NOT mark US-0132 DONE. Do NOT reopen US-0131.
+
+## Current status
+
+- **Active story**: **US-0132** — **OPEN** (discovery + sovereign-critic PASS; awaiting research)
+- **Prior segment**: **US-0131** — **DONE** / S0133 released (compose only)
+
+## Latest orchestration pointer
+
+- **stop_phase**: sovereign-critic
+- **stop_reason**: completed
+- **next_phase**: research
+- **next_role**: tech-lead
+
+## Intended resume phase
+
+research
+
+---
+# Resume Brief — US-0132 discovery PASS → research (DEC-0069 / US-0095)
+
+- **orchestrator_run_id**: auto-20260908-us0132
+- **prior_orchestrator_run_id**: auto-20260907-us0131
+- **story_id**: US-0132
+- **bug_id**: (none)
+- **sprint_id**: (none yet)
+- **delivery_mode**: ultra_lean
+- **resolved_phase_plan**: [spec, plan, build+verify, ship]
+- **reinstatement_mode**: none
+- **memory_layer**: pack
+- **macro_phase**: spec
+- **last_completed_phase**: discovery
+- **intended_resume_phase**: research
+- **next_scheduled_phase**: research
+- **next_scheduled_role**: tech-lead
+- **resolution_source**: discovery PASS (po / cursor-grok-4.5)
+- **wall_clock**: 2026-09-08T20:50:00Z
+- **segment_work_item_kind**: story
+- **backlog_drain_active**: 1
+- **AUTO_FLOW_MODE**: full_autonomy
+- **native_chain_active**: true
+- **native_chain_continuing**: true
+- **CROSS_MODEL_REVIEW**: 1
+- **verdict**: PASS
+- **decision_gate**: false
+- **status**: OPEN (US-0045 — NOT DONE)
+- **sibling_done**: US-0131 DONE (do not reopen)
+- **discovery_locks**: D1–D10
+- **research_stub**: expect R-0117 (tech-lead owns allocation; do not extend R-0116)
+- **runtime_proof_id**: rp-auto-20260908-us0132-discovery-po-20260908T205000Z-US-0132
+- **proof_hash**: 411E974B49A6636F4F73515A31EB7D67D792A95420251A54F35B03CA547537F8
+- **proof_ttl**: 2026-09-08T21:50:00Z
+- **fresh_context_marker**: po-US0132-discovery-20260908T205000Z-fresh
+- **model_id**: cursor-grok-4.5
+- **evidence_ref**: docs/product/vision.md ## Discovery Notes — US-0132; docs/product/backlog.md ## US-0132 discovery_notes; handoffs/po_to_tl.md ## Discovery handoff — US-0132; docs/engineering/state.md discovery checkpoint; handoffs/intake_evidence/US-0131-0132-intake-20260906.json
+- **stop_condition**: Orchestrator MUST Task-spawn fresh tech-lead for /research (BUG-0006). Do NOT execute research in-band. Do NOT spawn /research from this po. Do NOT mark US-0132 DONE. Do NOT reopen US-0131.
+
+## Current status
+
+- **Active story**: **US-0132** — **OPEN** (discovery PASS; awaiting research)
+- **Prior segment**: **US-0131** — **DONE** / S0133 released (compose only)
+
+## Latest orchestration pointer
+
+- **stop_phase**: discovery
+- **stop_reason**: completed
+- **next_phase**: research
+- **next_role**: tech-lead
+
+## Intended resume phase
+
+research
+
+---
+# Resume Brief — drain-advance US-0131 segment complete → US-0132 discovery (DEC-0069 / US-0095)
+
+- **orchestrator_run_id**: auto-20260908-us0132
+- **prior_orchestrator_run_id**: auto-20260907-us0131
+- **story_id**: US-0132
+- **bug_id**: (none)
+- **sprint_id**: (none yet)
+- **delivery_mode**: ultra_lean
+- **resolved_phase_plan**: [spec, plan, build+verify, ship]
+- **reinstatement_mode**: none
+- **memory_layer**: pack
+- **macro_phase**: spec
+- **last_completed_phase**: refresh-context + sovereign-critic (US-0131 segment closed)
+- **intended_resume_phase**: discovery
+- **next_scheduled_phase**: discovery
+- **next_scheduled_role**: po
+- **resolution_source**: drain_advance + backlog OPEN selection (priority_then_backlog_order)
+- **wall_clock**: 2026-09-08T20:42:00Z
+- **segment_work_item_kind**: story
+- **backlog_drain_active**: 1
+- **drain_advance_action**: spawned
+- **stories_selected_this_run**: US-0132
+- **prior_segment**: US-0131 DONE / S0133 released
+- **AUTO_FLOW_MODE**: full_autonomy
+- **native_chain_active**: true
+- **native_chain_continuing**: true
+- **CROSS_MODEL_REVIEW**: 1
+- **intake_status**: PASS (do not re-intake; discovery owns next)
+- **sibling_done**: US-0131 DONE (do not reopen)
+- **evidence_ref**: docs/product/backlog.md ## US-0132; handoffs/resume_brief.md; docs/engineering/state.md
+- **stop_condition**: Orchestrator MUST Task-spawn fresh po for /discovery (BUG-0006). Do NOT execute discovery in-band.
+
+## Current status
+
+- **Active story**: **US-0132** — **OPEN** (intake PASS; awaiting discovery)
+- **Prior segment**: **US-0131** — **DONE** / S0133 released / refresh-context PASS + critic PASS
+
+## Latest orchestration pointer
+
+- **stop_phase**: refresh-context (prior) → drain-advance
+- **stop_reason**: completed (US-0131) + OPEN remain (US-0132)
+- **drain_advance_action**: spawned
+- **next_phase**: discovery
+- **next_role**: po
+
+## Intended resume phase
+
+discovery
+
+---
+# Resume Brief — US-0131 sovereign-critic PASS on refresh-context → orchestrator drain-advance US-0132 (DEC-0069 / US-0095)
+
+- **orchestrator_run_id**: auto-20260907-us0131
+- **prior_orchestrator_run_id**: auto-20260906-bug0016
+- **story_id**: US-0131
+- **bug_id**: (none)
+- **sprint_id**: S0133
+- **delivery_mode**: ultra_lean
+- **resolved_phase_plan**: [spec, plan, build+verify, ship]
+- **reinstatement_mode**: none
+- **memory_layer**: pack
+- **macro_phase**: ship (terminal)
+- **last_completed_phase**: sovereign-critic (of refresh-context)
+- **intended_resume_phase**: (none — segment_closed; orchestrator drain-advance)
+- **next_scheduled_phase**: drain-advance → US-0132 discovery/spec
+- **next_scheduled_role**: orchestrator
+- **resolution_source**: SOVEREIGN_CRITIC_PASS (tech-lead / composer-2.5-fast) — concurs REFRESH_CONTEXT_PASS; Status DONE; L159 [x]; US-0132 OPEN; queue S0133=released; 0 blocking; anti_slop=10
+- **wall_clock**: 2026-09-08T20:40:00Z
+- **segment_work_item_kind**: story
+- **segment_closed**: true
+- **backlog_drain_active**: 1
+- **AUTO_FLOW_MODE**: full_autonomy
+- **AUTO_IMPLEMENTATION_LOOP**: 1 (cycle complete)
+- **native_chain_active**: true
+- **native_chain_continuing**: true
+- **CROSS_MODEL_REVIEW**: 1
+- **verdict**: PASS
+- **blocking_count**: 0
+- **anti_slop_aggregate**: 10
+- **finding_ids**: us0131rc-challenger-001, us0131rc-architect-002, us0131rc-subtractor-003
+- **decision_gate**: false
+- **fresh_context_marker**: critic-US0131-refresh-context-20260908T204000Z-fresh
+- **model_id**: composer-2.5-fast
+- **producer_runtime_proof_id**: rp-auto-20260907-us0131-refresh-context-curator-20260908T203000Z-US-0131
+- **producer_proof_hash**: 9FF76B1664AFBA0D1DFFFD14A80927E983B4988367F14D8AB7E2599BCC3439EC
+- **producer_proof_ttl**: 2026-09-08T21:30:00Z
+- **proof_consume**: RUNTIME_PROOF_VALID (MATCH before TTL; consumed_at 2026-09-08T20:40:00Z)
+- **producer_fresh_context_marker**: cur-US0131-refresh-context-20260908T203000Z-fresh
+- **queue_status**: S0133=released
+- **harness**: tests/report.md @ 2026-09-07T21:15:18Z Pass:853 / Fail:0 (not re-run by critic)
+- **research_id**: R-0116 (delivered)
+- **companion_dec**: DEC-0131
+- **approach_id**: A1
+- **sibling_out_of_scope**: US-0132 (remains OPEN — next drain candidate; do not close from this critic)
+- **status**: DONE (US-0045 / US-0120 — unchanged)
+- **acceptance**: L159 [x]
+- **nb_resolved**: runbook L4226 Release-status stamp OPEN→DONE
+- **next_eligible_open_story**: US-0132 (P1)
+- **drain_advance_action**: orchestrator-owned (critic STOP; do not spawn drain)
+- **evidence_ref**: handoffs/sovereign_critic_findings.jsonl (us0131rc-*); docs/engineering/state.md; sprints/S0133/summary.md; docs/engineering/decisions.md; docs/engineering/sovereign-memory/retrospectives/S0133.md; docs/product/backlog.md; docs/product/acceptance.md
+- **stop_condition**: STOP after sovereign-critic PASS. Orchestrator owns drain-advance to US-0132. Do NOT spawn US-0132 or drain from this critic. Do NOT reopen BUG-0015/BUG-0016.
+
+## Current status
+
+- **Active story**: **US-0131** — **DONE** (sovereign-critic PASS on refresh-context; segment closed)
+- **Sprint**: **S0133** — RELEASED
+- **Sibling OPEN**: **US-0132** (P1) — next drain candidate
+- **Portfolio**: 1 OPEN story / 0 OPEN bugs
+
+## Latest orchestration pointer
+
+- **stop_phase**: refresh-context (+ sovereign-critic PASS)
+- **stop_reason**: completed
+- **segment_closed**: true
+- **next_eligible**: US-0132
+- **drain_advance_action**: orchestrator-owned (critic STOP)
+- **next_operator_action**: orchestrator drain-advance → US-0132 discovery/spec (BUG-0006)
+
+# Resume Brief — US-0131 refresh-context PASS → segment complete (DEC-0069 / US-0095)
+
+- **orchestrator_run_id**: auto-20260907-us0131
+- **prior_orchestrator_run_id**: auto-20260906-bug0016
+- **story_id**: US-0131
+- **bug_id**: (none)
+- **sprint_id**: S0133
+- **delivery_mode**: ultra_lean
+- **resolved_phase_plan**: [spec, plan, build+verify, ship]
+- **reinstatement_mode**: none
+- **memory_layer**: pack
+- **macro_phase**: ship (terminal)
+- **last_completed_phase**: refresh-context (role=curator)
+- **intended_resume_phase**: (none — segment_closed)
+- **next_scheduled_phase**: (segment complete — orchestrator critic then drain-advance)
+- **next_scheduled_role**: (orchestrator)
+- **resolution_source**: REFRESH_CONTEXT_PASS (curator / composer-2.5) — segment_closed; Status DONE; L159 [x]; US-0132 OPEN; queue S0133=released
+- **wall_clock**: 2026-09-08T20:30:00Z
+- **segment_work_item_kind**: story
+- **segment_closed**: true
+- **backlog_drain_active**: 1
+- **AUTO_FLOW_MODE**: full_autonomy
+- **AUTO_IMPLEMENTATION_LOOP**: 1 (cycle complete)
+- **native_chain_active**: true
+- **native_chain_continuing**: true
+- **CROSS_MODEL_REVIEW**: 1
+- **AUTO_SOVEREIGN**: 1
+- **SOVEREIGN_GOAL_MODE**: goal_convergence
+- **verdict**: REFRESH_CONTEXT_PASS
+- **decision_gate**: false
+- **fresh_context_marker**: cur-US0131-refresh-context-20260908T203000Z-fresh
+- **model_id**: composer-2.5
+- **producer_runtime_proof_id**: rp-auto-20260907-us0131-closure-qe-20260907T212848Z-US-0131
+- **producer_proof_hash**: 69B2C58BC1026E266C1533DB3E28D9202FD428362F4D34BEE4A15EFAB1CCD335
+- **producer_proof_ttl**: 2026-09-07T22:28:48Z
+- **proof_consume**: historical — critic consumed before ttl; not re-consumed at refresh wall clock (do not fail closed)
+- **producer_fresh_context_marker**: critic-US0131-closure-20260907T213800Z-fresh
+- **runtime_proof_id**: rp-auto-20260907-us0131-refresh-context-curator-20260908T203000Z-US-0131
+- **proof_hash**: 9FF76B1664AFBA0D1DFFFD14A80927E983B4988367F14D8AB7E2599BCC3439EC
+- **proof_ttl**: 2026-09-08T21:30:00Z
+- **queue_status**: S0133=released
+- **harness**: tests/report.md @ 2026-09-07T21:15:18Z Pass:853 / Fail:0 (not re-run)
+- **research_id**: R-0116 (delivered)
+- **companion_dec**: DEC-0131
+- **approach_id**: A1
+- **sibling_out_of_scope**: US-0132 (remains OPEN — do not close)
+- **status**: DONE (US-0045 / US-0120 — unchanged)
+- **acceptance**: L159 [x]
+- **nb_resolved**: runbook L4226 Release-status stamp OPEN→DONE
+- **retrospective_ref**: docs/engineering/sovereign-memory/retrospectives/S0133.md
+- **triad_pack_ref**: docs/engineering/state-archive/state-pack-20260908.md; docs/engineering/state-archive/state-pack-20260908-a.md
+- **next_eligible_open_story**: US-0132 (P1)
+- **drain_advance_action**: orchestrator-owned (curator STOP; do not spawn drain)
+- **evidence_ref**: docs/engineering/state.md; sprints/S0133/summary.md; docs/engineering/decisions.md; handoffs/releases/S0133-release-notes.md; sprints/S0133/closure-verification.md
+- **stop_condition**: STOP after /refresh-context PASS. Orchestrator owns critic of refresh-context then drain-advance to US-0132. Do NOT spawn critic/drain/US-0132 from this curator. Do NOT reopen BUG-0015/BUG-0016.
+
+## Current status
+
+- **Active story**: **US-0131** — **DONE** (segment closed at refresh-context)
+- **Sprint**: **S0133** — RELEASED / REFRESH_CONTEXT_PASS
+- **Sibling OPEN**: **US-0132** (P1) — next drain candidate
+- **Portfolio**: 1 OPEN story / 0 OPEN bugs
+
+## Latest orchestration pointer
+
+- **stop_phase**: refresh-context
+- **stop_reason**: completed
+- **segment_closed**: true
+- **next_eligible**: US-0132
+- **drain_advance_action**: orchestrator-owned (curator STOP)
+- **next_operator_action**: orchestrator critic of refresh-context (when CROSS_MODEL_REVIEW=1) then drain-advance → US-0132 discovery/spec
+
+### goal_progress
+
+```json
+{
+  "goal_progress": {
+    "blocked_by": [
+      "CONVERGENCE_OPEN_STORIES_REMAIN"
+    ],
+    "conjuncts": {
+      "backlog_clear": {
+        "reason_code": "CONVERGENCE_OPEN_STORIES_REMAIN",
+        "skipped": false,
+        "status": "fail"
+      },
+      "critic_resolved": {
+        "reason_code": null,
+        "skipped": false,
+        "status": "pass"
+      },
+      "ledger_clean": {
+        "reason_code": null,
+        "skipped": true,
+        "status": "skip"
+      },
+      "smoke_green": {
+        "reason_code": null,
+        "skipped": false,
+        "status": "pass"
+      },
+      "zero_deferrals": {
+        "reason_code": null,
+        "skipped": true,
+        "status": "skip"
+      }
+    },
+    "converged": false,
+    "evaluated_at": "2026-09-08T20:33:01.000Z",
+    "goal_source": "vision_derived",
+    "goal_text": "AI coding assistants in Cursor lose context across sessions, produce fragmented work without structure, and lack a repeatable process for turning ideas into shipped software. Teams and solo developers face: \u2014 cache read vs cache creation vs ordinary input tokens (see **`R-0057`** Anthropic source). \u2014 **`SECURITY_REVIEW`**, materialized phase plan, resume anchor) \u2014 hash for baseline stability.",
+    "mode": "goal_convergence",
+    "orchestrator_run_id": "auto-20260907-us0131",
+    "schema_version": 1,
+    "unmet_conditions": [
+      "backlog has open stories",
+      "deferral_register_not_yet_deployed",
+      "ledger_disabled_skip"
+    ]
+  }
+}
+```
+
+---
+
 # Resume Brief — US-0131 sovereign-critic PASS on closure → refresh-context (DEC-0069 / US-0095)
 
 - **orchestrator_run_id**: auto-20260907-us0131
@@ -2886,6 +4770,58 @@ esearch
     "goal_text": "AI coding assistants in Cursor lose context across sessions, produce fragmented work without structure, and lack a repeatable process for turning ideas into shipped software. Teams and solo developers face: \u2014 cache read vs cache creation vs ordinary input tokens (see **`R-0057`** Anthropic source). \u2014 **`SECURITY_REVIEW`**, materialized phase plan, resume anchor) \u2014 hash for baseline stability.",
     "mode": "goal_convergence",
     "orchestrator_run_id": "auto-20260906-bug0016",
+    "schema_version": 1,
+    "unmet_conditions": [
+      "backlog has open stories",
+      "deferral_register_not_yet_deployed",
+      "ledger_disabled_skip"
+    ]
+  }
+}
+```
+
+
+### goal_progress
+
+```json
+{
+  "goal_progress": {
+    "blocked_by": [
+      "CONVERGENCE_OPEN_STORIES_REMAIN"
+    ],
+    "conjuncts": {
+      "backlog_clear": {
+        "reason_code": "CONVERGENCE_OPEN_STORIES_REMAIN",
+        "skipped": false,
+        "status": "fail"
+      },
+      "critic_resolved": {
+        "reason_code": null,
+        "skipped": false,
+        "status": "pass"
+      },
+      "ledger_clean": {
+        "reason_code": null,
+        "skipped": true,
+        "status": "skip"
+      },
+      "smoke_green": {
+        "reason_code": null,
+        "skipped": false,
+        "status": "pass"
+      },
+      "zero_deferrals": {
+        "reason_code": null,
+        "skipped": true,
+        "status": "skip"
+      }
+    },
+    "converged": false,
+    "evaluated_at": "2026-09-08T20:32:44.000Z",
+    "goal_source": "vision_derived",
+    "goal_text": "AI coding assistants in Cursor lose context across sessions, produce fragmented work without structure, and lack a repeatable process for turning ideas into shipped software. Teams and solo developers face: \u2014 cache read vs cache creation vs ordinary input tokens (see **`R-0057`** Anthropic source). \u2014 **`SECURITY_REVIEW`**, materialized phase plan, resume anchor) \u2014 hash for baseline stability.",
+    "mode": "goal_convergence",
+    "orchestrator_run_id": "auto-20260907-us0131",
     "schema_version": 1,
     "unmet_conditions": [
       "backlog has open stories",

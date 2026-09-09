@@ -15,6 +15,9 @@ Fall back to a new `scripts/opencode_model_catalog_validate.py` ONLY if OpenCode
 schema cannot share >50% of Cursor catalog helpers OR scope plumbing touches >3
 unrelated `--scope` modes (DEC-0124-class follow-up).
 
+US-0132 / DEC-0132: `--scope model-config` (inventory / unknown `model.json` /
+schema-mix / both-host / gitignore row). Do not fold into `opencode-catalog`.
+
 Exit codes:
 - 0: All validations passed
 - 1: Validation failed (see stderr for details)
@@ -25,18 +28,21 @@ import json
 import re
 import sys
 from pathlib import Path
-from typing import Dict, List, Tuple
+from typing import Dict, List, Optional, Tuple
 
 sys.path.insert(0, str(Path(__file__).parent))
 import host_runtime_config_lib as hrc  # noqa: E402
 from model_tier_lib import (
     CANONICAL_PHASE_IDS,
     CATALOG_ROLE_KEYS,
+    DEFAULT_CURSOR_CATALOG_REL,
+    DEFAULT_CURSOR_SCRATCHPAD_REL,
     DEFAULT_PHASE_TIER_MATRIX,
     PRECEDENCE_CHAIN_STEPS,
     ReasonCode,
     Tier,
     catalog_validation_reason_code,
+    format_provenance,
     phase_to_model_key,
     resolve_model_for_phase,
     validate_catalog_schema,
@@ -88,7 +94,26 @@ OPENCODE_ROLE_KEYS = (
 )
 
 OPENCODE_CATALOG_SCOPE = "opencode-catalog"
+MODEL_CONFIG_SCOPE = "model-config"
 REASON_OPENCODE_MODEL_SLUG_UNKNOWN = "OPENCODE_MODEL_SLUG_UNKNOWN"
+OPENCODE_HOST_SCOPE = "opencode-host"
+
+REASON_MODEL_CONFIG_PATH_UNKNOWN = "MODEL_CONFIG_PATH_UNKNOWN"
+REASON_MODEL_CONFIG_SCHEMA_MIX = "MODEL_CONFIG_SCHEMA_MIX"
+REASON_MODEL_CONFIG_HOST_COLLISION = "MODEL_CONFIG_HOST_COLLISION"
+
+OPENCODE_CATALOG_REL = ".opencode/model-catalog.local.json"
+UNKNOWN_MODEL_BASENAMES = ("model.json", "model.jsonc")
+UNKNOWN_MODEL_DIRS = ("", ".cursor", ".opencode")
+HOST_JSON_CANDIDATES = (
+    ".opencode/opencode.jsonc",
+    ".opencode/opencode.json",
+    "opencode.jsonc",
+    "opencode.json",
+)
+OPENCODE_SCHEMA_ROLE_HINTS = ("tech-lead", "curator", "auto")
+CURSOR_TIER_KEYS = ("cheap", "balanced", "strong")
+GITIGNORE_OPENCODE_CATALOG_ROW = ".opencode/model-catalog.local.json"
 
 CANONICAL_PHASE_ID_SET = set(CANONICAL_PHASE_IDS)
 
@@ -261,6 +286,204 @@ def run_opencode_catalog_scope(repo_root: Path) -> List[str]:
     return errors
 
 
+def _posix_rel(path: Path, repo_root: Path) -> str:
+    try:
+        return path.resolve().relative_to(repo_root.resolve()).as_posix()
+    except ValueError:
+        return str(path).replace("\\", "/")
+
+
+def four_surface_inventory() -> tuple[str, ...]:
+    """Canonical four surfaces (DEC-0132 §2). Generic model.json is not one."""
+    return (
+        DEFAULT_CURSOR_CATALOG_REL,
+        f"{DEFAULT_CURSOR_SCRATCHPAD_REL} MODEL_* keys",
+        OPENCODE_CATALOG_REL,
+        "opencode.json{,c} (host, not kit SOT)",
+    )
+
+
+def iter_unknown_model_paths(repo_root: Path) -> List[Path]:
+    """Repo-scoped three locations only. Do not scan home-dir OpenCode files."""
+    found: List[Path] = []
+    for dirname in UNKNOWN_MODEL_DIRS:
+        base = repo_root if dirname == "" else repo_root / dirname
+        for name in UNKNOWN_MODEL_BASENAMES:
+            candidate = base / name
+            if candidate.is_file():
+                found.append(candidate)
+    return found
+
+
+def classify_catalog_schema(data: object) -> str:
+    """Return cursor | opencode | mixed | unknown."""
+    if not isinstance(data, dict):
+        return "unknown"
+    tiers = data.get("tiers")
+    has_cursor = isinstance(tiers, dict) and any(k in tiers for k in CURSOR_TIER_KEYS)
+    roles = data.get("roles")
+    providers = data.get("providers")
+    has_opencode = (
+        isinstance(providers, dict)
+        and isinstance(roles, dict)
+        and any(k in roles for k in OPENCODE_SCHEMA_ROLE_HINTS)
+    )
+    if has_cursor and has_opencode:
+        return "mixed"
+    if has_cursor:
+        return "cursor"
+    if has_opencode:
+        return "opencode"
+    return "unknown"
+
+
+def detect_schema_mix(repo_root: Path) -> List[str]:
+    """Cursor schema at OpenCode catalog path (or reverse) → SCHEMA_MIX."""
+    errors: List[str] = []
+    pairs = (
+        (repo_root / OPENCODE_CATALOG_REL, "opencode", "cursor"),
+        (repo_root / DEFAULT_CURSOR_CATALOG_REL, "cursor", "opencode"),
+    )
+    for path, expected_host, forbidden_host in pairs:
+        if not path.is_file():
+            continue
+        try:
+            data = json.loads(path.read_text(encoding="utf-8"))
+        except json.JSONDecodeError:
+            continue
+        kind = classify_catalog_schema(data)
+        if kind == "mixed" or kind == forbidden_host:
+            rel = _posix_rel(path, repo_root)
+            errors.append(
+                f"[{REASON_MODEL_CONFIG_SCHEMA_MIX}] path={rel} "
+                f"expected_host={expected_host} observed={kind}"
+            )
+    return errors
+
+
+def read_opencode_host_json_names_only(repo_root: Path) -> Tuple[Optional[dict], List[str]]:
+    """Optional names-only diagnostic read. Fail-open if absent.
+
+    Malformed **present** file → MODEL_CATALOG_INVALID scope=opencode-host.
+    Kit never writes these files.
+    """
+    present: Optional[Path] = None
+    for rel in HOST_JSON_CANDIDATES:
+        candidate = repo_root / rel
+        if candidate.is_file():
+            present = candidate
+            break
+    if present is None:
+        return None, []
+    rel = _posix_rel(present, repo_root)
+    try:
+        data = json.loads(present.read_text(encoding="utf-8"))
+    except json.JSONDecodeError as exc:
+        return None, [
+            f"[MODEL_CATALOG_INVALID] scope={OPENCODE_HOST_SCOPE} path={rel} invalid JSON: {exc}"
+        ]
+    if not isinstance(data, dict):
+        return None, [
+            f"[MODEL_CATALOG_INVALID] scope={OPENCODE_HOST_SCOPE} path={rel} root must be object"
+        ]
+    names: dict = {"path": rel, "model": None, "agent_models": {}}
+    model_val = data.get("model")
+    if isinstance(model_val, str):
+        names["model"] = model_val
+    agents = data.get("agents")
+    if isinstance(agents, dict):
+        for agent_id, spec in agents.items():
+            if isinstance(spec, dict) and isinstance(spec.get("model"), str):
+                names["agent_models"][str(agent_id)] = spec["model"]
+    return names, []
+
+
+def check_gitignore_opencode_catalog_row(repo_root: Path) -> List[str]:
+    errors: List[str] = []
+    needle = GITIGNORE_OPENCODE_CATALOG_ROW
+    for rel in (".gitignore", "template/.gitignore"):
+        path = repo_root / rel
+        if not path.is_file():
+            continue
+        text = path.read_text(encoding="utf-8")
+        if needle not in text:
+            errors.append(f"gitignore missing explicit row {needle} in {rel}")
+    return errors
+
+
+def cursor_resolver_reads_opencode_catalog(repo_root: Path) -> bool:
+    """Source-level contract: Cursor resolver must not mention the OpenCode catalog path."""
+    lib = repo_root / "scripts" / "model_tier_lib.py"
+    if not lib.is_file():
+        return False
+    return OPENCODE_CATALOG_REL in lib.read_text(encoding="utf-8")
+
+
+def run_model_config_scope(repo_root: Path, host: str = "both") -> List[str]:
+    """US-0132 `--scope model-config` checks."""
+    errors: List[str] = []
+    print("[MODEL-CONFIG] Canonical four-surface inventory:")
+    for surface in four_surface_inventory():
+        print(f"  - {surface}")
+
+    unknown = iter_unknown_model_paths(repo_root)
+    for path in unknown:
+        rel = _posix_rel(path, repo_root)
+        errors.append(f"[{REASON_MODEL_CONFIG_PATH_UNKNOWN}] path={rel}")
+        if host == "both":
+            errors.append(
+                f"[{REASON_MODEL_CONFIG_HOST_COLLISION}] path={rel} "
+                "host=both (never map generic model.json to a host)"
+            )
+
+    errors.extend(detect_schema_mix(repo_root))
+
+    if cursor_resolver_reads_opencode_catalog(repo_root):
+        errors.append(
+            f"[{REASON_MODEL_CONFIG_SCHEMA_MIX}] Cursor resolver must not read {OPENCODE_CATALOG_REL}"
+        )
+
+    apply_path = repo_root / "scripts" / "opencode_model_catalog_apply.py"
+    if apply_path.is_file():
+        apply_text = apply_path.read_text(encoding="utf-8")
+        if DEFAULT_CURSOR_CATALOG_REL in apply_text:
+            errors.append(
+                f"[{REASON_MODEL_CONFIG_SCHEMA_MIX}] OpenCode materializer must not read {DEFAULT_CURSOR_CATALOG_REL}"
+            )
+
+    cursor_catalog = repo_root / DEFAULT_CURSOR_CATALOG_REL
+    opencode_catalog = repo_root / OPENCODE_CATALOG_REL
+    if host == "both" and cursor_catalog.is_file() and opencode_catalog.is_file():
+        print(
+            "[MODEL-CONFIG] both-host catalogs coexist "
+            f"(cursor={DEFAULT_CURSOR_CATALOG_REL}; opencode={OPENCODE_CATALOG_REL})"
+        )
+        print(
+            f"[MODEL-CONFIG] {format_provenance(host='cursor', path=DEFAULT_CURSOR_CATALOG_REL, step='catalog')}"
+        )
+        print(
+            f"[MODEL-CONFIG] {format_provenance(host='opencode', path=OPENCODE_CATALOG_REL, step='materializer')}"
+        )
+
+    if host in ("opencode", "both"):
+        names, host_errors = read_opencode_host_json_names_only(repo_root)
+        errors.extend(host_errors)
+        if names is None and not host_errors:
+            print("[MODEL-CONFIG] opencode host JSON absent (fail-open)")
+        elif names is not None:
+            print(
+                f"[MODEL-CONFIG] host JSON names-only path={names['path']} "
+                f"model={names['model']!r} agent_models={list(names['agent_models'])}"
+            )
+
+    alias_probe = resolve_model_for_phase("execute", {"MODEL_RESOLVE": "alias_only"})
+    if alias_probe.success:
+        print(f"[MODEL-CONFIG] cursor alias_only absent-catalog valid {alias_probe.provenance}")
+
+    errors.extend(check_gitignore_opencode_catalog_row(repo_root))
+    return errors
+
+
 def check_template_agents(repo_root: Path) -> List[str]:
     """Check template/.cursor/agents/*.mdc for forbidden slugs."""
     violations = []
@@ -415,14 +638,21 @@ Examples:
   python scripts/model_tier_validate.py --check-template-agents
   python scripts/model_tier_validate.py --enforce
   python scripts/model_tier_validate.py --scope opencode-catalog --repo .
+  python scripts/model_tier_validate.py --scope model-config --host both --repo .
         """,
     )
 
     parser.add_argument("--repo", type=Path, help="Repository root (default: current directory)")
     parser.add_argument(
         "--scope",
-        choices=("opencode-catalog",),
-        help="Validation scope (US-0123 OpenCode catalog surface)",
+        choices=("opencode-catalog", "model-config"),
+        help="Validation scope (US-0123 opencode-catalog; US-0132 model-config)",
+    )
+    parser.add_argument(
+        "--host",
+        choices=("cursor", "opencode", "both"),
+        default="both",
+        help="Host lens for --scope model-config (default: both)",
     )
     parser.add_argument("--catalog", type=Path, help="Path to local catalog")
     parser.add_argument("--scratchpad", type=Path, help="Path to scratchpad file")
@@ -437,6 +667,16 @@ Examples:
 
     if args.scope == OPENCODE_CATALOG_SCOPE:
         all_errors = run_opencode_catalog_scope(repo_root)
+        if all_errors:
+            print(f"\n[MODEL_TIER_VALIDATION_FAILED] {len(all_errors)} error(s)", file=sys.stderr)
+            for error in all_errors:
+                print(f"  {error}", file=sys.stderr)
+            sys.exit(1)
+        print("\n[MODEL_TIER_VALIDATION_OK]")
+        sys.exit(0)
+
+    if args.scope == MODEL_CONFIG_SCOPE:
+        all_errors = run_model_config_scope(repo_root, host=args.host)
         if all_errors:
             print(f"\n[MODEL_TIER_VALIDATION_FAILED] {len(all_errors)} error(s)", file=sys.stderr)
             for error in all_errors:

@@ -11289,5 +11289,197 @@ Fixtures: temp repos for cursor / opencode / oth with/without .cursor/ and with
 ### Decision gate
 
 - **decision_gate=false** — DQ1–DQ10 LOCKED; no critical unknowns remain for architecture.
-- **Status**: US-0131 remains **OPEN**. **Next**: /architecture in fresh **tech-lead** subagent. Do not spawn architecture from this research chat. STOP.
+- **Status**: closed (delivered with **US-0131** / **`S0133`** / **`DEC-0131`**; see **`docs/engineering/state.md`** refresh-context checkpoint **`auto-20260907-us0131`** **`2026-09-08T20:30:00Z`**). Historical “Status OPEN / Next architecture” lines above are research-time snapshot only.
+- **Delivery closure (2026-09-08T20:30:00Z, curator, `orchestrator_run_id=auto-20260907-us0131`)**: **`US-0131`** **DONE**; sprint **`S0133`** **released**; cross-host runtime config contract delivered per **`DEC-0131`** + 10/10 **`test_us0131_*`** + runbook h2; **`R-0116`** objectives satisfied; **`US-0132`** model-catalog boundary remains OPEN out of scope.
+
+## R-0117 - US-0132 Explicit Cursor/OpenCode model configuration contract research
+
+- **Date**: 2026-09-08
+- **Topic**: Canonical ownership, separate schemas, per-host precedence, materialization, fail-closed codes, and local-file protection for Cursor/OpenCode model files — without a generic `model.json` third SOT
+- **Linked**: US-0132, US-0101, DEC-0086, US-0102, DEC-0087, US-0112, US-0123, DEC-0123, US-0130, US-0131, DEC-0131 (compose-only / DONE — do not reopen), R-0116 (sibling boundary only — not extended)
+- **Confidence**: high (OpenCode v2 config + models docs + Context7 `/websites/opencode_ai_v2` + in-repo catalogs/validators/materializer/gitignore/manifest + discovery D1–D10 + critic NB1–NB3; no live OpenCode probe)
+- **Status**: delivered (closed at US-0132 refresh-context 2026-09-09T20:45:00Z)
+- **Query**: DQ1–DQ10 — `model.json` mapping, Cursor precedence diagnostics, OpenCode layering, gitignore/installer protection, reason-code family, both-host provenance, materializer invariants, validator `--scope`, contract tests, docs/migration
+- **Producer consumed**: discovery `rp-auto-20260908-us0132-discovery-po-20260908T205000Z-US-0132` (`proof_hash` `411E974B49A6636F4F73515A31EB7D67D792A95420251A54F35B03CA547537F8`, ttl `2026-09-08T21:50:00Z`) — RUNTIME_PROOF_VALID MATCH at research issue time `2026-09-08T20:55:00Z`; sovereign-critic `us0132dsc-*` PASS (0 blocking; anti_slop_aggregate=10); marker `po-US0132-discovery-20260908T205000Z-fresh`
+- **EARLY_RESEARCH posture**: scratchpad `EARLY_RESEARCH=1` — OpenCode v2 https://opencode.ai/v2/docs/config/ + https://opencode.ai/v2/docs/models + Context7 `/websites/opencode_ai_v2` consulted; official surfaces are `opencode.json{,c}` (`model` / `providers`) and agent markdown `model:` frontmatter. **No official `model.json` file.**
+- **ID policy**: highest existing research id was **R-0116** (US-0131, closed). This entry is **R-0117**. Do **not** wipe, renumber, or extend R-0116.
+- **Compose base**: DEC-0086 Cursor catalog + tiers; DEC-0087 5-step precedence + v2 roles; US-0130 critic pin overlay; DEC-0123 OpenCode per-role catalog + `opencode_model_catalog_apply.py`; US-0112 example delivery; DEC-0039 local preservation; DEC-0131 host-neutral `.its-magic/` runtime SOT (model keys out of scope there).
+- **US-0131 boundary (LOCKED)**: US-0131 / DEC-0131 remain **DONE compose-only**. Do not reopen runtime-config ACs. Kit governance keys stay out of `opencode.json`. US-0131 resolver continues to ignore `MODEL_*`.
+
+### Web / docs sources (2026-09-08)
+
+- https://opencode.ai/v2/docs/config/ — locations `~/.config/opencode/opencode.json(c)`, project `opencode.json(c)`, `.opencode/opencode.json(c)`; `.opencode` form overrides direct form; schema is host model/permissions/agents/plugins — **not** a kit catalog and **not** named `model.json`
+- https://opencode.ai/v2/docs/models — default `model` in `opencode.json{,c}` as `provider/model`; session selection does not rewrite config; agents/commands may set their own `model`; unknown variant fails resolution
+- https://opencode.ai/v2/docs/agents — markdown agents use YAML frontmatter `model: provider/slug`; equivalent to `agents.<name>.model` in JSON
+- Context7 `/websites/opencode_ai_v2` — corroborates same inventory; no `model.json` surface
+- In-repo: `scripts/model_tier_lib.py` `PRECEDENCE_CHAIN_STEPS` (5); `scripts/model_tier_validate.py` (`--scope` today is `opencode-catalog` only; Cursor is default unscoped); `scripts/opencode_model_catalog_apply.py`; `.gitignore` (Cursor catalog only); `template/.opencode/.gitignore` (`*.local.json` + `.opencode/opencode.json{,c}`); `docs/engineering/context/installer-owned-paths.manifest` (`[opencode_clean_paths] .opencode`)
+- Discovery: `docs/product/vision.md` `## Discovery Notes — US-0132`; `handoffs/po_to_tl.md` D1–D10 / DQ1–DQ10
+
+### Critic NB closures (discovery us0132dsc-*, non-blocking → research locks)
+
+| Critic theme | Resolution in R-0117 |
+|---|---|
+| D6 gitignore / DQ1 `model.json` / DQ6 both-host (challenger) | **LOCKED DQ1/DQ4/DQ6**: reject `model.json` as `MODEL_CONFIG_PATH_UNKNOWN`; explicit `.opencode/model-catalog.local.json` gitignore row; `--host both` never aliases the generic file to either host |
+| Catalog vs host-runtime vs scratchpad vs US-0131 kit SOT (architect) | **LOCKED DQ2/DQ3/DQ5**: four layers stay distinct; architecture authors `# US-0132` + companion **DEC-0132** |
+| Scope / YAGNI (subtractor) | Held: no third SOT; no US-0131 reopen; no DONE flip; no architecture spawn from research; no vendor pick / proxy / tracked credentials |
+
+### Gap confirmation (code)
+
+| Surface | Today | US-0132 gap |
+|---|---|---|
+| Cursor catalog | `.cursor/model-catalog.local.json` gitignored at root + template; examples framework-delivered (US-0112); installer never writes active local | Need inventory docs + unknown-path reject + precedence diagnostics overlay |
+| Cursor `MODEL_*` | DEC-0087 5-step in `model_tier_lib.py`; US-0130 critic overlay | Additive provenance diagnostics; do not amend chain |
+| OpenCode kit catalog | `.opencode/model-catalog.local.json` covered by `template/.opencode/.gitignore` `*.local.json`; **not** listed in root `.gitignore`; active kit `.opencode/` has no `.gitignore` copy unless installed via `--host opencode\|both` | Explicit root+template gitignore row; clean-path exemption |
+| OpenCode materializer | `opencode_model_catalog_apply.py` injects installed agents only; absent catalog = no-op; never writes `template/` or Cursor catalog | Document idempotency + never-write `opencode.json{,c}` |
+| OpenCode host config | Official `opencode.json{,c}`; template must not ship it; DEC-0131 forbids kit keys | Treat as **host** model/providers file, not kit SOT; never overwrite |
+| Generic `model.json` | Not in official OpenCode schema; not a kit file | Present-but-unmapped → fail-closed unknown path |
+| Validator | Default Cursor checks; `--scope opencode-catalog` only (`choices=("opencode-catalog",)`) | Extend with `--scope model-config` for inventory / mix / unknown path |
+| Clean | `[opencode_clean_paths] .opencode` can wipe operator catalog + local OpenCode JSON | AC-6 requires preserve locals on clean |
+
+### Canonical inventory (AC-1) — four supported surfaces, zero silent thirds
+
+| Owner | Path / keys | Kind |
+|---|---|---|
+| Cursor kit catalog | `.cursor/model-catalog.local.json` | Operator-local; gitignored; read-only resolver |
+| Cursor scratchpad | `MODEL_*` / `MODEL_TIER_*` / `MODEL_RESOLVE` / `MODEL_CATALOG` / `MODEL_FALLBACK` / `MODEL_PROVIDER_MODE` / `MODEL_TIER_DEFAULT` / `MODEL_SOVEREIGN-CRITIC` | Cursor-only; live in `.cursor/scratchpad.local.md` for real slugs |
+| OpenCode kit catalog | `.opencode/model-catalog.local.json` | Operator-local; gitignored; materializer SOT |
+| OpenCode **host** runtime | local-only `opencode.json{,c}` (repo root, `.opencode/`, or user global) | OpenCode's own `model` / `providers` / agents; kit never writes; not a kit-neutral catalog |
+
+Examples (framework, refreshable): `.cursor/model-catalog.local.example*.json`; `template/.opencode/model-catalog.local.example.json`.
+
+### DQ1 — `model.json` mapping (LOCKED)
+
+- **Ship**: **Reject as unknown path**. Do **not** alias to `.opencode/model-catalog.local.json` or `opencode.json`.
+- **Reason code**: `MODEL_CONFIG_PATH_UNKNOWN` when a generic `model.json` is present at repo root, `.cursor/model.json`, or `.opencode/model.json` (and the same basename with `.jsonc`).
+- **Rationale**: OpenCode v2 docs + Context7 show **no** `model.json` file. Aliasing would create the undocumented third kit SOT discovery forbids, and under `--host both` the alias target would be ambiguous.
+- **Migration**: docs tell operators to copy Cursor slugs into `.cursor/model-catalog.local.json` / scratchpad `MODEL_*`, or OpenCode `provider/slug` values into `.opencode/model-catalog.local.json` (kit) and/or `opencode.json{,c}` `model`/`providers` (host default) — never keep `model.json`.
+- **Reject**: silent ignore; auto-rename; treat as OpenCode host config.
+- **deferred_to_architecture**: exact path glob list (root / `.cursor/` / `.opencode/` only vs also `~/.config/opencode/model.json`) — default **repo-scoped three locations**; home-dir OpenCode files stay OpenCode-owned and are not kit-scanned.
+
+### DQ2 — Cursor precedence table (LOCKED)
+
+- **Do not amend** DEC-0086 / DEC-0087 / US-0130. Overlay is **diagnostics + inventory validation only**.
+- Cursor chain (compose, highest wins) remains:
+  1. `MODEL_<PHASE>` direct slug
+  2. `MODEL_TIER_<PHASE>`
+  3. `MODEL_RESOLVE=role_catalog` → catalog `roles`
+  4. `MODEL_TIER_DEFAULT`
+  5. Cursor stable alias
+- US-0130 critic overlay (compose): `MODEL_SOVEREIGN-CRITIC` > catalog `roles.critic` > opposition / `dev` fallback. Collision still `CROSS_MODEL_DEGRADED_MODE`.
+- `MODEL_CATALOG` path default remains `.cursor/model-catalog.local.json`; v1 tiers and v2 roles coexist (DEC-0087).
+- **US-0132 add**: resolver/validator diagnostics emit `provenance=` of the winning step (observable AC-3). Absent catalog + `alias_only` remains valid (not invalid).
+- **Reject**: rewriting the 5-step order; union with OpenCode catalog.
+
+### DQ3 — OpenCode precedence (LOCKED)
+
+Two **independent** layers — kit vs host. Kit does not merge them.
+
+**Kit materializer (DEC-0123 compose)**:
+1. `.opencode/model-catalog.local.json` **absent** → no-op; installed agents keep `model:` omitted
+2. Catalog **present** → validate → inject `model: provider/slug` into **installed** `.opencode/agents/<role>.md` only
+3. Present + unknown/empty/placeholder slug → `OPENCODE_MODEL_SLUG_UNKNOWN`; malformed → `MODEL_CATALOG_INVALID` `scope=opencode-catalog`
+
+**OpenCode host runtime (official docs; kit does not intercept sessions)**:
+1. Session / CLI per-run selection (does not rewrite config)
+2. Agent / command `model` (frontmatter or `opencode.json` `agents.*.model`) — this is where kit materializer output is consumed
+3. Root `opencode.json{,c}` `model` default when the agent has no model
+4. OpenCode newest-available enabled-model fallback
+
+- Kit **never** writes `opencode.json{,c}` to “sync” the catalog (DEC-0131 + DEC-0123).
+- Absent optional host `opencode.json` is not invalid; OpenCode uses its own defaults.
+- **deferred_to_architecture**: whether kit diagnostics should *read* (not write) `opencode.json` `model` for provenance only — default **yes, optional, names-only, fail-open if absent**; malformed present file → host-scoped invalid, not confused with absent.
+
+### DQ4 — Gitignore + installer protection (LOCKED)
+
+- **Gitignore (defense in depth)**:
+  - Add explicit `.opencode/model-catalog.local.json` to **root** and **template** `.gitignore` (today only `.cursor/model-catalog.local.json` is listed; OpenCode catalog relies on `template/.opencode/.gitignore` `*.local.json`, which is missing from the active kit `.opencode/` tree until `--host opencode|both` install).
+  - Keep `template/.opencode/.gitignore` `*.local.json` + `.opencode/opencode.json{,c}` rows (US-0121/0123 compose).
+  - Do **not** force-gitignore repo-root `opencode.json{,c}` (teams may commit non-secret project defaults). Credentials stay in OpenCode `/connect`, never in tracked files.
+- **Never overwrite** on install / missing / upgrade: `.cursor/model-catalog.local.json`, `.opencode/model-catalog.local.json`, `.cursor/scratchpad.local.md`, repo-root and `.opencode/` `opencode.json{,c}`.
+- **Clean exemption (AC-6 gap)**: `[opencode_clean_paths] .opencode` currently can delete operator catalog + local OpenCode JSON. Architecture must preserve those locals (copy aside / exclude / DEC-0039-class never-delete), then restore. Shrinking `--host` must not delete the other host’s locals (US-0121 compose).
+- **Example delivery**: Cursor examples on `--host cursor|both` (US-0112); OpenCode example catalog on `--host opencode|both`. Never deliver `opencode.json` or active catalogs. Manifest stays additive.
+- **Reject**: installer-generated catalogs; writing real slugs into examples.
+
+### DQ5 — Reason-code family (LOCKED)
+
+Reuse existing host-scoped codes for existing failures; add a small **contract-layer** family for inventory/mix/unknown-path only.
+
+| Code | When |
+|---|---|
+| Existing Cursor `MODEL_*` (`MODEL_CATALOG_INVALID`, `MODEL_SLUG_UNKNOWN`, `MODEL_OVERRIDE_SLUG_UNKNOWN`, `MODEL_ROLE_SLUG_UNKNOWN`, `MODEL_CATALOG_SCHEMA_V2_INVALID`, `MODEL_TIER_INVALID`, `MODEL_RESOLVE_FALLBACK`) | Unchanged Cursor resolver/validator |
+| Existing `OPENCODE_MODEL_SLUG_UNKNOWN` | OpenCode catalog present + unknown/empty/placeholder slug |
+| Existing `MODEL_CATALOG_INVALID` `scope=opencode-catalog` | Malformed OpenCode catalog JSON |
+| **New** `MODEL_CONFIG_PATH_UNKNOWN` | Generic `model.json{,c}` (or other undeclared model path) present |
+| **New** `MODEL_CONFIG_SCHEMA_MIX` | Cursor catalog schema offered as OpenCode catalog (or reverse) |
+| **New** `MODEL_CONFIG_HOST_COLLISION` | Same undeclared file under `--host both` (diagnostic companion to PATH_UNKNOWN; do not pick a host) |
+
+- Do **not** reuse `HOST_CONFIG_*` (US-0131 runtime config).
+- Do **not** invent `OPENCODE_MODEL_CATALOG_INVALID` (DEC-0123 single namespaced unknown-slug code + scoped reuse).
+- Absent optional file ≠ invalid (D5).
+
+### DQ6 — Both-host diagnostics (LOCKED)
+
+- `--host both`: both catalogs may coexist; **no union schema** (DEC-0123 A4 remains rejected).
+- Diagnostics emit **per-host provenance** (`host=cursor|opencode`, path, winning step / materializer result).
+- Generic `model.json` under `--host both` → `MODEL_CONFIG_PATH_UNKNOWN` (+ `MODEL_CONFIG_HOST_COLLISION` if architecture wants a distinct both-host row); **never** mapped to either catalog.
+- Cursor resolver must not read `.opencode/model-catalog.local.json`; OpenCode materializer must not read `.cursor/model-catalog.local.json` or scratchpad `MODEL_*` (already true; keep contract tests).
+
+### DQ7 — Materializer invariants (LOCKED)
+
+Confirm and test DEC-0123, plus two US-0132 clauses:
+
+1. **Idempotent**: second apply with unchanged catalog yields the same `model:` frontmatter (no oscillation).
+2. **Never write template** (`template/.opencode/agents/**`).
+3. **Never write active local catalog** (materializer reads `.opencode/model-catalog.local.json`; does not create/overwrite it).
+4. **Never write** Cursor catalog, scratchpad, or `opencode.json{,c}`.
+5. **No credentials / real operator slugs** in examples or templates.
+6. Absent catalog remains no-op exit 0.
+
+### DQ8 — Validator scopes (LOCKED)
+
+- **Extend in place** `scripts/model_tier_validate.py` (DEC-0123 policy: new script only if helpers cannot share >50% or scope plumbing touches >3 unrelated modes — neither is true).
+- Keep default unscoped Cursor checks and `--scope opencode-catalog`.
+- Add `--scope model-config` (inventory + unknown `model.json` + schema-mix + both-host coexistence + gitignore row presence). Do not fold this into `opencode-catalog` (would hide Cursor inventory).
+- **Reject**: new `scripts/opencode_model_catalog_validate.py` as the default.
+
+### DQ9 — Minimal `test_us0132_*` inventory (LOCKED)
+
+Static/fixture only — **no live OpenCode CI probe**:
+
+1. `test_us0132_canonical_inventory_rejects_model_json`
+2. `test_us0132_cursor_schema_not_interpreted_as_opencode`
+3. `test_us0132_opencode_schema_not_interpreted_as_cursor`
+4. `test_us0132_cursor_precedence_diagnostics_overlay`
+5. `test_us0132_opencode_absent_catalog_noop_vs_present_fail_closed`
+6. `test_us0132_materializer_idempotent_never_writes_template_or_host_json`
+7. `test_us0132_installer_preserves_local_model_files_including_clean`
+8. `test_us0132_both_host_independent_catalogs`
+9. `test_us0132_gitignore_opencode_catalog_explicit_row`
+10. `test_us0132_docs_migration_and_reason_codes`
+
+Fixtures: temp repos for `cursor` / `opencode` / `both`, with/without catalogs, with planted `model.json`, and with swapped schemas.
+
+### DQ10 — Docs + migration (LOCKED)
+
+- New runbook h2: `## Cursor/OpenCode model configuration contract (US-0132)` (active + template byte-identical) — inventory table, per-host precedence, `model.json` migration, fail-closed codes, clean/install protection.
+- README operator subsection pointer (execute writes README; architecture proposes the heading).
+- Compose cross-link only on US-0126 OpenCode host runbook and US-0131 runtime-config h2 (do not rewrite those contracts).
+- Architecture owns `# US-0132` H1 + companion **DEC-0132**.
+
+### Architecture seeds (for /architecture — not authored here)
+
+- Approach **A1 (recommended)**: explicit inventory contract + reject `model.json` + per-host precedence diagnostics + extend `model_tier_validate.py --scope model-config` + gitignore/clean exemption + 10 `test_us0132_*` + runbook h2. Compose existing catalogs/materializer/DEC-0086/0087/0123/0131.
+- Reject **A2**: alias `model.json` to OpenCode catalog or `opencode.json` (third SOT / host ambiguity).
+- Reject **A3**: union / generic kit `model.json` SOT.
+- Reject **A4**: dump kit catalog into `opencode.json` (DEC-0131 + OpenCode host schema).
+- Companion DEC: **DEC-0132** (Required → Accepted in architecture). Highest existing decision is DEC-0131; do not reuse or amend it.
+- Sprint seeds (preview for `/sprint-plan`, within `SPRINT_MAX_TASKS=12`): T-anch (`# US-0132` + DEC-0132) + T-001 inventory/unknown-path + T-002 schema-mix + T-003 Cursor diagnostics overlay + T-004 OpenCode layering + T-005 gitignore/clean/installer + T-006 `MODEL_CONFIG_*` codes + T-007 materializer invariants + T-008 `--scope model-config` + T-009 tests+docs.
+- Risks: R1 `model.json` silent alias (HIGH if A2 — mitigated by DQ1 reject); R2 clean deletes OpenCode locals (MEDIUM — DQ4 exemption); R3 schema mix under `--host both` (MEDIUM — DQ5/DQ6); R4 validator-scope sprawl (LOW — extend-in-place); R5 US-0131 boundary leak (MEDIUM — ignore kit keys in `opencode.json`, ignore `MODEL_*` in host-neutral resolver); R6 docs drift vs three installers (LOW–MEDIUM — AC-7 parity tests).
+
+### Decision gate
+
+- **decision_gate=false** — DQ1–DQ10 LOCKED; no critical unknowns remain for architecture.
+- **Status**: delivered (US-0132 / US-0045 — DONE at closure). **Next (historical)**: `/architecture` — satisfied by architecture + full lifecycle delivery.
+- **Delivery closure (2026-09-09T20:45:00Z, curator, `orchestrator_run_id=auto-20260909-us0132`)**: **`US-0132`** **DONE**; sprint **`S0134`** **released**; explicit Cursor/OpenCode model configuration contract delivered per **`DEC-0132`** + 10/10 **`test_us0132_*`** + runbook h2; **`R-0117`** objectives satisfied; portfolio **0 OPEN** stories.
+
 

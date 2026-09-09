@@ -241,6 +241,72 @@ function Classify-File($RelPath) {
   return 'framework'
 }
 
+$script:ModelConfigPreserveRelpaths = @(
+  '.cursor/model-catalog.local.json',
+  '.cursor/scratchpad.local.md',
+  '.opencode/model-catalog.local.json',
+  '.opencode/opencode.json',
+  '.opencode/opencode.jsonc',
+  'opencode.json',
+  'opencode.jsonc'
+)
+
+function ConvertTo-PosixRel([string]$Rel) {
+  return ($Rel -replace '\\','/')
+}
+
+function Test-ModelConfigPreservePath([string]$Rel) {
+  return $script:ModelConfigPreserveRelpaths -contains (ConvertTo-PosixRel $Rel)
+}
+
+function Remove-CleanPathPreservingLocals([string]$TargetRoot, [string]$Rel) {
+  $posix = ConvertTo-PosixRel $Rel
+  $full = Join-Path $TargetRoot $Rel
+  if (-not (Test-Path $full)) { return }
+  if (Test-Path $full -PathType Leaf) {
+    if ($script:ModelConfigPreserveRelpaths -contains $posix) {
+      Write-Host "Preserved (model-config): $posix"
+      return
+    }
+    Remove-Item -Path $full -Force
+    Write-Host "Removed: $Rel"
+    return
+  }
+  $prefix = $posix.TrimEnd('/') + '/'
+  $hasPreserve = $false
+  foreach ($p in $script:ModelConfigPreserveRelpaths) {
+    if ($p -eq $posix -or $p.StartsWith($prefix)) { $hasPreserve = $true; break }
+  }
+  if (-not $hasPreserve) {
+    Remove-Item -Path $full -Recurse -Force
+    Write-Host "Removed: $Rel"
+    return
+  }
+  $targetFull = (Resolve-Path $TargetRoot).Path
+  Get-ChildItem -Path $full -Recurse -Force -File -ErrorAction SilentlyContinue | ForEach-Object {
+    $r = ConvertTo-PosixRel ($_.FullName.Substring($targetFull.Length).TrimStart('\','/'))
+    if ($script:ModelConfigPreserveRelpaths -contains $r) {
+      Write-Host "Preserved (model-config): $r"
+      return
+    }
+    Remove-Item -Path $_.FullName -Force
+    Write-Host "Removed: $r"
+  }
+  Get-ChildItem -Path $full -Recurse -Force -Directory -ErrorAction SilentlyContinue |
+    Sort-Object { $_.FullName.Length } -Descending |
+    ForEach-Object {
+      if (-not (Get-ChildItem -Path $_.FullName -Force -ErrorAction SilentlyContinue)) {
+        Remove-Item -Path $_.FullName -Force -ErrorAction SilentlyContinue
+      }
+    }
+  if (-not (Get-ChildItem -Path $full -Force -ErrorAction SilentlyContinue)) {
+    Remove-Item -Path $full -Force -ErrorAction SilentlyContinue
+    Write-Host "Removed: $Rel"
+  } else {
+    Write-Host "Cleaned: $Rel (preserved model-config locals)"
+  }
+}
+
 function Read-InstalledVersion($TargetRoot) {
   $primary = Join-Path $TargetRoot "its_magic\.its-magic-version"
   if (Test-Path $primary -PathType Leaf) {
@@ -705,15 +771,7 @@ if ($CleanRepo) {
     }
   }
   foreach ($rel in $effectiveCleanPaths) {
-    $fullPath = Join-Path $targetRoot $rel
-    if (Test-Path $fullPath) {
-      if (Test-Path $fullPath -PathType Container) {
-        Remove-Item -Path $fullPath -Recurse -Force
-      } else {
-        Remove-Item -Path $fullPath -Force
-      }
-      Write-Host "Removed: $rel"
-    }
+    Remove-CleanPathPreservingLocals $targetRoot $rel
   }
   Write-Host "Clean completed."
   if ($hostValue -ne "both") {
@@ -794,6 +852,11 @@ if ($mode -eq "upgrade") {
     $dst = Join-Path $targetRoot $rel
     $exists = Test-Path $dst -PathType Leaf
     $cat = Classify-File $rel
+
+    if (Test-ModelConfigPreservePath $rel) {
+      $preserved++
+      continue
+    }
 
     if (-not $exists) {
       Ensure-Parent $dst
@@ -884,6 +947,8 @@ foreach ($rel in $files) {
   $src = Join-Path $sourceRoot $rel
   $dst = Join-Path $targetRoot $rel
   $exists = Test-Path $dst -PathType Leaf
+
+  if (Test-ModelConfigPreservePath $rel) { continue }
 
   if ($mode -eq "missing") {
     if ($exists) { continue }

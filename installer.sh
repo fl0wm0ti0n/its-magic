@@ -295,6 +295,66 @@ classify_file() {
   esac
 }
 
+# US-0132 / DEC-0132: exclude-from-clean + never-overwrite named model locals.
+MODEL_CONFIG_PRESERVE=" .cursor/model-catalog.local.json .cursor/scratchpad.local.md .opencode/model-catalog.local.json .opencode/opencode.json .opencode/opencode.jsonc opencode.json opencode.jsonc "
+
+is_model_config_preserve() {
+  case "$MODEL_CONFIG_PRESERVE" in
+    *" $1 "*) return 0 ;;
+    *) return 1 ;;
+  esac
+}
+
+clean_one_path() {
+  target_root="$1"
+  rel="$2"
+  rel_posix=$(printf '%s' "$rel" | tr '\\' '/')
+  path="$target_root/$rel"
+  if [ ! -e "$path" ]; then
+    return 0
+  fi
+  if [ -f "$path" ] || [ -L "$path" ]; then
+    if is_model_config_preserve "$rel_posix"; then
+      printf '%s\n' "Preserved (model-config): $rel_posix"
+      return 0
+    fi
+    rm -f "$path"
+    printf '%s\n' "Removed: $rel"
+    return 0
+  fi
+  prefix="${rel_posix%/}/"
+  has_preserve=0
+  for p in .cursor/model-catalog.local.json .cursor/scratchpad.local.md .opencode/model-catalog.local.json .opencode/opencode.json .opencode/opencode.jsonc opencode.json opencode.jsonc; do
+    case "$p" in
+      "$rel_posix"|${prefix}*) has_preserve=1; break ;;
+    esac
+  done
+  if [ "$has_preserve" -eq 0 ]; then
+    rm -rf "$path"
+    printf '%s\n' "Removed: $rel"
+    return 0
+  fi
+  # Selective delete: files first, then empty dirs. Keep named locals.
+  find "$path" -depth \( -type f -o -type d \) -print | while IFS= read -r item; do
+    r=$(printf '%s' "$item" | sed "s|^$target_root/||" | tr '\\' '/')
+    if [ -f "$item" ]; then
+      if is_model_config_preserve "$r"; then
+        printf '%s\n' "Preserved (model-config): $r"
+        continue
+      fi
+      rm -f "$item"
+      printf '%s\n' "Removed: $r"
+    elif [ -d "$item" ] && [ "$item" != "$path" ]; then
+      rmdir "$item" 2>/dev/null || true
+    fi
+  done
+  if rmdir "$path" 2>/dev/null; then
+    printf '%s\n' "Removed: $rel"
+  else
+    printf '%s\n' "Cleaned: $rel (preserved model-config locals)"
+  fi
+}
+
 read_installed_version() {
   primary="$1/its_magic/.its-magic-version"
   legacy="$1/.its-magic-version"
@@ -595,11 +655,7 @@ if [ "$CLEAN_REPO" = "true" ]; then
   OPENCODE_CLEAN_PATHS=$(get_manifest_paths "opencode_clean_paths")
   EFFECTIVE_CLEAN_PATHS=$(build_effective_clean_paths "$CLEAN_PATHS" "$OPENCODE_CLEAN_PATHS" "$HOST")
   for rel in $EFFECTIVE_CLEAN_PATHS; do
-    path="$TARGET_ROOT/$rel"
-    if [ -e "$path" ]; then
-      rm -rf "$path"
-      printf "%s\n" "Removed: $rel"
-    fi
+    clean_one_path "$TARGET_ROOT" "$rel"
   done
   printf "%s\n" "Clean completed."
   if [ "$HOST" != "both" ]; then
@@ -689,6 +745,11 @@ if [ "$MODE" = "upgrade" ]; then
     dst="$TARGET_ROOT/$rel"
     cat=$(classify_file "$rel")
 
+    if is_model_config_preserve "$rel"; then
+      count_preserved=$((count_preserved + 1))
+      continue
+    fi
+
     if [ ! -f "$dst" ]; then
       ensure_parent "$dst"
       cp -p "$src" "$dst"
@@ -772,6 +833,9 @@ fi
 for rel in $FILES; do
   src="$SOURCE_ROOT/$rel"
   dst="$TARGET_ROOT/$rel"
+  if is_model_config_preserve "$rel"; then
+    continue
+  fi
   if [ "$MODE" = "missing" ]; then
     [ -f "$dst" ] && continue
     ensure_parent "$dst"

@@ -1,4 +1,31 @@
-## Next — **`S0133` / `US-0131`** (**`/execute`**)
+## Next — **`S0134` / `US-0132`** (**sovereign-critic of plan-verify RE-ATTEST** then **`/execute`**)
+
+- **Verdict**: **RE_ATTEST_PASS / PLAN_VERIFY_PASS** — `sprints/S0134/plan-verify.json` status=`PASS` (`plan_verified_at=2026-09-09T18:58:21Z`, **qa**, `fresh_context_marker=qa-US0132-plan-verify-reattest-20260909T185821Z-fresh`, `orchestrator_run_id=auto-20260909-us0132`, `model_id=cursor-grok-4.6`, CROSS_MODEL_REVIEW=1, `reattest_kind=RE-ATTEST_ONLY`).
+- **Coverage**: independent remap AC-1..AC-8 surjective vs T-anch+T-001..T-009; `task_count=10<=12`; no `PLAN_AC_COVERAGE_GAP`; `decision_gate=false`. Sprint/task content not rewritten.
+- **A1 / DEC-0132 lock**: approach A1 LOCKED; DEC-0132 Accepted; A2/A3/A4 rejected.
+- **Critic NBs (carry-forwards only)**: T-005 gitignore/clean execute; T-004 host-JSON malformed assertion stays in T-004/T-009 (marker 5 catalog-centric; no 11th marker); files-to-touch generic Installer → T-005 already requires installer.py/ps1/sh.
+- **Governance**: DEC-0132 Accepted; `# US-0132`; R-0117; approach A1; US-0131 DONE compose-only; Status OPEN (US-0045); acceptance L160 unchecked.
+- **Prior plan-verify proof**: `rp-auto-20260908-us0132-plan-verify-qa-20260908T213933Z-US-0132` / `D1CCD3C93B3B6C8F7ED71E5095E4F6A3946D14CD500809686139DC56205E1167` / ttl `2026-09-08T22:39:33Z` — **RUNTIME_PROOF_STALE**; identity-checked; **not forged**; **not live-consumed**.
+- **Prior sprint-plan proof**: `rp-auto-20260908-us0132-sprint-plan-techlead-20260908T212407Z-US-0132` recorded superseded/expired — **not live-consumed**.
+- **Plan-verify RE-ATTEST proof**: `rp-auto-20260909-us0132-plan-verify-qa-20260909T185821Z-US-0132-reattest` / `90D9E2E7D70999806756EC900A9A67E00A4112D8303EC8DD8BCA0F63E8162034` / ttl `2026-09-09T19:58:21Z`.
+- **Next queue target**: sovereign-critic of this RE-ATTEST (**tech-lead critic**, fresh) then `/execute` (**dev**, fresh). Do NOT spawn critic or execute from this qa. Do NOT mark US-0132 DONE. Do NOT reopen US-0131.
+
+## Prior — **`S0134` / `US-0132`** (**`/execute`** — superseded by RE-ATTEST)
+
+- **Verdict**: **PASS** — `sprints/S0134/plan-verify.json` status=`PASS` (`plan_verified_at=2026-09-08T21:39:33Z`, **qa**, `fresh_context_marker=qa-US0132-plan-verify-20260908T213933Z-fresh`, `orchestrator_run_id=auto-20260908-us0132`, `model_id=cursor-grok-4.6`, CROSS_MODEL_REVIEW=1). Content still valid; DEC-0038 tuple STALE (superseded by RE-ATTEST above).
+- **Coverage**: AC-1..AC-8 surjective vs T-anch+T-001..T-009; `task_count=10<=12`; no `PLAN_AC_COVERAGE_GAP`; `decision_gate=false`.
+- **A1 / DEC-0132 lock**: approach A1 LOCKED; DEC-0132 Accepted; A2/A3/A4 rejected.
+- **Critic NBs (carry-forwards only)**: T-005 gitignore/clean execute; T-004 host-JSON malformed assertion stays in T-004/T-009 (marker 5 catalog-centric; no 11th marker); files-to-touch generic Installer → T-005 already requires installer.py/ps1/sh.
+- **Governance**: DEC-0132 Accepted; `# US-0132`; R-0117; approach A1; US-0131 DONE compose-only; Status OPEN (US-0045).
+- **Producer proof consumed**: `rp-auto-20260908-us0132-sprint-plan-techlead-20260908T212407Z-US-0132` / `3DF869CD3FDFF4C0A76093193B1550F4DE9082EB8AFD37091AD37A4C98392E89` — RUNTIME_PROOF_VALID (consumed 2026-09-08T21:39:33Z before ttl 2026-09-08T22:24:07Z).
+- **Plan-verify proof**: `rp-auto-20260908-us0132-plan-verify-qa-20260908T213933Z-US-0132` / `D1CCD3C93B3B6C8F7ED71E5095E4F6A3946D14CD500809686139DC56205E1167` / ttl `2026-09-08T22:39:33Z`.
+- **Next queue target**: `/execute` (**dev**, fresh). Do NOT spawn execute from this qa. Do NOT mark US-0132 DONE. Do NOT reopen US-0131.
+
+## Prior — **`S0134` / `US-0132`** (**`/plan-verify`** PENDING — superseded)
+
+- **Verdict**: **PENDING** — superseded by plan-verify **PASS** above (`planned_at=2026-09-08T21:24:07Z`, **tech-lead**, `fresh_context_marker=tl-US0132-sprint-plan-20260908T212407Z-fresh`).
+
+## Prior — **`S0133` / `US-0131`** (**`/execute`**)
 
 - **Verdict**: **PASS** — `sprints/S0133/plan-verify.json` status=`PASS` (`plan_verified_at=2026-09-07T19:52:00Z`, **qa**, `fresh_context_marker=qa-US0131-plan-verify-20260907T195200Z-fresh`, `orchestrator_run_id=auto-20260907-us0131`, `model_id=composer-2.5`, CROSS_MODEL_REVIEW=1).
 - **Coverage**: AC-1..AC-8 surjective vs T-anch+T-001..T-008; `task_count=9<=12`; no `PLAN_AC_COVERAGE_GAP`; `decision_gate=false`.

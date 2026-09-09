@@ -4210,6 +4210,16 @@ Raw Python validator reason codes (Python SOT — no `OPENCODE_*` wrapper per DE
 | `HOST_CONFIG_SECRET_REJECTED` | Credential-shaped values in shared layers; fail closed. | US-0131 |
 | `HOST_CONFIG_KEY_SHADOWED` | Kit local and Cursor local disagree (kit wins); diagnostic; fatal only when `HOST_CONFIG_STRICT=1`. | US-0131 |
 
+`MODEL_CONFIG_*` family (model-file inventory — additive from US-0132; compose only — do not reuse `HOST_CONFIG_*`):
+
+| Code | Semantics + fail-closed action | Owning slice |
+|------|--------------------------------|--------------|
+| `MODEL_CONFIG_PATH_UNKNOWN` | Generic `model.json{,c}` present at repo root / `.cursor/` / `.opencode/`; fail closed; do not alias. | US-0132 |
+| `MODEL_CONFIG_SCHEMA_MIX` | Cursor catalog schema offered as OpenCode catalog (or reverse); fail closed. | US-0132 |
+| `MODEL_CONFIG_HOST_COLLISION` | Undeclared `model.json{,c}` under `--host both`; fail closed; distinct row alongside `PATH_UNKNOWN`; never pick a host. | US-0132 |
+
+Cross-link: operator inventory, per-host precedence, and `model.json` migration live in `## Cursor/OpenCode model configuration contract (US-0132)`.
+
 Cross-link: full operator guidance for precedence, migration, and unsupported-capability behavior lives in `## Cross-host runtime configuration (US-0131)`.
 
 ### Parity scope
@@ -4223,7 +4233,7 @@ and `test_us0126_*` marker coverage are asserted by `tests/us0126_contract_test.
 
 ## Cross-host runtime configuration (US-0131)
 
-**Release status (S0133 / US-0131)**: **`released`** (`2026-09-07T21:15:18Z`); backlog remains **OPEN** until `/closure`. Operator verify: **`handoffs/releases/S0133-release-notes.md`** **## Verify**; publish skipped while **`RELEASE_PUBLISH_MODE=confirm`**. Gate-1 evidence: `tests/report.md` @ `2026-09-07T21:15:18Z` Pass:853 / Fail:0.
+**Release status (S0133 / US-0131)**: **`released`** (`2026-09-07T21:15:18Z`); backlog **DONE** (`/closure` `2026-09-07T21:28:48Z`; acceptance L159 [x]). Operator verify: **`handoffs/releases/S0133-release-notes.md`** **## Verify**; publish skipped while **`RELEASE_PUBLISH_MODE=confirm`**. Gate-1 evidence: `tests/report.md` @ `2026-09-07T21:15:18Z` Pass:853 / Fail:0.
 
 Shared Its-Magic lifecycle/governance settings resolve through host-neutral
 `.its-magic/config{,.local,.example}.json` (`DEC-0131` approach A1). Cursor
@@ -4269,6 +4279,9 @@ model catalogs/materializers).
 | OpenCode-only | existing `OPENCODE_*` (US-0124/0126) unchanged |
 | US-0132-owned | out of scope; ignore |
 
+See `## Cursor/OpenCode model configuration contract (US-0132)` for model catalogs,
+scratchpad `MODEL_*`, OpenCode kit catalog, and host `opencode.json{,c}`.
+
 ### Installer safety
 
 - `.its-magic/config.example.json` is a **kernel** install path for all `--host` modes.
@@ -4280,4 +4293,69 @@ model catalogs/materializers).
 See additive `HOST_CONFIG_*` rows under `## OpenCode host operator runbook (US-0126)` →
 `### Consolidated cross-host reason-code table`. Contract tests:
 `python -m pytest tests/us0131_contract_test.py -v` (10 markers; no live OpenCode probe).
+
+## Cursor/OpenCode model configuration contract (US-0132)
+
+Operators have **four** supported model surfaces. Generic `model.json{,c}` is **not**
+an official OpenCode or kit SOT — present files at repo root / `.cursor/` /
+`.opencode/` fail closed with `MODEL_CONFIG_PATH_UNKNOWN` (and
+`MODEL_CONFIG_HOST_COLLISION` under `--host both`). Do not alias `model.json` to
+either catalog or `opencode.json`. Do not scan `~/.config/opencode/model.json`.
+
+### Inventory (four surfaces)
+
+| Owner | Path / keys | Kind |
+|---|---|---|
+| Cursor kit catalog | `.cursor/model-catalog.local.json` | Operator-local; gitignored; read-only resolver |
+| Cursor scratchpad | `MODEL_*` / `MODEL_TIER_*` / `MODEL_RESOLVE` / `MODEL_CATALOG` / `MODEL_FALLBACK` / `MODEL_PROVIDER_MODE` / `MODEL_TIER_DEFAULT` / `MODEL_SOVEREIGN-CRITIC` | Cursor-only; live slugs in `.cursor/scratchpad.local.md` |
+| OpenCode kit catalog | `.opencode/model-catalog.local.json` | Operator-local; gitignored; materializer SOT |
+| OpenCode **host** runtime | local-only `opencode.json{,c}` (repo root or `.opencode/`) | `opencode.json{,c}` is a host file, not kit SOT; kit never writes |
+
+### Per-host precedence (diagnostics overlay)
+
+**Cursor** (DEC-0087 5-step + US-0130 overlay **unchanged**): `MODEL_<PHASE>` →
+`MODEL_TIER_<PHASE>` → `MODEL_RESOLVE=role_catalog` → `MODEL_TIER_DEFAULT` →
+Cursor stable alias. Resolver/validator emit `provenance=host=cursor;path=...;step=...`.
+Absent catalog + `alias_only` remains valid.
+
+**OpenCode kit materializer**: catalog absent → no-op exit 0; present → inject
+`model: provider/slug` into installed `.opencode/agents/<role>.md` only.
+Malformed catalog → `MODEL_CATALOG_INVALID` `scope=opencode-catalog`.
+
+**OpenCode host JSON** (optional names-only diagnostic): fail-open if absent;
+malformed **present** file → `MODEL_CATALOG_INVALID` `scope=opencode-host`.
+
+`--host both`: both catalogs may coexist; no union schema. Cross-offer →
+`MODEL_CONFIG_SCHEMA_MIX`.
+
+### `model.json` migration recipe
+
+1. Stop using `model.json` / `model.jsonc` at repo root, `.cursor/`, or `.opencode/`.
+2. Cursor slugs: copy into `.cursor/model-catalog.local.json` and/or scratchpad `MODEL_*`.
+3. OpenCode per-role `provider/slug`: copy into `.opencode/model-catalog.local.json`.
+4. OpenCode host default: set `model` / `providers` in local `opencode.json{,c}` (host file).
+5. Re-run `python scripts/model_tier_validate.py --scope model-config --host both --repo .`
+
+### Fail-closed codes
+
+Reuse existing host-scoped `MODEL_*` / `OPENCODE_MODEL_SLUG_UNKNOWN` / scoped
+`MODEL_CATALOG_INVALID`. New contract-layer codes: `MODEL_CONFIG_PATH_UNKNOWN`,
+`MODEL_CONFIG_SCHEMA_MIX`, `MODEL_CONFIG_HOST_COLLISION`. Do **not** reuse
+`HOST_CONFIG_*`. Absent optional file ≠ invalid.
+
+### Clean / install protection
+
+Never overwrite: `.cursor/model-catalog.local.json`,
+`.opencode/model-catalog.local.json`, `.cursor/scratchpad.local.md`, repo-root
+and `.opencode/` `opencode.json{,c}`. Clean **exclude-from-clean** those named
+locals (not copy-aside). `[opencode_clean_paths] .opencode` must not delete
+`.opencode/model-catalog.local.json` or `.opencode/opencode.json{,c}`.
+
+### Tests
+
+`python -m pytest tests/us0132_contract_test.py -v` (exactly 10 `test_us0132_*`
+markers; static/fixture only; no live OpenCode probe).
+
+**Release status (S0134 / US-0132)**: **`released`** (`2026-09-09T20:18:00Z`); backlog **DONE** (`/closure` `2026-09-09T20:33:00Z`; acceptance L160 [x]). Operator verify: **`handoffs/releases/S0134-release-notes.md`** **## Verify**; publish skipped while **`RELEASE_PUBLISH_MODE=confirm`**. Gate-1 evidence: `tests/report.md` @ `2026-09-09T20:17:05Z` Pass:856 / Fail:0.
+
 

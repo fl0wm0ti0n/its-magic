@@ -271,6 +271,26 @@ KIT_CONFIG_EXAMPLE_REL = os.path.join(KIT_CONFIG_DIR, "config.example.json")
 KIT_CONFIG_BASELINE_REL = os.path.join(KIT_CONFIG_DIR, "config.json")
 KIT_CONFIG_LOCAL_REL = os.path.join(KIT_CONFIG_DIR, "config.local.json")
 
+# US-0132 / DEC-0132: exclude-from-clean + never-overwrite named model locals
+# (not copy-aside). Shrinking --host still does not delete the other host's tree.
+MODEL_CONFIG_PRESERVE_RELPATHS = (
+    ".cursor/model-catalog.local.json",
+    ".cursor/scratchpad.local.md",
+    ".opencode/model-catalog.local.json",
+    ".opencode/opencode.json",
+    ".opencode/opencode.jsonc",
+    "opencode.json",
+    "opencode.jsonc",
+)
+
+
+def posix_relpath(rel):
+    return rel.replace("\\", "/")
+
+
+def is_model_config_preserve_path(rel):
+    return posix_relpath(rel) in MODEL_CONFIG_PRESERVE_RELPATHS
+
 # After merge (local > baseline > example), these must be non-empty (fail closed).
 REQUIRED_SCRATCHPAD_KEYS = (
     "MAGIC_CONTEXT_STRICT",
@@ -1027,16 +1047,58 @@ def show_help(version):
     print()
 
 
-def clean_repo(target_root, clean_paths):
+def clean_repo(target_root, clean_paths, preserve_relpaths=None):
+    """Remove clean_paths but exclude-from-clean named model-config locals.
+
+    Do **not** copy-aside/restore. Named locals stay in place.
+    """
+    preserve = set(preserve_relpaths or MODEL_CONFIG_PRESERVE_RELPATHS)
+    target_root = os.path.abspath(target_root)
     for rel in clean_paths:
-        full = os.path.join(target_root, rel)
-        if os.path.exists(full):
-            if os.path.isdir(full):
-                shutil.rmtree(full)
-            else:
-                os.remove(full)
-            print(f"Removed: {rel}")
+        _clean_one_path(target_root, rel, preserve)
     print("Clean completed.")
+
+
+def _clean_one_path(target_root, rel, preserve):
+    rel_posix = posix_relpath(rel)
+    full = os.path.join(target_root, rel)
+    if not os.path.exists(full):
+        return
+    if os.path.isfile(full) or os.path.islink(full):
+        if rel_posix in preserve:
+            print(f"Preserved (model-config): {rel_posix}")
+            return
+        os.remove(full)
+        print(f"Removed: {rel}")
+        return
+
+    prefix = rel_posix.rstrip("/") + "/"
+    has_preserve = any(p == rel_posix or p.startswith(prefix) for p in preserve)
+    if not has_preserve:
+        shutil.rmtree(full)
+        print(f"Removed: {rel}")
+        return
+
+    for dirpath, dirnames, filenames in os.walk(full, topdown=False):
+        for name in filenames:
+            fpath = os.path.join(dirpath, name)
+            r = posix_relpath(os.path.relpath(fpath, target_root))
+            if r in preserve:
+                print(f"Preserved (model-config): {r}")
+                continue
+            os.remove(fpath)
+            print(f"Removed: {r}")
+        for name in dirnames:
+            dpath = os.path.join(dirpath, name)
+            try:
+                os.rmdir(dpath)
+            except OSError:
+                pass
+    try:
+        os.rmdir(full)
+        print(f"Removed: {rel}")
+    except OSError:
+        print(f"Cleaned: {rel} (preserved model-config locals)")
 
 
 def main():
@@ -1222,6 +1284,10 @@ def main():
             exists = os.path.isfile(dst)
             cat = classify_file(rel)
 
+            if is_model_config_preserve_path(rel):
+                preserved += 1
+                continue
+
             if not exists:
                 ensure_parent(dst)
                 shutil.copy2(src, dst)
@@ -1323,6 +1389,9 @@ def main():
         src = os.path.join(source_root, rel)
         dst = os.path.join(target_root, rel)
         exists = os.path.isfile(dst)
+
+        if is_model_config_preserve_path(rel):
+            continue
 
         if mode == "missing":
             if exists:

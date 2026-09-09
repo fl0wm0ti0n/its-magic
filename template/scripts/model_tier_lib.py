@@ -141,6 +141,17 @@ def phase_to_tier_key(phase_id: str) -> str:
     return f"MODEL_TIER_{phase_id.upper()}"
 
 
+# US-0132 diagnostics overlay (do not amend PRECEDENCE_CHAIN_STEPS).
+CURSOR_HOST_ID = "cursor"
+DEFAULT_CURSOR_CATALOG_REL = ".cursor/model-catalog.local.json"
+DEFAULT_CURSOR_SCRATCHPAD_REL = ".cursor/scratchpad.local.md"
+
+
+def format_provenance(*, host: str, path: str, step: str) -> str:
+    """Observable AC-3 overlay: provenance=host=...;path=...;step=..."""
+    return f"provenance=host={host};path={path};step={step}"
+
+
 @dataclass
 class ResolveResult:
     """Result of model tier resolution."""
@@ -150,9 +161,15 @@ class ResolveResult:
     reason_message: Optional[str]
     tier: Optional[Tier] = None
     slug: Optional[str] = None  # vendor-specific slug from catalog or direct override
+    provenance: Optional[str] = None  # US-0132 overlay; None on failure
 
     @classmethod
-    def success_alias(cls, tier: Tier, alias: Optional[str]) -> "ResolveResult":
+    def success_alias(
+        cls,
+        tier: Optional[Tier],
+        alias: Optional[str],
+        provenance: Optional[str] = None,
+    ) -> "ResolveResult":
         """Successful resolution with alias."""
         return cls(
             success=True,
@@ -160,10 +177,16 @@ class ResolveResult:
             reason_code=None,
             reason_message=None,
             tier=tier,
+            provenance=provenance,
         )
 
     @classmethod
-    def success_slug(cls, tier: Optional[Tier], slug: str) -> "ResolveResult":
+    def success_slug(
+        cls,
+        tier: Optional[Tier],
+        slug: str,
+        provenance: Optional[str] = None,
+    ) -> "ResolveResult":
         """Successful resolution with vendor slug."""
         return cls(
             success=True,
@@ -172,6 +195,7 @@ class ResolveResult:
             reason_message=None,
             tier=tier,
             slug=slug,
+            provenance=provenance,
         )
 
     @classmethod
@@ -463,12 +487,24 @@ def resolve_model_for_phase(
     pad = scratchpad or {}
     model_resolve = pad.get("MODEL_RESOLVE", "alias_only").strip() or "alias_only"
     model_fallback = pad.get("MODEL_FALLBACK", "inherit").strip() or "inherit"
+    scratch_path = DEFAULT_CURSOR_SCRATCHPAD_REL
+    catalog_rel = DEFAULT_CURSOR_CATALOG_REL
+    if catalog_path is not None:
+        catalog_rel = str(catalog_path).replace("\\", "/")
 
     if catalog is None and catalog_path is not None:
         catalog, catalog_error = load_catalog(catalog_path)
         if catalog_error:
             code = catalog_validation_reason_code(catalog_error, None)
             return ResolveResult.failure(code, catalog_error)
+
+    def _prov(step: str, path: str) -> str:
+        return format_provenance(host=CURSOR_HOST_ID, path=path, step=step)
+
+    def _attach(result: ResolveResult, step: str, path: str) -> ResolveResult:
+        if result.success:
+            result.provenance = _prov(step, path)
+        return result
 
     # Step 1: MODEL_<PHASE> direct slug override
     model_key = phase_to_model_key(phase_id)
@@ -480,7 +516,9 @@ def resolve_model_for_phase(
                 ReasonCode.MODEL_OVERRIDE_SLUG_UNKNOWN,
                 error or "Direct slug validation failed",
             )
-        return ResolveResult.success_slug(None, slug)
+        return ResolveResult.success_slug(
+            None, slug, provenance=_prov(PRECEDENCE_CHAIN_STEPS[0], scratch_path)
+        )
 
     # Step 2: MODEL_TIER_<PHASE> tier chain (skipped when role_catalog — step 3 handles slug)
     if model_resolve in ("alias_only", "local_catalog"):
@@ -488,7 +526,7 @@ def resolve_model_for_phase(
         if tier is not None:
             result = _resolve_tier_chain(phase_id, tier, model_resolve, model_fallback, catalog)
             if result.success:
-                return result
+                return _attach(result, PRECEDENCE_CHAIN_STEPS[1], scratch_path)
             if result.reason_code != ReasonCode.MODEL_RESOLVE_FALLBACK:
                 return result
 
@@ -502,7 +540,11 @@ def resolve_model_for_phase(
                 if isinstance(roles, dict) and catalog_role_key in roles:
                     slug = roles[catalog_role_key]
                     if slug and slug.strip():
-                        return ResolveResult.success_slug(None, slug.strip())
+                        return ResolveResult.success_slug(
+                            None,
+                            slug.strip(),
+                            provenance=_prov(PRECEDENCE_CHAIN_STEPS[2], catalog_rel),
+                        )
             # Miss → fall through with reason (not hard stop)
             # Continue to step 4; reason emitted via optional metadata on result path
 
@@ -511,14 +553,18 @@ def resolve_model_for_phase(
     if default_tier is not None:
         result = _resolve_tier_chain(phase_id, default_tier, model_resolve, model_fallback, catalog)
         if result.success:
-            return result
+            return _attach(result, PRECEDENCE_CHAIN_STEPS[3], scratch_path)
 
     # Step 5: Cursor alias from phase matrix tier or balanced default
     fallback_tier = DEFAULT_PHASE_TIER_MATRIX.get(phase_id, Tier.BALANCED)
     if fallback_tier is None:
         fallback_tier = Tier.BALANCED
     alias = TIER_ALIAS_MAP.get(fallback_tier)
-    return ResolveResult.success_alias(fallback_tier, alias)
+    return ResolveResult.success_alias(
+        fallback_tier,
+        alias,
+        provenance=_prov(PRECEDENCE_CHAIN_STEPS[4], catalog_rel),
+    )
 
 
 def resolve_model_tier(
@@ -669,11 +715,15 @@ if __name__ == "__main__":
     if result.success:
         print(f"[OK] phase={args.phase} tier={result.tier.value if result.tier else 'n/a'}", end="")
         if result.alias:
-            print(f" alias={result.alias}")
+            print(f" alias={result.alias}", end="")
         elif result.slug:
-            print(f" slug={result.slug}")
+            print(f" slug={result.slug}", end="")
         else:
-            print(" (omit model: field)")
+            print(" (omit model: field)", end="")
+        if result.provenance:
+            print(f" {result.provenance}")
+        else:
+            print()
         if result.reason_code:
             print(f"  reason={result.reason_code.value}: {result.reason_message}")
         sys.exit(0)

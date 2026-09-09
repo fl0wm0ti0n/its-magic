@@ -1,4 +1,55 @@
-## Execute remediation PASS handoff — US-0131 / S0133 — /qa re-run (fresh qa)
+## Execute PASS handoff — US-0132 / S0134 — `/qa` next (fresh qa)
+
+- sprint_id: S0134
+- story_id: US-0132 (Status OPEN — authority docs/product/backlog.md)
+- companion_dec: DEC-0132 Accepted
+- research_anchor: R-0117 (DQ1–DQ10 LOCKED)
+- architecture_anchor: docs/engineering/architecture.md # US-0132
+- approach: A1 LOCKED — four surfaces; reject generic `model.json`; Cursor vs OpenCode schemas stay separate; `opencode.json{,c}` is host file not kit SOT; per-host `provenance=` diagnostics; `HOST_COLLISION` distinct both-host row; `--scope model-config`; exclude-from-clean locals
+- orchestrator_run_id: auto-20260909-us0132
+- fresh_context_marker: dev-US0132-execute-20260909T191200Z-fresh
+- timestamp: 2026-09-09T19:25:20Z (UTC)
+- model_id: cursor-grok-4.6 (CROSS_MODEL_REVIEW=1 — required on isolation)
+- execute_verdict: PASS
+- decision_gate: false
+- sprint_status: EXECUTE_PASS (backlog OPEN per US-0045 — not mutated; AC-1..AC-8 unchecked)
+- task_count: 10 (T-anch + T-001..T-009; all DONE)
+- tests: `pytest tests/us0132_contract_test.py -v` → 10/10 PASS
+- parity: `check_intake_template_parity.py --scope=us-0132` → OK
+- metadata: `check-user-visible-metadata.py --repo .` → exit 0
+- triad: `enforce-triad-hot-surface.py --check` → exit 0 (pre-state-append)
+- compose_guards: US-0131 DONE compose-only held; DEC-0086/0087/0123/0131 not amended; architecture.md / DEC-0132.md not mutated; no DONE flip; no AC ticks; no live OpenCode probe; no 11th marker
+- key_deliverables:
+  - `scripts/model_tier_validate.py --scope model-config` (+ template)
+  - Cursor `provenance=` overlay on `scripts/model_tier_lib.py`
+  - gitignore + exclude-from-clean + installer.py/ps1/sh + manifest `[model_config_preserve_paths]`
+  - `tests/us0132_contract_test.py` 10 markers (+ template)
+  - runbook h2 + README pointer + US-0126 additive `MODEL_CONFIG_*` rows
+- runtime_proof_id: rp-auto-20260909-us0132-execute-dev-20260909T192520Z-US-0132
+- proof_hash: 21431725A12CD3D170463E990B46EFD68649D71D05DEC571DFBB33C144FE967E
+- proof_ttl: 2026-09-09T20:25:20Z
+- consumed_plan_verify_proof: rp-auto-20260909-us0132-plan-verify-qa-20260909T185821Z-US-0132-reattest / 90D9E2E7D70999806756EC900A9A67E00A4112D8303EC8DD8BCA0F63E8162034 — RUNTIME_PROOF_VALID (consumed 2026-09-09T19:12:00Z before ttl 2026-09-09T19:58:21Z)
+- stale_tuple_not_consumed: rp-auto-20260908-us0132-plan-verify-qa-20260908T213933Z-US-0132 — RUNTIME_PROOF_STALE
+- next_scheduled_phase: /qa (role=qa)
+- next_scheduled_role: qa
+- stop_condition: STOP after execute. Orchestrator may critic then spawn /qa in fresh qa (BUG-0006). Do NOT spawn qa from this execute subagent. Do NOT spawn critic. Do NOT mark US-0132 DONE. Do NOT reopen US-0131.
+
+### critic_evidence
+
+```json
+{
+  "producer_model_id": "cursor-grok-4.6",
+  "critic_model_id": "pending-execute-critic",
+  "anti_slop_aggregate": 0,
+  "rework_generation": 0,
+  "degraded_mode": false,
+  "findings_path": "handoffs/sovereign_critic_findings.jsonl"
+}
+```
+
+---
+
+
 
 - sprint_id: S0133
 - story_id: US-0131 (Status OPEN — authority docs/product/backlog.md)

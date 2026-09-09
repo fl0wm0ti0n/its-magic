@@ -13,6 +13,26 @@ Canonical queue state now lives under:
 
 ---
 
+## Release finalized note (S0134)
+
+- Sprint: `S0134`
+- Story: `US-0132` (Explicit Cursor/OpenCode model configuration contract — four surfaces; reject generic `model.json`; 10 contract markers)
+- Release: **finalized** (`2026-09-09T20:18:00Z`, `orchestrator_run_id=auto-20260909-us0132`, `fresh_context_marker=release-US0132-release-20260909T201800Z-fresh`, `runtime_proof_id=rp-auto-20260909-us0132-release-release-20260909T201800Z-US-0132`, `model_id=cursor-grok-4.6`)
+- Queue: **`handoffs/release_queue.md`** row **`S0134`** = **`released`** (workflow-only; no version bump; backlog reconciliation deferred to `/closure`)
+- **Verdict**: **PASS** — all mandatory release gates (1, 2, 3, 4, 4b) green with **Fail:0**.
+- **Run / verify:** `python -m pytest tests/us0132_contract_test.py -v` → 10 passed; `python scripts/check_intake_template_parity.py --scope=us-0132` → `[INTAKE_TEMPLATE_PARITY_OK]`; `python scripts/validate_readme_feature_coverage.py --repo . --enforce` → PASS (`coverage_missing=[]`); `python scripts/check-user-visible-metadata.py --repo .` → exit 0; harness `tests/report.md` @ `2026-09-09T20:17:05Z` **Pass:856 / Fail:0**. See **`handoffs/releases/S0134-release-notes.md`** **## Run** / **## Verify**.
+- **Operator summary**: start=`python -m pytest tests/us0132_contract_test.py -v`; endpoint=`n/a` (model-config kit); verify pointer=`handoffs/releases/S0134-release-notes.md` ## Verify.
+- **Gate snapshot**: check_in_tests=PASS (harness Fail:0 + us0132 10/10); qa=PASS (0 blockers); verify_work=PASS (8/8 ACs; 9/9 UAT; 10/10 live); uat=PASS (9/9); isolation=PASS; strict_runtime_proof=PASS (verify-work proof consumed @20:18:00Z before TTL 20:53:16Z); finalization=PASS (queue → `released`).
+- ACs satisfied: **8/8** (10/10 contract markers live; 0 open blocking findings)
+- Compose guards: DEC-0132 Accepted; US-0131 DONE held; US-0132 OPEN; acceptance unchecked L160
+- **Backlog status**: US-0132 remains **OPEN** — closure deferred to `/closure`
+- **Acceptance**: US-0132 row remains **unchecked** — tick at `/closure`
+- Publish: **`RELEASE_PUBLISH_MODE=confirm`** + **`RELEASE_PUBLISH_AUTO_CONFIRM=0`** — `publish_snapshot=skipped_pending_operator_confirm`
+- Sync: **`SYNC_POLICY_MODE=disabled`** → `push_decision=not_eligible`, `reason_code=SYNC_DISABLED`
+- **Strict runtime proof (release)**: `proof_hash=1D77E47A2D6783A6872A184A9A55601FB3D7A50B7D96AF49BED0D101EA53329F`, `proof_ttl=2026-09-09T21:18:00Z`
+- **Unreleased visibility**: no remaining `unreleased`/`blocked` row for S0134 (this sprint is `released`)
+- **Next**: **`/closure`** (fresh **qe** subagent, ship macro phase 2 per DEC-0082)
+
 ## Release finalized note (S0133)
 
 - Sprint: `S0133`

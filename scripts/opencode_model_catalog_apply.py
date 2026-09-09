@@ -6,6 +6,13 @@ Reads `.opencode/model-catalog.local.json` at the install target and injects
 `model: <provider/slug>` into installed `.opencode/agents/<role>.md` YAML
 frontmatter only. Never writes to `template/` or reads `.cursor/` catalogs.
 
+US-0132 invariants (DEC-0132 §6 / T-007):
+- Idempotent: second apply with unchanged catalog yields the same model: lines
+- Never write template/.opencode/agents/**
+- Never write the active local catalog (read-only input)
+- Never write Cursor catalog, scratchpad, or opencode.json{,c}
+- Absent catalog remains no-op exit 0
+
 Exit codes:
   0 — success or catalog absent (no-op)
   1 — validation failure (see reason codes on stderr)
@@ -124,6 +131,15 @@ def inject_model_frontmatter(content: str, model_value: str) -> str:
         out = new_out
 
     return "---\n" + "\n".join(out) + "\n---" + (("\n" + body) if body else "")
+
+
+FORBIDDEN_WRITE_RELPATHS = (
+    ".opencode/model-catalog.local.json",
+    "opencode.json",
+    "opencode.jsonc",
+    ".opencode/opencode.json",
+    ".opencode/opencode.jsonc",
+)
 
 
 def apply_catalog(target_root: Path) -> int:

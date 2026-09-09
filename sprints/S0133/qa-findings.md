@@ -200,3 +200,11 @@ p-auto-20260907-us0131-release-release-20260907T211518Z-US-0131 / 10026570510E2C
 - CLOSURE_PASS CONFIRMED; Status DONE; L159 [x]; US-0132 OPEN; queue S0133=released; next=/refresh-context (orchestrator spawn only)
 - NB: active runbook L4226 Release-status stamp still says OPEN until /closure — refresh should rewrite to DONE (parity already green)
 
+## Cross-reviewer findings (sovereign-critic of refresh-context)
+
+- critic_model_id=composer-2.5-fast, degraded_mode=false, verdict=PASS
+- anti_slop_aggregate=10, blocking_count=0, open_blocking_count=0
+- finding_ids=us0131rc-challenger-001,us0131rc-architect-002,us0131rc-subtractor-003 (informational; US-0127 auto-resolved)
+- proof_consume=RUNTIME_PROOF_VALID for rp-auto-20260907-us0131-refresh-context-curator-20260908T203000Z-US-0131 / 9FF76B1664AFBA0D1DFFFD14A80927E983B4988367F14D8AB7E2599BCC3439EC
+- REFRESH_CONTEXT_PASS CONFIRMED; Status DONE; L159 [x]; US-0132 OPEN; queue S0133=released; runbook L4226 stamp DONE; next=orchestrator drain-advance US-0132 (BUG-0006 STOP — critic does not spawn)
+

@@ -5,3 +5,4 @@
 !.env.example
 .cursor/dev-environment.json
 .cursor/model-catalog.local.json
+.opencode/model-catalog.local.json
