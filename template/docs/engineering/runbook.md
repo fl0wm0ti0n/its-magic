@@ -1488,12 +1488,47 @@ If routing is not used (mode off/local default), still record:
 - `python tests/installer_shell_bug0004_test.py` — CR/LF rejection, forbidden
   `set` tokens, optional **`dash -n`** when **`dash`** is on **`PATH`**.
 - `python scripts/guard_installer_publish.py` — same checks for publish/CI
-  (**`prepublishOnly`**).
+  (**`prepublishOnly`**); also OpenCode pack `\r` inventory (**BUG-0017**).
 - `python scripts/remote_config_summary.py` — with **`REMOTE_EXECUTION=1`**,
   read-only summary of **`REMOTE_CONFIG`** (default **`.cursor/remote.json`**);
   stdout is **names-only** (no secret values). **`DEC-0070`**: when
   **`REMOTE_EXECUTION=0`**, the helper exits **0** and skips validation
   (stderr skip reason).
+
+### OpenCode pack LF / Linux slash commands (BUG-0017 / R-0118)
+
+- **Symptom**: On Linux, OpenCode does not list/recognize its-magic slash
+  commands (`/auto`, `/intake`, peers) even though `.opencode/commands/*.md`
+  exist. `file` may report `CRLF line terminators`; YAML frontmatter parse
+  fails (`parseOption` empty → silent skip).
+- **Root cause**: CRLF in kit/consumer OpenCode pack text (commands/agents/
+  plugins markdown/TS + pack README / template model-catalog example). Same
+  failure class as **BUG-0008** (manifest CRLF), different surface.
+- **Ship-fix controls** (approach A*): scoped `.gitattributes` LF for
+  `.opencode/**` + `template/.opencode/**` `*.{md,ts,json}` (never repo-wide
+  `*.md`); one-time renormalize; extended `npm run guard:installer` /
+  `prepublishOnly` fail-closed on `\r` in OpenCode inventory. **No**
+  install-time EOL rewrite.
+- **Consumer upgrade recipe (DQ6)** — kit fix alone does **not** heal
+  already-copied CRLF trees:
+  1. Upgrade its-magic to a release that includes **BUG-0017**.
+  2. Refresh framework-owned OpenCode pack files from the LF template:
+     `its-magic --mode upgrade --host opencode` or
+     `its-magic --mode upgrade --host both` (**DEC-0120**).
+  3. If local edits block refresh: resolve conflicts, then re-upgrade.
+  4. Optional last resort for orphaned local copies: `dos2unix` / re-checkout
+     of the affected `.opencode/` paths — prefer upgrade first.
+- **Release / chocolatey before-tag gate (NB1 / DQ4)**: Before any **GitHub
+  tag** whose zip is consumed by chocolatey, maintainers **must** run
+  `npm run guard:installer` (extended BUG-0017 inventory) and ensure it
+  **PASS**. Do **not** add a choco-specific EOL post-process. npm publish
+  already gates via `prepublishOnly`.
+- **Normative**: `docs/engineering/architecture.md` `# BUG-0017`; research
+  **`R-0118`**. Contract tests: `python -m pytest tests/bug0017_opencode_eol_test.py -v`.
+- **Release readiness (S0135 / 2026-09-11T20:18:30Z)**: workflow-only
+  **RELEASE_PASS**; harness `tests/report.md` Pass:857 / Fail:0; queue S0135
+  `released`; publish skipped (`RELEASE_PUBLISH_MODE=confirm`). Deploy commands
+  remain explicit no-ops above (no staging/prod target). Next: `/closure`.
 
 ### Optional deterministic CI routing recipe (US-0086)
 
@@ -4027,6 +4062,13 @@ its-magic --target . --mode upgrade --host both
 it emits `OPENCODE_STALE_BY_UPGRADE_CURSOR`. Symmetric:
 `CURSOR_STALE_BY_UPGRADE_OPENCODE` when shrinking the other way.
 
+After a **BUG-0017** kit fix, consumers that already have CRLF under
+`.opencode/` must run `upgrade --host opencode` or `--host both` so
+framework-owned pack files refresh from the LF template (see
+**OpenCode pack LF / Linux slash commands (BUG-0017 / R-0118)** above).
+Kit-only upgrade of the its-magic package is not sufficient without this
+host refresh.
+
 ### Missing (host-scoped — YAGNI)
 
 `missing` after `--host both` then `--host cursor` no-ops on `.opencode/` via
@@ -4356,6 +4398,6 @@ locals (not copy-aside). `[opencode_clean_paths] .opencode` must not delete
 `python -m pytest tests/us0132_contract_test.py -v` (exactly 10 `test_us0132_*`
 markers; static/fixture only; no live OpenCode probe).
 
-**Release status (S0134 / US-0132)**: **`released`** (`2026-09-09T20:18:00Z`); backlog remains **OPEN** until `/closure`; acceptance L160 unchecked. Operator verify: **`handoffs/releases/S0134-release-notes.md`** **## Verify**; publish skipped while **`RELEASE_PUBLISH_MODE=confirm`**. Gate-1 evidence: `tests/report.md` @ `2026-09-09T20:17:05Z` Pass:856 / Fail:0.
+**Release status (S0134 / US-0132)**: **`released`** (`2026-09-09T20:18:00Z`); backlog **DONE** (`/closure` `2026-09-09T20:33:00Z`; acceptance L160 [x]). Operator verify: **`handoffs/releases/S0134-release-notes.md`** **## Verify**; publish skipped while **`RELEASE_PUBLISH_MODE=confirm`**. Gate-1 evidence: `tests/report.md` @ `2026-09-09T20:17:05Z` Pass:856 / Fail:0.
 
 

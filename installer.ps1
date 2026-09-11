@@ -42,6 +42,28 @@ function Normalize-PathSafe($Path) {
   return [System.IO.Path]::GetFullPath($Path)
 }
 
+function Test-GlobalOpenCodeConfigTarget($TargetRoot) {
+  $candidates = @()
+  if ($env:XDG_CONFIG_HOME) {
+    $candidates += (Join-Path $env:XDG_CONFIG_HOME "opencode")
+  } else {
+    $candidates += (Join-Path ([Environment]::GetFolderPath("UserProfile")) ".config\opencode")
+  }
+  if ($env:APPDATA) { $candidates += (Join-Path $env:APPDATA "opencode") }
+  foreach ($candidate in $candidates) {
+    if ([string]::Equals((Normalize-PathSafe $TargetRoot), (Normalize-PathSafe $candidate), [System.StringComparison]::OrdinalIgnoreCase)) {
+      return $true
+    }
+  }
+  return $false
+}
+
+function Reject-GlobalOpenCodeConfigTarget($TargetRoot) {
+  if (-not (Test-GlobalOpenCodeConfigTarget $TargetRoot)) { return $false }
+  Write-Host "[INSTALL_TARGET_GLOBAL_OPENCODE_FORBIDDEN] target is OpenCode's user-global configuration directory. Run its-magic with the repository root as --target."
+  return $true
+}
+
 function Ensure-Parent($Path) {
   $parent = Split-Path -Parent $Path
   if ($parent -and -not (Test-Path $parent)) {
@@ -783,6 +805,7 @@ if ($CleanRepo) {
     Write-Host "Target directory does not exist."
     exit 1
   }
+  if (Reject-GlobalOpenCodeConfigTarget $targetRoot) { exit 1 }
   if (-not $Yes) {
     $proceed = Prompt-YesNo "Clean its-magic workflow artifacts in $targetRoot?" $false
     if (-not $proceed) {
@@ -804,6 +827,8 @@ if (-not $Target) {
   $Target = Read-Host "Target repository path"
 }
 $targetRoot = Normalize-PathSafe $Target
+
+if (Reject-GlobalOpenCodeConfigTarget $targetRoot) { exit 1 }
 
 if (-not (Test-Path $targetRoot -PathType Container)) {
   if ($Create -or (Prompt-YesNo "Target missing. Create?" $false)) {

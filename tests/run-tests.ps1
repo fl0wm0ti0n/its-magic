@@ -1689,6 +1689,10 @@ Assert-True "check_intake_template_parity --scope=us-0132 passes (US-0132)" ($us
 $us0132Contract = Start-Process python -ArgumentList @("-m", "pytest", "tests\us0132_contract_test.py", "-q") -PassThru -NoNewWindow -Wait -WorkingDirectory $root
 Assert-True "US-0132 contract tests pass" ($us0132Contract.ExitCode -eq 0)
 
+# 26AG) BUG-0017 — OpenCode pack LF / Linux slash commands (EOL / CR inventory)
+$bug0017Contract = Start-Process python -ArgumentList @("-m", "pytest", "tests\bug0017_opencode_eol_test.py", "-q") -PassThru -NoNewWindow -Wait -WorkingDirectory $root
+Assert-True "BUG-0017 OpenCode EOL contract tests pass" ($bug0017Contract.ExitCode -eq 0)
+
 # Cleanup
 if (Test-Path (Join-Path $root "tests\.tmp-install")) {
   Remove-Item -Recurse -Force (Join-Path $root "tests\.tmp-install") -ErrorAction SilentlyContinue

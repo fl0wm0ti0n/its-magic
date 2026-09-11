@@ -624,6 +624,17 @@ done
 
 [ -z "$HOST" ] && HOST="cursor"
 
+is_global_opencode_config_target() {
+  candidate="${XDG_CONFIG_HOME:-$HOME/.config}/opencode"
+  [ "$TARGET_ROOT" = "$candidate" ]
+}
+
+reject_global_opencode_config_target() {
+  if ! is_global_opencode_config_target; then return 0; fi
+  printf '%s\n' "[INSTALL_TARGET_GLOBAL_OPENCODE_FORBIDDEN] target is OpenCode's user-global configuration directory. Run its-magic with the repository root as --target."
+  exit 1
+}
+
 if [ "$SHOW_VERSION" = "true" ]; then
   printf "its-magic v%s\n" "$APP_VERSION"
   exit 0
@@ -659,6 +670,7 @@ if [ "$CLEAN_REPO" = "true" ]; then
     exit 1
   fi
   TARGET_ROOT=$(cd "$TARGET" && pwd)
+  reject_global_opencode_config_target
   if [ "$ASSUME_YES" != "true" ]; then
     if ! prompt_yes_no "Clean its-magic workflow artifacts in $TARGET_ROOT?" "false"; then
       printf "%s\n" "Aborted."
@@ -696,6 +708,7 @@ if [ ! -d "$TARGET" ]; then
   fi
 fi
 TARGET_ROOT=$(cd "$TARGET" && pwd)
+reject_global_opencode_config_target
 
 if [ -z "$MODE" ]; then
   MODE=$(choose_mode)
@@ -906,4 +919,3 @@ printf "its-magic v%s\n" "$APP_VERSION"
 printf "Repository: %s\n\n" "$REPO_URL"
 printf "\033[1;32m                    Installation complete!\033[0m\n\n"
 exit 0
-

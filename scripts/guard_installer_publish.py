@@ -2,6 +2,7 @@
 """Prepublish / CI guard: installer.sh LF + POSIX-safe startup tokens (US-0084 / AC-2).
 
 BUG-0008: reject CR bytes in installer-owned-paths.manifest (CRLF breaks POSIX awk section match).
+BUG-0017: reject CR bytes in OpenCode pack inventory (CRLF breaks Linux OpenCode YAML frontmatter).
 """
 
 from __future__ import annotations
@@ -27,6 +28,60 @@ FORBIDDEN_TOKENS = (
 )
 
 
+def _iter_opencode_inventory(root: Path) -> list[Path]:
+    """OpenCode pack paths that must stay LF (BUG-0017 / R-0118 DQ2+DQ5).
+
+    Skips missing trees and node_modules. Does not scan operator-local
+    model-catalog.local.json (gitignored).
+    """
+    paths: list[Path] = []
+    seen: set[Path] = set()
+
+    def add(path: Path) -> None:
+        resolved = path.resolve()
+        if resolved in seen:
+            return
+        if not path.is_file():
+            return
+        if "node_modules" in path.parts:
+            return
+        seen.add(resolved)
+        paths.append(path)
+
+    for base_rel in (".opencode", "template/.opencode"):
+        base = root / Path(base_rel)
+        if not base.is_dir():
+            continue
+        for sub, suffixes in (
+            ("commands", {".md"}),
+            ("agents", {".md"}),
+            ("plugins", {".md", ".ts"}),
+        ):
+            folder = base / sub
+            if not folder.is_dir():
+                continue
+            for path in folder.rglob("*"):
+                if path.is_file() and path.suffix in suffixes:
+                    add(path)
+        add(base / "README.md")
+
+    add(root / "template" / ".opencode" / "model-catalog.local.example.json")
+    return paths
+
+
+def _reject_cr(path: Path, *, bug_label: str) -> int:
+    data = path.read_bytes()
+    if b"\r" not in data:
+        return 0
+    rel = path.relative_to(ROOT).as_posix()
+    print(
+        f"guard_installer_publish: CR/LF (\\r) bytes found in {rel} — "
+        f"use LF only ({bug_label}).",
+        file=sys.stderr,
+    )
+    return 1
+
+
 def main() -> int:
     if not INSTALLER_SH.is_file():
         print("guard_installer_publish: installer.sh missing", file=sys.stderr)
@@ -42,13 +97,10 @@ def main() -> int:
     for man in INSTALLER_MANIFESTS:
         if not man.is_file():
             continue
-        mdata = man.read_bytes()
-        if b"\r" in mdata:
-            print(
-                f"guard_installer_publish: CR/LF (\\r) bytes found in {man.relative_to(ROOT)} — "
-                "use LF only (.gitattributes *.manifest; BUG-0008).",
-                file=sys.stderr,
-            )
+        if _reject_cr(man, bug_label=".gitattributes *.manifest; BUG-0008"):
+            return 1
+    for path in _iter_opencode_inventory(ROOT):
+        if _reject_cr(path, bug_label="BUG-0017 OpenCode pack; .gitattributes .opencode/**"):
             return 1
     text = data.decode("utf-8", errors="replace")
     for token in FORBIDDEN_TOKENS:

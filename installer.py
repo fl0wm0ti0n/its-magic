@@ -63,6 +63,27 @@ def normalize(path):
     return os.path.normpath(os.path.abspath(path))
 
 
+def is_global_opencode_config_dir(path):
+    """Return whether path is OpenCode's user-global configuration directory."""
+    home = os.path.expanduser("~")
+    config_home = os.environ.get("XDG_CONFIG_HOME") or os.path.join(home, ".config")
+    candidates = [os.path.join(config_home, "opencode")]
+    if os.name == "nt" and os.environ.get("APPDATA"):
+        candidates.append(os.path.join(os.environ["APPDATA"], "opencode"))
+    target = os.path.normcase(normalize(path))
+    return any(target == os.path.normcase(normalize(candidate)) for candidate in candidates)
+
+
+def reject_global_opencode_config_target(target_root):
+    if not is_global_opencode_config_dir(target_root):
+        return False
+    print(
+        "[INSTALL_TARGET_GLOBAL_OPENCODE_FORBIDDEN] target is OpenCode's user-global "
+        "configuration directory. Run its-magic with the repository root as --target."
+    )
+    return True
+
+
 def read_version(source_root):
     package_path = os.path.join(source_root, "package.json")
     try:
@@ -1265,6 +1286,8 @@ def main():
         if not os.path.isdir(target_root):
             print("Target directory does not exist.")
             return 1
+        if reject_global_opencode_config_target(target_root):
+            return 1
         if not args.yes and not prompt_yes_no(f"Clean its-magic workflow artifacts in {target_root}?", default=False):
             print("Aborted.")
             return 1
@@ -1275,6 +1298,9 @@ def main():
 
     if not target_root:
         target_root = normalize(input("Target repository path: ").strip())
+
+    if reject_global_opencode_config_target(target_root):
+        return 1
 
     if not os.path.isdir(target_root):
         if args.create or prompt_yes_no("Target missing. Create?", default=False):

@@ -1561,6 +1561,13 @@ set -e
 assert_true "check_intake_template_parity --scope=us-0132 passes (US-0132)" "[ \"$US0132_PARITY_PY\" -eq 0 ]"
 assert_true "US-0132 contract tests pass" "[ \"$US0132_CONTRACT_PY\" -eq 0 ]"
 
+# 26AG) BUG-0017 — OpenCode pack LF / Linux slash commands (EOL / CR inventory)
+set +e
+"$PY" -m pytest tests/bug0017_opencode_eol_test.py -q >/dev/null 2>&1
+BUG0017_CONTRACT_PY=$?
+set -e
+assert_true "BUG-0017 OpenCode EOL contract tests pass" "[ \"$BUG0017_CONTRACT_PY\" -eq 0 ]"
+
 timestamp=$(date -u +"%Y-%m-%dT%H:%M:%SZ")
 {
   echo "# its-magic Test Report"

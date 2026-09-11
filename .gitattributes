@@ -2,3 +2,12 @@
 # BUG-0008: manifest line-based parsing uses exact [section] matches — CRLF breaks Linux global installs.
 *.sh text eol=lf
 *.manifest text eol=lf
+
+# BUG-0017: OpenCode pack text must stay LF so Linux OpenCode YAML frontmatter parses
+# (CRLF → empty parseOption → silent slash-command skip). Scoped only — never repo-wide *.md.
+.opencode/**/*.md text eol=lf
+.opencode/**/*.ts text eol=lf
+.opencode/**/*.json text eol=lf
+template/.opencode/**/*.md text eol=lf
+template/.opencode/**/*.ts text eol=lf
+template/.opencode/**/*.json text eol=lf
