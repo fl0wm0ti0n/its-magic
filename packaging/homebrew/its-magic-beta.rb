@@ -2,9 +2,9 @@ class ItsMagicBeta < Formula
   desc "its-magic - AI dev team workflow (beta)"
   homepage "https://github.com/USER/its-magic"
   # UPDATE: url and sha256 after each beta release
-  url "https://github.com/USER/its-magic/archive/refs/tags/v0.1.3-7.tar.gz"
-  sha256 "29390f3a3a1c2e4fb8d19d88d57c947437f5b719da2042b6efd1a1f7e1528fbf"
-  version "0.1.3-7"
+  url "https://github.com/fl0wm0ti0n/its-magic/archive/refs/tags/v0.1.3-8.tar.gz"
+  sha256 "6e87697e52b62daac6e0740c6ae06a8b3832a4ec6ca9f83a915e8edd3acde138"
+  version "0.1.3-8"
   license "MIT"
 
   conflicts_with "its-magic", because: "beta and stable share the same binary"
@@ -39,58 +39,3 @@ class ItsMagicBeta < Formula
     system "#{bin}/its-magic", "--target", testpath, "--mode", "missing"
   end
 end
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
