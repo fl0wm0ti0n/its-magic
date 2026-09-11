@@ -193,6 +193,53 @@ def filter_model_keys(mapping: Mapping[str, str]) -> Dict[str, str]:
     return {k: v for k, v in mapping.items() if not is_model_key(k)}
 
 
+def strip_jsonc(text: str) -> str:
+    """Strip `//` line comments and `/* */` block comments from JSONC text.
+
+    Does not strip `//` or `/*` that appear inside JSON strings. Newlines inside
+    block comments are preserved so `json.loads` error line numbers stay useful.
+    """
+    out: List[str] = []
+    i = 0
+    n = len(text or "")
+    in_string = False
+    escape = False
+    while i < n:
+        ch = text[i]
+        if in_string:
+            out.append(ch)
+            if escape:
+                escape = False
+            elif ch == "\\":
+                escape = True
+            elif ch == '"':
+                in_string = False
+            i += 1
+            continue
+        if ch == '"':
+            in_string = True
+            out.append(ch)
+            i += 1
+            continue
+        if ch == "/" and i + 1 < n:
+            nxt = text[i + 1]
+            if nxt == "/":
+                i += 2
+                while i < n and text[i] not in "\n\r":
+                    i += 1
+                continue
+            if nxt == "*":
+                i += 2
+                while i + 1 < n and not (text[i] == "*" and text[i + 1] == "/"):
+                    out.append(text[i] if text[i] in "\n\r" else " ")
+                    i += 1
+                i += 2
+                continue
+        out.append(ch)
+        i += 1
+    return "".join(out)
+
+
 def parse_scratchpad_text(text: str) -> Dict[str, str]:
     out: Dict[str, str] = {}
     for raw in text.splitlines():
@@ -246,7 +293,7 @@ def _load_kit_json(path: Path, diagnostics: List[str]) -> Optional[Dict]:
         return None
     try:
         raw = path.read_text(encoding="utf-8")
-        data = json.loads(raw)
+        data = json.loads(strip_jsonc(raw))
     except json.JSONDecodeError as exc:
         diagnostics.append(f"{HOST_CONFIG_INVALID}: malformed JSON at {path}: {exc}")
         raise HostConfigError(HOST_CONFIG_INVALID, f"malformed JSON at {path}") from exc
@@ -599,5 +646,6 @@ __all__ = [
     "reject_opencode_json_governance_dump",
     "resolve_runtime_config",
     "shared_kernel_modules",
+    "strip_jsonc",
     "unsupported_capability_reason",
 ]

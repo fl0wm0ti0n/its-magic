@@ -216,6 +216,24 @@ choose_mode() {
   esac
 }
 
+kit_config_postinstall() {
+  target_root="$1"
+  mode="$2"
+  installer_py="$SCRIPT_DIR/installer.py"
+  if [ ! -f "$installer_py" ]; then
+    printf "%s\n" "[HOST_CONFIG_INVALID] installer.py missing next to installer.sh."
+    exit 1
+  fi
+  if command -v python3 >/dev/null 2>&1; then
+    python3 "$installer_py" --kit-config-postinstall --target "$target_root" --mode "$mode" || exit $?
+  elif command -v python >/dev/null 2>&1; then
+    python "$installer_py" --kit-config-postinstall --target "$target_root" --mode "$mode" || exit $?
+  else
+    printf "%s\n" "[HOST_CONFIG_INVALID] PYTHON_NOT_FOUND: Python 3 is required for kit config materialization."
+    exit 1
+  fi
+}
+
 scratchpad_postinstall() {
   target_root="$1"
   mode="$2"
@@ -288,7 +306,7 @@ classify_file() {
     .cursor/hooks/*|.cursor/hooks.json|.cursor/scratchpad.local.example.md) echo "framework" ;;
     .cursor/model-catalog.local.example*.json) echo "framework" ;;
     .github/workflows/*|scripts/validate-and-push*|scripts/sync_push_gates.py|docs/engineering/context/*|its_magic/*) echo "framework" ;;
-    .its-magic-version|its_magic/.its-magic-version|its_magic/README.md) echo "framework" ;;
+    .its-magic-version|its_magic/.its-magic-version|its_magic/README.md|.its-magic/config.example.json) echo "framework" ;;
     docs/product/*|docs/engineering/*|docs/user-guides/*) echo "user-data" ;;
     sprints/*|handoffs/*|decisions/*) echo "user-data" ;;
     *) echo "framework" ;;
@@ -788,6 +806,7 @@ if [ "$MODE" = "upgrade" ]; then
     fi
   done
 
+  kit_config_postinstall "$TARGET_ROOT" "upgrade"
   scratchpad_postinstall "$TARGET_ROOT" "upgrade"
   opencode_model_catalog_apply "$TARGET_ROOT"
   validate_install_completeness "$TARGET_ROOT"
@@ -871,6 +890,7 @@ for rel in $FILES; do
   fi
 done
 
+kit_config_postinstall "$TARGET_ROOT" "$MODE"
 scratchpad_postinstall "$TARGET_ROOT" "$MODE"
 opencode_model_catalog_apply "$TARGET_ROOT"
 validate_install_completeness "$TARGET_ROOT"

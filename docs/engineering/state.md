@@ -1175,4 +1175,15 @@
 - publish skipped (RELEASE_PUBLISH_MODE=confirm)
 - Autonomy breadcrumb: orchestrator MUST Task-spawn. post-subagent continuation. phase-role stop is not run terminal. native chain supersedes Option B. Nothing further schedulable after sovereign converged.
 
+## Quick checkpoint — Q0003 kit config JSONC + upgrade copy (role=dev)
 
+- phase_id=quick
+- role=dev
+- timestamp=2026-09-10T19:56:14Z
+- fresh_context_marker=dev-Q0003-quick-20260910T195614Z-fresh
+- acceptance_met=true
+- result=JSONC shared catalog filled; ps1/sh kit-config-postinstall; template-only upgrade copy fixed
+- evidence_ref=sprints/quick/Q0003/task.json; sprints/quick/Q0003/summary.md; tests/q0003_kit_config_example_test.py
+- isolation: phase_id=quick; role=dev; fresh_context_marker=dev-Q0003-quick-20260910T195614Z-fresh; evidence_ref as above
+- US-0131/US-0132/BUG-0015/BUG-0016 not reopened; story status not flipped
+- tests=17 passed (us0131 + q0003)

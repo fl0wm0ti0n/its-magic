@@ -150,7 +150,7 @@ function List-SourceFiles($SourceRoot, $IncludePaths) {
     if (Test-Path $src -PathType Leaf) {
       $files.Add($rel)
     } elseif (Test-Path $src -PathType Container) {
-      Get-ChildItem -Path $src -Recurse -File | ForEach-Object {
+      Get-ChildItem -Path $src -Recurse -File -Force | ForEach-Object {
         $relPath = $_.FullName.Substring($SourceRoot.Length).TrimStart("\","/")
         $files.Add($relPath)
       }
@@ -209,6 +209,7 @@ function Classify-File($RelPath) {
   $frameworkExact = @(
     '.cursor/hooks.json',
     '.cursor/scratchpad.local.example.md',
+    '.its-magic/config.example.json',
     '.cursor/model-catalog.local.example.json',
     '.cursor/model-catalog.local.example.cursor-only.json',
     '.cursor/model-catalog.local.example.level-1-easy.json',
@@ -577,6 +578,25 @@ function Get-AppVersion($SourceRoot) {
   return "unknown"
 }
 
+function Invoke-KitConfigPostinstall {
+  param(
+    [string]$TargetRoot,
+    [string]$Mode
+  )
+  $installerPy = Join-Path $scriptDir "installer.py"
+  if (-not (Test-Path $installerPy -PathType Leaf)) {
+    Write-Host "[HOST_CONFIG_INVALID] installer.py missing next to installer.ps1."
+    exit 1
+  }
+  $py = Get-Command python -ErrorAction SilentlyContinue
+  if (-not $py) {
+    Write-Host "[HOST_CONFIG_INVALID] PYTHON_NOT_FOUND: Python is required for kit config materialization."
+    exit 1
+  }
+  & python $installerPy --kit-config-postinstall --target $TargetRoot --mode $Mode
+  if ($LASTEXITCODE -ne 0) { exit $LASTEXITCODE }
+}
+
 function Invoke-ScratchpadPostinstall {
   param(
     [string]$TargetRoot,
@@ -893,6 +913,7 @@ if ($mode -eq "upgrade") {
     }
   }
 
+  Invoke-KitConfigPostinstall -TargetRoot $targetRoot -Mode "upgrade"
   Invoke-ScratchpadPostinstall -TargetRoot $targetRoot -Mode "upgrade"
   Invoke-OpencodeModelCatalogHook -TargetRoot $targetRoot
   Invoke-InstallCompletenessValidation -TargetRoot $targetRoot
@@ -985,6 +1006,7 @@ foreach ($rel in $files) {
   }
 }
 
+Invoke-KitConfigPostinstall -TargetRoot $targetRoot -Mode $mode
 Invoke-ScratchpadPostinstall -TargetRoot $targetRoot -Mode $mode
 Invoke-OpencodeModelCatalogHook -TargetRoot $targetRoot
 Invoke-InstallCompletenessValidation -TargetRoot $targetRoot

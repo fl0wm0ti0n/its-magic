@@ -2,18 +2,18 @@
   "schema_version": 2,
   "tiers": {
     "cheap": "composer-2.5",
-    "balanced": "grok-4-6-high",
-    "strong": "claude-opus-4.8"
+    "balanced": "cursor-grok-4.6-high",
+    "strong": "gpt-5.6-sol-high"
   },
   "roles": {
-    "po": "claude-opus-4.8",
-    "sa": "claude-opus-4.8",
-    "dev": "grok-4-6-high",
-    "dev_difficult": "claude-opus-4.8",
-    "qa": "grok-4-6-high",
-    "security": "claude-opus-4.8",
+    "po": "gpt-5.6-sol-high",
+    "sa": "gpt-5.6-sol-high",
+    "dev": "cursor-grok-4.6-high",
+    "dev_difficult": "gpt-5.6-sol-high",
+    "qa": "cursor-grok-4.6-high",
+    "security": "claude-fable-5-1-thinking-high",
     "release": "composer-2.5-fast",
-    "critic": "composer-2.5-fast"
+    "critic": "gpt-5.6-luna-medium"
   },
   "notes": "Role-based balanced preset — Cursor subscription Task/subagent slugs only (US-0102 / DEC-0087), aligned 2026-08-24. No custom API key. These are machine IDs (kebab-case), not Settings display names (Composer 2.5 Fast ≠ composer-2.5-fast). Mix: Claude Opus 4.8 (PO, SA, difficult DEV, Security, strong tier); Grok 4.6 High (DEV, QA, balanced tier); Composer 2.5 (cheap tier); Composer 2.5 Fast (Release). Copy to .cursor/model-catalog.local.json and set MODEL_RESOLVE=role_catalog. Confirm IDs in Settings → Models if your Cursor build differs."
 }

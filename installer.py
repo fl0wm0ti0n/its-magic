@@ -571,19 +571,35 @@ def run_scratchpad_postinstall(target_root, source_root, mode, print_ok=True):
     return ok
 
 
+def resolve_kit_config_example_src(source_root):
+    """Return the first existing kit example path (root or template/ nested).
+
+    Packaged npm layout uses source_root=template/ with the example at
+    `.its-magic/config.example.json`. When source_root is the package root,
+    the example lives at `template/.its-magic/config.example.json`. Try both.
+    """
+    candidates = (
+        os.path.join(source_root, KIT_CONFIG_EXAMPLE_REL),
+        os.path.join(source_root, "template", KIT_CONFIG_EXAMPLE_REL),
+    )
+    for path in candidates:
+        if os.path.isfile(path):
+            return path
+    return None
+
+
 # Host-neutral kit config example refresh (kernel post-install).
 def materialize_kit_config_example(target_root, source_root, print_ok=True):
     """Refresh framework-owned `.its-magic/config.example.json`.
 
     Never touches `.its-magic/config.local.json` or `.cursor/scratchpad.local.md`.
     """
-    src = os.path.join(source_root, "template", KIT_CONFIG_EXAMPLE_REL)
-    if not os.path.isfile(src):
-        alt = os.path.join(source_root, KIT_CONFIG_EXAMPLE_REL)
-        src = alt if os.path.isfile(alt) else src
-    if not os.path.isfile(src):
+    src = resolve_kit_config_example_src(source_root)
+    if not src:
+        nested = os.path.join(source_root, "template", KIT_CONFIG_EXAMPLE_REL)
+        direct = os.path.join(source_root, KIT_CONFIG_EXAMPLE_REL)
         print(
-            f"[HOST_CONFIG_INVALID] expected template file at {src}. "
+            f"[HOST_CONFIG_INVALID] expected template file at {direct} or {nested}. "
             "Reinstall its-magic package."
         )
         return False
@@ -1131,6 +1147,11 @@ def main():
         action="store_true",
         help=argparse.SUPPRESS,
     )
+    parser.add_argument(
+        "--kit-config-postinstall",
+        action="store_true",
+        help=argparse.SUPPRESS,
+    )
     parser.add_argument("--source-root", help=argparse.SUPPRESS)
     parser.add_argument(
         "--validate-install-completeness",
@@ -1167,6 +1188,24 @@ def main():
             print(f"[SCRATCHPAD_POSTINSTALL_ERROR] TARGET_MISSING: {target_root}")
             return 1
         ok = run_scratchpad_postinstall(target_root, source_root, mode, print_ok=True)
+        return 0 if ok else 1
+
+    if args.kit_config_postinstall:
+        target_root = normalize(args.target) if args.target else normalize(".")
+        mode = args.mode or "missing"
+        if mode not in ("missing", "overwrite", "interactive", "upgrade"):
+            print(
+                "[HOST_CONFIG_INVALID] INVALID_MODE: use --mode "
+                "missing|overwrite|interactive|upgrade with --kit-config-postinstall."
+            )
+            return 1
+        if not os.path.isdir(source_root):
+            print("[INSTALL_SOURCE_ERROR] template directory is missing. Reinstall its-magic package.")
+            return 1
+        if not os.path.isdir(target_root):
+            print(f"[HOST_CONFIG_INVALID] TARGET_MISSING: {target_root}")
+            return 1
+        ok = run_kit_config_postinstall(target_root, source_root, mode, print_ok=True)
         return 0 if ok else 1
 
     if args.validate_install_completeness:

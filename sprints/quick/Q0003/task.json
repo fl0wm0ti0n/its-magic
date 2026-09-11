@@ -1,0 +1,10 @@
+{
+  "task": "Fill .its-magic/config.example.json with all missing shared settings (JSONC comments) and fix its-magic upgrade so template kit config is copied into the live .its-magic/ path.",
+  "acceptance": [
+    "Root and template .its-magic/config.example.json are byte-identical JSONC catalogs with all shared KEY=VAL settings (no MODEL_*/MODEL_TIER_*, no secrets, host_overlays empty).",
+    "strip_jsonc is used before json.loads in _load_kit_json; // inside strings is preserved; HOST_CONFIG_INVALID remains for malformed JSON.",
+    "installer.ps1/sh call --kit-config-postinstall on upgrade/missing/overwrite/interactive; upgrade from a template-only source copies example bytes and does not overwrite config.local.json."
+  ],
+  "status": "done",
+  "acceptance_met": true
+}
