@@ -1,0 +1,66 @@
+{
+  "selected_pack": "small-intake-pack",
+  "intake_run_id": "cursor-20260911-BUG0017-intake",
+  "writer_id": "po-cursor-20260911-BUG0017-intake",
+  "INTAKE_GUIDED_MODE": 1,
+  "INTAKE_WORK_ITEM_KIND": "bug",
+  "requested_mode": "bug",
+  "intake_boundary_utc": "2026-09-11T18:51:00Z",
+  "ID_NAMESPACE_BOOTSTRAP": 0,
+  "bug_id": "BUG-0017",
+  "asked_topics": [
+    "outcome_success_criteria",
+    "impacted_components",
+    "constraints_compatibility_risks",
+    "required_tests_acceptance_checks",
+    "done_definition"
+  ],
+  "missing_topics": [],
+  "assumptions_confirmed": "(none)",
+  "topic_coverage": [
+    {
+      "topic_key": "outcome_success_criteria",
+      "satisfied_by": "answer_ref",
+      "quoted_user_text": "OpenCode on Linux does not offer/recognize any its-magic slash commands (/auto, /intake, etc.) even though files exist under .opencode/commands/.",
+      "intake_run_id": "cursor-20260911-BUG0017-intake",
+      "turn_index": 0,
+      "ref": "ie:cursor-20260911-BUG0017-intake:0:6a56b0d3509f6703"
+    },
+    {
+      "topic_key": "impacted_components",
+      "satisfied_by": "answer_ref",
+      "quoted_user_text": "Proven on root@docker-dmz project strategy_trading_bot: file .opencode/commands/auto.md shows ASCII text with CRLF line terminators; od -c shows CR LF after --- and every frontmatter line.",
+      "intake_run_id": "cursor-20260911-BUG0017-intake",
+      "turn_index": 1,
+      "ref": "ie:cursor-20260911-BUG0017-intake:1:46a63fdc2c4b8296"
+    },
+    {
+      "topic_key": "constraints_compatibility_risks",
+      "satisfied_by": "answer_ref",
+      "quoted_user_text": "Same failure class as BUG-0008 (CRLF breaking Linux consumers). .gitattributes currently only forces LF for *.sh and *.manifest, NOT .opencode/**/*.md. Agents/plugin also CRLF in kit checkout. Windows often still works.",
+      "intake_run_id": "cursor-20260911-BUG0017-intake",
+      "turn_index": 2,
+      "ref": "ie:cursor-20260911-BUG0017-intake:2:24a8702c52d3b732"
+    },
+    {
+      "topic_key": "required_tests_acceptance_checks",
+      "satisfied_by": "answer_ref",
+      "quoted_user_text": "Distinct from BUG-0015 (plugin dispatch attach) DONE and BUG-0016 (Layer-1 permissions) DONE. Fix should LF-normalize OpenCode command/agent/plugin markdown (gitattributes and/or publish guards) so YAML frontmatter parses on Linux.",
+      "intake_run_id": "cursor-20260911-BUG0017-intake",
+      "turn_index": 3,
+      "ref": "ie:cursor-20260911-BUG0017-intake:3:e4c39fb1b1bdead9"
+    },
+    {
+      "topic_key": "done_definition",
+      "satisfied_by": "answer_ref",
+      "quoted_user_text": "Done when Linux OpenCode lists and recognizes /auto, /intake, and peer slash commands from .opencode/commands/*.md (LF or equivalent defensive parse), with contract/gitattributes/parity checks proving no CRLF in shipped OpenCode markdown.",
+      "intake_run_id": "cursor-20260911-BUG0017-intake",
+      "turn_index": 4,
+      "ref": "ie:cursor-20260911-BUG0017-intake:4:80343dc79b439436"
+    }
+  ],
+  "duplicate_check_pass": true,
+  "duplicate_check_notes": "Distinct from BUG-0008 (installer manifest CRLF), BUG-0015 DONE (plugin dispatch), BUG-0016 DONE (Layer-1 permissions). Same CRLF failure class as BUG-0008 but different consumer: OpenCode YAML frontmatter for slash commands under .opencode/commands/.",
+  "decomposition_verdict": "single_bug",
+  "decomposition_rationale": "Bounded defect: line-ending normalization for OpenCode pack markdown so Linux OpenCode loads slash commands. Single independently testable vertical slice; no feature split needed."
+}

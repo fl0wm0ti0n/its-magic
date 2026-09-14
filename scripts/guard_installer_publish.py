@@ -7,6 +7,7 @@ BUG-0017: reject CR bytes in OpenCode pack inventory (CRLF breaks Linux OpenCode
 
 from __future__ import annotations
 
+import json
 import shutil
 import subprocess
 import sys
@@ -133,6 +134,101 @@ def main() -> int:
             "(Python CRLF + token checks still enforced).",
             file=sys.stderr,
         )
+    standalone = _reject_standalone_in_kit_publish()
+    if standalone != 0:
+        return standalone
+    return 0
+
+
+def _path_mentions_standalone(entry: object) -> bool:
+    text = str(entry).replace("\\", "/").strip()
+    if text in {"standalone", "standalone/", "./standalone", "./standalone/"}:
+        return True
+    parts = [p for p in text.split("/") if p and p != "."]
+    return bool(parts) and parts[0] == "standalone"
+
+
+def _reject_standalone_in_kit_publish() -> int:
+    """US-0133 / DEC-0133: kit npm `its-magic` must omit standalone/ (fail-closed)."""
+    pkg_path = ROOT / "package.json"
+    if not pkg_path.is_file():
+        return 0
+    try:
+        pkg = json.loads(pkg_path.read_text(encoding="utf-8"))
+    except json.JSONDecodeError as exc:
+        print(f"guard_installer_publish: package.json is not valid JSON: {exc}", file=sys.stderr)
+        return 1
+    if pkg.get("name") != "its-magic":
+        return 0
+    files = pkg.get("files", [])
+    if not isinstance(files, list):
+        print("guard_installer_publish: package.json files must be an array", file=sys.stderr)
+        return 1
+    for entry in files:
+        if _path_mentions_standalone(entry):
+            print(
+                "guard_installer_publish: kit package.json files must omit standalone/ (US-0133).",
+                file=sys.stderr,
+            )
+            return 1
+    workspaces = pkg.get("workspaces", [])
+    workspace_entries: list[object] = []
+    if isinstance(workspaces, list):
+        workspace_entries = workspaces
+    elif isinstance(workspaces, dict):
+        workspace_entries = list(workspaces.get("packages", []))
+    for entry in workspace_entries:
+        if _path_mentions_standalone(entry):
+            print(
+                "guard_installer_publish: kit package.json workspaces must not include standalone/ (US-0133).",
+                file=sys.stderr,
+            )
+            return 1
+    npm = shutil.which("npm")
+    if not npm:
+        print(
+            "guard_installer_publish: npm not on PATH; skipping tarball inventory "
+            "(package.json files omit-check still enforced).",
+            file=sys.stderr,
+        )
+        return 0
+    packed = subprocess.run(
+        [npm, "pack", "--dry-run", "--json"],
+        cwd=ROOT,
+        capture_output=True,
+        text=True,
+        encoding="utf-8",
+        errors="replace",
+    )
+    if packed.returncode != 0:
+        print(
+            "guard_installer_publish: npm pack --dry-run failed; cannot verify "
+            "standalone/ omitted from tarball.\n"
+            + (packed.stderr or packed.stdout or ""),
+            file=sys.stderr,
+        )
+        return 1
+    try:
+        payload = json.loads(packed.stdout or "[]")
+    except json.JSONDecodeError as exc:
+        print(
+            f"guard_installer_publish: npm pack --json was not valid JSON: {exc}",
+            file=sys.stderr,
+        )
+        return 1
+    items = payload if isinstance(payload, list) else [payload]
+    for item in items:
+        if not isinstance(item, dict):
+            continue
+        for file_row in item.get("files", []):
+            path = file_row.get("path") if isinstance(file_row, dict) else file_row
+            if _path_mentions_standalone(path):
+                print(
+                    "guard_installer_publish: published tarball inventory includes "
+                    f"{path} — kit files must omit standalone/ (US-0133).",
+                    file=sys.stderr,
+                )
+                return 1
     return 0
 
 

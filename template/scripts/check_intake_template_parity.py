@@ -23,6 +23,7 @@ Scoped modes (DEC-0073 §10 / US-0090):
   --scope=sovereign-convergence  US-0110 convergence lib + validator pair table.
   --scope=bug-0015               BUG-0015 OpenCode /auto dispatch attach surfaces.
   --scope=bug-0016               BUG-0016 OpenCode Layer-1 agent permission surfaces.
+  --scope=bug-0019               BUG-0019 OpenCode /auto slash listing surfaces.
   --scope=all              union of all tables.
 """
 
@@ -604,10 +605,6 @@ BUG0015_PAIRS: tuple[tuple[str, str], ...] = (
         "template/.opencode/plugins/orchestrator.ts",
     ),
     (
-        ".opencode/commands/auto.md",
-        "template/.opencode/commands/auto.md",
-    ),
-    (
         "scripts/opencode_auto_bridge.py",
         "template/scripts/opencode_auto_bridge.py",
     ),
@@ -618,6 +615,118 @@ BUG0015_PAIRS: tuple[tuple[str, str], ...] = (
     (
         "docs/engineering/runbook.md",
         "template/docs/engineering/runbook.md",
+    ),
+)
+
+# BUG-0019 additive: OpenCode /auto TUI slash listing surfaces (keep BUG0015 orchestrator pair).
+BUG0019_PAIRS: tuple[tuple[str, str], ...] = (
+    (
+        ".opencode/plugins/its-magic-auto/index.ts",
+        "template/.opencode/plugins/its-magic-auto/index.ts",
+    ),
+    (
+        ".opencode/plugins/its-magic-auto/tui.ts",
+        "template/.opencode/plugins/its-magic-auto/tui.ts",
+    ),
+    (
+        ".opencode/plugins/orchestrator.ts",
+        "template/.opencode/plugins/orchestrator.ts",
+    ),
+    (
+        "tests/bug0019_opencode_auto_slash_listing_test.py",
+        "template/tests/bug0019_opencode_auto_slash_listing_test.py",
+    ),
+    (
+        "docs/engineering/runbook.md",
+        "template/docs/engineering/runbook.md",
+    ),
+    (
+        "docs/engineering/context/installer-owned-paths.manifest",
+        "template/docs/engineering/context/installer-owned-paths.manifest",
+    ),
+)
+
+# BUG-0020 additive: project tui.json CLI TUI load path (keep BUG0019_PAIRS).
+BUG0020_PAIRS: tuple[tuple[str, str], ...] = (
+    (
+        ".opencode/tui.json",
+        "template/.opencode/tui.json",
+    ),
+    (
+        ".opencode/plugins/orchestrator.ts",
+        "template/.opencode/plugins/orchestrator.ts",
+    ),
+    (
+        "tests/bug0020_opencode_desktop_command_info_listing_test.py",
+        "template/tests/bug0020_opencode_desktop_command_info_listing_test.py",
+    ),
+    (
+        "docs/engineering/runbook.md",
+        "template/docs/engineering/runbook.md",
+    ),
+    (
+        "docs/engineering/context/installer-owned-paths.manifest",
+        "template/docs/engineering/context/installer-owned-paths.manifest",
+    ),
+)
+
+# BUG-0021 additive: reshaped { id, tui } CLI TUI load (keep BUG0020_PAIRS / BUG0019_PAIRS).
+BUG0021_PAIRS: tuple[tuple[str, str], ...] = (
+    (
+        ".opencode/plugins/its-magic-auto/tui.ts",
+        "template/.opencode/plugins/its-magic-auto/tui.ts",
+    ),
+    (
+        ".opencode/tui.json",
+        "template/.opencode/tui.json",
+    ),
+    (
+        ".opencode/plugins/orchestrator.ts",
+        "template/.opencode/plugins/orchestrator.ts",
+    ),
+    (
+        "tests/bug0021_opencode_cli_tui_plugin_load_test.py",
+        "template/tests/bug0021_opencode_cli_tui_plugin_load_test.py",
+    ),
+    (
+        "docs/engineering/runbook.md",
+        "template/docs/engineering/runbook.md",
+    ),
+    (
+        "docs/engineering/context/installer-owned-paths.manifest",
+        "template/docs/engineering/context/installer-owned-paths.manifest",
+    ),
+)
+
+# BUG-0023 additive: shared Rpc.define dispatch (keep BUG0021_PAIRS / BUG0020_PAIRS / BUG0019_PAIRS).
+BUG0023_PAIRS: tuple[tuple[str, str], ...] = (
+    (
+        ".opencode/plugins/its-magic-auto/rpc.ts",
+        "template/.opencode/plugins/its-magic-auto/rpc.ts",
+    ),
+    (
+        ".opencode/plugins/its-magic-auto/tui.ts",
+        "template/.opencode/plugins/its-magic-auto/tui.ts",
+    ),
+    (
+        ".opencode/plugins/orchestrator.ts",
+        "template/.opencode/plugins/orchestrator.ts",
+    ),
+    (
+        "tests/bug0023_opencode_cli_tui_dispatch_rpc_test.py",
+        "template/tests/bug0023_opencode_cli_tui_dispatch_rpc_test.py",
+    ),
+    (
+        "tests/bug0023_dispatch_harness.mjs",
+        "template/tests/bug0023_dispatch_harness.mjs",
+    ),
+    (
+        "docs/engineering/runbook.md",
+        "template/docs/engineering/runbook.md",
+    ),
+    (
+        "docs/engineering/context/installer-owned-paths.manifest",
+        "template/docs/engineering/context/installer-owned-paths.manifest",
     ),
 )
 
@@ -729,6 +838,10 @@ SCOPES: dict[str, tuple[tuple[str, str], ...]] = {
     "arch-linkage": ARCH_LINKAGE_PAIRS,
     "bug-0015": BUG0015_PAIRS,
     "bug-0016": BUG0016_PAIRS,
+    "bug-0019": BUG0019_PAIRS,
+    "bug-0020": BUG0020_PAIRS,
+    "bug-0021": BUG0021_PAIRS,
+    "bug-0023": BUG0023_PAIRS,
     "us-0131": US0131_PAIRS,
     "us-0132": US0132_PAIRS,
     "all": (
@@ -758,6 +871,10 @@ SCOPES: dict[str, tuple[tuple[str, str], ...]] = {
         + ARCH_LINKAGE_PAIRS
         + BUG0015_PAIRS
         + BUG0016_PAIRS
+        + BUG0019_PAIRS
+        + BUG0020_PAIRS
+        + BUG0021_PAIRS
+        + BUG0023_PAIRS
         + US0131_PAIRS
         + US0132_PAIRS
     ),

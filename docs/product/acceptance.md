@@ -158,6 +158,22 @@
 - [x] US-0130: Operator-pinned sovereign-critic model — `MODEL_SOVEREIGN-CRITIC` + optional catalog `roles.critic`, `select_critic_model` precedence, keep degraded same-slug fallback, one global critic, example/installer compose, `test_us0130_*`, US-0104 schema unchanged (9 ACs)
 - [x] US-0131: Cross-host Its-Magic runtime configuration and parity — host-neutral shared config, Cursor scratchpad compatibility, OpenCode-only operation without `.cursor/`, shared validator/runtime behavior, installer preservation, and cross-host contract tests (8 ACs)
 - [x] US-0132: Explicit Cursor/OpenCode model configuration contract — canonical ownership and precedence for model catalogs, `opencode.json`, scratchpad model keys, installed-agent materialization, local-file protection, and fail-closed validation (8 ACs)
+- [x] US-0133: Standalone repository and replaceable Pi kernel — workspace, adapter boundary, custom-tool-only sessions, resource isolation, and hard-proof spike (6 ACs)
+- [x] US-0134: Existing kernel bridge and compatibility handshake — authoritative Python validators, artifact memory, version range, and fail-closed bridge (6 ACs)
+- [x] US-0135: Standalone authentication and model routing — Codex OAuth, API/custom providers, role precedence, thinking levels, critic collision, and credential safety (7 ACs)
+- [x] US-0136: Fresh role sessions and runtime attestation — phase-role enforcement, isolation proof, orchestrator restrictions, and crash-safe session lifecycle (7 ACs)
+- [x] US-0137: Owned tool broker, policy engine, and security boundary — role/path/shell controls, secrets, OS profiles, audit, and security tests (8 ACs)
+- [x] US-0138: Typed runtime configuration and legacy migration adapter — complete typed schema, precedence, scratchpad compatibility, secret policy, and validation (6 ACs)
+- [x] US-0139: Persistent code intelligence and bounded context engine — AFT adapter, indexed retrieval, context fusion/hashes, codebase map, benchmark, and stale recovery (8 ACs)
+- [x] US-0140: Canonical lifecycle and gate orchestrator — full phase graph, rework, release/closure ownership, artifact state, crash resume, and E2E gates (8 ACs)
+- [x] US-0141: Application runtime and pluggable execution backends — discovery, process management, local/Docker/WSL/SSH, tests, repair, and chaos coverage (8 ACs)
+- [x] US-0142: Owned browser UAT and evidence runtime — Playwright/CDP, typed actions, compatible UAT planning, complete evidence, credentials, and E2E tests (8 ACs)
+- [x] US-0143: Delivery routing and full-autonomy scheduler — standard/lean/quick routes, work-kind, phase precedence, drain, hard stops, ledgers, and tests (8 ACs)
+- [ ] US-0144: Sovereign memory, reviews, and convergence — decision ledger, bounded memory, critics, deferrals, evidence-based convergence, and contract tests (8 ACs)
+- [ ] US-0145: Parallel development, release/deploy, self-healing, and closure — worktree arbitration, resource caps, target gates, bounded repair, and ownership (9 ACs)
+- [ ] US-0146: CLI, TUI, and operational observability — operator commands, status/timeline, panels, metrics, responsive logs, and cross-platform integration tests (8 ACs)
+- [ ] US-0147: Installation, update, and existing-project adoption — fresh setup, non-destructive migration, host coexistence, docs, preservation, and lifecycle tests (8 ACs)
+- [ ] US-0148: Stable control protocol and recoverable daemon — versioned commands/events, reconnect, local security, reconciliation, protocol tests, and future-client boundary (8 ACs)
 
 ## Bug acceptance (canonical)
 
@@ -179,5 +195,13 @@ Per **`DEC-0061`** §8 / **`US-0079`**: portfolio checkbox rows **`- [ ]` / `- [
 - [x] BUG-0014: Sovereign-loop era features missing from README feature coverage catalog and legacy release_notes.md (UAT closure: `sprints/S-BUG0014/uat.json`, `sprints/S-BUG0014/uat.md`, verify-work **2026-07-03T20:05:00Z** / `orchestrator_run_id=auto-20260703-01`; release notes `handoffs/releases/S-BUG0014-release-notes.md`, queue **`S-BUG0014`** → **`released`**)
 - [x] BUG-0015: OpenCode `/auto` never triggers orchestrator plugin dispatch and stops at command STOP
 - [x] BUG-0016: OpenCode Layer-1 role permissions block required lifecycle validators/writes (matrix vs kit duties)
+- [x] BUG-0017: OpenCode on Linux ignores its-magic slash commands (CRLF breaks YAML frontmatter)
+- [x] BUG-0018: OpenCode markdown `/auto` wins over plugin execute (STOP, no OPENCODE_* code)
+- [x] BUG-0019: OpenCode slash palette has no `/auto` after plugin-only ownership (BUG-0018 residual listing)
+- [x] BUG-0020: OpenCode still has no invokable auto mode after BUG-0019 TUI keymap (Command.Info picker live-falsifies E*)
+- [x] BUG-0021: OpenCode CLI TUI still has no invokable /auto after BUG-0020 tui.json (C-limb live-falsified)
+- [ ] BUG-0022: `/auto` Task-spawns inherit parent chat model instead of role_catalog
+- [x] BUG-0023: OpenCode CLI TUI listed `/auto` toasts OPENCODE_AUTO_TUI_DISPATCH_UNSUPPORTED (dispatch live-falsified)
+- [ ] BUG-0024: OpenCode CLI TUI listed `/auto` still toasts OPENCODE_AUTO_TUI_DISPATCH_UNSUPPORTED after BUG-0023 Axis A (live dispatch falsified)
 
 Validator (backlog bugs + optional drift vs this section): `python scripts/bug_issue_validate.py --backlog docs/product/backlog.md --check-acceptance`.

@@ -93,6 +93,7 @@ unavailable). Guided and decision-gated modes remain the default.
 - `/usr` — Global Linux install fails: empty `install_include_paths` when manifest is CRLF (`BUG-0008`).
 - `/workdir` — installer.sh fails in shell path with `set: Illegal option -` (`BUG-0004`).
 - `MIGRATION` scratchpad flag — Smart Upgrade Mode (`US-0018`).
+- `/auto` — OpenCode pack LF so Linux slash commands parse (`BUG-0017`).
 - `US-0016` scratchpad flag — Homebrew Version Sync (`US-0016`).
 
 ## Setup
@@ -382,6 +383,8 @@ Generated test scaffolding + auto-run behavior (US-0066):
 - `/pause`, `/resume`, `/refresh-context`.
 - `/auto`: orchestration mode that spawns a fresh subagent per phase.
 - **US-0124**: OpenCode orchestrator plugin spawn-only `/auto` (Task-spawns US-0069 roles, never executes phase work in-session).
+- **BUG-0019** — OpenCode TUI slash lists `/auto` via `its-magic-auto/tui.ts` keymap after plugin-only ownership (`BUG-0018`); does not restore `auto.md`.
+- **BUG-0020** — OpenCode desktop Command.Info cannot list execute-only `/auto`; CLI TUI `/auto` via project `.opencode/tui.json` + desktop fail-closed `OPENCODE_AUTO_DESKTOP_COMMAND_INFO_LISTING_UNSUPPORTED`; does not restore `auto.md`.
 
 ### OpenCode host operator runbook (US-0126)
 
@@ -415,6 +418,53 @@ OpenCode Layer-1 agent frontmatter (`bash: ask` for po/tech-lead/curator; real
 duty paths) is aligned with kit phase contracts while preserving success test (c)
 (non-dev no production/code allow). See runbook / architecture `# BUG-0016` and
 `decisions/DEC-0122.md` §2.
+
+### OpenCode pack LF / Linux slash commands (BUG-0017)
+
+OpenCode markdown commands ship LF-only via scoped `.gitattributes` (never repo-wide `*.md`).
+Publish/CI fail-closed on CR. Consumers with existing CRLF trees run
+`its-magic --mode upgrade --host opencode|both`. See runbook **OpenCode pack LF / Linux slash commands (BUG-0017 / R-0118)** and architecture `# BUG-0017`.
+
+### OpenCode plugin-only `/auto` (BUG-0018)
+
+`.opencode/commands/auto.md` is removed so markdown cannot own `/auto`. Plugin
+`editor.add({ name: "auto", execute })` → `runAutoLifecycle` remains the sole owner.
+Leftover consumer `auto.md` fail-closes with `OPENCODE_AUTO_MARKDOWN_COLLISION`; prune with
+`its-magic --mode upgrade --host opencode|both`. See runbook **OpenCode markdown `/auto` vs plugin execute (BUG-0018 / R-0120)** and architecture `# BUG-0018`.
+
+### OpenCode `/auto` TUI slash listing (BUG-0019)
+
+After BUG-0018 prune, plugin `editor.add` is the sole execute owner but the OpenCode
+TUI slash palette does not discover execute-only commands. Sibling
+`.opencode/plugins/its-magic-auto/tui.ts` keymap `slash`/`slashName` `"auto"` lists
+`/auto` in CLI TUI; `run()` dispatches to plugin execute → `runAutoLifecycle`.
+Colliding `auto.md` is not restored. Fail-closed `OPENCODE_AUTO_SLASH_LISTING_UNSUPPORTED`
+when listing is missing. Upgrade copies listing files and still prunes leftover `auto.md`.
+See runbook **OpenCode `/auto` slash listing after plugin-only ownership (BUG-0019 / R-0124)**
+and architecture `# BUG-0019`.
+
+### OpenCode desktop Command.Info `/auto` listing (BUG-0020)
+
+After BUG-0019 E*, desktop Command.Info still cannot list execute-only `/auto`.
+Project `.opencode/tui.json` loads CLI TUI `/auto` via `./plugins/its-magic-auto/tui.ts`.
+Desktop operators see `OPENCODE_AUTO_DESKTOP_COMMAND_INFO_LISTING_UNSUPPORTED` (not a silent miss).
+Do not restore `.opencode/commands/auto.md`. Upgrade copies/merges `tui.json` and still prunes leftover `auto.md`.
+See runbook **OpenCode desktop Command.Info `/auto` listing (BUG-0020 / R-0126)** and architecture `# BUG-0020`.
+
+### Unpublished standalone Pi kernel workspace (US-0133)
+
+In-tree unpublished `standalone/` npm workspaces with owned `AgentKernel` in
+`packages/pi-kernel`. Kit `files` omit `standalone/`. Additive CI job
+`standalone` (Windows+Linux, Node 22). Not an npm/GitHub/Homebrew/Chocolatey
+publish. Operator details: `docs/engineering/runbook.md` → **Unpublished
+standalone Pi kernel workspace (US-0133 / R-0121)**.
+
+### KernelBridge consume contract (US-0134)
+
+In-tree unpublished `@its-magic/kernel-bridge` under `standalone/packages/kernel-bridge`.
+Explicit `supported-kernel-range.json` plus four `KERNEL_*` handshake codes. Kit `files`
+omit `standalone/`. Operator details: `docs/engineering/runbook.md` → **KernelBridge consume
+contract + upgrade (US-0134 / R-0122 / DEC-0134)**.
 
 ### Guided intake behavior (US-0033)
 

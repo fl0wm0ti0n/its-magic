@@ -1,0 +1,19 @@
+{
+	"name": "@its-magic/config",
+	"version": "0.0.0",
+	"private": true,
+	"type": "module",
+	"description": "Owned RuntimeConfig resolver + LegacyScratchpadAdapter. No Pi SDK imports.",
+	"engines": {
+		"node": ">=22.19.0"
+	},
+	"exports": {
+		".": "./src/index.ts"
+	},
+	"dependencies": {
+		"@its-magic/auth-models": "0.0.0",
+		"@its-magic/policy-engine": "0.0.0",
+		"@its-magic/role-runtime": "0.0.0",
+		"zod": "4.1.12"
+	}
+}

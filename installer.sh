@@ -323,6 +323,113 @@ is_model_config_preserve() {
   esac
 }
 
+# BUG-0018: targeted prune of leftover colliding markdown /auto (not a sweeper).
+RETIRED_OPENCODE_AUTO_MD=".opencode/commands/auto.md"
+
+prune_retired_opencode_auto_md() {
+  target_root="$1"
+  source_root="$2"
+  host="$3"
+  case "$host" in
+    opencode|both) ;;
+    *) return 0 ;;
+  esac
+  src="$source_root/$RETIRED_OPENCODE_AUTO_MD"
+  [ -f "$src" ] && return 0
+  dst="$target_root/$RETIRED_OPENCODE_AUTO_MD"
+  [ -f "$dst" ] || return 0
+  if rm -f "$dst"; then
+    return 0
+  fi
+  printf '%s\n' "[OPENCODE_AUTO_MARKDOWN_COLLISION] leftover $RETIRED_OPENCODE_AUTO_MD could not be removed; delete the file then re-run upgrade --host opencode|both"
+}
+
+# BUG-0019: copy TUI listing files onto already-pruned consumers (not a sweeper).
+# BUG-0021: overwrite tui.ts even when dest exists (`cp -f`, not copy-if-absent).
+# BUG-0023: also overwrite rpc.ts + orchestrator.ts (dispatch path, not copy-if-absent).
+copy_opencode_auto_listing_surface() {
+  target_root="$1"
+  source_root="$2"
+  host="$3"
+  case "$host" in
+    opencode|both) ;;
+    *) return 0 ;;
+  esac
+  for rel in .opencode/plugins/its-magic-auto/index.ts .opencode/plugins/its-magic-auto/tui.ts .opencode/plugins/its-magic-auto/rpc.ts .opencode/plugins/orchestrator.ts; do
+    src="$source_root/$rel"
+    if [ ! -f "$src" ]; then
+      src="$source_root/template/$rel"
+    fi
+    [ -f "$src" ] || continue
+    dst="$target_root/$rel"
+    mkdir -p "$(dirname "$dst")"
+    cp -f "$src" "$dst"
+  done
+}
+
+# BUG-0020: copy-if-absent / JSONC-merge project tui.json (CLI TUI load path).
+OPENCODE_TUI_JSON=".opencode/tui.json"
+OPENCODE_TUI_PLUGIN_SPEC="./plugins/its-magic-auto/tui.ts"
+
+is_opencode_tui_json_merge_path() {
+  [ "$1" = "$OPENCODE_TUI_JSON" ]
+}
+
+copy_or_merge_opencode_tui_json() {
+  target_root="$1"
+  source_root="$2"
+  host="$3"
+  case "$host" in
+    opencode|both) ;;
+    *) return 0 ;;
+  esac
+  rel="$OPENCODE_TUI_JSON"
+  src="$source_root/$rel"
+  if [ ! -f "$src" ]; then
+    src="$source_root/template/$rel"
+  fi
+  [ -f "$src" ] || return 0
+  dst="$target_root/$rel"
+  if [ ! -f "$dst" ]; then
+    mkdir -p "$(dirname "$dst")"
+    cp -f "$src" "$dst"
+    return 0
+  fi
+  grep -F -q "$OPENCODE_TUI_PLUGIN_SPEC" "$dst" && return 0
+  tmp="$dst.its-magic-tui-merge.$$"
+  if grep -Eq '"plugin"[[:space:]]*:' "$dst"; then
+    awk -v spec="$OPENCODE_TUI_PLUGIN_SPEC" '
+      BEGIN { inserted=0 }
+      {
+        if (!inserted && $0 ~ /"plugin"[[:space:]]*:[[:space:]]*\[/) {
+          if ($0 ~ /\[\]/) {
+            sub(/\[\]/, "[\n    \"" spec "\"\n  ]")
+            inserted=1
+          } else if ($0 ~ /\[/) {
+            sub(/\[/, "[\n    \"" spec "\",")
+            inserted=1
+          }
+        }
+        print
+      }
+    ' "$dst" > "$tmp" && mv "$tmp" "$dst"
+  else
+    awk -v spec="$OPENCODE_TUI_PLUGIN_SPEC" '
+      { lines[NR]=$0 }
+      END {
+        last=NR
+        while (last>0 && lines[last] !~ /}/) last--
+        for (i=1; i<=NR; i++) {
+          if (i==last && last>1) {
+            print "  ,\"plugin\": [\"" spec "\"]"
+          }
+          print lines[i]
+        }
+      }
+    ' "$dst" > "$tmp" && mv "$tmp" "$dst"
+  fi
+}
+
 clean_one_path() {
   target_root="$1"
   rel="$2"
@@ -790,6 +897,11 @@ if [ "$MODE" = "upgrade" ]; then
       continue
     fi
 
+    if is_opencode_tui_json_merge_path "$rel"; then
+      count_unchanged=$((count_unchanged + 1))
+      continue
+    fi
+
     if [ "$cat" = "framework" ]; then
       if cmp -s "$src" "$dst"; then
         count_unchanged=$((count_unchanged + 1))
@@ -818,6 +930,10 @@ if [ "$MODE" = "upgrade" ]; then
       continue
     fi
   done
+
+  copy_opencode_auto_listing_surface "$TARGET_ROOT" "$SOURCE_ROOT" "$HOST"
+  copy_or_merge_opencode_tui_json "$TARGET_ROOT" "$SOURCE_ROOT" "$HOST"
+  prune_retired_opencode_auto_md "$TARGET_ROOT" "$SOURCE_ROOT" "$HOST"
 
   kit_config_postinstall "$TARGET_ROOT" "upgrade"
   scratchpad_postinstall "$TARGET_ROOT" "upgrade"

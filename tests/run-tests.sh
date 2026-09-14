@@ -1568,6 +1568,90 @@ BUG0017_CONTRACT_PY=$?
 set -e
 assert_true "BUG-0017 OpenCode EOL contract tests pass" "[ \"$BUG0017_CONTRACT_PY\" -eq 0 ]"
 
+# 26AH) BUG-0018 — OpenCode plugin-only /auto (no colliding auto.md)
+set +e
+"$PY" -m pytest tests/bug0018_opencode_auto_ownership_test.py -q >/dev/null 2>&1
+BUG0018_CONTRACT_PY=$?
+set -e
+assert_true "BUG-0018 OpenCode auto ownership contract tests pass" "[ \"$BUG0018_CONTRACT_PY\" -eq 0 ]"
+
+# 26AH2) BUG-0019 — OpenCode TUI slash listing (compose; do not weaken)
+set +e
+"$PY" -m pytest tests/bug0019_opencode_auto_slash_listing_test.py -q >/dev/null 2>&1
+BUG0019_CONTRACT_PY=$?
+set -e
+assert_true "BUG-0019 OpenCode auto slash listing contract tests pass" "[ \"$BUG0019_CONTRACT_PY\" -eq 0 ]"
+
+# 26AH3) BUG-0020 — OpenCode desktop Command.Info listing vs CLI TUI tui.json
+set +e
+"$PY" -m pytest tests/bug0020_opencode_desktop_command_info_listing_test.py -q >/dev/null 2>&1
+BUG0020_CONTRACT_PY=$?
+set -e
+assert_true "BUG-0020 OpenCode desktop Command.Info listing contract tests pass" "[ \"$BUG0020_CONTRACT_PY\" -eq 0 ]"
+
+# 26AI) US-0133 — kit files omit standalone/ + import-boundary (not standalone npm test)
+set +e
+"$PY" -m pytest tests/us0133_contract_test.py -q >/dev/null 2>&1
+US0133_CONTRACT_PY=$?
+set -e
+assert_true "US-0133 kit contract tests pass" "[ \"$US0133_CONTRACT_PY\" -eq 0 ]"
+
+# 26AJ) US-0134 — kit files omit standalone/ + no Pi in kernel-bridge (not standalone npm test)
+set +e
+"$PY" -m pytest tests/us0134_contract_test.py -q >/dev/null 2>&1
+US0134_CONTRACT_PY=$?
+set -e
+assert_true "US-0134 kit contract tests pass" "[ \"$US0134_CONTRACT_PY\" -eq 0 ]"
+
+# 26AK) US-0135 — kit files omit standalone/ + no Pi in auth-models (not standalone npm test)
+set +e
+"$PY" -m pytest tests/us0135_contract_test.py -q >/dev/null 2>&1
+US0135_CONTRACT_PY=$?
+set -e
+assert_true "US-0135 kit contract tests pass" "[ \"$US0135_CONTRACT_PY\" -eq 0 ]"
+
+# 26AL) US-0136 — kit files omit standalone/ + no Pi in role-runtime (not standalone npm test)
+set +e
+"$PY" -m pytest tests/us0136_contract_test.py -q >/dev/null 2>&1
+US0136_CONTRACT_PY=$?
+set -e
+assert_true "US-0136 kit contract tests pass" "[ \"$US0136_CONTRACT_PY\" -eq 0 ]"
+
+# 26AM) US-0137 — kit files omit standalone/ + no Pi in policy-engine/tool-broker (not standalone npm test)
+set +e
+"$PY" -m pytest tests/us0137_contract_test.py -q >/dev/null 2>&1
+US0137_CONTRACT_PY=$?
+set -e
+assert_true "US-0137 kit contract tests pass" "[ \"$US0137_CONTRACT_PY\" -eq 0 ]"
+
+# 26AN) US-0138 — kit files omit standalone/ + no Pi in packages/config (not standalone npm test)
+set +e
+"$PY" -m pytest tests/us0138_contract_test.py -q >/dev/null 2>&1
+US0138_CONTRACT_PY=$?
+set -e
+assert_true "US-0138 kit contract tests pass" "[ \"$US0138_CONTRACT_PY\" -eq 0 ]"
+
+# 26AO) US-0141 — kit files omit standalone/ + no Pi in packages/app-runtime (not standalone npm test)
+set +e
+"$PY" -m pytest tests/us0141_contract_test.py -q >/dev/null 2>&1
+US0141_CONTRACT_PY=$?
+set -e
+assert_true "US-0141 kit contract tests pass" "[ \"$US0141_CONTRACT_PY\" -eq 0 ]"
+
+# 26AP) US-0142 — kit files omit standalone/ + no Pi in packages/browser-uat (not standalone npm test)
+set +e
+"$PY" -m pytest tests/us0142_contract_test.py -q >/dev/null 2>&1
+US0142_CONTRACT_PY=$?
+set -e
+assert_true "US-0142 kit contract tests pass" "[ \"$US0142_CONTRACT_PY\" -eq 0 ]"
+
+# 26AQ) US-0143 — kit files omit standalone/ + no Pi in packages/runtime-core scheduler lift (not standalone npm test)
+set +e
+"$PY" -m pytest tests/us0143_contract_test.py -q >/dev/null 2>&1
+US0143_CONTRACT_PY=$?
+set -e
+assert_true "US-0143 kit contract tests pass" "[ \"$US0143_CONTRACT_PY\" -eq 0 ]"
+
 timestamp=$(date -u +"%Y-%m-%dT%H:%M:%SZ")
 {
   echo "# its-magic Test Report"

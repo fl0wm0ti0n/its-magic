@@ -1,0 +1,6 @@
+node_modules/
+*.tsbuildinfo
+.runtime-isolation/
+
+# US-0140 operational SQLite (never commit)
+**/.its-magic/runtime/

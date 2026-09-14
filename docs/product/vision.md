@@ -1044,6 +1044,22 @@ AI coding assistants in Cursor lose context across sessions, produce fragmented 
 - **Evidence**: `handoffs/intake_evidence/BUG-0011-intake-20260606.json` (`[INTAKE_EVIDENCE_VALIDATION_OK]`); operator `/ask` comparing local `caveman.mdc` vs JuliusBrussee/caveman `SKILL.md`.
 - **Intake closure (2026-06-06, PO)**: Backlog **`BUG-0011`** **OPEN**; next **`/discovery`**.
 
+## Discovery Notes — BUG-0018
+
+- **Operator value proposition**: After BUG-0015 attach and BUG-0017 LF, operators on OpenCode invoke **`/auto`** and expect plugin **`execute`** → **`runAutoLifecycle`** so the phase→role chain starts — or a documented **`OPENCODE_*`** fail-closed. Live host still stops at markdown STOP with no reason code.
+- **Defect framing (discovery-locked)**:
+  - **Precedence gap, not missing attach**: plugin `editor.add({ name: "auto", execute })` **is in source**; markdown `.opencode/commands/auto.md` wins at runtime.
+  - **Distinct from BUG-0015 DONE** (attach was missing — now present; do not reopen).
+  - **Distinct from BUG-0017 DONE** (CRLF — live `auto.md` is LF; commands **are** offered).
+  - **Architecture `# BUG-0015` CF1** (“transform owns execute”) is **live-falsified** and must be superseded, not silently ignored.
+- **Product-facing constraints**:
+  - Thin **`auto.md`** stays STOP-only / no spawn literals (DEC-0125 DQ5 / BUG-0006); emptying the body is **not** enough if markdown still owns execution.
+  - Slash listing of `/auto` must remain after any markdown remove/rename (plugin `editor.add` or equivalent).
+  - Cursor Task-unavailable in a specific chat is **out of scope** (`NATIVE_CHAIN_UNAVAILABLE` / BUG-0006) — not a second OPEN bug.
+- **Discovery locks D1–D10**: see `docs/product/backlog.md` **`### BUG-0018`** `discovery_notes` and `handoffs/po_to_tl.md` discovery handoff.
+- **Done signal (operator)**: OpenCode `/auto` starts plugin execute / lifecycle, or fail-closes with documented `OPENCODE_*` instead of silent markdown STOP.
+- **Research asks**: DQ1–DQ8 for **`/research`** → new **`R-0120`** (compose **`R-0119`** / **`R-0114`**; do not wipe). Next phase **`research`** (tech-lead).
+
 ## Discovery Notes — BUG-0016
 
 - **Operator value proposition**: On an OpenCode host with the `.opencode/` pack installed, each role agent (`@po`, `@tech-lead`, …) can run the **kit-mandated Python validators** and **write owned phase artifacts** under Layer-1 host permissions — without granting non-dev roles production/code write (success test (c)).
@@ -2303,4 +2319,243 @@ AI coding assistants in Cursor lose context across sessions, produce fragmented 
   - **DQ6 (Harness marker — AC-5)**: Exact pytest marker / harness row name for US-0126 B-1 regression slice?
   - **DQ7 (`test_us0129_*` inventory — AC-5/AC-6)**: Exact test count, names, and fixture paths (synthetic mini-architecture vs replay `architecture-pack-20260825.md`)?
   - **DQ8 (Minimal stub shape — AC-3)**: What constitutes a "minimal H1 stub" restored from archive — heading line only vs heading + one linkage sentence vs full archived section cap?
+
+## Intake Notes — BUG-0019
+
+- **Bug**: OpenCode slash palette has no `/auto` after plugin-only ownership (BUG-0018 residual listing).
+- **Intake date**: 2026-09-12T17:26:00Z (UTC)
+- **Role / writer**: po / `po-cursor-20260912-BUG0019-intake`
+- **Pack**: `small-intake-pack` (`INTAKE_WORK_ITEM_KIND=bug` via argv `/intake bug`)
+- **Evidence**: `handoffs/intake_evidence/BUG-0019-intake-20260912.json` (`[INTAKE_EVIDENCE_VALIDATION_OK]`); **R-0123**
+- **Outcome**: Operator can select/invoke `/auto` in OpenCode **and** plugin `execute` → `runAutoLifecycle` (or documented `OPENCODE_*`). Do not restore STOP-only `auto.md`. Do not reopen BUG-0018. Cursor `.cursor/commands/auto.md` out of scope except do not prune.
+
+## Discovery Notes — BUG-0019
+
+- **Operator value proposition**: After BUG-0018 plugin-only `/auto` (colliding `.opencode/commands/auto.md` pruned), operators on OpenCode must **see and select `/auto` in the slash palette** (or equivalent host list) **and** have invocation start plugin `execute` → `runAutoLifecycle` — or fail-close with a documented `OPENCODE_*`. Today `/auto` is missing from the list while peer markdown commands remain.
+- **Defect framing (discovery-locked)**:
+  - **Listing/discovery gap, not missing attach**: plugin `editor.add({ name: "auto", execute })` **is in source**; `.opencode/commands/auto.md` is **absent by design**.
+  - **Distinct from BUG-0018 DONE** (markdown-wins STOP — collision gone; do not reopen ACs).
+  - **Distinct from BUG-0015 DONE** (attach was missing — now present).
+  - **Distinct from BUG-0017 DONE** (CRLF hid all commands — peers exist).
+  - **R-0120 DQ5** (“plugin name+description lists `/auto`”) and **R1 / `# BUG-0018` NB1** are **live-falsified** and must be superseded by additive `# BUG-0019`, not silently ignored.
+- **Product-facing constraints**:
+  - Must **not** restore STOP-only `.opencode/commands/auto.md` as a listing fix (recreates BUG-0018). Empty/no-STOP markdown is **not** sufficient if markdown still owns execution (v2: body is always the prompt template).
+  - Same-name JSON `commands.auto` with required `template` is a **collision risk** vs plugin `execute` — research must prove coexistence or reject.
+  - Peers that still have markdown files must remain listed.
+  - Cursor `.cursor/commands/auto.md` and `.opencode/agents/auto.md` — do not prune/touch.
+- **Discovery locks D1–D10**: see `docs/product/backlog.md` **`### BUG-0019`** `discovery_notes` and `handoffs/po_to_tl.md` discovery handoff.
+- **Done signal (operator)**: operator can choose `/auto` in the OpenCode list **and** lifecycle starts (or documented `OPENCODE_*`). Peers remain listed.
+- **Research asks**: DQ1–DQ8 for **`/research`** → new **`R-0124`** (compose **R-0123**; do not wipe **R-0120**; R1 listing residual live-falsified). Next phase **`research`** (tech-lead).
+
+## Intake Notes — BUG-0020
+
+- **Bug**: OpenCode still has no invokable auto mode after BUG-0019 TUI keymap (Command.Info picker live-falsifies E*).
+- **Intake date**: 2026-09-12T22:35:00Z (UTC); operator local 2026-09-13T00:35:00+02:00
+- **Role / writer**: po / `po-cursor-20260913-BUG0020-intake`
+- **Pack**: `small-intake-pack` (`INTAKE_WORK_ITEM_KIND=bug` via argv `/intake bug`)
+- **Evidence**: `handoffs/intake_evidence/BUG-0020-intake-20260913.json` (`[INTAKE_EVIDENCE_VALIDATION_OK]`); **R-0125**
+- **Outcome**: Operator can start its-magic auto on OpenCode comparable to Cursor `/auto` — preferably `/auto` in the picker they actually use, or another documented host-true control — and that start runs plugin execute → `runAutoLifecycle` (or documented `OPENCODE_*`). Silent missing command is the defect. Do not restore STOP-only `auto.md`. Do not reopen BUG-0019/BUG-0018. Cursor `.cursor/commands/auto.md` out of scope except do not prune.
+- **Decomposition**: **single_bug** (accepted via `/intake bug` + `/auto`). Recommended alternative: new bug locking the actual Command.Info UI surface; reject restore-`auto.md`, reopen-0019, and Cursor-only.
+
+## Discovery Notes — BUG-0020
+
+- **Operator value proposition**: After BUG-0019 E* (TUI keymap `slash`/`slashName` `"auto"` in `its-magic-auto/tui.ts`), operators on OpenCode must **start its-magic auto from the surface they actually use** (desktop/GUI Command.Info `/` next to `/ask`, or a documented equivalent they can find without hidden commands) **and** have that start run plugin `execute` → `runAutoLifecycle` — or fail-close with a documented `OPENCODE_*`. Silent missing command is the defect. Not markdown STOP.
+- **Defect framing (discovery-locked)**:
+  - **Wrong-surface listing, not missing attach**: E* files are present in this repo; `orchestrator.ts` `editor.add` is present; `.opencode/commands/auto.md` remains absent by design.
+  - **Command.Info picker ≠ CLI TUI keymap**. Live `/ask` 2026-09-13 + **R-0125**: the picker that lists `/ask` is Command.Info; TUI keymap does not populate it. Internal spec: TUI plugins **must** be listed in `tui.json`; kit shipped neither `tui.json` nor `cli.json`. Static `test_bug0019_*` closed E* on file/string presence — **live-falsified**.
+  - **Distinct from BUG-0019 DONE** (E* closed on static tests; do not reopen ACs / S0139). **R-0124 E\*** “TUI keymap lists `/auto` in the operator picker” must be superseded by additive `# BUG-0020`.
+  - **Distinct from BUG-0018 DONE** (markdown-wins STOP — do not restore STOP-only `auto.md`).
+  - **Distinct from BUG-0015 DONE** (attach present) and **BUG-0017 DONE** (peers exist).
+- **Product-facing constraints**:
+  - Must **not** restore STOP-only `.opencode/commands/auto.md` or any markdown/JSON Command.Info `template` that owns `/auto` as a prompt and blocks plugin execute. Empty markdown is not sufficient (BUG-0018 D4).
+  - Same-name JSON `commands.auto`+`template` remains 0018-class until `/research` proves plugin execute still wins.
+  - Peers that still have markdown files must remain listed.
+  - Cursor `.cursor/commands/auto.md` and `.opencode/agents/auto.md` — do not prune/touch.
+  - Additive `test_bug0020_*` must not be file-existence / slash-string-only.
+- **Discovery locks D1–D10**: see `docs/product/backlog.md` **`### BUG-0020`** `discovery_notes` and `handoffs/po_to_tl.md` discovery handoff.
+- **Done signal (operator)**: operator can start auto on OpenCode (preferably `/auto` in their picker, or chosen equivalent) **and** lifecycle starts (or documented `OPENCODE_*`). Peers remain listed.
+- **Research asks**: DQ1–DQ8 for **`/research`** → new **`R-0126`** (compose **R-0125**; do not wipe R-0120..R-0125; R-0124 E* listing claim live-falsified). Next phase **`research`** (tech-lead). Do not spawn research from this discovery chat.
+
+## Intake Notes — BUG-0021
+
+- **Bug**: OpenCode CLI TUI still has no invokable `/auto` after BUG-0020 tui.json (C-limb live-falsified).
+- **Intake date**: 2026-09-13T11:20:00Z (UTC); operator local 2026-09-13 ~13:06–13:20 +02:00
+- **Role / writer**: po / `po-cursor-20260913-BUG0021-intake`
+- **Pack**: `small-intake-pack` (`INTAKE_WORK_ITEM_KIND=bug` via argv `/intake bug`)
+- **Evidence**: `handoffs/intake_evidence/BUG-0021-intake-20260913.json` (`[INTAKE_EVIDENCE_VALIDATION_OK]`); **R-0131**
+- **Outcome**: Operator can invoke a real OpenCode CLI TUI slash command `/auto` (listed/highlighted, not free-text) that starts plugin `execute` → `runAutoLifecycle` (or documented `OPENCODE_*`). Not LLM “Auto mode enabled”. Not OpenCode `--auto` permission. Do not restore STOP-only `auto.md`. Do not reopen BUG-0020.
+- **Decomposition**: **single_bug** (accepted via `/intake bug`). Recommended alternative: new bug live-falsifying C-limb; reject restore-`auto.md`, reopen-0020, and Cursor-only.
+
+## Discovery Notes — BUG-0021
+
+- **Operator value proposition**: After BUG-0020 E2 C-limb (`.opencode/tui.json` listing `./plugins/its-magic-auto/tui.ts`), operators on OpenCode **CLI TUI** (`opencode`, not `--pure`) must **see and invoke `/auto` as a real slash command** that starts plugin `execute`/`run()` → `runAutoLifecycle` — or fail-close with a documented `OPENCODE_*`. LLM “Auto mode enabled. Describe the task you want handled.” is **not** success. Not markdown STOP.
+- **Defect framing (discovery-locked)**:
+  - **C-limb listing file is not enough**: `tui.json` + `its-magic-auto/tui.ts` are present in this repo (and template twin); `orchestrator.ts` `editor.add` is present; `.opencode/commands/auto.md` remains absent by design.
+  - **Live-falsified C-limb**. Operator slash list still has no `/auto`. Typing `/auto ` (not recognized as command) sends chat; model roleplays Auto mode. Static `test_bug0020_*` closed C-limb on file presence — **live-falsified**.
+  - **Kit TUI module shape mismatches live host**. Live Context7 `/anomalyco/opencode` (`tui-plugins.md`): default export `{ id, tui }` + `api.keymap.registerLayer` with command **`name`** / `slashName` and bindings `{ key, cmd }`. Kit uses `Plugin.define({ setup })`, command `id`, keyless bindings. Loader reads **only** the default export object; a file listed in `tui.json` that is not a TUI plugin module is sufficient to explain silent missing `/auto`.
+  - **Distinct from BUG-0020 DONE** (C-limb closed on static tests; do not reopen ACs / S0140). R-0126 / `# BUG-0020` “CLI TUI `/auto` via tui.json works” must be superseded by additive `# BUG-0021`. Do **not** rewrite historical `# BUG-0020` body.
+  - **Distinct from BUG-0019/0018/0017/0015 DONE**. Do not restore STOP-only `auto.md`. Do not mutate BUG-0022 OPEN.
+- **Product-facing constraints**:
+  - Must **not** restore STOP-only `.opencode/commands/auto.md` or any markdown/JSON Command.Info `template` that owns `/auto` as a prompt and blocks plugin execute unless `/research` proves execute still wins.
+  - Peers that still have markdown files must remain listed.
+  - Cursor `.cursor/commands/auto.md` and `.opencode/agents/auto.md` — do not prune/touch.
+  - Additive `test_bug0021_*` must not be `tui.json`-path-only / slash-string-only. Keep `test_bug0020_*` / `test_bug0019_*` / `test_bug0018_*` compose.
+- **Discovery locks D1–D10**: see `docs/product/backlog.md` **`### BUG-0021`** `discovery_notes` and `handoffs/po_to_tl.md` discovery handoff.
+- **Done signal (operator)**: listed `/auto` in CLI TUI **and** lifecycle starts (or documented `OPENCODE_*`). Peers remain listed. Not LLM Auto mode.
+- **Research asks**: DQ1–DQ8 for **`/research`** → new **`R-0134`** (compose **R-0131**; do not wipe R-0120..R-0126, R-0133; do not reuse R-0132). Next phase **`research`** (tech-lead). Do not spawn research from this discovery chat.
+
+## Discovery Notes — US-0135
+
+- **Operator value proposition**: On the standalone `itsm` runtime (not Cursor/OpenCode hosts), operators authenticate providers and resolve per-role models so Codex OAuth, API-key vendors, Chinese/local/custom gateways, thinking levels, and an independent critic work without putting tokens in the repo, agent context, or audit.
+- **Product-facing constraints (discovery-locked)**:
+  - Stable release uses an **owned credential store outside project files**; never copy OAuth/API tokens into the repo or `.env`.
+  - Pi `ModelRuntime` is transport/auth plumbing behind an owned `ModelRouter` / AuthService (R1). Workflow code must not import Pi.
+  - Resolution precedence is **CLI > phase-local > role catalog > critic override > tier/catalog > runtime default**, with observable provenance (port US-0101/0102; Cursor aliases are not standalone runtime).
+  - Thinking level is independent of provider/model slug and `TOKEN_PROFILE`.
+  - Critic pin is honored; same-slug producer/critic is **`CROSS_MODEL_DEGRADED_MODE`**, never false cross-model independence.
+  - Operator UX: `itsm auth`, `itsm models list`, `itsm models test <provider/model>` — health diagnostics without logging tokens.
+  - Two roles may use different providers in one run; OAuth refresh must not expose a token to the model.
+- **Out of scope this story**: session isolation (US-0136), ToolBroker/policy (US-0137), full typed RuntimeConfig (US-0138), lifecycle (US-0140), sovereign critic sessions (US-0144), CLI/TUI polish and cost dashboards (US-0146), vendor lock-in / proxying all traffic. US-0133/US-0134 DONE compose only. BUG-0020 DONE — do not reopen.
+- **Discovery locks D1–D10**: see `docs/product/backlog.md` **`## US-0135`** `discovery_notes` and `handoffs/po_to_tl.md` discovery handoff.
+- **Research asks**: DQ1–DQ10 for **`/research`** → new **`R-0127`** (compose **R-0121** / **R-0122** / **DEC-0133** / **DEC-0134**; do not wipe). Next phase **`research`** (tech-lead). Do not spawn research from this discovery chat. Do not author `# US-0135` or **DEC-0135**.
+
+## Discovery Notes — US-0136
+
+- **Operator value proposition**: On the standalone `itsm` runtime, every phase and rework iteration runs in a genuinely fresh, correctly authorized agent session. Operators can trust that PO cannot silently become DEV, that execute/QA cycles do not reuse a prior transcript, and that isolation is proven by runtime-generated attestations bound to real Pi session IDs — not by prompts or manual markers.
+- **Product-facing constraints (discovery-locked)**:
+  - `SessionSupervisor` creates a new Pi session for every producer phase, review/critic phase, and execute/QA rework iteration except an explicitly versioned same-phase continuation contract.
+  - Typed `RoleCatalog` is the phase→role source of truth (canonical mapping, permitted alternates, objectives, artifact ownership, bounded sovereign role-manifest injection). Unrelated fallback is forbidden.
+  - Runtime (not the model) emits spawn/start/end attestations bound to run, phase, role, kernel session/process, model, context hash, policy hash, timestamps, and freshness.
+  - Existing US-0048 isolation fields and US-0056/DEC-0038 strict-proof envelope stay compatible; standalone fields are sidecar data.
+  - Fail closed on reused session IDs, role mismatch, prior-role transcript carry-over, missing/stale proof, hash mismatch, or orchestrator phase mutation.
+  - Orchestrator is scheduling-only: no project source-write, no unrestricted shell.
+  - Isolation tests cover PO/DEV separation, each execute/QA cycle, critic sessions, crash recovery, and session disposal.
+- **Out of scope this story**: ToolBroker/policy (US-0137), full typed RuntimeConfig (US-0138), context engine (US-0139), lifecycle sequencing (US-0140), drain/autonomy (US-0143), sovereign critic *content* (US-0144), CLI/TUI polish (US-0146), OS/microVM sandbox (US-0141). Auth/models (US-0135) DONE compose-only — do not reopen. US-0133/US-0134 DONE compose only. BUG-0020 DONE — do not reopen.
+- **Discovery locks D1–D10**: see `docs/product/backlog.md` **`## US-0136`** `discovery_notes` and `handoffs/po_to_tl.md` discovery handoff.
+- **Research asks**: DQ1–DQ10 for **`/research`** → new **`R-0128`** (compose **R-0127** / **DEC-0135** / **US-0135** + **R-0121** / **R-0122** / **DEC-0133** / **DEC-0134**; do not wipe). Next phase **`research`** (tech-lead). Do not spawn research from this discovery chat. Do not author `# US-0136` or **DEC-0136**.
+
+## Discovery Notes — US-0140
+
+- **Operator value proposition**: On the standalone `itsm` runtime (not Cursor/OpenCode as the only host), an operator can run intake through closure/refresh with deterministic phase sequencing, fresh specialist sessions, authoritative validators, ordered release gates, exclusive closure, and crash resume from repository evidence.
+- **Product-facing constraints (discovery-locked)**:
+  - Programmatic commands cover intake, discovery, research, architecture, sprint-plan, plan-verify, execute, QA, verify-work, release, closure, refresh-context, ask, memory-audit, map-codebase, and security-review. `/auto` and `/quick` (drain/compressed routes) are **US-0143**.
+  - Workflow is owned code (CommandRouter + phase graph), not a 200-line prompt. Agent work always spawns a fresh correct-role session (BUG-0006 / DEC-0051). Host orchestrators remain scheduling-only.
+  - Execute/QA rework is bounded. Decision gates, security-review, and critics supplement rather than substitute the owning producer.
+  - Release gate order: check-in tests, independent QA, UAT, documentation/release artifacts, fail-closed reasons. Release cannot mark stories DONE. Closure requires valid release evidence.
+  - Repository artifacts remain canonical. SQLite stores operational run/session/audit/process/index metadata only.
+  - Restart reconciles repo + operational state, rejects false completion, discards orphans, and resumes with a fresh correct-role session (compose US-0136).
+- **Out of scope this story**: Full-autonomy drain and compressed delivery routes (US-0143); critic *content* (US-0144); parallel DEV/deploy (US-0145); CLI/TUI polish (US-0146); OS sandbox (US-0141); browser UAT (US-0142). US-0139/US-0138/US-0137/US-0136/US-0135/BUG-0020 DONE — compose only; do not reopen. Do not mutate US-0141+ or BUG-0021/BUG-0022.
+- **Discovery locks D1–D10**: see `docs/product/backlog.md` **`## US-0140`** `discovery_notes` and `handoffs/po_to_tl.md` discovery handoff.
+- **Research asks**: DQ1–DQ10 for **`/research`** → new **`R-0135`** (highest existing heading is **R-0134** BUG-0021; do not reuse R-0130..R-0134). Next phase **sovereign-critic (discovery)** then **`research`** (tech-lead). Do not spawn research from this discovery chat. Do not author `# US-0140` or **DEC-0140**.
+
+## Intake Notes — BUG-0023
+
+- **Bug**: OpenCode CLI TUI listed `/auto` toasts `OPENCODE_AUTO_TUI_DISPATCH_UNSUPPORTED` (dispatch live-falsified after BUG-0021 listing).
+- **Intake date**: 2026-09-13T23:35:00Z (UTC); operator local 2026-09-13 ~18:04 +02:00. `state_clock_adjust` vs last_checkpoint `2026-09-13T23:25:00Z` (US-0140 sovereign-critic refresh-context).
+- **Role / writer**: po / `po-cursor-20260913-BUG0023-intake`
+- **Pack**: `small-intake-pack` (`INTAKE_WORK_ITEM_KIND=bug` via argv `/intake bug`)
+- **Evidence**: `handoffs/intake_evidence/BUG-0023-intake-20260913.json` (`[INTAKE_EVIDENCE_VALIDATION_OK]`); **R-0136**
+- **Outcome**: Listed OpenCode CLI TUI `/auto` starts `runAutoLifecycle` (lifecycle advances). Not fail-closed toast as the happy path. Not LLM “Auto mode enabled”. Not OpenCode `--auto`. Not Cursor-only. Do not restore STOP-only `auto.md`. Do not reopen BUG-0021 ACs. Do not merge BUG-0022.
+- **Decomposition**: **single_bug** (accepted via `/intake bug`). Recommended alternative: new bug live-falsifying BUG-0021 dispatch limb; reject restore-`auto.md`, reopen-0021, merge-0022, Cursor-only, and treating DISPATCH toast as success.
+
+## Discovery Notes — BUG-0023
+
+- **Operator value proposition**: After BUG-0021 listing (`{ id, tui }` + `slashName: "auto"`), operators on OpenCode **CLI TUI** (`opencode`, not `--pure`) invoke **listed** `/auto` and the its-magic **phase chain starts** (`runAutoLifecycle`). A fail-closed toast is **not** the happy path. LLM “Auto mode enabled” is **not** success. Not markdown STOP.
+- **Defect framing (discovery-locked)**:
+  - **Listing is not enough**: BUG-0021 shipped listable `/auto`. Live invoke toasts title `its-magic /auto` body `OPENCODE_AUTO_TUI_DISPATCH_UNSUPPORTED`. Lifecycle does not start.
+  - **Dispatch live-falsified**. R-0134 DQ4 / `# BUG-0021` AC-2 “`run()` → `api.client.rpc` → `runAutoLifecycle`” is live-falsified. `dispatchRunAutoLifecycle` reached its else-path (missing usable `client.rpc` + HTTP fallback).
+  - **Distinct from BUG-0021 DONE** (listing limb still true; do not reopen ACs / S0146). Additive `# BUG-0023` later supersedes “listed `/auto` starts lifecycle”. Do **not** rewrite historical `# BUG-0021` / `# BUG-0019`.
+  - **Distinct from BUG-0020/0019/0018 DONE** and **BUG-0022 OPEN**. Do not restore STOP-only `auto.md`. Do not merge Cursor inherit.
+- **Product-facing constraints**:
+  - Must **not** restore STOP-only `.opencode/commands/auto.md` or JSON `commands.auto`+`template`.
+  - Must **not** treat `OPENCODE_AUTO_TUI_DISPATCH_UNSUPPORTED` as success. Fail-closed `OPENCODE_*` only when the host **truly** cannot dispatch.
+  - Keep plugin `editor.add` execute owner. TUI `run()` must reach `runAutoLifecycle` without becoming Command.Info / SessionPrompt.
+  - Additive `test_bug0023_*` must not be listing-only or “token string exists”. Keep `test_bug0021_*` / `test_bug0020_*` / `test_bug0019_*` / `test_bug0018_*` compose.
+- **Discovery locks D1–D10**: see `docs/product/backlog.md` **`### BUG-0023`** `discovery_notes` and `handoffs/po_to_tl.md` discovery handoff.
+- **Done signal (operator)**: listed `/auto` **starts lifecycle** (or honest host-true `OPENCODE_*` only if proven unlistable-dispatch). Not DISPATCH toast as happy path. Not LLM Auto mode.
+- **Research asks**: DQ1–DQ8 for **`/research`** → new **`R-0137`** (compose **R-0136** / **R-0134** / **R-0124**; do not wipe **R-0135** US-0140). Live-fetch OpenCode RPC/TUI client docs. Next phase **`research`** (tech-lead; orchestrator may insert sovereign-critic of discovery first). Do not spawn research from this discovery chat. Do not author `# BUG-0023` or a companion DEC this phase.
+
+## Discovery Notes — US-0141
+
+- **Operator value proposition**: On the standalone `itsm` runtime, the agent discovers a stack-aware app profile, starts and keeps the process healthy (local, Docker, WSL, SSH/remote Docker), captures bounded logs, runs tests/builds through the selected backend, and exposes URL/ports/health to browser QA — with bounded automatic remediation instead of unbounded restart loops.
+- **Product-facing constraints (discovery-locked)**:
+  - Owned `AppRuntime` / `ProcessManager` / `ExecutionBackend` live in standalone TypeScript (**no Pi**). Package split (`standalone/packages/app-runtime` vs compose `runtime-core` process table) is architecture-owned.
+  - Compose US-0140 `RunsStore` reserved `process_handles` SQLite table — extend, do not reimplement workflow/GateEngine.
+  - Core v1 backends: **local** + **Docker**. **WSL** and **SSH/remote Docker** are typed adapters with connectivity diagnostics. OS micro-VM/sandbox isolation is **future**, not this story.
+  - Stack coverage: Node, Python, Go, Java, .NET get stack-aware test/start; unknown stacks fail or fall back with a deterministic reason (compose US-0065).
+  - Startup/health failure: capture logs → classify → optional fresh DEV remediation session → rebuild/restart → stop at a configured retry cap with a deterministic reason. Docker healthchecks do **not** auto-restart standalone containers; AppRuntime owns the retry loop.
+  - Test/build evidence: structured exit, duration, stdout/stderr refs; large logs summarized for model context.
+  - Connect/health is a **safe handoff** to US-0142 (URL/ports/health + cleanup). This story does not drive the browser.
+  - Secrets: never read `.env`; names-only env refs (compose US-0085 / US-0086 / US-0098 Connect block).
+- **Out of scope this story**: Browser UAT (US-0142); `/auto`/`/quick` drain routing (US-0143); critic content (US-0144); parallel DEV/deploy (US-0145); CLI/TUI polish (US-0146); OS micro-VM. Do not restore `.opencode/commands/auto.md`. Do not ship kit `cli.json` or plugin-local `its-magic-auto/tui.json`. Kit `files` omit `standalone/`. Do not npm-publish or git push.
+- **Sibling boundary**: US-0133..US-0140 DONE — compose only; do not reopen. US-0142..US-0148 OPEN — do not mutate. BUG-0021 DONE / BUG-0022 OPEN / BUG-0023 OPEN — do not mutate; do not drain bugs.
+- **Discovery locks D1–D10**: see `docs/product/backlog.md` **`## US-0141`** `discovery_notes` and `handoffs/po_to_tl.md` discovery handoff.
+- **Design / UX refs**: masterplan §§19, 21, 26.3, 32 Phase 4; VS Code Dev Containers `CLIHostType` `local|wsl|container|ssh`; Chump `ExecutionBackend` `name`/`execute`/`health_check` (local/docker/ssh, fail-closed missing binary); Xec `LocalAdapter`/`DockerAdapter`/`SSHAdapter` (timeouts, cancellation, remote Docker); US-0065 runtime QA evidence; US-0098 Connect block; US-0086 remote.json as **input compatibility**, not the owner.
+- **Research asks**: DQ1–DQ10 for **`/research`** → expected **`R-0137`** (orchestrator assignment; highest heading is **R-0136** BUG-0023). **Collision**: BUG-0023 discovery also stubbed **R-0137** — `/research` live-inventories headings; if `## R-0137` already exists, continue to next unused (do not wipe R-0136 / R-0135). Do not author `## R-0137` this phase. Do not author `# US-0141` or **DEC-0141**. Next: orchestrator sovereign-critic of discovery, then `/research` (tech-lead).
+
+## Discovery Notes — US-0142
+
+- **Operator value proposition**: On the standalone `itsm` runtime, QA executes acceptance in an owned browser: Playwright isolated/headless contexts for reproducible CI, plus an operator-authorized Chrome/Chromium CDP mode for existing logged-in developer sessions. Each applicable probe yields screenshots, traces, console/network evidence, and fail-closed `uat.json` — without Cursor plugins as the v1 authority.
+- **Product-facing constraints (discovery-locked)**:
+  - Compose US-0141 AppRuntime Connect/health/ports (`connectHandoff`: `connect_endpoint`, `health_path`, `service_id`, `container_id`, `env_refs` names-only). Do **not** reimplement AppRuntime or ProcessManager.
+  - Owned browser runtime in standalone TypeScript (**no Pi**). Package home is likely `standalone/packages/browser-uat` **or similar** — architecture decides (DQ1).
+  - Two modes: Playwright-managed isolated/headless contexts (fresh cookies/profile, CI) **and** operator-authorized CDP attach to Chrome/Chromium (logged-in session, extensions). Cursor browser MCP remains host-only compatibility (US-0093 KEEP contract, REPLACE backend); this story owns the kit/standalone runtime.
+  - Typed `itsm_browser` tool (today a PolicyEngine **STUB**): open, navigate, snapshot, click, type, select, wait, screenshot, console, network, download/upload, accessibility.
+  - Existing UAT planner (`uat_probe_lib.py`) maps steps to process health, CLI smoke, browser smoke, API probes, or manual judgment and persists compatible `uat.json`. This story **owns lifting** `browser_smoke` execution for applicable US-0142 probes. Do **not** weaken `UAT_PROBE_FORBIDDEN` for other stories (`.env` / intake-evidence / secret-token deny + kit-slice waives stay).
+  - Evidence per applicable probe: screenshot, snapshot summary, console errors, failed requests, final URL, trace, duration, backend, app-runtime handle/ref. Redact headers, cookies, tokens, and sensitive form data (masterplan §26.4; traces/HAR leak secrets unless scrubbed).
+  - Credentials: browser agents cannot read `.env` or type raw secrets from project files. Authenticated flows use an authorized profile, opaque externally injected test account, or explicit operator approval.
+  - Fail-closed: crashes, failed waits/assertions, console/network failures, missing CDP authorization, and evidence gaps — bounded retry, no silent PASS / no fake browser PASS.
+  - Exploratory QA → Playwright regression spec is in-scope; pixel-perfect visual baseline is **OUT**.
+- **Out of scope this story**: Pixel visual baseline; `/auto`/`/quick` drain routing (US-0143); critic content (US-0144); parallel DEV/deploy (US-0145); CLI/TUI polish (US-0146); OS micro-VM. Do not restore `.opencode/commands/auto.md`. Do not ship kit `cli.json` or plugin-local `its-magic-auto/tui.json`. Kit `files` omit `standalone/`. Do not npm-publish or git push.
+- **Sibling boundary**: US-0141 DONE — compose Connect/health only; do not reopen. US-0133..US-0140 DONE — compose only; do not reopen. US-0143..US-0148 OPEN — do not mutate. BUG-0021 DONE / BUG-0022 OPEN / BUG-0023 DONE — do not mutate; do not drain bugs.
+- **Discovery locks D1–D10**: see `docs/product/backlog.md` **`## US-0142`** `discovery_notes` and `handoffs/po_to_tl.md` discovery handoff.
+- **Design / UX refs**: masterplan §§20, 26.4, 32 Phase 4, 35, 36; Playwright [browser contexts / isolation](https://playwright.dev/docs/browser-contexts), [`connectOverCDP`](https://playwright.dev/docs/api/class-browsertype#browser-type-connect-over-cdp), [`launchPersistentContext`](https://playwright.dev/docs/api/class-browsertype) (Chrome does **not** allow automating the default User Data dir); Playwright [tracing](https://playwright.dev/docs/api/class-tracing) + HAR `content: omit`; Currents [trace/HAR secret leakage](https://currents.dev/posts/playwright-avoid-data-leak); US-0093 Cursor contract (replace backend); US-0065 runtime QA; US-0128 no fake browser PASS; US-0141 `connectHandoff`; US-0135 `redact.ts`.
+- **Research asks**: DQ1–DQ10 for **`/research`** → expected **`R-0139`** (highest heading is **`R-0138`** US-0141). Do not author `## R-0139` this phase. Do not wipe **R-0138** (US-0141) or **R-0136**/**R-0137** (BUG-0023). Do not author `# US-0142` or **DEC-0142**. Next: orchestrator sovereign-critic of discovery, then `/research` (tech-lead).
+
+## Intake Notes — BUG-0024
+
+- **Bug**: OpenCode CLI TUI listed `/auto` still toasts `OPENCODE_AUTO_TUI_DISPATCH_UNSUPPORTED` after BUG-0023 Axis A files are present (live dispatch falsified).
+- **Intake date**: 2026-09-14T03:50:00Z (UTC); operator local 2026-09-13 ~21:30 +02:00. `state_clock_adjust` vs last_checkpoint `2026-09-14T03:40:00Z` (US-0142 sovereign-critic of research).
+- **Role / writer**: po / `po-cursor-20260913-BUG0024-intake`
+- **Pack**: `small-intake-pack` (`INTAKE_WORK_ITEM_KIND=bug` via argv `/intake bug`)
+- **Evidence**: `handoffs/intake_evidence/BUG-0024-intake-20260914T035000Z.json` (`[INTAKE_EVIDENCE_VALIDATION_OK]`); **R-0140**
+- **Outcome**: Listed OpenCode CLI TUI `/auto` starts `runAutoLifecycle` (lifecycle advances). Not fail-closed DISPATCH toast as the happy path. Axis A files present is not sufficient. Not LLM “Auto mode enabled”. Not OpenCode `--auto`. Not Cursor-only as the product outcome (Cursor IDE `/auto` is the working path until fix). Do not restore STOP-only `auto.md`. Do not reopen BUG-0023 / BUG-0021 ACs. Do not merge BUG-0022.
+- **Decomposition**: **single_bug** (accepted via `/intake bug`). Recommended alternative: new bug live-falsifying BUG-0023 Axis A live limb; reject reopen-0023, reopen-0021, merge-0022, restore-`auto.md`, files-present-as-success, and Cursor-only-as-done.
+
+## Discovery Notes — US-0143
+
+- **Operator value proposition**: One `/auto` (and `/quick`) command completes eligible work through deterministic delivery modes, work-kind routing, phase selection, autonomy presets, and optional backlog drain — without allowing models to bypass hard stops or skip mandatory tests/acceptance.
+- **Product-facing constraints (discovery-locked)**:
+  - Compose US-0140 `@its-magic/runtime-core` CommandRouter / WorkflowEngine / GateEngine. Today `/auto` and `/quick` **accept names then fail-closed `WORKFLOW_ROUTE_DEFERRED`**. This story **implements those routes**. Do **not** rewrite GateEngine `RELEASE_GATE_ORDER` (tests → QA → UAT → docs/artifacts). **No Pi**.
+  - Consume US-0118 work-kind (`work_kind_classify_lib` as a library, not an agent guess), US-0119 autonomy presets (`expand_autonomy_preset` before execution), US-0095 native chain, US-0096 ultra_lean/mega_quick.
+  - Independent axes: `DELIVERY_MODE` (lifecycle shape), `TOKEN_PROFILE` (context breadth), CAVEMAN/voice (response style), `AUTONOMY_PRESET` (operator intervention), `WORK_KIND` (recommended route). Standard, ultra-lean, and mega-quick **preserve mandatory tests and acceptance evidence**.
+  - Explicit `start-from` / phase and delivery overrides beat work-kind recommendations (DEC-0118 L8: `start-from` > explicit `DELIVERY_MODE` > explicit `AUTO_PHASE_*` > `WORK_KIND_ROUTING`-derived > default).
+  - Autonomy presets expand to explicit flags before execution. Canonical stop matrix and reason codes come from the kernel/manifest (`scripts/data/autonomy_stop_matrix.yaml` + consume runtime-core `stop-matrix/codes.ts`), not divergent prompts. Models never decide whether a hard stop is relaxable.
+  - Drain, bulk execution, retry/skip/repair, quiet mode, pause, and operator approvals obey configured caps and preserve operator authority.
+  - Non-relaxable terminals: security-hard gates, unresolved decisions, incompatible kernel, failed mandatory quality evidence, budget exhaustion, and ambiguous resume.
+  - Audit/repair ledgers make phase selection, retries, skips, stop reasons, and resume choices reproducible.
+  - Host Cursor/OpenCode orchestrators remain **scheduling-only** (BUG-0006 / DEC-0051). Do not move lifecycle correctness into model prompts.
+- **Out of scope this story**: US-0144 sovereign memory / critic *content* (compose hooks only); parallel DEV/deploy (US-0145); CLI/TUI polish (US-0146); restore `.opencode/commands/auto.md`; kit `cli.json`; plugin-local `its-magic-auto/tui.json`. Kit `files` omit `standalone/`. Do not npm-publish or git push. Never read `.env`.
+- **Sibling boundary**: US-0141 DONE / US-0142 DONE — compose only; do not reopen. US-0133..US-0140 DONE — compose only; do not reopen. US-0144..US-0148 OPEN — do not mutate. BUG-0021 DONE / BUG-0022 OPEN / BUG-0023 DONE / BUG-0024 OPEN — do not mutate; do not drain bugs.
+- **Discovery locks D1–D10**: see `docs/product/backlog.md` **`## US-0143`** `discovery_notes` and `handoffs/po_to_tl.md` discovery handoff.
+- **Design / UX refs**: masterplan §§14.4–14.6, 15, 32 Phase 6, 38; DEC-0118 L8 precedence; DEC-0119 preset expansion + `security_hard`; DEC-0082 delivery modes; DEC-0078 / US-0095 native chain; US-0140 `WORKFLOW_ROUTE_DEFERRED` stub; [scheduler-theoretic Graph Harness](https://arxiv.org/html/2604.11378v1) (deterministic policy, bounded recovery, immutable plans — not an Agent Loop); [deterministic vs LLM orchestration](https://dreaming.press/posts/deterministic-vs-llm-orchestration-for-multi-agent-systems.html) (LLM in steps, wiring in code); [capability vs permission autonomy levels](https://arxiv.org/pdf/2607.23438).
+- **Research asks**: DQ1–DQ10 for **`/research`** → expected **`R-0141`** (highest heading is **`R-0140`** BUG-0024). Do not author `## R-0141` this phase. Do not wipe **R-0139** (US-0142) or **R-0140** (BUG-0024). Do not author `# US-0143` or **DEC-0143**. Next: orchestrator sovereign-critic of discovery, then `/research` (tech-lead).
+
+## Discovery Notes — US-0144
+
+- **Operator value proposition**: Autonomous standalone runs stay auditable and cannot self-declare success — decision ledger, bounded memory digest, independent role reviews, cross-model criticism, deferrals, and code-evaluated convergence remain operator-visible contracts.
+- **Product-facing constraints (discovery-locked)**:
+  - Compose US-0143 `@its-magic/runtime-core` CommandRouter `RouteScheduled` / WorkflowEngine drain / critic-hook slot (`critic_content: false` today). This story **implements remaining deferred critic/memory/convergence content**. Do **not** rewrite US-0143 drain. **GateEngine unamended**. **No Pi**.
+  - Compose existing Python libs (do not rewrite schemas): US-0103 decision ledger, US-0104 three-lens critic, US-0105 `build_injection_digest_block`, US-0106 role-manifest reviews, US-0107 deferrals/drain-generate, US-0110 `evaluate_convergence`, US-0127 blocking-only critic conjunct, US-0128 smoke surrogate (never fake browser PASS).
+  - Decision ledger stays append-only and model/session/run-aware; QA verifies plan fidelity.
+  - Sovereign memory stays repository-owned; only a ranked size-capped digest enters sessions.
+  - Role-manifest obligations and Challenger/Architect/Subtractor lenses run as **fresh** review sessions and never replace producer roles.
+  - Different producer/critic models when available; critic pinning; explicit degraded same-model semantics.
+  - Deferrals and drain-generate keep mandatory operator decision gates (`SOVEREIGN_DRAIN_AUTO_ACCEPT=0`).
+  - Convergence is evaluated by code and evidence; models do not self-declare success.
+- **Out of scope this story**: Parallel DEV/deploy (US-0145); CLI/TUI polish (US-0146); restore `.opencode/commands/auto.md`; kit `cli.json`; plugin-local `its-magic-auto/tui.json`. Kit `files` omit `standalone/`. Do not npm-publish or git push. Never read `.env`. Do not rewrite US-0143 CommandRouter drain.
+- **Sibling boundary**: US-0143 DONE — compose RouteScheduled/drain/critic-hook only; do not reopen. US-0133..US-0142 DONE — compose only; do not reopen. US-0145..US-0148 OPEN — do not mutate. BUG-0021 DONE / BUG-0022 OPEN / BUG-0023 DONE / BUG-0024 OPEN — do not mutate; do not drain bugs.
+- **Discovery locks D1–D10**: see `docs/product/backlog.md` **`## US-0144`** `discovery_notes` and `handoffs/po_to_tl.md` discovery handoff.
+- **Design / UX refs**: masterplan §§22 (producer/critic + three lenses + role reviews + pinning), 24 (ledger/memory/deferrals/code-evaluated convergence + critic/smoke fixes), 32 Phase 7 (sovereign parity; parallel DEV is US-0145), 38 (parity DoD: ledger, critic, memory, role reviews, deferrals, goal convergence); MultiCritique independent critics [Findings EMNLP 2025](https://aclanthology.org/2025.findings-emnlp.78); [bounded memory control over more context](https://arxiv.org/html/2601.11653); [origin-bound memory authority](https://ar5iv.labs.arxiv.org/html/2606.24322); US-0143 critic-hook slot only.
+- **Research asks**: DQ1–DQ10 for **`/research`** → expected **`R-0142`** (highest heading is **`R-0141`** US-0143). Do not author `## R-0142` this phase. Do not wipe **R-0141** (US-0143). Do not author `# US-0144` or **DEC-0144**. Next: orchestrator sovereign-critic of discovery, then `/research` (tech-lead).
 

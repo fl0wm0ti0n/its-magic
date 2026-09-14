@@ -1,0 +1,13 @@
+{
+	"name": "@its-magic/auth-models",
+	"version": "0.0.0",
+	"private": true,
+	"type": "module",
+	"description": "Owned AuthService + ModelRouter. No kernel-adapter or vendor-SDK imports.",
+	"engines": {
+		"node": ">=22.19.0"
+	},
+	"exports": {
+		".": "./src/index.ts"
+	}
+}

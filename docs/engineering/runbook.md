@@ -1530,6 +1530,338 @@ If routing is not used (mode off/local default), still record:
   `released`; publish skipped (`RELEASE_PUBLISH_MODE=confirm`). Deploy commands
   remain explicit no-ops above (no staging/prod target). Next: `/closure`.
 
+### OpenCode markdown `/auto` vs plugin execute (BUG-0018 / R-0120)
+
+- **Symptom**: OpenCode `/auto` submits the markdown STOP body. Plugin
+  `editor.add({ name: "auto", execute })` → `runAutoLifecycle` is registered
+  but never invoked. No `OPENCODE_*` reason code.
+- **Root cause**: same-name markdown `.opencode/commands/auto.md` owns `/auto`
+  (markdown-wins). Distinct from **BUG-0015** (missing attach) and **BUG-0017**
+  (CRLF so commands were not offered).
+- **Ship-fix controls** (approach A*): kit deletes colliding `auto.md`; plugin
+  `editor.add` remains the sole `/auto` owner; upgrade `--host opencode|both`
+  **must prune** leftover consumer `auto.md`. Plugin leftover check is
+  fail-closed defense and **does not delete** the file.
+- **Consumer upgrade recipe (DQ8)** — kit-only delete is **not** enough for
+  trees that still have leftover `auto.md`:
+  1. Upgrade its-magic to a release that includes **BUG-0018**.
+  2. `its-magic --mode upgrade --host opencode` or
+     `its-magic --mode upgrade --host both` (**must prune**
+     `.opencode/commands/auto.md`).
+  3. If unlink is blocked: operator deletes `.opencode/commands/auto.md`,
+     then re-upgrade.
+- **Do not prune** `.opencode/agents/auto.md` or `.cursor/commands/auto.md`.
+- **Normative**: `docs/engineering/architecture.md` `# BUG-0018`; research
+  **`R-0120`**. Contract tests: `python -m pytest tests/bug0018_opencode_auto_ownership_test.py -v`.
+
+### OpenCode `/auto` slash listing after plugin-only ownership (BUG-0019 / R-0124)
+
+- **Symptom**: After BUG-0018 prune, OpenCode TUI slash palette has no `/auto`
+  while plugin `editor.add({ name: "auto", execute })` → `runAutoLifecycle` is
+  still registered. Peers with markdown files remain listed.
+- **Root cause**: plugin `editor.add` is not a TUI slash list source. Distinct
+  from **BUG-0015** (missing attach), **BUG-0017** (CRLF hid all commands), and
+  **BUG-0018** (markdown-wins STOP — collision/STOP fix remains correct).
+- **Ship-fix controls** (approach E1 / E*): listing = project-local TUI keymap
+  `slash` / `slashName` `"auto"` in `.opencode/plugins/its-magic-auto/{index.ts,tui.ts}`;
+  execute owner remains `orchestrator.ts` `editor.add`. `run()` uses
+  `context.client` / plugin RPC wrapping `runAutoLifecycle` (not a Command.Info
+  prompt template). Do **not** restore `.opencode/commands/auto.md`. Do **not**
+  add JSON `commands.auto` with `template`. Do **not** ship kit `cli.json` /
+  `tui.json`.
+- **Consumer upgrade recipe** — already-pruned trees lack the listing surface:
+  1. Upgrade its-magic to a release that includes **BUG-0019**.
+  2. `its-magic --mode upgrade --host opencode` or
+     `its-magic --mode upgrade --host both` (**copies** listing files
+     `.opencode/plugins/its-magic-auto/{index.ts,tui.ts}` **and still prunes**
+     leftover `.opencode/commands/auto.md`).
+  3. Restart OpenCode (not `--pure`).
+  4. Slash palette lists `/auto` and invocation starts lifecycle or
+     `OPENCODE_*`.
+- **Do not prune** `.opencode/agents/auto.md` or `.cursor/commands/auto.md`.
+- **Normative**: `docs/engineering/architecture.md` `# BUG-0019`; research
+  **`R-0124`**. Contract tests: `python -m pytest tests/bug0019_opencode_auto_slash_listing_test.py -v`.
+- **Release readiness (S0139 / 2026-09-12T19:40:00Z)**: workflow-only
+  **RELEASE_PASS**; scoped pytest 13/13 (bug0019 7/7 + bug0018 6/6);
+  `harness_fail_zero_claimed=false`; queue S0139 `released`; publish skipped
+  (`RELEASE_PUBLISH_MODE=confirm`). Deploy commands remain explicit no-ops
+  above (no staging/prod target). Next: `/closure`.
+- **Compose (BUG-0020)**: project `.opencode/tui.json` is now the CLI TUI load
+  path so the BUG-0019 keymap actually loads. It does **not** feed desktop
+  Command.Info. Plugin-local `its-magic-auto/tui.json` remains forbidden.
+  See the BUG-0020 section below.
+
+### OpenCode desktop Command.Info `/auto` listing (BUG-0020 / R-0126)
+
+- **Symptom**: After BUG-0019 E*, the **desktop/GUI Command.Info** slash picker
+  that lists `/ask` still has no `/auto`. TUI keymap `slash`/`slashName` `"auto"`
+  is CLI TUI only; it does **not** feed desktop `sync.data.command`.
+- **Root cause**: desktop custom `/` rows = Command.Info (`GET /api/command` /
+  `source` command|mcp|skill) + app builtins. Plugin `editor.add`, TUI keymap,
+  and `tui.json` are **not** Command.Info sources. Host cannot list execute-only
+  `/auto` without a Command.Info `template` (0018-class steal). Distinct from
+  **BUG-0015** (missing attach), **BUG-0017** (CRLF hid all commands),
+  **BUG-0018** (markdown-wins STOP — do **not** restore `auto.md`), and
+  **BUG-0019** (E* remains valid **CLI TUI keymap**, not this picker).
+- **Ship-fix controls** (approach E2): keep `orchestrator.ts` `editor.add` →
+  `runAutoLifecycle`; C-limb CLI TUI `/auto` via shipping `.opencode/tui.json`
+  listing `./plugins/its-magic-auto/tui.ts` (CLI-TUI-only; does **not** feed
+  desktop Command.Info); desktop-visible
+  `OPENCODE_AUTO_DESKTOP_COMMAND_INFO_LISTING_UNSUPPORTED` via
+  `emitDesktopCommandInfoListingUnsupported` (**not** TUI-toast-only). Do
+  **not** restore `.opencode/commands/auto.md`. Do **not** add JSON
+  `commands.auto` with `template`. Do **not** ship kit `cli.json` or
+  plugin-local `its-magic-auto/tui.json`.
+- **Consumer upgrade recipe** — already-E* trees lack `tui.json` / desktop
+  fail-closed:
+  1. Upgrade its-magic to a release that includes **BUG-0020**.
+  2. `its-magic --mode upgrade --host opencode` or
+     `its-magic --mode upgrade --host both` (**copy-if-absent** / **JSONC-merge**
+     `.opencode/tui.json` plugin entry `./plugins/its-magic-auto/tui.ts` without
+     wholesale overwrite of theme/keybinds/attention, **and still prunes**
+     leftover `.opencode/commands/auto.md`).
+  3. Restart OpenCode (not `--pure`).
+  4. **Desktop Command.Info still will not list execute-only `/auto`** —
+     operator sees documented
+     `OPENCODE_AUTO_DESKTOP_COMMAND_INFO_LISTING_UNSUPPORTED` (not silent)
+     **and** starts auto from **CLI TUI** `/auto` (`opencode`, not `--pure`).
+- **Do not prune** `.opencode/agents/auto.md` or `.cursor/commands/auto.md`.
+- **Normative**: `docs/engineering/architecture.md` `# BUG-0020`; research
+  **`R-0126`**. Contract tests: `python -m pytest tests/bug0020_opencode_desktop_command_info_listing_test.py -v`.
+- **Release readiness (S0140 / 2026-09-13T01:10:00Z)**: workflow-only
+  **RELEASE_PASS**; scoped pytest 21/21 (bug0020 8/8 + bug0019 7/7 + bug0018 6/6);
+  `harness_fail_zero_claimed=false`; queue S0140 `released`; publish skipped
+  (`RELEASE_PUBLISH_MODE=confirm`). Deploy commands remain explicit no-ops
+  (no staging/prod target). Next: `/closure`.
+- **Compose (BUG-0021)**: `tui.json` listing is the CLI TUI **load path**, not
+  proof that operator CLI TUI `/auto` listed. Loader still requires default
+  export `{ id, tui }`. See the BUG-0021 section below.
+
+### OpenCode CLI TUI `/auto` after tui.json listing (BUG-0021 / R-0134)
+
+- **Symptom**: After BUG-0020 C-limb, project `.opencode/tui.json` lists
+  `./plugins/its-magic-auto/tui.ts`, keymap strings `slash`/`slashName` `"auto"`
+  exist, `orchestrator.ts` `editor.add({ name: "auto", execute })` →
+  `runAutoLifecycle` is registered, colliding `auto.md` is absent — but the
+  operator OpenCode **CLI TUI** (`opencode`, not `--pure`) still has **no
+  invokable `/auto`**. Typing `/auto ` (trailing space, not highlighted) sends
+  chat; the model roleplays “Auto mode enabled.” That is **LLM prompt
+  handling**, not lifecycle.
+- **Root cause**: `tui.json` file-plugin loader `readV1Plugin(..., "tui")`
+  requires default export `{ id, tui }` with `typeof tui === "function"`. Kit
+  `Plugin.define({ setup })` is skipped → `tui()` never runs → silent miss.
+  CLI TUI slash list = keymap `slashName` + `namespace: "palette"` (not
+  `GET /api/command` Command.Info). Distinct from **BUG-0020** (desktop
+  Command.Info honest token remains), **BUG-0019** (E* keymap strings),
+  **BUG-0018** (do **not** restore `auto.md`).
+- **Ship-fix controls** (Axis A): reshape `.opencode/plugins/its-magic-auto/tui.ts`
+  to live default export `{ id: "its-magic.auto.tui", tui }`; inside `tui()`
+  call `api.keymap.registerLayer` with `name: "its-magic.auto"`,
+  `slashName: "auto"`, `namespace: "palette"`, binding
+  `{ key: "ctrl+shift+a", cmd: "its-magic.auto" }`; `run()` →
+  `api.client.rpc(ITS_MAGIC_AUTO_RPC)` → `runAutoLifecycle`. Keep `tui.json`
+  listing (load path, not listing proof). Keep `editor.add` execute owner.
+  Additive `OPENCODE_AUTO_CLI_TUI_PLUGIN_LOAD_UNSUPPORTED` for listed-but-skipped.
+  Do **not** restore `.opencode/commands/auto.md`. Do **not** add JSON
+  `commands.auto` with `template`. Do **not** ship kit `cli.json` or
+  plugin-local `its-magic-auto/tui.json`. `--pure` is **out of scope** (host
+  skips external TUI plugins).
+- **Consumer upgrade recipe** — already-C-limb trees have `tui.json` plus a
+  wrong-shaped `Plugin.define` `tui.ts`:
+  1. Upgrade its-magic to a release that includes **BUG-0021**.
+  2. `its-magic --mode upgrade --host opencode` or
+     `its-magic --mode upgrade --host both` (**overwrites** reshaped
+     `.opencode/plugins/its-magic-auto/tui.ts` **and still prunes** leftover
+     `.opencode/commands/auto.md`; `tui.json` stays copy-if-absent / JSONC-merge).
+  3. Restart OpenCode CLI TUI (`opencode`, **not** `--pure`).
+  4. `/auto` is highlighted/listed and starts `runAutoLifecycle` — or
+     documented `OPENCODE_*` (not LLM Auto mode). If still missing after that
+     on a given binary: residual
+     [anomalyco/opencode#36505](https://github.com/anomalyco/opencode/issues/36505)
+     → `OPENCODE_AUTO_CLI_TUI_PLUGIN_LOAD_UNSUPPORTED` when `tui()` never runs;
+     **do not** restore `auto.md`.
+- **Do not prune** `.opencode/agents/auto.md` or `.cursor/commands/auto.md`.
+- **Normative**: `docs/engineering/architecture.md` `# BUG-0021`; research
+  **`R-0134`**. Contract tests: `python -m pytest tests/bug0021_opencode_cli_tui_plugin_load_test.py -v`.
+- **Release readiness (S0147 / 2026-09-13T22:35:00Z)**: workflow-only
+  **RELEASE_PASS**; scoped standalone npm test 82/82 (12/12 `test_us0140_*` +
+  us0133–us0139 compose); `harness_fail_zero_claimed=false`; queue S0147 `released`;
+  publish skipped (`RELEASE_PUBLISH_MODE=confirm`). Deploy commands remain explicit
+  no-ops (no staging/prod target). **No live runtime/browser probe in CI**
+  (`UAT_PROBE_FORBIDDEN`). Release cannot mark DONE (AC-5); closure owns
+  OPEN→DONE. Next: sovereign-critic (release) then `/closure`.
+- **Release readiness (S0146 / 2026-09-13T14:15:00Z)**: workflow-only
+  **RELEASE_PASS**; scoped pytest 29/29 (bug0021 8/8 + bug0020 8/8 + bug0019 7/7 +
+  bug0018 6/6); `harness_fail_zero_claimed=false`; queue S0146 `released`; publish
+  skipped (`RELEASE_PUBLISH_MODE=confirm`). Deploy commands remain explicit no-ops
+  (no staging/prod target). **No live OpenCode CLI TUI listing probe in CI**
+  (`UAT_PROBE_FORBIDDEN`). Residual `#36505` documented; **do not** restore
+  `auto.md`. Next: sovereign-critic (release) then `/closure`.
+
+### OpenCode CLI TUI `/auto` dispatch after listing (BUG-0023 / R-0137)
+
+- **Symptom**: After BUG-0021 Axis A listing, operator OpenCode **CLI TUI**
+  (`opencode`, not `--pure`) **sees and invokes listed `/auto`**, then toasts
+  title `its-magic /auto` / body **`OPENCODE_AUTO_TUI_DISPATCH_UNSUPPORTED`**.
+  Lifecycle does **not** start (`runAutoLifecycle` not reached). That toast is
+  the **defect**, not success. Distinct from **BUG-0021** (listing limb remains),
+  **BUG-0020** (desktop Command.Info), **BUG-0019** (token defined), **BUG-0018**
+  (do **not** restore `auto.md`).
+- **Root cause**: kit `dispatchRunAutoLifecycle` used plain-JSON `ITS_MAGIC_AUTO_RPC`
+  plus invented `POST /rpc/its-magic.auto/runAutoLifecycle` `{ input }`. Host-true
+  v2 RPC is `Rpc.define` + `await ctx.rpc.register` + `client.rpc(Defined).runAutoLifecycle(payload)`.
+- **Ship-fix controls** (Axis A): shared `.opencode/plugins/its-magic-auto/rpc.ts`
+  `Rpc.define({ id: "its-magic.auto", methods: { runAutoLifecycle } })` from
+  `@opencode/plugin/rpc` (JSON Schema, no Zod). Orchestrator **static**-imports
+  `rpc.ts` and **`await ctx.rpc.register(ITS_MAGIC_AUTO_RPC, { runAutoLifecycle: runAutoLifecycleRpc })`**
+  when register exists; keep `editor.add`. TUI **dynamic**-imports `rpc.ts` inside
+  `dispatchRunAutoLifecycle` then `api.client.rpc(Defined).runAutoLifecycle(payload)`
+  (not `{ input }`). If `.rpc` is missing: `OpenCode.make({ baseUrl }).rpc(Defined)`
+  with `baseUrl = client.baseUrl ?? client.config?.baseUrl ?? client.defaults?.baseUrl`.
+  **Do not** silent-default `http://localhost:4096`. Invented POST is **not** the
+  happy path. Keep `{ id, tui }` listing. Keep `slashName: "auto"` /
+  `ctrl+shift+a`. `--pure` is **out of scope**.
+- **DISPATCH is a defect** when it is the happy path. Honest
+  `OPENCODE_AUTO_TUI_DISPATCH_UNSUPPORTED` only when client/RPC **truly** cannot
+  dispatch (both `.rpc` and `OpenCode.make` fallback failed, or Defined cannot
+  load). Do **not** reuse listing/load/desktop/markdown-collision tokens. Do
+  **not** restore `auto.md` because DISPATCH fired.
+- **Consumer upgrade recipe** — already-Axis-A trees have `{ id, tui }` plus
+  plain-JSON dispatch:
+  1. Upgrade its-magic to a release that includes **BUG-0023**.
+  2. `its-magic --mode upgrade --host opencode` or
+     `its-magic --mode upgrade --host both` (**overwrites** framework-owned
+     `.opencode/plugins/its-magic-auto/rpc.ts`, `tui.ts`, and orchestrator
+     register path **and still prunes** leftover `.opencode/commands/auto.md`;
+     `tui.json` stays copy-if-absent / JSONC-merge).
+  3. Restart OpenCode CLI TUI (`opencode`, **not** `--pure`).
+  4. Listed `/auto` **starts** `runAutoLifecycle` — or honest DISPATCH only if
+     client/RPC truly absent (not LLM Auto mode).
+- **Do not prune** `.opencode/agents/auto.md` or `.cursor/commands/auto.md`.
+- **Normative**: `docs/engineering/architecture.md` `# BUG-0023`; research
+  **`R-0137`**. Contract tests: `python -m pytest tests/bug0023_opencode_cli_tui_dispatch_rpc_test.py -v`.
+
+
+- **What shipped**: in-tree unpublished `standalone/` npm workspaces with owned
+  `AgentKernel` in `packages/pi-kernel`. Kit `files` omit `standalone/`. Additive
+  CI job `standalone` (Windows+Linux, Node 22). Not an npm/GitHub/Homebrew/Chocolatey
+  publish.
+- **Validate (local)**:
+  1. `python -m pytest tests/us0133_contract_test.py -v` (kit markers 1/2/3/5/10).
+  2. `cd standalone && npm test && npm run typecheck && npm run lint`.
+  3. `python scripts/guard_installer_publish.py`.
+- **Do not** fold standalone `npm test` into kit `TEST_COMMAND`.
+- **No live provider** / no OS-sandbox claim / no branding lock.
+- **Normative**: `docs/engineering/architecture.md` `# US-0133`; **DEC-0133**;
+  research **`R-0121`**.
+- **Release readiness (S0137 / 2026-09-12T12:30:00Z)**: workflow-only
+  **RELEASE_PASS**; harness `tests/report.md` Pass:859 / Fail:0; queue S0137
+  `released`; publish skipped (`RELEASE_PUBLISH_MODE=confirm`). Deploy commands
+  remain explicit no-ops above (no staging/prod target). Next: `/closure`.
+
+### KernelBridge consume contract + upgrade (US-0134 / R-0122 / DEC-0134)
+
+- **What ships**: in-tree unpublished `@its-magic/kernel-bridge` under
+  `standalone/packages/kernel-bridge`. Kit `files` still omit `standalone/`.
+  Additive `its_magic/kernel-contract.json` plus allowlisted Python CLIs.
+  Runtime range is `supported-kernel-range.json` (`>=0.1.3-9 <0.2.0`,
+  `includePrerelease: true`). Four `KERNEL_*` handshake codes only.
+- **Consumer upgrade recipe (R3)** — kit-only add is **not** enough for trees
+  installed before this story:
+  1. Upgrade its-magic to a release that includes **US-0134**.
+  2. Refresh framework-owned files:
+     `its-magic --mode upgrade` (or `--mode upgrade --host both`).
+     Upgrade copies `its_magic/kernel-contract.json` and the newly allowlisted
+     scripts (`bug_issue_validate` + lib, `pack_json_validate`, `ledger_validate`
+     + `decision_ledger_lib`, `model_tier_validate` + lib,
+     `status_reconcile_validate`).
+  3. Old trees **without** `its_magic/kernel-contract.json` fail closed with
+     `KERNEL_CONTRACT_MISMATCH` (never a silent default synthesized from
+     filenames). Re-run upgrade, then retry the standalone handshake.
+- **Validate (local)**:
+  1. `python -m pytest tests/us0134_contract_test.py -v` (kit marker 10).
+  2. `cd standalone && npm test && npm run typecheck && npm run lint`.
+  3. `python scripts/guard_installer_publish.py`.
+- **Do not** fold standalone `npm test` into kit `TEST_COMMAND`.
+- **Do not** emit `OPENCODE_*` on the standalone path (US-0125 remains the
+  parallel OpenCode host).
+- **Normative**: `docs/engineering/architecture.md` `# US-0134`; **DEC-0134**;
+  research **`R-0122`**.
+- **Release readiness (S0138 / 2026-09-12T13:45:00Z)**: workflow-only
+  **RELEASE_PASS**; harness `tests/report.md` Pass:860 / Fail:0; queue S0138
+  `released`; publish skipped (`RELEASE_PUBLISH_MODE=confirm`). Deploy commands
+  remain explicit no-ops above (no staging/prod target). Next: `/closure`.
+  Operator stops after S0138 ship — do not drain-advance.
+
+### Standalone authentication and model routing (US-0135 / R-0127 / DEC-0135)
+
+- **What shipped**: in-tree unpublished `standalone/packages/auth-models` (no Pi imports)
+  + pi-kernel `AuthRuntimeAdapter`; owned OS credential dir (XDG / `%APPDATA%` / macOS
+  Application Support `its-magic/`, 0600-class); 6-step `ModelRouter` with provenance;
+  thinking clamp independent of slug/`TOKEN_PROFILE`; critic pin +
+  `CROSS_MODEL_DEGRADED_MODE`; `itsm auth` / `models list` / `models test` (`--live`
+  never CI). Kit `files` omit `standalone/`. Not an npm/GitHub/Homebrew/Chocolatey
+  publish.
+- **Validate (local)**:
+  1. `python -m pytest tests/us0135_contract_test.py tests/us0134_contract_test.py tests/us0133_contract_test.py -v` (kit markers + compose).
+  2. `cd standalone && npm test && npm run typecheck && npm run lint` (10/10 `test_us0135_*` + us0133/us0134 compose).
+  3. `python scripts/check-user-visible-metadata.py --repo .` (US-0071).
+- **Do not** fold standalone `npm test` into kit `TEST_COMMAND`.
+- **No live provider** / no `.env` ship store / fake-model CI default held.
+- **Normative**: `docs/engineering/architecture.md` `# US-0135`; **DEC-0135**;
+  research **`R-0127`**.
+- **Release readiness (S0141 / 2026-09-13T05:55:00Z)**: workflow-only
+  **RELEASE_PASS**; scoped standalone npm test 26/26 + kit pytest 7/7;
+  `harness_fail_zero_claimed=false`; queue S0141 `released`; publish skipped
+  (`RELEASE_PUBLISH_MODE=confirm`). Deploy commands remain explicit no-ops above
+  (no staging/prod target). Next: `/closure`.
+
+### Fresh role sessions and runtime attestation (US-0136 / R-0128 / DEC-0136)
+
+- **What shipped**: in-tree unpublished `standalone/packages/role-runtime` (no Pi
+  imports) + `SessionSupervisor` wrapping injected `AgentKernel.createSession`;
+  in-memory `ContinuationContract` same-phase `run`/`steer`; typed `RoleCatalog`
+  (DEC-0051 + `AUTO_ROLE_*` + extra rows); sidecar spawn/start/end +
+  `attestation_hash` (separate from DEC-0038 tuple); fail-closed `SESSION_*` /
+  `ATTESTATION_*`; TS orchestrator scheduling-only (`assertOrchestratorSchedulingOnly`).
+  Kit `files` omit `standalone/`. Not an npm/GitHub/Homebrew/Chocolatey publish.
+- **Validate (local)**:
+  1. `python -m pytest tests/us0136_contract_test.py tests/us0135_contract_test.py tests/us0134_contract_test.py tests/us0133_contract_test.py -v` (kit markers + compose).
+  2. `cd standalone && npm test && npm run typecheck && npm run lint` (10/10 `test_us0136_*` + us0133/us0134/us0135 compose).
+  3. `python scripts/check-user-visible-metadata.py --repo .` (US-0071).
+- **Do not** fold standalone `npm test` into kit `TEST_COMMAND`.
+- **No live provider** / no `.env` ship store / fake-model CI default held.
+- **Normative**: `docs/engineering/architecture.md` `# US-0136`; **DEC-0136**;
+  research **`R-0128`**.
+- **Release readiness (S0142 / 2026-09-13T09:15:00Z)**: workflow-only
+  **RELEASE_PASS**; scoped standalone npm test 36/36 + kit pytest 8/8;
+  `harness_fail_zero_claimed=false`; queue S0142 `released`; publish skipped
+  (`RELEASE_PUBLISH_MODE=confirm`). Deploy commands remain explicit no-ops above
+  (no staging/prod target). Next: `/closure`.
+
+### Owned tool broker, policy engine, and security boundary (US-0137 / R-0129 / DEC-0137)
+
+- **What shipped**: in-tree unpublished `standalone/packages/policy-engine` +
+  `standalone/packages/tool-broker` (no Pi imports) + thin kernel `ownedTools` port
+  (`defineTool` only in pi-kernel); production `itsm_*` via ToolBroker;
+  `noTools: "builtin"` held; PolicyEngine ALLOW|ASK|DENY; path/shell/secret/profile
+  deny matrix; compact audit + real `policy_hash`; Layer B missing →
+  `ISOLATION_BACKEND_UNAVAILABLE`. Kit `files` omit `standalone/`. Not an
+  npm/GitHub/Homebrew/Chocolatey publish.
+- **Validate (local)**:
+  1. `python -m pytest tests/us0137_contract_test.py tests/us0136_contract_test.py tests/us0135_contract_test.py tests/us0134_contract_test.py tests/us0133_contract_test.py -v` (kit markers + compose).
+  2. `cd standalone && npm test && npm run typecheck && npm run lint` (10/10 `test_us0137_*` + us0133/us0134/us0135/us0136 compose).
+  3. `python scripts/check-user-visible-metadata.py --repo .` (US-0071).
+- **Do not** fold standalone `npm test` into kit `TEST_COMMAND`.
+- **No live provider** / no `.env` ship store / fake-model CI default held.
+- **Normative**: `docs/engineering/architecture.md` `# US-0137`; **DEC-0137**;
+  research **`R-0129`**.
+- **Release readiness (S0143 / 2026-09-13T12:35:00Z)**: workflow-only
+  **RELEASE_PASS**; scoped standalone npm test 46/46 + kit pytest 9/9;
+  `harness_fail_zero_claimed=false`; queue S0143 `released`; publish skipped
+  (`RELEASE_PUBLISH_MODE=confirm`). Deploy commands remain explicit no-ops above
+  (no staging/prod target). Next: `/closure`.
+
 ### Optional deterministic CI routing recipe (US-0086)
 
 Use this only when CI needs explicit remote-target hints; keep it opt-in.
@@ -4069,6 +4401,12 @@ framework-owned pack files refresh from the LF template (see
 Kit-only upgrade of the its-magic package is not sufficient without this
 host refresh.
 
+After a **BUG-0018** kit fix, consumers that still have leftover
+`.opencode/commands/auto.md` must run `upgrade --host opencode` or
+`--host both` so the colliding file is **pruned** (copy-only upgrade is
+not enough). If unlink is blocked, delete the file then re-upgrade (see
+**OpenCode markdown `/auto` vs plugin execute (BUG-0018 / R-0120)** above).
+
 ### Missing (host-scoped — YAGNI)
 
 `missing` after `--host both` then `--host cursor` no-ops on `.opencode/` via
@@ -4162,6 +4500,39 @@ Stub reason-code table — US-0126 owns the full cross-host consolidated table; 
 
 - `OPENCODE_PLUGIN_DISPATCH_ATTACH_UNSUPPORTED` — no usable `/auto` attach surface (`ctx.command.transform` / `editor.add({ name: "auto" })` and no event subscribe); fail closed; stop `/auto`.
 - `OPENCODE_AUTO_ALREADY_RUNNING` — concurrent or re-entrant `/auto` while `runAutoLifecycle` is in-flight (mutex TTL 7200s / clear-on-exit); fail closed; distinct from `AUTO_SCHEDULER_CONFLICT`.
+
+### OpenCode `/auto` markdown collision reason codes (BUG-0018)
+
+Stub reason-code table — US-0126 owns the full cross-host consolidated table; this section ships the one-liner stub only for leftover markdown `/auto` vs plugin execute.
+
+- `OPENCODE_AUTO_MARKDOWN_COLLISION` — leftover `.opencode/commands/auto.md` so markdown would own `/auto`; fail closed; do not silent STOP. Installer prints this token if prune unlink fails. Plugin leftover check is defense-only and does **not** delete the file. Operator: delete `.opencode/commands/auto.md` then `upgrade --host opencode|both`.
+
+### OpenCode `/auto` slash listing reason codes (BUG-0019)
+
+Stub reason-code table — US-0126 owns the full cross-host consolidated table; this section ships the one-liner stub only for TUI keymap listing + TUI `run()` dispatch.
+
+- `OPENCODE_AUTO_SLASH_LISTING_UNSUPPORTED` — plugin execute is registered but TUI keymap/slash listing cannot be registered (missing `keymap.layer` / `registerLayer` / slash field); fail closed; must not silent missing `/auto`. Do **not** reuse `OPENCODE_AUTO_MARKDOWN_COLLISION` for listing-miss.
+- `OPENCODE_AUTO_TUI_DISPATCH_UNSUPPORTED` — `/auto` is listed but TUI `run()` cannot reach `runAutoLifecycle` because client/RPC is **truly absent** (both `api.client.rpc(Defined)` and `OpenCode.make({ baseUrl }).rpc(Defined)` failed, or Defined cannot load). **Defect if this is the happy path** (BUG-0023). Fail closed; never paper over with a markdown/JSON template. Do **not** restore `auto.md` because this token fired.
+
+### OpenCode CLI TUI `/auto` dispatch reason codes (BUG-0023)
+
+Stub reason-code table — US-0126 owns the full cross-host consolidated table; this section ships the one-liner stub only for listed `/auto` dispatch miss vs `Rpc.define`.
+
+- `OPENCODE_AUTO_TUI_DISPATCH_UNSUPPORTED` — listed CLI TUI `/auto` `run()` cannot dispatch to `runAutoLifecycle` because client/RPC truly cannot dispatch. DISPATCH-is-defect when the host has a usable client. Do **not** reuse `OPENCODE_AUTO_SLASH_LISTING_UNSUPPORTED`, `OPENCODE_AUTO_CLI_TUI_PLUGIN_LOAD_UNSUPPORTED`, `OPENCODE_AUTO_DESKTOP_COMMAND_INFO_LISTING_UNSUPPORTED`, or `OPENCODE_AUTO_MARKDOWN_COLLISION` for this miss. `--pure` is out of scope.
+
+### OpenCode desktop Command.Info listing reason codes (BUG-0020)
+
+Stub reason-code table — US-0126 owns the full cross-host consolidated table; this section ships the one-liner stub only for desktop Command.Info execute-only `/auto` silent-miss.
+
+- `OPENCODE_AUTO_DESKTOP_COMMAND_INFO_LISTING_UNSUPPORTED` — plugin execute is registered **but** the operator Command.Info picker cannot list/invoke execute-only `/auto`. Fail closed; must not silent missing-command on desktop. Do **not** reuse `OPENCODE_AUTO_MARKDOWN_COLLISION` or `OPENCODE_AUTO_SLASH_LISTING_UNSUPPORTED` for this miss. Emission is `emitDesktopCommandInfoListingUnsupported` (desktop/session notify, then session notice, then setup session-error) — **not** CLI TUI toast-only. Working start remains CLI TUI `/auto` after `.opencode/tui.json` load.
+
+### OpenCode CLI TUI plugin load reason codes (BUG-0021)
+
+Stub reason-code table — US-0126 owns the full cross-host consolidated table; this section ships the one-liner stub only for listed-but-skipped CLI TUI `tui.json` load.
+
+- `OPENCODE_AUTO_CLI_TUI_PLUGIN_LOAD_UNSUPPORTED` — `.opencode/tui.json` **lists** `./plugins/its-magic-auto/tui.ts` **but** the host skipped it (`readV1Plugin` / `tui()` never runs / init fail / `#36505`-class no external load). Fail closed; must not silent-miss in kit docs. Reuse `OPENCODE_AUTO_SLASH_LISTING_UNSUPPORTED` only when `tui()` **ran** but keymap API is missing. Do **not** reuse `OPENCODE_AUTO_DESKTOP_COMMAND_INFO_LISTING_UNSUPPORTED` or `OPENCODE_AUTO_MARKDOWN_COLLISION` for listed-but-skipped. Emission is `emitCliTuiPluginLoadUnsupported` (session-visible notice) — **not** TUI-toast-only — and **must not** block `editor.add`. Residual `#36505` is **not** a reason to restore `auto.md`. `--pure` is out of scope.
+
+Cross-link: US-0126 owns the full reason-code table text and remediation guidance.
 
 **Release status (S0132 / BUG-0016)**: **`released`** (`2026-09-06T19:35:00Z`); backlog remains **OPEN** until `/closure`. Operator verify: **`handoffs/releases/S0132-release-notes.md`** **## Verify**; publish skipped while **`RELEASE_PUBLISH_MODE=confirm`**. Gate-1 evidence: `tests/report.md` @ `2026-09-06T20:46:57Z` Pass:851 / Fail:0.
 
@@ -4399,5 +4770,9 @@ locals (not copy-aside). `[opencode_clean_paths] .opencode` must not delete
 markers; static/fixture only; no live OpenCode probe).
 
 **Release status (S0134 / US-0132)**: **`released`** (`2026-09-09T20:18:00Z`); backlog **DONE** (`/closure` `2026-09-09T20:33:00Z`; acceptance L160 [x]). Operator verify: **`handoffs/releases/S0134-release-notes.md`** **## Verify**; publish skipped while **`RELEASE_PUBLISH_MODE=confirm`**. Gate-1 evidence: `tests/report.md` @ `2026-09-09T20:17:05Z` Pass:856 / Fail:0.
+
+**Release status (S0150 / US-0142)**: **`released`** (`2026-09-14T05:30:00Z`); backlog **OPEN** (closure deferred). Operator verify: **`handoffs/releases/S0150-release-notes.md`** **## Verify**; publish skipped while **`RELEASE_PUBLISH_MODE=confirm`**. Gate-1 evidence: scoped `python -m pytest tests/us0142_contract_test.py -q` 12/12 + US-0071 metadata exit 0 (`harness_fail_zero_claimed=false`).
+
+**Release status (S0151 / US-0143)**: **`released`** (`2026-09-14T08:50:00Z`); backlog **OPEN** (closure deferred). Operator verify: **`handoffs/releases/S0151-release-notes.md`** **## Verify**; publish skipped while **`RELEASE_PUBLISH_MODE=confirm`** (no operator confirm this turn). Gate-1 evidence: scoped `python -m pytest tests/us0143_contract_test.py -q` 12/12 + US-0071 metadata exit 0 (`harness_fail_zero_claimed=false`).
 
 

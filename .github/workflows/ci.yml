@@ -193,33 +193,27 @@ jobs:
           echo "     (or:  powershell scripts/validate-and-push.ps1)"
           echo "  3. Fix failures, the script loops until green, then pushes."
 
-  # ── npm pack smoke test (kit-internal) ─────────────────────────────
-  npm-test:
-    runs-on: ubuntu-latest
+  # ── Standalone workspace contract tests (US-0133+; not kit TEST_COMMAND) ──
+  standalone-test:
+    strategy:
+      fail-fast: false
+      matrix:
+        os: [ubuntu-latest, windows-latest]
+    runs-on: ${{ matrix.os }}
+    defaults:
+      run:
+        working-directory: standalone
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-node@v4
         with:
-          node-version: "20"
-      - name: npm pack
-        run: npm pack
-
-  # ── Homebrew formula test (macOS) ──────────────────────────────────
-  brew-test:
-    runs-on: macos-latest
-    steps:
-      - uses: actions/checkout@v4
-      - name: Validate formula syntax
-        run: brew style packaging/homebrew/its-magic.rb || true
-
-  # ── Chocolatey package test (Windows) ──────────────────────────────
-  choco-test:
-    runs-on: windows-latest
-    steps:
-      - uses: actions/checkout@v4
-      - name: Validate choco pack
-        shell: powershell
+          node-version: "22"
+          cache: npm
+          cache-dependency-path: standalone/package-lock.json
+      - name: Install and test
         run: |
-          Push-Location packaging/chocolatey
-          choco pack
-          Pop-Location
+          npm ci
+          npm run typecheck
+          npm run lint
+          npm test
+

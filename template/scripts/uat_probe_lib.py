@@ -75,7 +75,7 @@ AUTOMATABLE_UI_TOKENS = (
     "browser",
 )
 
-BROWSER_PROBE_MODES = ("cursor", "http_fallback", "playwright_fallback")
+BROWSER_PROBE_MODES = ("cursor", "http_fallback", "playwright_fallback", "owned")
 
 DEFAULT_PROBE_TIMEOUT = 120
 DEFAULT_POLL_SECONDS = 60
@@ -425,6 +425,12 @@ def execute_browser_smoke(
 
     if not url:
         result["reason_code"] = UAT_PROBE_UNRESOLVED
+        return result
+
+    if mode == "owned":
+        result["execution_tier"] = "standalone"
+        result["reason_code"] = UAT_BROWSER_UNAVAILABLE
+        result["owned_backend"] = "browser-uat"
         return result
 
     if mode == "cursor":

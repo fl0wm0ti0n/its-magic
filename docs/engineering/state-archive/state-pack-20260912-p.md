@@ -1,0 +1,82 @@
+# State archive pack (2026-09-12)
+
+- Rollover trigger: `STATE_HOT_MAX_LINES=1200, STATE_HOT_MAX_CHECKPOINTS=80`
+- Source: `docs/engineering/state.md`
+- Archived units (oldest first, contiguous prefix): 1
+- Retained units in hot file: 16
+- First archived heading: `## Discovery checkpoint — BUG-0018 / auto-20260912-bug0018 (role=po)`
+- Last archived heading: `## Discovery checkpoint — BUG-0018 / auto-20260912-bug0018 (role=po)`
+- Verification tuple (mandatory):
+  - archived_body_lines=67
+  - preamble_lines=11
+  - retained_body_lines=1136
+
+---
+
+## Discovery checkpoint — BUG-0018 / auto-20260912-bug0018 (role=po)
+
+- phase_id=discovery
+- role=po
+- bug_id=BUG-0018
+- story_id=BUG-0018
+- sprint_id=none (pending)
+- orchestrator_run_id=auto-20260912-bug0018
+- delivery_mode=ultra_lean
+- macro_phase=spec (intake DONE; discovery PASS)
+- model_id=cursor-grok-4.6 (CROSS_MODEL_REVIEW=1 — required on isolation)
+- fresh_context_marker=po-BUG0018-discovery-20260912T091900Z-fresh
+- timestamp=2026-09-12T09:28:00Z
+- verdict=DISCOVERY_PASS (D1..D10 LOCKED; decision_gate=false)
+- backlog_status=OPEN (### BUG-0018 — discovery_notes appended; Status OPEN)
+- acceptance_BUG-0018=unchecked (unchanged)
+- sibling_boundary=BUG-0015/BUG-0016/BUG-0017 DONE out of scope; Symptom B Cursor Task-unavailable not a bug
+- research_target=R-0120 (compose R-0119 / R-0114; do not wipe)
+- next_scheduled_phase=/research (fresh tech-lead)
+- stop_condition=STOP after discovery PASS. Orchestrator spawns /research in fresh tech-lead subagent (BUG-0006). Do NOT spawn research from this PO subagent. Do NOT mark BUG-0018 DONE. Do NOT tick acceptance.
+
+### Isolation evidence (US-0048 / DEC-0029) — discovery BUG-0018
+
+- phase_id=discovery
+- role=po
+- model_id=cursor-grok-4.6 (CROSS_MODEL_REVIEW=1 — required)
+- fresh_context_marker=po-BUG0018-discovery-20260912T091900Z-fresh (NEW per US-0048 / BUG-0006; not reused from intake marker)
+- timestamp=2026-09-12T09:28:00Z (UTC)
+- orchestrator_run_id=auto-20260912-bug0018
+- evidence_ref=docs/product/backlog.md ### BUG-0018 (+ discovery_notes); docs/product/acceptance.md BUG-0018 row; docs/product/vision.md ## Discovery Notes — BUG-0018; handoffs/intake_evidence/BUG-0018-intake-20260912.json; handoffs/po_to_tl.md Discovery handoff BUG-0018; .opencode/commands/auto.md (LF STOP-only); .opencode/plugins/orchestrator.ts (BUG-0015 attach present); docs/engineering/research.md ## R-0119; docs/engineering/architecture.md # BUG-0015 CF1
+- Fresh PO subagent per BUG-0006 / US-0048 isolation; no prior chat history carried forward. Narrow-read only. No .env reads, no credentials, no intake JSON mutation, no /research spawn from this subagent, no Status DONE flip, no acceptance tick, no execute-surface mutation.
+
+### Strict runtime proof (DEC-0038) — discovery
+
+- runtime_proof_id=rp-auto-20260912-bug0018-discovery-po-20260912T092800Z-BUG-0018
+- phase_id=discovery, role=po, story_id=BUG-0018, sprint_id=none
+- proof_issued_at=2026-09-12T09:28:00Z
+- proof_ttl_seconds=3600, proof_ttl=2026-09-12T10:28:00Z
+- proof_hash=0786CBA6FFED9208970ABE0E22C1CC72683D8B5B0EF2F4076191947E55F2D543
+- Canonical payload (sorted-key compact JSON per DEC-0038, lowercase keys only): {"delivery_mode":"ultra_lean","macro_phase":"spec","model_id":"cursor-grok-4.6","orchestrator_run_id":"auto-20260912-bug0018","phase_id":"discovery","proof_issued_at":"2026-09-12T09:28:00Z","proof_ttl_seconds":3600,"role":"po","runtime_proof_id":"rp-auto-20260912-bug0018-discovery-po-20260912T092800Z-BUG-0018","sprint_id":"none","story_id":"BUG-0018"}
+- hash_recompute_confirmation=true (Python hashlib SHA-256 of exact canonical payload → 0786CBA6FFED9208970ABE0E22C1CC72683D8B5B0EF2F4076191947E55F2D543)
+
+### Discovery locks summary
+
+| ID | Lock |
+|----|------|
+| D1 | Plugin execute / runAutoLifecycle or OPENCODE_* fail-closed |
+| D2 | Precedence/registry merge (not attach, not CRLF) |
+| D3 | Supersede # BUG-0015 CF1; do not reopen BUG-0015 |
+| D4 | auto.md STOP-only; empty body insufficient if markdown owns execution |
+| D5 | Fix axis A–D; research picks winner |
+| D6 | command.executed not primary unless proven |
+| D7 | Additive test_bug0018_*; no live CI probe |
+| D8 | Symptom B / reopen 0015-0017 / DEC body rewrite out of scope |
+| D9 | Done = lifecycle start or documented OPENCODE_* + slash listing |
+| D10 | Active↔template parity + consumer upgrade |
+
+### Triad hot-surface verification tuple (DEC-0054) — discovery BUG-0018
+
+- surface=docs/engineering/state.md (isolation + discovery checkpoint append-bottom) + handoffs/po_to_tl.md (discovery handoff append)
+- companion=docs/product/backlog.md discovery_notes; docs/product/vision.md ## Discovery Notes — BUG-0018; handoffs/resume_brief.md (prepend)
+- pre_write: STATE hot oversize after append (1239/1200)
+- post_append: enforce-triad-hot-surface.py --rollover units=1 pack=docs/engineering/state-archive/state-pack-20260912.md (archived ## Architecture checkpoint — BUG-0017); final --check exit 0; po_to_tl under PO_TO_TL_HOT_MAX_LINES (no po rollover)
+- artifact_ordering: backlog notes append; vision insert; po_to_tl.md append; state.md append-bottom (DEC-0040); resume_brief.md prepend-top
+- Active context surface preamble present
+- pack_ref=docs/engineering/state-archive/state-pack-20260912.md
+

@@ -1,0 +1,70 @@
+{
+  "selected_pack": "small-intake-pack",
+  "intake_run_id": "cursor-20260913-BUG0022-intake",
+  "writer_id": "po-cursor-20260913-BUG0022-intake",
+  "INTAKE_GUIDED_MODE": 1,
+  "INTAKE_WORK_ITEM_KIND": "bug",
+  "requested_mode": "bug",
+  "intake_boundary_utc": "2026-09-13T11:37:00Z",
+  "ID_NAMESPACE_BOOTSTRAP": 0,
+  "bug_id": "BUG-0022",
+  "asked_topics": [
+    "outcome_success_criteria",
+    "impacted_components",
+    "constraints_compatibility_risks",
+    "required_tests_acceptance_checks",
+    "done_definition"
+  ],
+  "missing_topics": [],
+  "assumptions_confirmed": "(none)",
+  "topic_coverage": [
+    {
+      "topic_key": "outcome_success_criteria",
+      "satisfied_by": "answer_ref",
+      "quoted_user_text": "Your observation is right: this /auto run mostly inherited the parent chat model (cursor-grok-4.6) instead of executing the role catalog.",
+      "intake_run_id": "cursor-20260913-BUG0022-intake",
+      "turn_index": 0,
+      "ref": "ie:cursor-20260913-BUG0022-intake:0:11195e136fd8286a"
+    },
+    {
+      "topic_key": "impacted_components",
+      "satisfied_by": "answer_ref",
+      "quoted_user_text": "Scratchpad already has MODEL_RESOLVE=role_catalog and MODEL_CATALOG=.cursor/model-catalog.local.example.role-based-balanced_cursor_only.json. Isolation rows still recorded model_id: cursor-grok-4.6 for producers and composer-2.5-fast for critics. That is the parent chat plus a hardcoded critic, not catalog lookup.",
+      "intake_run_id": "cursor-20260913-BUG0022-intake",
+      "turn_index": 1,
+      "ref": "ie:cursor-20260913-BUG0022-intake:1:11941191db115e01"
+    },
+    {
+      "topic_key": "constraints_compatibility_risks",
+      "satisfied_by": "answer_ref",
+      "quoted_user_text": "Orchestrator did not pass catalog slugs. /auto is supposed to call model_tier_lib.resolve_model_for_phase and select_critic_model (DEC-0104). This session used inherit for every producer and a fixed critic slug.",
+      "intake_run_id": "cursor-20260913-BUG0022-intake",
+      "turn_index": 2,
+      "ref": "ie:cursor-20260913-BUG0022-intake:2:9bb5c71f8272dcf9"
+    },
+    {
+      "topic_key": "required_tests_acceptance_checks",
+      "satisfied_by": "answer_ref",
+      "quoted_user_text": "scripts/model_tier_lib.py is missing in this repo (same class of gap as sovereign_critic_lib.py). Lookup cannot run even though MODEL_RESOLVE=role_catalog.",
+      "intake_run_id": "cursor-20260913-BUG0022-intake",
+      "turn_index": 3,
+      "ref": "ie:cursor-20260913-BUG0022-intake:3:39c239d1be7ef2a7"
+    },
+    {
+      "topic_key": "done_definition",
+      "satisfied_by": "answer_ref",
+      "quoted_user_text": "Treat this as an orchestration bug: /auto must pass Task.model from role_catalog, not parent inherit.",
+      "intake_run_id": "cursor-20260913-BUG0022-intake",
+      "turn_index": 4,
+      "ref": "ie:cursor-20260913-BUG0022-intake:4:876e32d2f719cd5d"
+    }
+  ],
+  "duplicate_check_pass": true,
+  "duplicate_check_notes": "NEW bug. Distinct from BUG-0021 OPEN (OpenCode CLI TUI /auto listing — different host; do not merge; do not mutate BUG-0021). Distinct from BUG-0020 DONE (OpenCode desktop/CLI listing C-limb). Distinct from US-0101 DONE / US-0102 DONE (catalog/resolver stories — compose; do not flip OPEN; do not allocate US-xxxx). Live gap: /auto Task spawn used inherit despite MODEL_RESOLVE=role_catalog. Do not mutate US-0133..US-0148. Do not drain US-0139+. Do not restore OpenCode auto.md.",
+  "decomposition_verdict": "single_bug",
+  "decomposition_rationale": "Operator already invoked /intake bug — treat as accept. One outcome: /auto Task-spawns pass model from role_catalog (resolve_model_for_phase / select_critic_model) so isolation model_id matches catalog, or fail-closed MODEL_* / MODEL_ROLE_SLUG_UNKNOWN / documented MODEL_RESOLVE_FALLBACK — not silent parent inherit. Critic uses roles.critic not hardcoded release slug. Phase-role names align (sa vs tech-lead, qe/curator).",
+  "research_id": "R-0133",
+  "sibling_not_persisted": "Do not reopen US-0101/US-0102; do not merge BUG-0021; do not reopen BUG-0020; do not allocate US-xxxx; operator copy-to-local.json only is insufficient",
+  "argv_wins_over_scratchpad": "INTAKE_WORK_ITEM_KIND=story in scratchpad; explicit /intake bug wins for this run",
+  "WORK_KIND_ROUTING": 0
+}

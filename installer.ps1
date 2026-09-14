@@ -282,6 +282,125 @@ function Test-ModelConfigPreservePath([string]$Rel) {
   return $script:ModelConfigPreserveRelpaths -contains (ConvertTo-PosixRel $Rel)
 }
 
+# BUG-0018: targeted prune of leftover colliding markdown /auto (not a sweeper).
+function Invoke-PruneRetiredOpencodeAutoMd {
+  param(
+    [string]$TargetRoot,
+    [string]$SourceRoot,
+    [string]$HostValue
+  )
+  if ($HostValue -notin @("opencode", "both")) { return }
+  $rel = ".opencode/commands/auto.md"
+  $src = Join-Path $SourceRoot $rel
+  if (Test-Path -LiteralPath $src -PathType Leaf) { return }
+  $dst = Join-Path $TargetRoot $rel
+  if (-not (Test-Path -LiteralPath $dst -PathType Leaf)) { return }
+  try {
+    Remove-Item -LiteralPath $dst -Force -ErrorAction Stop
+  } catch {
+    Write-Host "[OPENCODE_AUTO_MARKDOWN_COLLISION] leftover $rel could not be removed; delete the file then re-run upgrade --host opencode|both"
+  }
+}
+
+# BUG-0019: copy TUI listing files onto already-pruned consumers (not a sweeper).
+# BUG-0021: overwrite tui.ts even when dest exists (Copy-Item -Force, not copy-if-absent).
+# BUG-0023: also overwrite rpc.ts + orchestrator.ts (dispatch path, not copy-if-absent).
+function Invoke-CopyOpencodeAutoListingSurface {
+  param(
+    [string]$TargetRoot,
+    [string]$SourceRoot,
+    [string]$HostValue
+  )
+  if ($HostValue -notin @("opencode", "both")) { return }
+  $rels = @(
+    ".opencode/plugins/its-magic-auto/index.ts",
+    ".opencode/plugins/its-magic-auto/tui.ts",
+    ".opencode/plugins/its-magic-auto/rpc.ts",
+    ".opencode/plugins/orchestrator.ts"
+  )
+  foreach ($rel in $rels) {
+    $src = Join-Path $SourceRoot $rel
+    if (-not (Test-Path -LiteralPath $src -PathType Leaf)) {
+      $src = Join-Path $SourceRoot ("template/" + $rel)
+    }
+    if (-not (Test-Path -LiteralPath $src -PathType Leaf)) { continue }
+    $dst = Join-Path $TargetRoot $rel
+    $dstDir = Split-Path -Parent $dst
+    if (-not (Test-Path -LiteralPath $dstDir)) {
+      New-Item -ItemType Directory -Path $dstDir -Force | Out-Null
+    }
+    Copy-Item -LiteralPath $src -Destination $dst -Force
+  }
+}
+
+# BUG-0020: copy-if-absent / JSONC-merge project tui.json (CLI TUI load path).
+function Test-OpencodeTuiJsonMergePath {
+  param([string]$Rel)
+  return ((ConvertTo-PosixRel $Rel) -eq ".opencode/tui.json")
+}
+
+function Invoke-CopyOrMergeOpencodeTuiJson {
+  param(
+    [string]$TargetRoot,
+    [string]$SourceRoot,
+    [string]$HostValue
+  )
+  if ($HostValue -notin @("opencode", "both")) { return }
+  $rel = ".opencode/tui.json"
+  $spec = "./plugins/its-magic-auto/tui.ts"
+  $src = Join-Path $SourceRoot $rel
+  if (-not (Test-Path -LiteralPath $src -PathType Leaf)) {
+    $src = Join-Path $SourceRoot ("template/" + $rel)
+  }
+  if (-not (Test-Path -LiteralPath $src -PathType Leaf)) { return }
+  $dst = Join-Path $TargetRoot $rel
+  if (-not (Test-Path -LiteralPath $dst -PathType Leaf)) {
+    $dstDir = Split-Path -Parent $dst
+    if (-not (Test-Path -LiteralPath $dstDir)) {
+      New-Item -ItemType Directory -Path $dstDir -Force | Out-Null
+    }
+    Copy-Item -LiteralPath $src -Destination $dst -Force
+    return
+  }
+  $raw = Get-Content -LiteralPath $dst -Raw -Encoding utf8
+  if ($raw -like "*$spec*") { return }
+  $stripped = [regex]::Replace($raw, '(?m)//.*?$', '')
+  $stripped = [regex]::Replace($stripped, '/\*[\s\S]*?\*/', '')
+  try {
+    $data = $stripped | ConvertFrom-Json
+  } catch {
+    return
+  }
+  $plugins = @()
+  if ($null -ne $data.plugin) {
+    $plugins = @($data.plugin)
+  }
+  $names = @()
+  foreach ($item in $plugins) {
+    if ($item -is [string]) { $names += $item }
+    elseif ($item -is [System.Array] -and $item.Count -gt 0) { $names += [string]$item[0] }
+  }
+  if ($names -contains $spec) { return }
+  $newPlugins = @($plugins) + $spec
+  $data | Add-Member -NotePropertyName plugin -NotePropertyValue $newPlugins -Force
+  if (-not $data.PSObject.Properties.Name.Contains('$schema')) {
+    $data | Add-Member -NotePropertyName '$schema' -NotePropertyValue 'https://opencode.ai/tui.json' -Force
+  }
+  $json = $data | ConvertTo-Json -Depth 8
+  $comment = "  // BUG-0020 / BUG-0021: CLI TUI plugin load only. Does NOT list /auto in desktop Command.Info. Listing is the load path, not proof of /auto."
+  $lines = $json -split "`n"
+  $out = New-Object System.Collections.Generic.List[string]
+  $inserted = $false
+  foreach ($line in $lines) {
+    $out.Add($line)
+    if (-not $inserted -and $line -match '"\$schema"') {
+      $out.Add($comment)
+      $inserted = $true
+    }
+  }
+  Set-Content -LiteralPath $dst -Value ($out -join "`n") -Encoding utf8
+}
+
 function Remove-CleanPathPreservingLocals([string]$TargetRoot, [string]$Rel) {
   $posix = ConvertTo-PosixRel $Rel
   $full = Join-Path $TargetRoot $Rel
@@ -911,6 +1030,11 @@ if ($mode -eq "upgrade") {
       continue
     }
 
+    if (Test-OpencodeTuiJsonMergePath $rel) {
+      $unchanged++
+      continue
+    }
+
     if ($cat -eq 'framework') {
       if (Files-ContentEqual $src $dst) {
         $unchanged++
@@ -937,6 +1061,10 @@ if ($mode -eq "upgrade") {
       continue
     }
   }
+
+  Invoke-CopyOpencodeAutoListingSurface -TargetRoot $targetRoot -SourceRoot $sourceRoot -HostValue $hostValue
+  Invoke-CopyOrMergeOpencodeTuiJson -TargetRoot $targetRoot -SourceRoot $sourceRoot -HostValue $hostValue
+  Invoke-PruneRetiredOpencodeAutoMd -TargetRoot $targetRoot -SourceRoot $sourceRoot -HostValue $hostValue
 
   Invoke-KitConfigPostinstall -TargetRoot $targetRoot -Mode "upgrade"
   Invoke-ScratchpadPostinstall -TargetRoot $targetRoot -Mode "upgrade"

@@ -13,6 +13,348 @@ Canonical queue state now lives under:
 
 ---
 
+## Release finalized note (S0151)
+
+- Sprint: `S0151`
+- Story: `US-0143` (Delivery routing and full-autonomy scheduler — `@its-magic/runtime-core` delivery-router; RouteScheduled `/auto`/`/quick`; WorkflowEngine drain; GateEngine unamended; 12 `test_us0143_*` markers)
+- Release: **finalized** (`2026-09-14T08:50:00Z`, `orchestrator_run_id=auto-20260913-us0143`, `fresh_context_marker=rel-US0143-release-20260914T085000Z-fresh`, `runtime_proof_id=rp-auto-20260913-us0143-release-release-20260914T085000Z-US-0143`, `model_id=composer-2.5-fast`)
+- Queue: **`handoffs/release_queue.md`** row **`S0151`** = **`released`** (workflow-only; backlog reconciliation deferred to `/closure`)
+- **Verdict**: **PASS** — mandatory release gates green; scoped pytest 12/12 (`harness_fail_zero_claimed=false`).
+- **Run / verify:** `python -m pytest tests/us0143_contract_test.py -q` → 12 passed; `cd standalone && npm test` → 118/118 qa attestation; metadata guard exit 0. See **`handoffs/releases/S0151-release-notes.md`** **## Run** / **## Verify**.
+- **Operator summary**: start=`python -m pytest tests/us0143_contract_test.py -q`; endpoint=`n/a` (contract-test kit); verify pointer=`handoffs/releases/S0151-release-notes.md` ## Verify.
+- **Gate snapshot**: check_in_tests=PASS; qa=PASS (0 blockers); verify_work=PASS (8/8 ACs; 9/9 UAT); uat=PASS (`contract_tests_primary`; live_chrome_probed=false); isolation=PASS; strict_runtime_proof=PASS; finalization=PASS.
+- **Backlog status**: US-0143 remains **OPEN** — closure deferred
+- **Acceptance**: US-0143 row remains **unchecked**
+- Publish: **`RELEASE_PUBLISH_MODE=confirm`** — skipped (`PUBLISH_CONFIRMATION_REQUIRED`; no operator confirm; `npm_published=false`)
+- Sync: **`SYNC_POLICY_MODE=disabled`** → `push_decision=not_eligible`
+- **Strict runtime proof (release)**: `proof_hash=0CBF9393607650A4B90A5BD0DB82EC22A72C8B8169F02D8D273087EB1C755C29`, `proof_ttl=2026-09-14T09:50:00Z`
+- **Next**: **sovereign-critic (release)** then **`/closure`** (fresh **qe**)
+
+## Release finalized note (S0150)
+
+- Sprint: `S0150`
+- Story: `US-0142` (Owned browser UAT and evidence runtime — `@its-magic/browser-uat` no Pi; compose US-0141 `connectHandoff`; Playwright isolated + typed CDP; promote `itsm_browser`; additive `UAT_BROWSER_PROBE_MODE=owned`; fail-closed `BROWSER_*`/`UAT_*`; 12 `test_us0142_*` markers)
+- Release: **finalized** (`2026-09-14T05:30:00Z`, `orchestrator_run_id=auto-20260913-us0142`, `fresh_context_marker=rel-US0142-release-20260914T053000Z-fresh`, `runtime_proof_id=rp-auto-20260913-us0142-release-release-20260914T053000Z-US-0142`, `model_id=composer-2.5-fast`)
+- Queue: **`handoffs/release_queue.md`** row **`S0150`** = **`released`** (workflow-only; no version bump; backlog reconciliation deferred to `/closure`)
+- **Verdict**: **PASS** — all mandatory release gates (1, 2, 3, 4, 4b) green with scoped pytest 12/12 (`harness_fail_zero_claimed=false`).
+- **Run / verify:** `python -m pytest tests/us0142_contract_test.py -q` → 12 passed; `cd standalone && npm test` → 106/106 qa attestation; `python scripts/check-user-visible-metadata.py --repo .` → exit 0. See **`handoffs/releases/S0150-release-notes.md`** **## Run** / **## Verify**.
+- **Operator summary**: start=`python -m pytest tests/us0142_contract_test.py -q`; endpoint=`n/a` (unpublished browser-uat contract-test kit); verify pointer=`handoffs/releases/S0150-release-notes.md` ## Verify.
+- **Gate snapshot**: check_in_tests=PASS (scoped pytest 12/12 + US-0071; harness Fail:0 not claimed); qa=PASS (0 blockers); verify_work=PASS (8/8 ACs; 9/9 UAT; live pytest); uat=PASS (9/9; owned-mode hermetic; live_chrome_probed=false); isolation=PASS; strict_runtime_proof=PASS (verify-work `051000Z` consumed @05:30:00Z before TTL 06:10:00Z); finalization=PASS (queue → `released`).
+- ACs satisfied: **8/8** (12/12 contract markers live; 0 open blocking findings)
+- Compose guards: A1 LOCKED; US-0133..US-0141 DONE held; BUG-0021 DONE / BUG-0022 OPEN / BUG-0023 DONE not mutated; US-0142 OPEN; acceptance unchecked; no fake live-Chrome PASS (`UAT_PROBE_FORBIDDEN`)
+- **Backlog status**: US-0142 remains **OPEN** — closure deferred to `/closure`
+- **Acceptance**: US-0142 row remains **unchecked** — tick at `/closure`
+- Publish: **`RELEASE_PUBLISH_MODE=confirm`** + **`RELEASE_PUBLISH_AUTO_CONFIRM=0`** — `publish_snapshot=skipped_pending_operator_confirm` (`npm_published=false`)
+- Sync: **`SYNC_POLICY_MODE=disabled`** → `push_decision=not_eligible`, `reason_code=SYNC_DISABLED`
+- **Strict runtime proof (release)**: `proof_hash=1656F5928BA41EE1941A51D6CE2E5BC8A777910C6897171170405DC7F46EAF9B` (64 hex; independent MATCH), `proof_ttl=2026-09-14T06:30:00Z`
+- **Unreleased visibility**: no remaining `unreleased`/`blocked` row for S0150 (this sprint is `released`)
+- **Next**: **sovereign-critic (release)** then **`/closure`** (fresh **qe** subagent)
+
+## Release finalized note (S0149)
+
+- Sprint: `S0149`
+- Story: `US-0141` (Application runtime and pluggable execution backends — `@its-magic/app-runtime` no Pi; AppRuntime + ProcessManager + CLI-first local/docker + WSL/SSH adapters; additive `process_handles`; bounded self-debug; Connect handoff no browser; 12 `test_us0141_*` markers)
+- Release: **finalized** (`2026-09-14T02:10:00Z`, `orchestrator_run_id=auto-20260913-us0141`, `fresh_context_marker=rel-US0141-release-20260914T021000Z-fresh`, `runtime_proof_id=rp-auto-20260913-us0141-release-release-20260914T021000Z-US-0141`, `model_id=composer-2.5-fast`)
+- Queue: **`handoffs/release_queue.md`** row **`S0149`** = **`released`** (workflow-only; no version bump; backlog reconciliation deferred to `/closure`)
+- **Verdict**: **PASS** — all mandatory release gates (1, 2, 3, 4, 4b) green with scoped pytest 12/12 (`harness_fail_zero_claimed=false`).
+- **Run / verify:** `python -m pytest tests/us0141_contract_test.py -q` → 12 passed; `cd standalone && npm test` → 94/94 qa attestation; `python scripts/check-user-visible-metadata.py --repo .` → exit 0. See **`handoffs/releases/S0149-release-notes.md`** **## Run** / **## Verify**.
+- **Operator summary**: start=`python -m pytest tests/us0141_contract_test.py -q`; endpoint=`n/a` (unpublished app-runtime contract-test kit); verify pointer=`handoffs/releases/S0149-release-notes.md` ## Verify.
+- **Gate snapshot**: check_in_tests=PASS (scoped pytest 12/12 + US-0071; harness Fail:0 not claimed); qa=PASS (0 blockers); verify_work=PASS (8/8 ACs; 9/9 UAT; live pytest); uat=PASS (9/9); isolation=PASS; strict_runtime_proof=PASS (verify-work `015000Z` consumed @02:10:00Z before TTL 02:50:00Z); finalization=PASS (queue → `released`).
+- ACs satisfied: **8/8** (12/12 contract markers live; 0 open blocking findings)
+- Compose guards: A1 LOCKED; US-0133..US-0140 DONE held; BUG-0021 DONE / BUG-0022 OPEN / BUG-0023 OPEN not mutated; US-0141 OPEN; acceptance unchecked; no fake browser PASS (`UAT_PROBE_FORBIDDEN`)
+- **Backlog status**: US-0141 remains **OPEN** — closure deferred to `/closure`
+- **Acceptance**: US-0141 row remains **unchecked** — tick at `/closure`
+- Publish: **`RELEASE_PUBLISH_MODE=confirm`** + **`RELEASE_PUBLISH_AUTO_CONFIRM=0`** — `publish_snapshot=skipped_pending_operator_confirm` (`npm_published=false`)
+- Sync: **`SYNC_POLICY_MODE=disabled`** → `push_decision=not_eligible`, `reason_code=SYNC_DISABLED`
+- **Strict runtime proof (release)**: `proof_hash=272CB66024D6B3DC8C967C15B057D14F5605466B4D6B2251D233D3015B04AE18` (64 hex; independent MATCH), `proof_ttl=2026-09-14T03:10:00Z`
+- **Unreleased visibility**: no remaining `unreleased`/`blocked` row for S0149 (this sprint is `released`)
+- **Next**: **sovereign-critic (release)** then **`/closure`** (fresh **qe** subagent)
+
+## Release finalized note (S0148)
+
+- Sprint: `S0148`
+- Bug: `BUG-0023` (OpenCode CLI TUI `/auto` Axis A dispatch — shared `Rpc.define` `rpc.ts`; `await ctx.rpc.register`; TUI `client.rpc(Defined)` + `OpenCode.make` fallback; invented POST removed; upgrade overwrites `rpc.ts`/`tui.ts`/orchestrator; no `auto.md` restore; 8 `test_bug0023_*` markers)
+- Release: **finalized** (`2026-09-14T01:05:00Z`, `orchestrator_run_id=auto-20260913-bug0023`, `fresh_context_marker=rel-BUG0023-release-20260914T010500Z-fresh`, `runtime_proof_id=rp-auto-20260913-bug0023-release-release-20260914T010500Z-BUG-0023`, `model_id=composer-2.5-fast`)
+- Queue: **`handoffs/release_queue.md`** row **`S0148`** = **`released`** (workflow-only; no version bump; backlog reconciliation deferred to `/closure`)
+- **Verdict**: **PASS** — all mandatory release gates (1, 2, 3, 4, 4b) green with scoped pytest 37/37 (`harness_fail_zero_claimed=false`).
+- **Run / verify:** `python -m pytest tests/bug0023_opencode_cli_tui_dispatch_rpc_test.py tests/bug0021_opencode_cli_tui_plugin_load_test.py tests/bug0020_opencode_desktop_command_info_listing_test.py tests/bug0019_opencode_auto_slash_listing_test.py tests/bug0018_opencode_auto_ownership_test.py -v` → 37 passed; `python scripts/check-user-visible-metadata.py --repo .` → exit 0. See **`handoffs/releases/S0148-release-notes.md`** **## Run** / **## Verify**.
+- **Operator summary**: start=`python -m pytest tests/bug0023_*.py tests/bug0021_*.py tests/bug0020_*.py tests/bug0019_*.py tests/bug0018_*.py -v`; endpoint=`n/a` (unpublished OpenCode CLI TUI kit); verify pointer=`handoffs/releases/S0148-release-notes.md` ## Verify.
+- **Gate snapshot**: check_in_tests=PASS (scoped pytest 37/37 + parity bug-0023 + US-0071; harness Fail:0 not claimed); qa=PASS (0 blockers); verify_work=PASS (9/9 ACs; 10/10 UAT; live pytest); uat=PASS (10/10); isolation=PASS; strict_runtime_proof=PASS (verify-work `005500Z` consumed @01:05:00Z before TTL 01:55:00Z); finalization=PASS (queue → `released`).
+- ACs satisfied: **9/9** (8/8 contract markers live; 0 open blocking findings)
+- Compose guards: Axis A LOCKED; BUG-0021/0020/0019/0018 DONE held; BUG-0022 / US-0141 OPEN not mutated; BUG-0023 OPEN; acceptance unchecked; no live CLI TUI probe (`UAT_PROBE_FORBIDDEN`)
+- **Backlog status**: BUG-0023 remains **OPEN** — closure deferred to `/closure`
+- **Acceptance**: BUG-0023 row remains **unchecked** — tick at `/closure`
+- Publish: **`RELEASE_PUBLISH_MODE=confirm`** + **`RELEASE_PUBLISH_AUTO_CONFIRM=0`** — `publish_snapshot=skipped_pending_operator_confirm` (`npm_published=false`)
+- Sync: **`SYNC_POLICY_MODE=disabled`** → `push_decision=not_eligible`, `reason_code=SYNC_DISABLED`
+- **Strict runtime proof (release)**: `proof_hash=22EEF81C0AE735C983DDB4248FAD6A8D9ADDD12DD2A7D7AA2D7A9AFB6AB7E9F8` (64 hex; independent MATCH), `proof_ttl=2026-09-14T02:05:00Z`
+- **Unreleased visibility**: no remaining `unreleased`/`blocked` row for S0148 (this sprint is `released`)
+- **Next**: **sovereign-critic (release)** then **`/closure`** (fresh **curator** subagent)
+
+## Release finalized note (S0147)
+
+- Sprint: `S0147`
+- Story: `US-0140` (Canonical lifecycle and gate orchestrator — `@its-magic/runtime-core` no Pi; nested CommandRouter 7-step + typed phase graph + nested GateEngine `RELEASE_*`; closure-exclusive DONE; `node:sqlite` RunsStore; crash resume `discardOrphans` + fresh role; `/auto`/`/quick` `WORKFLOW_ROUTE_DEFERRED`; 12 `test_us0140_*` markers)
+- Release: **finalized** (`2026-09-13T22:35:00Z`, `orchestrator_run_id=auto-20260913-us0140`, `fresh_context_marker=rel-US0140-release-20260913T223500Z-fresh`, `runtime_proof_id=rp-auto-20260913-us0140-release-release-20260913T223500Z-US-0140`, `model_id=composer-2.5-fast`)
+- Queue: **`handoffs/release_queue.md`** row **`S0147`** = **`released`** (workflow-only; no version bump; backlog reconciliation deferred to `/closure`)
+- **Verdict**: **PASS** — all mandatory release gates (1, 2, 3, 4, 4b) green with scoped npm 82/82 (`harness_fail_zero_claimed=false`).
+- **Run / verify:** `cd standalone && npm test` → 82 passed; `python scripts/check-user-visible-metadata.py --repo .` → exit 0. See **`handoffs/releases/S0147-release-notes.md`** **## Run** / **## Verify**.
+- **Operator summary**: start=`cd standalone && npm test`; endpoint=`n/a` (unpublished runtime-core workflow kit); verify pointer=`handoffs/releases/S0147-release-notes.md` ## Verify.
+- **Gate snapshot**: check_in_tests=PASS (scoped npm 82/82 + US-0071; harness Fail:0 not claimed); qa=PASS (0 blockers); verify_work=PASS (8/8 ACs; 9/9 UAT; live npm); uat=PASS (9/9); isolation=PASS; strict_runtime_proof=PASS (verify-work `221500Z` consumed @22:35:00Z before TTL 23:15:00Z); finalization=PASS (queue → `released`).
+- ACs satisfied: **8/8** (12/12 contract markers live; 0 open blocking findings)
+- Compose guards: A1 LOCKED; kit omit `standalone/`; R-0135 DQ1–DQ10 LOCKED; US-0133/US-0134/US-0135/US-0136/US-0137/US-0138/US-0139 DONE held; BUG-0020 DONE held; US-0140 OPEN; acceptance unchecked
+- **Backlog status**: US-0140 remains **OPEN** — closure deferred to `/closure`
+- **Acceptance**: US-0140 row remains **unchecked** — tick at `/closure`
+- Publish: **`RELEASE_PUBLISH_MODE=confirm`** + **`RELEASE_PUBLISH_AUTO_CONFIRM=0`** — `publish_snapshot=skipped_pending_operator_confirm` (no npm/GitHub/Homebrew/Chocolatey)
+- Sync: **`SYNC_POLICY_MODE=disabled`** → `push_decision=not_eligible`, `reason_code=SYNC_DISABLED`
+- **Strict runtime proof (release)**: `proof_hash=0ffe998df10ffdcb2a9ad0ee04a4450899b171f21b2fff171158cbb98a6fe703` (64 hex; independent MATCH), `proof_ttl=2026-09-13T23:35:00Z`
+- **Unreleased visibility**: no remaining `unreleased`/`blocked` row for S0147 (this sprint is `released`)
+- **Next**: **sovereign-critic (release)** then **`/closure`** (fresh **qe** subagent)
+
+## Release finalized note (S0146)
+
+- Sprint: `S0146`
+- Bug: `BUG-0021` (OpenCode CLI TUI `/auto` Axis A reshape — `{ id, tui }` + `registerLayer` `slashName: "auto"` + rpc → `runAutoLifecycle`; keep `editor.add`; LOAD token + `#36505` residual; no `auto.md` restore; 8 `test_bug0021_*` markers)
+- Release: **finalized** (`2026-09-13T14:15:00Z`, `orchestrator_run_id=auto-20260913-bug0021`, `fresh_context_marker=rel-BUG0021-release-20260913T141500Z-fresh`, `runtime_proof_id=rp-auto-20260913-bug0021-release-release-20260913T141500Z-BUG-0021`, `model_id=composer-2.5-fast`)
+- Queue: **`handoffs/release_queue.md`** row **`S0146`** = **`released`** (workflow-only; no version bump; backlog reconciliation deferred to `/closure`)
+- **Verdict**: **PASS** — all mandatory release gates (1, 2, 3, 4, 4b) green with scoped pytest 29/29 (`harness_fail_zero_claimed=false`).
+- **Run / verify:** `python -m pytest tests/bug0021_opencode_cli_tui_plugin_load_test.py tests/bug0020_opencode_desktop_command_info_listing_test.py tests/bug0019_opencode_auto_slash_listing_test.py tests/bug0018_opencode_auto_ownership_test.py -v` → 29 passed; `python scripts/check-user-visible-metadata.py --repo .` → exit 0. See **`handoffs/releases/S0146-release-notes.md`** **## Run** / **## Verify**.
+- **Operator summary**: start=`python -m pytest tests/bug0021_*.py tests/bug0020_*.py tests/bug0019_*.py tests/bug0018_*.py -v`; endpoint=`n/a` (unpublished OpenCode CLI TUI kit); verify pointer=`handoffs/releases/S0146-release-notes.md` ## Verify.
+- **Gate snapshot**: check_in_tests=PASS (scoped pytest 29/29 + US-0071; harness Fail:0 not claimed); qa=PASS (0 blockers); verify_work=PASS (10/10 ACs; 11/11 UAT; live pytest); uat=PASS (11/11); isolation=PASS; strict_runtime_proof=PASS (verify-work `134500Z` consumed @14:15:00Z before TTL 14:45:00Z); finalization=PASS (queue → `released`).
+- ACs satisfied: **10/10** (8/8 contract markers live; 0 open blocking findings)
+- Compose guards: Axis A LOCKED; BUG-0020/0019/0018 DONE held; BUG-0022 / US-0139 / US-0140 OPEN not mutated; BUG-0021 OPEN; acceptance unchecked; no live CLI TUI probe (`UAT_PROBE_FORBIDDEN`)
+- **Backlog status**: BUG-0021 remains **OPEN** — closure deferred to `/closure`
+- **Acceptance**: BUG-0021 row remains **unchecked** — tick at `/closure`
+- Publish: **`RELEASE_PUBLISH_MODE=confirm`** + **`RELEASE_PUBLISH_AUTO_CONFIRM=0`** — `publish_snapshot=skipped_pending_operator_confirm` (no npm/GitHub/Homebrew/Chocolatey)
+- Sync: **`SYNC_POLICY_MODE=disabled`** → `push_decision=not_eligible`, `reason_code=SYNC_DISABLED`
+- **Strict runtime proof (release)**: `proof_hash=A2ABBD7C9D50F937024ED4E829DD6323DEEE6D2D43B9B8C5DD4317FDBAF39EEB` (64 hex; hashfix consumed @2026-09-13T14:20:00Z; independent MATCH), `proof_ttl=2026-09-13T15:15:00Z`
+- **Unreleased visibility**: no remaining `unreleased`/`blocked` row for S0146 (this sprint is `released`)
+- **Next**: **sovereign-critic (release)** then **`/closure`** (fresh **qe** subagent)
+
+## Release finalized note (S0145)
+
+- Sprint: `S0145`
+- Story: `US-0139` (Persistent code intelligence and bounded context engine — `@its-magic/code-intelligence` + `@its-magic/context-engine` no Pi; nested AFT read sidecar; `LIVE_INTEL_TOOLS` unstub; `code_context` + TOKEN_PROFILE caps; assembler exclusion; pack envelope hash ≠ DEC-0038; compose `materialize_codebase_map.py`; benchmark; partial-pack `INTEL_*`/`CONTEXT_*`; 12 `test_us0139_*` markers)
+- Release: **finalized** (`2026-09-13T19:15:00Z`, `orchestrator_run_id=auto-20260913-us0139`, `fresh_context_marker=rel-US0139-release-20260913T191500Z-fresh`, `runtime_proof_id=rp-auto-20260913-us0139-release-release-20260913T191500Z-US-0139`, `model_id=composer-2.5-fast`)
+- Queue: **`handoffs/release_queue.md`** row **`S0145`** = **`released`** (workflow-only; no version bump; backlog reconciliation deferred to `/closure`)
+- **Verdict**: **PASS** — all mandatory release gates (1, 2, 3, 4, 4b) green with scoped npm 70/70 (`harness_fail_zero_claimed=false`).
+- **Run / verify:** `cd standalone && npm test` → 70 passed; `python scripts/check-user-visible-metadata.py --repo .` → exit 0. See **`handoffs/releases/S0145-release-notes.md`** **## Run** / **## Verify**.
+- **Operator summary**: start=`cd standalone && npm test`; endpoint=`n/a` (unpublished code-intelligence/context kit); verify pointer=`handoffs/releases/S0145-release-notes.md` ## Verify.
+- **Gate snapshot**: check_in_tests=PASS (scoped npm 70/70 + US-0071; harness Fail:0 not claimed); qa=PASS (0 blockers); verify_work=PASS (8/8 ACs; 9/9 UAT; live npm); uat=PASS (9/9); isolation=PASS; strict_runtime_proof=PASS (verify-work `185500Z` consumed @19:15:00Z before TTL 19:55:00Z); finalization=PASS (queue → `released`).
+- ACs satisfied: **8/8** (12/12 contract markers live; 0 open blocking findings)
+- Compose guards: A1 LOCKED; kit omit `standalone/`; R-0132 DQ1–DQ10 LOCKED; US-0133/US-0134/US-0135/US-0136/US-0137/US-0138 DONE held; BUG-0020 DONE held; US-0139 OPEN; acceptance unchecked
+- **Backlog status**: US-0139 remains **OPEN** — closure deferred to `/closure`
+- **Acceptance**: US-0139 row remains **unchecked** — tick at `/closure`
+- Publish: **`RELEASE_PUBLISH_MODE=confirm`** + **`RELEASE_PUBLISH_AUTO_CONFIRM=0`** — `publish_snapshot=skipped_pending_operator_confirm` (no npm/GitHub/Homebrew/Chocolatey)
+- Sync: **`SYNC_POLICY_MODE=disabled`** → `push_decision=not_eligible`, `reason_code=SYNC_DISABLED`
+- **Strict runtime proof (release)**: `proof_hash=39F198D01A2C6E570B25DBE476ECCE6DF951F66D14209618B973079DB6BDF756`, `proof_ttl=2026-09-13T20:15:00Z`
+- **Unreleased visibility**: no remaining `unreleased`/`blocked` row for S0145 (this sprint is `released`)
+- **Next**: **sovereign-critic (release)** then **`/closure`** (fresh **qe** subagent)
+
+## Release finalized note (S0144)
+
+- Sprint: `S0144`
+- Story: `US-0138` (Typed runtime configuration and legacy migration adapter — `@its-magic/config` no Pi; Zod `RuntimeConfig` v1 JSONC `.its-magic/` analog; TS `LegacyScratchpadAdapter`; public 5-layer resolve with provenance; `CONFIG_*` fail-closed; secret names/handles only; US-0119 preset expansion with `security_hard` unrelaxable; 12 `test_us0138_*` markers)
+- Release: **finalized** (`2026-09-13T15:55:00Z`, `orchestrator_run_id=auto-20260913-us0138`, `fresh_context_marker=rel-US0138-release-20260913T155500Z-fresh`, `runtime_proof_id=rp-auto-20260913-us0138-release-release-20260913T155500Z-US-0138`, `model_id=composer-2.5-fast`)
+- Queue: **`handoffs/release_queue.md`** row **`S0144`** = **`released`** (workflow-only; no version bump; backlog reconciliation deferred to `/closure`)
+- **Verdict**: **PASS** — all mandatory release gates (1, 2, 3, 4, 4b) green with scoped npm 58/58 + pytest 10/10 (`harness_fail_zero_claimed=false`).
+- **Run / verify:** `cd standalone && npm test` → 58 passed; `python -m pytest tests/us0138_contract_test.py tests/us0137_contract_test.py tests/us0136_contract_test.py tests/us0135_contract_test.py tests/us0134_contract_test.py tests/us0133_contract_test.py -v` → 10 passed; `python scripts/check-user-visible-metadata.py --repo .` → exit 0. See **`handoffs/releases/S0144-release-notes.md`** **## Run** / **## Verify**.
+- **Operator summary**: start=`cd standalone && npm test`; endpoint=`n/a` (unpublished config kit); verify pointer=`handoffs/releases/S0144-release-notes.md` ## Verify.
+- **Gate snapshot**: check_in_tests=PASS (scoped npm 58/58 + pytest 10/10 + US-0071; harness Fail:0 not claimed); qa=PASS (0 blockers); verify_work=PASS (6/6 ACs; 7/7 UAT; live npm+pytest); uat=PASS (7/7); isolation=PASS; strict_runtime_proof=PASS (verify-work `153500Z` consumed @15:55:00Z before TTL 16:35:00Z); finalization=PASS (queue → `released`).
+- ACs satisfied: **6/6** (12/12 contract markers live; 0 open blocking findings)
+- Compose guards: A1 LOCKED; kit omit `standalone/`; R-0130 DQ1–DQ10 LOCKED; US-0133/US-0134/US-0135/US-0136/US-0137 DONE held; BUG-0020 DONE held; US-0138 OPEN; acceptance unchecked
+- **Backlog status**: US-0138 remains **OPEN** — closure deferred to `/closure`
+- **Acceptance**: US-0138 row remains **unchecked** — tick at `/closure`
+- Publish: **`RELEASE_PUBLISH_MODE=confirm`** + **`RELEASE_PUBLISH_AUTO_CONFIRM=0`** — `publish_snapshot=skipped_pending_operator_confirm` (no npm/GitHub/Homebrew/Chocolatey)
+- Sync: **`SYNC_POLICY_MODE=disabled`** → `push_decision=not_eligible`, `reason_code=SYNC_DISABLED`
+- **Strict runtime proof (release)**: `proof_hash=4F19A3919D77F0C2046185960C20128682EEBAACDAA088A787002EA38870493C`, `proof_ttl=2026-09-13T16:55:00Z`
+- **Unreleased visibility**: no remaining `unreleased`/`blocked` row for S0144 (this sprint is `released`)
+- **Next**: **sovereign-critic (release)** then **`/closure`** (fresh **qe** subagent)
+
+## Release finalized note (S0143)
+
+- Sprint: `S0143`
+- Story: `US-0137` (Owned tool broker, policy engine, and security boundary — `@its-magic/policy-engine` + `@its-magic/tool-broker` no Pi; thin kernel `ownedTools` port; production `itsm_*` via ToolBroker; `noTools: "builtin"` held; PolicyEngine ALLOW|ASK|DENY; path/shell/secret/profile/audit; real `policy_hash`; 10 `test_us0137_*` markers)
+- Release: **finalized** (`2026-09-13T12:35:00Z`, `orchestrator_run_id=auto-20260913-us0137`, `fresh_context_marker=rel-US0137-release-20260913T123500Z-fresh`, `runtime_proof_id=rp-auto-20260913-us0137-release-release-20260913T123500Z-US-0137`, `model_id=composer-2.5-fast`)
+- Queue: **`handoffs/release_queue.md`** row **`S0143`** = **`released`** (workflow-only; no version bump; backlog reconciliation deferred to `/closure`)
+- **Verdict**: **PASS** — all mandatory release gates (1, 2, 3, 4, 4b) green with scoped npm 46/46 + pytest 9/9 (`harness_fail_zero_claimed=false`).
+- **Run / verify:** `cd standalone && npm test` → 46 passed; `python -m pytest tests/us0137_contract_test.py tests/us0136_contract_test.py tests/us0135_contract_test.py tests/us0134_contract_test.py tests/us0133_contract_test.py -v` → 9 passed; `python scripts/check-user-visible-metadata.py --repo .` → exit 0. See **`handoffs/releases/S0143-release-notes.md`** **## Run** / **## Verify**.
+- **Operator summary**: start=`cd standalone && npm test`; endpoint=`n/a` (unpublished policy-engine/tool-broker kit); verify pointer=`handoffs/releases/S0143-release-notes.md` ## Verify.
+- **Gate snapshot**: check_in_tests=PASS (scoped npm 46/46 + pytest 9/9 + US-0071; harness Fail:0 not claimed); qa=PASS (0 blockers); verify_work=PASS (8/8 ACs; 9/9 UAT; live npm+pytest); uat=PASS (9/9); isolation=PASS; strict_runtime_proof=PASS (verify-work `121500Z` consumed @12:35:00Z before TTL 13:15:00Z); finalization=PASS (queue → `released`).
+- ACs satisfied: **8/8** (10/10 contract markers live; 0 open blocking findings)
+- Compose guards: A1 LOCKED; kit omit `standalone/`; R-0129 DQ1–DQ10 LOCKED; US-0133/US-0134/US-0135/US-0136 DONE held; BUG-0020 DONE held; US-0137 OPEN; acceptance unchecked
+- **Backlog status**: US-0137 remains **OPEN** — closure deferred to `/closure`
+- **Acceptance**: US-0137 row remains **unchecked** — tick at `/closure`
+- Publish: **`RELEASE_PUBLISH_MODE=confirm`** + **`RELEASE_PUBLISH_AUTO_CONFIRM=0`** — `publish_snapshot=skipped_pending_operator_confirm` (no npm/GitHub/Homebrew/Chocolatey)
+- Sync: **`SYNC_POLICY_MODE=disabled`** → `push_decision=not_eligible`, `reason_code=SYNC_DISABLED`
+- **Strict runtime proof (release)**: `proof_hash=0E0CCB537C1BFCB89A784333A655F443789902EAAE0C62D51B23C868E6407C3A`, `proof_ttl=2026-09-13T13:35:00Z`
+- **Unreleased visibility**: no remaining `unreleased`/`blocked` row for S0143 (this sprint is `released`)
+- **Next**: **`/closure`** (fresh **qe** subagent, ship macro phase 2 per DEC-0082)
+
+## Release finalized note (S0142)
+
+- Sprint: `S0142`
+- Story: `US-0136` (Fresh role sessions and runtime attestation — `@its-magic/role-runtime`, RoleCatalog + SessionSupervisor wrapping injected `AgentKernel.createSession`, in-memory ContinuationContract same-phase `run`/`steer`, sidecar spawn/start/end + `attestation_hash`, fail-closed `SESSION_*`/`ATTESTATION_*`, TS orchestrator scheduling-only; 10 `test_us0136_*` markers)
+- Release: **finalized** (`2026-09-13T09:15:00Z`, `orchestrator_run_id=auto-20260913-us0136`, `fresh_context_marker=rel-US0136-release-20260913T091500Z-fresh`, `runtime_proof_id=rp-auto-20260913-us0136-release-release-20260913T091500Z-US-0136`, `model_id=composer-2.5-fast`)
+- Queue: **`handoffs/release_queue.md`** row **`S0142`** = **`released`** (workflow-only; no version bump; backlog reconciliation deferred to `/closure`)
+- **Verdict**: **PASS** — all mandatory release gates (1, 2, 3, 4, 4b) green with scoped npm 36/36 + pytest 8/8 (`harness_fail_zero_claimed=false`).
+- **Run / verify:** `cd standalone && npm test` → 36 passed; `python -m pytest tests/us0136_contract_test.py tests/us0135_contract_test.py tests/us0134_contract_test.py tests/us0133_contract_test.py -v` → 8 passed; `python scripts/check-user-visible-metadata.py --repo .` → exit 0. See **`handoffs/releases/S0142-release-notes.md`** **## Run** / **## Verify**.
+- **Operator summary**: start=`cd standalone && npm test`; endpoint=`n/a` (unpublished role-runtime kit); verify pointer=`handoffs/releases/S0142-release-notes.md` ## Verify.
+- **Gate snapshot**: check_in_tests=PASS (scoped npm 36/36 + pytest 8/8 + US-0071; harness Fail:0 not claimed); qa=PASS (0 blockers); verify_work=PASS (7/7 ACs; 8/8 UAT; live npm+pytest); uat=PASS (8/8); isolation=PASS; strict_runtime_proof=PASS (verify-work `085500Z` consumed @09:15:00Z before TTL 09:55:00Z); finalization=PASS (queue → `released`).
+- ACs satisfied: **7/7** (10/10 contract markers live; 0 open blocking findings)
+- Compose guards: A1 LOCKED; kit omit `standalone/`; R-0128 DQ1–DQ10 LOCKED; US-0133/US-0134/US-0135 DONE held; BUG-0020 DONE held; US-0136 OPEN; acceptance unchecked
+- **Backlog status**: US-0136 remains **OPEN** — closure deferred to `/closure`
+- **Acceptance**: US-0136 row remains **unchecked** — tick at `/closure`
+- Publish: **`RELEASE_PUBLISH_MODE=confirm`** + **`RELEASE_PUBLISH_AUTO_CONFIRM=0`** — `publish_snapshot=skipped_pending_operator_confirm` (no npm/GitHub/Homebrew/Chocolatey)
+- Sync: **`SYNC_POLICY_MODE=disabled`** → `push_decision=not_eligible`, `reason_code=SYNC_DISABLED`
+- **Strict runtime proof (release)**: `proof_hash=2A1CB96E3D0F6F6FBAB1E0733100B82765F5C3DD9235B8ADC8C0D72797529957`, `proof_ttl=2026-09-13T10:15:00Z`
+- **Unreleased visibility**: no remaining `unreleased`/`blocked` row for S0142 (this sprint is `released`)
+- **Next**: **`/closure`** (fresh **qe** subagent, ship macro phase 2 per DEC-0082)
+
+## Release finalized note (S0141)
+
+- Sprint: `S0141`
+- Story: `US-0135` (Standalone authentication and model routing — `@its-magic/auth-models`, owned OS credential store, pi-kernel `AuthRuntimeAdapter`, 6-step ModelRouter, thinking clamp, critic degraded mode, `itsm auth` / `models list` / `models test`; 10 `test_us0135_*` markers)
+- Release: **finalized** (`2026-09-13T05:55:00Z`, `orchestrator_run_id=auto-20260913-us0135`, `fresh_context_marker=rel-US0135-release-20260913T055500Z-fresh`, `runtime_proof_id=rp-auto-20260913-us0135-release-release-20260913T055500Z-US-0135`, `model_id=composer-2.5-fast`)
+- Queue: **`handoffs/release_queue.md`** row **`S0141`** = **`released`** (workflow-only; no version bump; backlog reconciliation deferred to `/closure`)
+- **Verdict**: **PASS** — all mandatory release gates (1, 2, 3, 4, 4b) green with scoped npm 26/26 + pytest 7/7 (`harness_fail_zero_claimed=false`).
+- **Run / verify:** `cd standalone && npm test` → 26 passed; `python -m pytest tests/us0135_contract_test.py tests/us0134_contract_test.py tests/us0133_contract_test.py -v` → 7 passed; `python scripts/check-user-visible-metadata.py --repo .` → exit 0. See **`handoffs/releases/S0141-release-notes.md`** **## Run** / **## Verify**.
+- **Operator summary**: start=`cd standalone && npm test`; endpoint=`n/a` (unpublished auth-models kit); verify pointer=`handoffs/releases/S0141-release-notes.md` ## Verify.
+- **Gate snapshot**: check_in_tests=PASS (scoped npm 26/26 + pytest 7/7 + US-0071; harness Fail:0 not claimed); qa=PASS (0 blockers); verify_work=PASS (7/7 ACs; 8/8 UAT; live npm+pytest); uat=PASS (8/8); isolation=PASS; strict_runtime_proof=PASS (verify-work `053500Z` consumed @05:55:00Z before TTL 06:35:00Z); finalization=PASS (queue → `released`).
+- ACs satisfied: **7/7** (10/10 contract markers live; 0 open blocking findings)
+- Compose guards: A1 LOCKED; kit omit `standalone/`; R-0127 DQ1–DQ10 LOCKED; US-0133/US-0134 DONE held; BUG-0020 DONE held; US-0135 OPEN; acceptance unchecked
+- **Backlog status**: US-0135 remains **OPEN** — closure deferred to `/closure`
+- **Acceptance**: US-0135 row remains **unchecked** — tick at `/closure`
+- Publish: **`RELEASE_PUBLISH_MODE=confirm`** + **`RELEASE_PUBLISH_AUTO_CONFIRM=0`** — `publish_snapshot=skipped_pending_operator_confirm` (no npm/GitHub/Homebrew/Chocolatey)
+- Sync: **`SYNC_POLICY_MODE=disabled`** → `push_decision=not_eligible`, `reason_code=SYNC_DISABLED`
+- **Strict runtime proof (release)**: `proof_hash=FDA768E5894FBC79316ED0E3A76A943FA782368B772E9B78F9AFFB5E55DE1543`, `proof_ttl=2026-09-13T06:55:00Z`
+- **Unreleased visibility**: no remaining `unreleased`/`blocked` row for S0141 (this sprint is `released`)
+- **Next**: **`/closure`** (fresh **qe** subagent, ship macro phase 2 per DEC-0082)
+
+## Release finalized note (S0140)
+
+- Sprint: `S0140`
+- Story: `BUG-0020` (OpenCode desktop Command.Info `/auto` listing after BUG-0019 TUI keymap — E2 C-limb CLI TUI via `.opencode/tui.json` listing `./plugins/its-magic-auto/tui.ts`; plugin `editor.add` execute retained; desktop fail-closed `OPENCODE_AUTO_DESKTOP_COMMAND_INFO_LISTING_UNSUPPORTED`; 8 `test_bug0020_*` markers)
+- Release: **finalized** (`2026-09-13T01:10:00Z`, `orchestrator_run_id=auto-20260913-bug0020`, `fresh_context_marker=rel-BUG0020-release-20260913T011000Z-fresh`, `runtime_proof_id=rp-auto-20260913-bug0020-release-release-20260913T011000Z-BUG-0020`, `model_id=cursor-grok-4.6`)
+- Sibling spawn also finalized (`2026-09-13T02:35:00Z`, `rel-BUG0020-release-20260913T023500Z-fresh`, `rp-auto-20260913-bug0020-release-release-20260913T023500Z-BUG-0020`, `model_id=composer-2.5-fast`) — both RELEASE_PASS; queue remains `released`
+- Queue: **`handoffs/release_queue.md`** row **`S0140`** = **`released`** (workflow-only; no version bump; backlog reconciliation deferred to `/closure`)
+- **Verdict**: **PASS** — all mandatory release gates (1, 2, 3, 4, 4b) green with scoped pytest 21/21 (`harness_fail_zero_claimed=false`).
+- **Run / verify:** `python -m pytest tests/bug0020_opencode_desktop_command_info_listing_test.py tests/bug0019_opencode_auto_slash_listing_test.py tests/bug0018_opencode_auto_ownership_test.py -v` → 21 passed; `python scripts/validate_readme_feature_coverage.py --repo . --enforce` → PASS (`coverage_missing=[]`); `python scripts/check-user-visible-metadata.py --repo .` → exit 0. See **`handoffs/releases/S0140-release-notes.md`** **## Run** / **## Verify**.
+- **Operator summary**: start=`python -m pytest tests/bug0020_opencode_desktop_command_info_listing_test.py tests/bug0019_opencode_auto_slash_listing_test.py tests/bug0018_opencode_auto_ownership_test.py -v`; endpoint=`n/a` (OpenCode CLI TUI / desktop fail-closed kit); verify pointer=`handoffs/releases/S0140-release-notes.md` ## Verify.
+- **Gate snapshot**: check_in_tests=PASS (scoped 21/21 + US-0071; harness Fail:0 not claimed); qa=PASS (0 blockers); verify_work=PASS (10/10 ACs; 11/11 UAT; 21/21 live); uat=PASS (11/11); isolation=PASS; strict_runtime_proof=PASS (verify-work `005000Z` consumed @01:10:00Z before TTL 01:50:00Z; sibling `021500Z` consumed @02:35:00Z before TTL 03:15:00Z); finalization=PASS (queue → `released`).
+- ACs satisfied: **10/10** (8/8 contract markers live; 0 open blocking findings)
+- Compose guards: E2 LOCKED; R-0126 DQ1–DQ8 LOCKED; BUG-0019/0018/0017/0015/0016 DONE held; BUG-0020 OPEN; acceptance unchecked
+- **Backlog status**: BUG-0020 remains **OPEN** — closure deferred to `/closure`
+- **Acceptance**: BUG-0020 row remains **unchecked** — tick at `/closure`
+- Publish: **`RELEASE_PUBLISH_MODE=confirm`** + **`RELEASE_PUBLISH_AUTO_CONFIRM=0`** — `publish_snapshot=skipped_pending_operator_confirm` (no npm/GitHub/Homebrew/Chocolatey)
+- Sync: **`SYNC_POLICY_MODE=disabled`** → `push_decision=not_eligible`, `reason_code=SYNC_DISABLED`
+- **Strict runtime proof (release, this spawn)**: `proof_hash=2EF491A4B04834A6B2978071626A3912E7C1165BED813089005A1FE38776431F`, `proof_ttl=2026-09-13T02:10:00Z`
+- **Unreleased visibility**: no remaining `unreleased`/`blocked` row for S0140 (this sprint is `released`)
+- **Next**: **`/closure`** (fresh **qe** subagent, ship macro phase 2 per DEC-0082)
+
+## Release finalized note (S0139)
+
+- Sprint: `S0139`
+- Story: `BUG-0019` (OpenCode TUI slash listing for `/auto` after BUG-0018 plugin-only ownership — sibling `its-magic-auto` keymap `slash`/`slashName` `"auto"`; plugin `editor.add` execute retained; 7 `test_bug0019_*` markers)
+- Release: **finalized** (`2026-09-12T19:40:00Z`, `orchestrator_run_id=auto-20260912-bug0019`, `fresh_context_marker=rel-BUG0019-release-20260912T193500Z-fresh`, `runtime_proof_id=rp-auto-20260912-bug0019-release-release-20260912T194000Z-BUG-0019`, `model_id=cursor-grok-4.6`)
+- Queue: **`handoffs/release_queue.md`** row **`S0139`** = **`released`** (workflow-only; no version bump; backlog reconciliation deferred to `/closure`)
+- **Verdict**: **PASS** — all mandatory release gates (1, 2, 3, 4, 4b) green with scoped pytest 13/13 (`harness_fail_zero_claimed=false`).
+- **Run / verify:** `python -m pytest tests/bug0019_opencode_auto_slash_listing_test.py tests/bug0018_opencode_auto_ownership_test.py -v` → 13 passed; `python scripts/validate_readme_feature_coverage.py --repo . --enforce` → PASS (`coverage_missing=[]`); `python scripts/check-user-visible-metadata.py --repo .` → exit 0. See **`handoffs/releases/S0139-release-notes.md`** **## Run** / **## Verify**.
+- **Operator summary**: start=`python -m pytest tests/bug0019_opencode_auto_slash_listing_test.py tests/bug0018_opencode_auto_ownership_test.py -v`; endpoint=`n/a` (OpenCode TUI listing kit); verify pointer=`handoffs/releases/S0139-release-notes.md` ## Verify.
+- **Gate snapshot**: check_in_tests=PASS (scoped 13/13 + US-0071; harness Fail:0 not claimed); qa=PASS (0 blockers); verify_work=PASS (7/7 ACs; 8/8 UAT; 13/13 live); uat=PASS (8/8); isolation=PASS; strict_runtime_proof=PASS (verify-work proof consumed @19:40:00Z before TTL 20:25:00Z); finalization=PASS (queue → `released`).
+- ACs satisfied: **7/7** (7/7 contract markers live; 0 open blocking findings)
+- Compose guards: E1/E* LOCKED; R-0124 DQ1–DQ8 LOCKED; BUG-0018/0017/0015/0016 DONE held; BUG-0019 OPEN; acceptance unchecked
+- **Backlog status**: BUG-0019 remains **OPEN** — closure deferred to `/closure`
+- **Acceptance**: BUG-0019 row remains **unchecked** — tick at `/closure`
+- Publish: **`RELEASE_PUBLISH_MODE=confirm`** + **`RELEASE_PUBLISH_AUTO_CONFIRM=0`** — `publish_snapshot=skipped_pending_operator_confirm` (no npm/GitHub/Homebrew/Chocolatey)
+- Sync: **`SYNC_POLICY_MODE=disabled`** → `push_decision=not_eligible`, `reason_code=SYNC_DISABLED`
+- **Strict runtime proof (release)**: `proof_hash=1DDA131DA24FC672C364FF54CF1218AEE54712FA1F6053CEAF4D749C0E0EA0D7`, `proof_ttl=2026-09-12T20:40:00Z`
+- **Unreleased visibility**: no remaining `unreleased`/`blocked` row for S0139 (this sprint is `released`)
+- **Next**: **`/closure`** (fresh **qe** subagent, ship macro phase 2 per DEC-0082)
+
+## Release finalized note (S0138)
+
+- Sprint: `S0138`
+- Story: `US-0134` (unpublished `@its-magic/kernel-bridge` + explicit range + four `KERNEL_*` handshake; kit `files` omit `standalone/`; 10 `test_us0134_*` markers)
+- Release: **finalized** (`2026-09-12T13:45:00Z`, `orchestrator_run_id=auto-20260912-us0134`, `fresh_context_marker=rel-US0134-release-20260912T134500Z-fresh`, `runtime_proof_id=rp-auto-20260912-us0134-release-release-20260912T134500Z-US-0134`, `model_id=cursor-grok-4.6`)
+- Queue: **`handoffs/release_queue.md`** row **`S0138`** = **`released`** (workflow-only; no version bump; backlog reconciliation deferred to `/closure`)
+- **Verdict**: **PASS** — all mandatory release gates (1, 2, 3, 4, 4b) green with **Fail:0**.
+- **Run / verify:** `python -m pytest tests/us0134_contract_test.py tests/us0133_contract_test.py -v` → 6 passed; `cd standalone && npm test` → 16 passed; `python scripts/guard_installer_publish.py` → exit 0; `python scripts/validate_readme_feature_coverage.py --repo . --enforce` → PASS (`coverage_missing=[]`); `python scripts/check-user-visible-metadata.py --repo .` → exit 0; harness `tests/report.md` @ `2026-09-12T13:47:25Z` **Pass:860 / Fail:0**. See **`handoffs/releases/S0138-release-notes.md`** **## Run** / **## Verify**.
+- **Operator summary**: start=`python -m pytest tests/us0134_contract_test.py tests/us0133_contract_test.py -v` + `npm test` (cwd `standalone/`); endpoint=`n/a` (unpublished KernelBridge kit); verify pointer=`handoffs/releases/S0138-release-notes.md` ## Verify.
+- **Gate snapshot**: check_in_tests=PASS (harness Fail:0 + us0134+us0133 kit 6/6 + standalone npm 16/16); qa=PASS (0 blockers); verify_work=PASS (6/6 ACs; 7/7 UAT; 10/10 live); uat=PASS (7/7); isolation=PASS; strict_runtime_proof=PASS (verify-work proof consumed @13:45:00Z before TTL 14:35:00Z); finalization=PASS (queue → `released`).
+- ACs satisfied: **6/6** (10/10 contract markers live; 0 open blocking findings)
+- Compose guards: A1 LOCKED; kit omit `standalone/`; R-0122 DQ1–DQ10 LOCKED; R-0120 / R-0121 intact; US-0133 DONE held; BUG-0018 DONE held; US-0134 OPEN; acceptance unchecked
+- **Backlog status**: US-0134 remains **OPEN** — closure deferred to `/closure`
+- **Acceptance**: US-0134 row remains **unchecked** — tick at `/closure`
+- Publish: **`RELEASE_PUBLISH_MODE=confirm`** + **`RELEASE_PUBLISH_AUTO_CONFIRM=0`** — `publish_snapshot=skipped_pending_operator_confirm` (no npm/GitHub/Homebrew/Chocolatey)
+- Sync: **`SYNC_POLICY_MODE=disabled`** → `push_decision=not_eligible`, `reason_code=SYNC_DISABLED`
+- **Strict runtime proof (release)**: `proof_hash=A6350DAA60031FC7A2060E9CD089DCAE7908F1F0285FB6606ABE746093EDF226`, `proof_ttl=2026-09-12T14:45:00Z`
+- **Unreleased visibility**: no remaining `unreleased`/`blocked` row for S0138 (this sprint is `released`)
+- **Next**: **`/closure`** (fresh **qe** subagent, ship macro phase 2 per DEC-0082). Operator stops after S0138 ship — do not drain-advance.
+
+## Release finalized note (S0137)
+
+- Sprint: `S0137`
+- Story: `US-0133` (unpublished in-tree `standalone/` + owned `AgentKernel`; kit `files` omit `standalone/`; 10 `test_us0133_*` markers)
+- Release: **finalized** (`2026-09-12T12:30:00Z`, `orchestrator_run_id=auto-20260912-us0133`, `fresh_context_marker=rel-US0133-release-20260912T123000Z-fresh`, `runtime_proof_id=rp-auto-20260912-us0133-release-release-20260912T123000Z-US-0133`, `model_id=cursor-grok-4.6`)
+- Queue: **`handoffs/release_queue.md`** row **`S0137`** = **`released`** (workflow-only; no version bump; backlog reconciliation deferred to `/closure`)
+- **Verdict**: **PASS** — all mandatory release gates (1, 2, 3, 4, 4b) green with **Fail:0**.
+- **Run / verify:** `python -m pytest tests/us0133_contract_test.py -v` → 5 passed; `cd standalone && npm test` → 6 passed; `python scripts/guard_installer_publish.py` → exit 0; `python scripts/validate_readme_feature_coverage.py --repo . --enforce` → PASS (`coverage_missing=[]`); `python scripts/check-user-visible-metadata.py --repo .` → exit 0; harness `tests/report.md` @ `2026-09-12T12:16:03Z` **Pass:859 / Fail:0**. See **`handoffs/releases/S0137-release-notes.md`** **## Run** / **## Verify**.
+- **Operator summary**: start=`python -m pytest tests/us0133_contract_test.py -v` + `npm test` (cwd `standalone/`); endpoint=`n/a` (unpublished standalone Pi kernel kit); verify pointer=`handoffs/releases/S0137-release-notes.md` ## Verify.
+- **Gate snapshot**: check_in_tests=PASS (harness Fail:0 + us0133 kit 5/5 + standalone npm 6/6); qa=PASS (0 blockers); verify_work=PASS (6/6 ACs; 7/7 UAT; 10/10 live); uat=PASS (7/7); isolation=PASS; strict_runtime_proof=PASS (verify-work proof consumed @12:30:00Z before TTL 13:20:00Z); finalization=PASS (queue → `released`).
+- ACs satisfied: **6/6** (10/10 contract markers live; 0 open blocking findings)
+- Compose guards: A1 LOCKED; kit omit `standalone/`; R-0121 DQ1–DQ10 LOCKED; R-0120 intact; BUG-0018 DONE held; US-0133 OPEN; acceptance unchecked
+- **Backlog status**: US-0133 remains **OPEN** — closure deferred to `/closure`
+- **Acceptance**: US-0133 row remains **unchecked** — tick at `/closure`
+- Publish: **`RELEASE_PUBLISH_MODE=confirm`** + **`RELEASE_PUBLISH_AUTO_CONFIRM=0`** — `publish_snapshot=skipped_pending_operator_confirm` (no npm/GitHub/Homebrew/Chocolatey)
+- Sync: **`SYNC_POLICY_MODE=disabled`** → `push_decision=not_eligible`, `reason_code=SYNC_DISABLED`
+- **Strict runtime proof (release)**: `proof_hash=96546887FA44B924ABC8E16EAE912B84C17FB70811DB90D284F621481F45D0C8`, `proof_ttl=2026-09-12T13:30:00Z`
+- **Unreleased visibility**: no remaining `unreleased`/`blocked` row for S0137 (this sprint is `released`)
+- **Next**: **`/closure`** (fresh **qe** subagent, ship macro phase 2 per DEC-0082)
+
+## Release finalized note (S0136)
+
+- Sprint: `S0136`
+- Story: `BUG-0018` (OpenCode plugin-only `/auto` — colliding `auto.md` removed; plugin `editor.add` execute retained; targeted upgrade prune + `OPENCODE_AUTO_MARKDOWN_COLLISION`; 6 `test_bug0018_*` markers)
+- Release: **finalized** (`2026-09-12T10:55:00Z`, `orchestrator_run_id=auto-20260912-bug0018`, `fresh_context_marker=rel-BUG0018-release-20260912T105500Z-fresh`, `runtime_proof_id=rp-auto-20260912-bug0018-release-release-20260912T105500Z-BUG-0018`, `model_id=cursor-grok-4.6`)
+- Queue: **`handoffs/release_queue.md`** row **`S0136`** = **`released`** (workflow-only; no version bump; backlog reconciliation deferred to `/closure`)
+- **Verdict**: **PASS** — all mandatory release gates (1, 2, 3, 4, 4b) green with **Fail:0**.
+- **Run / verify:** `python -m pytest tests/bug0018_opencode_auto_ownership_test.py -v` → 6 passed; compose 30/30; `python scripts/validate_readme_feature_coverage.py --repo . --enforce` → PASS (`coverage_missing=[]`); `python scripts/check-user-visible-metadata.py --repo .` → exit 0; harness `tests/report.md` @ `2026-09-12T10:37:55Z` **Pass:858 / Fail:0**. See **`handoffs/releases/S0136-release-notes.md`** **## Run** / **## Verify**.
+- **Operator summary**: start=`python -m pytest tests/bug0018_opencode_auto_ownership_test.py -v`; endpoint=`n/a` (OpenCode plugin-only `/auto` kit); verify pointer=`handoffs/releases/S0136-release-notes.md` ## Verify.
+- **Gate snapshot**: check_in_tests=PASS (harness Fail:0 + bug0018 6/6); qa=PASS (0 blockers); verify_work=PASS (7/7 ACs; 8/8 UAT; 6/6 live); uat=PASS (8/8); isolation=PASS; strict_runtime_proof=PASS (verify-work proof consumed @10:55:00Z before TTL 11:45:00Z); finalization=PASS (queue → `released`).
+- ACs satisfied: **7/7** (6/6 contract markers live; 0 open blocking findings)
+- Compose guards: BUG-0015 attach compose-only; R-0120 DQ1–DQ8 LOCKED; BUG-0015/0016/0017 DONE held; BUG-0018 OPEN; acceptance unchecked
+- **Backlog status**: BUG-0018 remains **OPEN** — closure deferred to `/closure`
+- **Acceptance**: BUG-0018 row remains **unchecked** — tick at `/closure`
+- Publish: **`RELEASE_PUBLISH_MODE=confirm`** + **`RELEASE_PUBLISH_AUTO_CONFIRM=0`** — `publish_snapshot=skipped_pending_operator_confirm`
+- Sync: **`SYNC_POLICY_MODE=disabled`** → `push_decision=not_eligible`, `reason_code=SYNC_DISABLED`
+- **Strict runtime proof (release)**: `proof_hash=791DEF823E5A7B4985951D258DAC56B57CB7491A8ADA0B6914ACE4B52545ACD7`, `proof_ttl=2026-09-12T11:55:00Z`
+- **Unreleased visibility**: no remaining `unreleased`/`blocked` row for S0136 (this sprint is `released`)
+- **Next**: **`/closure`** (fresh **qe** subagent, ship macro phase 2 per DEC-0082)
+
+---
+
+## Release finalized note (S0135)
+
+- Sprint: `S0135`
+- Story: `BUG-0017` (OpenCode pack LF / Linux slash commands — scoped `.gitattributes` + renormalize + guard OpenCode CR inventory + 6 `test_bug0017_*` markers)
+- Release: **finalized** (`2026-09-11T20:18:30Z`, `orchestrator_run_id=auto-20260911-bug0017`, `fresh_context_marker=rel-BUG0017-release-20260911T195400Z-fresh`, `runtime_proof_id=rp-auto-20260911-bug0017-release-release-20260911T201830Z-BUG-0017`, `model_id=composer-2.5`)
+- Queue: **`handoffs/release_queue.md`** row **`S0135`** = **`released`** (workflow-only; no version bump; backlog reconciliation deferred to `/closure`)
+- **Verdict**: **PASS** — all mandatory release gates (1, 2, 3, 4, 4b) green with **Fail:0**.
+- **Run / verify:** `python -m pytest tests/bug0017_opencode_eol_test.py -v` → 6 passed; `npm run guard:installer` → PASS; `python scripts/validate_readme_feature_coverage.py --repo . --enforce` → PASS (`coverage_missing=[]`); `python scripts/check-user-visible-metadata.py --repo .` → exit 0; harness `tests/report.md` @ `2026-09-11T20:18:29Z` **Pass:857 / Fail:0**. See **`handoffs/releases/S0135-release-notes.md`** **## Run** / **## Verify**.
+- **Operator summary**: start=`python -m pytest tests/bug0017_opencode_eol_test.py -v`; endpoint=`n/a` (OpenCode EOL kit); verify pointer=`handoffs/releases/S0135-release-notes.md` ## Verify.
+- **Gate snapshot**: check_in_tests=PASS (harness Fail:0 + bug0017 6/6); qa=PASS (0 blockers); verify_work=PASS (7/7 ACs; 8/8 UAT; 6/6 live); uat=PASS (8/8); isolation=PASS; strict_runtime_proof=PASS (verify-work proof consumed @20:18:30Z before TTL 20:52:00Z); finalization=PASS (queue → `released`).
+- ACs satisfied: **7/7** (6/6 contract markers live; 0 open blocking findings)
+- Compose guards: BUG-0008/US-0084 compose-only; R-0118 DQ1–DQ6 LOCKED; BUG-0015/0016 DONE held; BUG-0017 OPEN; acceptance unchecked
+- **Backlog status**: BUG-0017 remains **OPEN** — closure deferred to `/closure`
+- **Acceptance**: BUG-0017 row remains **unchecked** — tick at `/closure`
+- Publish: **`RELEASE_PUBLISH_MODE=confirm`** + **`RELEASE_PUBLISH_AUTO_CONFIRM=0`** — `publish_snapshot=skipped_pending_operator_confirm`
+- Sync: **`SYNC_POLICY_MODE=disabled`** → `push_decision=not_eligible`, `reason_code=SYNC_DISABLED`
+- **Strict runtime proof (release)**: `proof_hash=EFFA303CA150F1727598673F4B15ECC55C617A9E94EADD3D194DF5361D024CC9`, `proof_ttl=2026-09-11T21:18:30Z`
+- **Unreleased visibility**: no remaining `unreleased`/`blocked` row for S0135 (this sprint is `released`)
+- **Next**: **`/closure`** (fresh **qe** subagent, ship macro phase 2 per DEC-0082)
+
+---
+
 ## Release finalized note (S0134)
 
 - Sprint: `S0134`

@@ -1,0 +1,68 @@
+{
+  "selected_pack": "small-intake-pack",
+  "intake_run_id": "cursor-20260913-BUG0020-intake",
+  "writer_id": "po-cursor-20260913-BUG0020-intake",
+  "INTAKE_GUIDED_MODE": 1,
+  "INTAKE_WORK_ITEM_KIND": "bug",
+  "requested_mode": "bug",
+  "intake_boundary_utc": "2026-09-12T22:35:00Z",
+  "ID_NAMESPACE_BOOTSTRAP": 0,
+  "bug_id": "BUG-0020",
+  "asked_topics": [
+    "outcome_success_criteria",
+    "impacted_components",
+    "constraints_compatibility_risks",
+    "required_tests_acceptance_checks",
+    "done_definition"
+  ],
+  "missing_topics": [],
+  "assumptions_confirmed": "(none)",
+  "topic_coverage": [
+    {
+      "topic_key": "outcome_success_criteria",
+      "satisfied_by": "answer_ref",
+      "quoted_user_text": "i just want that the auto function is also possible in opencode .. like it is in cursor right now",
+      "intake_run_id": "cursor-20260913-BUG0020-intake",
+      "turn_index": 0,
+      "ref": "ie:cursor-20260913-BUG0020-intake:0:d6e03396100d9184"
+    },
+    {
+      "topic_key": "impacted_components",
+      "satisfied_by": "answer_ref",
+      "quoted_user_text": "ich hab imme rnoch kein auto befehl in opencode, in diesem repo",
+      "intake_run_id": "cursor-20260913-BUG0020-intake",
+      "turn_index": 1,
+      "ref": "ie:cursor-20260913-BUG0020-intake:1:eae220382cef1b47"
+    },
+    {
+      "topic_key": "constraints_compatibility_risks",
+      "satisfied_by": "answer_ref",
+      "quoted_user_text": "du hast jetzt schon so oft versucht das thema zu lösen.. warum ist es imme rnoch fehlerhaft? eventuell musst du tiefer suchen auch in den docs von opencode",
+      "intake_run_id": "cursor-20260913-BUG0020-intake",
+      "turn_index": 2,
+      "ref": "ie:cursor-20260913-BUG0020-intake:2:cb774882b59b5a85"
+    },
+    {
+      "topic_key": "required_tests_acceptance_checks",
+      "satisfied_by": "answer_ref",
+      "quoted_user_text": "eventuell musst du tiefer suchen auch in den docs von opencode",
+      "intake_run_id": "cursor-20260913-BUG0020-intake",
+      "turn_index": 3,
+      "ref": "ie:cursor-20260913-BUG0020-intake:3:173c218c0de8e03a"
+    },
+    {
+      "topic_key": "done_definition",
+      "satisfied_by": "answer_ref",
+      "quoted_user_text": "i want to say /auto to start the auto process or in any other way.. but i need an auto mode",
+      "intake_run_id": "cursor-20260913-BUG0020-intake",
+      "turn_index": 4,
+      "ref": "ie:cursor-20260913-BUG0020-intake:4:6ac8e44dff1d70a4"
+    }
+  ],
+  "duplicate_check_pass": true,
+  "duplicate_check_notes": "NEW bug. Distinct from BUG-0019 DONE (S0139, unpublished): E* shipped TUI keymap slash/slashName \"auto\" in .opencode/plugins/its-magic-auto/{index.ts,tui.ts} (discovery-only index.ts). Operator still has no /auto in the OpenCode slash picker they use, in this kit repo (files already present — not an unpublished-upgrade miss). Live /ask 2026-09-13: picker listing /ask /quick /architecture /closure is Command.Info (markdown .md or JSON template); plugin editor.add({execute}) does not feed that list; TUI keymap slash is CLI TUI not desktop/GUI composer list; internal spec tui-plugins.md: no directory auto-discovery, TUI plugins must be listed in tui.json; kit shipped no tui.json/cli.json. Distinct from BUG-0018 DONE: do not restore STOP-only .opencode/commands/auto.md. Distinct from BUG-0017 DONE (peers exist, not CRLF-all-skip). Distinct from BUG-0015 DONE (orchestrator.ts still editor.add -> runAutoLifecycle). Distinct from BUG-0016 DONE (permissions). Do not reopen BUG-0019 ACs. Do not drain US-0135.",
+  "decomposition_verdict": "single_bug",
+  "decomposition_rationale": "One operator outcome: working auto mode on OpenCode comparable to Cursor /auto. Preferred invocation is /auto; operator accepts any other host-true invocation (palette, keymap, command, button) iff it starts the same its-magic auto lifecycle (runAutoLifecycle / phase->role chain) or fail-closes with a documented OPENCODE_*. Silent missing command is the defect. Operator already invoked /intake bug + /auto — treat as accept single_bug. Do not split Cursor vs OpenCode. Do not persist a second bug for US-0135. Cursor .cursor/commands/auto.md still works and is out of scope except do not prune/touch. .opencode/agents/auto.md — do not prune.",
+  "research_id": "R-0125",
+  "sibling_not_persisted": "Do not reopen BUG-0019; do not restore STOP-only auto.md (BUG-0018); do not allocate a second bug for US-0135; do not tell operator to use Cursor only"
+}

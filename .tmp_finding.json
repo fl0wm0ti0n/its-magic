@@ -1,0 +1,21 @@
+{
+  "ts": "2026-09-12T11:10:00.000Z",
+  "orchestrator_run_id": "auto-20260912-bug0018",
+  "phase_id": "closure",
+  "role": "qe",
+  "producer_model_id": "composer-2.5",
+  "critic_model_id": "composer-2.5-fast",
+  "lens": "challenger",
+  "finding_id": "bug0018clo-challenger-001",
+  "severity": "low",
+  "confidence": "medium",
+  "anti_slop_score": 10,
+  "finding_text": "CLOSURE_PASS independently upheld (degraded_mode=false — producer composer-2.5 vs critic composer-2.5-fast). Critic recomputed DEC-0038 closure proof_hash C532059A7D74BE0079E9B5B1BEB30501492B7CC60019FC12A291A6FD3E66FADC via Python hashlib sorted-key compact JSON (proof_ttl_seconds as int 3600) — byte-identical MATCH (runtime_proof_id=rp-auto-20260912-bug0018-closure-qe-20260912T110500Z-BUG-0018; ttl 2026-09-12T12:05:00Z). Wall clock 2026-09-12T11:10:00Z — RUNTIME_PROOF_VALID (MATCH before TTL; ~3300s remaining). Consumed release proof MATCH 791DEF823E5A7B4985951D258DAC56B57CB7491A8ADA0B6914ACE4B52545ACD7 before release TTL 2026-09-12T11:55:00Z at closure 11:05:00Z — RUNTIME_PROOF_VALID. Independent gates: docs/product/backlog.md ### BUG-0018 Status DONE; docs/product/acceptance.md BUG-0018 [x]; handoffs/release_queue.md S0136=released; sprints/S0136/closure-verification.md CLOSURE_PASS; python scripts/bug_issue_validate.py --check-acceptance → [BUG_VALIDATION_OK]; BUG-0015/BUG-0016/BUG-0017 DONE held. Edge case cited: validate_closure_verification.py STORY_ID_RE US-only rejects BUG-0018 story_id — disclosed intentional in closure-verification.md normalization_notes (non-blocking). Failure mode named: premature refresh-context before critic; Status revert; sibling reopen; queue mutation; proof_id reuse / RUNTIME_PROOF_STALE. Concurrency considered: critic does not spawn /refresh-context (BUG-0006); distinct markers qe-BUG0018-closure-20260912T110500Z-fresh vs critic-BUG0018-closure-20260912T111000Z-fresh. Input boundary tested: publish skipped confirm mode; harness not re-run (release Fail:0 evidence held). 0 blocking findings.",
+  "status": "resolved",
+  "blocking": false,
+  "degraded_mode": false,
+  "rework_generation": 0,
+  "schema_version": 1,
+  "issue_key": "ik_bug0018_clo_done_tick_released",
+  "single_finder": true
+}

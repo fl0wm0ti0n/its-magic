@@ -58,6 +58,14 @@ scripts/autonomy_preset_lib.py
 scripts/autonomy_repair_ledger_lib.py
 scripts/data/autonomy_stop_matrix.yaml
 scripts/validate_closure_verification.py
+scripts/bug_issue_validate.py
+scripts/bug_issue_lib.py
+scripts/pack_json_validate.py
+scripts/ledger_validate.py
+scripts/decision_ledger_lib.py
+scripts/model_tier_validate.py
+scripts/model_tier_lib.py
+scripts/status_reconcile_validate.py
 scripts/validate_autonomy_stop_matrix.py
 .github/workflows
 its_magic
@@ -98,6 +106,14 @@ scripts/validate_project_readme_coverage.py
 scripts/work_kind_classify_lib.py
 scripts/work_kind_routing_lib.py
 scripts/validate_closure_verification.py
+scripts/bug_issue_validate.py
+scripts/bug_issue_lib.py
+scripts/pack_json_validate.py
+scripts/ledger_validate.py
+scripts/decision_ledger_lib.py
+scripts/model_tier_validate.py
+scripts/model_tier_lib.py
+scripts/status_reconcile_validate.py
 .github/workflows/ci.yml
 .github/workflows/deploy.yml
 its_magic
@@ -113,6 +129,14 @@ template/.opencode/agents/**
 template/.opencode/commands/**
 template/.opencode/model-catalog.local.example.json
 template/.opencode/plugins/orchestrator.ts
+template/.opencode/plugins/its-magic-auto/index.ts
+# BUG-0021: tui.ts is framework-owned overwrite (copy2 even if dest exists).
+# tui.json remains copy-if-absent / JSONC merge (BUG-0020 load path ≠ listing proof).
+template/.opencode/plugins/its-magic-auto/tui.ts
+# BUG-0023: shared Rpc.define contract — framework-owned overwrite (copy2).
+template/.opencode/plugins/its-magic-auto/rpc.ts
+.opencode/tui.json
+template/.opencode/tui.json
 scripts/opencode_model_catalog_apply.py
 
 # [opencode_clean_paths] still lists `.opencode` so framework files are removed.
@@ -150,3 +174,11 @@ scripts/caveman_compress_input.py
 scripts/host_runtime_config_lib.py
 scripts/work_kind_classify_lib.py
 scripts/work_kind_routing_lib.py
+scripts/bug_issue_validate.py
+scripts/bug_issue_lib.py
+scripts/pack_json_validate.py
+scripts/ledger_validate.py
+scripts/decision_ledger_lib.py
+scripts/model_tier_validate.py
+scripts/model_tier_lib.py
+scripts/status_reconcile_validate.py

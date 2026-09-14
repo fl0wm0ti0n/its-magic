@@ -135,6 +135,37 @@ reason_codes:
     cap: 0
     rationale: Architecture rollover would drop headings still required by contract tests (US-0129); never skip
 
+  # US-0143 AC-6 additive security_hard — do not weaken US-0119 rows; not relaxable under AUTONOMY_PRESET=full
+  - code: DECISION_UNRESOLVED
+    stop_class: security_hard
+    auto_repair_kind: n/a
+    cap: 0
+    rationale: Unresolved decision gate remains terminal even under AUTONOMY_PRESET=full (US-0143 AC-6)
+
+  - code: KERNEL_INCOMPATIBLE
+    stop_class: security_hard
+    auto_repair_kind: n/a
+    cap: 0
+    rationale: Incompatible kernel remains terminal even under AUTONOMY_PRESET=full (US-0143 AC-6)
+
+  - code: QUALITY_EVIDENCE_FAILED
+    stop_class: security_hard
+    auto_repair_kind: n/a
+    cap: 0
+    rationale: Failed mandatory quality evidence remains terminal even under AUTONOMY_PRESET=full (US-0143 AC-6)
+
+  - code: BUDGET_EXHAUSTED
+    stop_class: security_hard
+    auto_repair_kind: n/a
+    cap: 0
+    rationale: Budget exhaustion remains terminal even under AUTONOMY_PRESET=full (US-0143 AC-6)
+
+  - code: RESUME_AMBIGUOUS
+    stop_class: security_hard
+    auto_repair_kind: n/a
+    cap: 0
+    rationale: Ambiguous resume remains terminal even under AUTONOMY_PRESET=full (US-0143 AC-6)
+
   # ─────────────────────────────────────────────────────────────────────────
   # autonomy_resolvable codes — bounded auto-repair (cap default 3)
   # ─────────────────────────────────────────────────────────────────────────

@@ -1,0 +1,13 @@
+{
+	"name": "@its-magic/role-runtime",
+	"version": "0.0.0",
+	"private": true,
+	"type": "module",
+	"description": "Owned RoleCatalog + SessionSupervisor + sidecar attestation. No Pi SDK imports.",
+	"engines": {
+		"node": ">=22.19.0"
+	},
+	"exports": {
+		".": "./src/index.ts"
+	}
+}

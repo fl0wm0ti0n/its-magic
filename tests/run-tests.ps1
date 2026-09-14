@@ -1693,6 +1693,54 @@ Assert-True "US-0132 contract tests pass" ($us0132Contract.ExitCode -eq 0)
 $bug0017Contract = Start-Process python -ArgumentList @("-m", "pytest", "tests\bug0017_opencode_eol_test.py", "-q") -PassThru -NoNewWindow -Wait -WorkingDirectory $root
 Assert-True "BUG-0017 OpenCode EOL contract tests pass" ($bug0017Contract.ExitCode -eq 0)
 
+# 26AH) BUG-0018 — OpenCode plugin-only /auto (no colliding auto.md)
+$bug0018Contract = Start-Process python -ArgumentList @("-m", "pytest", "tests\bug0018_opencode_auto_ownership_test.py", "-q") -PassThru -NoNewWindow -Wait -WorkingDirectory $root
+Assert-True "BUG-0018 OpenCode auto ownership contract tests pass" ($bug0018Contract.ExitCode -eq 0)
+
+# 26AH2) BUG-0019 — OpenCode TUI slash listing (compose; do not weaken)
+$bug0019Contract = Start-Process python -ArgumentList @("-m", "pytest", "tests\bug0019_opencode_auto_slash_listing_test.py", "-q") -PassThru -NoNewWindow -Wait -WorkingDirectory $root
+Assert-True "BUG-0019 OpenCode auto slash listing contract tests pass" ($bug0019Contract.ExitCode -eq 0)
+
+# 26AH3) BUG-0020 — OpenCode desktop Command.Info listing vs CLI TUI tui.json
+$bug0020Contract = Start-Process python -ArgumentList @("-m", "pytest", "tests\bug0020_opencode_desktop_command_info_listing_test.py", "-q") -PassThru -NoNewWindow -Wait -WorkingDirectory $root
+Assert-True "BUG-0020 OpenCode desktop Command.Info listing contract tests pass" ($bug0020Contract.ExitCode -eq 0)
+
+# 26AI) US-0133 — kit files omit standalone/ + import-boundary (not standalone npm test)
+$us0133Contract = Start-Process python -ArgumentList @("-m", "pytest", "tests\us0133_contract_test.py", "-q") -PassThru -NoNewWindow -Wait -WorkingDirectory $root
+Assert-True "US-0133 kit contract tests pass" ($us0133Contract.ExitCode -eq 0)
+
+# 26AJ) US-0134 — kit files omit standalone/ + no Pi in kernel-bridge (not standalone npm test)
+$us0134Contract = Start-Process python -ArgumentList @("-m", "pytest", "tests\us0134_contract_test.py", "-q") -PassThru -NoNewWindow -Wait -WorkingDirectory $root
+Assert-True "US-0134 kit contract tests pass" ($us0134Contract.ExitCode -eq 0)
+
+# 26AK) US-0135 — kit files omit standalone/ + no Pi in auth-models (not standalone npm test)
+$us0135Contract = Start-Process python -ArgumentList @("-m", "pytest", "tests\us0135_contract_test.py", "-q") -PassThru -NoNewWindow -Wait -WorkingDirectory $root
+Assert-True "US-0135 kit contract tests pass" ($us0135Contract.ExitCode -eq 0)
+
+# 26AL) US-0136 — kit files omit standalone/ + no Pi in role-runtime (not standalone npm test)
+$us0136Contract = Start-Process python -ArgumentList @("-m", "pytest", "tests\us0136_contract_test.py", "-q") -PassThru -NoNewWindow -Wait -WorkingDirectory $root
+Assert-True "US-0136 kit contract tests pass" ($us0136Contract.ExitCode -eq 0)
+
+# 26AM) US-0137 — kit files omit standalone/ + no Pi in policy-engine/tool-broker (not standalone npm test)
+$us0137Contract = Start-Process python -ArgumentList @("-m", "pytest", "tests\us0137_contract_test.py", "-q") -PassThru -NoNewWindow -Wait -WorkingDirectory $root
+Assert-True "US-0137 kit contract tests pass" ($us0137Contract.ExitCode -eq 0)
+
+# 26AN) US-0138 — kit files omit standalone/ + no Pi in packages/config (not standalone npm test)
+$us0138Contract = Start-Process python -ArgumentList @("-m", "pytest", "tests\us0138_contract_test.py", "-q") -PassThru -NoNewWindow -Wait -WorkingDirectory $root
+Assert-True "US-0138 kit contract tests pass" ($us0138Contract.ExitCode -eq 0)
+
+# 26AO) US-0141 — kit files omit standalone/ + no Pi in packages/app-runtime (not standalone npm test)
+$us0141Contract = Start-Process python -ArgumentList @("-m", "pytest", "tests\us0141_contract_test.py", "-q") -PassThru -NoNewWindow -Wait -WorkingDirectory $root
+Assert-True "US-0141 kit contract tests pass" ($us0141Contract.ExitCode -eq 0)
+
+# 26AP) US-0142 — kit files omit standalone/ + no Pi in packages/browser-uat (not standalone npm test)
+$us0142Contract = Start-Process python -ArgumentList @("-m", "pytest", "tests\us0142_contract_test.py", "-q") -PassThru -NoNewWindow -Wait -WorkingDirectory $root
+Assert-True "US-0142 kit contract tests pass" ($us0142Contract.ExitCode -eq 0)
+
+# 26AQ) US-0143 — kit files omit standalone/ + no Pi in packages/runtime-core scheduler lift (not standalone npm test)
+$us0143Contract = Start-Process python -ArgumentList @("-m", "pytest", "tests\us0143_contract_test.py", "-q") -PassThru -NoNewWindow -Wait -WorkingDirectory $root
+Assert-True "US-0143 kit contract tests pass" ($us0143Contract.ExitCode -eq 0)
+
 # Cleanup
 if (Test-Path (Join-Path $root "tests\.tmp-install")) {
   Remove-Item -Recurse -Force (Join-Path $root "tests\.tmp-install") -ErrorAction SilentlyContinue

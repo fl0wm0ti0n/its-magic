@@ -1,0 +1,19 @@
+{
+	"name": "@its-magic/tool-broker",
+	"version": "0.0.0",
+	"private": true,
+	"type": "module",
+	"description": "Owned ToolBroker catalog, audit, and spawn allowlist. No Pi SDK imports.",
+	"engines": {
+		"node": ">=22.19.0"
+	},
+	"exports": {
+		".": "./src/index.ts"
+	},
+	"dependencies": {
+		"@its-magic/auth-models": "0.0.0",
+		"@its-magic/code-intelligence": "0.0.0",
+		"@its-magic/policy-engine": "0.0.0",
+		"@its-magic/role-runtime": "0.0.0"
+	}
+}

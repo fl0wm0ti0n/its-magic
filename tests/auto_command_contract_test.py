@@ -1145,7 +1145,7 @@ class AutoCommandContractTest(unittest.TestCase):
         )
 
     def test_bug0009_active_ci_five_job_inventory(self) -> None:
-        """T-005 / AC-2: active ci.yml retains all five required job ids."""
+        """T-005 / AC-2: active ci.yml retains all five required job ids (additive jobs allowed)."""
         import sys as _sys
 
         root = Path(__file__).resolve().parents[1]
@@ -1156,10 +1156,10 @@ class AutoCommandContractTest(unittest.TestCase):
             _sys.path.pop(0)
         active_text = (root / ".github" / "workflows" / "ci.yml").read_text(encoding="utf-8")
         job_keys = set(dci.extract_job_keys(active_text))
-        self.assertEqual(
-            self._BUG0009_REQUIRED_ACTIVE_JOBS,
-            job_keys,
-            "active ci.yml must retain checks, auto-fix, npm-test, brew-test, choco-test",
+        self.assertTrue(
+            self._BUG0009_REQUIRED_ACTIVE_JOBS.issubset(job_keys),
+            "active ci.yml must retain checks, auto-fix, npm-test, brew-test, choco-test"
+            f"; found {sorted(job_keys)!r}",
         )
 
     def test_bug0009_guard_report_inventory_fields(self) -> None:
@@ -1189,7 +1189,11 @@ class AutoCommandContractTest(unittest.TestCase):
         self.assertIn("forbidden_hits", payload)
         self.assertEqual(payload["forbidden_hits"], [])
         self.assertEqual(set(payload["template_job_keys"]), {"checks", "auto-fix"})
-        self.assertEqual(set(payload["active_job_keys"]), self._BUG0009_REQUIRED_ACTIVE_JOBS)
+        self.assertTrue(
+            self._BUG0009_REQUIRED_ACTIVE_JOBS.issubset(set(payload["active_job_keys"])),
+            "active_job_keys must retain the five required packaging jobs"
+            f"; found {sorted(payload['active_job_keys'])!r}",
+        )
         self.assertTrue(payload["ok"])
 
     def test_bug0009_runbook_remediation_parity(self) -> None:

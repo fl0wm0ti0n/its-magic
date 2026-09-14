@@ -1,0 +1,68 @@
+{
+  "selected_pack": "small-intake-pack",
+  "intake_run_id": "cursor-20260913-BUG0021-intake",
+  "writer_id": "po-cursor-20260913-BUG0021-intake",
+  "INTAKE_GUIDED_MODE": 1,
+  "INTAKE_WORK_ITEM_KIND": "bug",
+  "requested_mode": "bug",
+  "intake_boundary_utc": "2026-09-13T11:20:00Z",
+  "ID_NAMESPACE_BOOTSTRAP": 0,
+  "bug_id": "BUG-0021",
+  "asked_topics": [
+    "outcome_success_criteria",
+    "impacted_components",
+    "constraints_compatibility_risks",
+    "required_tests_acceptance_checks",
+    "done_definition"
+  ],
+  "missing_topics": [],
+  "assumptions_confirmed": "(none)",
+  "topic_coverage": [
+    {
+      "topic_key": "outcome_success_criteria",
+      "satisfied_by": "answer_ref",
+      "quoted_user_text": "ich erwarte mir einen /auto befehl der funktioniert.",
+      "intake_run_id": "cursor-20260913-BUG0021-intake",
+      "turn_index": 0,
+      "ref": "ie:cursor-20260913-BUG0021-intake:0:04740927a79c8e13"
+    },
+    {
+      "topic_key": "impacted_components",
+      "satisfied_by": "answer_ref",
+      "quoted_user_text": "ich habe in der cli version von opencode weiterhin kein commant für auto.",
+      "intake_run_id": "cursor-20260913-BUG0021-intake",
+      "turn_index": 1,
+      "ref": "ie:cursor-20260913-BUG0021-intake:1:3875e4e5f2a3a0b5"
+    },
+    {
+      "topic_key": "constraints_compatibility_risks",
+      "satisfied_by": "answer_ref",
+      "quoted_user_text": "wenn ich \"/auto \" eingebe ohne, dass es als commant erkantn wird, durch das leerzeichen dahinter. komtm folgendes:",
+      "intake_run_id": "cursor-20260913-BUG0021-intake",
+      "turn_index": 2,
+      "ref": "ie:cursor-20260913-BUG0021-intake:2:ed8161a186386432"
+    },
+    {
+      "topic_key": "required_tests_acceptance_checks",
+      "satisfied_by": "answer_ref",
+      "quoted_user_text": "Auto mode enabled. Describe the task you want handled.",
+      "intake_run_id": "cursor-20260913-BUG0021-intake",
+      "turn_index": 2,
+      "ref": "ie:cursor-20260913-BUG0021-intake:2:2594fa75bbb436ae"
+    },
+    {
+      "topic_key": "done_definition",
+      "satisfied_by": "answer_ref",
+      "quoted_user_text": "wie ist der korrekte weg autgo zu nutzen?",
+      "intake_run_id": "cursor-20260913-BUG0021-intake",
+      "turn_index": 3,
+      "ref": "ie:cursor-20260913-BUG0021-intake:3:baa1124361b7a724"
+    }
+  ],
+  "duplicate_check_pass": true,
+  "duplicate_check_notes": "NEW bug. Distinct from BUG-0020 DONE (S0140): C-limb claimed CLI TUI /auto via .opencode/tui.json listing ./plugins/its-magic-auto/tui.ts. Operator live-falsified that C-limb on OpenCode CLI TUI (this kit repo, files already present): slash list still has no /auto; typing '/auto ' (trailing space, not recognized as command) sends chat; model replies Thought + 'Auto mode enabled. Describe the task you want handled.' — LLM prompt, not runAutoLifecycle, not OpenCode --auto permission. Do not flip BUG-0020 back to OPEN; do not untick BUG-0020 acceptance. Distinct from BUG-0019 DONE (TUI keymap files exist; listing still not in operator CLI slash list). Distinct from BUG-0018 DONE: do not restore STOP-only .opencode/commands/auto.md. Distinct from BUG-0017 DONE (peers /ask /quick still listed). Distinct from BUG-0015 DONE (orchestrator.ts editor.add -> runAutoLifecycle still present). Distinct from BUG-0016 DONE. Do not mutate US-0133..US-0148. Do not drain OPEN US-0139+. Cursor .cursor/commands/auto.md out of scope except do not prune. Do not prune .opencode/agents/auto.md.",
+  "decomposition_verdict": "single_bug",
+  "decomposition_rationale": "One operator outcome: a working OpenCode CLI TUI slash command /auto (listed/highlighted, not free-text) that starts its-magic plugin execute -> runAutoLifecycle (or fail-closes with documented OPENCODE_*). Not 'use Cursor instead'. Not OpenCode permission --auto. Not LLM roleplay 'Auto mode enabled'. Operator already invoked /intake bug — treat as accept single_bug. Do not split Cursor vs OpenCode. Do not reopen BUG-0020. Do not restore auto.md.",
+  "research_id": "R-0131",
+  "sibling_not_persisted": "Do not reopen BUG-0020; do not restore STOP-only auto.md (BUG-0018); do not reopen BUG-0019/0017/0015/0016; do not tell operator to use Cursor only; do not treat LLM Auto mode as success"
+}

@@ -1,3 +1,1068 @@
+## Sprint-plan handoff - US-0143 / S0151 - sovereign-critic (sprint-plan) then /execute (fresh dev, ultra_lean)
+
+- sprint_id: S0151
+- story_id: US-0143 (Status OPEN - authority docs/product/backlog.md)
+- bug_id: (none)
+- companion_dec: DEC-0143 Accepted (decisions/DEC-0143.md)
+- research_anchor: R-0141 (DQ1-DQ10 LOCKED, do not wipe R-0120..R-0141; R-0139 remains US-0142; R-0138 remains US-0141; R-0140 remains BUG-0024)
+- architecture_anchor: docs/engineering/architecture.md # US-0143
+- approach: A1 LOCKED - CommandRouter implements deferred /auto /quick inside @its-magic/runtime-core (no Pi); nested DeliveryRouter; WorkflowEngine owns drain; GateEngine unamended; YAML stop-matrix consume; TS L8 adapter; five independent axes; AC-6 non-relaxable under full; 12 test_us0143_*; reject A2-A15
+- orchestrator_run_id: auto-20260913-us0143
+- parent_orchestrator_run_id: auto-20260913-us0142
+- fresh_context_marker: tl-US0143-sprintplan-20260914T073000Z-fresh
+- timestamp: 2026-09-14T07:30:00Z (UTC)
+- model_id: cursor-grok-4.6-high (CROSS_MODEL_REVIEW=1 - required on isolation)
+- sprint_plan_verdict: PASS
+- decision_gate: false
+- sprint_status: PLANNED (backlog OPEN per US-0045 - not mutated, AC-1..AC-8 unchecked)
+- task_count: 11 (T-anch + T-001..T-010, within SPRINT_MAX_TASKS=12, no split, 1:1 architecture seeds)
+- ac_surjective_map: AC-1->T-001,T-005,T-009 (T-010 m1-m2); AC-2->T-002,T-004 (T-010 m3-m5); AC-3->T-003 (T-010 m6-m7); AC-4->T-002,T-007 (T-010 m8); AC-5->T-005,T-006 (T-010 m9); AC-6->T-007 (T-010 m10); AC-7->T-008 (T-010 m11); AC-8->T-010 (m12); DC->T-anch
+- task_order: T-anch -> T-001 -> T-002 -> T-003 -> T-004 -> T-005 -> T-006 -> T-007 -> T-008 -> T-009 -> T-010
+- plan-verify: ultra_lean - NOT in resolved_phase_plan, skipped, plan-verify.json is a SKIPPED placeholder (reason=ultra_lean_not_in_resolved_phase_plan; not a QA phase)
+- compose_guards (non-negotiable): DO NOT amend AgentKernel isolation loader / noTools / KernelBridge / auth-models store / PolicyEngine tables / RoleCatalog internals / config loaders, DO NOT import Pi, DO NOT add sibling auto-scheduler, DO NOT restore auto.md, DO NOT rewrite GateEngine RELEASE_GATE_ORDER, DO NOT extend compute_strict_proof_hash, DO NOT implement US-0144 critic content, DO NOT drain BUG-0024, DO NOT own credentials or read .env, DO NOT rewrite DEC-0133..0142 bodies, DO NOT wipe R-0120..R-0141, DO NOT reopen US-0133..US-0142, DO NOT mutate US-0144+ or BUG-0021/S0146 or BUG-0022 or BUG-0023/S0148 or S0149 or S0150, DO NOT mark US-0143 DONE, DO NOT tick AC-1..AC-8, DO NOT mutate intake JSON, DO NOT run live paid CI, DO NOT npm-publish, DO NOT git push
+- critic_nb_execute_awareness:
+  - T-001/T-003/T-007/T-010: AC-6 terminals locked, compose-amend test_us0140_command_coverage, L8 golden vs Python, RouteScheduled vs 7-step, full cannot relax AC-6, credentials OUT (NB1)
+  - T-anch..T-010: keep 1:1 architecture seeds, sprint folder is S0151 (S0150 occupied by US-0142), execute owns runtime-core lift + 12 tests, US-0144 content deferred (NB2)
+  - T-anch: NO-OP verification, reject A2-A15, do not amend isolation/noTools/KernelBridge/PolicyEngine tables, do not mark DONE, do not design US-0144+, do not drain BUG-0024, do not own credentials (NB3)
+- first_execute_task: T-anch (NO-OP / verification)
+- key_locked_artifacts:
+  - existing @its-magic/runtime-core (no sibling package, no Pi)
+  - nested workflow/delivery-router.ts
+  - CommandRouter RouteScheduled for /auto /quick
+  - WorkflowEngine runAuto / runQuick
+  - GateEngine RELEASE_GATE_ORDER unamended
+  - YAML stop-matrix consume + AC-6 additive security_hard
+  - TS L8 adapter + golden vectors
+  - 12 test_us0143_*
+- sprint_id_lock: S0151 (S0146=BUG-0021, S0147=US-0140, S0148=BUG-0023, S0149=US-0141, S0150=US-0142). Do not reuse.
+- runtime_proof_id: rp-auto-20260913-us0143-sprint-plan-techlead-20260914T073000Z-US-0143
+- proof_hash: 63708536512D56BA8B5497D2C082299E4376DD495B12388125500454CACF46BE
+- proof_ttl: 2026-09-14T08:30:00Z
+- consumed_architecture_proof: rp-auto-20260913-us0143-architecture-techlead-20260914T071000Z-US-0143 / 6FF1DB37B91284FDE90C5EC7058FF518605D49525BD8FACECB5AC570284F26E5 - RUNTIME_PROOF_VALID (MATCH before TTL 2026-09-14T08:10:00Z)
+- consumed_critic_proof: rp-auto-20260913-us0143-sovereign-critic-techlead-20260914T072000Z-US-0143 / D82C4ED7A5FFA6B6E63139AE250850C13B1945A6FDC20BB64394B76DA2E7E65F - MATCH, anti_slop=10, 0 blocking, degraded_mode=false, findings us0143arc-* informational
+- next_scheduled_phase: sovereign-critic (sprint-plan) then /execute (role=dev)
+- next_scheduled_role: tech-lead (critic), then dev
+- stop_condition: STOP after sprint-plan. Orchestrator MUST spawn sovereign-critic of sprint-plan (CROSS_MODEL_REVIEW=1) then MUST spawn /execute in fresh dev (BUG-0006). Do NOT spawn execute, plan-verify, or critic from this tech-lead. Do NOT mark US-0143 DONE. Do NOT tick acceptance. Do NOT reopen US-0133..US-0142. Do NOT mutate US-0144+ or S0146/S0147/S0148/S0149/S0150. Do NOT implement packages this phase.
+
+---
+
+## Sprint-plan handoff - US-0142 / S0150 - sovereign-critic (sprint-plan) then /execute (fresh dev, ultra_lean)
+
+- sprint_id: S0150
+- story_id: US-0142 (Status OPEN - authority docs/product/backlog.md)
+- bug_id: (none)
+- companion_dec: DEC-0142 Accepted (decisions/DEC-0142.md)
+- research_anchor: R-0139 (DQ1-DQ10 LOCKED, do not wipe R-0120..R-0139; R-0138 remains US-0141; R-0136/R-0137 remain BUG-0023)
+- architecture_anchor: docs/engineering/architecture.md # US-0142
+- approach: A1 LOCKED - sibling @its-magic/browser-uat (no Pi) composing US-0141 connectHandoff; Playwright isolated launch+newContext + typed CDP connectOverCDP/disconnect (dedicated profile; default Chrome forbidden); promote itsm_browser; additive UAT_BROWSER_PROBE_MODE=owned; fail-closed BROWSER_*/UAT_*; BROWSER_RETRY_MAX default 2; 12 test_us0142_*; reject A2-A15
+- orchestrator_run_id: auto-20260913-us0142
+- parent_orchestrator_run_id: auto-20260913-us0141
+- fresh_context_marker: tl-US0142-sprintplan-20260914T041000Z-fresh
+- timestamp: 2026-09-14T04:10:00Z (UTC)
+- model_id: cursor-grok-4.6-high (CROSS_MODEL_REVIEW=1 - required on isolation)
+- sprint_plan_verdict: PASS
+- decision_gate: false
+- sprint_status: PLANNED (backlog OPEN per US-0045 - not mutated, AC-1..AC-8 unchecked)
+- task_count: 11 (T-anch + T-001..T-010, within SPRINT_MAX_TASKS=12, no split, 1:1 architecture seeds)
+- ac_surjective_map: AC-1->T-001,T-002,T-003 (T-010 m1-m3); AC-2->T-004 (T-010 m4); AC-3->T-005 (T-010 m5,m6); AC-4->T-006 (T-010 m7); AC-5->T-008 (T-010 m3,m10); AC-6->T-007 (T-010 m9); AC-7->T-006 (T-010 m8); AC-8->T-009 (T-010 m11,m12); DC->T-anch
+- task_order: T-anch -> T-001 -> T-002 -> T-003 -> T-004 -> T-005 -> T-006 -> T-007 -> T-008 -> T-009 -> T-010
+- plan-verify: ultra_lean - NOT in resolved_phase_plan, skipped, plan-verify.json is a SKIPPED placeholder (reason=ultra_lean_not_in_resolved_phase_plan; not a QA phase)
+- compose_guards (non-negotiable): DO NOT amend AgentKernel isolation loader / noTools / KernelBridge / auth-models store / PolicyEngine path/shell/secret tables (promote itsm_browser only) / RoleCatalog internals / config loaders, DO NOT import Pi in browser-uat, DO NOT extend compute_strict_proof_hash, DO NOT reimplement AppRuntime/ProcessManager/ExecutionBackend, DO NOT implement /auto /quick drain (US-0143), DO NOT ship pixel visual baseline, DO NOT own credentials or read .env, DO NOT attach default Chrome User Data, DO NOT browser.close() after CDP as default teardown, DO NOT weaken kit UAT_PROBE_FORBIDDEN, DO NOT rewrite DEC-0133..0141 bodies, DO NOT wipe R-0120..R-0139, DO NOT reopen US-0133..US-0141, DO NOT mutate US-0143+ or BUG-0021/S0146 or BUG-0022 or BUG-0023/S0148 or S0149, DO NOT mark US-0142 DONE, DO NOT tick AC-1..AC-8, DO NOT mutate intake JSON, DO NOT run live paid CI, DO NOT restore auto.md
+- critic_nb_execute_awareness:
+  - T-002/T-003/T-006/T-007/T-008/T-010: BROWSER_* / UAT_* fail-closed, Chrome 136+ default profile forbidden, traces/HAR redact, CDP disconnect not close, BROWSER_RETRY_MAX orthogonal, credentials OUT, pixel OUT (NB1)
+  - T-anch..T-010: keep 1:1 architecture seeds, sprint folder is S0150 (S0149 occupied by US-0141), execute owns browser-uat + 12 tests, compose US-0141 connectHandoff, US-0143/pixel deferred (NB2)
+  - T-anch: NO-OP verification, reject A2-A15, do not amend isolation/noTools/KernelBridge/PolicyEngine tables, do not mark DONE, do not design US-0143+, do not own credentials (NB3)
+- first_execute_task: T-anch (NO-OP / verification)
+- key_locked_artifacts:
+  - standalone/packages/browser-uat (@its-magic/browser-uat, no Pi)
+  - BrowserUAT facade + isolated Playwright driver + typed CDP adapter
+  - consume connectHandoff; AppRuntime not rewritten
+  - promote itsm_browser typed actions; ToolBroker delegates to BrowserUAT
+  - additive UAT_BROWSER_PROBE_MODE=owned; kit cursor default held
+  - evidence schema + redaction + gitignored traces
+  - BROWSER_RETRY_MAX default 2
+  - 12 test_us0142_*
+- sprint_id_lock: S0150 (S0146=BUG-0021, S0147=US-0140, S0148=BUG-0023, S0149=US-0141). Do not reuse.
+- runtime_proof_id: rp-auto-20260913-us0142-sprint-plan-techlead-20260914T041000Z-US-0142
+- proof_hash: 4F3D2D0DD9ADF5E18221DD2CF7169103F4DE4AD90CC2C88E38104E7A3C6182BA
+- proof_ttl: 2026-09-14T05:10:00Z
+- consumed_architecture_proof: rp-auto-20260913-us0142-architecture-techlead-20260914T035000Z-US-0142 / 52A720174CB9E0D35507ED9683ED70D22D72A5D9E757A5CF1170B2AC304B3175 - RUNTIME_PROOF_VALID (MATCH before TTL 2026-09-14T04:50:00Z)
+- consumed_critic_proof: rp-auto-20260913-us0142-sovereign-critic-techlead-20260914T040000Z-US-0142 / FD58C34EB6D949E85F1E7C5866AA9FA8EA19CB24FAD3D7D7ED2DF210E72B65E4 - MATCH, anti_slop=10, 0 blocking, degraded_mode=false, findings us0142arc-* informational
+- next_scheduled_phase: sovereign-critic (sprint-plan) then /execute (role=dev)
+- next_scheduled_role: tech-lead (critic), then dev
+- stop_condition: STOP after sprint-plan. Orchestrator MUST spawn sovereign-critic of sprint-plan (CROSS_MODEL_REVIEW=1) then MUST spawn /execute in fresh dev (BUG-0006). Do NOT spawn execute, plan-verify, or critic from this tech-lead. Do NOT mark US-0142 DONE. Do NOT tick acceptance. Do NOT reopen US-0133..US-0141. Do NOT mutate US-0143+ or S0146/S0147/S0148/S0149. Do NOT implement packages this phase.
+
+---
+
+## Sovereign-critic handoff — BUG-0023 / S0148 qa CRITIC_PASS → `/verify-work` (fresh qa, ultra_lean)
+
+- sprint_id: S0148
+- story_id: (none — bug segment)
+- bug_id: BUG-0023 (Status OPEN — authority docs/product/backlog.md)
+- companion_dec: none (cite R-0137; compose DEC-0124 / DEC-0125 / DEC-0120 / DEC-0132)
+- research_anchor: R-0137 (DQ1–DQ8 LOCKED; do not wipe)
+- architecture_anchor: docs/engineering/architecture.md # BUG-0023 (UNCHANGED)
+- approach: Axis A LOCKED held — shared Rpc.define rpc.ts; await ctx.rpc.register(Defined, { runAutoLifecycle }); dispatchRunAutoLifecycle dynamic-import → client.rpc(Defined) / OpenCode.make fallback; invented POST removed; DISPATCH only when client/RPC truly absent; keep { id, tui } + editor.add; auto.md not restored
+- orchestrator_run_id: auto-20260913-bug0023
+- parent_orchestrator_run_id: cursor-20260913-BUG0023-intake
+- reviewed_phase_id: qa
+- producer_role: qa
+- critic_role: tech-lead
+- fresh_context_marker: tl-BUG0023-critic-qa-20260914T005000Z-fresh
+- timestamp: 2026-09-14T00:50:00Z (UTC)
+- producer_model_id: cursor-grok-4.6-high
+- critic_model_id: composer-2.5
+- degraded_mode: false
+- critic_verdict: CRITIC_PASS
+- decision_gate: false
+- anti_slop_aggregate: 10
+- blocking_count: 0
+- rework_generation: 0
+- finding_ids: bug0023qa-challenger-001, bug0023qa-architect-002, bug0023qa-subtractor-003
+- independent_pytest: 37 passed in 0.77s (bug0023 8/8; bug0021 8/8; bug0020 8/8; bug0019 7/7; bug0018 6/6)
+- parity: [INTAKE_TEMPLATE_PARITY_OK] --scope bug-0023
+- sovereign_critic_validate: [SOVEREIGN_CRITIC_VALIDATION_OK]
+- consumed_qa_proof: rp-auto-20260913-bug0023-qa-qa-20260914T004500Z-BUG-0023 / AC810B53913132F5B0A5F256DC3689AF80F95EFD065682A24443C4A8A180E850 — MATCH; TTL 2026-09-14T01:45:00Z
+- runtime_proof_id: rp-auto-20260913-bug0023-sovereign-critic-techlead-20260914T005000Z-BUG-0023
+- proof_hash: CB3E4D8EB2E7C1B56919FCE7AAB69D3211701FD7284E636B4D47C02AAAFE4E8F
+- proof_ttl: 2026-09-14T01:50:00Z
+- backlog_status: OPEN
+- acceptance_BUG-0023: unchecked
+- backlog_acs: AC-1..AC-9 ticked (slice; AC-1 mock+inspection; live CLI TUI not probed)
+- live_opencode_cli_tui_pass_claimed: false
+- sibling_boundary: BUG-0021 DONE not reopened; BUG-0020/0019/0018 DONE compose-only; BUG-0022 OPEN not mutated; US-0141 not mutated
+- next_scheduled_phase: /verify-work (role=qa)
+- next_scheduled_role: qa
+- stop_condition: STOP after CRITIC_PASS. Orchestrator MUST spawn /verify-work in fresh qa (BUG-0006). Do NOT spawn verify-work from this critic. Do NOT rework qa. Do NOT mark BUG-0023 DONE. Do NOT tick acceptance. Do NOT reopen BUG-0021. Do NOT mutate BUG-0022 / US-0141. Do NOT restore auto.md. Do NOT claim live CLI TUI PASS.
+
+### critic_evidence
+
+```json
+{
+  "producer_model_id": "cursor-grok-4.6-high",
+  "critic_model_id": "composer-2.5",
+  "anti_slop_aggregate": 10,
+  "rework_generation": 0,
+  "blocking_count": 0,
+  "degraded_mode": false,
+  "finding_ids": ["bug0023qa-challenger-001", "bug0023qa-architect-002", "bug0023qa-subtractor-003"],
+  "independent_checks": [
+    "qa proof SHA-256 MATCH+not-STALE",
+    "pytest 37/37 critic re-run",
+    "parity bug-0023 OK",
+    "acceptance BUG-0023 unchecked",
+    "backlog AC-1..AC-9 slice ticks honest",
+    "BUG-0021 DONE not reopened",
+    "live_opencode_cli_tui_pass_claimed=false",
+    "sovereign_critic_validate.py --enforce PASS"
+  ]
+}
+```
+
+---
+
+## Sovereign-critic handoff — BUG-0023 / S0148 execute CRITIC_PASS → `/qa` (fresh qa, ultra_lean)
+
+- sprint_id: S0148
+- story_id: (none — bug segment)
+- bug_id: BUG-0023 (Status OPEN — authority docs/product/backlog.md)
+- companion_dec: none (cite R-0137; compose DEC-0124 / DEC-0125 / DEC-0120 / DEC-0132)
+- research_anchor: R-0137 (DQ1–DQ8 LOCKED; do not wipe)
+- architecture_anchor: docs/engineering/architecture.md # BUG-0023 (UNCHANGED)
+- approach: Axis A LOCKED held — shared Rpc.define rpc.ts; await ctx.rpc.register(Defined, { runAutoLifecycle }); dispatchRunAutoLifecycle dynamic-import → client.rpc(Defined) / OpenCode.make fallback; invented POST removed; DISPATCH only when client/RPC truly absent; keep { id, tui } + editor.add; auto.md not restored
+- orchestrator_run_id: auto-20260913-bug0023
+- parent_orchestrator_run_id: cursor-20260913-BUG0023-intake
+- reviewed_phase_id: execute
+- producer_role: dev
+- critic_role: tech-lead
+- fresh_context_marker: tl-BUG0023-critic-execute-20260914T004000Z-fresh
+- timestamp: 2026-09-14T00:40:00Z (UTC)
+- producer_model_id: cursor-grok-4.6-high
+- critic_model_id: composer-2.5
+- degraded_mode: false
+- critic_verdict: CRITIC_PASS
+- decision_gate: false
+- anti_slop_aggregate: 10
+- blocking_count: 0
+- rework_generation: 0
+- finding_ids: bug0023ex-challenger-001, bug0023ex-architect-002, bug0023ex-subtractor-003
+- independent_pytest: 37 passed in 0.76s (bug0023 8/8; bug0021 8/8; bug0020 8/8; bug0019 7/7; bug0018 6/6)
+- parity: [INTAKE_TEMPLATE_PARITY_OK] --scope bug-0023
+- metadata: exit 0
+- sovereign_critic_validate: [SOVEREIGN_CRITIC_VALIDATION_OK]
+- consumed_execute_proof: rp-auto-20260913-bug0023-execute-dev-20260914T003500Z-BUG-0023 / 9D6731CDE1E53798FC7637915B93F0519DC23C5723C0E480713CFA259C680980 — MATCH; TTL 2026-09-14T01:35:00Z
+- runtime_proof_id: rp-auto-20260913-bug0023-sovereign-critic-techlead-20260914T004000Z-BUG-0023
+- proof_hash: C9E2EBDB463F6A90F819DCCD8D89F5F30665DC9FB22CD1D0826B7CD169554ACB
+- proof_ttl: 2026-09-14T01:40:00Z
+- next_scheduled_phase: /qa (role=qa)
+- next_scheduled_role: qa
+- stop_condition: STOP after CRITIC_PASS. Orchestrator MUST spawn /qa in fresh qa (BUG-0006). Do NOT spawn qa from this critic. Do NOT rework execute. Do NOT mark BUG-0023 DONE. Do NOT tick acceptance. Do NOT reopen BUG-0021. Do NOT mutate BUG-0022 / US-0141. Do NOT restore auto.md.
+
+### critic_evidence
+
+```json
+{
+  "producer_model_id": "cursor-grok-4.6-high",
+  "critic_model_id": "composer-2.5",
+  "anti_slop_aggregate": 10,
+  "rework_generation": 0,
+  "degraded_mode": false,
+  "findings_path": "handoffs/sovereign_critic_findings.jsonl",
+  "finding_ids": ["bug0023ex-challenger-001", "bug0023ex-architect-002", "bug0023ex-subtractor-003"],
+  "verdict": "PASS",
+  "blocking_count": 0,
+  "reviewed_phase_id": "execute"
+}
+```
+
+---
+## Sprint-plan handoff - US-0141 / S0149 - sovereign-critic (sprint-plan) then /execute (fresh dev, ultra_lean)
+
+- sprint_id: S0149
+- story_id: US-0141 (Status OPEN - authority docs/product/backlog.md)
+- bug_id: (none)
+- companion_dec: DEC-0141 Accepted (decisions/DEC-0141.md)
+- research_anchor: R-0138 (DQ1-DQ10 LOCKED, do not wipe R-0120..R-0138; R-0137 remains BUG-0023)
+- architecture_anchor: docs/engineering/architecture.md # US-0141
+- approach: A1 LOCKED - sibling @its-magic/app-runtime (no Pi) composing runtime-core RunsStore; AppRuntime + ProcessManager + CLI-first local+docker + WSL/SSH adapters; AppRuntime-owned restart (HEALTHCHECK status-only); stack profiles; Connect handoff no browser; 12 test_us0141_*; reject A2-A14
+- orchestrator_run_id: auto-20260913-us0141
+- parent_orchestrator_run_id: auto-20260913-us0140
+- fresh_context_marker: tl-US0141-sprintplan-20260914T005000Z-fresh
+- timestamp: 2026-09-14T00:50:00Z (UTC)
+- model_id: cursor-grok-4.6-high (CROSS_MODEL_REVIEW=1 - required on isolation)
+- sprint_plan_verdict: PASS
+- decision_gate: false
+- sprint_status: PLANNED (backlog OPEN per US-0045 - not mutated, AC-1..AC-8 unchecked)
+- task_count: 11 (T-anch + T-001..T-010, within SPRINT_MAX_TASKS=12, no split, 1:1 architecture seeds)
+- ac_surjective_map: AC-1->T-001 (T-010 m1); AC-2->T-002 (T-010 m2); AC-3->T-003,T-004 (T-010 m3,m4); AC-4->T-005 (T-010 m5); AC-5->T-006 (T-010 m6); AC-6->T-007 (T-010 m7); AC-7->T-008 (T-010 m8,m9); AC-8->T-009,T-010 m10-m12; DC->T-anch
+- task_order: T-anch -> T-001 -> T-002 -> T-003 -> T-004 -> T-005 -> T-006 -> T-007 -> T-008 -> T-009 -> T-010
+- plan-verify: ultra_lean - NOT in resolved_phase_plan, skipped, plan-verify.json is a SKIPPED placeholder (reason=ultra_lean_not_in_resolved_phase_plan; not a QA phase)
+- compose_guards (non-negotiable): DO NOT amend AgentKernel isolation loader / noTools / KernelBridge / auth-models store / PolicyEngine tables / RoleCatalog internals / config loaders, DO NOT import Pi in app-runtime, DO NOT extend compute_strict_proof_hash, DO NOT implement browser UAT (US-0142), DO NOT implement /auto /quick drain (US-0143), DO NOT own credentials or read .env, DO NOT treat HEALTHCHECK as restart owner, DO NOT fall back unknown backends to local, DO NOT rewrite DEC-0133..0140 bodies, DO NOT wipe R-0120..R-0138, DO NOT reopen US-0133..US-0140, DO NOT mutate US-0142+ or BUG-0021/S0146 or BUG-0022 or BUG-0023/S0148 or S0147, DO NOT mark US-0141 DONE, DO NOT tick AC-1..AC-8, DO NOT mutate intake JSON, DO NOT run live paid CI, DO NOT restore auto.md
+- critic_nb_execute_awareness:
+  - T-003/T-004/T-006/T-009/T-010: BACKEND_* / APP_RUNTIME_* / PROCESS_* fail-closed, HEALTHCHECK status-only, unknown backend not local, credentials OUT, US-0142 OUT (NB1)
+  - T-anch..T-010: keep 1:1 architecture seeds, sprint folder is S0149 (S0148 occupied by BUG-0023), execute owns app-runtime + 12 tests, compose US-0140 RunsStore, US-0142/US-0143 deferred (NB2)
+  - T-anch: NO-OP verification, reject A2-A14, do not amend isolation/noTools/KernelBridge/PolicyEngine tables, do not mark DONE, do not design US-0142+, do not own credentials (NB3)
+- first_execute_task: T-anch (NO-OP / verification)
+- key_locked_artifacts:
+  - standalone/packages/app-runtime (@its-magic/app-runtime, no Pi)
+  - AppRuntime facade + ProcessManager + ExecutionBackend adapters
+  - process_handles additive columns; ProcessManager writes; workflow reserveProcessHandle remains claim token
+  - local + docker CLI-first core + WSL/SSH typed adapters
+  - stack profiles Node/Python/Go/Java/.NET
+  - APP_RUNTIME_RESTART_MAX default 3; HEALTHCHECK status-only
+  - Connect handoff names; no Playwright/CDP
+  - 12 test_us0141_*
+- sprint_id_lock: S0149 (S0146=BUG-0021, S0147=US-0140, S0148=BUG-0023). Do not reuse.
+- runtime_proof_id: rp-auto-20260913-us0141-sprint-plan-techlead-20260914T005000Z-US-0141
+- proof_hash: 04696BE6D2E51F966804C58784F8239000011299CECE0ECB13BED846B113555E
+- proof_ttl: 2026-09-14T01:50:00Z
+- consumed_architecture_proof: rp-auto-20260913-us0141-architecture-techlead-20260914T003000Z-US-0141 / 4B5EBD9D8FF00C4C7CC5CF114B946AFBA684E11998C4C553C59AE5080326A3BF - RUNTIME_PROOF_VALID (MATCH before TTL 2026-09-14T01:30:00Z)
+- consumed_critic_proof: rp-auto-20260913-us0141-sovereign-critic-techlead-20260914T004000Z-US-0141 / 581985E343F2274BE2B09E16F505C1E472F5955FCA350F4BD571AD3532428118 - MATCH, anti_slop=10, 0 blocking, degraded_mode=false, findings us0141arc-* informational
+- next_scheduled_phase: sovereign-critic (sprint-plan) then /execute (role=dev)
+- next_scheduled_role: tech-lead (critic), then dev
+- stop_condition: STOP after sprint-plan. Orchestrator MUST spawn sovereign-critic of sprint-plan (CROSS_MODEL_REVIEW=1) then MUST spawn /execute in fresh dev (BUG-0006). Do NOT spawn execute, plan-verify, or critic from this tech-lead. Do NOT mark US-0141 DONE. Do NOT tick acceptance. Do NOT reopen US-0133..US-0140. Do NOT mutate US-0142+ or S0146/S0147/S0148. Do NOT implement packages this phase.
+
+---
+## Sprint-plan handoff - BUG-0023 / S0148 - sovereign-critic (sprint-plan) then /execute (fresh dev, ultra_lean)
+
+- sprint_id: S0148
+- story_id: (none — bug segment)
+- bug_id: BUG-0023 (Status OPEN - authority docs/product/backlog.md)
+- companion_dec: none (cite R-0137; compose DEC-0124 / DEC-0125 / DEC-0120 / DEC-0132)
+- research_anchor: R-0137 (DQ1-DQ8 LOCKED, do not wipe R-0120..R-0137; do not reuse R-0135 / R-0138)
+- architecture_anchor: docs/engineering/architecture.md # BUG-0023
+- approach: Axis A LOCKED - shared Rpc.define (@opencode/plugin/rpc) + TUI api.client.rpc(Defined) / OpenCode.make().rpc + await ctx.rpc.register; keep { id, tui } listing + editor.add; remove invented POST happy path; DISPATCH only when client/RPC truly absent; 8 test_bug0023_* mock-invoke; upgrade overwrite dispatch path + prune leftover auto.md; no companion DEC; do not rewrite # BUG-0021 / # BUG-0019
+- orchestrator_run_id: auto-20260913-bug0023
+- parent_orchestrator_run_id: cursor-20260913-BUG0023-intake
+- fresh_context_marker: tl-BUG0023-sprintplan-20260914T001500Z-fresh
+- timestamp: 2026-09-14T00:15:00Z (UTC)
+- model_id: cursor-grok-4.6-high (CROSS_MODEL_REVIEW=1 - required on isolation)
+- model_resolve_fallback: MODEL_RESOLVE_FALLBACK (requested_slug=gpt-5.6-sol-high)
+- sprint_plan_verdict: PASS
+- decision_gate: false
+- sprint_status: PLANNED (backlog OPEN per US-0045 - not mutated, acceptance unchecked)
+- task_count: 8 (T-anch + T-001..T-007, within SPRINT_MAX_TASKS=12, no split, 1:1 architecture seeds)
+- ac_surjective_map: AC-1->T-001,T-002,T-003,T-005(m1,m2,m4); AC-2->T-004,T-005(m6); AC-3->T-anch,T-005(m5); AC-4->T-005(m5); AC-5->T-002,T-003,T-005(m5); AC-6->T-005; AC-7->T-006,T-005(m8); AC-8->T-007,T-005(m7); AC-9->T-003,T-005(m3); DC->T-anch
+- test_surjection: m1 T-001+T-005; m2 T-003+T-005; m3 T-003+T-005; m4 T-002+T-005; m5 T-anch+T-005; m6 T-004+T-005; m7 T-007+T-005; m8 T-006+T-005 (neither m7 nor m8 dropped)
+- task_order: T-anch -> T-001 -> T-002 -> T-003 -> T-004 -> T-005 -> T-006 -> T-007
+- plan-verify: ultra_lean - NOT in resolved_phase_plan, skipped, plan-verify.json is a SKIPPED placeholder (not a QA phase)
+- compose_guards (non-negotiable): DO NOT restore auto.md, DO NOT add JSON commands.auto template, DO NOT rewrite # BUG-0021 / # BUG-0019 / DEC-0124 / DEC-0125, DO NOT reopen BUG-0021/0020/0019/0018/0017/0015/0016, DO NOT mutate BUG-0022 or US-0140 / S0147 or US-0141, DO NOT mutate US-0133..US-0148, DO NOT mark BUG-0023 DONE, DO NOT tick acceptance, DO NOT live-probe OpenCode CLI TUI in default CI, DO NOT extend compute_strict_proof_hash, DO NOT silent-default localhost:4096, DO NOT top-level import rpc from the TUI default-export module
+- critic_nb_execute_awareness:
+  - T-004/T-005/T-007: DISPATCH is defect not success; honest token only when client/RPC truly absent; do not restore auto.md (NB1)
+  - T-anch..T-007: keep 1:1 architecture seeds, sprint folder is S0148, execute owns rpc.ts + await register + client.rpc(Defined) / OpenCode.make + 8 mock-invoke tests + overwrite, keep { id, tui } + editor.add (NB2)
+  - T-anch: NO-OP verification, reject Axis B/D/E/F, do not rewrite # BUG-0021, do not mark DONE, do not mutate BUG-0022 / US-0141 (NB3)
+- first_execute_task: T-anch (NO-OP / verification)
+- key_locked_artifacts:
+  - shared .opencode/plugins/its-magic-auto/rpc.ts Rpc.define id its-magic.auto
+  - await ctx.rpc.register(Defined, { runAutoLifecycle }); keep editor.add
+  - dispatchRunAutoLifecycle dynamic-import Defined → client.rpc(Defined) + OpenCode.make fallback
+  - remove invented POST happy path; keep { id, tui } listing
+  - DISPATCH only when client/RPC truly absent
+  - upgrade overwrite rpc.ts/tui.ts/orchestrator + prune leftover auto.md
+  - 8 test_bug0023_*
+- sprint_id_lock: S0148 (S0146=BUG-0021, S0147=US-0140). US-0141 research expected S0148 is superseded — US-0141 increments at its own /sprint-plan.
+- runtime_proof_id: rp-auto-20260913-bug0023-sprint-plan-techlead-20260914T001500Z-BUG-0023
+- proof_hash: 4ADB13DBEB1B57EF96301023AF423D4F71528AAFC0B005028F4E5231D8D80FF1
+- proof_ttl: 2026-09-14T01:15:00Z
+- consumed_architecture_proof: rp-auto-20260913-bug0023-architecture-techlead-20260914T000500Z-BUG-0023 / A565DE258312BA535F8CF4E9B00E8A17913E8F44960AC83097EC3C093997EF95 - RUNTIME_PROOF_VALID (MATCH before TTL 2026-09-14T01:05:00Z)
+- consumed_critic_proof: rp-auto-20260913-bug0023-sovereign-critic-techlead-20260914T001000Z-BUG-0023 / B6E305BCC4C02E091033550DC53E0446E6F908228819A59BB25AAC35F5906D53 - MATCH, anti_slop=10, 0 blocking, degraded_mode=false, findings bug0023arc-* informational
+- next_scheduled_phase: sovereign-critic (sprint-plan) then /execute (role=dev)
+- next_scheduled_role: tech-lead (critic), then dev
+- stop_condition: STOP after sprint-plan. Orchestrator MUST spawn sovereign-critic of sprint-plan (CROSS_MODEL_REVIEW=1) then MUST spawn /execute in fresh dev (BUG-0006). Do NOT spawn execute, plan-verify, or critic from this tech-lead. Do NOT mark BUG-0023 DONE. Do NOT tick acceptance. Do NOT reopen BUG-0021. Do NOT mutate BUG-0022 / US-0141. Do NOT restore auto.md. Do NOT implement dispatch-path code this phase.
+
+---
+## Sprint-plan handoff - US-0140 / S0147 - sovereign-critic (sprint-plan) then /execute (fresh dev, ultra_lean)
+
+- sprint_id: S0147
+- story_id: US-0140 (Status OPEN - authority docs/product/backlog.md)
+- bug_id: (none)
+- companion_dec: DEC-0140 Accepted (decisions/DEC-0140.md)
+- research_anchor: R-0135 (DQ1-DQ10 LOCKED, do not wipe R-0120..R-0135)
+- architecture_anchor: docs/engineering/architecture.md # US-0140
+- approach: A1 LOCKED - runtime-core nested workflow/runs/recovery/stop-matrix (no Pi), nested GateEngine, typed TS graph, CommandRouter 7-step, KernelBridge consume, /auto /quick WORKFLOW_ROUTE_DEFERRED, node:sqlite ops DB, crash resume discardOrphans + fresh role, reject A2-A13
+- orchestrator_run_id: auto-20260913-us0140
+- parent_orchestrator_run_id: auto-20260913-us0139
+- fresh_context_marker: tl-US0140-sprintplan-20260913T211500Z-fresh
+- timestamp: 2026-09-13T21:15:00Z (UTC)
+- model_id: cursor-grok-4.6-high (CROSS_MODEL_REVIEW=1 - required on isolation)
+- sprint_plan_verdict: PASS
+- decision_gate: false
+- sprint_status: PLANNED (backlog OPEN per US-0045 - not mutated, AC-1..AC-8 unchecked)
+- task_count: 11 (T-anch + T-001..T-010, within SPRINT_MAX_TASKS=12, no split, 1:1 architecture seeds)
+- ac_surjective_map: AC-1->T-001,T-003 (T-010 m1), AC-2->T-002,T-003,T-004 (T-010 m2,m3), AC-3->T-005 (T-010 m4,m5), AC-4->T-006 (T-010 m6), AC-5->T-007 (T-010 m7), AC-6->T-008 (T-010 m8), AC-7->T-009 (T-010 m9), AC-8->T-010 m10-m12, DC->T-anch
+- task_order: T-anch -> T-001 -> T-002 -> T-003 -> T-004 -> T-005 -> T-006 -> T-007 -> T-008 -> T-009 -> T-010
+- plan-verify: ultra_lean - NOT in resolved_phase_plan, skipped, plan-verify.json is a SKIPPED placeholder (not a QA phase)
+- compose_guards (non-negotiable): DO NOT amend AgentKernel isolation loader / noTools / KernelBridge / auth-models store / PolicyEngine tables / RoleCatalog internals / context-engine ranking, DO NOT import Pi in runtime-core, DO NOT extend compute_strict_proof_hash, DO NOT implement /auto /quick drain (US-0143), DO NOT own credentials or read .env, DO NOT rewrite DEC-0133..0139 bodies, DO NOT wipe R-0120..R-0135, DO NOT reopen US-0133..US-0139/BUG-0020, DO NOT mutate US-0141+ or BUG-0021/S0146 or S0145, DO NOT mark US-0140 DONE, DO NOT tick AC-1..AC-8, DO NOT mutate intake JSON, DO NOT run live paid CI
+- critic_nb_execute_awareness:
+  - T-003/T-005/T-006/T-008/T-009/T-010: WORKFLOW_ROUTE_DEFERRED / WORKFLOW_LOOP_CAP / RELEASE_* / CLOSURE_RELEASE_EVIDENCE_MISSING / RECOVERY_FALSE_COMPLETION fail-closed, US-0143 OUT, credentials OUT (NB1)
+  - T-anch..T-010: keep 1:1 architecture seeds, sprint folder is S0147 (S0146 occupied by BUG-0021), execute owns runtime-core + 12 tests, PolicyEngine/config/KernelBridge compose-only, US-0143 deferred (NB2)
+  - T-anch: NO-OP verification, reject A2-A13, do not amend isolation/noTools/KernelBridge/PolicyEngine tables, do not mark DONE, do not design US-0141+, do not own credentials (NB3)
+- first_execute_task: T-anch (NO-OP / verification)
+- key_locked_artifacts:
+  - standalone/packages/runtime-core (@its-magic/runtime-core, no Pi)
+  - nested src/workflow/ + src/workflow/gates/ + src/runs/ + src/recovery/ + src/stop-matrix/
+  - CommandRouter 7-step + /auto /quick WORKFLOW_ROUTE_DEFERRED
+  - typed phase graph + ultra_lean plan-verify skip edge
+  - nested GateEngine RELEASE_*
+  - closure exclusive DONE + release-evidence envelope
+  - node:sqlite RunsStore gitignored .its-magic/runtime/
+  - crash resume discardOrphans + fresh role
+  - 12 test_us0140_*
+- runtime_proof_id: rp-auto-20260913-us0140-sprint-plan-techlead-20260913T211500Z-US-0140
+- proof_hash: 8DF26AFE6649AB65A7B3F5CF3F350743B88384CFA36B7172E5D0C74198D62E6D
+- proof_ttl: 2026-09-13T22:15:00Z
+- consumed_architecture_proof: rp-auto-20260913-us0140-architecture-techlead-20260913T205500Z-US-0140 / 006C9A41ABF30BCA3A313E8E3B0367CF7E17BA97759F3060BED8B60918DE50CC - RUNTIME_PROOF_VALID (MATCH before TTL 2026-09-13T21:55:00Z)
+- consumed_critic_proof: rp-auto-20260913-us0140-sovereign-critic-techlead-20260913T210500Z-US-0140 / C8B88DCD0B57CE0D3A4FD66C282E51F1510D6FC3E53DC2DD48FCCCDE8C3439F6 - MATCH, anti_slop=10, 0 blocking, degraded_mode=false, findings us0140arch-* informational
+- next_scheduled_phase: sovereign-critic (sprint-plan) then /execute (role=dev)
+- next_scheduled_role: tech-lead (critic), then dev
+- stop_condition: STOP after sprint-plan. Orchestrator MUST spawn sovereign-critic of sprint-plan (CROSS_MODEL_REVIEW=1) then MUST spawn /execute in fresh dev (BUG-0006). Do NOT spawn execute, plan-verify, or critic from this tech-lead. Do NOT mark US-0140 DONE. Do NOT tick acceptance. Do NOT reopen US-0139 or BUG-0020. Do NOT mutate US-0141+ or S0145/S0146. Do NOT implement packages this phase.
+
+---
+## Sprint-plan handoff - BUG-0021 / S0146 - sovereign-critic (sprint-plan) then /execute (fresh dev, ultra_lean)
+
+- sprint_id: S0146
+- story_id: (none — bug segment)
+- bug_id: BUG-0021 (Status OPEN - authority docs/product/backlog.md)
+- companion_dec: none (cite R-0134; compose DEC-0124 / DEC-0125 / DEC-0120 / DEC-0132)
+- research_anchor: R-0134 (DQ1-DQ8 LOCKED, do not wipe R-0120..R-0133)
+- architecture_anchor: docs/engineering/architecture.md # BUG-0021
+- approach: Axis A LOCKED - reshape tui.ts default export { id, tui }; registerLayer name/slashName: auto/namespace: palette; binding ctrl+shift+a; run() → api.client.rpc → runAutoLifecycle; keep tui.json + editor.add; OPENCODE_AUTO_CLI_TUI_PLUGIN_LOAD_UNSUPPORTED; no auto.md restore; no JSON template; no companion DEC; do not rewrite # BUG-0020
+- orchestrator_run_id: auto-20260913-bug0021
+- parent_orchestrator_run_id: cursor-20260913-BUG0021-intake
+- fresh_context_marker: tl-BUG0021-sprintplan-20260913T124000Z-fresh
+- timestamp: 2026-09-13T12:40:00Z (UTC)
+- model_id: cursor-grok-4.6-high (CROSS_MODEL_REVIEW=1 - required on isolation)
+- model_resolve_fallback: MODEL_RESOLVE_FALLBACK (requested_slug=gpt-5.6-sol-high)
+- sprint_plan_verdict: PASS
+- decision_gate: false
+- sprint_status: PLANNED (backlog OPEN per US-0045 - not mutated, acceptance unchecked)
+- task_count: 8 (T-anch + T-001..T-007, within SPRINT_MAX_TASKS=12, no split, 1:1 architecture seeds)
+- ac_surjective_map: AC-1->T-001,T-002,T-005(m1,m2,m6); AC-2->T-003,T-004,T-005(m3,m5); AC-3->T-anch,T-005(m4); AC-4->T-005(m4); AC-5->T-003,T-005(m3); AC-6->T-006,T-005(m8); AC-7->T-007,T-005(m7); AC-8->T-anch; AC-9->T-005; AC-10->T-004,T-007; DC->T-anch
+- test_surjection: m1 T-001+T-005; m2 T-002+T-005; m3 T-003+T-005; m4 T-anch+T-005; m5 T-004+T-005; m6 T-001+T-002+T-005; m7 T-007+T-005; m8 T-006+T-005 (neither m7 nor m8 dropped; architecture split, not both on T-007)
+- task_order: T-anch -> T-001 -> T-002 -> T-003 -> T-004 -> T-005 -> T-006 -> T-007
+- plan-verify: ultra_lean - NOT in resolved_phase_plan, skipped, plan-verify.json is a SKIPPED placeholder (not a QA phase)
+- compose_guards (non-negotiable): DO NOT restore auto.md, DO NOT add JSON commands.auto template, DO NOT ship cli.json or plugin-local tui.json, DO NOT rewrite # BUG-0020 / DEC-0124 / DEC-0125, DO NOT reopen BUG-0020/0019/0018/0017/0015/0016, DO NOT mutate BUG-0022 or US-0139 / S0145, DO NOT mutate US-0133..US-0148, DO NOT mark BUG-0021 DONE, DO NOT tick acceptance, DO NOT live-probe OpenCode CLI TUI in default CI, DO NOT extend compute_strict_proof_hash
+- critic_nb_execute_awareness:
+  - T-004/T-005/T-007: LOAD/LISTING/DISPATCH fail-closed, #36505 residual, upgrade overwrite R7, do not restore auto.md (NB1)
+  - T-anch..T-007: keep 1:1 architecture seeds, sprint folder is S0146, execute owns reshape + registerLayer + rpc + 8 tests + overwrite, index.ts server-only (NB2)
+  - T-anch: NO-OP verification, reject Axis B/D/E, do not rewrite # BUG-0020, do not mark DONE, do not mutate BUG-0022 / US-0139 (NB3)
+- first_execute_task: T-anch (NO-OP / verification)
+- key_locked_artifacts:
+  - reshape .opencode/plugins/its-magic-auto/tui.ts { id: "its-magic.auto.tui", tui }
+  - registerLayer name/slashName: auto/namespace: palette/ctrl+shift+a
+  - run() api.client.rpc(ITS_MAGIC_AUTO_RPC) → runAutoLifecycle
+  - keep tui.json listing + editor.add
+  - OPENCODE_AUTO_CLI_TUI_PLUGIN_LOAD_UNSUPPORTED
+  - upgrade overwrite tui.ts + prune leftover auto.md
+  - 8 test_bug0021_*
+- runtime_proof_id: rp-auto-20260913-bug0021-sprint-plan-techlead-20260913T124000Z-BUG-0021
+- proof_hash: 11A440144E6A2350DADBE1C2709BE6A2769E15D1074964211AD11CD7897423DD
+- proof_ttl: 2026-09-13T13:40:00Z
+- consumed_architecture_proof: rp-auto-20260913-bug0021-architecture-techlead-20260913T121000Z-BUG-0021 / 7621D2D4FCE1EEB34FF8E41F8B26F6069E5D348833F8EEBEF8CD5210DE53A60B - RUNTIME_PROOF_VALID (MATCH before TTL 2026-09-13T13:10:00Z)
+- consumed_critic_proof: rp-auto-20260913-bug0021-sovereign-critic-techlead-20260913T123600Z-BUG-0021 / 83E7EEBC715167A882F8A5301DC8FBCB63610CAEEBFB1748A28EC830D127E2BE - MATCH, anti_slop=10, 0 blocking, degraded_mode=false, findings bug0021arc-* informational
+- next_scheduled_phase: sovereign-critic (sprint-plan) then /execute (role=dev)
+- next_scheduled_role: tech-lead (critic), then dev
+- stop_condition: STOP after sprint-plan. Orchestrator MUST spawn sovereign-critic of sprint-plan (CROSS_MODEL_REVIEW=1) then MUST spawn /execute in fresh dev (BUG-0006). Do NOT spawn execute, plan-verify, or critic from this tech-lead. Do NOT mark BUG-0021 DONE. Do NOT tick acceptance. Do NOT reopen BUG-0020. Do NOT mutate BUG-0022 / US-0139. Do NOT restore auto.md. Do NOT reshape tui.ts this phase.
+
+---
+## Sprint-plan handoff - US-0139 / S0145 - sovereign-critic (sprint-plan) then /execute (fresh dev, ultra_lean)
+
+- sprint_id: S0145
+- story_id: US-0139 (Status OPEN - authority docs/product/backlog.md)
+- bug_id: (none)
+- companion_dec: DEC-0139 Accepted (decisions/DEC-0139.md)
+- research_anchor: R-0132 (DQ1-DQ10 LOCKED, do not wipe R-0120..R-0133)
+- architecture_anchor: docs/engineering/architecture.md # US-0139
+- approach: A1 LOCKED - code-intelligence + context-engine (no Pi), nested AFT read adapter, unstub itsm_*, TOKEN_PROFILE caps, assembler exclusion, pack hash not DEC-0038, compose materialize_codebase_map, benchmark, its-indexd OUT, reject A2-A13
+- orchestrator_run_id: auto-20260913-us0139
+- parent_orchestrator_run_id: auto-20260913-us0138
+- fresh_context_marker: tl-US0139-sprintplan-20260913T175500Z-fresh
+- timestamp: 2026-09-13T17:55:00Z (UTC)
+- model_id: cursor-grok-4.6-high (CROSS_MODEL_REVIEW=1 - required on isolation)
+- sprint_plan_verdict: PASS
+- decision_gate: false
+- sprint_status: PLANNED (backlog OPEN per US-0045 - not mutated, AC-1..AC-8 unchecked)
+- task_count: 11 (T-anch + T-001..T-010, within SPRINT_MAX_TASKS=12, no split, 1:1 architecture seeds)
+- ac_surjective_map: AC-1->T-001,T-002 (T-010 m1), AC-2->T-002,T-003 (T-010 m2), AC-3->T-004 (T-010 m3), AC-4->T-005 (T-010 m4), AC-5->T-006 (T-010 m5), AC-6->T-007 (T-010 m6), AC-7->T-008 (T-010 m7), AC-8->T-009 (T-010 m8-m12), DC->T-anch
+- task_order: T-anch -> T-001 -> T-002 -> T-003 -> {T-004, T-005} -> T-006 -> T-007 -> T-008 -> T-009 -> T-010
+- plan-verify: ultra_lean - NOT in resolved_phase_plan, skipped, plan-verify.json is a SKIPPED placeholder (not a QA phase)
+- compose_guards (non-negotiable): DO NOT amend AgentKernel isolation loader / noTools / KernelBridge / auth-models store / PolicyEngine tables / RoleCatalog internals, DO NOT import Pi in code-intelligence/context-engine, DO NOT extend compute_strict_proof_hash, DO NOT add its-indexd or runtime-core, DO NOT own credentials or read .env, DO NOT rewrite DEC-0133..0138 bodies, DO NOT wipe R-0120..R-0133, DO NOT reopen US-0133..US-0138/BUG-0020, DO NOT mutate US-0140+ or BUG-0021, DO NOT mark US-0139 DONE, DO NOT tick AC-1..AC-8, DO NOT mutate intake JSON, DO NOT run live paid CI
+- critic_nb_execute_awareness:
+  - T-002/T-005/T-006/T-008/T-009/T-010: INTEL_*/CONTEXT_* fail-closed edges, pack hash not DEC-0038, its-indexd OUT, credentials OUT (NB1)
+  - T-anch..T-010: keep 1:1 architecture seeds, sprint folder is S0145, execute owns packages + 12 tests, PolicyEngine/config compose-only, US-0140 deferred (NB2)
+  - T-anch: NO-OP verification, reject A2-A13, do not amend isolation/noTools/KernelBridge/PolicyEngine tables, do not mark DONE, do not design US-0140+, do not own credentials (NB3)
+- first_execute_task: T-anch (NO-OP / verification)
+- key_locked_artifacts:
+  - standalone/packages/code-intelligence (@its-magic/code-intelligence, no Pi)
+  - standalone/packages/context-engine (@its-magic/context-engine, no Pi)
+  - nested AFT read sidecar AFT_BINARY_VERSION=0.55.1 + fake adapter
+  - LIVE_INTEL_TOOLS unstub six itsm_* names
+  - code_context ranking + TOKEN_PROFILE caps
+  - assembler exclusion + pack envelope hash
+  - derived codebase-map compose
+  - benchmark harness, its-indexd OUT
+  - 12 test_us0139_*
+- runtime_proof_id: rp-auto-20260913-us0139-sprint-plan-techlead-20260913T175500Z-US-0139
+- proof_hash: E7EF29705559E89CF0DF2B47132D00CBCCC4E376C5CCCF5862BB305C597DAF17
+- proof_ttl: 2026-09-13T18:55:00Z
+- consumed_architecture_proof: rp-auto-20260913-us0139-architecture-techlead-20260913T173500Z-US-0139 / 93664305B6847E244901E87027891EA2EC9FA4E23F9A66B5CC5BC00293C0F51C - RUNTIME_PROOF_VALID (MATCH before TTL 2026-09-13T18:35:00Z)
+- consumed_critic_proof: rp-auto-20260913-us0139-sovereign-critic-techlead-20260913T174500Z-US-0139 / F4FA5F3517694EBEB416B9AB43F3885B14CBD81821A870BC31D96EE8A8731E12 - MATCH, anti_slop=10, 0 blocking, degraded_mode=false, findings us0139arc-* informational
+- next_scheduled_phase: sovereign-critic (sprint-plan) then /execute (role=dev)
+- next_scheduled_role: tech-lead (critic), then dev
+- stop_condition: STOP after sprint-plan. Orchestrator MUST spawn sovereign-critic of sprint-plan (CROSS_MODEL_REVIEW=1) then MUST spawn /execute in fresh dev (BUG-0006). Do NOT spawn execute, plan-verify, or critic from this tech-lead. Do NOT mark US-0139 DONE. Do NOT tick acceptance. Do NOT reopen US-0138 or BUG-0020. Do NOT mutate US-0140+. Do NOT implement packages this phase.
+
+---
+## Sprint-plan handoff — US-0138 / S0144 — sovereign-critic (sprint-plan) then `/execute` (fresh dev; ultra_lean)
+
+- sprint_id: S0144
+- story_id: US-0138 (Status OPEN — authority docs/product/backlog.md)
+- bug_id: (none)
+- companion_dec: DEC-0138 Accepted (`decisions/DEC-0138.md`)
+- research_anchor: R-0130 (DQ1–DQ10 LOCKED; compose R-0129 / R-0128 / R-0127 / R-0122 / R-0121 / R-0116; do not wipe R-0120..R-0130)
+- architecture_anchor: docs/engineering/architecture.md # US-0138
+- approach: A1 LOCKED — `standalone/packages/config` (`@its-magic/config`, no Pi imports); Zod-typed versioned `RuntimeConfig`; JSONC `.its-magic/config{,.local,.example}.json` same files as US-0131 analog (do not rewrite `host_runtime_config_lib.py`); TS `LegacyScratchpadAdapter` (absent OK; no Python spawn; no forced migration; DEC-0039 locals preserved); 5-layer public precedence mapped onto kit 7-layer; per-key provenance; `CONFIG_*` fail-closed; secret names/handles only (credentials OUT US-0135); US-0119 preset expansion with `security_hard` unrelaxable; inject PolicyEngine/ModelRouter/SessionSupervisor flags only; fake-model CI / empty loader / `noTools` / KernelBridge / auth-models / PolicyEngine tables / RoleCatalog held; reject A2–A12
+- orchestrator_run_id: auto-20260913-us0138
+- parent_orchestrator_run_id: auto-20260913-us0137
+- fresh_context_marker: tl-US0138-sprintplan-20260913T143500Z-fresh
+- timestamp: 2026-09-13T14:35:00Z (UTC)
+- model_id: cursor-grok-4.6-high (CROSS_MODEL_REVIEW=1 — required on isolation)
+- sprint_plan_verdict: PASS
+- decision_gate: false
+- sprint_status: PLANNED (backlog OPEN per US-0045 — not mutated; AC-1..AC-6 unchecked)
+- task_count: 11 (T-anch + T-001..T-010; within SPRINT_MAX_TASKS=12; no split; 1:1 architecture seeds)
+- ac_surjective_map: AC-1->T-001,T-002,T-008; AC-2->T-003(T-010 m1-m4,m12); AC-3->T-004(T-010 m5,m6); AC-4->T-005(T-010 m9); AC-5->T-006,T-007(T-010 m10,m11); AC-6->T-009,T-010; DC->T-anch
+- task_order: T-anch -> T-001 -> T-002 -> T-003 -> T-004 -> {T-005, T-006, T-007} -> T-008 -> T-009 -> T-010
+- plan-verify: ultra_lean — NOT in resolved_phase_plan; skipped; plan-verify.json is a SKIPPED placeholder (not a QA phase)
+- compose_guards (non-negotiable): DO NOT amend AgentKernel isolation loader / noTools / KernelBridge / auth-models store / PolicyEngine tables / RoleCatalog internals; DO NOT import Pi in packages/config; DO NOT rewrite host_runtime_config_lib.py; DO NOT extend compute_strict_proof_hash; DO NOT add runtime-core; DO NOT own credentials or read .env; DO NOT force migration or overwrite DEC-0039 locals; DO NOT rewrite DEC-0133/0134/0135/0136/0137 bodies; DO NOT wipe R-0120..R-0130; DO NOT reopen US-0133/US-0134/US-0135/US-0136/US-0137/BUG-0020; DO NOT mutate US-0139+; DO NOT mark US-0138 DONE; DO NOT tick AC-1..AC-6; DO NOT mutate intake JSON; DO NOT run live paid CI
+- critic_nb_execute_awareness:
+  - T-003/T-004/T-005/T-006/T-007/T-010: fail-closed edges locked DEC-0138 §4–§8 — 5-layer precedence, secret reject, security_hard, legacy adapter; compute_strict_proof_hash tuple unamended; credentials OUT (NB1)
+  - T-anch..T-010: keep 1:1 architecture seeds; sprint folder is S0144; execute owns packages/config + Zod schema + adapter + 12 tests; inject-only PolicyEngine/ModelRouter/SessionSupervisor; US-0131 analog compose-only; US-0139/0140 deferred; DEC-0133/0134/0135/0136/0137 compose held (NB2)
+  - T-anch: NO-OP verification; reject A2–A12; do not amend isolation/noTools/KernelBridge/auth-models/PolicyEngine tables; do not mark DONE; do not reopen US-0137/US-0136/US-0135 or BUG-0020; do not design US-0139+; do not own credentials (NB3)
+- first_execute_task: T-anch (NO-OP / verification)
+- key_locked_artifacts:
+  - standalone/packages/config (@its-magic/config; no Pi)
+  - Zod RuntimeConfig + schema_version v1 + AC-1 groups
+  - JSONC .its-magic/config{,.local,.example}.json (US-0131 analog)
+  - 5-layer resolve + provenance
+  - TS LegacyScratchpadAdapter (absent OK; migration hints)
+  - secret reject names/handles only
+  - CONFIG_* fail-closed + security_hard unrelaxable
+  - inject PolicyEngine/ModelRouter/SessionSupervisor flags
+  - DEC-0039 local preservation + existing-repo identity
+  - 12 test_us0138_*
+- runtime_proof_id: rp-auto-20260913-us0138-sprint-plan-techlead-20260913T143500Z-US-0138
+- proof_hash: F6F06430D519000457A0F38ECB45BF90368CCDE7C8921EA4D349C798744FE5F0
+- proof_ttl: 2026-09-13T15:35:00Z
+- consumed_architecture_proof: rp-auto-20260913-us0138-architecture-techlead-20260913T141500Z-US-0138 / 7400FC661403FBA49902875B7A08FB930D156840A8B84EF9ED5D5B385DF6BEE4 — RUNTIME_PROOF_VALID (MATCH before TTL 2026-09-13T15:15:00Z)
+- consumed_critic_proof: rp-auto-20260913-us0138-sovereign-critic-techlead-20260913T142500Z-US-0138 / AB66B458010E29E861F3D866A4BDFDAF3CF09E09D3239E47D00E5E49F3721CD6 — MATCH; anti_slop=10; 0 blocking; degraded_mode=false; findings us0138asc-* informational
+- next_scheduled_phase: sovereign-critic (sprint-plan) then /execute (role=dev)
+- next_scheduled_role: tech-lead (critic), then dev
+- stop_condition: STOP after sprint-plan. Orchestrator MUST spawn sovereign-critic of sprint-plan (CROSS_MODEL_REVIEW=1) then MUST spawn /execute in fresh dev (BUG-0006). Do NOT spawn execute, plan-verify, or critic from this tech-lead. Do NOT mark US-0138 DONE. Do NOT tick acceptance. Do NOT reopen US-0137, US-0136, US-0135, or BUG-0020. Do NOT mutate US-0139+. Do NOT implement standalone/packages/config this phase.
+
+---
+
+## Sprint-plan handoff — US-0137 / S0143 — `/execute` next (fresh dev; ultra_lean)
+
+- sprint_id: S0143
+- story_id: US-0137 (Status OPEN — authority docs/product/backlog.md)
+- bug_id: (none)
+- companion_dec: DEC-0137 Accepted (`decisions/DEC-0137.md`)
+- research_anchor: R-0129 (DQ1–DQ10 LOCKED; compose R-0121 / R-0122 / R-0127 / R-0128; do not wipe R-0120..R-0128)
+- architecture_anchor: docs/engineering/architecture.md # US-0137
+- approach: A1 LOCKED — `standalone/packages/policy-engine` + `standalone/packages/tool-broker` (no Pi imports); thin kernel tool-port (`defineTool` only in pi-kernel); production `itsm_*` via ToolBroker; `noTools: "builtin"` held; PolicyEngine ALLOW|ASK|DENY; path deny matrix; shell classify; secret deny + US-0135 `redact.ts` compose; Layer A ≠ Layer B (US-0141 OUT); compact audit + real `policy_hash`; fake-model CI / empty loader / KernelBridge / auth-models / role-runtime held (compose spawn allowlist + hash); reject A2–A12
+- orchestrator_run_id: auto-20260913-us0137
+- parent_orchestrator_run_id: auto-20260913-us0136
+- fresh_context_marker: tl-US0137-sprintplan-20260913T111500Z-fresh
+- timestamp: 2026-09-13T11:15:00Z (UTC)
+- model_id: cursor-grok-4.6-high (CROSS_MODEL_REVIEW=1 — required on isolation)
+- sprint_plan_verdict: PASS
+- decision_gate: false
+- sprint_status: PLANNED (backlog OPEN per US-0045 — not mutated; AC-1..AC-8 unchecked)
+- task_count: 11 (T-anch + T-001..T-010; within SPRINT_MAX_TASKS=12; no split; 1:1 architecture seeds)
+- ac_surjective_map: AC-1->T-001,T-008,T-009(T-010 m1,m2,m10); AC-2->T-002; AC-3->T-003(T-010 m3,m4); AC-4->T-004(T-010 m6,m7); AC-5->T-005(T-010 m5,m8); AC-6->T-006(T-010 m9); AC-7->T-007; AC-8->T-010; DC->T-anch
+- task_order: T-anch -> T-001 -> T-002 -> {T-003, T-004, T-005} -> T-006 -> T-007 -> T-008 -> T-009 -> T-010
+- plan-verify: ultra_lean — NOT in resolved_phase_plan; skipped; plan-verify.json is a SKIPPED placeholder (not a QA phase)
+- compose_guards (non-negotiable): DO NOT amend AgentKernel isolation loader / noTools / KernelBridge / auth-models store; DO NOT import Pi in policy-engine/tool-broker; DO NOT extend compute_strict_proof_hash; DO NOT add SQLite or runtime-core; DO NOT claim OS sandbox; DO NOT rewrite DEC-0133/0134/0135/0136 bodies; DO NOT wipe R-0120..R-0129; DO NOT reopen US-0133/US-0134/US-0135/US-0136/BUG-0020; DO NOT mutate US-0138+; DO NOT mark US-0137 DONE; DO NOT tick AC-1..AC-8; DO NOT mutate intake JSON; DO NOT run live paid CI; DO NOT read .env
+- critic_nb_execute_awareness:
+  - T-003/T-004/T-005/T-006/T-008/T-010: fail-closed edges locked DEC-0137 §3–§11 — raw Pi tools, path ownership, shell exfil, secret deny, Layer B unavailable, malicious extensions; compute_strict_proof_hash tuple unamended (NB1)
+  - T-anch..T-010: keep 1:1 architecture seeds; sprint folder is S0143; execute owns policy-engine + tool-broker + kernel tool-port + catalog + 10 tests; PolicyEngine vs RoleCatalog (intent vs permission); defineTool only in pi-kernel; US-0141 Layer B deferred; DEC-0133/0134/0135/0136 compose held (NB2)
+  - T-anch: NO-OP verification; reject A2–A12; do not amend isolation/noTools/KernelBridge/auth-models; do not mark DONE; do not reopen US-0136/US-0135 or BUG-0020; do not design US-0138+; do not claim OS sandbox (NB3)
+- first_execute_task: T-anch (NO-OP / verification)
+- key_locked_artifacts:
+  - standalone/packages/policy-engine (@its-magic/policy-engine; no Pi)
+  - standalone/packages/tool-broker (@its-magic/tool-broker; no Pi)
+  - PolicyEngine ALLOW|ASK|DENY + security_hard
+  - path ownership deny matrix
+  - shell classifier v1 + fail-safe inventory
+  - secret path deny + redact.ts compose
+  - Layer A profiles + ISOLATION_BACKEND_UNAVAILABLE
+  - compact audit + real policy_hash
+  - kernel tool-port ownedTools + defineTool only in pi-kernel
+  - per-role itsm_* catalog + fail-closed stubs
+  - 10 test_us0137_*
+- runtime_proof_id: rp-auto-20260913-us0137-sprint-plan-techlead-20260913T111500Z-US-0137
+- proof_hash: 90403EE6908313220976FDAFC69EA3E96BCB44EABC525574ED2499E6ABB89CE3
+- proof_ttl: 2026-09-13T12:15:00Z
+- consumed_architecture_proof: rp-auto-20260913-us0137-architecture-techlead-20260913T105500Z-US-0137 / 1BA2580EED66FC542D567EEF44EC4C6040854A0DFFCFABEE0087042E7657D97C — RUNTIME_PROOF_VALID (MATCH before TTL 2026-09-13T11:55:00Z)
+- consumed_critic_proof: rp-auto-20260913-us0137-sovereign-critic-techlead-20260913T110500Z-US-0137 / EA78042C178EB8C42093D6E92389CE2E3CB114540E5369707BBC56A1F182F1CE — MATCH; anti_slop=10; 0 blocking; degraded_mode=false; findings us0137asc-* informational
+- next_scheduled_phase: /execute (role=dev)
+- next_scheduled_role: dev
+- stop_condition: STOP after sprint-plan. Orchestrator MAY spawn sovereign-critic of sprint-plan (CROSS_MODEL_REVIEW=1) then MUST spawn /execute in fresh dev (BUG-0006). Do NOT spawn execute or plan-verify from this tech-lead. Do NOT mark US-0137 DONE. Do NOT tick acceptance. Do NOT reopen US-0136, US-0135, or BUG-0020. Do NOT mutate US-0138+.
+
+---
+
+## Sprint-plan handoff — US-0136 / S0142 — `/execute` next (fresh dev; ultra_lean)
+
+- sprint_id: S0142
+- story_id: US-0136 (Status OPEN — authority docs/product/backlog.md)
+- bug_id: (none)
+- companion_dec: DEC-0136 Accepted (`decisions/DEC-0136.md`)
+- research_anchor: R-0128 (DQ1–DQ10 LOCKED; compose R-0121 / R-0122 / R-0127; do not wipe R-0120..R-0127)
+- architecture_anchor: docs/engineering/architecture.md # US-0136
+- approach: A1 LOCKED — `standalone/packages/role-runtime` (RoleCatalog + SessionSupervisor + sidecar attestation; no Pi imports); Supervisor wraps injected AgentKernel.createSession only; SessionManager.inMemory; continueRecent/fork default-deny; ContinuationContract same-phase run/steer only; RoleCatalog ports DEC-0051 / AUTO_ROLE_* + extra catalog rows; sidecar spawn/start/end + attestation_hash; additive standalone_attestation; DEC-0038 envelope unamended; TS orchestrator spawn-time tool deny; fail-closed SESSION_*/ATTESTATION_*; 10 test_us0136_*; fake-model CI / empty loader / noTools / KernelBridge / auth-models held; reject A2–A9
+- orchestrator_run_id: auto-20260913-us0136
+- parent_orchestrator_run_id: auto-20260913-us0135
+- fresh_context_marker: tl-US0136-sprintplan-20260913T075500Z-fresh
+- timestamp: 2026-09-13T07:55:00Z (UTC)
+- model_id: cursor-grok-4.6-high (CROSS_MODEL_REVIEW=1 — required on isolation)
+- sprint_plan_verdict: PASS
+- decision_gate: false
+- sprint_status: PLANNED (backlog OPEN per US-0045 — not mutated; AC-1..AC-7 unchecked)
+- task_count: 11 (T-anch + T-001..T-010; within SPRINT_MAX_TASKS=12; no split; 1:1 architecture seeds)
+- ac_surjective_map: AC-1->T-001,T-003,T-004,T-008(T-010 m1-m4,m6,m8); AC-2->T-002(T-010 m7); AC-3->T-005(T-010 m9); AC-4->T-005; AC-5->T-006,T-007(T-010 m6-m10); AC-6->T-007(T-010 m10); AC-7->T-008,T-009,T-010(m1-m5); DC->T-anch
+- task_order: T-anch -> T-001 -> T-002 -> T-003 -> {T-004, T-005} -> T-006 -> T-007 -> T-008 -> T-009 -> T-010
+- plan-verify: ultra_lean — NOT in resolved_phase_plan; skipped; plan-verify.json is a deferred/skipped placeholder (not a QA phase)
+- compose_guards (non-negotiable): DO NOT amend AgentKernel isolation loader / noTools / KernelBridge / auth-models; DO NOT import Pi in role-runtime; DO NOT add continueRecent/fork/newSession({ parentSession }) to AgentKernel; DO NOT extend compute_strict_proof_hash; DO NOT add SQLite or runtime-core; DO NOT rewrite DEC-0133/0134/0135 bodies; DO NOT wipe R-0120..R-0127; DO NOT reopen US-0133/US-0134/US-0135/BUG-0020; DO NOT mutate US-0137+; DO NOT mark US-0136 DONE; DO NOT tick AC-1..AC-7; DO NOT mutate intake JSON; DO NOT run live paid CI
+- critic_nb_execute_awareness:
+  - T-003/T-004/T-006/T-009: DQ2 continuation allow-list; Pi continueRecent/fork default-deny; crash orphan discard; SESSION_*/ATTESTATION_* fail-closed; stub context_pack_hash/policy_hash until US-0139/US-0137 (NB1)
+  - T-anch..T-010: keep 1:1 architecture seeds; sprint folder is S0142; execute owns role-runtime + SessionSupervisor + RoleCatalog + sidecar + 10 tests; role-runtime vs pi-kernel; sidecar attestation_hash ≠ DEC-0038; DEC-0133/0134/0135 compose held; TS orchestrator scheduling-only (NB2)
+  - T-anch: NO-OP verification; reject A2–A9; do not amend isolation/noTools/KernelBridge/auth-models; do not mark DONE; do not reopen US-0135 or BUG-0020; do not design US-0137+ (NB3)
+- first_execute_task: T-anch (NO-OP / verification)
+- key_locked_artifacts:
+  - standalone/packages/role-runtime (@its-magic/role-runtime; no Pi)
+  - RoleCatalog DEC-0051 + AUTO_ROLE_* + extra catalog rows
+  - SessionSupervisor wrap createSession + inMemory
+  - ContinuationContract same-phase run/steer
+  - sidecar spawn/start/end + attestation_hash + standalone_attestation
+  - fail-closed SESSION_* / ATTESTATION_*
+  - assertOrchestratorSchedulingOnly
+  - critic/review fresh sessions + parent_phase_session_id
+  - crash orphan discard + dispose
+  - 10 test_us0136_*
+- runtime_proof_id: rp-auto-20260913-us0136-sprint-plan-techlead-20260913T075500Z-US-0136
+- proof_hash: ADE16B3E4FC3F643CE7B79049DDB1C829A55B0D4F89F0D1E0CD9BA655FAF0A10
+- proof_ttl: 2026-09-13T08:55:00Z
+- consumed_architecture_proof: rp-auto-20260913-us0136-architecture-techlead-20260913T073500Z-US-0136 / 3814A075FD13922FD3E8B344CDA11F02BC832845C35245F2D2B5A0B07587E3CD — RUNTIME_PROOF_VALID (MATCH before TTL 2026-09-13T08:35:00Z)
+- consumed_critic_proof: rp-auto-20260913-us0136-sovereign-critic-techlead-20260913T074500Z-US-0136 / B312C8FAFAA551E913692A427FE468DFA9C7E7C4EB3DE5CB1A3406B7F4D151EB — MATCH; anti_slop=10; 0 blocking; findings us0136arc-* informational
+- next_scheduled_phase: /execute (role=dev)
+- next_scheduled_role: dev
+- stop_condition: STOP after sprint-plan. Orchestrator MAY spawn sovereign-critic of sprint-plan (CROSS_MODEL_REVIEW=1) then MUST spawn /execute in fresh dev (BUG-0006). Do NOT spawn execute or plan-verify from this tech-lead. Do NOT mark US-0136 DONE. Do NOT tick acceptance. Do NOT reopen US-0135 or BUG-0020. Do NOT mutate US-0137+.
+
+---
+
+## Sprint-plan handoff — US-0135 / S0141 — `/execute` next (fresh dev; ultra_lean)
+
+- sprint_id: S0141
+- story_id: US-0135 (Status OPEN — authority docs/product/backlog.md)
+- bug_id: (none)
+- companion_dec: DEC-0135 Accepted (`decisions/DEC-0135.md`)
+- research_anchor: R-0127 (DQ1–DQ10 LOCKED; compose R-0121 / R-0122; do not wipe R-0120..R-0126)
+- architecture_anchor: docs/engineering/architecture.md # US-0135
+- approach: A1 LOCKED — `standalone/packages/auth-models` (AuthService + ModelRouter + thin catalog + CLI handlers; no Pi imports); pi-kernel AuthRuntimeAdapter wrapping ModelRuntime.create({ authPath, modelsPath }) / three-arg login / checkAuth / in-process registerProvider; owned OS credential dir (XDG / %APPDATA% / macOS Application Support its-magic/, 0600-class); 6-step ModelRouter + provenance; thinking inject independent of slug/TOKEN_PROFILE (clamp+provenance); critic pin + CROSS_MODEL_DEGRADED_MODE; itsm auth / models list / models test; 10 test_us0135_*; fake-model CI default held; empty loader / noTools / KernelBridge unamended; reject A2–A9
+- orchestrator_run_id: auto-20260913-us0135
+- parent_orchestrator_run_id: auto-20260913-bug0020
+- fresh_context_marker: tl-US0135-sprintplan-20260913T043500Z-fresh
+- timestamp: 2026-09-13T04:35:00Z (UTC)
+- model_id: cursor-grok-4.6-high (CROSS_MODEL_REVIEW=1 — required on isolation)
+- sprint_plan_verdict: PASS
+- decision_gate: false
+- sprint_status: PLANNED (backlog OPEN per US-0045 — not mutated; AC-1..AC-7 unchecked)
+- task_count: 10 (T-anch + T-001..T-009; within SPRINT_MAX_TASKS=12; no split; 1:1 architecture seeds)
+- ac_surjective_map: AC-1->T-001,T-002,T-003,T-008(T-009 m1-m3); AC-2->T-003,T-004(T-009 m8); AC-3->T-005(T-009 m4); AC-4->T-006(T-009 m5); AC-5->T-007(T-009 m6); AC-6->T-008(T-009 m7); AC-7->T-009(m8,m9,m10); DC->T-anch
+- task_order: T-anch -> T-001 -> T-002 -> T-003 -> T-004 -> T-005 -> T-006 -> T-007 -> T-008 -> T-009
+- plan-verify: ultra_lean — NOT in resolved_phase_plan; skipped; plan-verify.json is a deferred/skipped placeholder (not a QA phase)
+- compose_guards (non-negotiable): DO NOT amend AgentKernel isolation loader / noTools / KernelBridge; DO NOT import Pi outside pi-kernel; DO NOT use ~/.pi/agent as ship store; DO NOT store credentials in project or .env; DO NOT load project .pi/extensions; DO NOT treat Cursor aliases as runtime slugs; DO NOT run live paid CI; DO NOT auto-next-slug on critic collision; DO NOT rewrite DEC-0133/0134 bodies; DO NOT wipe R-0120..R-0126; DO NOT reopen US-0133/US-0134/BUG-0020; DO NOT mutate US-0136+; DO NOT mark US-0135 DONE; DO NOT tick AC-1..AC-7; DO NOT mutate intake JSON
+- critic_nb_execute_awareness:
+  - T-001/T-002/T-003/T-006/T-009: A1 auth-models + AuthRuntimeAdapter layering locked; thinking clamp+provenance (not MODEL_THINKING_UNSUPPORTED); Windows v1 = %APPDATA% user profile; persist via login api_key not setRuntimeApiKey; OAuth refresh marker locked (NB1)
+  - T-anch..T-009: keep 1:1 architecture seeds; sprint folder is S0141; execute owns auth-models + AuthRuntimeAdapter + 10 tests; CLI → auth-models → pi-kernel adapter; DEC-0133/0134 compose held (NB2)
+  - T-anch: NO-OP verification; reject A2–A9; do not amend isolation/noTools/KernelBridge; do not mark DONE; do not reopen BUG-0020; do not design US-0136+ (NB3)
+- first_execute_task: T-anch (NO-OP / verification)
+- key_locked_artifacts:
+  - standalone/packages/auth-models (@its-magic/auth-models; no Pi)
+  - owned OS credential dir + 0600-class auth.json + InMemoryCredentialStore tests
+  - pi-kernel AuthRuntimeAdapter (three-arg login / checkAuth / in-process registerProvider)
+  - owned models.json provider matrix
+  - ModelRouter 6-step + provenance
+  - KernelCreateSessionOptions.thinkingLevel inject (clamp+provenance)
+  - critic pin + CROSS_MODEL_DEGRADED_MODE
+  - itsm auth / models list / models test
+  - 10 test_us0135_*
+- runtime_proof_id: rp-auto-20260913-us0135-sprint-plan-techlead-20260913T043500Z-US-0135
+- proof_hash: 87447355F56BF42813F4499D6FAB84F1CFC19A8ADDDD82A3EB015D05425BB35B
+- proof_ttl: 2026-09-13T05:35:00Z
+- consumed_architecture_proof: rp-auto-20260913-us0135-architecture-techlead-20260913T041500Z-US-0135 / 44CCE2BBAB0F863D610152D108DF62D1DACA1F722D2F12CF4DB98067DF1923D7 — RUNTIME_PROOF_VALID (MATCH before TTL 2026-09-13T05:15:00Z)
+- consumed_critic_proof: rp-auto-20260913-us0135-sovereign-critic-techlead-20260913T042500Z-US-0135 / F68EFC5ACB6B63B6EB86D5B37589AE781B8CE8EA48539E496AC70AA32D50E68F — MATCH; anti_slop=10; 0 blocking; findings us0135arc-* informational
+- next_scheduled_phase: /execute (role=dev)
+- next_scheduled_role: dev
+- stop_condition: STOP after sprint-plan. Orchestrator MAY spawn sovereign-critic of sprint-plan (CROSS_MODEL_REVIEW=1) then MUST spawn /execute in fresh dev (BUG-0006). Do NOT spawn execute or plan-verify from this tech-lead. Do NOT mark US-0135 DONE. Do NOT tick acceptance. Do NOT reopen BUG-0020. Do NOT mutate US-0136+.
+
+---
+
+## Sprint-plan handoff — BUG-0020 / S0140 — `/execute` next (fresh dev; ultra_lean)
+
+- sprint_id: S0140
+- bug_id: BUG-0020 (Status OPEN — authority docs/product/backlog.md)
+- story_id: (none — bug segment)
+- companion_dec: none (cite R-0126; do not allocate DEC-0136; compose DEC-0124 / DEC-0125 / DEC-0120 / DEC-0132 / BUG-0018 A* / BUG-0019 E* CLI TUI)
+- research_anchor: R-0126 (DQ1–DQ8 LOCKED; compose R-0125 / R-0124)
+- architecture_anchor: docs/engineering/architecture.md # BUG-0020
+- approach: E2 LOCKED — honest host-cannot-do-both on desktop Command.Info; keep editor.add → runAutoLifecycle; C-limb CLI TUI /auto via shipping .opencode/tui.json listing ./plugins/its-magic-auto/tui.ts; keep existing tui.ts keymap; desktop-visible OPENCODE_AUTO_DESKTOP_COMMAND_INFO_LISTING_UNSUPPORTED (not TUI-toast-only); 8 test_bug0020_*; upgrade copy-if-absent / JSONC-merge tui.json + still prune leftover auto.md; supersede R-0124 E* picker claim; reject E2-A..E2-G
+- orchestrator_run_id: auto-20260913-bug0020
+- fresh_context_marker: tl-BUG0020-sprintplan-20260912T234500Z-fresh
+- timestamp: 2026-09-12T23:45:00Z (UTC)
+- model_id: cursor-grok-4.6 (CROSS_MODEL_REVIEW=1 — required on isolation)
+- sprint_plan_verdict: PASS
+- decision_gate: false
+- sprint_status: PLANNED (backlog OPEN per US-0045 — not mutated; acceptance BUG-0020 unchecked)
+- task_count: 8 (T-anch + T-001..T-007; within SPRINT_MAX_TASKS=12; no split; 1:1 architecture seeds)
+- ac_surjective_map: AC-1->T-001,T-005(m5,m6); AC-2->T-002,T-003,T-005(m3,m6); AC-3->T-003,T-004,T-005(m1,m4),T-007; AC-4->T-002,T-005(m2); AC-5->T-002,T-005(m2); AC-6->T-002,T-005(m3); AC-7->T-006,T-005(m8); AC-8->T-007,T-005(m7); AC-9->T-anch,T-002; AC-10->T-005; DC->T-anch
+- task_order: T-anch -> T-001 -> T-002 -> T-003 -> T-004 -> T-005 -> T-006 -> T-007
+- plan-verify: ultra_lean — NOT in resolved_phase_plan; skipped; plan-verify.json is a deferred/skipped placeholder (not a QA phase)
+- compose_guards (non-negotiable): DO NOT author DEC-0136; DO NOT rewrite DEC-0124/0125 bodies; DO NOT rewrite historical # BUG-0019 / # BUG-0018 / R-0124 / R-0120 bodies; DO NOT reopen BUG-0015/0016/0017/0018/0019; DO NOT restore STOP-only auto.md; DO NOT add JSON commands.auto template; DO NOT ship kit cli.json or plugin-local its-magic-auto/tui.json; DO NOT live OpenCode desktop probe; DO NOT invent desktop execute-only Command.Info listing API; DO NOT wholesale overwrite operator tui.json theme/keybinds; DO NOT touch .cursor/commands/auto.md or .opencode/agents/auto.md; DO NOT weaken test_bug0018_*; DO NOT weaken test_bug0019_* except compose-only comments; DO NOT drain US-0135+; DO NOT mark BUG-0020 DONE; DO NOT tick acceptance BUG-0020 row; DO NOT mutate intake JSON
+- critic_nb_execute_awareness:
+  - T-001/T-003/T-004/T-005: execute owns tui.json + emit helper + tests; restoring auto.md recreates 0018; JSON template is 0018-class; TUI-toast-only emission forbidden; silent desktop miss forbidden; do not claim tui.json feeds Command.Info (NB1)
+  - T-anch..T-007: keep 1:1 architecture seeds; sprint folder is S0140; execute owns surfaces including exact desktop notification channel within locked helper (NB2)
+  - T-anch: NO-OP verification; reject E2-A..E2-G; no companion DEC; do not mark DONE; do not reopen BUG-0019 (NB3)
+- first_execute_task: T-anch (NO-OP / verification)
+- key_locked_artifacts:
+  - .opencode/tui.json (+ template twin) listing ./plugins/its-magic-auto/tui.ts
+  - retain its-magic-auto/tui.ts keymap slash/slashName "auto"
+  - retain orchestrator.ts editor.add auto execute
+  - emitDesktopCommandInfoListingUnsupported (not TUI-toast-only)
+  - OPENCODE_AUTO_DESKTOP_COMMAND_INFO_LISTING_UNSUPPORTED
+  - 8 test_bug0020_*
+  - upgrade copy-if-absent / JSONC-merge tui.json + keep auto.md prune
+  - installer-owned-paths named rows for .opencode/tui.json
+  - check_intake_template_parity.py additive BUG0020_PAIRS
+- runtime_proof_id: rp-auto-20260913-bug0020-sprint-plan-techlead-20260912T234500Z-BUG-0020
+- proof_hash: 48453D60EC7A0FF0E77A2DB134534920099CDB90875EABB07CD2653880427193
+- proof_ttl: 2026-09-13T00:45:00Z
+- consumed_architecture_proof: rp-auto-20260913-bug0020-architecture-techlead-20260912T232500Z-BUG-0020 / 92D10D4743D65A2F7AF276A45749FB57DFA15593254213488026D10171C2EC87 — RUNTIME_PROOF_VALID (MATCH before TTL 2026-09-13T00:25:00Z)
+- next_scheduled_phase: /execute (role=dev)
+- next_scheduled_role: dev
+- stop_condition: STOP after sprint-plan. Orchestrator MAY spawn sovereign-critic of sprint-plan (CROSS_MODEL_REVIEW=1) then MUST spawn /execute in fresh dev (BUG-0006). Do NOT spawn execute or plan-verify from this tech-lead. Do NOT mark BUG-0020 DONE. Do NOT tick acceptance. Do NOT reopen BUG-0019.
+
+---
+
+## Sprint-plan handoff — BUG-0019 / S0139 — `/execute` next (fresh dev; ultra_lean)
+
+- sprint_id: S0139
+- bug_id: BUG-0019 (Status OPEN — authority docs/product/backlog.md)
+- story_id: (none — bug segment)
+- companion_dec: none (cite R-0124; do not allocate DEC-0135; compose DEC-0124 / DEC-0125 / DEC-0120 / DEC-0132 / BUG-0018 A*)
+- research_anchor: R-0124 (DQ1–DQ8 LOCKED; compose R-0123 / R-0120)
+- architecture_anchor: docs/engineering/architecture.md # BUG-0019
+- approach: E1 / E* LOCKED — TUI keymap slash/slashName "auto" lists /auto; run() → context.client / plugin RPC → runAutoLifecycle; keep editor.add; additive sibling .opencode/plugins/its-magic-auto/{index.ts,tui.ts} (keep flat orchestrator.ts); no cli.json; OPENCODE_AUTO_SLASH_LISTING_UNSUPPORTED + OPENCODE_AUTO_TUI_DISPATCH_UNSUPPORTED; 7 test_bug0019_*; upgrade copy listing files + still prune leftover auto.md; supersede R-0120 DQ5 / # BUG-0018 NB1; reject E2–E7
+- orchestrator_run_id: auto-20260912-bug0019
+- fresh_context_marker: tl-BUG0019-sprintplan-20260912T182500Z-fresh
+- timestamp: 2026-09-12T18:30:00Z (UTC)
+- model_id: cursor-grok-4.6 (CROSS_MODEL_REVIEW=1 — required on isolation)
+- sprint_plan_verdict: PASS
+- decision_gate: false
+- sprint_status: PLANNED (backlog OPEN per US-0045 — not mutated; acceptance BUG-0019 unchecked)
+- task_count: 8 (T-anch + T-001..T-007; within SPRINT_MAX_TASKS=12; no split; 1:1 architecture seeds)
+- ac_surjective_map: AC-1->T-001,T-005(m4); AC-2->T-003,T-004,T-005(m5); AC-3->T-002,T-005(m1),T-anch; AC-4->T-002,T-005(m3); AC-5->T-002,T-005(m2); AC-6->T-001,T-004,T-005(m4); AC-7->T-006,T-007,T-005(m6,m7); DC->T-anch
+- task_order: T-anch -> T-001 -> T-002 -> T-003 -> T-004 -> T-005 -> T-006 -> T-007
+- plan-verify: ultra_lean — NOT in resolved_phase_plan; skipped; plan-verify.json is a deferred/skipped placeholder (not a QA phase)
+- compose_guards (non-negotiable): DO NOT author DEC-0135; DO NOT rewrite DEC-0124/0125 bodies; DO NOT rewrite historical # BUG-0018 body / R-0120 body; DO NOT reopen BUG-0015/0016/0017/0018; DO NOT restore STOP-only auto.md; DO NOT add JSON commands.auto template; DO NOT convert orchestrator.ts to package; DO NOT ship kit cli.json/tui.json; DO NOT live OpenCode probe; DO NOT touch .cursor/commands/auto.md or .opencode/agents/auto.md; DO NOT weaken test_bug0018_*; DO NOT drain US-0135+; DO NOT mark BUG-0019 DONE; DO NOT tick acceptance BUG-0019 row; DO NOT mutate intake JSON; index.ts must NOT editor.add({ name: "auto" })
+- critic_nb_execute_awareness:
+  - T-001/T-003/T-005: execute owns its-magic-auto + invoke wiring + tests; restoring auto.md recreates 0018; JSON template is 0018-class; silent missing-command without listing token forbidden; index.ts must not second editor.add (NB1)
+  - T-anch..T-007: keep 1:1 architecture seeds; sprint folder is S0139; execute owns surfaces including exact client invoke / optional orchestrator RPC (NB2)
+  - T-anch: NO-OP verification; reject E2–E7; no companion DEC; do not mark DONE; do not reopen BUG-0018 (NB3)
+- first_execute_task: T-anch (NO-OP / verification)
+- key_locked_artifacts:
+  - .opencode/plugins/its-magic-auto/{index.ts,tui.ts} (+ template twins)
+  - TUI keymap slash/slashName "auto"
+  - run() → context.client / plugin RPC → runAutoLifecycle
+  - retain orchestrator.ts editor.add auto execute
+  - OPENCODE_AUTO_SLASH_LISTING_UNSUPPORTED + OPENCODE_AUTO_TUI_DISPATCH_UNSUPPORTED
+  - 7 test_bug0019_*
+  - upgrade copy listing files + keep auto.md prune
+  - installer-owned-paths named rows if required
+  - check_intake_template_parity.py additive its-magic-auto/ pair
+- runtime_proof_id: rp-auto-20260912-bug0019-sprint-plan-techlead-20260912T183000Z-BUG-0019
+- proof_hash: CE7CBD5F51EA25108B6C877ED94B2A9189CD1D9DADA761B70A1A4ACAF200A6D0
+- proof_ttl: 2026-09-12T19:30:00Z
+- consumed_architecture_proof: rp-auto-20260912-bug0019-architecture-techlead-20260912T181500Z-BUG-0019 / 467370D2B9622A20D2659B59116522D4E7D8F42B65253A936F40A0A72C729970 — RUNTIME_PROOF_VALID (MATCH before TTL 2026-09-12T19:15:00Z)
+- next_scheduled_phase: /execute (role=dev)
+- next_scheduled_role: dev
+- stop_condition: STOP after sprint-plan. Orchestrator MAY spawn sovereign-critic of sprint-plan (CROSS_MODEL_REVIEW=1) then MUST spawn /execute in fresh dev (BUG-0006). Do NOT spawn execute or plan-verify from this tech-lead. Do NOT mark BUG-0019 DONE. Do NOT tick acceptance. Do NOT reopen BUG-0018.
+
+---
+
+## Architecture handoff — BUG-0019 — `/sprint-plan` next (fresh tech-lead; ultra_lean plan macro)
+
+- bug_id: BUG-0019 (Status OPEN — authority docs/product/backlog.md)
+- story_id: (none — bug segment)
+- sprint_id: (pending — materialize at /sprint-plan)
+- dec_id: none (companion DEC not required; cite R-0124; do not allocate DEC-0135; compose DEC-0124 / DEC-0125 / DEC-0120 / DEC-0132 / BUG-0018 A*)
+- research_anchor: R-0124 (DQ1–DQ8 LOCKED)
+- architecture_anchor: docs/engineering/architecture.md # BUG-0019
+- approach: E1 / E* LOCKED — TUI keymap slash/slashName "auto" lists /auto; run() → context.client / plugin RPC → runAutoLifecycle; keep editor.add; additive sibling .opencode/plugins/its-magic-auto/{index.ts,tui.ts} (keep flat orchestrator.ts); no cli.json; OPENCODE_AUTO_SLASH_LISTING_UNSUPPORTED + OPENCODE_AUTO_TUI_DISPATCH_UNSUPPORTED; 7 test_bug0019_*; upgrade copy listing files + still prune leftover auto.md; supersede R-0120 DQ5 / # BUG-0018 NB1; reject E2–E7
+- orchestrator_run_id: auto-20260912-bug0019
+- fresh_context_marker: tl-BUG0019-architecture-20260912T181000Z-fresh
+- timestamp: 2026-09-12T18:15:00Z (UTC)
+- model_id: cursor-grok-4.6 (CROSS_MODEL_REVIEW=1)
+- architecture_verdict: PASS
+- decision_gate: false
+- critic_nb_closures: NB1 sibling its-magic-auto + client invoke (T-001/T-003); NB2 E1 + 7 tests + listing token (T-004/T-005); NB3 no companion DEC / no DONE / no auto.md restore (T-anch)
+- task_seeds: T-anch + T-001..T-007 (8; under SPRINT_MAX_TASKS=12) — refine into next free sprint id at /sprint-plan
+- compose_guards (non-negotiable): DO NOT author DEC-0135; DO NOT rewrite DEC-0124/0125 bodies; DO NOT rewrite historical # BUG-0018 body; DO NOT reopen BUG-0015/0016/0017/0018; DO NOT restore STOP-only auto.md; DO NOT add JSON commands.auto template; DO NOT convert orchestrator.ts to package; DO NOT live OpenCode probe; DO NOT touch .cursor/commands/auto.md or .opencode/agents/auto.md; DO NOT drain US-0135+; DO NOT mark BUG-0019 DONE; DO NOT tick acceptance BUG-0019 row
+- files_to_touch (execute foreshadow): add .opencode/plugins/its-magic-auto/{index.ts,tui.ts} + template twins; orchestrator.ts REASON_CODES + optional RPC wrapper; installer.py/sh/ps1 copy+existing prune; installer-owned-paths named rows; check_intake_template_parity.py additive pair; tests/bug0019_*; runbook stub + upgrade recipe
+- files_NOT_to_touch: DEC-0124.md / DEC-0125.md bodies; # BUG-0018 historical body; R-0120 body; Cursor auto.md; OpenCode agents/auto.md; intake JSON; acceptance tick; US-0135+ bodies
+- next_phase: `/sprint-plan` (fresh tech-lead per US-0069 / DEC-0051; third canonical phase of `plan` macro per ultra_lean). Orchestrator runs sovereign-critic of architecture first (CROSS_MODEL_REVIEW=1) then spawns sprint-plan. Do not mandate outer driver.
+- runtime_proof_id: rp-auto-20260912-bug0019-architecture-techlead-20260912T181500Z-BUG-0019
+- proof_hash: 467370D2B9622A20D2659B59116522D4E7D8F42B65253A936F40A0A72C729970
+- proof_ttl: 2026-09-12T19:15:00Z (UTC)
+- prior_phase_proof_consumed: rp-auto-20260912-bug0019-research-techlead-20260912T175800Z-BUG-0019 (proof_hash=D67B1BF49AF607EC472297AD62B949798D51ED92B5CE85B0068CAABB009F3854, ttl=2026-09-12T18:58:00Z)
+- stop_condition: STOP after architecture PASS. Orchestrator owns critic of architecture then /sprint-plan in fresh tech-lead subagent per BUG-0006. Do not spawn /sprint-plan or /execute from this subagent. Do not mark BUG-0019 DONE. Do not execute implementation.
+
+---
+
+## Sprint-plan handoff — US-0134 / S0138 — /execute next (fresh dev; ultra_lean)
+
+
+- sprint_id: S0138
+- story_id: US-0134 (Status OPEN — authority docs/product/backlog.md)
+- bug_id: (none)
+- companion_dec: DEC-0134 (Accepted)
+- research_anchor: R-0122 (DQ1–DQ10 LOCKED; do not wipe R-0120 / R-0121)
+- architecture_anchor: docs/engineering/architecture.md # US-0134
+- approach: A1 LOCKED — standalone/packages/kernel-bridge; three-marker parent walk + --kernel-root; DEC-0045 version + its_magic/kernel-contract.json; supported-kernel-range.json + semver@7.8.5 includePrerelease (kit 0.1.3-9 in-range); spawn real Python (probe then resolved interpreter); four KERNEL_* codes; thin uat/status wrappers; 10 test_us0134_*; reject A2–A5
+- orchestrator_run_id: auto-20260912-us0134
+- parent_orchestrator_run_id: auto-20260912-us0133
+- fresh_context_marker: tl-US0134-sprintplan-20260912T125500Z-fresh
+- timestamp: 2026-09-12T12:55:00Z (UTC)
+- model_id: cursor-grok-4.6 (CROSS_MODEL_REVIEW=1 — required on isolation)
+- sprint_plan_verdict: PASS
+- decision_gate: false
+- sprint_status: PLANNED (backlog OPEN per US-0045 — not mutated; acceptance US-0134 unchecked)
+- task_count: 10 (T-anch + T-001..T-009; within SPRINT_MAX_TASKS=12; no split; 1:1 architecture seeds)
+- ac_surjective_map: AC-1->T-001,T-005,T-007,T-009; AC-2->T-002,T-009; AC-3->T-003; AC-4->T-004,T-005,T-007; AC-5->T-006; AC-6->T-008; DC->T-anch
+- task_order: T-anch -> T-001 -> T-002 -> T-003 -> T-004 -> T-005 -> T-006 -> T-007 -> T-008 -> T-009
+- plan-verify: ultra_lean — NOT in resolved_phase_plan; skipped; plan-verify.json NOT written here
+- compose_guards (non-negotiable): DO NOT extract its-magic-kernel/; DO NOT rewrite validators in TypeScript; DO NOT reuse OpenCode US-0125 plugin as the standalone bridge; DO NOT emit OPENCODE_* on standalone path; DO NOT amend AgentKernel / # US-0133 / DEC-0133; DO NOT reopen BUG-0018; DO NOT wipe R-0120/R-0121; DO NOT rewrite architecture.md / DEC-0134 / R-0122; DO NOT mark US-0134 DONE; DO NOT tick acceptance US-0134 row; DO NOT mutate intake JSON; DO NOT design US-0135+; DO NOT put range in RuntimeConfig (US-0138); DO NOT wrap all kit scripts
+- critic_nb_execute_awareness:
+  - T-002/T-004/T-008/T-009: R1 includePrerelease + 0.1.3-9/0.1.2 fixtures; R2 probe then resolved interpreter; R3 fail-closed missing manifest (NB1)
+  - T-anch..T-009: keep 1:1 architecture seeds; sprint folder is S0138; execute owns kernel-bridge + tests + installer include-list (NB2)
+  - T-anch: NO-OP verification; reject A2–A5; no extract; no TS rewrite; do not mark DONE (NB3)
+- first_execute_task: T-anch (NO-OP / verification)
+- key_locked_artifacts:
+  - standalone/packages/kernel-bridge (@its-magic/kernel-bridge, no Pi)
+  - three-marker locate + --kernel-root
+  - its_magic/kernel-contract.json + supported-kernel-range.json + semver@7.8.5
+  - four KERNEL_* handshake codes
+  - Python spawn (resolved interpreter; 60s; raw Python reason codes)
+  - runValidator allowlist + thin runUatPlanner / runStatusReconcile
+  - status_reconcile_validate.py (read-only)
+  - 10 test_us0134_* (standalone node:test + kit pytest twin; temp fixtures)
+  - installer include-list + runbook upgrade recipe
+- runtime_proof_id: rp-auto-20260912-us0134-sprint-plan-techlead-20260912T125500Z-US-0134
+- proof_hash: FEFE3644C154CB5BFF798CE4E0FAFE0032E7DCC1E60045C5EFECE17ED7A0E1B5
+- proof_ttl: 2026-09-12T13:55:00Z
+- consumed_architecture_proof: rp-auto-20260912-us0134-architecture-techlead-20260912T124500Z-US-0134 / D7686414BA2C17E2053CD7DA5279B56F6B56F9D814CCD46D021A12A870CE2704 — RUNTIME_PROOF_VALID
+- next_scheduled_phase: /execute (role=dev)
+- next_scheduled_role: dev
+- stop_condition: STOP after sprint-plan. Orchestrator MAY spawn sovereign-critic of sprint-plan (CROSS_MODEL_REVIEW=1) then MUST spawn /execute in fresh dev (BUG-0006). Do NOT spawn execute or plan-verify from this tech-lead. Do NOT mark US-0134 DONE. Do NOT reopen US-0133 or BUG-0018. Do NOT design US-0135+.
+
+---
+
+## Architecture handoff — US-0134 — `/sprint-plan` next (fresh tech-lead; ultra_lean plan macro)
+
+- story_id: US-0134 (Status OPEN — authority docs/product/backlog.md)
+- bug_id: (none)
+- sprint_id: (pending — materialize at /sprint-plan)
+- dec_id: DEC-0134 (Accepted)
+- research_anchor: R-0122 (DQ1–DQ10 LOCKED)
+- architecture_anchor: docs/engineering/architecture.md # US-0134
+- approach: A1 LOCKED — standalone/packages/kernel-bridge; three-marker parent walk + --kernel-root; DEC-0045 version + its_magic/kernel-contract.json; supported-kernel-range.json + semver@7.8.5 includePrerelease (kit 0.1.3-9 in-range); spawn real Python; four KERNEL_* codes; thin uat/status wrappers; 10 test_us0134_*; reject A2–A5
+- orchestrator_run_id: auto-20260912-us0134
+- fresh_context_marker: tl-US0134-architecture-20260912T124500Z-fresh
+- timestamp: 2026-09-12T12:45:00Z (UTC)
+- model_id: cursor-grok-4.6 (CROSS_MODEL_REVIEW=1)
+- architecture_verdict: PASS
+- decision_gate: false
+- critic_nb_closures: NB1 includePrerelease + resolved interpreter + fail-closed mismatch (T-002/T-004/T-008/T-009); NB2 H1+DEC-0134+API+semver pin+status schema (this phase); NB3 no sprint-plan spawn / no extract / no DONE (T-anch)
+- task_seeds: T-anch + T-001..T-009 (10; under SPRINT_MAX_TASKS=12) — refine into next free sprint id at /sprint-plan
+- compose_guards (non-negotiable): DO NOT extract its-magic-kernel/; DO NOT rewrite validators in TypeScript; DO NOT reuse OpenCode US-0125 plugin as the standalone bridge; DO NOT emit OPENCODE_* on standalone path; DO NOT amend AgentKernel / # US-0133 / DEC-0133; DO NOT reopen BUG-0018; DO NOT wipe R-0120/R-0121; DO NOT mark US-0134 DONE; DO NOT tick acceptance US-0134 row; DO NOT design US-0135+
+- files_to_touch (execute foreshadow): standalone/packages/kernel-bridge; its_magic/kernel-contract.json + template twin; supported-kernel-range.json; scripts/status_reconcile_validate.py; installer-owned-paths allowlist scripts; 10 test_us0134_*; kit tests/us0134_contract_test.py; CI standalone job extend
+- files_NOT_to_touch: packages/pi-kernel AgentKernel; .opencode/ plugin execute; DEC-0124/0125 bodies; BUG-0018 surfaces; US-0135+ bodies; intake JSON; acceptance tick; # US-0133
+- next_phase: `/sprint-plan` (fresh tech-lead per US-0069 / DEC-0051; third canonical phase of `plan` macro per ultra_lean). Orchestrator runs sovereign-critic of architecture first (CROSS_MODEL_REVIEW=1) then spawns sprint-plan. Do not mandate outer driver.
+- runtime_proof_id: rp-auto-20260912-us0134-architecture-techlead-20260912T124500Z-US-0134
+- proof_hash: D7686414BA2C17E2053CD7DA5279B56F6B56F9D814CCD46D021A12A870CE2704
+- proof_ttl: 2026-09-12T13:45:00Z (UTC)
+- prior_phase_proof_consumed: rp-auto-20260912-us0134-research-techlead-20260912T123500Z-US-0134 (proof_hash=5C25F84CEC351C1C21FB84DB65A8CAC8071F5598DDDFBF774226935C9FD30927, ttl=2026-09-12T13:35:00Z)
+- stop_condition: STOP after architecture PASS. Orchestrator owns critic of architecture then /sprint-plan in fresh tech-lead subagent per BUG-0006. Do not spawn /sprint-plan or /execute from this subagent. Do not mark US-0134 DONE. Do not execute implementation.
+
+---
+
+## Sprint-plan handoff — US-0133 / S0137 — /execute next (fresh dev; ultra_lean)
+
+- sprint_id: S0137
+- story_id: US-0133 (Status OPEN — authority docs/product/backlog.md)
+- bug_id: (none)
+- companion_dec: DEC-0133 (Accepted)
+- research_anchor: R-0121 (DQ1–DQ10 LOCKED; do not wipe R-0120)
+- architecture_anchor: docs/engineering/architecture.md # US-0133
+- approach: A1 LOCKED — in-tree standalone/ npm workspaces; real packages/pi-kernel AgentKernel; empty DefaultResourceLoader overrides + noTools builtin + itsm_ping allowlist; pin 0.85.1; Phase 0 items 1/2/3/5 only; no OS-sandbox; no branding lock; reject A2–A5
+- orchestrator_run_id: auto-20260912-us0133
+- parent_orchestrator_run_id: auto-20260912-bug0018
+- fresh_context_marker: tl-US0133-sprintplan-20260912T112500Z-fresh
+- timestamp: 2026-09-12T11:25:00Z (UTC)
+- model_id: cursor-grok-4.6 (CROSS_MODEL_REVIEW=1 — required on isolation)
+- sprint_plan_verdict: PASS
+- decision_gate: false
+- sprint_status: PLANNED (backlog OPEN per US-0045 — not mutated; acceptance US-0133 unchecked)
+- task_count: 10 (T-anch + T-001..T-009; within SPRINT_MAX_TASKS=12; no split; 1:1 architecture seeds)
+- ac_surjective_map: AC-1->T-001,T-002,T-008; AC-2->T-003,T-006; AC-3->T-005; AC-4->T-004; AC-5->T-007; AC-6->T-002,T-009; DC->T-anch
+- task_order: T-anch -> T-001 -> T-002 -> T-003 -> T-004 -> T-005 -> T-006 -> T-007 -> T-008 -> T-009
+- plan-verify: ultra_lean — NOT in resolved_phase_plan; skipped; plan-verify.json NOT written here
+- compose_guards (non-negotiable): DO NOT fold standalone/ into kit its-magic files or workspaces; DO NOT implement KernelBridge (US-0134); DO NOT implement ToolBroker (US-0137); DO NOT claim OS sandbox; DO NOT lock public branding; DO NOT reopen BUG-0018; DO NOT wipe R-0120; DO NOT rewrite architecture.md / DEC-0133 / R-0121; DO NOT mark US-0133 DONE; DO NOT tick acceptance US-0133 row; DO NOT mutate intake JSON; DO NOT live-provider CI as AC-5 gate
+- critic_nb_execute_awareness:
+  - T-004/T-005/T-007: R2 planted-extension fixture; R3 fake Model inject; R6 files omit-guard; trusted still empty loader (NB1)
+  - T-anch..T-009: keep 1:1 architecture seeds; sprint folder is S0137 not S0133 (NB2)
+  - T-anch: NO-OP verification; Phase 0 items 1/2/3/5 only; reject A2–A5 + §30 stub farm; do not mark DONE (NB3)
+- first_execute_task: T-anch (NO-OP / verification)
+- key_locked_artifacts:
+  - standalone/ npm workspaces + apps/cli stub + packages/pi-kernel AgentKernel
+  - kit files omit-guard + guard_installer_publish fail-closed
+  - isolation loader + PI_COMPAT_RESOURCES=off + itsm_ping factory
+  - import-boundary Biome + grep
+  - 10 test_us0133_* (standalone node:test + kit pytest twin)
+  - CI Windows/Linux working-directory standalone (not kit TEST_COMMAND)
+  - standalone/docs/phase0-kernel-spike.md
+- runtime_proof_id: rp-auto-20260912-us0133-sprint-plan-techlead-20260912T112500Z-US-0133
+- proof_hash: A702E976CD3B489CF0CE3F0CD02482BF19088CB5F02DA183606CD811C322A0C3
+- proof_ttl: 2026-09-12T12:25:00Z
+- consumed_architecture_proof: rp-auto-20260912-us0133-architecture-techlead-20260912T111500Z-US-0133 / 825C6B9EDE5BDC0BFE3911BFA93B3A6AFE2E14BFE2523F4528B07B121897A5B7 — RUNTIME_PROOF_VALID
+- next_scheduled_phase: /execute (role=dev)
+- next_scheduled_role: dev
+- stop_condition: STOP after sprint-plan. Orchestrator MAY spawn sovereign-critic of sprint-plan (CROSS_MODEL_REVIEW=1) then MUST spawn /execute in fresh dev (BUG-0006). Do NOT spawn execute or plan-verify from this tech-lead. Do NOT mark US-0133 DONE. Do NOT reopen BUG-0018. Do NOT design US-0134+.
+
+---
+
+## Architecture handoff — US-0133 — `/sprint-plan` next (fresh tech-lead; ultra_lean plan macro)
+
+- story_id: US-0133 (Status OPEN — authority docs/product/backlog.md)
+- bug_id: (none)
+- sprint_id: (pending — materialize at /sprint-plan)
+- dec_id: DEC-0133 (Accepted)
+- research_anchor: R-0121 (DQ1–DQ10 LOCKED)
+- architecture_anchor: docs/engineering/architecture.md # US-0133
+- approach: A1 LOCKED — in-tree standalone/ npm workspaces; real packages/pi-kernel AgentKernel; empty DefaultResourceLoader overrides + noTools builtin + itsm_ping allowlist; pin 0.85.1; Phase 0 items 1/2/3/5 only; no OS-sandbox; no branding lock; reject A2–A5
+- orchestrator_run_id: auto-20260912-us0133
+- fresh_context_marker: tl-US0133-architecture-20260912T111500Z-fresh
+- timestamp: 2026-09-12T11:15:00Z (UTC)
+- model_id: cursor-grok-4.6 (CROSS_MODEL_REVIEW=1)
+- architecture_verdict: PASS
+- decision_gate: false
+- critic_nb_closures: NB1 empty loader + fake Model (T-004/T-007); NB2 H1+DEC-0133 authored; KernelBridge/ToolBroker out (T-anch); NB3 no sprint-plan spawn / no DONE / Phase 0 subset (T-anch)
+- task_seeds: T-anch + T-001..T-009 (10; under SPRINT_MAX_TASKS=12) — refine into next free sprint id at /sprint-plan
+- compose_guards (non-negotiable): DO NOT fold standalone/ into kit its-magic files; DO NOT implement KernelBridge (US-0134); DO NOT implement ToolBroker (US-0137); DO NOT claim OS sandbox; DO NOT lock public branding; DO NOT reopen BUG-0018; DO NOT wipe R-0120; DO NOT mark US-0133 DONE; DO NOT tick acceptance US-0133 row
+- files_to_touch (execute foreshadow): standalone/ workspace; packages/pi-kernel; apps/cli stub; kit files guard; 10 test_us0133_*; CI windows/linux standalone job; standalone/docs/phase0-kernel-spike.md
+- files_NOT_to_touch: kit template OpenCode/Cursor packs; DEC-0124/0125; BUG-0018 surfaces; US-0134+ bodies; intake JSON; acceptance tick
+- next_phase: `/sprint-plan` (fresh tech-lead per US-0069 / DEC-0051; third canonical phase of `plan` macro per ultra_lean). Orchestrator runs sovereign-critic of architecture first (CROSS_MODEL_REVIEW=1) then spawns sprint-plan. Do not mandate outer driver.
+- runtime_proof_id: rp-auto-20260912-us0133-architecture-techlead-20260912T111500Z-US-0133
+- proof_hash: 825C6B9EDE5BDC0BFE3911BFA93B3A6AFE2E14BFE2523F4528B07B121897A5B7
+- proof_ttl: 2026-09-12T12:15:00Z (UTC)
+- prior_phase_proof_consumed: rp-auto-20260912-us0133-research-techlead-20260912T110500Z-US-0133 (proof_hash=C2A48622B0322E60A0EBC335A60D0CF71911F97CDFC5C713C2CF2B6348B9AF3A, ttl=2026-09-12T12:05:00Z)
+- stop_condition: STOP after architecture PASS. Orchestrator owns critic of architecture then /sprint-plan in fresh tech-lead subagent per BUG-0006. Do not spawn /sprint-plan or /execute from this subagent. Do not mark US-0133 DONE. Do not execute implementation.
+
+---
+
+## Sprint-plan handoff — BUG-0018 / S0136 — /execute next (fresh dev; ultra_lean)
+
+- sprint_id: S0136
+- bug_id: BUG-0018 (Status OPEN — authority docs/product/backlog.md)
+- story_id: (none — bug segment)
+- companion_dec: none (cite R-0120; compose DEC-0124 / DEC-0125 / DEC-0120 / DEC-0132)
+- research_anchor: R-0120 (DQ1–DQ8 LOCKED)
+- architecture_anchor: docs/engineering/architecture.md # BUG-0018
+- approach: A* LOCKED — plugin-only `/auto`; remove colliding auto.md (active+template); keep editor.add execute → runAutoLifecycle; targeted upgrade prune; OPENCODE_AUTO_MARKDOWN_COLLISION; 6 test_bug0018_*; compose-only inventory/if-present/plant-path; reject A2–A7
+- orchestrator_run_id: auto-20260912-bug0018
+- fresh_context_marker: tl-BUG0018-sprintplan-20260912T101000Z-fresh
+- timestamp: 2026-09-12T10:10:00Z (UTC)
+- model_id: cursor-grok-4.6 (CROSS_MODEL_REVIEW=1 — required on isolation)
+- sprint_plan_verdict: PASS
+- decision_gate: false
+- sprint_status: PLANNED (backlog OPEN per US-0045 — not mutated; acceptance BUG-0018 unchecked)
+- task_count: 8 (T-anch + T-001..T-007; within SPRINT_MAX_TASKS=12; no split; 1:1 architecture seeds)
+- ac_surjective_map: AC-1->T-001,T-002,T-005; AC-2->T-001,T-004,T-005(m1); AC-3->T-002,T-005(m2); AC-4->T-003,T-005(m4),T-006; AC-5->T-002,T-003,T-005(m6),T-006; AC-6->T-001,T-002,T-004,T-005(m3),T-007; AC-7->T-002,T-004,T-005(m5); DC->T-anch
+- task_order: T-anch -> T-001 -> T-002 -> T-003 -> T-004 -> T-005 -> T-006 -> T-007
+- plan-verify: ultra_lean — NOT in resolved_phase_plan; skipped; plan-verify.json NOT written here
+- compose_guards (non-negotiable): DO NOT author companion DEC; DO NOT rewrite DEC-0124/0125 bodies; DO NOT rewrite historical # BUG-0015 CF1 cell; DO NOT reopen BUG-0015/0016/0017; DO NOT general template-absent sweeper; DO NOT touch .cursor/commands/auto.md or .opencode/agents/auto.md; DO NOT live OpenCode probe; DO NOT plugin-delete leftover auto.md; DO NOT mark BUG-0018 DONE; DO NOT tick acceptance BUG-0018 row; DO NOT mutate intake JSON; DO NOT rewrite architecture.md / R-0120
+- critic_nb_execute_awareness:
+  - T-001/T-003/T-005: execute owns delete + prune + tests (NB1); R1 listing residual via plugin add; R2 leftover prune; R6 unlink print OPENCODE_AUTO_MARKDOWN_COLLISION
+  - T-anch..T-007: keep 1:1 architecture seeds (NB2)
+  - T-anch: NO-OP verification; reject A2–A7 + companion DEC; do not mark DONE (NB3)
+- first_execute_task: T-anch (NO-OP / verification)
+- key_locked_artifacts:
+  - delete .opencode/commands/auto.md + template twin
+  - orchestrator.ts REASON_CODES + leftover fail-closed (plugin does not delete)
+  - installer.py/sh/ps1 targeted prune on upgrade --host opencode|both
+  - compose us0125 15→14 / BUG0015_PAIRS drop auto.md / bug0017 plant intake.md / if-present named tests
+  - 6 test_bug0018_* markers
+  - runbook prune recipe + OPENCODE_AUTO_MARKDOWN_COLLISION stub (US-0126 cross-link)
+- runtime_proof_id: rp-auto-20260912-bug0018-sprint-plan-techlead-20260912T101000Z-BUG-0018
+- proof_hash: 56DAA01EAC3125E806C6A10A1EBBD140CFAF20782B68776F56A71D1B9351CC28
+- proof_ttl: 2026-09-12T11:10:00Z
+- consumed_architecture_proof: rp-auto-20260912-bug0018-architecture-techlead-20260912T100000Z-BUG-0018 / 076F4C6E4744AB44B4751AF821572EB7082C8103EBD0091C9BC6EAB88351AA0B — RUNTIME_PROOF_VALID
+- next_scheduled_phase: /execute (role=dev)
+- next_scheduled_role: dev
+- stop_condition: STOP after sprint-plan. Orchestrator MAY spawn sovereign-critic of sprint-plan (CROSS_MODEL_REVIEW=1) then MUST spawn /execute in fresh dev (BUG-0006). Do NOT spawn execute or plan-verify from this tech-lead. Do NOT mark BUG-0018 DONE. Do NOT reopen BUG-0015/BUG-0016/BUG-0017.
+
+---
+
+## Architecture handoff — BUG-0018 — `/sprint-plan` next (fresh tech-lead; ultra_lean plan macro)
+
+- bug_id: BUG-0018 (Status OPEN — authority docs/product/backlog.md)
+- story_id: (none — bug segment)
+- sprint_id: (pending — materialize at /sprint-plan)
+- dec_id: none (companion DEC not required; cite R-0120; compose DEC-0124 / DEC-0125 / DEC-0120)
+- research_anchor: R-0120 (DQ1–DQ8 LOCKED)
+- architecture_anchor: docs/engineering/architecture.md # BUG-0018
+- approach: A* LOCKED — plugin-only `/auto`; remove colliding auto.md (active+template); keep editor.add execute → runAutoLifecycle; targeted upgrade prune; OPENCODE_AUTO_MARKDOWN_COLLISION; 6 test_bug0018_*; supersede # BUG-0015 CF1; reject A2–A7
+- orchestrator_run_id: auto-20260912-bug0018
+- fresh_context_marker: tl-BUG0018-architecture-20260912T100000Z-fresh
+- timestamp: 2026-09-12T10:00:00Z (UTC)
+- model_id: cursor-grok-4.6 (CROSS_MODEL_REVIEW=1)
+- architecture_verdict: PASS
+- decision_gate: false
+- critic_nb_closures: NB1 prune+listing (T-003/T-002); NB2 token OPENCODE_AUTO_MARKDOWN_COLLISION + installer-primary / plugin leftover defense (T-002/T-003/T-006); NB3 no companion DEC / no DONE / no Symptom B (T-anch)
+- task_seeds: T-anch + T-001..T-007 (8; under SPRINT_MAX_TASKS=12) — refine into next free sprint id at /sprint-plan
+- compose_guards (non-negotiable): DO NOT author companion DEC; DO NOT rewrite DEC-0124/0125 bodies; DO NOT rewrite historical # BUG-0015 CF1 cell; DO NOT reopen BUG-0015/0016/0017; DO NOT general template-absent sweeper; DO NOT touch .cursor/commands/auto.md or .opencode/agents/auto.md; DO NOT live OpenCode probe; DO NOT mark BUG-0018 DONE; DO NOT tick acceptance BUG-0018 row
+- files_to_touch (execute foreshadow): delete .opencode/commands/auto.md + template twin; orchestrator.ts REASON_CODES + leftover check; installer.py/sh/ps1 prune; BUG0015_PAIRS drop auto.md; us0125 inventory 15→14; bug0015/us0125 if-present; bug0017 plant intake.md; tests/bug0018_*; runbook stub + prune recipe
+- files_NOT_to_touch: DEC-0124.md / DEC-0125.md bodies; BUG-0015 CF1 historical cell; Cursor auto.md; OpenCode agents/auto.md; intake JSON; acceptance tick
+- next_phase: `/sprint-plan` (fresh tech-lead per US-0069 / DEC-0051; third canonical phase of `plan` macro per ultra_lean). Orchestrator runs sovereign-critic of architecture first (CROSS_MODEL_REVIEW=1) then spawns sprint-plan. Do not mandate outer driver.
+- runtime_proof_id: rp-auto-20260912-bug0018-architecture-techlead-20260912T100000Z-BUG-0018
+- proof_hash: 076F4C6E4744AB44B4751AF821572EB7082C8103EBD0091C9BC6EAB88351AA0B
+- proof_ttl: 2026-09-12T11:00:00Z (UTC)
+- prior_phase_proof_consumed: rp-auto-20260912-bug0018-research-techlead-20260912T095000Z-BUG-0018 (proof_hash=6E62DB20F5F4B898E086B6DD8385E3874A5A6DC43C896314F81F6C8D65E3AA0A, ttl=2026-09-12T10:50:00Z)
+- stop_condition: STOP after architecture PASS. Orchestrator owns critic of architecture then /sprint-plan in fresh tech-lead subagent per BUG-0006. Do not spawn /sprint-plan or /execute from this subagent. Do not mark BUG-0018 DONE. Do not execute implementation.
+
+---
+
+## Sprint-plan handoff — BUG-0017 / S0135 — /execute next (fresh dev; ultra_lean)
+
+- sprint_id: S0135
+- bug_id: BUG-0017 (Status OPEN — authority docs/product/backlog.md)
+- story_id: (none — bug segment)
+- companion_dec: none (cite R-0118; compose BUG-0008 / US-0084 / DEC-0120)
+- research_anchor: R-0118 (DQ1–DQ6 LOCKED)
+- architecture_anchor: docs/engineering/architecture.md # BUG-0017
+- approach: A* LOCKED — DQ1 attrs + D4 renormalize + extend guard_installer_publish.py + 6 test_bug0017_* + DQ6 runbook + T-007 before-tag gate; reject A2/A3/A4/A5
+- orchestrator_run_id: auto-20260911-bug0017
+- fresh_context_marker: tl-BUG0017-sprint-plan-20260911T192300Z-fresh
+- timestamp: 2026-09-11T19:23:00Z (UTC)
+- model_id: composer-2.5 (CROSS_MODEL_REVIEW=1 — required on isolation)
+- sprint_plan_verdict: PASS
+- decision_gate: false
+- sprint_status: PLANNED (backlog OPEN per US-0045 — not mutated; acceptance BUG-0017 unchecked)
+- task_count: 8 (T-anch + T-001..T-007; within SPRINT_MAX_TASKS=12; no split; 1:1 architecture seeds)
+- ac_surjective_map: AC-1->T-001,T-002,T-003,T-005; AC-2->T-002,T-003,T-005; AC-3->T-001,T-005(m1); AC-4->T-003,T-005(m4,m5),T-007; AC-5->T-004,T-005(m6); AC-6->T-006; AC-7->T-anch,T-005(m5); DC->T-anch
+- task_order: T-anch -> T-001 -> T-002 -> T-003 -> T-004 -> T-005 -> T-006 -> T-007
+- plan-verify: ultra_lean — deferred/merged into build+verify under QA; plan-verify.json NOT written here
+- compose_guards (non-negotiable): DO NOT author companion DEC; DO NOT weaken BUG-0008/US-0084; DO NOT install-time EOL rewrite; DO NOT repo-wide *.md eol=lf; DO NOT host parser patch; DO NOT reopen BUG-0015/BUG-0016; DO NOT mark BUG-0017 DONE; DO NOT tick acceptance BUG-0017 row; DO NOT mutate intake JSON; DO NOT rewrite architecture.md / R-0118
+- critic_nb_execute_awareness:
+  - T-007: guard:installer before GitHub tag (choco path; NB1)
+  - T-002: scoped renormalize only (NB2)
+  - T-006: DQ6 upgrade --host opencode|both (NB3)
+  - T-anch: NO-OP verification; do not mutate architecture.md / R-0118
+- first_execute_task: T-anch (NO-OP / verification)
+- key_locked_artifacts:
+  - .gitattributes DQ1 six rows (.opencode/** + template/.opencode/** *.{md,ts,json})
+  - one-time scoped git add --renormalize
+  - extend scripts/guard_installer_publish.py (+ template mirror)
+  - 6 test_bug0017_* markers
+  - runbook DQ6 upgrade recipe + before-tag checklist
+- runtime_proof_id: rp-auto-20260911-bug0017-sprint-plan-techlead-20260911T192300Z-BUG-0017
+- proof_hash: 86620B9B243BE83D493E59BAF042EB1AFBFB02F84B996AA041CDDA34BB64CB6B
+- proof_ttl: 2026-09-11T20:23:00Z
+- consumed_architecture_proof: rp-auto-20260911-bug0017-architecture-techlead-20260911T192000Z-BUG-0017 / 541A4773D0E994EE9FC1A0DD09E70DBE1D0B262170FB6D63540407CEBBD76B68 — RUNTIME_PROOF_VALID
+- next_scheduled_phase: /execute (role=dev)
+- next_scheduled_role: dev
+- stop_condition: STOP after sprint-plan. Orchestrator MUST spawn sovereign-critic of sprint-plan then /execute in fresh dev (BUG-0006). Do NOT spawn execute or plan-verify from this tech-lead. Do NOT mark BUG-0017 DONE. Do NOT reopen BUG-0015/BUG-0016.
+
+---
+
+## Architecture handoff — BUG-0017 — `/sprint-plan` next (fresh tech-lead; ultra_lean plan macro)
+
+- bug_id: BUG-0017 (Status OPEN — authority docs/product/backlog.md)
+- story_id: (none — bug segment)
+- sprint_id: (pending — materialize at /sprint-plan)
+- dec_id: none (companion DEC not required; cite R-0118; compose BUG-0008 / US-0084 / DEC-0120)
+- research_anchor: R-0118 (DQ1–DQ6 LOCKED)
+- architecture_anchor: docs/engineering/architecture.md # BUG-0017
+- approach: A* LOCKED — DQ1 attrs + D4 renormalize + extend guard_installer_publish.py + 6 test_bug0017_* + DQ6 runbook; reject A2/A3/A4/A5
+- orchestrator_run_id: auto-20260911-bug0017
+- fresh_context_marker: tl-BUG0017-architecture-20260911T191500Z-fresh
+- timestamp: 2026-09-11T19:20:00Z (UTC)
+- model_id: composer-2.5 (CROSS_MODEL_REVIEW=1)
+- architecture_verdict: PASS
+- critic_nb_closures: NB1 choco tag→guard:installer before zip (T-007); NB2 dirty-tree scoped renormalize (T-002); NB3 DQ6 upgrade recipe (T-006)
+- task_seeds: T-anch + T-001..T-007 (8; under SPRINT_MAX_TASKS=12) — refine into next free sprint id at /sprint-plan
+- compose_guards (non-negotiable): DO NOT author companion DEC; DO NOT weaken BUG-0008/US-0084 tests; DO NOT install-time EOL rewrite; DO NOT repo-wide *.md eol=lf; DO NOT host parser patch; DO NOT reopen BUG-0015/BUG-0016; DO NOT mark BUG-0017 DONE; DO NOT tick acceptance BUG-0017 row
+- files_to_touch (execute foreshadow): .gitattributes; .opencode/** + template/.opencode/** (renormalize); scripts/guard_installer_publish.py + template mirror; tests/bug0017_*; docs/engineering/runbook.md + template; release/CI checklist for guard before tag
+- files_NOT_to_touch: BUG-0015/0016 ACs; installer EOL rewrite paths; operator-local model-catalog.local.json; DEC-0120 body (compose only)
+- next_phase: `/sprint-plan` (fresh tech-lead per US-0069 / DEC-0051; third canonical phase of `plan` macro per ultra_lean). Orchestrator runs sovereign-critic of architecture first (CROSS_MODEL_REVIEW=1) then spawns sprint-plan. Do not mandate outer driver.
+- runtime_proof_id: rp-auto-20260911-bug0017-architecture-techlead-20260911T192000Z-BUG-0017
+- proof_hash: 541A4773D0E994EE9FC1A0DD09E70DBE1D0B262170FB6D63540407CEBBD76B68
+- proof_ttl: 2026-09-11T20:20:00Z (UTC)
+- prior_phase_proof_consumed: rp-auto-20260911-bug0017-research-techlead-20260911T191200Z-BUG-0017 (proof_hash=DF94BA041DDCB51ADD0675C7B41DEAD6F14CADB1D1095489E3B5F0E8342B777A, ttl=2026-09-11T20:12:00Z)
+- stop_condition: STOP after architecture PASS. Orchestrator owns critic of architecture then /sprint-plan in fresh tech-lead subagent per BUG-0006. Do not spawn /sprint-plan or /execute from this subagent. Do not mark BUG-0017 DONE. Do not execute implementation.
+
+---
+
 ## Plan-verify RE-ATTEST PASS handoff — US-0132 / S0134 — sovereign-critic then `/execute` (fresh)
 
 - sprint_id: S0134

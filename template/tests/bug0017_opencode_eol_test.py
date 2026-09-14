@@ -142,7 +142,7 @@ class Bug0017OpencodeEolTest(unittest.TestCase):
 
     def test_bug0017_guard_installer_publish_rejects_opencode_cr(self) -> None:
         self.assertTrue(GUARD.is_file(), "scripts/guard_installer_publish.py missing")
-        target = ROOT / ".opencode" / "commands" / "auto.md"
+        target = ROOT / ".opencode" / "commands" / "intake.md"
         self.assertTrue(target.is_file())
         original = target.read_bytes()
         self.assertNotIn(b"\r", original)
@@ -161,7 +161,7 @@ class Bug0017OpencodeEolTest(unittest.TestCase):
             self.assertNotEqual(0, run.returncode, "guard must fail on OpenCode CR")
             err = (run.stderr or "") + (run.stdout or "")
             self.assertIn("BUG-0017", err)
-            self.assertIn(".opencode/commands/auto.md", err.replace("\\", "/"))
+            self.assertIn(".opencode/commands/intake.md", err.replace("\\", "/"))
         finally:
             target.write_bytes(original)
 

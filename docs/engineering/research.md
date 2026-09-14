@@ -11482,4 +11482,3206 @@ Fixtures: temp repos for `cursor` / `opencode` / `both`, with/without catalogs, 
 - **Status**: delivered (US-0132 / US-0045 — DONE at closure). **Next (historical)**: `/architecture` — satisfied by architecture + full lifecycle delivery.
 - **Delivery closure (2026-09-09T20:45:00Z, curator, `orchestrator_run_id=auto-20260909-us0132`)**: **`US-0132`** **DONE**; sprint **`S0134`** **released**; explicit Cursor/OpenCode model configuration contract delivered per **`DEC-0132`** + 10/10 **`test_us0132_*`** + runbook h2; **`R-0117`** objectives satisfied; portfolio **0 OPEN** stories.
 
+## R-0118 - BUG-0017 OpenCode pack CRLF / LF normalization research
+
+- **Date**: 2026-09-11
+- **Topic**: Kit OpenCode pack (`.opencode/**` + `template/.opencode/**`) ships CRLF on Windows checkouts; Linux OpenCode YAML frontmatter parse fails and silently drops slash commands — lock exact `.gitattributes` globs, normalize approach, publish-guard wiring, packaging coverage, test markers
+- **Linked**: BUG-0017, BUG-0008, US-0084, US-0121 / DEC-0120, US-0125, R-0069 (compose; do not wipe), R-0114 / R-0115 (DONE siblings; out of scope)
+- **Confidence**: high (git gitattributes docs + in-repo BUG-0008/US-0084 guard wiring + CRLF inventory of active+template OpenCode pack + installer `shutil.copy2` byte-copy + npm `prepublishOnly` / chocolatey GitHub-zip paths)
+- **Status**: open (research complete; architecture next)
+- **Query**: DQ1–DQ6 from discovery D1–D9
+- **Producer consumed**: discovery `rp-auto-20260911-bug0017-discovery-po-20260911T190600Z-BUG-0017` (`proof_hash` `441F98E3F1A52F467609C749C92452506E959282F99E1CF6FD1A142272F3587D`, ttl `2026-09-11T20:06:00Z`) — RUNTIME_PROOF_VALID MATCH at research issue time `2026-09-11T19:12:00Z`; sovereign-critic discovery PASS (0 blocking; anti_slop_aggregate=10); marker `tl-BUG0017-research-20260911T191000Z-fresh`
+- **EARLY_RESEARCH posture**: scratchpad `EARLY_RESEARCH=1` — consulted https://git-scm.com/docs/gitattributes (`eol=lf`, path patterns use `path/**` for recursion; directory patterns do not recurse) + Carolyn Van Slyck directory EOL note (`**/dir/**` pattern class)
+- **ID policy**: highest existing research id was **R-0117** (US-0132, closed). This entry is **R-0118**. Do **not** wipe, renumber, or extend R-0069 / R-0117.
+- **Compose base**: `.gitattributes` today `*.sh` + `*.manifest` LF only (BUG-0008 / US-0084); `scripts/guard_installer_publish.py` + `npm run guard:installer` / `prepublishOnly`; installer OpenCode copy via `shutil.copy2` (byte-preserving); npm `files` ships `template/` (not active `.opencode/`); chocolatey installs from GitHub tag zip then `installer.ps1`.
+
+### Gap confirmation (code / inventory 2026-09-11)
+
+| Surface | Today | BUG-0017 gap |
+|---|---|---|
+| `.gitattributes` | `*.sh text eol=lf`; `*.manifest text eol=lf` | No `.opencode/**` or `template/.opencode/**` rows |
+| Active `.opencode/` | commands/agents/plugins `*.md`/`*.ts` + README = **CRLF**; `.gitignore` LF; `package.json` LF | Linux OpenCode drops slash commands |
+| `template/.opencode/` | same pack text **CRLF** including `model-catalog.local.example.json` + `.gitignore` | npm/choco ship CRLF into consumers |
+| Publish guard | CR reject for `installer.sh` + both manifests only | OpenCode pack not scanned |
+| Installer copy | `shutil.copy2` / peers — no EOL rewrite | Install preserves whatever template bytes are |
+| Packaging | npm `template/` + `prepublishOnly`; choco GitHub zip | Both inherit git/working-tree bytes; no separate EOL filter |
+
+### DQ1 — Exact `.gitattributes` globs (LOCKED)
+
+Ship **scoped** root `.gitattributes` rows (compose existing `*.sh` / `*.manifest`; **reject** repo-wide `*.md text eol=lf` per D3/D8):
+
+- `.opencode/**/*.md text eol=lf`
+- `.opencode/**/*.ts text eol=lf`
+- `.opencode/**/*.json text eol=lf`
+- `template/.opencode/**/*.md text eol=lf`
+- `template/.opencode/**/*.ts text eol=lf`
+- `template/.opencode/**/*.json text eol=lf`
+
+- **Why `dir/**/*.ext`**: gitattributes path patterns match gitignore-style rules; a directory pattern alone does **not** recurse — use trailing `/**` (git-scm gitattributes). `**` between segments matches zero or more directories, so `.opencode/README.md` and `.opencode/commands/auto.md` both match `.opencode/**/*.md`.
+- **Why explicit active + template prefixes**: both trees are tracked kit sources; a single `.opencode/**` pattern does **not** match `template/.opencode/**`.
+- **Why `*.json`**: covers `template/.opencode/model-catalog.local.example.json` (CRLF today; shipped via manifest). Does **not** force LF on operator-local `*.local.json` that are gitignored — attributes only affect tracked paths that match.
+- **Out of scope for attributes**: `node_modules` (not shipped as kit text); `.gitignore` without extension (not YAML frontmatter; optional hygiene only — **do not** require for BUG-0017 AC).
+- **Renormalize**: after adding attributes, execute-phase one-time `git add --renormalize` on `.opencode` + `template/.opencode` so index stores LF (D4).
+
+### DQ2 — Guard script wiring (LOCKED)
+
+- **Extend** `scripts/guard_installer_publish.py` (and `template/scripts/` mirror + manifest row already present) to fail-closed on any `\r` in the OpenCode pack inventory below.
+- **Keep** existing US-0084 / BUG-0008 checks unchanged (`installer.sh` LF + dash -n; both manifests CR-free).
+- **Hook placement**: reuse existing `npm run guard:installer` / `package.json` `prepublishOnly` — no new npm script required.
+- **Reject** new sibling `guard_opencode_eol.py` as default (same failure class as BUG-0008; would duplicate CI wiring).
+- **Inventory scanned by guard** (relative to repo root; skip if path absent; exclude `node_modules`):
+  - `.opencode/commands/**/*.md`
+  - `.opencode/agents/**/*.md`
+  - `.opencode/plugins/**/*.{md,ts}`
+  - `.opencode/README.md`
+  - `template/.opencode/commands/**/*.md`
+  - `template/.opencode/agents/**/*.md`
+  - `template/.opencode/plugins/**/*.{md,ts}`
+  - `template/.opencode/README.md`
+  - `template/.opencode/model-catalog.local.example.json`
+- Implementation note for architecture/execute: walk with `Path.rglob` + suffix filter, or explicit globs; message must name relative path + BUG-0017.
+
+### DQ3 — Installer EOL rewrite vs attributes+guard (LOCKED)
+
+- **Ship**: **attributes + one-time normalize + publish/CI guard only**. No install-time CR-strip / EOL rewrite on OpenCode copy paths.
+- **Rationale**: installers already use byte-preserving `shutil.copy2` (and peers). If template bytes are LF and guard blocks publish of CR, consumer installs stay LF without a second EOL code path.
+- **Reject**: installer rewrite-on-copy as primary fix (masks attribute/guard failures; triples PS1/Bash/Python surface; YAGNI vs D5).
+- **deferred_to_architecture**: whether a **diagnostic-only** install warning when source template already contains `\r` is worth adding (default **no** — guard should have blocked publish; keep installers thin).
+
+### DQ4 — npm / chocolatey coverage (LOCKED)
+
+| Channel | How OpenCode pack ships | LF coverage |
+|---|---|---|
+| **npm** | `package.json` `files` includes `template/` (not active `.opencode/`); install copies from template pack | Guard on `template/.opencode/**` inventory + `prepublishOnly` is the hard gate; normalize template before publish |
+| **chocolatey** | Downloads GitHub tag zip → runs `installer.ps1` against extracted tree | Same git LF content after renormalize; no choco-specific EOL transform required |
+| **Active kit `.opencode/`** | Not in npm `files`; used by kit-repo OpenCode + active↔template parity (D6) | Still normalize + guard + attributes so kit checkout and parity tests are LF |
+
+- **Reject**: separate chocolatey EOL post-process.
+- **Compose**: do not change chocolatey URL/checksum mechanics in this bug beyond ensuring tagged source is LF.
+
+### DQ5 — model-catalog example JSON + README in guard (LOCKED)
+
+- **YES — include both**:
+  - `template/.opencode/model-catalog.local.example.json` (CRLF today; listed in `[opencode_install_include_paths]`; framework-delivered example)
+  - `.opencode/README.md` + `template/.opencode/README.md` (D2 pack README)
+- Attributes: covered by `.opencode/**/*.json` / `template/.opencode/**/*.json` and `**/*.md` rows (DQ1).
+- **Reject**: scanning operator-local `.opencode/model-catalog.local.json` (gitignored; never overwrite per DEC-0132).
+
+### DQ6 — Consumer upgrade / renormalize vs kit-only (LOCKED)
+
+- **Kit-only is necessary but not sufficient** for consumers that already have CRLF `.opencode/` on disk.
+- **Consumer fix path (document in runbook at architecture/execute)**:
+  1. Upgrade its-magic to the BUG-0017 fixed release.
+  2. Run `its-magic --mode upgrade --host opencode` or `--host both` so framework-owned OpenCode pack files refresh from LF template (DEC-0120 upgrade semantics).
+  3. If local edits block refresh: operator resolves conflicts, then re-upgrade; optional `dos2unix` / re-checkout only as last resort for orphaned local copies.
+- **Kit repo**: one-time renormalize + commit LF (D4); attributes prevent reintroduction on Windows autocrlf checkouts.
+- **Reject**: “kit fix alone heals all installed consumers without upgrade” (false for already-copied CRLF trees).
+- **Reject**: mandating OpenCode host parser CR-strip (D8).
+
+### Test marker list (LOCKED — D7)
+
+Additive `tests/bug0017_*` (or `tests/installer_opencode_eol_bug0017_test.py`) — do **not** weaken BUG-0008 / US-0084 tests:
+
+1. `test_bug0017_gitattributes_scoped_opencode_eol_lf` — assert DQ1 rows present; assert **no** repo-wide `*.md text eol=lf`
+2. `test_bug0017_no_cr_in_active_opencode_pack_text` — no `\r` in active inventory (commands/agents/plugins/README)
+3. `test_bug0017_no_cr_in_template_opencode_pack_text` — no `\r` in template inventory including model-catalog example
+4. `test_bug0017_guard_installer_publish_rejects_opencode_cr` — plant CR in a temp copy / monkeypatch path → guard exit ≠ 0
+5. `test_bug0017_guard_still_enforces_installer_sh_and_manifests` — US-0084 / BUG-0008 regression (or call existing tests unchanged)
+6. `test_bug0017_active_template_opencode_tracked_text_parity` — tracked in-scope pairs remain content-parity after LF normalize (compose existing opencode-adapter parity where applicable)
+
+### Architecture seeds (for /architecture — not authored here)
+
+- Approach **A1 (recommended)**: DQ1 attributes + D4 renormalize + extend `guard_installer_publish.py` inventory + 6 `test_bug0017_*` + short runbook recipe (DQ6 upgrade path). No installer EOL rewrite. No new DEC required unless architecture wants a thin companion — default **compose BUG-0008 / US-0084 / DEC-0120** without new DEC (`decision_gate=false`).
+- Reject **A2**: install-time EOL rewrite as primary control.
+- Reject **A3**: repo-wide `*.md eol=lf`.
+- Reject **A4**: OpenCode host parser patch.
+- Risks: R1 Windows editors reintroduce CRLF before attributes land (MEDIUM — attributes+guard); R2 npm ships only template — active drift (MEDIUM — D6 parity tests); R3 consumers skip upgrade (MEDIUM — DQ6 recipe); R4 over-scoping `.gitignore` / node_modules (LOW — inventory excludes).
+
+### Decision gate
+
+- **decision_gate=false** — DQ1–DQ6 LOCKED; no critical unknowns remain for architecture.
+- **Status**: delivered (BUG-0017 / US-0045 — DONE at closure). **Next (historical)**: `/architecture` — satisfied by architecture + full lifecycle delivery.
+- **Delivery closure (2026-09-11T20:29:00Z, curator, `orchestrator_run_id=auto-20260911-bug0017`)**: **`BUG-0017`** **DONE**; sprint **`S0135`** **released**; scoped `.gitattributes` LF + renormalize + guard OpenCode CR inventory + 6 `test_bug0017_*` + DQ6 upgrade recipe delivered per **R-0118** / **A***; compose **BUG-0008** / **US-0084** / **DEC-0120**; portfolio **0 OPEN** stories.
+- **Freshness review (2026-09-11, curator refresh-context)**: R-0118 marked **delivered** (BUG-0017 DONE). R-0117 / R-0116 / R-0115 remain **delivered** compose bases (not outdated). No duplicate R-ids to merge. Unlinked prune deferred (portfolio empty; no operator request).
+
+## R-0119 - BUG-0018 OpenCode markdown `/auto` vs plugin execute precedence (intake)
+
+- **Date**: 2026-09-11
+- **Topic**: Live OpenCode host runs dispatch-only `.opencode/commands/auto.md` STOP instead of plugin `editor.add({ name: "auto", execute })` even when BUG-0015 attach is present in source
+- **Linked**: BUG-0018 (OPEN), BUG-0015 DONE, BUG-0017 DONE, US-0124, US-0125, DEC-0124, DEC-0125, R-0114 (compose; deferred precedence now live-proven), BUG-0006 / US-0095 (Symptom B out of scope)
+- **Confidence**: high for the live gap (operator host proof + in-repo attach + markdown STOP body); medium for exact OpenCode registry merge order (docs do not spell markdown-file vs plugin-execute when both name `auto`)
+- **Status**: current
+- **Query**: After BUG-0015 attach + BUG-0017 LF, why does `/auto` still stop at markdown STOP with no `OPENCODE_*` code? What does OpenCode document for markdown commands vs `ctx.command.transform` / `editor.add`?
+- **Producer consumed**: `/intake bug` operator packet 2026-09-11/12 (Linux `strategy_trading_bot` on `root@docker-dmz`; Windows Cursor Task-unavailable treated as out of scope)
+- **EARLY_RESEARCH posture**: scratchpad `EARLY_RESEARCH=1` — web + Context7 consulted at intake (not a substitute for `/research`)
+- **ID policy**: highest existing research id was **R-0118**. This entry is **R-0119**. Do **not** wipe or renumber R-0114 / R-0118.
+
+### Web / docs sources (2026-09-11)
+
+- https://opencode.ai/v2/docs/commands/ — project `.opencode/commands/*.md` (body = prompt template always); markdown and JSON share one registry; later sources replace earlier same-name commands; project overrides global
+- https://opencode.ai/v2/docs/build/plugins/ — v2 `ctx.command.transform((editor) => editor.add({ name, description, execute }))`; `CommandEditor.add` only in the published CommandEditor interface; `ctx.command.reload()` after transform state changes
+- https://opencode.ai/v2/docs/build/plugins/effect/ — “current command transform is add-only”; transforms apply in plugin order; later valid registration overrides earlier for the same effective **tool** name (tool editor; not proven for commands)
+- Context7 `/anomalyco/opencode` + `/websites/opencode_ai_plugins` — custom markdown commands override built-ins; plugin **tools** of the same name take precedence over built-in tools; **no** documented rule that plugin `command.execute` overrides a same-name markdown command
+- Internal: `.opencode/commands/auto.md` STOP-only (DEC-0125); `.opencode/plugins/orchestrator.ts` BUG-0015 attach (`command.transform` → `editor.add({ name: "auto", execute })` → `runAutoLifecycle`); `docs/engineering/architecture.md` `# BUG-0015` CF1 “Transform owns execute”; **R-0114** DQ1 `deferred_to_architecture`: markdown vs transform precedence
+
+### Gap confirmation (intake)
+
+- BUG-0015 shipped source attach. Live host still does not call `execute`.
+- BUG-0017 shipped LF so Linux OpenCode **lists** `/auto`. Live `file auto.md` = ASCII text (no CRLF).
+- Architecture CF1 assumed transform owns execute and markdown is discoverability-only. Live host: **markdown wins**; plugin execute never runs; no `OPENCODE_*` code.
+- v2 plugin docs show `editor.add` (add-only). They do **not** document `update`/`remove` on CommandEditor in the Overview schema. Markdown commands always send the file body as the prompt template.
+
+### Symptom B (not persisted)
+
+- Windows Cursor `/auto` in this kit repo: Task tool unavailable → German fail-closed `TASK_SPAWN_UNAVAILABLE`; canonical kit code is `NATIVE_CHAIN_UNAVAILABLE` (US-0095 / DEC-0080). This is Cursor spawn-only (BUG-0006) when Task is missing **in that chat**, not the OpenCode markdown/plugin gap. **Out of scope — not BUG-0019.**
+
+### Alternatives (intake recommendation; discovery/architecture lock)
+
+| Option | Summary | Intake verdict |
+|---|---|---|
+| **A1** | Persist BUG-0018 only; discovery locks how `/auto` is owned (remove/rename markdown, or replace markdown command from plugin, or host-documented override) so plugin `execute` runs | **Recommended** |
+| A2 | Two OPEN bugs (OpenCode + Cursor Task-unavailable) | Rejected — Cursor is session/tool limitation |
+| A3 | Reopen BUG-0015 | Rejected — that defect was missing attach; attach is present |
+| A4 | Fold into US-0125 | Rejected — US-0125 DONE; this is live host-precedence |
+
+### Seeds for `/discovery` / `/research` (not locked here)
+
+- Confirm whether OpenCode loads markdown commands after plugin transforms (markdown would then replace plugin `/auto`).
+- Confirm whether `command.executed` fires for markdown-template commands (BUG-0015 secondary attach may never see `/auto`).
+- Candidate fixes for architecture: plugin-only `/auto` (no `auto.md`); markdown renamed/non-colliding; `editor.add` after `reload` if later add wins; empty/no-STOP body is **not** sufficient if markdown still owns execution.
+- Tests: additive `test_bug0018_*` proving registry/ownership contract (static + mock-ctx); live OpenCode probe remains out of CI (same pattern as BUG-0015).
+
+### Decision gate
+
+- **decision_gate=false** for intake persistence. Exact host merge order remains a `/research` DQ.
+- **Status**: current. **Next**: `/discovery` for **BUG-0018**.
+
+## R-0120 - BUG-0018 OpenCode markdown `/auto` vs plugin execute precedence research
+
+- **Date**: 2026-09-12
+- **Topic**: Close discovery DQ1–DQ8; pick winning fix axis (A–D) so `/auto` invokes plugin `execute` → `runAutoLifecycle` (or documented `OPENCODE_*`) instead of silent markdown STOP
+- **Linked**: BUG-0018 (OPEN), R-0119 (compose; do not wipe), R-0114 (compose; deferred CF1 now live-falsified), BUG-0015 DONE, BUG-0017 DONE, US-0124, US-0125, DEC-0124, DEC-0125, DEC-0120, US-0069, BUG-0006
+- **Confidence**: high for gap class + winning axis (live host + v2 command/plugin docs + in-repo attach + installer upgrade copy-only); medium for exact host C source merge (docs omit markdown-file vs plugin-execute; live proof substitutes)
+- **Status**: open (research complete; architecture next)
+- **Query**: DQ1–DQ8 from discovery D1–D10
+- **Producer consumed**: discovery `rp-auto-20260912-bug0018-discovery-po-20260912T092800Z-BUG-0018` (`proof_hash` `0786CBA6FFED9208970ABE0E22C1CC72683D8B5B0EF2F4076191947E55F2D543`, ttl `2026-09-12T10:28:00Z`) — RUNTIME_PROOF_VALID MATCH at research issue time `2026-09-12T09:50:00Z`; sovereign-critic of discovery PASS (0 blocking; anti_slop_aggregate=10); marker `tl-BUG0018-research-20260912T094000Z-fresh`
+- **EARLY_RESEARCH posture**: scratchpad `EARLY_RESEARCH=1` — web + Context7 consulted (compose R-0119 sources; do not wipe)
+- **ID policy**: highest existing research id was **R-0119**. This entry is **R-0120**. Do **not** wipe, renumber, or rewrite R-0114 / R-0119.
+- **Compose base**: R-0119 (markdown wins; CF1 live-falsified; Axis A–D seeds) + R-0114 DQ1 deferred precedence + `# BUG-0015` CF1 (“Transform owns execute”) superseded here for architecture (D3). Discovery D1–D10 unchanged.
+
+### Web / docs / code sources (2026-09-12)
+
+- https://opencode.ai/v2/docs/commands/ — markdown body is always the prompt template; markdown + JSON share one registry; later sources replace earlier same-name commands; project overrides global; custom can replace built-ins; file reload updates `/name` without restart
+- https://opencode.ai/v2/docs/build/plugins/ — `ctx.command.transform((draft) => draft.add({ name, description, execute }))`; `CommandContext`: `list` / `transform` / `reload`; **`CommandDraft` / `CommandEditor` = `add` only** (no `update`/`remove` in published command draft)
+- https://opencode.ai/v2/docs/build/plugins/effect/ — “The current command transform is **add-only**”; later valid registration override is documented for **tools**, not commands
+- https://opencode.ai/docs/plugins/ — `command.executed` exists on the event bus; plugin **tools** of the same name beat built-in tools — **not** a command-vs-markdown rule
+- Context7 `/anomalyco/opencode` + `/websites/opencode_ai` + `/websites/opencode_ai_plugins` — no documented rule that plugin `command.execute` overrides a same-name markdown command
+- Internal: `.opencode/commands/auto.md` + `template/.opencode/commands/auto.md` LF STOP-only; `.opencode/plugins/orchestrator.ts` BUG-0015 attach (`command.transform` → `editor.add({ name: "auto", execute })` → `runAutoLifecycle`) + secondary `command.executed` subscribe; `installer.py` upgrade iterates template file list (add/update framework files; **no prune** of target files absent from template); `tests/bug0015_auto_md_dispatch_only_static` and `tests/us0125_auto_command_dispatch_only` require `auto.md` present
+
+### Gap confirmation (code + live)
+
+- Attach is present (BUG-0015 DONE). Linux slash listing works (BUG-0017 DONE; LF `auto.md`).
+- Live host still submits markdown STOP body; plugin `execute` never runs; no `OPENCODE_*`. Secondary `command.executed` subscribe is shipped and still did not start `runAutoLifecycle`.
+- `# BUG-0015` CF1 assumed transform owns execute and markdown is discoverability-only. **Live-falsified** (D3: supersede in `# BUG-0018`; do not reopen BUG-0015).
+
+### Critic NB closures (discovery `bug0018dsc-*`, non-blocking → research locks)
+
+| Critic theme | Resolution in R-0120 |
+|---|---|
+| D10 consumer upgrade + D4 empty-body insufficient + D6 executed viability (challenger) | **LOCKED DQ8 / DQ2 / DQ3**: empty/no-STOP body is not a fix; `command.executed` is not primary; upgrade must **prune** leftover `auto.md` (copy-only upgrade is insufficient) |
+| Research owns DQ1–DQ8; architecture later owns CF1 supersede (architect) | **LOCKED**: this entry closes DQ1–DQ8 + Axis **A**; architecture authors `# BUG-0018` (no companion DEC) |
+| No DEC-0124/0125 body rewrite; no DONE flip; no Symptom B (subtractor) | **Held**: additive `# BUG-0018`; Status OPEN; Symptom B out of scope |
+
+### DQ1 — Same-name merge (LOCKED)
+
+- **Markdown template path owns `/auto` when `.opencode/commands/auto.md` exists.** OpenCode v2 commands docs: markdown body is always the prompt template; same-name markdown/JSON later-replace-earlier. Plugin `editor.add({ name: "auto", execute })` is a **separate add-only command transform**, not documented as beating a markdown file of the same name.
+- **Live proof**: both surfaces present → markdown STOP runs; plugin `execute` never invoked; no dual-fire of spawn (markdown owns; plugin idle).
+- **Not** missing attach (BUG-0015). **Not** CRLF (BUG-0017).
+- Tool same-name precedence (plugin tool beats built-in tool) does **not** apply to markdown commands vs plugin command `execute`.
+- **deferred_to_architecture**: none for merge class — treat markdown-wins as the host contract this kit must design around.
+
+### DQ2 — Load order / `command.reload()` (LOCKED)
+
+- Command files: later/nearer sources replace earlier same-name markdown/JSON; autosave reloads files.
+- Plugins: loaded global→project; transforms apply in plugin order.
+- Docs do **not** specify whether markdown scan happens before or after `command.transform`. Live host with attach already registered still markdown-wins → **later plugin `add` does not win**.
+- `ctx.command.reload()` “reapplies transforms” after external transform-state changes. It does **not** document a plugin-execute-beats-markdown rule. If markdown is rebuilt on reload, reload can **reassert** markdown ownership.
+- **Reject Axis C** (`later editor.add` / `command.reload()` as winner). Empirically falsified; add-only transform cannot replace the markdown command.
+
+### DQ3 — `command.executed` for markdown templates (LOCKED)
+
+- Event name exists (v1/v2 plugin event lists).
+- Shipped BUG-0015 secondary subscribe (`type === "command.executed" && name === "auto"` → `runAutoLifecycle`) did **not** start the lifecycle on the live markdown-wins host.
+- **Not proven** that the event fires for markdown-template commands with `name === "auto"`. Possible: no emit; payload shape mismatch; subscribe API mismatch. Kit will not live-probe in CI (D7).
+- **Reject as primary fix** (D6). Keep subscribe as defense-only **after** markdown collision is removed (mutex-gated; compose BUG-0015 CF6). Do not depend on it to unstick `/auto`.
+
+### DQ4 — CommandEditor capabilities (LOCKED)
+
+- Published v2 `CommandDraft` / command `CommandEditor`: **`add` only**. Effect docs: “current command transform is add-only.”
+- Tool editor has `update`/`remove`; **command draft does not** in the published schema.
+- Plugin **cannot** replace or remove a same-name markdown command via CommandEditor.
+- **Reject Axis D** as a documented host override — none exists for this pair. **Reject Axis C** (cannot replace markdown via `add`).
+
+### DQ5 — Slash discoverability without `auto.md` (LOCKED)
+
+- v2 plugin docs register slash commands with `draft.add({ name, description, execute })`. That is the documented plugin listing surface.
+- Removing colliding `auto.md` leaves plugin `name: "auto"` as the sole `/auto` registration → D9 listing via plugin description (match current markdown description string).
+- Other markdown commands (`intake.md`, peers) stay; this bug only removes the **`auto.md` name collision**.
+- Residual risk (MEDIUM): a host that lists **only** markdown files would hide `/auto` after removal. Mitigation: keep plugin `add`; static tests assert registration; D1 fail-closed if attach missing (`OPENCODE_PLUGIN_DISPATCH_ATTACH_UNSUPPORTED`). No live CI probe.
+- **Reject Axis B** as default: a renamed markdown (`/auto-dispatch`) adds a second slash name, still requires pruning leftover `auto.md`, and does not improve `/auto` listing vs plugin-only.
+
+### DQ6 — Fail-closed reason-code (LOCKED)
+
+| Code | When |
+|---|---|
+| Existing `OPENCODE_PLUGIN_DISPATCH_ATTACH_UNSUPPORTED` | `command.transform` / `editor.add` unavailable (compose BUG-0015) |
+| Existing `OPENCODE_PLUGIN_SPAWN_UNSUPPORTED` / `OPENCODE_SUBTASK_IGNORED` / `OPENCODE_AUTO_ALREADY_RUNNING` | Unchanged compose |
+| **Additive** `OPENCODE_AUTO_MARKDOWN_COLLISION` (architecture may bikeshed the exact string) | Colliding `.opencode/commands/auto.md` still present so markdown would own `/auto` — **must not** silent STOP |
+
+- Silent markdown STOP is the defect; fail-closed must be operator-visible.
+- **deferred_to_architecture**: exact reason-code token; whether plugin `setup` detects leftover `auto.md` vs installer/test-only detection (recommend both: prune + static test; optional runtime detect).
+
+### DQ7 — Tests + companion DEC (LOCKED)
+
+**Winning architecture shape**: additive `# BUG-0018` superseding `# BUG-0015` CF1. **No companion DEC.** Do **not** rewrite DEC-0124 / DEC-0125 bodies (D8). DEC-0125 “thin `auto.md` discoverability” is composed: plugin `CommandDefinition` now owns `/auto` listing + execute.
+
+**Compose-only test relaxations** (D7 exception — required if `auto.md` is removed; do not reopen US-0125/BUG-0015 ACs):
+
+- `test_bug0015_auto_md_dispatch_only_static`: **if** `auto.md` exists → ≤20 lines / STOP / no spawn literals; **absence is OK** (BUG-0018 owns collision removal)
+- `test_us0125_auto_command_dispatch_only`: same if-present dispatch-only; do not keep a hard `auto.md missing` fail
+- Do **not** otherwise amend `test_us0124_*` / remaining `test_bug0015_*` / `test_us0125_*`
+
+**Additive `test_bug0018_*` (6 markers; no live OpenCode probe)**:
+
+1. `test_bug0018_no_colliding_opencode_auto_md` — active + template `.opencode/commands/auto.md` **absent**
+2. `test_bug0018_plugin_editor_add_auto_execute` — `command.transform` + `editor.add({ name: "auto" })` + `execute` / `runAutoLifecycle` (active + template)
+3. `test_bug0018_active_template_opencode_auto_ownership_parity` — absence of `auto.md` + plugin attach byte-parity
+4. `test_bug0018_upgrade_prunes_consumer_auto_md` — upgrade `--host opencode` (or targeted prune helper) removes leftover consumer `auto.md` when template no longer ships it
+5. `test_bug0018_compose_bug0015_attach_api_unchanged` — `runAutoLifecycle` / attach reason codes still present (read-only compose)
+6. `test_bug0018_markdown_collision_reason_code_stub` — `OPENCODE_AUTO_MARKDOWN_COLLISION` (or architecture-locked synonym) present in plugin vocabulary / runbook stub
+
+### DQ8 — Consumer upgrade path (LOCKED)
+
+- **Kit-only is necessary but not sufficient** (compose R-0118 DQ6 / DEC-0120).
+- `its-magic --mode upgrade --host opencode|both` **refreshes framework files that still exist in the template** (`installer.py` upgrade: add missing + update differing framework bytes; skip byte-identical; preserve user-data/mixed).
+- Upgrade **does not delete** target files that the template no longer ships. Removing kit `auto.md` therefore **leaves consumer `auto.md` in place** → collision remains (live BUG-0018 reproduces after a naïve upgrade).
+- **Ship**: targeted prune of consumer `.opencode/commands/auto.md` when the kit no longer ships that path (installer upgrade/host-opencode path, or a one-line helper invoked from that path). Preserve other markdown commands. Do **not** invent a general “delete all files not in template” sweeper (operator locals / DEC-0132 preserve paths).
+- Runbook recipe (architecture/execute): (1) upgrade its-magic to the BUG-0018 release; (2) `upgrade --host opencode|both` (must prune `auto.md`); (3) if local edits blocked prune, operator deletes `.opencode/commands/auto.md` then re-upgrade.
+- Active ↔ template parity (D10): both trees omit colliding `auto.md`; both keep plugin attach.
+
+### Fix-axis verdict (D5)
+
+| Axis | Summary | Verdict |
+|---|---|---|
+| **A** | Plugin-only `/auto`: remove colliding `auto.md` (active + template); plugin `editor.add({ name: "auto", execute })` remains sole owner; prune consumers | **WINNER** — simplest change that matches host markdown-wins + add-only transform |
+| B | Rename markdown to a non-colliding name; plugin keeps `auto` | **Rejected** — extra slash name; still must prune leftover `auto.md`; YAGNI vs A |
+| C | Later `editor.add` / `command.reload()` if later add wins | **Rejected** — add-only; live host already adds and markdown still wins; reload does not document override |
+| D | Documented host override | **Rejected** — none for markdown vs plugin command execute |
+
+**Approach seed for `/architecture`**: **A1 = Axis A** + DQ8 targeted prune + 6 `test_bug0018_*` + compose-only if-present relaxations + `# BUG-0018` superseding CF1. No companion DEC (`decision_gate=false`).
+
+### Risks
+
+- **R1 (MEDIUM)**: host lists only markdown files → `/auto` disappears after removal. Mitigation: plugin `add` + D9; attach-missing fail-closed; no live probe.
+- **R2 (HIGH → MEDIUM)**: consumer leftover `auto.md` after kit fix. Mitigation: DQ8 prune + marker 4; runbook.
+- **R3 (LOW)**: us0125/bug0015 tests fail on absence without compose-only relaxation. Mitigation: DQ7 if-present asserts.
+- **R4 (LOW)**: Symptom B Cursor Task-unavailable mistaken for this bug. Out of scope (D8).
+- **R5 (LOW)**: reason-code stub drift vs US-0126. Stub + cross-link only.
+
+### Decision gate
+
+- **decision_gate=false** — DQ1–DQ8 LOCKED; winning axis **A**; companion DEC **no**.
+- **Status**: delivered (BUG-0018 / US-0045 — DONE at closure). **Next (historical)**: `/architecture` — satisfied by architecture + full lifecycle delivery.
+- **Delivery closure (2026-09-12T11:15:00Z, curator, `orchestrator_run_id=auto-20260912-bug0018`)**: **`BUG-0018`** **DONE**; sprint **`S0136`** **released**; plugin-only `/auto` (delete colliding `auto.md`; plugin `editor.add` sole owner; targeted upgrade prune; `OPENCODE_AUTO_MARKDOWN_COLLISION`) + 6 `test_bug0018_*` delivered per **R-0120** / **A***; compose **DEC-0124** / **DEC-0125** / **BUG-0015** / **BUG-0017**; portfolio **16 OPEN** stories (US-0133..US-0148), **0 OPEN** bugs.
+- **Freshness review (2026-09-12, curator refresh-context)**: R-0120 marked **delivered** (BUG-0018 DONE). R-0119 intake entry remains **current** compose base (not outdated). R-0118 / R-0117 / R-0116 / R-0115 remain **delivered** compose bases. No duplicate R-ids to merge. Unlinked prune deferred (no operator request).
+
+## R-0121 - US-0133 Standalone repository and replaceable Pi kernel research
+
+- **Date**: 2026-09-12
+- **Topic**: Close discovery DQ1–DQ10; pick winning bootstrap + AgentKernel isolation approach for the standalone TypeScript workspace (Phase 0 kernel subset only)
+- **Linked**: US-0133 (DONE), R-0120 (do not wipe), masterplan §§4/7/8/30/32 Phase 0/35, DEC-0038, US-0045, US-0048; sibling US-0134..US-0140 OUT OF SCOPE; BUG-0018 DONE not reopened
+- **Confidence**: high for SDK surface + hosting + isolation mechanism (pi.dev latest SDK + security + npm 0.85.1 engines); medium for live mock-model tool-loop without credentials (architecture may gate live prompt)
+- **Status**: delivered (US-0133 DONE; refresh-context 2026-09-12T12:50:00Z)
+- **Query**: DQ1–DQ10 from discovery D1–D10
+- **Producer consumed**: discovery `rp-auto-20260912-us0133-discovery-po-20260912T105500Z-US-0133` (`proof_hash` `436C5C331EFDD5FE94FA243CE94B38D5CED95E985367DCB29D72C544A532F334`, ttl `2026-09-12T11:55:00Z`) — RUNTIME_PROOF_VALID MATCH at research issue time `2026-09-12T11:05:00Z`; sovereign-critic of discovery PASS (0 blocking; anti_slop_aggregate=10); marker `tl-US0133-research-20260912T110500Z-fresh`
+- **EARLY_RESEARCH posture**: scratchpad `EARLY_RESEARCH=1` — web + Context7 `/earendil-works/pi` consulted
+- **ID policy**: highest existing research id was **R-0120**. This entry is **R-0121**. Do **not** wipe, renumber, or rewrite R-0120.
+- **Compose base**: discovery D1–D10 unchanged. Do not author US-0134+. Do not reopen BUG-0018.
+
+### Web / docs / npm sources (2026-09-12)
+
+- https://pi.dev/docs/latest/sdk — `createAgentSession`, `AgentSession.{prompt,steer,abort,dispose,subscribe,sessionId}`, `noTools`, `tools`, `customTools`/`defineTool`, `resourceLoader`/`DefaultResourceLoader`, `SessionManager.inMemory`
+- https://pi.dev/docs/latest/extensions — project `.pi/extensions` auto-discovery; `pi.registerTool()` from extensions
+- https://pi.dev/docs/latest/security — **no built-in sandbox**; project trust is input-loading only; `AGENTS.md` loads **regardless of trust** unless context loading is disabled
+- https://github.com/earendil-works/pi — `packages/coding-agent/src/core/sdk.ts` `CreateAgentSessionOptions`
+- Context7 `/earendil-works/pi` — session abort/dispose/`getSessionStats().sessionId`; event types; DefaultResourceLoader overrides
+- npm registry 2026-09-12: `@earendil-works/pi-coding-agent@0.85.1` and `@earendil-works/pi-ai@0.85.1` (`dist-tags.latest`; published 2026-09-05); `engines.node >=22.19.0`; coding-agent depends on `@earendil-works/pi-ai` / `pi-agent-core` / `pi-tui` / `chord` at `^0.85.1`
+- Kit `package.json` name `its-magic`, `files` = template/installer/scripts/bin only — no TS agent workspace today
+
+### Critic NB closures (discovery `us0133dsc-*`, non-blocking → research locks)
+
+| Critic theme | Resolution in R-0121 |
+|---|---|
+| D1 hosting + D3 import boundary + D5 isolation (challenger) | **LOCKED DQ1 / DQ5 / DQ9** |
+| Research owns DQ1–DQ10; architecture later owns `# US-0133` + AgentKernel contract (architect) | **LOCKED**: this entry closes DQ1–DQ10 + Approach **A1**; architecture authors `# US-0133` + **DEC-0133** |
+| No US-0134+ scope; no DONE; Phase 0 subset 1/2/3/5 only (subtractor) | **Held** |
+
+### DQ1 — Workspace hosting (LOCKED)
+
+- **Winner**: in-tree `standalone/` TypeScript npm workspace inside this git repo. **Not** published via kit npm `its-magic` (`files` whitelist already omits it; keep it omitted; add a guard so `standalone/` never enters kit `files`).
+- Workspace `package.json` **name** is a code name only (`its-magic-agent` or `@its-magic/agent` — **AC-6: do not lock public branding**). Must **not** reuse npm name `its-magic`.
+- **US-0134 KernelBridge locate path**: walk up from cwd / `standalone/` to the kit repo root that contains `docs/product/backlog.md` + shipped Python validators. In-tree hosting makes that locate a parent-directory walk — no second clone. Do not implement KernelBridge here.
+- **Reject A2** (new git repo now): dual CI/clone, KernelBridge path harder, Phase 0 overhead; extract later if needed.
+- **Reject A3** (fold Pi packages into kit `files`): violates D1.
+
+### DQ2 — Current Pi SDK surface (LOCKED)
+
+From `@earendil-works/pi-coding-agent` (docs latest + 0.85.x `sdk.ts`):
+
+| Need | SDK |
+|---|---|
+| Create session | `createAgentSession(options) → { session }` |
+| Run | `session.prompt(text, options?)` |
+| Steer | `session.steer(text)` / `prompt(..., { streamingBehavior: "steer" })` |
+| Abort | `await session.abort()` |
+| Dispose | `session.dispose()` |
+| Session id | `session.sessionId` (also `getSessionStats().sessionId`) |
+| Built-in disable | `noTools: "builtin"` **or** `"all"`; `tools` allowlist; `excludeTools` denylist |
+| Custom tools | `customTools: ToolDefinition[]` via `defineTool()`; if `tools` is set, **include each custom name** |
+| Events | `session.subscribe(event => …)` types: `agent_start/end`, `turn_start/end`, `message_start/end/update`, `tool_execution_start/update/end`, `queue_update` |
+| Persistence for tests | `SessionManager.inMemory()` |
+| Resources | `resourceLoader` (default `DefaultResourceLoader` discovers `.pi/extensions`, skills, prompts, `AGENTS.md`, `~/.pi/agent`) |
+
+`noTools: "builtin"` alone **keeps extension + custom tools**. Production must combine built-in disable + empty resource loader + `tools` allowlist of owned names only.
+
+Map to §7 `AgentKernel`: `createSession`→`createAgentSession`; `run`→`prompt`; `steer`→`steer`; `abort`→`abort`; `dispose`→`dispose`; `getRuntimeInfo`→owned wrapper (`sessionId`, pinned SDK versions, isolation mode). Workflow must not import Pi types.
+
+### DQ3 — npm pins (LOCKED)
+
+Research-time latest (npm 2026-09-12):
+
+| Package | Pin |
+|---|---|
+| `@earendil-works/pi-coding-agent` | **0.85.1** exact |
+| `@earendil-works/pi-ai` | **0.85.1** exact (scoped; **not** unscoped `pi-ai`) |
+| Node | **`>=22.19.0`** (`engines` on both packages) |
+
+Transitive (resolve via npm, do not re-export): `@earendil-works/pi-agent-core`, `pi-tui`, `chord` at `^0.85.1`. Pi imports **only** inside `packages/pi-kernel`. Spike AC-6 records the **exact installed** versions at go/no-go time (may differ by patch if execute re-resolves; do not silent-float majors).
+
+### DQ4 — Minimal §30 inventory (LOCKED)
+
+**Ship now (AC-1)**:
+
+- `standalone/package.json` workspaces + pinned Pi deps + scripts (`typecheck`, `lint`, `format`, `test`)
+- `standalone/apps/cli` **stub** only (`itsm` code-name bin; no workflow)
+- `standalone/packages/pi-kernel` **real** AgentKernel adapter
+- `standalone/tests/{unit,contract}`
+- CI job (Windows + Linux) for those scripts
+- format + lint + `tsc --noEmit`
+
+**Do not** stub the rest of §30 (`runtime-core`, `auth-models`, `tool-broker`, `browser-uat`, `crates/its-indexd`, fixture apps, …) — YAGNI / D9. Later stories add packages.
+
+### DQ5 — Resource auto-load disable (LOCKED)
+
+SDK has **no** `PI_COMPAT_RESOURCES` env. `DefaultResourceLoader` auto-discovers project `.pi/extensions`, skills, prompts, themes, and `AGENTS.md` walking up from `cwd`, plus `~/.pi/agent`. Security docs: project trust is **not** a sandbox; **`AGENTS.md` loads even when untrusted**.
+
+**Winner**: inject a production `resourceLoader` that yields empty extensions/skills/prompts/themes/`agentsFiles`:
+
+1. `DefaultResourceLoader` with `agentsFilesOverride: () => ({ agentsFiles: [] })`, `skillsOverride: () => ({ skills: [], diagnostics: [] })`, `promptsOverride: () => ({ prompts: [], diagnostics: [] })`, **no** `additionalExtensionPaths` / `extensionFactories`; loader `cwd`/`agentDir` = runtime-owned empty dir (not operator `~/.pi/agent`, not target project).
+2. Pass that loader into `createAgentSession` so session `cwd` no longer controls discovery (docs: custom ResourceLoader → cwd/agentDir do not control discovery).
+3. Product flag `PI_COMPAT_RESOURCES=off` (default) vs `trusted` is **our** policy mapped onto that loader. Trusted still must not enable third-party mutation tools (US-0137).
+
+**Reject**: cwd-jail of the whole session as the only control (breaks later tool paths). **Reject**: relying on Pi project-trust / `--no-extensions` CLI flags as the production API.
+
+### DQ6 — Minimal audit event-order contract (LOCKED)
+
+Owned event-bridge (inside `pi-kernel`) must record at least this sequence for AC-5:
+
+1. `agent_start`
+2. `tool_execution_start` (owned custom tool name only)
+3. `tool_execution_end`
+4. `agent_end`
+
+Plus: abort path (`abort()` → agent becomes idle; no further tool starts). Session id stable from `createSession` through dispose. Extra Pi events (`message_*`, `turn_*`, `queue_update`) may be forwarded but are not the AC-5 minimum. Exact owned type names = architecture.
+
+### DQ7 — Tooling (LOCKED)
+
+- **npm workspaces** (kit already npm; reject pnpm/bun for v1 — second lockfile / CI ubiquity).
+- **Node 22** (`>=22.19.0`).
+- **TypeScript** 5.x `tsc --noEmit`.
+- **Biome** for format + lint (one tool). Import restriction via Biome `noRestrictedImports` (or eslint `no-restricted-imports` if Biome cannot encode the Pi glob) — see DQ9.
+- Reject adding a Python test runner inside `standalone/`; kit pytest stays at repo root.
+
+### DQ8 — Contract-test strategy (LOCKED)
+
+- **Default CI: no credentials, no live provider.**
+- Unit: fake `AgentKernel` (no Pi).
+- Contract (live SDK, mock/no network): `SessionManager.inMemory()` + isolation loader + `noTools`/`tools` allowlist + placeholder `itsm_*` tool; assert `sessionId`, tool registry = custom-only, loader `getExtensions()`/`getAgentsFiles()` empty, `abort()`/`dispose()`.
+- Custom-tool **execution** + event order: prefer injected fake `Model`/`ModelRuntime` if SDK accepts it without network; else a `PI_SPIKE_LIVE=1` optional job (not required to PASS CI). Architecture picks the fake-model seam.
+- Matrix: GitHub Actions **Windows + Linux** for the no-network contract tests.
+
+### DQ9 — Import-boundary enforcement (LOCKED)
+
+Pi modules (`@earendil-works/pi-coding-agent`, `@earendil-works/pi-ai`, `@earendil-works/pi-*`) may be imported **only** from `standalone/packages/pi-kernel/**`.
+
+**Winner**: Biome/eslint `noRestrictedImports` on workspace packages except `pi-kernel` **plus** a contract test grep (fail-closed) for those strings outside `packages/pi-kernel`. dependency-cruiser optional later — not required for AC-2.
+
+### DQ10 — Spike go/no-go rubric (LOCKED)
+
+Evidence path (architecture-locked filename; seed): `standalone/docs/phase0-kernel-spike.md` (or sprint evidence). **Kernel subset of §32 Phase 0 items 1, 2, 3, 5 only.** Items 4, 6–10 stay later stories.
+
+| Item | GO if | NO-GO if |
+|---|---|---|
+| 1 Bootstrap | `standalone/` workspace + CI scripts exist; kit `files` unchanged | Pi folded into kit publish |
+| 2 Pin | lockfile records exact `@earendil-works/pi-coding-agent` + `pi-ai` versions | unpinned `latest` / major float |
+| 3 Adapter + fresh session | `AgentKernel.createSession` returns stable `sessionId`; no Pi imports outside pi-kernel | workflow imports Pi |
+| 5 Custom tool, built-ins off | only owned `itsm_*` in tool registry; abort works | any of `read`/`bash`/`edit`/`write` enabled in production factory |
+
+**GO** = all four pass contract tests. **NO-GO** = any fail. Working names `its-magic-agent` / `itsm` are code names — **do not lock public branding** (AC-6). No OS-sandbox claim (D8).
+
+### Approach verdict
+
+| Approach | Summary | Verdict |
+|---|---|---|
+| **A1** | In-tree `standalone/` npm workspace; real `packages/pi-kernel` AgentKernel; Isolation `DefaultResourceLoader` empty overrides; `noTools: "builtin"` + `tools` allowlist of owned custom tools; npm + Node 22 + Biome + tsc; no-network CI contract tests | **WINNER** |
+| A2 | New git repo for the agent | **Rejected** — Phase 0 overhead; KernelBridge locate harder |
+| A3 | Fold Pi into kit npm `its-magic` | **Rejected** — D1 |
+| A4 | DefaultResourceLoader + Pi project-trust only | **Rejected** — `AGENTS.md` still loads; not a sandbox |
+| A5 | `noTools: "builtin"` without empty resource loader | **Rejected** — extension tools remain |
+
+**Approach seed for `/architecture`**: **A1**. **Companion DEC: yes → DEC-0133** Required → Accepted in `/architecture` (durable hosting + AgentKernel + isolation defaults). `decision_gate=false`.
+
+### Architecture seeds preview (within SPRINT_MAX_TASKS=12)
+
+T-anch (`# US-0133` + DEC-0133), T-001 `standalone/` + kit `files` guard, T-002 pin 0.85.1, T-003 AgentKernel mapping, T-004 isolation loader + `PI_COMPAT_RESOURCES=off`, T-005 custom-tool factory, T-006 import-boundary lint+grep, T-007 contract tests, T-008 CI Windows/Linux, T-009 spike go/no-go evidence. (= 10 tasks)
+
+### Risks
+
+- **R1 (MEDIUM)**: Pi 0.85 → 0.86 SDK churn (`ResourceLoader` / `noTools`). Mitigation: exact pin + spike evidence.
+- **R2 (HIGH → MEDIUM)**: `AGENTS.md` / `~/.pi/agent/extensions` leak if loader omitted. Mitigation: DQ5 required in production factory; contract test with a planted `.pi/extensions` fixture.
+- **R3 (MEDIUM)**: fake-model seam missing → cannot prove tool-loop in CI. Mitigation: DQ8 optional live gate; registry assertions still required.
+- **R4 (LOW)**: OS-sandbox claim. Mitigation: D8; docs cite pi.dev/security.
+- **R5 (LOW)**: branding lock via npm name. Mitigation: AC-6; unpublished workspace name.
+- **R6 (LOW)**: later `files` whitelist drift publishes `standalone/`. Mitigation: T-001 guard.
+
+### Decision gate
+
+- **decision_gate=false** — DQ1–DQ10 LOCKED; winning approach **A1**; companion DEC **yes (DEC-0133)**.
+- **Status**: US-0133 remains **OPEN** (US-0045). **Next**: `/architecture` in fresh **tech-lead** subagent. Do not spawn architecture from this research chat.
+
+- **Delivery closure (2026-09-12T12:50:00Z, curator, `orchestrator_run_id=auto-20260912-us0133`)**: **`US-0133`** **DONE**; sprint **`S0137`** **released**; in-tree `standalone/` npm workspaces + `packages/pi-kernel` AgentKernel + empty loader + `noTools: "builtin"` + `itsm_ping` + pin 0.85.1 + 10/10 `test_us0133_*` delivered per **R-0121** / **A1** / **DEC-0133**; compose **BUG-0018** / **R-0120** (DONE preserved); portfolio **15 OPEN** stories (US-0134..US-0148), **0 OPEN** bugs.
+- **Freshness review (2026-09-12, curator refresh-context)**: R-0121 marked **delivered** (US-0133 DONE). R-0120 remains **delivered** compose base (not outdated). R-0119 intake entry remains **current** compose base. R-0118 / R-0117 / R-0116 / R-0115 remain **delivered** compose bases. No duplicate R-ids to merge. Unlinked prune deferred (no operator request).
+
+## R-0122 - US-0134 Existing kernel bridge and compatibility handshake research
+
+- **Date**: 2026-09-12
+- **Topic**: Close discovery DQ1–DQ10; pick winning KernelBridge locate + handshake + Python-validator consume approach (no `its-magic-kernel/` extract; no TS validator rewrite)
+- **Linked**: US-0134 (OPEN), R-0121 / DEC-0133 / `# US-0133` (DONE compose locate-path only), R-0120 (do not wipe), US-0125 / DEC-0125 (parallel OpenCode validator host — do not replace), DEC-0045 (`its_magic/.its-magic-version`), masterplan §§2.1/16.1–16.4/27.1/35 Kernel-gates/36 kernel-contract, DEC-0038, US-0045; sibling US-0135..US-0148 OUT OF SCOPE; BUG-0018 DONE not reopened
+- **Confidence**: high for locate markers, handshake codes, Python spawn, artifact map, and US-0125 compose (repo inventory + Node 22 child_process + npm semver prerelease docs); medium for exact `semver` pin (architecture locks package version)
+- **Status**: delivered
+- **Query**: DQ1–DQ10 from discovery D1–D10
+- **Producer consumed**: discovery `rp-auto-20260912-us0134-discovery-po-20260912T122800Z-US-0134` (`proof_hash` `2BA8441A2DCC0FB1E559A373160115B7DA44ACFA56A939761B65EFF3B98B3DE2`, ttl `2026-09-12T13:28:00Z`) — RUNTIME_PROOF_VALID MATCH at research issue time `2026-09-12T12:35:00Z`; sovereign-critic of discovery PASS (0 blocking; anti_slop_aggregate=10; findings `us0134dsc-*`); marker `tl-US0134-research-20260912T123500Z-fresh`
+- **EARLY_RESEARCH posture**: scratchpad `EARLY_RESEARCH=1` — web + Context7 `/nodejs/node` consulted
+- **ID policy**: highest existing research id was **R-0121**. This entry is **R-0122**. Do **not** wipe, renumber, or rewrite R-0120 or R-0121.
+- **Compose base**: discovery D1–D10 unchanged. Do not author US-0135+. Do not reopen US-0133 or BUG-0018. Do not extract `its-magic-kernel/`.
+
+### Web / docs / kit sources (2026-09-12)
+
+- https://github.com/npm/node-semver — prerelease `0.1.3-9` does **not** satisfy `>=0.1.3 <0.2.0` unless the range itself contains a `0.1.3-*` comparator **or** `includePrerelease: true`. Kit marker is a prerelease; range encoding must opt in.
+- https://nodejs.org/docs/latest-v22.x/api/child_process.html (Context7 `/nodejs/node`) — `spawn`/`spawnSync` `cwd`, `timeout`, `AbortSignal`, `windowsHide`, `shell: false`; capture stdout/stderr; timeout/abort is kill+error, not a distinct exit code.
+- https://peps.python.org/pep-0397/ — Windows `py -3` launcher is a parent process; killing only the launcher can leave the interpreter. Prefer resolved `python.exe`/`python3` after a probe; if `py -3` is used, treat timeout as validator crash evidence.
+- Kit: `its_magic/.its-magic-version` = `0.1.3-9` (DEC-0045 canonical marker; candidate not a contract schema).
+- Kit: `bin/postinstall.js` walks max **6** parents for `.cursor/scratchpad.md` **or** `its_magic/.its-magic-version` and spawns `python` (win32) / `python3` (posix) — **too weak** as KernelBridge locate (scratchpad-only is not a kernel) and too shallow from `standalone/apps/cli`.
+- Kit: US-0125 / DEC-0125 — OpenCode plugin subprocess to `intake_evidence_validate.py` + `bug_issue_validate.py`; raw Python reason codes; `OPENCODE_DRIVER_INVOKE_FAILED` for invoke failure. Parallel host path; do not reuse `OPENCODE_*`.
+- Kit: `scripts/uat_probe_lib.py` has `__main__` CLI; `/status-reconcile` is a curator command with **no** Python CLI.
+- `# US-0133` / DEC-0133: KernelBridge locate documented as parent walk; **not implemented**. `standalone/` workspaces already glob `packages/*`.
+- Masterplan §16.1 API, §16.2 four `KERNEL_*` codes, §16.3 runtime→kernel range, §16.4 extract deferred, §27.1 repo artifacts canonical (no SQLite lifecycle), §35 Kernel/gates PASS advances / FAIL blocks, §36 actual Python validators + invalid-version / validator-crash fixtures.
+
+### Critic NB closures (discovery `us0134dsc-*`, non-blocking → research locks)
+
+| Critic theme | Resolution in R-0122 |
+|---|---|
+| DQ1 locate ambiguity + DQ5 Win/Linux Python + DQ9 KERNEL_* + D8 crash fixtures (challenger) | **LOCKED DQ1 / DQ5 / DQ8 / DQ9** |
+| Research owns R-0122 manifest/range/inventory; architecture/execute own KernelBridge (architect) | **LOCKED**: this entry closes DQ1–DQ10 + Approach **A1**; architecture authors `# US-0134` + **DEC-0134** |
+| No extract / no SQLite / no US-0135+ / no research spawn from critic (subtractor) | **Held** |
+
+### DQ1 — Locate algorithm (LOCKED)
+
+**Winner**: walk-up from `process.cwd()` (and, if cwd is inside `standalone/`, also from the `standalone/` directory) until a **kernel root** is found or the filesystem root / **cap 16** is hit.
+
+A directory is a kernel root iff **all** of:
+
+1. `docs/product/backlog.md` exists (canonical artifact tree sentinel)
+2. `scripts/intake_evidence_validate.py` exists (shipped Python validator sentinel)
+3. `its_magic/.its-magic-version` exists (DEC-0045 version marker)
+
+**Explicit override**: `--kernel-root <abs>` (CLI/test). The path must still pass the three markers; failure → `KERNEL_NOT_FOUND` (not a silent accept).
+
+**Reject**: postinstall’s scratchpad-or-version walk (false-positive Cursor trees without validators). **Reject**: walk-from-`standalone/` only (installed consumers have no `standalone/`). **Reject**: filename-only inference (`*kernel*`).
+
+`locateMode`: `kit-dev` when `standalone/package.json` exists as a child of the kernel root; else `consumer`. Record in `getRuntimeInfo`-style locate result. Do not require `standalone/` for consumer locate.
+
+### DQ2 — Contract version / manifest SOT (LOCKED)
+
+| Method | Source |
+|---|---|
+| `getKernelVersion()` | `its_magic/.its-magic-version` (DEC-0045; trim; do not invent a second version file) |
+| `readContractManifest()` | `its_magic/kernel-contract.json` (new additive kit file — **not** inferred from filenames) |
+
+Manifest schema (architecture locks field names; research seed):
+
+```json
+{
+  "schema_version": 1,
+  "kernel_version": "0.1.3-9",
+  "validators": ["intake_evidence_validate", "bug_issue_validate", "..."],
+  "artifact_keys": ["vision", "backlog", "acceptance", "..."]
+}
+```
+
+Missing/malformed manifest after a successful locate → `KERNEL_CONTRACT_MISMATCH`. Do **not** synthesize a silent default from filenames. Execute ships the JSON into kit `its_magic/` + template so current `0.1.3-9` trees become in-range **with** a real manifest (installer copies it). `kernel_version` in the JSON must match the version file or → `KERNEL_CONTRACT_MISMATCH`.
+
+**Reject**: treating `.its-magic-version` as the whole contract. **Reject**: reading kit root `package.json` version as the handshake.
+
+### DQ3 — Runtime → kernel range encoding (LOCKED)
+
+Runtime (not US-0138 typed config, not scratchpad) declares the range in `standalone/packages/kernel-bridge/supported-kernel-range.json`:
+
+```json
+{
+  "minInclusive": "0.1.3-9",
+  "maxExclusive": "0.2.0",
+  "includePrerelease": true
+}
+```
+
+Compare with npm `semver.satisfies(version, '>=' + minInclusive + ' <' + maxExclusive, { includePrerelease: true })` inside `kernel-bridge` only. Kit `0.1.3-9` is a **prerelease**; without `includePrerelease` / an explicit `0.1.3-9` comparator, npm semver would treat it as unsupported.
+
+**Reject**: inferring range from kit `package.json` or Chocolatey nuspec. **Reject**: homemade prerelease compare (`-9` vs `-10`). **Reject**: putting the range in `RuntimeConfig` (US-0138).
+
+v1 pin: current marker `0.1.3-9` is **in range**. Architecture may tighten to an exact list if execute wants zero `semver` dep — default is the interval + `semver` on `kernel-bridge` only (not `pi-kernel`, not kit npm `its-magic`).
+
+### DQ4 — Named validator inventory v1 (LOCKED)
+
+`runValidator(name, args)` allowlist (unknown name → `KERNEL_VALIDATOR_MISSING`):
+
+| Name | Script |
+|---|---|
+| `intake_evidence_validate` | `scripts/intake_evidence_validate.py` |
+| `bug_issue_validate` | `scripts/bug_issue_validate.py` |
+| `pack_json_validate` | `scripts/pack_json_validate.py` |
+| `validate_closure_verification` | `scripts/validate_closure_verification.py` |
+| `ledger_validate` | `scripts/ledger_validate.py` |
+| `model_tier_validate` | `scripts/model_tier_validate.py` |
+| `uat-planner` | reserved wrapper → `scripts/uat_probe_lib.py` (existing `__main__`) |
+| `status-reconcile` | reserved wrapper → thin new `scripts/status_reconcile_validate.py` (existence/schema of status surfaces only; **no curator writes**) |
+
+This set covers §35 Kernel/gates + AC-5 memory surfaces without enumerating every kit script. Generic spawn is the contract; later stories add names via the manifest `validators[]` **intersect** this allowlist (manifest cannot enable unknown names).
+
+**Reject**: wrapping all 40+ `scripts/*.py`. **Reject**: TypeScript reimplementation of any named CLI.
+
+### DQ5 — Process invocation (LOCKED)
+
+- Interpreter discovery (first that probes `python -c "import sys; raise SystemExit(0 if sys.version_info[0]==3 else 1)"` with `shell: false`): `ITS_MAGIC_PYTHON` / `PYTHON` / `PYTHON_BIN` → win32 `py -3` then `python` then `python3` → posix `python3` then `python`.
+- `cwd` = kernel root. `windowsHide: true`. No `shell: true`.
+- Timeout default **60s** via `spawn` `timeout` + `AbortSignal.timeout` (Node 22). Capture stdout/stderr UTF-8 (`maxBuffer` 1 MiB).
+- Exit **0** → PASS (caller may advance). Exit **non-zero** → FAIL; capture first `[A-Z][A-Z0-9_]+` token from stderr as the **Python** reason (US-0125 compose: raw codes, no `OPENCODE_*` wrapper).
+- Cannot spawn interpreter / ENOENT on script → `KERNEL_VALIDATOR_MISSING`.
+- Timeout / signal / crash → **validator FAIL** with captured evidence (`VALIDATOR_TIMEOUT` / `VALIDATOR_CRASH` as evidence strings). These are **not** a fifth `KERNEL_*` handshake code (D5 stays four codes). D7 still blocks.
+
+**Reject**: copying postinstall’s `python` vs `python3` only. **Reject**: `OPENCODE_DRIVER_INVOKE_FAILED` on the standalone path.
+
+### DQ6 — `resolveArtifactPaths()` map (LOCKED)
+
+Canonical map from §2.1 (paths relative to kernel root):
+
+| Key | Path |
+|---|---|
+| `vision` | `docs/product/vision.md` |
+| `backlog` | `docs/product/backlog.md` |
+| `acceptance` | `docs/product/acceptance.md` |
+| `architecture` | `docs/engineering/architecture.md` |
+| `decisions_index` | `docs/engineering/decisions.md` |
+| `research` | `docs/engineering/research.md` |
+| `state` | `docs/engineering/state.md` |
+| `decisions_dir` | `decisions/` |
+| `sprints` | `sprints/` |
+| `handoffs` | `handoffs/` |
+| `release_queue` | `handoffs/release_queue.md` |
+| `release_notes` | `handoffs/release_notes.md` |
+| `traceability` | `docs/engineering/state.md` (hot traceability surface; archives under `docs/engineering/state-archive/`) |
+| `work_packs` | `work/` (optional; absent is not mismatch) |
+| `sovereign` | `docs/engineering/sovereign-memory/` (optional) |
+
+**Required** keys (missing file/dir after in-range handshake → `KERNEL_CONTRACT_MISMATCH`): vision, backlog, acceptance, architecture, decisions_index, research, state, decisions_dir, sprints, handoffs. Optional keys may be `null`. Pi session history is never a map entry (D6 / §27.1). No SQLite paths.
+
+### DQ7 — `runUatPlanner` / `runStatusReconcile` (LOCKED)
+
+Both are **required §16.1 methods** implemented as thin `runValidator` aliases:
+
+- `runUatPlanner(args)` → `runValidator('uat-planner', args)` → existing `scripts/uat_probe_lib.py` CLI. Does **not** invent a TypeScript UAT planner (US-0142 owns browser UAT).
+- `runStatusReconcile(args)` → `runValidator('status-reconcile', args)` → new thin Python **read-only** checker (backlog/acceptance/state/resume_brief exist and parse enough to prove the helper is real). Does **not** perform curator `/status-reconcile` writes (command stays human/agent-owned).
+
+**Reject**: no-op PASS (silent degrade). **Reject**: porting the curator command into TS.
+
+### DQ8 — Test strategy (LOCKED)
+
+- **Primary**: `standalone/tests/contract` `test_us0134_*` (`node:test`) spawning **real** Python validators against **fixture repos** (temp copies), not in-tree mutation of this kit’s version file.
+- Fixture classes: `supported` (in-range + manifest + PASS validator), `unsupported-version`, `contract-mismatch` (in-range, missing backlog or bad manifest), `validator-missing`, `validator-crash` / timeout (§36 chaos subset), `not-found` (empty walk).
+- Kit twin: `tests/us0134_contract_test.py` for locate-from-kit-root / files-omit (`kernel-bridge` stays out of kit `files`) — same pattern as US-0133.
+- CI: existing `standalone` GitHub Actions job Windows + Linux (extend; do not fold into kit `TEST_COMMAND`). No paid/model calls.
+- Unit tests may mock spawn for timeout mapping only; handshake + PASS/FAIL paths must hit real Python.
+
+### DQ9 — `KERNEL_VERSION_UNSUPPORTED` vs `KERNEL_CONTRACT_MISMATCH` (LOCKED)
+
+| Code | When |
+|---|---|
+| `KERNEL_NOT_FOUND` | Walk/`--kernel-root` does not satisfy the three locate markers |
+| `KERNEL_VERSION_UNSUPPORTED` | Kernel found; version **parses** as semver; **outside** declared range |
+| `KERNEL_VALIDATOR_MISSING` | In-range kernel; named script or Python interpreter missing; or `runValidator` name not in allowlist |
+| `KERNEL_CONTRACT_MISMATCH` | In-range kernel; version file empty/unparseable **or** manifest missing/malformed **or** `kernel_version` ≠ version file **or** required artifact path missing |
+
+Unparseable version is **mismatch** (a kernel is present; the contract cannot be read) — not `UNSUPPORTED` (that requires a comparable version outside the range). Validator semantic FAIL (exit ≠ 0) is **not** a `KERNEL_*` handshake code.
+
+### DQ10 — Compose US-0125 + US-0133 (LOCKED)
+
+- **US-0133**: KernelBridge lives in **new** `standalone/packages/kernel-bridge` (workspaces glob already includes `packages/*`). **No Pi imports** in `kernel-bridge`. Do not amend AgentKernel, pins, isolation loader, or `# US-0133`. Locate = parent walk as already documented.
+- **US-0125**: OpenCode markdown/plugin Python bridge stays the OpenCode host path. Standalone KernelBridge is **parallel**. Do not delete/rewrite `.opencode/` commands or plugin subprocess. Do not emit `OPENCODE_*`. Shared fact: Python CLIs remain SOT; raw Python reason codes on validator FAIL.
+- **DEC-0045**: version marker path unchanged.
+- **BUG-0018**: not reopened.
+
+### Approach verdict
+
+| Approach | Summary | Verdict |
+|---|---|---|
+| **A1** | `standalone/packages/kernel-bridge`; three-marker parent walk + `--kernel-root`; DEC-0045 version + `its_magic/kernel-contract.json`; runtime range JSON + semver `includePrerelease`; spawn real Python; four `KERNEL_*` handshake codes; thin uat/status wrappers; fixture contract tests Win+Linux | **WINNER** |
+| A2 | Extract `its-magic-kernel/` now | **Rejected** — D1 / §16.4 |
+| A3 | Reimplement validators in TypeScript | **Rejected** — D2 |
+| A4 | Infer compatibility from filenames / kit `package.json` only | **Rejected** — D4 / AC-2 |
+| A5 | Reuse OpenCode US-0125 plugin as the standalone bridge | **Rejected** — D9 parallel path |
+
+**Approach seed for `/architecture`**: **A1**. **Companion DEC: yes → DEC-0134** Required → Accepted in `/architecture` (durable KernelBridge API, locate, range, handshake codes, inventory). `decision_gate=false`.
+
+### Architecture seeds preview (within SPRINT_MAX_TASKS=12)
+
+T-anch (`# US-0134` + DEC-0134), T-001 locate + `--kernel-root`, T-002 version file + `kernel-contract.json` + range JSON, T-003 `KERNEL_*` handshake, T-004 Python discovery + spawn, T-005 allowlist `runValidator`, T-006 `resolveArtifactPaths`, T-007 uat/status wrappers, T-008 fixtures + `test_us0134_*` Win/Linux, T-009 compose US-0125/US-0133 docs + kit `files` omit-guard for `standalone/`. (= 10 tasks)
+
+### Risks
+
+- **R1 (MEDIUM)**: npm semver prerelease footgun (`0.1.3-9` vs `>=0.1.3`). Mitigation: DQ3 `includePrerelease: true` + contract test with unsupported `0.1.2` and supported `0.1.3-9`.
+- **R2 (MEDIUM)**: Windows `py -3` launcher vs interpreter kill on timeout. Mitigation: DQ5 probe to a real interpreter; crash fixture; captured `VALIDATOR_TIMEOUT`.
+- **R3 (MEDIUM)**: Missing `kernel-contract.json` on already-installed consumers until upgrade. Mitigation: installer copies the new file; upgrade recipe in runbook (architecture T-009); fail-closed mismatch not silent default.
+- **R4 (LOW)**: Thin `status_reconcile_validate.py` mistaken for curator writes. Mitigation: DQ7 read-only; tests assert no backlog mutation.
+- **R5 (LOW)**: Locate false-positive on incomplete trees. Mitigation: three-marker AND; scratchpad-only rejected.
+- **R6 (LOW)**: Pi import leak into `kernel-bridge`. Mitigation: existing US-0133 import-boundary grep extended to deny Pi in `kernel-bridge`.
+
+### Decision gate
+
+- **decision_gate=false** — DQ1–DQ10 LOCKED; winning approach **A1**; companion DEC **yes (DEC-0134)**.
+- **Status**: **delivered** (delivery closure trailer below; curator refresh **2026-09-12T14:05:00Z**).
+
+- **Delivery closure (2026-09-12T14:05:00Z, curator, `orchestrator_run_id=auto-20260912-us0134`)**: **`US-0134`** **DONE**; sprint **`S0138`** **released**; `@its-magic/kernel-bridge` three-marker locate + `--kernel-root` + DEC-0045 version + `its_magic/kernel-contract.json` + `supported-kernel-range.json` (`includePrerelease`) + four `KERNEL_*` codes + Python validator spawn SOT + 10/10 `test_us0134_*` delivered per **R-0122** / **A1** / **DEC-0134**; compose **US-0133** / **R-0121** / **US-0125** (DONE preserved); portfolio **14 OPEN** stories (US-0135..US-0148), **0 OPEN** bugs.
+- **Freshness review (2026-09-12, curator refresh-context US-0134)**: R-0122 marked **delivered** (US-0134 DONE). R-0121 / R-0120 remain **delivered** compose bases (not outdated). R-0119 intake entry remains **current** compose base. R-0118 / R-0117 / R-0116 / R-0115 remain **delivered** compose bases. No duplicate R-ids to merge. Unlinked prune deferred (no operator request).
+
+## R-0123 - BUG-0019 OpenCode `/auto` missing from slash list after plugin-only ownership (intake)
+
+- **Date**: 2026-09-12
+- **Topic**: After BUG-0018 A* removed colliding `.opencode/commands/auto.md`, OpenCode TUI slash palette no longer lists `/auto` while peer markdown commands remain; plugin `editor.add({ name: "auto", execute })` is still present
+- **Linked**: BUG-0019 (OPEN), BUG-0018 DONE (compose; do not reopen), R-0120 R1 / architecture `# BUG-0018` NB1 (listing residual now live-falsified), BUG-0015 DONE, BUG-0017 DONE, US-0124, US-0125, US-0069
+- **Confidence**: high for the live listing gap (operator screenshot 2026-09-12 + peers still listed + kit has no `auto.md` by design); medium for exact TUI registry vs plugin `command.list()` merge (docs do not state that plugin `add` appears in the markdown file scan)
+- **Status**: current (intake research; not a substitute for `/research`)
+- **Query**: After BUG-0018 plugin-only ownership, why does OpenCode hide `/auto` from the slash picker while other commands exist? How can `/auto` be listed **and** keep plugin `execute` → `runAutoLifecycle` without restoring markdown-wins STOP?
+- **Producer consumed**: `/intake bug` operator packet 2026-09-12T17:26:00Z (OpenCode TUI screenshot: typed `/auto`, no match; visible `/closure`, `/ask`, `/architecture`, `/verify-work`, `/review`, `/quick`)
+- **EARLY_RESEARCH posture**: scratchpad `EARLY_RESEARCH=1` — web + Context7 consulted at intake (not a substitute for `/research`)
+- **ID policy**: highest existing research id was **R-0122**. This entry is **R-0123**. Do **not** wipe, renumber, or rewrite R-0120 / R-0121 / R-0122.
+
+### Web / docs / code sources (2026-09-12)
+
+- https://opencode.ai/v2/docs/commands/ — **Only `.md` files are discovered** for markdown commands; markdown + JSON share one registry; later same-name replaces earlier; body is always the prompt template. JSON `commands` entries require a **`template`** (prompt), not a plugin `execute` hook.
+- https://opencode.ai/v2/docs/build/plugins/ — `ctx.command.list()`, `ctx.command.transform((editor) => editor.add({ name, description, execute }))`; CommandEditor **add-only** (`CommandDefinition.execute`). Plugin `add` is **not** documented as appearing in the markdown file scan.
+- Context7 `/anomalyco/opencode`: `GET /api/command` lists registered commands including markdown `.opencode/commands/*.md`. TUI slash palette is markdown/JSON discovery-shaped.
+- Internal: kit has **no** `.opencode/commands/auto.md` (active + template) after BUG-0018; plugin attach retained (`editor.add({ name: "auto", execute })` → `runAutoLifecycle`); **R-0120 DQ5** assumed plugin `name`+`description` lists `/auto`; **R-0120 R1 MEDIUM** residual now **live-falsified**.
+
+### Gap confirmation (intake)
+
+- BUG-0018 DONE shipped plugin-only `/auto` (delete colliding `auto.md`; upgrade prune). Collision/STOP fix remains correct — do **not** reopen BUG-0018.
+- Operator live proof: typing `/auto` in OpenCode slash palette yields **no match**. Peers that still have `.md` files are listed. Attach is present (not BUG-0015). Not CRLF-all-missing (not BUG-0017).
+- Architecture `# BUG-0018` NB1 / R-0120 R1 warned a host that lists **only** markdown would hide `/auto`. **No live OpenCode CI probe** was shipped. Operator screenshot is the live probe.
+
+### Alternatives (intake recommendation; discovery/architecture lock)
+
+| Option | Summary | Intake verdict |
+|---|---|---|
+| **A1** | Persist BUG-0019; discovery/research restore **invokable `/auto` in OpenCode TUI/picker** AND plugin `execute` → `runAutoLifecycle` (or documented `OPENCODE_*`) without restoring markdown-wins STOP-only `auto.md`. Candidates: JSON `commands.auto` if that shares the picker registry without owning execute; markdown that does not own execute (if research finds a non-colliding path); different plugin/TUI registration; live listing probe | **Recommended** |
+| A2 | Restore STOP-only `.opencode/commands/auto.md` | **Rejected** — recreates BUG-0018 |
+| A3 | Reopen BUG-0018 | **Rejected** — collision fix still correct; listing gap is new |
+| A4 | Tell operator to type a hidden plugin command | **Rejected** — picker shows no `/auto`; operator cannot use it |
+
+### Seeds for `/discovery` / `/research` (not locked here)
+
+- Does the TUI slash palette list **only** markdown + JSON commands (not plugin `editor.add`)?
+- Does `ctx.command.list()` include plugin-added commands, and does the TUI consume that list?
+- Can JSON `commands.auto` (`template`) coexist with plugin `execute`, or does same-name registry still markdown/JSON-win (recreate collision)?
+- How to keep plugin `execute` without markdown-wins STOP — listing surface vs execute owner split.
+- Tests: additive `test_bug0019_*` (static + mock-ctx listing/ownership); live OpenCode listing probe still out of CI unless architecture opts in. Do not restore STOP-only `auto.md` as a test fixture that reintroduces BUG-0018.
+
+### Decision gate
+
+- **decision_gate=false** for intake persistence. Exact TUI vs plugin listing merge remains a `/research` DQ.
+- **Status**: current. **Next**: `/discovery` for **BUG-0019**.
+
+## R-0124 - BUG-0019 OpenCode `/auto` slash listing vs plugin execute coexistence research
+
+- **Date**: 2026-09-12
+- **Topic**: Close discovery DQ1–DQ8; pick winning D5 axis so OpenCode TUI lists/invokes `/auto` **and** plugin `execute` → `runAutoLifecycle` (or documented `OPENCODE_*`) without restoring STOP-only `auto.md`
+- **Linked**: BUG-0019 (OPEN), R-0123 (compose intake; do not wipe), R-0120 (compose; DQ5 listing claim + R1 live-falsified — do not wipe/renumber), BUG-0018 DONE (do not reopen), BUG-0015 DONE, BUG-0017 DONE, US-0124, US-0125, US-0069, DEC-0124, DEC-0125
+- **Confidence**: high for three-registry split + rejected JSON/markdown listing (live v2 commands/plugins/CLI docs + Command.Info `template` required + operator screenshot); medium for exact TUI `run()` → server `runAutoLifecycle` client call (architecture owns invoke wiring)
+- **Status**: current (research complete; architecture next)
+- **Query**: DQ1–DQ8 from discovery D1–D10
+- **Producer consumed**: discovery `rp-auto-20260912-bug0019-discovery-po-20260912T174800Z-BUG-0019` (`proof_hash` `507087DABF2962119695939EA44F128729F382B4BA3AE69AEE3BF7E75DA65CD1`, ttl `2026-09-12T18:48:00Z`) — RUNTIME_PROOF_VALID MATCH at research issue time `2026-09-12T17:58:00Z`; sovereign-critic of discovery PASS (0 blocking; anti_slop_aggregate=9; `bug0019dsc-challenger-001` / `bug0019dsc-architect-002` / `bug0019dsc-subtractor-003`); marker `tl-BUG0019-research-20260912T175500Z-fresh`
+- **EARLY_RESEARCH posture**: scratchpad `EARLY_RESEARCH=1` — live OpenCode v2 docs + Context7 `/anomalyco/opencode` + `/websites/opencode_ai_plugins` consulted (compose R-0123; not a substitute)
+- **ID policy**: highest existing research id was **R-0123**. This entry is **R-0124**. Do **not** wipe, renumber, or rewrite R-0120 / R-0121 / R-0122 / R-0123. `ID_NAMESPACE_BOOTSTRAP=0` → continuation (no bootstrap).
+- **Compose base**: R-0123 (intake listing gap) + R-0120 (markdown-wins; Axis A plugin-only execute; DQ5 listing claim now live-falsified) + architecture `# BUG-0018` NB1 residual. Discovery D1–D10 unchanged.
+
+### Web / docs / code sources (2026-09-12)
+
+- https://opencode.ai/v2/docs/commands/ — **Only `.md` files are discovered** for markdown commands; JSON `commands` entries **require `template`**; markdown body is always the prompt template; markdown + JSON share **one registry**; later same-name replaces earlier; file reload updates `/name` without restart
+- https://opencode.ai/v2/docs/build/plugins/ — `ctx.command.list()`, `ctx.command.transform((editor) => editor.add({ name, description, execute }))`, `ctx.command.reload()`; `CommandEditor` / `CommandDraft` = **add-only**; `CommandDefinition` = `{ name, description?, execute }` (**no `template`**)
+- https://opencode.ai/v2/docs/build/plugins/cli/ — TUI/CLI plugins register **palette + slash** via `context.keymap.layer({ commands: [{ slash: { name }, run }] })`; `run` is a function, not a prompt template
+- https://opencode.ai/v2/docs/cli/plugins — project discovery: `.opencode/plugins/<name>/index.ts` + `tui.ts` (server and TUI entrypoints kept together); `cli.json` for CLI-only; TUI import `@opencode/plugin/tui`
+- Context7 `/anomalyco/opencode`: `GET /api/command` (`v2.command.list`) returns `Command.Info[]`; **`template` is required** on `Command.Info`; TUI keymap `slashName` / `slash: { name }` surfaces in the host slash/palette (separate from Command.Info)
+- Context7 `/websites/opencode_ai_plugins`: plugin event `command.executed` exists; not a listing API
+- Command module analysis (host `src/command/index.ts` four-phase merge): built-in + Config/JSON + MCP prompts + Skills — **commands are templates, not executable functions**; TUI/API consume `Command.list()` for the markdown/JSON list. **Plugin `editor.add` is not a merge source.**
+- Internal: `.opencode/plugins/orchestrator.ts` attach retained (`command.transform` → `editor.add({ name: "auto", execute })` → `runAutoLifecycle`); **absent** `.opencode/commands/auto.md` + `template/.opencode/commands/auto.md`; `tests/bug0018_*` (6 markers; auto.md must stay absent); installer `prune_retired_opencode_auto_md`; architecture `# BUG-0018` NB1 (markdown-only listing residual — now live)
+
+### Gap confirmation (code + live)
+
+- BUG-0018 A* collision/STOP fix remains correct (do **not** reopen). Plugin execute is registered; colliding markdown is gone.
+- Operator screenshot 2026-09-12: TUI slash palette typing `/auto` → **no match**; peers with `.md` files listed. R-0120 DQ5 (“plugin name+description lists `/auto`”) and R1 / `# BUG-0018` NB1 are **live-falsified**.
+- Three registries, not one: (1) Command.Info markdown+JSON templates (`GET /api/command` / `ctx.command.list()` / TUI markdown slash rows); (2) server plugin `CommandDefinition.execute` via `editor.add`; (3) TUI keymap slash (`slash.name` / `slashName`) with `run()`. Registry (2) does **not** feed registry (1). Live 0018 already proved registry (1) **wins execute** over (2) when a same-name template exists.
+
+### Critic NB closures (discovery `bug0019dsc-*`, non-blocking → research locks)
+
+| Critic theme | Resolution in R-0124 |
+|---|---|
+| Proof MATCH + Status OPEN + auto.md absent (challenger-001) | **Consumed**: discovery hash MATCH before TTL; Status remains OPEN; auto.md stays absent (D4) |
+| Research owns D5 A–E + R-0124 wiring; architecture later owns `# BUG-0019` (architect-002) | **LOCKED**: this entry closes DQ1–DQ8 + Axis **E***; architecture authors additive `# BUG-0019` (no companion DEC) |
+| No DEC-0124/0125 rewrite; no DONE; no STOP-only restore; YAGNI (subtractor-003) | **Held**: additive `# BUG-0019` supersedes R-0120 DQ5 only; Status OPEN; D4/D8 held |
+
+### DQ1 — TUI slash palette list source (LOCKED)
+
+- **Markdown + JSON Command.Info are the TUI `/` rows for custom prompt-commands.** v2: “Only `.md` files are discovered”; JSON `commands` require `template`; they share one registry. `GET /api/command` / `Command.Info` **requires `template`**.
+- **Plugin `editor.add` is not a Command.Info source** (no `template` field; not in the four-phase command merge). Live screenshot: attach present, `/auto` not listed.
+- **TUI keymap `slash` / `slashName` is a separate listing surface** (CLI plugin docs). That is Axis E, not markdown/JSON and not `editor.add`.
+- **deferred_to_architecture**: none for list-source class.
+
+### DQ2 — `ctx.command.list()` vs TUI consume (LOCKED)
+
+- `ctx.command.list()` is the plugin wrapper around the same Command.Info list as `GET /api/command` (`v2.command.list`). Schema: `name` + **required `template`** + optional description/agent/model/subtask.
+- Plugin-added `CommandDefinition` (`name`+`description`+`execute`) does **not** match that schema. Docs do **not** say `list()` includes transform-added execute-only commands.
+- TUI markdown slash rows consume Command.list() / Command.Info. TUI keymap slash rows consume keymap layers. **TUI does not consume `editor.add` as a slash row** (live-falsified).
+- **Reject Axis C as a listing fix** (`command.list` → TUI will not surface plugin-only `/auto`).
+
+### DQ3 — JSON `commands.auto` + `template` vs plugin `execute` (LOCKED)
+
+- JSON `commands.auto` **must** ship a `template`. Same-name markdown/JSON later-replace-earlier. Host execution of Command.Info is `SessionPrompt.command()` → expand template → user prompt (**not** `CommandDefinition.execute`).
+- Live BUG-0018: markdown template owned `/auto` while plugin `execute` sat idle. JSON is the same registry class → **JSON-win (0018 class)**.
+- **Reject Axis A** unless plugin execute still wins — live docs + 0018 falsification say markdown/JSON win. No documented coexistence of JSON `template` + plugin `execute` for the same name.
+
+### DQ4 — List without prompt `template` (LOCKED)
+
+- Markdown: **no** — body is always the prompt template (empty/no-STOP still owns execute; D4 / BUG-0018 D4).
+- JSON: **no** — `template` required; no listing-only JSON command.
+- Plugin `CommandDefinition`: execute-only, **but not listed** in the TUI slash Command.Info list (DQ1/DQ2).
+- **Documented listing-without-template path**: TUI CLI plugin keymap `slash: { name: "auto" }` / `slashName: "auto"` with `run()` (not a prompt template). That is Axis E.
+
+### DQ5 — Fail-closed token (LOCKED)
+
+| Code | When |
+|---|---|
+| Existing `OPENCODE_PLUGIN_DISPATCH_ATTACH_UNSUPPORTED` | Server `command.transform` / `editor.add` unavailable (compose BUG-0015) |
+| Existing `OPENCODE_AUTO_MARKDOWN_COLLISION` | Leftover `.opencode/commands/auto.md` (compose BUG-0018; **do not reuse for listing-miss**) |
+| **Additive** `OPENCODE_AUTO_SLASH_LISTING_UNSUPPORTED` (architecture may bikeshed the exact string) | Plugin execute is registered **but** TUI keymap/slash listing surface cannot be registered (missing `keymap.layer` / `slash` API) — **must not** silent missing-command |
+| Optional sibling (architecture) `OPENCODE_AUTO_TUI_DISPATCH_UNSUPPORTED` | Listed `/auto` `run()` cannot reach `runAutoLifecycle` |
+
+- Silent missing `/auto` is the defect. Fail-closed must be operator-visible when listing or TUI dispatch cannot attach.
+- **deferred_to_architecture**: exact token string(s); whether TUI setup vs server setup emits the listing token.
+
+### DQ6 — Tests + companion DEC (LOCKED)
+
+**Winning architecture shape**: additive `# BUG-0019` **superseding R-0120 DQ5** (plugin `name`+`description` lists `/auto`) and `# BUG-0018` NB1 residual listing claim. **No companion DEC.** Do **not** rewrite DEC-0124 / DEC-0125 bodies (D8). Do **not** weaken `test_bug0018_*` (`auto.md` remains absent).
+
+**Additive `test_bug0019_*` (7 markers; no live OpenCode TUI probe unless architecture opts in)**:
+
+1. `test_bug0019_no_restored_opencode_auto_md` — active + template `.opencode/commands/auto.md` **absent** (compose 0018; Cursor `.cursor/commands/auto.md` + `.opencode/agents/auto.md` remain)
+2. `test_bug0019_plugin_editor_add_auto_execute_retained` — `command.transform` + `editor.add({ name: "auto" })` + `execute` / `runAutoLifecycle` still present (active + template)
+3. `test_bug0019_no_json_commands_auto_template` — no OpenCode JSON/JSONC `commands.auto` / `command.auto` with `template` (reject Axis A)
+4. `test_bug0019_tui_slash_auto_listing_surface` — TUI keymap `slash` / `slashName` `"auto"` present in discovered TUI entry (`tui.ts` or architecture-locked equivalent; active + template)
+5. `test_bug0019_tui_run_dispatches_lifecycle_not_template` — TUI `run` wires to `runAutoLifecycle` / client invoke of plugin execute; **not** a Command.Info prompt template / STOP body
+6. `test_bug0019_active_template_listing_parity` — listing surface + no-`auto.md` + no JSON template byte-parity (D10)
+7. `test_bug0019_upgrade_copies_listing_surface` — upgrade `--host opencode|both` **copies** the new TUI listing files onto already-pruned consumer trees; still **prunes** leftover `auto.md` (compose 0018); no general sweeper
+
+### DQ7 — Consumer upgrade path (LOCKED)
+
+- BUG-0018 already pruned consumer `auto.md`. Those trees **lack** a listing surface. Upgrade is **copy-only for files the template still ships** plus the targeted `auto.md` prune.
+- **Ship** the Axis E TUI listing files in `template/.opencode/plugins/...` (and `cli.json` only if architecture proves discovery needs it). `its-magic --mode upgrade --host opencode|both` **adds missing framework files** → already-pruned consumers receive the listing surface without restoring `auto.md`.
+- Active ↔ template parity (D10). Do **not** restore STOP-only `auto.md`. Do **not** prune `.cursor/commands/auto.md` or `.opencode/agents/auto.md`.
+- Runbook recipe (architecture/execute): (1) upgrade to the BUG-0019 release; (2) `upgrade --host opencode|both`; (3) restart OpenCode (not `--pure`); (4) slash palette lists `/auto` and invocation starts lifecycle or `OPENCODE_*`.
+
+### DQ8 — `command.reload()` / load order without markdown (LOCKED)
+
+- `ctx.command.reload()` “reapplies transforms” after external transform-state changes. It does **not** document that `editor.add` appears in the TUI slash picker without a markdown/JSON Command.Info row.
+- Live host already has `editor.add` registered post-0018 prune → picker still hides `/auto`. Reload cannot create a Command.Info `template` the schema requires.
+- Plugin load order (global→project) does not merge `CommandDefinition` into Command.list().
+- **Reject reload / later `editor.add` as a listing fix** (Axis C listing variant). TUI keymap `tui.ts` discovery is the listing load path (Axis E).
+
+### Fix-axis verdict (D5)
+
+| Axis | Summary | Verdict |
+|---|---|---|
+| A | JSON `commands.auto` + `template` if it lists without stealing execute | **Rejected** — `template` required; same registry as markdown; JSON-win = 0018 class; plugin execute does not win |
+| B | Markdown listing that does not own execute | **Rejected** — body is always the prompt template; empty/no-STOP still owns execute (D4). **Do not restore STOP-only `auto.md`.** |
+| C | `editor.add` consumed by picker via `command.list` → TUI | **Rejected as listing fix** — `list()` / `GET /api/command` is Command.Info (`template` required); plugin add is not a merge source; live-falsified |
+| D | Dedicated listing file / host config that is not a prompt template | **Rejected** for markdown/JSON (no listing-only field). TUI keymap **is** this class — counted as **E**, not a second JSON/md file |
+| **E** | TUI keymap `slash` / `slashName` shim; prove picker + execute coexistence | **WINNER (E\*)** — documented list-without-template; `run()` is not Command.Info; keep plugin `editor.add` as execute owner |
+
+**E\*** (named hybrid, still Axis E): **listing** = project-local TUI/CLI plugin keymap layer `slash: { name: "auto" }` (or `slashName: "auto"`) whose `run()` dispatches to existing `runAutoLifecycle` / plugin `execute`. **Execute owner** remains server `editor.add({ name: "auto", execute })` (BUG-0018 A* retained). Two registries → coexistence without markdown/JSON steal. Simplest approach that meets D1 without recreating 0018.
+
+**Approach seed for `/architecture`**: **E1 = Axis E\*** + 7 `test_bug0019_*` + additive `OPENCODE_AUTO_SLASH_LISTING_UNSUPPORTED` + upgrade copy of TUI listing files + `# BUG-0019` superseding R-0120 DQ5 / NB1. No companion DEC (`decision_gate=false`). **deferred_to_architecture**: exact plugin directory layout (`orchestrator.ts` stays vs sibling `.opencode/plugins/<pkg>/tui.ts`); whether `cli.json` is required besides auto-discovery; exact TUI `run()` → server lifecycle client call; exact reason-code token string.
+
+### Risks
+
+- **R1 (MEDIUM)**: TUI `run()` lives in the CLI process; server `runAutoLifecycle` lives in the server plugin. Mitigation: architecture must lock a documented `context.client` / session invoke; fail-closed `OPENCODE_AUTO_TUI_DISPATCH_UNSUPPORTED` if unreachable. Do not paper over with a JSON/md template.
+- **R2 (MEDIUM)**: local TUI discovery wants package layout (`index.ts` + `tui.ts`); current kit ships flat `orchestrator.ts`. Mitigation: additive sibling plugin dir (YAGNI on converting orchestrator.ts unless architecture proves one package is required).
+- **R3 (LOW)**: keymap `slash.name=auto` collides with a future Command.Info `/auto`. Mitigation: keep `auto.md` absent; forbid JSON `commands.auto`; 0018 prune remains.
+- **R4 (LOW)**: already-pruned consumers miss new TUI files if upgrade path is wrong. Mitigation: DQ7 copy-on-upgrade marker 7.
+- **R5 (LOW)**: Cursor `/auto` mistaken for this bug. Out of scope (D8); do not prune `.cursor/commands/auto.md`.
+
+### Decision gate
+
+- **decision_gate=false** — DQ1–DQ8 LOCKED; winning axis **E***; companion DEC **no**.
+- **Status**: **delivered** (delivery closure trailer below; curator refresh **2026-09-12T20:10:00Z**).
+
+- **Delivery closure (2026-09-12T20:10:00Z, curator, `orchestrator_run_id=auto-20260912-bug0019`)**: **`BUG-0019`** **DONE**; sprint **`S0139`** **released**; TUI keymap slash listing + retained plugin `editor.add` execute + `OPENCODE_AUTO_SLASH_LISTING_UNSUPPORTED` / `OPENCODE_AUTO_TUI_DISPATCH_UNSUPPORTED` + upgrade copy-on-add + 7/7 `test_bug0019_*` + bug0018 compose 6/6 delivered per **R-0124** / **E1 / E\*** / **`# BUG-0019`** (no companion DEC); compose **BUG-0018** / **R-0120** / **DEC-0124** / **DEC-0125** (DONE preserved); portfolio **14 OPEN** stories (US-0135..US-0148), **0 OPEN** bugs.
+- **Freshness review (2026-09-12, curator refresh-context BUG-0019)**: R-0124 marked **delivered** (BUG-0019 DONE). R-0123 intake entry remains **current** compose base (not outdated). R-0122 / R-0121 / R-0120 remain **delivered** compose bases (not wiped). R-0119 intake entry remains **current** compose base. No duplicate R-ids to merge. Unlinked prune deferred (no operator request).
+
+## R-0125 - BUG-0020 OpenCode Command.Info picker still has no `/auto` after BUG-0019 TUI keymap (intake)
+
+- **Date**: 2026-09-13
+- **Topic**: After BUG-0019 E* shipped TUI keymap `slash`/`slashName` `"auto"`, the operator's OpenCode slash UI (the same Command.Info list as `/ask`) still has no invokable auto mode in this kit repo
+- **Linked**: BUG-0020 (OPEN), BUG-0019 DONE (compose; do not reopen ACs), R-0124 (E* delivered; listing surface live-falsified — do not wipe), R-0123, R-0120, BUG-0018 DONE (do not restore STOP-only `auto.md`), BUG-0015 DONE, BUG-0017 DONE, US-0124, US-0125, US-0069
+- **Confidence**: high for three-registry split (Command.Info `/` list ≠ plugin `editor.add` execute ≠ TUI keymap slash); medium for whether a later OpenCode API lists execute-only commands in the desktop/GUI composer
+- **Status**: current (intake research; not a substitute for `/research`)
+- **Query**: Why is `/auto` still missing from the OpenCode picker the operator uses after E* files exist in this repo? What host-true listing+execute path (or equivalent non-slash start) starts `runAutoLifecycle` without restoring markdown/JSON Command.Info ownership?
+- **Producer consumed**: `/intake bug` operator packet 2026-09-12T22:35:00Z (quotes preserved; preferred `/auto`; any other host-true start accepted iff lifecycle or documented `OPENCODE_*`)
+- **EARLY_RESEARCH posture**: intake-time web fetch of current OpenCode v2 docs + internal spec `tui-plugins.md` (not a substitute for `/research`)
+- **ID policy**: highest existing research id was **R-0124**. This entry is **R-0125**. Do **not** wipe, renumber, or rewrite R-0120 / R-0121 / R-0122 / R-0123 / R-0124. `ID_NAMESPACE_BOOTSTRAP=0` → continuation (no bootstrap).
+
+### Web / docs / code sources (2026-09-13)
+
+- https://opencode.ai/v2/docs/commands/ — **Only `.md` files are discovered** for markdown commands; JSON `commands` entries **require `template`**; markdown body is always the prompt template; markdown + JSON share **one registry**; later same-name replaces earlier. **No list-without-template Command.Info.**
+- https://opencode.ai/v2/docs/build/plugins/ — `ctx.command.list()`, `ctx.command.transform((editor) => editor.add({ name, description, execute }))`; `CommandEditor` / `CommandDraft` = **add-only**; `CommandDefinition` = `{ name, description?, execute }` (**no `template`**). Plugin execute is not documented as a Command.Info source.
+- https://opencode.ai/v2/docs/build/plugins/cli/ — TUI/CLI plugins register **palette + slash** via `context.keymap.layer({ commands: [{ slash: { name }, run }] })`; `run` is a function, not a prompt template. This is the **CLI TUI** surface.
+- https://opencode.ai/v2/docs/cli/plugins — project discovery: `.opencode/plugins/<name>/index.ts` + `tui.ts` (server and TUI entrypoints kept together); `cli.json` for CLI-only plugins; TUI import `@opencode/plugin/tui`. Public docs claim **directory discovery**.
+- https://github.com/anomalyco/opencode/blob/dev/packages/opencode/specs/tui-plugins.md (raw `packages/opencode/specs/tui-plugins.md`) — **TUI plugin config lives in `tui.json`**. **There is no directory auto-discovery for TUI plugins; they must be listed in `tui.json`.** Local smoke config example: `.opencode/tui.json`. This **contradicts** the public CLI plugins directory-discovery claim for TUI load.
+- Internal: kit has `.opencode/plugins/its-magic-auto/{index.ts,tui.ts}` (BUG-0019 E*); **absent** `.opencode/tui.json` and `.opencode/cli.json`; **absent** `.opencode/commands/auto.md`; orchestrator `editor.add` retained; peers with `.md` files listed in the operator picker.
+
+### Gap confirmation (intake)
+
+- BUG-0019 DONE shipped E* (TUI keymap listing + retained plugin execute). Static `test_bug0019_*` passed on file/string presence. Operator still has **no `/auto`** in the slash UI they use **in this kit repo** (files already present — not unpublished-upgrade miss).
+- Three registries remain: (1) Command.Info markdown+JSON templates — this is the picker that lists `/ask`, `/quick`, `/architecture`, `/closure`; (2) server plugin `CommandDefinition.execute` via `editor.add`; (3) CLI TUI keymap slash. Registry (3) does **not** feed registry (1). Registry (2) does **not** feed registry (1).
+- `tui.json` listing vs directory discovery: public v2 CLI plugin docs say `.opencode/plugins/<name>/{index.ts,tui.ts}` is discovered; internal spec says TUI plugins **must** be listed in `tui.json` and there is **no directory auto-discovery**. Kit shipped **neither** `tui.json` nor `cli.json`.
+- Silent missing `/auto` with no reported `OPENCODE_AUTO_SLASH_LISTING_UNSUPPORTED` toast in the operator's desktop/GUI composer.
+
+### Alternatives (intake recommendation; discovery/architecture lock)
+
+| Option | Summary | Intake verdict |
+|---|---|---|
+| **1** | Persist BUG-0020; live-falsify E*; lock the **actual UI surface** (desktop Command.Info vs CLI TUI keymap); require a host-true listing+execute path **or** an equivalent non-slash start; **no** STOP-only `auto.md`; **no** JSON `commands.auto`+`template` unless research **proves** plugin execute still wins (0018 live-falsified that). Tests must not be file-existence-only | **Recommended** |
+| 2 | Restore STOP-only `.opencode/commands/auto.md` so `/auto` appears next to `/ask` | **Rejected** — recreates BUG-0018 |
+| 3 | Reopen BUG-0019 | **Rejected** — E* closed on static tests; this is a new live-falsification |
+| 4 | Tell operator to use Cursor only | **Rejected** — operator needs OpenCode auto mode |
+
+### Seeds for `/discovery` / `/research` (not locked here)
+
+- Confirm the operator picker is Command.Info (`GET /api/command` / markdown `.md`) vs CLI TUI keymap.
+- Does shipping `.opencode/tui.json` listing `its-magic-auto` make `/auto` appear in **desktop composer**, or only in CLI TUI?
+- Is there a documented desktop/GUI command-registration API that lists execute-only `/auto` without a `template`?
+- Equivalent non-slash start (palette, keymap, button) that still calls `runAutoLifecycle`.
+- Tests: additive `test_bug0020_*` must prove the **operator’s picker** would list/invoke `/auto` (or chosen equivalent) — not “files exist / slash string present”. Keep `test_bug0018_*`. Do not weaken `test_bug0019_*` except compose-only if architecture replaces E*.
+
+### Decision gate
+
+- **decision_gate=false** for intake persistence. Exact host-true listing+execute (or equivalent non-slash) path remains a `/research` DQ.
+- **Status**: current. **Next**: `/discovery` for **BUG-0020**.
+
+## R-0126 - BUG-0020 OpenCode desktop Command.Info picker cannot list execute-only `/auto` (research)
+
+- **Date**: 2026-09-12
+- **Topic**: Close discovery DQ1–DQ8; pick winning D5 axis so the operator can start its-magic auto on OpenCode from the surface they actually use (desktop/GUI Command.Info `/` next to `/ask`) **or** a documented equivalent, running plugin `execute` → `runAutoLifecycle` (or documented `OPENCODE_*`) without restoring STOP-only `auto.md` / JSON `commands.auto`+`template`
+- **Linked**: BUG-0020 (OPEN), R-0125 (compose intake; do not wipe), R-0124 (E* delivered; listing-surface claim live-falsified — do not wipe), R-0123, R-0120, BUG-0019 DONE (do not reopen ACs / S0139), BUG-0018 DONE (do not restore STOP-only `auto.md`), BUG-0015 DONE, BUG-0017 DONE, US-0124, US-0125, US-0069, DEC-0124, DEC-0125
+- **Confidence**: high for desktop slash merge (Command.Info + app builtins only), Command.Info `template` required, plugin `editor.add` not a merge source, TUI keymap/`tui.json` CLI-TUI-only; medium for exact desktop-visible fail-closed emission API (architecture owns wiring)
+- **Status**: current (research complete; architecture next)
+- **Query**: DQ1–DQ8 from discovery D1–D10
+- **Producer consumed**: discovery `rp-auto-20260913-bug0020-discovery-po-20260912T224500Z-BUG-0020` (`proof_hash` `935A9B7B69DBCBD3A07B4014322814A53C312D9A6A63415A0E6BCAB7FDF030F3`, ttl `2026-09-12T23:45:00Z`) — RUNTIME_PROOF_VALID MATCH at research issue time `2026-09-12T22:58:00Z`; sovereign-critic of discovery PASS (composer-2.5-fast; 0 blocking; anti_slop_aggregate=9; `bug0020dsc-challenger-001` / `bug0020dsc-architect-002` / `bug0020dsc-subtractor-003`); marker `tl-BUG0020-research-20260912T231000Z-fresh`
+- **EARLY_RESEARCH posture**: scratchpad `EARLY_RESEARCH=1` — live OpenCode v2 docs + GitHub `dev` source + Context7 `/anomalyco/opencode` + internal spec `tui-plugins.md` consulted (compose R-0125; not a substitute)
+- **ID policy**: highest existing research id was **R-0125**. This entry is **R-0126**. Do **not** wipe, renumber, or rewrite R-0120 / R-0121 / R-0122 / R-0123 / R-0124 / R-0125. `ID_NAMESPACE_BOOTSTRAP=0` → continuation (no bootstrap).
+- **Compose base**: R-0125 (intake Command.Info vs TUI keymap) + R-0124 (E* TUI keymap winner; picker claim now live-falsified) + architecture `# BUG-0019` E* (do not rewrite body). Discovery D1–D10 unchanged.
+
+### Web / docs / code sources (2026-09-12 live-fetch)
+
+- https://opencode.ai/v2/docs/commands/ — **Only `.md` files are discovered** for markdown commands; JSON `commands` entries **require `template`**; markdown body is always the prompt template; markdown + JSON share **one registry**; later same-name replaces earlier. **No list-without-template Command.Info.**
+- https://opencode.ai/v2/docs/build/plugins/ — `ctx.command.list()`, `ctx.command.transform((editor) => editor.add({ name, description, execute }))`; `CommandEditor` / `CommandDraft` = **add-only**; `CommandDefinition` = `{ name, description?, execute }` (**no `template`**). Plugin execute is not documented as a Command.Info source.
+- https://opencode.ai/v2/docs/build/plugins/cli/ — TUI/CLI plugins register **palette + slash** via `context.keymap.layer({ commands: [{ slash: { name }, run }] })`; `run` is a function, not a prompt template. This is the **CLI TUI** surface (OpenTUI). Slots (`session.composer.top`, `prompt.footer`) are TUI slots, not desktop composer.
+- https://opencode.ai/v2/docs/cli/plugins — project discovery: `.opencode/plugins/<name>/index.ts` + `tui.ts`; `cli.json` for CLI-only plugins. Public docs claim **directory discovery**.
+- https://opencode.ai/docs/plugins/ — v0-style hooks (`command.executed`, `tui.toast.show`); local `.opencode/plugins/` auto-load for **server** plugins. Not a desktop Command.Info listing API.
+- https://opencode.ai/docs/tui/ — TUI `/` built-ins; `tui.json` is TUI config (theme/keybinds/attention), **not** desktop composer config.
+- https://github.com/anomalyco/opencode/blob/dev/packages/opencode/specs/tui-plugins.md (raw) — **TUI plugin config lives in `tui.json`**. **There is no directory auto-discovery for TUI plugins; they must be listed in `tui.json`.** Local smoke: `.opencode/tui.json`. Contradicts public CLI directory-discovery for **TUI** load.
+- Context7 `/anomalyco/opencode`: `GET /api/command` (`v2.command.list`) returns `Command.Info[]`; TUI keymap `slashName` / `slash: { name }` is a **separate** palette (CLI TUI).
+- Live `dev` schema `packages/schema/src/command.ts` `Command.Info`: `{ name, template, description?, agent?, model?, subtask? }` — **`template` is required**; no `execute` field.
+- Live `dev` `packages/opencode/src/command/index.ts` Command.Service merge: built-in `init`/`review` + `cfg.command` (JSON/markdown templates) + MCP prompts + skills. **Plugin `editor.add` / `CommandDefinition.execute` is not a merge source.**
+- Live `dev` `packages/app/src/components/prompt-input.tsx` desktop composer: `slashCommands` = app-internal builtins (`command.options` with `slash`) **plus** `sync.data.command` mapped as `type: "custom"` / `source: command|mcp|skill`. Selecting custom inserts `/${name} ` as text (SessionPrompt command path). **Does not consume TUI keymap, `tui.json` plugins, or `editor.add`.**
+- GitHub #17048 (closed stale): GUI slash originally hard-coded; later comment — GUI uses `sdk.command.list()` → `sync.data.command` (Command.Info). Operator screenshot (peers `/ask` listed, `/auto` missing) matches Command.Info-only custom rows.
+- GitHub #18514: desktop **command palette** still closed over built-ins (`command.register`); not a kit plugin API.
+- GitHub #22255: plugin slash via `command.execute.before` **fails on Desktop** (“Failed to send command”) while TUI works — do not pick template+hook as the desktop execute path.
+- Internal kit: `.opencode/plugins/its-magic-auto/{index.ts,tui.ts}` present; `orchestrator.ts` `editor.add` retained; **absent** `.opencode/commands/auto.md`, `.opencode/tui.json`, `.opencode/cli.json` (and template twins).
+
+### Gap confirmation (code + live)
+
+- BUG-0019 DONE shipped E* (TUI keymap listing + retained plugin execute). Static `test_bug0019_*` passed on file/string presence. Operator desktop Command.Info picker in **this kit repo** still has **no `/auto`** (files already present — not unpublished-upgrade miss). **R-0124 E\*** “TUI keymap lists `/auto` in the operator picker” is **live-falsified**.
+- Three registries remain: (1) Command.Info markdown+JSON+MCP+skills — **this is the desktop `/` list that shows `/ask`**; (2) server plugin `CommandDefinition.execute` via `editor.add`; (3) CLI TUI keymap slash. Registry (3) does **not** feed registry (1). Registry (2) does **not** feed registry (1).
+- Desktop cannot list execute-only `/auto` without a Command.Info `template` (schema + merge + prompt-input). A same-name template is 0018-class (live-falsified markdown/JSON-win). `noReply`+hook still owns Command.Info execute and is desktop-dispatch-fragile (#22255).
+- Silent missing `/auto` in the operator picker with no desktop-visible `OPENCODE_*` is the defect. CLI TUI toast-only does not reach that UI.
+
+### Critic NB closures (discovery `bug0020dsc-*`, non-blocking → research locks)
+
+| Critic theme | Resolution in R-0126 |
+|---|---|
+| Proof MATCH + Status OPEN + wrong-surface listing (challenger-001) | **Consumed**: discovery hash MATCH before TTL `2026-09-12T23:45:00Z`; Status remains OPEN; auto.md stays absent (D4); gap class = Command.Info picker ≠ CLI TUI keymap |
+| Research owns D5 A–E + R-0126 wiring; architecture later owns `# BUG-0020` (architect-002) | **LOCKED**: this entry closes DQ1–DQ8 + Axis **E2**; architecture authors additive `# BUG-0020` (no companion DEC) |
+| No DEC-0124/0125 rewrite; no DONE; no STOP-only restore; no BUG-0019 reopen (subtractor-003) | **Held**: additive `# BUG-0020` supersedes R-0124 E* picker claim only; Status OPEN; D4/D8 held |
+
+### DQ1 — Desktop/GUI composer slash list source (LOCKED)
+
+- **Custom rows are Command.Info only.** Desktop `prompt-input.tsx` builds `slashCommands` from (a) app-internal builtins via `command.register("composer", …)` (`/model`, `/agent`, …) and (b) `sync.data.command` (`GET /api/command` / `v2.command.list` → `Command.Info[]` with `source: command|mcp|skill`). That is the picker that lists `/ask` (markdown `.md`).
+- **Plugin `editor.add` is not a Command.Info source** (no `template`; not in Command.Service merge). Live: attach present, `/auto` not listed.
+- **TUI keymap `slash` / `slashName` is CLI TUI only** (v2 CLI plugin docs + `tui-plugins.md`). Desktop does not consume keymap layers. Do **not** re-pick “keymap slash lists `/auto` in that picker” (E* live-falsified).
+- **deferred_to_architecture**: none for list-source class.
+
+### DQ2 — Does `tui.json` listing a plugin make `/auto` appear in desktop composer? (LOCKED)
+
+- **No — CLI TUI only.** Internal spec: TUI plugins **must** be listed in `tui.json`; no directory auto-discovery. Public CLI docs: directory discovery of `plugins/<name>/{index.ts,tui.ts}`. Neither path feeds desktop `sync.data.command`.
+- Axis **A** (`tui.json` as desktop listing fix) is **rejected**. Shipping `tui.json` may still be required for the **CLI TUI working-start** load path (DQ8) — that is **not** Axis A winning.
+- **deferred_to_architecture**: whether kit ships `.opencode/tui.json` listing `its-magic-auto` for CLI TUI load (research recommends **yes**, with runbook/tests that it does **not** feed desktop Command.Info). This **supersedes** `# BUG-0019` “do not ship `tui.json`” for the CLI working-start limb only; do **not** rewrite the `# BUG-0019` body.
+
+### DQ3 — Documented execute-only listing API for desktop? (LOCKED)
+
+- **No.** v2 `Command.Info` **requires `template`**. Command.Service merge has no plugin-execute phase. Desktop custom slash = Command.Info only. Issue #18514: desktop palette `command.register` is app-internal, not a kit plugin API. v2 CLI `keymap.layer` / slots are OpenTUI, not desktop.
+- E-style “new surface that **is** the Command.Info picker without stealing execute” **has no documented API**. Do not invent one.
+- **Reject Axis B.**
+
+### DQ4 — Equivalent non-slash visible start that still hits `runAutoLifecycle`? (LOCKED)
+
+- **No documented desktop plugin button/slot/palette-register API** for kits. TUI slots (`session.composer.top`, `prompt.footer`) and keymap palette are CLI TUI. Operator accepts a non-slash start **iff visible in their UI**; desktop has no such kit surface today.
+- Hidden “just type `/auto` anyway” — **reject** (intake). Cursor-only — **reject** (D8). Template+`noReply`+`command.execute.before` — **reject** (0018-class ownership + desktop dispatch historically broken, #22255).
+- **Working start that can still deliver auto mode (D1/D9 C-limb)**: keep `editor.add` → `runAutoLifecycle`; make CLI TUI `/auto` **actually load** (ship `.opencode/tui.json` listing `its-magic-auto` per internal spec) and document it as the **findable equivalent** (`opencode` TUI, not `--pure`). That is slash in a **different** UI — allowed by D1 “documented equivalent they can find without hidden commands”; it does **not** fill the desktop Command.Info picker.
+- **deferred_to_architecture**: exact `tui.json` shape; how desktop-visible fail-closed is emitted if the operator stays on desktop (must not be toast-only on CLI TUI).
+
+### DQ5 — Fail-closed tokens (LOCKED)
+
+| Code | When |
+|---|---|
+| Existing `OPENCODE_PLUGIN_DISPATCH_ATTACH_UNSUPPORTED` | Server `command.transform` / `editor.add` unavailable (compose BUG-0015) |
+| Existing `OPENCODE_AUTO_MARKDOWN_COLLISION` | Leftover `.opencode/commands/auto.md` (compose BUG-0018; **do not reuse for listing-miss**) |
+| Existing `OPENCODE_AUTO_SLASH_LISTING_UNSUPPORTED` | CLI TUI keymap/slash API missing (compose BUG-0019; **do not reuse as the desktop Command.Info silent-miss token**) |
+| Existing `OPENCODE_AUTO_TUI_DISPATCH_UNSUPPORTED` | Listed CLI TUI `/auto` `run()` cannot reach `runAutoLifecycle` |
+| **Additive** `OPENCODE_AUTO_DESKTOP_COMMAND_INFO_LISTING_UNSUPPORTED` (architecture may bikeshed the exact string) | Plugin execute is registered **but** the operator Command.Info picker cannot list/invoke execute-only `/auto` — **must not** silent missing-command on desktop |
+
+- Silent miss in the operator picker is the defect. Fail-closed must be **visible in that UI** (or a documented adjacent desktop notice). CLI TUI toast-only is insufficient. Fail-closed **plus** the C-limb working start (DQ4) — token-only is not delivery.
+- **deferred_to_architecture**: exact token string; desktop-visible emission (must not be a Command.Info `/auto` template row).
+
+### DQ6 — Tests + companion DEC (LOCKED)
+
+**Winning architecture shape**: additive `# BUG-0020` **superseding R-0124 E\*** “TUI keymap lists `/auto` in the operator picker”. **No companion DEC.** Do **not** rewrite DEC-0124 / DEC-0125 bodies (D8). Do **not** weaken `test_bug0018_*` (`auto.md` remains absent). Do **not** weaken `test_bug0019_*` except compose-only comments that E* is not the desktop picker fix.
+
+**Additive `test_bug0020_*` (8 markers; not file-existence-only; no live OpenCode desktop probe unless architecture opts in — default out of CI like 0018/0019)**:
+
+1. `test_bug0020_desktop_command_info_picker_contract` — encode the operator-picker merge: desktop custom slash = `sync.data.command` (`source` command\|mcp\|skill) + builtins; **not** TUI keymap, **not** `editor.add`, **not** `tui.json` plugin list. Fixture/quoted contract from `prompt-input.tsx` + Command.Service phases. Fail if kit docs/comments claim `tui.json` or keymap feeds that picker.
+2. `test_bug0020_no_command_info_auto_template` — no OpenCode `auto.md` and no JSON/JSONC `commands.auto` / `command.auto` with `template` (compose 0018/0019; picker must not steal execute)
+3. `test_bug0020_plugin_editor_add_auto_execute_retained` — `command.transform` + `editor.add({ name: "auto" })` + `execute` / `runAutoLifecycle` still present (active + template)
+4. `test_bug0020_desktop_listing_fail_closed_token` — additive desktop Command.Info listing token present and **not** reused as markdown-collision or TUI-keymap-missing; emission path is not “files exist”
+5. `test_bug0020_cli_tui_working_start_load_path` — if `tui.json` is shipped: plugin is listed **and** comments/runbook/tests assert CLI-TUI-only (Command.Service does not read `tui.json`). Not “file exists” alone.
+6. `test_bug0020_tui_run_still_dispatches_lifecycle` — compose 0019: TUI `run` → `runAutoLifecycle` / RPC; **not** SessionPrompt / Command.Info template (working-start limb)
+7. `test_bug0020_active_template_parity` — chosen surface (`tui.json` if shipped, token wiring, no-`auto.md`, no JSON template) byte-parity (D10)
+8. `test_bug0020_upgrade_copies_surface_still_prunes_auto_md` — upgrade `--host opencode|both` copies the new files onto already-E* trees; still **prunes** leftover `auto.md`; no general sweeper
+
+### DQ7 — Consumer upgrade path (LOCKED)
+
+- Already-E* trees have `its-magic-auto/{index.ts,tui.ts}` and still **lack** `tui.json` / desktop fail-closed. Upgrade is **copy-only for files the template still ships** plus the targeted `auto.md` prune.
+- **Ship** (if architecture locks tui.json) `template/.opencode/tui.json` listing `its-magic-auto` + fail-closed wiring. `its-magic --mode upgrade --host opencode|both` **adds missing framework files**.
+- Active ↔ template parity (D10). Do **not** restore STOP-only `auto.md`. Do **not** prune `.cursor/commands/auto.md` or `.opencode/agents/auto.md`. Do **not** reopen BUG-0019 ACs.
+- Runbook recipe (architecture/execute): (1) upgrade to the BUG-0020 release; (2) `upgrade --host opencode|both`; (3) restart OpenCode (not `--pure`); (4) desktop Command.Info still will not list execute-only `/auto` — operator sees documented `OPENCODE_*` (not silent) **and** can start auto from CLI TUI `/auto` (or later desktop-visible C if an API appears).
+
+### DQ8 — Public directory discovery vs `tui.json` — which load path does the operator host use? (LOCKED)
+
+- **Operator host = desktop Command.Info.** Load path for custom `/` rows = Command.Service (`GET /api/command`): builtins + config/markdown + MCP + skills. **Neither** public CLI directory discovery **nor** `tui.json` TUI plugin listing.
+- **CLI TUI** (working-start limb): public docs say directory discovery of `plugins/<name>/tui.ts`; internal `tui-plugins.md` says **must list in `tui.json`**, no directory auto-discovery. Kit shipped **neither** `tui.json` nor `cli.json`. Prefer the **stricter internal spec** for the working-start load path (list in `tui.json`).
+- `ctx.command.reload()` does not create a Command.Info `template`. **Reject reload as a desktop listing fix.**
+
+### Fix-axis verdict (D5)
+
+| Axis | Summary | Verdict |
+|---|---|---|
+| A | Ship `.opencode/tui.json` listing `its-magic-auto` **as the desktop composer listing fix** | **Rejected** — `tui.json` / TUI plugins are CLI-TUI-only; desktop slash is Command.Info (`prompt-input.tsx` + `GET /api/command`) |
+| B | Documented desktop/GUI API that lists execute-only `/auto` without `template` | **Rejected** — Command.Info `template` required; plugin `execute` not a merge source; no desktop plugin listing API |
+| C | Equivalent non-slash start **visible in the operator’s desktop UI** that calls `runAutoLifecycle` | **Rejected as sole winner** — no documented desktop plugin button/slot/palette API. **Retained as C-limb** working start = documented CLI TUI `/auto` after `tui.json` load (D1 equivalent, not hidden) |
+| D | Other host-true coexistence of Command.Info list + plugin execute for `/auto` | **Rejected** — JSON/markdown `template` = 0018 class (live-falsified); `noReply`+hook still owns Command.Info and is desktop-fragile |
+| **E** | Reject E* as listing fix for **this** picker; pick a new surface | **WINNER (E2)** |
+
+**E2** (named hybrid, still Axis E): **Reject** BUG-0019 E* as the listing fix for the operator Command.Info picker (additive `# BUG-0020` supersedes R-0124 E* picker claim; do not reopen S0139 ACs). **New surface is not Command.Info `/auto`** (no execute-only listing API). **Honest host-cannot-do-both** on desktop: cannot list execute-only `/auto` without stealing execute. **Must still deliver auto mode**: keep `editor.add` → `runAutoLifecycle`; **C-limb** documented CLI TUI `/auto` made loadable via `.opencode/tui.json`; **desktop-visible** fail-closed `OPENCODE_AUTO_DESKTOP_COMMAND_INFO_LISTING_UNSUPPORTED` (no silent miss). **No companion DEC.** Cite **R-0126**. Do **not** restore STOP-only `auto.md`. Do **not** JSON `commands.auto`+`template`.
+
+**Approach seed for `/architecture`**: **E2** + 8 `test_bug0020_*` + additive desktop listing token + optional/recommended `tui.json` for CLI TUI load (not desktop listing) + upgrade copy + `# BUG-0020` superseding R-0124 E* picker claim. No companion DEC (`decision_gate=false`). **deferred_to_architecture**: exact token string; desktop-visible emission; exact `tui.json` plugin spec; whether a future desktop UI API can replace the CLI TUI C-limb.
+
+### Risks
+
+- **R1 (HIGH)**: Operator stays on desktop and never opens CLI TUI — they see a fail-closed notice but may still want `/auto` next to `/ask`. Mitigation: D1 already allows a documented equivalent; runbook must be explicit; do not fake Command.Info listing. Host parser patch is out of scope (D8).
+- **R2 (MEDIUM)**: Desktop-visible fail-closed has no documented toast API from a server plugin. Mitigation: architecture must lock an emission that the desktop operator can actually see; CLI TUI toast-only is insufficient.
+- **R3 (MEDIUM)**: Internal `tui.json` vs public directory-discovery disagreement. Mitigation: ship `tui.json` for CLI TUI load; contract tests forbid claiming it feeds desktop.
+- **R4 (LOW)**: Someone restores `auto.md` / JSON template to fill the picker. Mitigation: D4/D6 + `test_bug0020_no_command_info_auto_template` + keep `test_bug0018_*`.
+- **R5 (LOW)**: Cursor `/auto` mistaken for this bug. Out of scope (D8); do not prune `.cursor/commands/auto.md`.
+
+### Decision gate
+
+- **decision_gate=false** — DQ1–DQ8 LOCKED; winning axis **E2**; companion DEC **no**.
+- **Status**: **delivered** (delivery closure trailer below; curator refresh **2026-09-13T01:50:00Z**).
+
+- **Delivery closure (2026-09-13T01:50:00Z, curator, `orchestrator_run_id=auto-20260913-bug0020`)**: **`BUG-0020`** **DONE**; sprint **`S0140`** **released**; `.opencode/tui.json` CLI TUI `/auto` load + retained plugin `editor.add` execute + `OPENCODE_AUTO_DESKTOP_COMMAND_INFO_LISTING_UNSUPPORTED` + upgrade copy-on-add + 8/8 `test_bug0020_*` + bug0019 7/7 + bug0018 6/6 delivered per **R-0126** / **E2** / **`# BUG-0020`** (no companion DEC); compose **BUG-0019** / **BUG-0018** / **R-0124** / **DEC-0124** / **DEC-0125** (DONE preserved); portfolio **14 OPEN** stories (US-0135..US-0148), **0 OPEN** bugs; explicit bug-target segment terminal — orchestrator STOP (do **not** drain-advance to US-0135).
+- **Freshness review (2026-09-13, curator refresh-context BUG-0020)**: R-0126 marked **delivered** (BUG-0020 DONE). R-0125 intake entry remains **current** compose base (superseded by R-0126 for architecture; not outdated). R-0124 / R-0123 / R-0122 / R-0121 / R-0120 remain **delivered** compose bases (not wiped). No duplicate R-ids to merge. Unlinked prune deferred (no operator request).
+
+## R-0127 - US-0135 Standalone authentication and model routing research
+
+- **Date**: 2026-09-13
+- **Topic**: Close discovery DQ1–DQ10; pick winning owned credential store + Pi-adapter + 6-step ModelRouter approach (no `# US-0135` / DEC-0135 this phase)
+- **Linked**: US-0135 (OPEN), R-0121 / DEC-0133 / `# US-0133` (DONE compose inject seam + fake-model CI default; do not amend isolation loader / `noTools` / KernelBridge), R-0122 / DEC-0134 (DONE compose locate-only), R-0126 (do not wipe), US-0101/0102/DEC-0087 (port 5-step kit resolver to Pi `provider/model` slugs), US-0130/US-0104 (`CROSS_MODEL_DEGRADED_MODE`), DEC-0062 (`TOKEN_PROFILE` orthogonality), masterplan §§12/22.1/22.4/26.4/32 Phase 5/35 Provider-auth, DEC-0038, US-0045; sibling US-0136..US-0148 OUT OF SCOPE; BUG-0020 DONE not reopened
+- **Confidence**: high for SDK `ModelRuntime.create({ authPath, modelsPath, credentials })`, `login(providerId, type, interaction)`, `checkAuth`, `InMemoryCredentialStore`, thinkingLevel axis, built-in vs `models.json` vs `registerProvider` split (pi.dev latest + Context7 `/earendil-works/pi` + `/websites/pi_dev` + GitHub `earendil-works/pi` 0.85.x/main); medium for exact Windows ACL vs POSIX 0600 (architecture locks)
+- **Status**: current (research complete; architecture next)
+- **Query**: DQ1–DQ10 from discovery D1–D10
+- **Producer consumed**: discovery `rp-auto-20260913-us0135-discovery-po-20260913T033500Z-US-0135` (`proof_hash` `AEA63BCA1D98E9DF0C7D28E4035C0B72C569147799059E2958120462D6FDB0E8`, ttl `2026-09-13T04:35:00Z`) — RUNTIME_PROOF_VALID MATCH at research issue time `2026-09-13T03:55:00Z` (independent `compute_strict_proof_hash` positional args — byte-identical); sovereign-critic of discovery PASS (`rp-auto-20260913-us0135-sovereign-critic-techlead-20260913T034500Z-US-0135` / `C912E4684FBF7793859955FA6A6A7923DADC5CA2A2CE07601C636AFE850F736D`; 0 blocking; anti_slop_aggregate=10; `degraded_mode=false`; findings `us0135dsc-*`); marker `tl-US0135-research-20260913T035500Z-fresh`
+- **EARLY_RESEARCH posture**: scratchpad `EARLY_RESEARCH=1` — web + Context7 `resolve-library-id` + `query-docs` for `/earendil-works/pi` and `/websites/pi_dev` consulted
+- **ID policy**: highest existing research id was **R-0126**. This entry is **R-0127**. Do **not** wipe, renumber, or rewrite R-0120..R-0126. `ID_NAMESPACE_BOOTSTRAP=0` → continuation (no bootstrap).
+- **Compose base**: discovery D1–D10 unchanged. Do not author `# US-0135` or `decisions/DEC-0135.md`. Do not implement code. Do not tick AC. Do not reopen BUG-0020. Do not mutate US-0136+.
+
+### Web / docs / in-tree sources (2026-09-13)
+
+- https://pi.dev/docs/latest/providers — subscriptions (Codex / Claude Pro / Copilot / xAI / OpenRouter OAuth); API-key env map (Anthropic, OpenAI, Google, OpenRouter, DeepSeek, `kimi-coding`, `zai`/`zai-coding-cn`, `minimax`/`minimax-cn`, `qwen-token-plan*`); default `~/.pi/agent/auth.json` **0600**; resolution `--api-key` > `auth.json` > env > `models.json` keys
+- https://pi.dev/docs/latest/models — `~/.pi/agent/models.json` for Ollama / LM Studio / vLLM / proxies; APIs `openai-completions` | `openai-responses` | `anthropic-messages` | `google-generative-ai`; `thinkingLevelMap` holes (`off|minimal|low|medium|high|xhigh|max`; `null` = unsupported)
+- https://pi.dev/docs/latest/sdk — `ModelRuntime.create({ authPath, modelsPath, credentials, allowModelNetwork })`; `InMemoryCredentialStore`; `checkAuth`; `login`/`logout`/`setRuntimeApiKey`; `CredentialSynchronizationError`; `createAgentSession({ model, modelRuntime, thinkingLevel })`; thinking levels `off|minimal|low|medium|high|xhigh|max`; `setRuntimeApiKey` is **not** persisted
+- https://pi.dev/docs/latest/custom-provider — `pi.registerProvider` for custom API / OAuth/SSO; `models.json` `"oauth": "radius"` without extensions; project `.pi/extensions` auto-discovery (DEC-0133 empty loader still forbids this path)
+- https://github.com/earendil-works/pi — `packages/coding-agent/src/core/model-runtime.ts` `login(providerId, type, interaction)`; `packages/ai/src/auth/oauth/openai-codex.ts` browser + device-code (`auth.openai.com/codex/device`)
+- Context7 `/earendil-works/pi` + `/websites/pi_dev` — same SDK/auth/custom-provider surface; Codex OAuth via `models.login('…', 'oauth', { prompt, notify })`
+- In-tree: `standalone/packages/pi-kernel` `createAgentSession({ model, modelRuntime, thinkingLevel: "off" })`; DEC-0133 §6 fake-model CI default; `KernelCreateSessionOptions.model` / `modelRuntime`; Biome `noRestrictedImports` Pi except `packages/pi-kernel`; CLI stub `standalone/apps/cli` types-only
+- Kit compose: DEC-0087 5-step (`MODEL_<PHASE>` > tier-phase > role catalog > `MODEL_TIER_DEFAULT` > Cursor alias); DEC-0104 / US-0130 critic pin + `CROSS_MODEL_DEGRADED_MODE`
+
+### Critic NB closures (discovery `us0135dsc-*`, non-blocking → research locks)
+
+| Critic theme | Resolution in R-0127 |
+|---|---|
+| Proof MATCH + Status OPEN + no auth-models code (challenger-001) | **Consumed**: discovery hash MATCH before TTL `2026-09-13T04:35:00Z`; Status remains OPEN; no implementation this phase |
+| Research owns DQ1–DQ10 + R-0127; architecture later owns `# US-0135` + DEC-0135 (architect-002) | **LOCKED**: this entry closes DQ1–DQ10 + Approach **A1**; architecture authors `# US-0135` + **DEC-0135** |
+| No US-0136+ / no DONE / no DEC-0135 file / no kernel isolation amend (subtractor-003) | **Held** |
+
+### DQ1 — Owned credential path (LOCKED)
+
+**Winner**: ship-path `ModelRuntime.create({ authPath, modelsPath })` against a **standalone-owned OS config directory**, never the project tree and never `~/.pi/agent` as the stable store.
+
+| OS | Directory (code-name `its-magic`; **AC-6: do not lock public branding**) | Files |
+|---|---|---|
+| Linux | `${XDG_CONFIG_HOME:-$HOME/.config}/its-magic/` | `auth.json`, `models.json`, `models-store.json` |
+| Windows | `%APPDATA%\its-magic\` | same |
+| macOS | `~/Library/Application Support/its-magic/` | same |
+
+- Mode **0600-class** on `auth.json` (Pi default behavior). POSIX: `chmod 0o600`. Windows: user-profile `%APPDATA%` is the v1 control (ACL hardening optional later).
+- Overrides: `--auth-path` / `ITSM_AUTH_PATH` (must stay outside the project; project-relative paths fail-closed `AUTH_PATH_IN_PROJECT`).
+- Tests: `InMemoryCredentialStore` via `ModelRuntime.create({ credentials })` — **no disk**.
+- Spike-only: Pi default `~/.pi/agent/auth.json` may be read by explicit `itsm auth migrate --from-pi` when dest is absent. **Never auto-copy. Never write tokens into the repo or `.env`.**
+- Isolation dirs from DEC-0133 remain empty runtime `agentDir` (not `~/.pi/agent`). Auth path is independent of session `agentDir`.
+
+**Reject**: `~/.pi/agent/auth.json` as the stable ship store (D1). **Reject**: project `.its-magic/` / `.env` credentials.
+
+### DQ2 — Codex OAuth programmatic login (LOCKED)
+
+Pin remains `@earendil-works/pi-coding-agent@0.85.1` / `@earendil-works/pi-ai@0.85.1` (DEC-0133).
+
+The production API is **not** one-arg `login("openai-codex")` and **not** Pi TUI `/login`. It is:
+
+```ts
+await modelRuntime.login(providerId, type, interaction)
+// providerId = "openai-codex"; type = "oauth" | "api_key"
+// interaction: AuthInteraction { prompt, notify, signal }
+```
+
+Codex flow (GitHub `openai-codex.ts`): `prompt({ type: "select" })` → **browser** (default; `notify({ type: "auth_url" })` + `manual_code` paste/loopback) or **device_code** (headless; `notify({ type: "device_code", verificationUri: "https://auth.openai.com/codex/device" })`).
+
+CLI `itsm auth login openai-codex` wraps those callbacks (print URL / device code; read paste). `CredentialSynchronizationError` → fail-closed (`AUTH_SYNC_FAILED` seed; architecture locks the token); **do not retry the credential mutation blindly**.
+
+**Reject**: driving interactive Pi `/login`. **Reject**: opening a browser from CI.
+
+### DQ3 — Provider matrix at 0.85.1 (LOCKED)
+
+Minimum AC-2 set **without** loading project `.pi/extensions` (DEC-0133 empty loader held):
+
+| Category | v1 ids | Mechanism |
+|---|---|---|
+| Codex OAuth | `openai-codex` | built-in OAuth |
+| API-key | `openai`, `anthropic`, `google`, `openrouter` | built-in API key (`auth.json` / env — **not** `.env` injection) |
+| Chinese | `deepseek`, `kimi-coding`, `zai` (+ `zai-coding-cn`), `minimax` (+ `minimax-cn`), `qwen-token-plan*` | built-in API key |
+| Local OpenAI-compatible | operator `ollama` / `lmstudio` / `vllm` | owned `models.json` (`api: "openai-completions"`) |
+| Custom corporate gateway | operator id | owned `models.json` (headers/`baseUrl`/`authHeader`) **or** runtime `registerProvider` for custom OAuth/SSO |
+
+Generic DashScope OpenAI-compatible (beyond Qwen token-plan) = `models.json`. Extra Moonshot baseUrl if `kimi-coding` is insufficient = `models.json`. Selecting a preferred vendor or proxying all traffic remains **out**.
+
+### DQ4 — Custom / Chinese / local / corporate vs empty loader (LOCKED)
+
+- Chinese built-ins in DQ3 do **not** need extensions.
+- Local + compatible corporate gateways: **owned** `modelsPath` (same config dir as auth), **not** project `~/.pi` / `.pi/extensions`.
+- Corporate OAuth/SSO that `models.json` cannot express: `ModelRuntime.registerProvider(...)` called from a **pi-kernel AuthRuntimeAdapter** reading runtime-owned config. **Not** `DefaultResourceLoader` extension discovery.
+- Empty isolation loader + `noTools: "builtin"` **unchanged**.
+
+**Reject**: enabling project Pi extensions to satisfy AC-2.
+
+### DQ5 — ModelRouter surface + 6-step precedence (LOCKED)
+
+Owned types live in `standalone/packages/auth-models` (no Pi imports). Provenance must be observable on every resolve:
+
+```text
+CLI argv `--model provider/model`
+  > phase-local catalog/config override
+  > role catalog `roles[<phase→role>]`
+  > critic overlay (critic resolve only)
+  > tier/catalog `tiers[cheap|balanced|strong]`
+  > runtime default (operator default slug, else first available; CI = fake-model)
+```
+
+Map from DEC-0087 5-step: kit step 1 `MODEL_<PHASE>` becomes standalone **phase-local** (step 2); new **CLI argv** is step 1; kit role catalog = step 3; critic pin (US-0130) is new step 4; kit tier default = step 5; Cursor alias step **dropped** (D3 — `fast`/`inherit` are not standalone runtime).
+
+Slug shape: actual Pi `provider/model`. Unknown slug → fail-closed (`MODEL_OVERRIDE_SLUG_UNKNOWN` / `MODEL_ROLE_SLUG_UNKNOWN` compose; architecture may keep `MODEL_*` for routing vs `AUTH_*` for credentials). Provenance fields (seed): `source`, `slug`, `provider`, `model`, `thinkingLevel`, `criticPin`, `degradedMode`, `thinkingClamped`.
+
+### DQ6 — Standalone catalog vs Cursor catalog (LOCKED)
+
+Thin **standalone** catalog JSON (gitignored local; schema_version + `tiers` + `roles` + optional `phases` + `critic` + per-role `thinking`). This story does **not** implement US-0138 `RuntimeConfig`.
+
+`.cursor/model-catalog.local.json` remains a Cursor-host mapping (US-0132). Standalone **must not** treat Cursor aliases as runtime slugs. Operator may copy names as input only after rewriting to Pi `provider/model`.
+
+**Reject**: migrating Cursor catalog as the SOT. **Reject**: full typed config here.
+
+### DQ7 — Thinking-level wiring (LOCKED)
+
+Pi session option `createAgentSession({ thinkingLevel })` is the wiring (session-scoped, not per-prompt). Levels: `off|minimal|low|medium|high|xhigh|max`. AgentKernel today hardcodes `"off"` — this story **injects** per-role/phase thinking via `KernelCreateSessionOptions.thinkingLevel` (owned string union; pi-kernel maps to SDK). Do **not** couple to `TOKEN_PROFILE` (DEC-0062).
+
+`thinkingLevelMap` holes: if requested level is `null`, clamp to nearest supported lower level and set `thinkingClamped=true` in provenance (or fail-closed `MODEL_THINKING_UNSUPPORTED` — architecture picks one; research default = **clamp + provenance**, not a hard stop). Always-thinking models (`off: null`) keep provider default + provenance `thinking_forced`.
+
+**Reject**: encoding thinking in the model slug. **Reject**: per-prompt thinking as v1 SOT.
+
+### DQ8 — Critic pin + degraded (LOCKED)
+
+Standalone analogue of `MODEL_SOVEREIGN-CRITIC` / catalog `roles.critic`: thin catalog `critic.model` (or CLI critic overlay) honored on critic resolve only (6-step step 4).
+
+Same normalized `provider/model` as producer → `degraded_mode=true` / **`CROSS_MODEL_DEGRADED_MODE`**. **Reuse that code** — do not invent `AUTH_CROSS_MODEL_*`. Not a hard stop. Not auto-next-slug. Never claim false cross-model independence. Compose US-0130 / US-0104; US-0144 owns critic **session spawn**.
+
+### DQ9 — `itsm models test` + CI (LOCKED)
+
+- Default `itsm models test <provider/model>`: `checkAuth` + catalog presence. **No paid completion.**
+- Optional `--live` paid completion is operator-opt-in; **never CI**.
+- Diagnostics: `{ provider, model, auth: configured|missing, health: ok|fail }` — **no tokens**, no Authorization/Cookie, no `.env` reads.
+- CI: DEC-0133 **fake-model default held**; `InMemoryCredentialStore`; `allowModelNetwork: false`.
+- Inventory (10 markers, Win+Linux `standalone/tests/contract` + kit twin as needed): `test_us0135_owned_auth_path_outside_project`, `test_us0135_inmemory_credential_store_no_disk`, `test_us0135_no_pi_imports_in_auth_models`, `test_us0135_model_router_six_step_precedence`, `test_us0135_thinking_orthogonal_to_slug_and_token_profile`, `test_us0135_critic_same_slug_degraded_mode`, `test_us0135_models_test_checkauth_no_token_logs`, `test_us0135_two_roles_different_providers_fake`, `test_us0135_oauth_refresh_not_in_prompt_audit_or_repo`, `test_us0135_fake_model_ci_default_held`.
+- Two-role different-provider fixture uses two fake/in-memory providers — **no paid calls**.
+- Cost/usage dashboards stay **US-0146**. Thin health collector is **not** required for `models test`.
+
+### DQ10 — OAuth refresh isolation (LOCKED)
+
+Refresh stays inside Pi `ModelRuntime` / `pi-ai` (`refreshToken` / stored OAuth). Tokens must never appear in `session.prompt` text, audit payloads, logs, or repo artifacts. Redact `Authorization` / `Cookie` / `sk-` / `access` / `refresh`. Never read `.env` (US-0137 owns tool deny). CI fake-model means **no live secrets**. Contract test spies prompt + audit JSON for token-shaped strings after a stubbed refresh.
+
+### Approach verdict
+
+| Approach | Summary | Verdict |
+|---|---|---|
+| **A1** | `standalone/packages/auth-models` (AuthService + ModelRouter + thin catalog + CLI handlers; **no Pi imports**); pi-kernel **AuthRuntimeAdapter** wraps `ModelRuntime.create({ authPath, modelsPath })` / `login` / `checkAuth` / `registerProvider`; owned OS credential dir; 6-step router + provenance; thinking inject independent of slug/`TOKEN_PROFILE`; critic pin + `CROSS_MODEL_DEGRADED_MODE`; `itsm auth` / `itsm models list` / `itsm models test`; fake-model CI default **held**; empty loader / `noTools` / KernelBridge **unamended** | **WINNER (A\*)** |
+| A2 | Stable store = `~/.pi/agent/auth.json` | **Rejected** — D1 spike-only |
+| A3 | Credentials in project / `.env` | **Rejected** — AC-1 / D7 / §26.4 |
+| A4 | Workflow/CLI import `@earendil-works/pi-*` | **Rejected** — R1 / DEC-0133 |
+| A5 | Fold AuthService into `pi-kernel` only (no `auth-models`) | **Rejected** — §30 / D8 |
+| A6 | Load project `.pi/extensions` for custom providers | **Rejected** — empty loader held |
+| A7 | Live paid CI for `models test` | **Rejected** — DEC-0133 fake-model |
+| A8 | Cursor `.cursor/model-catalog.local.json` as standalone runtime | **Rejected** — D3 / US-0132 host split |
+| A9 | Auto-next-slug on critic collision | **Rejected** — D5 |
+
+**Approach seed for `/architecture`**: **A1** (A\*). **Companion DEC: yes → DEC-0135** Required → Accepted in `/architecture` (durable AuthService/ModelRouter, owned store, 6-step chain, thinking axis, critic degraded). `decision_gate=false`.
+
+### Architecture seeds preview (within SPRINT_MAX_TASKS=12)
+
+T-anch (`# US-0135` + DEC-0135), T-001 `packages/auth-models` + Pi import-boundary grep, T-002 owned auth path + InMemory + 0600, T-003 pi-kernel AuthRuntimeAdapter (`login`/`checkAuth`/`authPath`; do not amend isolation/`noTools`/KernelBridge), T-004 provider matrix + owned `models.json`, T-005 ModelRouter 6-step + provenance, T-006 thinkingLevel inject, T-007 critic pin + `CROSS_MODEL_DEGRADED_MODE`, T-008 `itsm auth` / `models list` / `models test`, T-009 `test_us0135_*` Win+Linux fake-model CI. (= 10 tasks)
+
+### Risks
+
+- **R1 (MEDIUM)**: Pi 0.85.1 `login(providerId, type, interaction)` vs docs shorthand. Mitigation: wrap the three-arg SDK; contract-test the CLI adapter with fake `AuthInteraction`.
+- **R2 (MEDIUM)**: Windows ACL weaker than POSIX 0600. Mitigation: keep store under `%APPDATA%`; never project tree; architecture may add ACL later.
+- **R3 (MEDIUM)**: `setRuntimeApiKey` looks like `itsm auth set` but is not persisted. Mitigation: persist via `login(..., "api_key", …)` / CredentialStore; runtime key = one-run only.
+- **R4 (LOW)**: `thinkingLevelMap` holes surprise operators. Mitigation: DQ7 clamp + provenance.
+- **R5 (LOW)**: accidental dotenv / `.env` read. Mitigation: D7; no dotenv dependency; US-0137 owns tool deny.
+- **R6 (LOW)**: AuthRuntimeAdapter in pi-kernel mistaken for amending isolation. Mitigation: D8; tests assert empty loader + fake-model default still hold.
+
+### Decision gate
+
+- **decision_gate=false** — DQ1–DQ10 LOCKED; winning approach **A1** (A\*); companion DEC **yes (DEC-0135)**.
+- **Status**: **delivered** (US-0135 DONE @ refresh-context 2026-09-13T06:35:00Z).
+- **Delivery closure (2026-09-13T06:35:00Z, curator, `orchestrator_run_id=auto-20260913-us0135`)**: **`US-0135`** **DONE**; sprint **`S0141`** **released**; `@its-magic/auth-models` owned OS credential store + pi-kernel `AuthRuntimeAdapter` + 6-step ModelRouter + thinking clamp/provenance + critic `CROSS_MODEL_DEGRADED_MODE` + `itsm auth`/`models list`/`models test` + 10/10 `test_us0135_*` delivered per **R-0127** / **A1** / **DEC-0135**; compose **US-0133** / **US-0134** (DONE preserved); portfolio **13 OPEN** stories (US-0136..US-0148), **0 OPEN** bugs; orchestrator **`drain-advance`** → **US-0136** next.
+
+## R-0128 - US-0136 Fresh role sessions and runtime attestation research
+
+- **Date**: 2026-09-13
+- **Topic**: Close discovery DQ1–DQ10; pick winning SessionSupervisor + RoleCatalog + sidecar attestation + fail-closed isolation approach (no `# US-0136` / DEC-0136 this phase)
+- **Linked**: US-0136 (OPEN), R-0127 / DEC-0135 / US-0135 (DONE compose-only), R-0121 / DEC-0133 / US-0133 (DONE compose-only), R-0122 / DEC-0134 / US-0134 (DONE compose-only), DEC-0051 / US-0069, DEC-0029 / US-0048, DEC-0038 / US-0056, US-0023, US-0003, US-0106, US-0104; masterplan §§9/10/14.2/22.1/22.3/27.3/30/32 Phase 1/35 Isolation/R3/R4/R5/§41.4; sibling US-0137..US-0148 OUT OF SCOPE; BUG-0020 DONE not reopened
+- **Confidence**: high for Pi session APIs (`createAgentSession` + `SessionManager.inMemory|create|continueRecent|forkFrom` + `AgentSessionRuntime.newSession/fork` + `session.sessionId`/`dispose`) and package boundary; high for DEC-0051 matrix port + sidecar vs DEC-0038 envelope; medium for exact `kernel_process_instance` encoding (architecture may pin UUID+pid)
+- **Status**: current
+- **Query**: DQ1–DQ10 from discovery D1–D10
+- **Producer consumed**: discovery `rp-auto-20260913-us0136-discovery-po-20260913T065500Z-US-0136` (`proof_hash` `335B7AFFF3EAEEBCE096684A91D7B1F273962BC1A6E1F0F4A1EA7DB47F7263DE`, ttl `2026-09-13T07:55:00Z`) — RUNTIME_PROOF_VALID MATCH at research issue time `2026-09-13T07:15:00Z`; sovereign-critic of discovery PASS (`rp-auto-20260913-us0136-sovereign-critic-techlead-20260913T070500Z-US-0136` / `D9C65F4503D923737D009DF4EEB5383C8A57374A55EA8D01413ECB3C36087C1A`; 0 blocking; anti_slop_aggregate=10; degraded_mode=false); marker `tl-US0136-research-20260913T071500Z-fresh`
+- **EARLY_RESEARCH posture**: scratchpad `EARLY_RESEARCH=1` — web + Context7 `/earendil-works/pi` + `/websites/pi_dev` consulted for session/createSession/continueRecent/fork
+- **ID policy**: highest existing research id was **R-0127**. This entry is **R-0128**. Do **not** wipe, renumber, or rewrite R-0120..R-0127.
+- **Compose base**: discovery D1–D10 unchanged. Do not author `# US-0136` or `decisions/DEC-0136.md`. Do not reopen US-0135 or BUG-0020. Do not mutate US-0137+. Do not amend isolation loader, `noTools`, KernelBridge, or auth-models. Fake-model CI default **held**.
+
+### Web / docs / analog sources (2026-09-13)
+
+- https://pi.dev/docs/latest/sdk — `createAgentSession({ sessionManager })`; `AgentSession.sessionId` / `dispose`; `SessionManager.inMemory()` / `.create(cwd)` / `.continueRecent(cwd)` / `.open(path)`; **session replacement** (`newSession` / `switchSession` / `fork` / `importFromJsonl`) lives on **`AgentSessionRuntime`**, not `AgentSession`.
+- https://pi.dev/docs/latest/session-format — `SessionManager.create(cwd, sessionDir?, { id, parentSession })`; `continueRecent` continues most recent **or creates new**; `inMemory(cwd?, options?, entries?)` can restore prior messages; `forkFrom(sourcePath, targetCwd, …)` forks across projects; `newSession({ parentSession })` records parent in header; `getSessionId()` UUID.
+- Context7 `/earendil-works/pi` + `/websites/pi_dev` (2026-09-13): `createAgentSession` → `{ session }`; `SessionManager.inMemory()` no persistence; `continueRecent(process.cwd())` resumes last jsonl; `runtime.fork(entryId)` / `fork(entryId, { position: "at" })` clones transcript through an entry; `ctx.newSession({ parentSession, setup })` can **append prior-role messages** in `setup`; `dispose()` aborts + `cleanupSessionResources(sessionId)`.
+- GitHub `earendil-works/pi` `agent-session-runtime.ts`: `newSession({ parentSession })` + `fork(entryId)` replace the active session and rebuild context from the manager — **transcript carry-over by design**.
+- Compose (in-tree, do not amend): `standalone/packages/pi-kernel` production factory already uses `SessionManager.inMemory(dirs.cwd)` (no entries) + empty loader + `noTools: "builtin"` + `itsm_ping`; `KernelSession.{sessionId,run,steer,abort,dispose}`; **no** `continueRecent`/`fork`/`AgentSessionRuntime` on the owned surface.
+- Analogs (DQ seeds, **not adopted**): AWS AgentCore isolated `runtimeSessionId` / dedicated microVM (OS isolation = US-0141, not this story); AIP-46 spawn gate host-side **before tool injection**, deny-by-default, **role ≠ permission**; H33/cMCP SessionStart→ToolCall→SessionEnd hash DAG (sidecar spawn/start/end analog; no PQ signatures / H33-74 in v1).
+
+### Critic NB closures (discovery `us0136dsc-*`, non-blocking → research locks)
+
+| Critic theme | Resolution in R-0128 |
+|---|---|
+| Fail-closed edges named; Pi continueRecent/fork default-deny; crash orphan discard (challenger-001) | **LOCKED DQ2 / DQ6 / DQ9** |
+| `role-runtime` package; Supervisor→`AgentKernel.createSession`; sidecar vs DEC-0038; orchestrator scheduling-only (architect-002) | **LOCKED DQ1 / DQ4 / DQ5 / DQ7**; this entry closes DQ1–DQ10 + Approach **A1 (A\*)**; architecture authors `# US-0136` + **DEC-0136** |
+| No role-runtime code; no R-0128/DEC-0136/# US-0136 from critic; no US-0137+; no DONE (subtractor-003) | **Held** this research phase: R-0128 authored; still no `# US-0136` / `decisions/DEC-0136.md` / no code |
+
+### DQ1 — SessionSupervisor surface + package (LOCKED)
+
+- **Winner**: new `standalone/packages/role-runtime` (masterplan §30). npm name `@its-magic/role-runtime`, `private: true`, `version: 0.0.0`, `type: module`, `engines.node >=22.19.0`, export `./src/index.ts`. Hosts typed **RoleCatalog** + **SessionSupervisor** + sidecar attestation emitter.
+- **No Pi imports.** `package.json` must not depend on `@earendil-works/pi-*`. Extend US-0133/0134/0135 grep to deny Pi inside `role-runtime`. Do **not** add a Biome override.
+- Supervisor is constructed with an injected `AgentKernel` (owned `createSession` only). Type-only import from `@its-magic/pi-kernel` is allowed; do not import Pi modules. Workflow/CLI never calls `createAgentSession`.
+- **Session persistence**: production + CI use kernel's existing `SessionManager.inMemory(cwd)` (DEC-0133 `agentDir` isolation held — not `~/.pi/agent`, not the target project). Do **not** switch the production factory to `SessionManager.create` / `continueRecent` / `open` / `forkFrom`.
+- **Reject A2** (fold into `runtime-core`): package does not exist; §30 names `role-runtime`; US-0140 owns workflow/recovery in `runtime-core`.
+- **Reject A3** (Pi imports in `role-runtime`): R1 / DEC-0133.
+- **Reject A4** (persist jsonl + `continueRecent` as default): transcript reuse; AC-1 / R3 / R5.
+- Compose: do not amend isolation loader, `noTools: "builtin"`, KernelBridge, or auth-models. Fake-model inject seam **held**.
+
+### DQ2 — Versioned continuation allow-list (LOCKED)
+
+Default: **fresh `AgentKernel.createSession` per producer phase, review/critic phase, and every execute#N / QA#N rework iteration** (AC-1 / R3 / §9.1). Crash recovery always fresh (§27.3).
+
+**Allow-list (same KernelSession, same `sessionId`)**: explicitly versioned **same-phase** continuation only:
+
+```ts
+interface ContinuationContract {
+  schema_version: 1;
+  phase_id: string;
+  role_id: string;
+  kernel_session_id: string;
+  allowed_ops: ["run" | "steer"]; // owned KernelSession; Pi followUp queue not exposed
+}
+```
+
+- `run` / `steer` on the **current** phase session = yes (in-session follow-up; DEC-0133 already maps `steer`).
+- execute#N after QA, QA#N after execute, critic after producer, any **phase_id change** = **new** `createSession`.
+- Crash / restart / orphan = **deny** continuation; discard + spawn fresh.
+- Pi `SessionManager.continueRecent` / `forkFrom` / `open` / `inMemory(..., entries)` / `AgentSessionRuntime.fork` / `newSession({ parentSession })` = **default-deny** across phase boundaries. Do not add these to `AgentKernel` this story.
+- Missing/expired/mismatched contract, or `allowed_ops` including fork/resume = fail-closed `SESSION_CONTINUATION_DENIED`.
+- `parent_phase_session_id` on critic/review attestations is a **lineage pointer**, not a transcript import.
+
+### DQ3 — RoleCatalog schema (LOCKED)
+
+Thin typed JSON inside `role-runtime` (not US-0138 `RuntimeConfig`; not Cursor catalog SOT):
+
+- `schema_version: 1`
+- `phases[phase_id]`: `{ canonical_role, allowed_roles[], auto_role_key? }` — port **DEC-0051** matrix + `AUTO_ROLE_RESEARCH|PLAN_VERIFY|CLOSURE|REFRESH_CONTEXT` single-valued resolution (invalid → fail-closed, **no unrelated fallback**). Include `sovereign-critic` / `security-review` / `map-codebase` / `ask` as catalog rows with canonical roles (`tech-lead` critic, `security`, `scout`/`dev` read-only as architecture locks).
+- `roles[role_id]`: `{ objective, artifact_ownership[], mutability: "none"|"owned-artifacts"|"implementation", bounded_manifest_keys[] }` covering §10.1 (orchestrator, po, tech-lead, dev, qa, release, qe/closure, curator, security, critic, scout).
+- Bounded sovereign injection (US-0106): catalog names which `objective_function` / review-focus keys may enter the short role prompt (§10.2). **Not** the permission matrix (US-0137 PolicyEngine).
+- Unknown `phase_id` → `SESSION_UNKNOWN_PHASE`. Unknown / unresolved `role_id` → `SESSION_UNKNOWN_ROLE`. Wrong role vs catalog → reuse `PHASE_ROLE_MISMATCH`.
+- Role prompts stay short; orchestrator mutability = no project writes (R4).
+
+### DQ4 — Attestation spawn/start/end + hash (LOCKED)
+
+Runtime (not the model) emits three sidecar records per session: **spawn**, **start**, **end** (H33 analog SessionStart/End only — no PQ DAG in v1). Bound fields (masterplan §9.2):
+
+| Field | Source |
+|---|---|
+| `orchestrator_run_id` | scheduler |
+| `phase_id` / `role_id` | RoleCatalog resolve |
+| `kernel` | `"pi"` |
+| `kernel_session_id` | `KernelSession.sessionId` (`session.sessionId`) |
+| `kernel_process_instance` | supervisor boot UUID + `process.pid` (in-process Node; not OS sandbox) |
+| `model_id` | DEC-0135 ModelRouter provenance slug |
+| `context_pack_hash` | **stub** `sha256` of canonical empty/placeholder pack JSON until US-0139 |
+| `policy_hash` | **stub** `sha256` of RoleCatalog snapshot + spawn tool-allowlist until US-0137 |
+| `created_at` / `started_at` / `ended_at` | runtime clocks |
+| `parent_phase_session_id` | prior producer session id or `null` |
+| `fresh` | `true` iff new `createSession` and no continuation contract |
+| `attestation_event` | `spawn` \| `start` \| `end` |
+| `attestation_hash` | SHA-256 of canonical sorted-key JSON of the sidecar **without** this field |
+
+**Do not extend** `compute_strict_proof_hash` / DEC-0038 tuple. Kit envelope (`runtime_proof_id` / `proof_hash` / TTL) stays the isolation gate. Sidecar `attestation_hash` is a **separate** hash over kernel session facts.
+
+### DQ5 — Sidecar persistence (LOCKED)
+
+- **Repo artifacts remain canonical lifecycle memory** (§27.1). Do not write kernel session ids into backlog/acceptance/decisions.
+- **v1 store**: in-memory session registry + gitignored runtime-owned JSONL/JSON under the standalone OS config / temp run dir (not the project tree). SQLite operational store (§27.2) is **deferred** (no sqlite package this story; US-0140 may adopt).
+- Isolation evidence **required fields** (US-0048 / DEC-0029) + DEC-0038 envelope stay **byte-compatible**. Standalone kernel facts live under an additive `standalone_attestation` (or equivalent) object. Python validators **ignore unknown keys**.
+- Missing sidecar when standalone supervisor ran → `ATTESTATION_MISSING` (fail closed). Hash mismatch → `ATTESTATION_HASH_MISMATCH`. Stale kit proof → reuse `RUNTIME_PROOF_STALE` (do not invent a second TTL algorithm).
+
+### DQ6 — Fail-closed reason-code inventory (LOCKED)
+
+**Reuse** (do not fork semantics):
+
+- `PHASE_ROLE_MISMATCH`, `PHASE_ROLE_CAPABILITY_MISSING`
+- `RUNTIME_PROOF_MISSING`, `RUNTIME_PROOF_STALE`, `RUNTIME_PROOF_INVALID`
+- `PHASE_CONTEXT_ISOLATION_VIOLATION`
+- `AUTO_ORCHESTRATOR_PHASE_EXECUTION` (orchestrator performing phase-owned mutation)
+
+**New `SESSION_*` / `ATTESTATION_*`** (deterministic; architecture may freeze exact strings):
+
+- `SESSION_REUSED_ACROSS_PHASE` — same `kernel_session_id` observed on a new `phase_id`
+- `SESSION_CONTINUATION_DENIED` — missing/invalid continuation contract; fork/resume/crash
+- `SESSION_TRANSCRIPT_CARRYOVER` — prior-role messages / `fresh=false` without contract; detector = supervisor never passes `entries`/`parentSession`/`fork`; tests inject tainted restore and expect this code
+- `SESSION_UNKNOWN_PHASE` / `SESSION_UNKNOWN_ROLE`
+- `SESSION_ORCHESTRATOR_TOOLS_DENIED` — orchestrator spawn with mutation / write / unrestricted-shell tools
+- `ATTESTATION_MISSING` / `ATTESTATION_HASH_MISMATCH` / `ATTESTATION_KERNEL_SESSION_MISMATCH`
+
+Transcript detector does **not** parse Pi jsonl in workflow code. Enforcement is spawn-path: only `createSession` with empty in-memory manager; context pack stub contains artifacts/handoff hashes, never prior-role transcript (R5). US-0139 owns the real pack.
+
+Orchestrator mutation **before ToolBroker** (US-0137): spawn-time allowlist check. If `role_id === "orchestrator"` and tools contain write/bash/edit/`itsm_*` mutation names → `SESSION_ORCHESTRATOR_TOOLS_DENIED`. Actual phase writes by the scheduler → `AUTO_ORCHESTRATOR_PHASE_EXECUTION`.
+
+### DQ7 — Orchestrator scheduling-only (LOCKED)
+
+- **Winner**: **pure TypeScript scheduler** (no orchestrator Pi session in v1). Scheduling lives in upcoming `runtime-core` / CLI loop (US-0140 consumes SessionSupervisor); this story fail-closes capability at spawn.
+- If a future orchestrator-role Pi session exists: `customTools=[]`, `tools=[]`, `noTools: "builtin"` held — **zero** custom tools (not `itsm_ping`). Ping is not source-write but is still a session tool; D6 prefers no implementing session.
+- Proof without PolicyEngine: contract tests assert orchestrator spawn tool allowlist empty + attempting `write`/`bash`/`edit`/`itsm_*` mutation names fails `SESSION_ORCHESTRATOR_TOOLS_DENIED`; scheduler module must not import Pi.
+- **Reject A5** (orchestrator as read-only Pi session with `itsm_ping`): extra session, weaker R4, not required for AC-6.
+- AIP-46 analog: spawn gate is **host code before tool injection**; RoleCatalog declares intent, not permission (US-0137 remains the policy floor).
+
+### DQ8 — Critic / review sessions (LOCKED)
+
+- SessionSupervisor spawns a **fresh** session for sovereign-critic and role-behavior reviews (AC-1 / §22.1 / §22.3). Review never substitutes the producer role.
+- Attestation `parent_phase_session_id` = producer `kernel_session_id`; `fresh: true`; distinct `kernel_session_id`.
+- `model_id` from DEC-0135 critic overlay / pin; same slug → `CROSS_MODEL_DEGRADED_MODE` (compose US-0104 v2). This story does **not** author critic lens content (US-0144).
+- Dispose producer only after end attestation; critic must not `steer` the producer session.
+
+### DQ9 — Crash recovery + dispose (LOCKED)
+
+This story owns **session facts**, not next-phase reconstruction (US-0140):
+
+1. Track live handles in the supervisor registry (`kernel_session_id` → KernelSession).
+2. On restart / crash fixture: any handle without an `end` attestation is an **orphan** → `abort` + `dispose` + drop registry row; do not `continueRecent` / restore `entries`.
+3. Claimed-complete vs crashed: `end` attestation present **and** kit proof valid ⇒ complete; missing end / process death ⇒ crashed (not complete). Supervisor does not flip backlog Status.
+4. Next spawn is always `createSession` (fresh). No inherited old-role conversation (R5 / §27.3).
+5. `dispose()` must be called in tests (AC-7); after dispose, `sessionId` must not be reused for a later phase.
+
+### DQ10 — `test_us0136_*` Win+Linux fake-model inventory (LOCKED)
+
+Primary: `standalone/tests/contract` (`node:test`) Windows + Linux. Fake-model CI default **held**. No paid/model calls. Kit twin as needed for no-Pi-in-role-runtime / files-omit compose.
+
+1. `test_us0136_po_dev_distinct_session_ids`
+2. `test_us0136_execute_qa_cycle_new_ids`
+3. `test_us0136_critic_distinct_session`
+4. `test_us0136_crash_orphan_discard`
+5. `test_us0136_session_dispose`
+6. `test_us0136_reused_id_fail_closed`
+7. `test_us0136_role_mismatch_fail_closed`
+8. `test_us0136_transcript_carryover_fail_closed`
+9. `test_us0136_missing_stale_hash_attestation`
+10. `test_us0136_orchestrator_mutation_deny_and_no_pi_imports`
+
+Markers 6–10 cover reused ID, `PHASE_ROLE_MISMATCH`, carry-over, missing/stale/hash sidecar, orchestrator deny, and Pi-import grep.
+
+### Approach verdict
+
+| Approach | Summary | Verdict |
+|---|---|---|
+| **A1 (A\*)** | `standalone/packages/role-runtime` (no Pi); SessionSupervisor wraps injected `AgentKernel.createSession` (fresh inMemory); typed RoleCatalog (DEC-0051 + AUTO_ROLE_*); sidecar spawn/start/end attestations; DEC-0038 envelope unamended; TS orchestrator scheduler (no mutation tools); fail-closed SESSION_*/ATTESTATION_* + reused kit codes; fake-model CI / loader / `noTools` / KernelBridge / auth-models **held** | **WINNER** |
+| A2 | Fold RoleCatalog/Supervisor into `runtime-core` | **Rejected** — §30 / US-0140 |
+| A3 | Pi imports in `role-runtime` | **Rejected** — R1 / DEC-0133 |
+| A4 | Persist jsonl + `continueRecent`/`fork` as isolation mechanism | **Rejected** — AC-1 / R3 / R5; SDK fork copies transcript |
+| A5 | Orchestrator as read-only Pi session (`itsm_ping`) | **Rejected** — weaker R4; extra session |
+| A6 | Extend `compute_strict_proof_hash` with kernel fields | **Rejected** — AC-4 sidecar; DEC-0038 byte-compat |
+| A7 | SQLite operational store this story | **Rejected** — §27.2 later; no sqlite package |
+| A8 | Amend isolation loader / `noTools` / KernelBridge / auth-models | **Rejected** — D8 / D9 |
+| A9 | Live paid CI for isolation proofs | **Rejected** — DEC-0133 fake-model |
+
+**Can this be simpler?** Reusing Pi `continueRecent` looks smaller and fails AC-1. Folding into `pi-kernel` leaks RoleCatalog next to SDK imports. A1 (new package + wrap `createSession` + sidecar) is the simplest design that meets AC-1..AC-7.
+
+**Approach seed for `/architecture`**: **A1 (A\*)**. **Companion DEC: yes → DEC-0136** Required → Accepted in `/architecture`. `decision_gate=false`.
+
+### Architecture seeds preview (within SPRINT_MAX_TASKS=12)
+
+T-anch (`# US-0136` + DEC-0136), T-001 `packages/role-runtime` + Pi import-boundary grep, T-002 RoleCatalog + DEC-0051/`AUTO_ROLE_*`, T-003 SessionSupervisor fresh `createSession`, T-004 ContinuationContract same-phase `run`/`steer` only, T-005 sidecar spawn/start/end + `attestation_hash`, T-006 fail-closed SESSION_*/ATTESTATION_* + reused kit codes, T-007 TS orchestrator scheduler / spawn-time tool deny, T-008 critic/review fresh sessions + `parent_phase_session_id`, T-009 crash orphan discard + dispose, T-010 `test_us0136_*` Win+Linux fake-model. (= 11 tasks)
+
+### Risks
+
+- **R1 (MEDIUM)**: Pi 0.85.1 `AgentSessionRuntime.fork` / `continueRecent` accidentally wired later. Mitigation: do not add those methods to `AgentKernel`; grep + DQ2 deny tests.
+- **R2 (MEDIUM)**: `inMemory(..., entries)` restore used as “resume”. Mitigation: supervisor never passes entries; `SESSION_TRANSCRIPT_CARRYOVER` fixture.
+- **R3 (LOW)**: stub `context_pack_hash` / `policy_hash` mistaken for US-0139/US-0137 completeness. Mitigation: document stubs; US-0139/0137 replace hashes later without changing sidecar field names.
+- **R4 (LOW)**: `kernel_process_instance` pid recycle. Mitigation: boot UUID + pid.
+- **R5 (LOW)**: RoleCatalog confused with PolicyEngine. Mitigation: D2 / AIP-46 analog — role = intent; US-0137 = permission.
+- **R6 (LOW)**: amending DEC-0133 loader while adding supervisor options. Mitigation: D8; tests assert empty loader + fake-model default still hold.
+
+### Decision gate
+
+- **decision_gate=false** — DQ1–DQ10 LOCKED; winning approach **A1 (A\*)**; companion DEC **yes (DEC-0136)**.
+- **Status**: US-0136 remains **OPEN** (US-0045). **Next**: `/architecture` in fresh **tech-lead** subagent. Do not spawn architecture from this research chat.
+
+## R-0129 - US-0137 Owned tool broker, policy engine, and security boundary research
+
+- **Date**: 2026-09-13
+- **Topic**: Close discovery DQ1–DQ10; pick winning owned ToolBroker + PolicyEngine approach (no `# US-0137` / DEC-0137 this phase)
+- **Linked**: US-0137 (OPEN), R-0128 / DEC-0136 / US-0136 (DONE compose-only), R-0127 / DEC-0135 / US-0135 (DONE compose-only), R-0121 / DEC-0133 / US-0133 (DONE compose-only), R-0122 / DEC-0134 / US-0134 (DONE compose-only), DEC-0038 / US-0056, DEC-0029 / US-0048, US-0005; masterplan §§11/26/30/32 Phase 1/35 Permissions/36/R2/R4/R10; sibling US-0138..US-0148 OUT OF SCOPE (US-0141 Layer B sandbox OUT); BUG-0020 DONE not reopened
+- **Confidence**: high for Pi tool APIs (`createAgentSession` `customTools`/`defineTool`/`tools`/`excludeTools`/`noTools`; builtins `read`/`bash`/`edit`/`write`/`powershell`/`grep`/`find`/`ls`) and pi.dev security (no built-in sandbox; project trust ≠ sandbox); high for package split §30 + R1; medium for exact `policy_hash` snapshot JSON (architecture may pin field set)
+- **Status**: current
+- **Query**: DQ1–DQ10 from discovery D1–D10
+- **Producer consumed**: discovery `rp-auto-20260913-us0137-discovery-po-20260913T101500Z-US-0137` (`proof_hash` `4982C931EAF52F854E23C5D91C16D1C771256548A6DA94F9858785BB7CC639FB`, ttl `2026-09-13T11:15:00Z`) — RUNTIME_PROOF_VALID MATCH at research issue time `2026-09-13T10:35:00Z`; sovereign-critic of discovery PASS (`rp-auto-20260913-us0137-sovereign-critic-techlead-20260913T102500Z-US-0137` / `0B1CD0DCEBDAC9FA3BF16B464E997D1912B621C67AB4F6F6B665A48741D60B80`; 0 blocking; anti_slop_aggregate=10; degraded_mode=false); marker `tl-US0137-research-20260913T103500Z-fresh`
+- **EARLY_RESEARCH posture**: scratchpad `EARLY_RESEARCH=1` — web + Context7 `/earendil-works/pi` + `/websites/pi_dev` consulted for tools/`noTools`/`customTools`/`defineTool`/security
+- **ID policy**: highest existing research id was **R-0128**. This entry is **R-0129**. Do **not** wipe, renumber, or rewrite R-0120..R-0128.
+- **Compose base**: discovery D1–D10 unchanged. Do not author `# US-0137` or `decisions/DEC-0137.md`. Do not reopen US-0136 / US-0135 / BUG-0020. Do not mutate US-0138+. Do not amend isolation loader internals, `noTools: "builtin"`, KernelBridge, or auth-models. Fake-model CI default **held**. Role-runtime compose-only except spawn allowlist + real `policy_hash`.
+
+### Web / docs / analog sources (2026-09-13)
+
+- https://pi.dev/docs/latest/sdk — `createAgentSession({ customTools, tools, excludeTools, noTools })`; `defineTool({ name, label, description, parameters, execute })`; builtins `read`/`bash`/`edit`/`write`/`powershell`/`grep`/`find`/`ls` (defaults `read`/`bash`/`edit`/`write`). `tools: ["read","grep","find","ls"]` is a read-only *builtin* mode — **not** an owned catalog.
+- Context7 `/earendil-works/pi` + `/websites/pi_dev` (2026-09-13): `CreateAgentSessionFromServicesOptions` includes `tools?`, `excludeTools?`, `noTools?`, `customTools?: ToolDefinition[]`; custom tools combine with extension-registered tools; `DefaultResourceLoader` discovers `.pi/extensions` unless overridden; `--no-builtin-tools` / `noTools: "builtin"` keep builtins off while custom tools remain.
+- https://pi.dev/docs/latest/security — Pi runs with the starting user's OS permissions. **No built-in sandbox.** Project trust is an input-loading guard (`.pi/settings.json`, `.pi/extensions|skills|prompts|themes`, system-prompt files) and **does not** restrict what tools may do after a directory is opened. A partial in-process sandbox would be easy to misunderstand as a security boundary. Real isolation = OS / container / VM / micro-VM (US-0141).
+- Compose (in-tree, do not amend internals): `standalone/packages/pi-kernel` production factory `noTools: "builtin"` + `customTools: [itsmPingTool]` + empty loader (`extensionsOverride` → `[]`) + `SessionManager.inMemory`; `BUILTIN_MUTATION_TOOLS = ["read","bash","edit","write"]` (tests must also deny `powershell`/`grep`/`find`/`ls`); `KernelCreateSessionOptions` today has **no** tool-port; `getRegisteredToolNames` exists; DEC-0136 `stubPolicyHash({ catalog_schema_version:1, tools })`; `auth-models` `redactAudit` / `redactSecretShaped`; `role-runtime` `assertOrchestratorSchedulingOnly` treats any `itsm_*` as mutation at spawn.
+- Analogs (DQ seeds, **not adopted**): AWS Bedrock AgentCore Policy / Cedar (gateway default-deny + omit unreachable tools from list-tools); OPA/Rego; Cerbos; ToolHive MCP gateway; `@gotgenes/pi-permission-system` / `thurstonsand/pi-permissions` (ALLOW/ASK/DENY over Pi builtins — would re-expose raw Pi tools). Adopt the **pattern** (host-side gate before tool visibility/execution; default-deny; filter tools the LLM never sees) not the language/runtime.
+
+### Critic NB closures (discovery `us0137dsc-*`, non-blocking → research locks)
+
+| Critic theme | Resolution in R-0129 |
+|---|---|
+| Fail-closed edges named; raw Pi tools / path / shell exfil / secret deny / Layer B unavailable (challenger-001) | **LOCKED DQ2 / DQ4 / DQ5 / DQ6 / DQ7 / DQ9 / DQ10** |
+| `policy-engine` + `tool-broker` packages; ToolBroker→PolicyEngine ALLOW/ASK/DENY; RoleCatalog=intent vs PolicyEngine=permission; US-0141 Layer B deferred (architect-002) | **LOCKED DQ1 / DQ3 / DQ7 / DQ8**; this entry closes DQ1–DQ10 + Approach **A1 (A\*)**; architecture authors `# US-0137` + **DEC-0137** |
+| No policy-engine/tool-broker code; no R-0129/DEC-0137/# US-0137 from critic; no US-0141 sandbox; no DONE (subtractor-003) | **Held** this research phase: R-0129 authored; still no `# US-0137` / `decisions/DEC-0137.md` / no code |
+
+### DQ1 — Package split + kernel tool-port (LOCKED)
+
+- **Winner**: new `standalone/packages/policy-engine` + `standalone/packages/tool-broker` (masterplan §30). npm names `@its-magic/policy-engine` and `@its-magic/tool-broker`, `private: true`, `version: 0.0.0`, `type: module`, `engines.node >=22.19.0`, export `./src/index.ts`. Workspaces glob `packages/*` already covers them.
+- **No Pi imports.** Neither `package.json` may depend on `@earendil-works/pi-*`. Extend US-0133/0134/0135/0136 grep to deny Pi inside both packages. Type-only import from `@its-magic/pi-kernel` / `@its-magic/role-runtime` is allowed. Do **not** add a Biome override. Kit `files` continues to omit `standalone/` (DEC-0120).
+- **Thin kernel tool-port** (not `defineTool` in broker): additive owned-tool structs on `KernelCreateSessionOptions` (JSON-schema parameters + execute returning `{ content, details }`). **Only** `packages/pi-kernel` calls `defineTool` and passes `customTools` into `createAgentSession`. ToolBroker builds the owned-tool list; PolicyEngine is injected into every execute.
+- `itsm_ping` remains the kernel-contract placeholder (US-0133 compose tests / `getProductionFactorySpec` fallback). Production spawn via ToolBroker does **not** expose `itsm_ping` as a mutation path.
+- **Reject A2** (fold broker/engine into `pi-kernel`): R1; §30 names two packages; would park policy next to SDK imports.
+- **Reject A3** (fold into `role-runtime`): RoleCatalog = intent (DEC-0136 / AIP-46 analog); PolicyEngine = permission. Mixing reopens US-0136.
+- **Reject A4** (fold into `runtime-core`): package does not exist; US-0140 owns workflow.
+- Compose: do not amend isolation loader internals, `noTools: "builtin"`, KernelBridge, or auth-models. Fake-model inject seam **held**.
+
+### DQ2 — Per-role/phase `itsm_*` catalog (LOCKED)
+
+Production sessions receive **only** role/phase `itsm_*` names from ToolBroker. SessionSupervisor spawn allowlist = that name list (orchestrator remains `[]` per DEC-0136). `noTools: "builtin"` **held** — raw Pi `read`/`bash`/`edit`/`write`/`powershell`/`grep`/`find`/`ls` and any extension-registered non-`itsm_*` never reach a production session (AC-1 / R2).
+
+**Implemented this story** (file/shell/git + policy):
+
+- `itsm_read`, `itsm_edit`, `itsm_write`, `itsm_patch`, `itsm_shell`, `itsm_git`
+
+**Registered fail-closed stubs** (name visible only if the role catalog includes it; execute → deterministic DENY, no backend work):
+
+- `itsm_search` / `itsm_outline` / `itsm_symbol` / `itsm_references` / `itsm_callers` / `itsm_impact` → US-0139
+- `itsm_app_start` / `itsm_app_stop` / `itsm_app_logs` / `itsm_app_health` / `itsm_deploy` → US-0141
+- `itsm_browser` → US-0142
+- `itsm_test` / `itsm_validate` → stub unless classified as in-process build/test via `itsm_shell` policy (no AppRuntime)
+- `itsm_spawn_review` → stub (SessionSupervisor already owns critic spawn; US-0140 may wire later)
+
+Role subsets (architecture may freeze exact maps; floor):
+
+- orchestrator: **zero** tools (DEC-0136 `SESSION_ORCHESTRATOR_TOOLS_DENIED` held)
+- po / curator / release / qe-closure / qa: no production-source writes (DQ4)
+- scout / security / critic: read-oriented subset only
+- dev / tech-lead: implementation / owned-artifact writes per path matrix
+
+Do **not** ship the full §11.1 list as live backends this story.
+
+### DQ3 — Policy language (LOCKED)
+
+- **Winner**: owned TypeScript decision tables inside `policy-engine`. Default-deny. Result **ALLOW | ASK | DENY**. Tuple = role, phase, work item, sprint, worktree/cwd, path(s), command, execution backend, autonomy, permission mode, security class, operator approvals (AC-2 / §11.2).
+- `security_hard` cannot be relaxed by autonomy (R10). Thin autonomy/permission/security-class enums allowed here; US-0138 owns typed RuntimeConfig flags.
+- ASK persistence: process-local in-memory + optional gitignored runtime JSON under the standalone OS config / temp run dir (compose DEC-0136 attestation persist). **SQLite deferred** (§27.2).
+- **Reject A7** (Cedar / OPA/Rego / Cerbos / AgentCore Policy runtime): extra process or WASM; schema-from-MCP is the analog not the dependency; v1 tuple is TS-native and must stay grep-able in-tree. Names remain research seeds only.
+
+### DQ4 — Path ownership (LOCKED)
+
+Path ownership is **code**, not prompt (AC-3 / §11.3). PolicyEngine consumes RoleCatalog `artifact_ownership[]` **plus** a deterministic deny matrix. Canonicalize with `path.resolve` + `realpath` against the worktree root; compare with `path.relative`; reject escape (`..`, symlink-out, UNC `\\`, `/etc`, Windows `\\?\` / `\\.\`).
+
+Deny matrix (reason codes — architecture may freeze strings):
+
+| Actor | Forbidden | Code |
+|---|---|---|
+| PO | production source (`src/**`, `standalone/packages/**` except docs) | `POLICY_PO_PRODUCTION_WRITE` |
+| QA | silent production patch during independent QA | `POLICY_QA_SILENT_FIX` |
+| release | mark story DONE / closure writes | `POLICY_RELEASE_CLOSURE_WRITE` |
+| closure | modify release artifacts | `POLICY_CLOSURE_RELEASE_WRITE` |
+| orchestrator | phase-owned writes | compose `AUTO_ORCHESTRATOR_PHASE_EXECUTION` / `SESSION_ORCHESTRATOR_TOOLS_DENIED` |
+| curator | rewrite product intent (`docs/product/vision.md`, backlog ACs as intent) | `POLICY_CURATOR_INTENT_REWRITE` |
+
+Secret-file paths (`.env`, `.env.*`, `*.pem`, `credentials.json`, auth stores) → `POLICY_SECRET_PATH_DENIED` before any read content is materialized. Traversal → `POLICY_TRAVERSAL_DENIED`.
+
+### DQ5 — Shell classifier (LOCKED)
+
+Parse then classify (AC-4 / §11.4). **v1**: argv / PowerShell token split — **not** a full bash AST. Unparseable / command-substitution / nested shell → fail-closed `POLICY_SHELL_UNPARSEABLE`.
+
+Classes: `safe-read` | `build-test` | `local-process` | `package-install` | `git-mutation` | `destructive-fs` | `network-deploy` | `privileged`.
+
+Explicit deny / ASK inventory (fail-safe):
+
+- traversal: `..`, symlink escape, `/etc`, UNC
+- exfil: `curl`/`wget`/`Invoke-WebRequest` posting env; `printenv`/`Get-ChildItem env:`; `type .env`; `cat ~/.ssh`
+- privileged: `sudo`, `runas`, `Set-ExecutionPolicy Unrestricted`
+- destructive: `rm -rf`, `Remove-Item -Recurse`, `format`, `mkfs`
+- package: `npm publish`, `npm install -g` (ASK or DENY by autonomy)
+- git mutation: `push --force`, `reset --hard` (policy, not prompt)
+- Windows: `powershell`/`cmd` wrappers classified the same as argv
+
+Do **not** classify by asking the model.
+
+### DQ6 — Secret boundary (LOCKED)
+
+- Deny secret-file reads **before** bytes enter tool `content` (AC-5 / §26.4). Never inject `.env` into LLM context.
+- Compose US-0135 `redactAudit` / `redactSecretShaped` / `containsTokenShape` for logs, audit `details`, and evidence. Browser/header helper: redact `Authorization`/`Cookie` and token-shaped values in any network-shaped payload **without** implementing US-0142 runtime.
+- Config may reference secret **names** only (US-0138). This story does not read `.env`. Provider tokens never logged.
+- **Reject** expanding `redact.ts` into a second secret store.
+
+### DQ7 — Execution profiles ≠ sandbox (LOCKED)
+
+Typed enum (AC-6 / §26.3): `trusted-local` | `isolated-development` | `untrusted-repository`. PolicyEngine records the requested profile + backend handle. Missing Layer B backend → fail-closed `ISOLATION_BACKEND_UNAVAILABLE` (deterministic reason; no execution).
+
+**Layer A** = this story (semantic authorization). **Layer B** = US-0141 (local/Docker/WSL/SSH/micro-VM). Claiming a complete OS sandbox from in-process checks is **forbidden** (pi.dev/security; masterplan §26.1). In-process path/shell/secret checks are Layer A only.
+
+### DQ8 — Audit + real `policy_hash` (LOCKED)
+
+Every consequential action writes a compact row (AC-7 / §11.5): `run_id`, `phase_id`, `kernel_session_id`, `tool`, normalized action, policy decision, duration, result, `evidence_ref` — **no secret payload** (`redactAudit` on persist).
+
+- **v1 store**: in-memory + gitignored runtime JSON/JSONL under standalone OS config / temp run dir (compose DEC-0136). SQLite deferred.
+- **Real `policy_hash`**: SHA-256 of canonical sorted-key JSON `{ schema_version: 1, policy_snapshot, tool_allowlist }` (architecture may add RoleCatalog digest). Replace DEC-0136 `stubPolicyHash` **value source**; keep sidecar field name `policy_hash`. Python validators ignore unknown keys.
+- **Do not extend** `compute_strict_proof_hash` / DEC-0038 tuple.
+
+### DQ9 — Kernel compose + extension default-deny (LOCKED)
+
+- Bounded additive `KernelCreateSessionOptions.ownedTools` (DQ1). Production: `noTools: "builtin"` + `customTools` = defineTool-wrapped owned tools + `tools` = those `itsm_*` names. Empty isolation loader **held** (`createEmptyResourceLoader` internals unamended).
+- `PI_COMPAT_RESOURCES` trusted enablement **owned here remains default-off**. Even if `isolationMode=trusted`, project `.pi/extensions` cannot register tools (AC-8 / §26.5). Malicious fixture with `.pi/extensions` must yield `extensionCount=0` and no extra tool names.
+- Do **not** switch `cwd`/`agentDir` to the target project. Do **not** add `additionalExtensionPaths` / `extensionFactories` in production.
+- **Reject A5** (enable Pi raw tools / drop `noTools`): AC-1 / R2 / pi.dev builtins run as the user.
+- **Reject A12** (amend isolation loader internals / KernelBridge / auth-models): D9.
+
+### DQ10 — `test_us0137_*` Win+Linux fake-model inventory (LOCKED)
+
+Primary: `standalone/tests/contract` (`node:test`) Windows + Linux. Fake-model CI default **held**. No paid/model calls. Kit twin as needed for no-Pi-in-policy-engine/tool-broker + files-omit compose.
+
+1. `test_us0137_no_raw_pi_tools_in_production_session`
+2. `test_us0137_role_subset_itsm_tools`
+3. `test_us0137_po_src_deny`
+4. `test_us0137_qa_silent_fix_deny`
+5. `test_us0137_env_read_deny`
+6. `test_us0137_path_traversal_deny`
+7. `test_us0137_shell_exfil_deny`
+8. `test_us0137_browser_header_redaction`
+9. `test_us0137_isolation_backend_unavailable`
+10. `test_us0137_malicious_pi_extension_and_orchestrator_zero_tools`
+
+Markers cover AC-8 plus orchestrator still zero mutation tools (compose DEC-0136) and Pi-import grep.
+
+### Approach verdict
+
+| Approach | Summary | Verdict |
+|---|---|---|
+| **A1 (A\*)** | `standalone/packages/policy-engine` + `standalone/packages/tool-broker` (no Pi); thin kernel tool-port wraps `defineTool` only inside `pi-kernel`; production `itsm_*` via ToolBroker; `noTools: "builtin"` held; PolicyEngine ALLOW/ASK/DENY; path/shell/secret/audit; Layer A profiles + fail-closed missing Layer B; real `policy_hash`; fake-model CI / empty loader / KernelBridge / auth-models / role-runtime **held** (compose spawn allowlist + hash) | **WINNER** |
+| A2 | Fold broker/engine into `pi-kernel` | **Rejected** — R1 / §30 |
+| A3 | Fold into `role-runtime` | **Rejected** — intent vs permission; would amend US-0136 |
+| A4 | Fold into `runtime-core` | **Rejected** — §30 / US-0140 |
+| A5 | Pi raw tools / drop `noTools` | **Rejected** — AC-1 / R2 |
+| A6 | Claim OS sandbox from in-process checks | **Rejected** — pi.dev/security; US-0141 |
+| A7 | Adopt Cedar / OPA / Cerbos / AgentCore Policy | **Rejected** — analog only; extra runtime |
+| A8 | Extend `compute_strict_proof_hash` | **Rejected** — DEC-0038 byte-compat; sidecar `policy_hash` |
+| A9 | Amend US-0136 RoleCatalog as permission matrix | **Rejected** — D2 / DEC-0136 compose-only |
+| A10 | SQLite operational store this story | **Rejected** — §27.2 |
+| A11 | Live paid CI for security proofs | **Rejected** — DEC-0133 fake-model |
+| A12 | Amend isolation loader internals / KernelBridge / auth-models | **Rejected** — D9 |
+
+**Can this be simpler?** Exposing Pi `read`/`bash`/`edit`/`write` plus a permission wrapper looks smaller and fails AC-1 (raw tools reach the session; pi.dev says those tools run as the user). Folding into `pi-kernel` leaks policy next to SDK imports (R1). A1 (two named packages + kernel tool-port + `noTools` held) is the simplest design that meets AC-1..AC-8.
+
+**Approach seed for `/architecture`**: **A1 (A\*)**. **Companion DEC: yes → DEC-0137** Required → Accepted in `/architecture`. `decision_gate=false`.
+
+### Architecture seeds preview (within SPRINT_MAX_TASKS=12)
+
+T-anch (`# US-0137` + DEC-0137), T-001 `packages/policy-engine` + `packages/tool-broker` + Pi import-boundary grep, T-002 PolicyEngine tuple ALLOW/ASK/DENY + `security_hard`, T-003 path ownership deny matrix, T-004 shell parse/classify + traversal/exfil, T-005 secret deny + compose `redact.ts`, T-006 Layer A profiles + `ISOLATION_BACKEND_UNAVAILABLE`, T-007 compact audit + real `policy_hash`, T-008 kernel tool-port + `noTools`/`itsm_*` injection, T-009 per-role catalog + fail-closed stubs, T-010 `test_us0137_*` Win+Linux fake-model. (= 11 tasks)
+
+### Risks
+
+- **R1 (MEDIUM)**: `ownedTools` accidentally includes a builtin name (`read`/`bash`). Mitigation: broker name prefix `itsm_` only; DQ10 no-raw-Pi test; `noTools: "builtin"` held.
+- **R2 (MEDIUM)**: operators treat Layer A as a sandbox. Mitigation: DQ7 reason code + docs; US-0141 owns backends; tests for `ISOLATION_BACKEND_UNAVAILABLE`.
+- **R3 (LOW)**: ASK store lost on crash. Mitigation: fail-closed to DENY if approval missing; gitignored JSON optional; SQLite later.
+- **R4 (LOW)**: `stubPolicyHash` callers still hash tools-only. Mitigation: replace value source; keep field name; contract test snapshot mismatch.
+- **R5 (LOW)**: PowerShell vs bash classifier gaps. Mitigation: unparseable → DENY; dual inventory in DQ5; Win+Linux tests.
+- **R6 (LOW)**: trusted-resource enablement silently loads project extensions. Mitigation: default-off; empty loader internals unamended; malicious-extension fixture.
+
+### Decision gate
+
+- **decision_gate=false** — DQ1–DQ10 LOCKED; winning approach **A1 (A\*)**; companion DEC **yes (DEC-0137)**.
+- **Status**: US-0137 remains **OPEN** (US-0045). **Next**: `/architecture` in fresh **tech-lead** subagent. Do not spawn architecture from this research chat.
+
+## R-0130 - US-0138 Typed runtime configuration and legacy migration adapter research
+
+- **Date**: 2026-09-13
+- **Topic**: Close discovery DQ1–DQ10; pick winning typed `RuntimeConfig` + `LegacyScratchpadAdapter` approach (no `# US-0138` / DEC-0138 this phase)
+- **Linked**: US-0138 (OPEN), R-0129 / DEC-0137 / US-0137 (DONE compose-only), R-0128 / DEC-0136 / US-0136 (DONE compose-only), R-0127 / DEC-0135 / US-0135 (DONE compose-only; credentials OUT), R-0122 / DEC-0134 / US-0134 (DONE compose-only), R-0121 / DEC-0133 / US-0133 (DONE compose-only), R-0116 / DEC-0131 / US-0131 (DONE analog — do not rewrite `host_runtime_config_lib.py`), DEC-0119 / US-0119, DEC-0039, DEC-0055, R-0003, masterplan §§13/14.6/15/26.4/30 `packages/config`/32 Phase 1/R9/R10; sibling US-0139..US-0148 OUT OF SCOPE (US-0139 context, US-0140 workflow, US-0141 OS sandbox, US-0142 browser); BUG-0020 DONE not reopened
+- **Confidence**: high for package split §30 + R1 + US-0131 7-layer analog + cosmiconfig first-found-wins rejection + Zod parse-at-resolve fail-closed; medium for exact CLI argv names and unknown-scratchpad-key default (architecture may pin)
+- **Status**: current
+- **Query**: DQ1–DQ10 from discovery D1–D10
+- **Producer consumed**: discovery `rp-auto-20260913-us0138-discovery-po-20260913T133500Z-US-0138` (`proof_hash` `CD875B00729490356361F201D267184DF371645349B7006C08A010EF798E7F81`, ttl `2026-09-13T14:35:00Z`) — RUNTIME_PROOF_VALID MATCH at research issue time `2026-09-13T13:55:00Z`; sovereign-critic of discovery PASS (`rp-auto-20260913-us0138-sovereign-critic-techlead-20260913T134500Z-US-0138` / `892325B9BB90E8FACA19DD99989EB1970B2BA38046C855CD476A0AAD68874991`; 0 blocking; anti_slop_aggregate=10; degraded_mode=false); marker `tl-US0138-research-20260913T135500Z-fresh`
+- **EARLY_RESEARCH posture**: scratchpad `EARLY_RESEARCH=1` — cosmiconfig first-found-wins (no layered merge), Zod `parse`/`toJSONSchema` versioning, 12-factor config, zod-config layered adapters consulted as analogs (not adopted as SOT)
+- **ID policy**: highest existing research id was **R-0129**. This entry is **R-0130**. Do **not** wipe, renumber, or rewrite R-0120..R-0129.
+- **Compose base**: discovery D1–D10 unchanged. Do not author `# US-0138` or `decisions/DEC-0138.md`. Do not reopen US-0137 / US-0136 / US-0135 / BUG-0020. Do not mutate US-0139+. Do not amend isolation loader internals, `noTools: "builtin"`, KernelBridge, auth-models credential store, RoleCatalog/SessionSupervisor internals, or PolicyEngine/ToolBroker decision tables. Fake-model CI default **held**.
+
+### Web / docs / analog sources (2026-09-13)
+
+- https://github.com/cosmiconfig/cosmiconfig — `search()` **stops at the first configuration found** and does **not** merge layers. Reject as SOT for AC-2 (CLI > local > shared > legacy > defaults). Pattern seed only: explicit searchPlaces, never executable `.js`/`.ts` loaders.
+- https://zod.dev/json-schema — `z.toJSONSchema(schema, { target: "draft-2020-12" })`; runtime validation via `z.parse` (fail-closed) / `z.safeParse` (structured `CONFIG_*` mapping). Owned Zod schema is the TS SOT; JSON Schema is a derived artifact, not a second writer.
+- https://12factor.net/config — env/CLI for one-run and secrets; committed files hold non-secret names/handles only. Aligns with §26.4 and D4 (never `.env`; credentials stay US-0135).
+- https://github.com/alexmarqs/zod-config — deep-merge adapters analog. **Not adopted**: we need explicit per-key provenance and a documented 5-layer ladder, not opaque deep merge (null-overwrite warning in that library).
+- In-tree analog (compose, do not rewrite): `scripts/host_runtime_config_lib.py` `resolve_runtime_config` 7-layer kit/cursor interleave (R-0116 DQ6 / DEC-0131); reason codes `HOST_CONFIG_*`; `looks_like_secret`; JSONC strip; DEC-0039 local never-overwrite; `.its-magic/config{,.local,.example}.json`.
+- Compose (in-tree, do not amend internals): `standalone/packages/policy-engine/src/types.ts` `Autonomy`/`PermissionMode`/`SecurityClass`/`IsolationProfile`; `standalone/packages/auth-models/src/types.ts` `tokenProfile?` (orthogonal to thinking; credentials OUT); `standalone/packages/role-runtime/src/catalog.ts` RoleCatalog; US-0119 `AUTONOMY_PRESET=none|balanced|full` + `docs/engineering/autonomy-stop-matrix.md` (`security_hard` never softened).
+
+### Critic NB closures (discovery `us0138dsc-*`, non-blocking → research locks)
+
+| Critic theme | Resolution in R-0130 |
+|---|---|
+| Fail-closed edges named; precedence layers, secret reject, security_hard, legacy adapter (challenger-001) | **LOCKED DQ4 / DQ5 / DQ6 / DQ7 / DQ10** |
+| `packages/config` boundary; inject PolicyEngine/ModelRouter/SessionSupervisor; US-0131 analog compose-only; US-0139/0140 deferred (architect-002) | **LOCKED DQ1 / DQ8 / DQ9**; this entry closes DQ1–DQ10 + Approach **A1 (A\*)**; architecture authors `# US-0138` + **DEC-0138** |
+| No packages/config code; no R-0130/DEC-0138/# US-0138 from critic; no DONE (subtractor-003) | **Held** this research phase: R-0130 authored; still no `# US-0138` / `decisions/DEC-0138.md` / no code |
+
+### DQ1 — Package split + injection (LOCKED)
+
+- **Winner**: new `standalone/packages/config` (masterplan §30). npm name `@its-magic/config`, `private: true`, `version: 0.0.0`, `type: module`, `engines.node >=22.19.0`, export `./src/index.ts`. Workspaces glob `packages/*` already covers it.
+- **No Pi imports.** `package.json` must not depend on `@earendil-works/pi-*`. Extend US-0133..0137 grep to deny Pi inside `packages/config`. Type-only imports from `@its-magic/policy-engine` / `@its-magic/auth-models` / `@its-magic/role-runtime` are allowed for enum/flag types. Do **not** add a Biome override. Kit `files` continues to omit `standalone/` (DEC-0120).
+- **Surfaces**: `resolveRuntimeConfig(repoRoot, options) -> { config: RuntimeConfig, provenance: Record<string, Provenance>, diagnostics: string[], ok, fatal_code? }` plus `LegacyScratchpadAdapter.parse/map`. Consumers receive the **resolved object**, not the package internals.
+- **Injection**: CLI/workflow (US-0140 later) and current spawn sites pass typed flags into PolicyEngine (`autonomy`/`permission_mode`/`security_class`/`isolation_profile`), ModelRouter (`tokenProfile` name + thinking orthogonality — **not** credentials), SessionSupervisor (phase/role catalog keys). Those packages **do not** import config loaders.
+- **Reject A2** (fold into `runtime-core`): package does not exist; US-0140 owns workflow.
+- **Reject A3** (spawn Python `host_runtime_config_lib.py`): R9 requires standalone code-parsed TS; subprocess dual-runtime drift; D3 forbids rewriting the Python lib and also forbids making it the standalone engine.
+- Compose: do not amend isolation loader internals, `noTools: "builtin"`, KernelBridge, or auth-models credential store.
+
+### DQ2 — Schema language + versioning (LOCKED)
+
+- **Winner**: owned TypeScript types + **Zod** as the parse gate (`z.parse` / mapped `safeParse` → `CONFIG_*`). `schema_version` required int; v1 supported. Unknown/unsupported version → `CONFIG_SCHEMA_UNSUPPORTED`.
+- JSON Schema (`z.toJSONSchema`, draft-2020-12) is a **derived** operator/docs artifact, not a second writer.
+- **File format**: JSONC (compose kit `.its-magic/` — `//` and `/* */`). **Reject YAML** as SOT (dual parser; kit analog is JSONC). **Reject executable config** (`.js`/`.ts` cosmiconfig loaders) — fail-closed safety / R9.
+- **Reject A6** (TypeBox or ajv as SOT): extra schema dialect; Zod already infers `RuntimeConfig`.
+- **Reject A4** (cosmiconfig as resolver): first-found-wins cannot express AC-2 layered precedence.
+- Strict unknown **top-level** keys → `CONFIG_INVALID`. Nested `shared` unknown keys: diagnostic `CONFIG_UNKNOWN_KEY` (non-fatal unless `CONFIG_STRICT=1`; architecture default-off) so existing repos keep identity (AC-6).
+
+### DQ3 — File layout (LOCKED)
+
+Reuse the US-0131 **same files** (compose, not dual-SOT):
+
+| Layer (public 5) | Path | Notes |
+|---|---|---|
+| CLI one-run | argv / `ITSM_RUNTIME_<KEY>` | Highest; architecture pins exact flags (`--delivery-mode`, `--token-profile`, `--autonomy-preset`, `--work-kind`, optional `--runtime-override KEY=VAL`) |
+| Local project | `.its-magic/config.local.json` | **gitignored** (DEC-0039); never overwritten by install/upgrade |
+| Shared project | `.its-magic/config.json` | Team baseline; materialize-from-example when absent (kit analog) |
+| Legacy scratchpad | `.cursor/scratchpad.local.md` then `.cursor/scratchpad.md` via adapter | Compatibility only; absent OK |
+| Framework defaults | `.its-magic/config.example.json` then code defaults | Bottom of public ladder |
+
+- **Reject A8** (new standalone-only filenames such as `runtime.json`): dual-SOT vs kit Python.
+- `ITS_MAGIC_CONFIG_ROOT` remains a **test path override**, not a sixth SOT (compose R-0116).
+- Standalone must **implement** CLI one-run (Python layer 1 is still reserved/N/A for many keys).
+
+### DQ4 — Precedence + provenance (LOCKED)
+
+Public AC-2 / §13.3 ladder (highest wins, **per key**):
+
+1. CLI one-run
+2. local project (gitignored)
+3. shared project
+4. legacy scratchpad compatibility
+5. framework defaults
+
+Map onto US-0131 7-layer interleave **without replacing it**:
+
+| Public layer | Kit analog labels |
+|---|---|
+| 1 CLI | reserved CLI/env (now real on standalone) |
+| 2 local | `kit_local` |
+| 3 shared | `kit_baseline` |
+| 4 legacy | `cursor_local` then `cursor_baseline` (adapter; kit local still shadows cursor local) |
+| 5 defaults | `kit_example` then `code_defaults` |
+
+Provenance record per resolved key: `{ layer, label, path?, source_key }`. Emit `CONFIG_KEY_SHADOWED` when kit local ≠ cursor local (non-fatal unless `CONFIG_STRICT=1`). Security-hard key disagreements that would **weaken** a higher layer → fatal `CONFIG_UNSAFE_RELAXATION` (not a shadow diagnostic).
+
+Axes stay orthogonal (D1 / §15): `DELIVERY_MODE` ≠ `TOKEN_PROFILE` ≠ `AUTONOMY_PRESET` ≠ `WORK_KIND_ROUTING`. A layer that sets one must not coerce the others.
+
+### DQ5 — LegacyScratchpadAdapter (LOCKED)
+
+- **Winner**: TypeScript reimplementation of parse/validate/map (KEY=VAL comments, DEC-0055 local > baseline > example **inside** the adapter). **Do not spawn** Python `parse_scratchpad_*`. **Do not rewrite** `host_runtime_config_lib.py`.
+- Absent legacy files → valid empty mapping (AC-3 / AC-6). Malformed present file → `CONFIG_LEGACY_INVALID` fail-closed (not silent skip).
+- Unknown scratchpad keys: keep in opaque `compat` bag + `CONFIG_UNKNOWN_KEY` diagnostic; do not fail existing-repo identity unless strict.
+- Migration diagnostics are **actionable and non-blocking**: `CONFIG_MIGRATION_HINT` listing keys that would live in `.its-magic/config.json` if the operator chooses to migrate. **No forced write.**
+- **DEC-0039**: never overwrite `.its-magic/config.local.json` or `.cursor/scratchpad.local.md`.
+- MODEL_* / MODEL_TIER_* encountered in scratchpad: **ignore** as host-catalog keys (US-0132/0135 boundary); standalone model **names** come from typed `model` group referencing catalog handles, not vendor secrets.
+
+### DQ6 — Secret boundary (LOCKED)
+
+- Reject secret-**shaped values** in shared **and** local project files and in legacy mapped values (`looks_like_secret` analog: `api_key`/`secret`/`password`/`token` assignments, `sk-`/`ghp_`/`xox` prefixes, PEM private keys, `Bearer …`).
+- Allow **names/handles only**: `secret_name` / `credential_handle` matching `^[A-Za-z][A-Za-z0-9_.-]*$`. Resolve values inside US-0135 owned store / execution layer — **this package never reads credentials**.
+- **Never** read `.env`. **Never** log provider tokens. Compose US-0135 `redactAudit` / `redactSecretShaped` on diagnostics if a reject fires (code + key name, not value).
+- Reason-code family: **`CONFIG_*`** (standalone). Analog map `HOST_CONFIG_SECRET_REJECTED` → `CONFIG_SECRET_REJECTED`. Do **not** reuse kit Python codes as the standalone fatal tokens (hosts keep `HOST_CONFIG_*`).
+
+### DQ7 — Autonomy / security_hard (LOCKED)
+
+- Port US-0119: expand `AUTONOMY_PRESET=none|balanced|full` to per-feature flags **before** execution; explicit per-flag > preset > defaults (DEC-0119 R5).
+- Map into PolicyEngine thin enums (do not rewrite tables): `none` → `Autonomy="supervised"`; `balanced`/`full` → `Autonomy="autonomous"` with different expansions. `PERMISSION_MODE` kit `interactive|auto` maps to `PermissionMode` `ask-on-write`/`default-deny` (architecture pins exact pairs).
+- `SecurityClass="security_hard"` and matrix rows classified `security_hard` **cannot** be marked `autonomy_resolvable` by any layer or by the preset (R10 / US-0119 / US-0137). Attempt → `CONFIG_UNSAFE_RELAXATION`.
+- Models never decide relaxability (§14.6). `AUTONOMY_STOP_POLICY` remains `block|auto_repair_then_block|auto_repair_then_skip` and cannot demote hard gates.
+
+### DQ8 — Domain coverage (LOCKED)
+
+Typed **now** (enums / bounded ints / orthogonal flags) for AC-1:
+
+| Group | Typed now | Opaque / handle until consumer |
+|---|---|---|
+| delivery | `DELIVERY_MODE=standard\|ultra_lean\|mega_quick` | — |
+| token | `TOKEN_PROFILE=lean\|balanced\|full` (orthogonal to thinking) | — |
+| work-kind | `WORK_KIND_ROUTING` 0\|1 + tie-break enum | classifier implementation = US-0140 |
+| phase | `PHASE_MODE`, include/exclude lists, `AUTO_ROLE_*` names | WorkflowEngine sequencing = US-0140 |
+| model | catalog/role/critic **handles**, thinking level enum | credentials / slug login = US-0135 |
+| autonomy | `AUTONOMY_PRESET`, 12 per-feature flags, `AUTO_FLOW_MODE` | — |
+| stop | `AUTONOMY_STOP_POLICY`, pause policy | — |
+| retry/test | loop caps, `AUTO_BLOCK_RETRY_MAX`, timeout ints | — |
+| security/compliance | `SecurityClass`, `PermissionMode`, `IsolationProfile` | Layer B backend = US-0141 |
+| sovereign | CROSS_MODEL_REVIEW, AI_DECISION_LEDGER, SOVEREIGN_MEMORY, AUTO_SOVEREIGN flags | critic **content** = US-0144 |
+| browser | policy enum `off\|isolated\|authorized-cdp` + handle name | Playwright/CDP runtime = US-0142 |
+| dev-environment | profile **name**/stack handle | AppRuntime = US-0141 |
+| remote | target **id** / backend handle | SSH/Docker backends = US-0141 |
+
+Passthrough groups are still **present and versioned** on `RuntimeConfig` (AC-1 coverage) but must not grow AppRuntime/browser/workflow implementations here.
+
+### DQ9 — Kernel compose (LOCKED)
+
+- Additive resolver only. Empty isolation loader + `noTools: "builtin"` **held**. KernelBridge locate/handshake **unamended**.
+- auth-models: consume `tokenProfile` + thinking orthogonality; **do not** move CredentialStore into config.
+- PolicyEngine: consume typed autonomy/security/profile flags; **do not** rewrite decision tables.
+- RoleCatalog: consume phase→role names already in catalog; **do not** amend internals.
+- Malicious `.pi/extensions` still cannot register (US-0137 compose). Fake-model CI **held**.
+
+### DQ10 — `test_us0138_*` Win+Linux fake-model inventory (LOCKED)
+
+Primary: `standalone/tests/contract` (`node:test`) Windows + Linux. Fake-model CI default **held**. No paid/model calls. Kit twin as needed for no-Pi-in-config + DEC-0039 local preservation + files-omit compose.
+
+1. `test_us0138_cli_one_run_wins`
+2. `test_us0138_local_wins_over_shared`
+3. `test_us0138_shared_wins_over_legacy`
+4. `test_us0138_legacy_wins_over_defaults`
+5. `test_us0138_absent_legacy_ok`
+6. `test_us0138_malformed_fail_closed`
+7. `test_us0138_local_file_preservation`
+8. `test_us0138_existing_repo_identity`
+9. `test_us0138_secret_rejected_from_shared`
+10. `test_us0138_security_hard_not_weakened_by_autonomy`
+11. `test_us0138_invalid_version_enum_conflict`
+12. `test_us0138_provenance_and_orthogonal_axes`
+
+Markers cover every public precedence layer, absent vs malformed legacy, DEC-0039 locals, existing-repo behavioral identity, secret reject, R10, and per-key provenance.
+
+### Approach verdict
+
+| Approach | Summary | Verdict |
+|---|---|---|
+| **A1 (A\*)** | `standalone/packages/config` (no Pi); Zod-typed `RuntimeConfig` + JSONC `.its-magic/` same files as US-0131; TS `LegacyScratchpadAdapter` (no Python spawn, no forced migration); 5-layer public ladder mapped onto 7-layer kit analog; per-key provenance; `CONFIG_*` fail-closed; inject flags only; credentials/OS sandbox/workflow/context OUT | **WINNER** |
+| A2 | Fold into `runtime-core` | **Rejected** — §30 / US-0140 |
+| A3 | Spawn Python `host_runtime_config_lib.py` as engine | **Rejected** — R9; D3 analog-only |
+| A4 | cosmiconfig first-found-wins | **Rejected** — no layered merge |
+| A5 | Executable `.js`/`.ts` config | **Rejected** — fail-closed / R9 |
+| A6 | TypeBox/ajv as SOT | **Rejected** — Zod infers TS; JSON Schema derived |
+| A7 | YAML SOT | **Rejected** — kit analog is JSONC |
+| A8 | New standalone-only filenames (dual-SOT) | **Rejected** — drift vs US-0131 |
+| A9 | Rewrite PolicyEngine / auth-models / KernelBridge / RoleCatalog | **Rejected** — D7/D9 compose |
+| A10 | Own credentials or read `.env` | **Rejected** — D4/D8 / US-0135 |
+| A11 | Rewrite `host_runtime_config_lib.py` | **Rejected** — D3 |
+| A12 | Forced migration / overwrite locals | **Rejected** — AC-3 / DEC-0039 |
+
+**Can this be simpler?** Wrapping the Python resolver looks smaller and fails R9 (standalone must be code-parsed TS) plus Windows/Linux spawn cost and schema drift. Cosmiconfig looks smaller and fails AC-2. A1 (one named package + same `.its-magic/` files + TS adapter) is the simplest design that meets AC-1..AC-6.
+
+**Approach seed for `/architecture`**: **A1 (A\*)**. **Companion DEC: yes → DEC-0138** Required → Accepted in `/architecture` (do **not** author `decisions/DEC-0138.md` this phase). Recommend architecture H1 **`# US-0138`** (not `## US-0138`). `decision_gate=false`.
+
+### Architecture seeds preview (within SPRINT_MAX_TASKS=12)
+
+T-anch (`# US-0138` + DEC-0138), T-001 `packages/config` + Pi-import grep, T-002 Zod `RuntimeConfig` + `schema_version` + AC-1 groups, T-003 5-layer resolve + provenance, T-004 `LegacyScratchpadAdapter` + absent-OK + migration hints, T-005 secret reject names/handles only, T-006 fail-closed version/type/enum/conflict + `CONFIG_*`, T-007 US-0119 preset expansion + `security_hard` unrelaxable, T-008 inject PolicyEngine/ModelRouter/SessionSupervisor flags (no internals rewrite), T-009 DEC-0039 local preservation + existing-repo identity, T-010 `test_us0138_*` Win+Linux fake-model. (= 11 tasks)
+
+### Risks
+
+- **R1 (MEDIUM)**: TS vs Python kit resolver drift on shared `.its-magic/` files. Mitigation: same paths + schema_version 1 string-compatible `shared` keys; contract tests; do not rewrite Python.
+- **R2 (MEDIUM)**: CLI one-run flag/env name bikeshed. Mitigation: architecture pins argv; tests lock winners.
+- **R3 (LOW)**: unknown scratchpad keys fail existing repos. Mitigation: DQ2 non-fatal `CONFIG_UNKNOWN_KEY` default.
+- **R4 (MEDIUM)**: secret-shaped false positives on harmless strings. Mitigation: compose kit `_SECRET_PATTERNS`; allow handle regex; tests.
+- **R5 (LOW)**: operators treat IsolationProfile as OS sandbox. Mitigation: DQ8 passthrough; US-0141 owns backends (compose US-0137 DQ7).
+- **R6 (LOW)**: autonomy mapping `none|balanced|full` ↔ PolicyEngine `supervised|autonomous` underspecified. Mitigation: DQ7 mapping + architecture pin + test 10.
+
+### Decision gate
+
+- **decision_gate=false** — DQ1–DQ10 LOCKED; winning approach **A1 (A\*)**; companion DEC **yes (DEC-0138)**.
+- **Status**: US-0138 remains **OPEN** (US-0045). **Next**: sovereign-critic of research, then `/architecture` in a fresh **tech-lead** subagent. Do not spawn architecture or critic from this research chat.
+
+## R-0131 - BUG-0021 OpenCode CLI TUI still has no invokable `/auto` after BUG-0020 tui.json (C-limb live-falsified)
+
+- **Date**: 2026-09-13
+- **Topic**: After BUG-0020 E2 C-limb shipped `.opencode/tui.json` listing `./plugins/its-magic-auto/tui.ts` (claimed CLI TUI `/auto`), the operator's OpenCode **CLI TUI** still has no invokable `/auto` command; typing `/auto ` as non-command sends chat and the model roleplays “Auto mode enabled…”
+- **Linked**: BUG-0021 (OPEN), BUG-0020 DONE (compose; C-limb live-falsified — do **not** reopen ACs / S0140), R-0126 (E2 C-limb claimed CLI TUI `/auto` via `tui.json` — do not wipe), R-0125, R-0124, R-0120, BUG-0019 DONE, BUG-0018 DONE (do not restore STOP-only `auto.md`), BUG-0015 DONE, BUG-0017 DONE, US-0124, US-0125, US-0069
+- **Confidence**: high that C-limb `tui.json` listing is **not** sufficient for a working CLI TUI `/auto`; high that “Auto mode enabled. Describe the task you want handled.” is **LLM prompt handling**, not `runAutoLifecycle` and not OpenCode `--auto` permission auto-approve; high that kit `tui.ts` module shape mismatches live TUI plugin API (`export default { id, tui }` + `api.keymap.registerLayer` with command `name`/`slashName` and bindings `{ key, cmd }`)
+- **Status**: current (intake research; not a substitute for `/research`)
+- **Query**: Why does OpenCode CLI TUI still lack a listed `/auto` after `tui.json` + `its-magic-auto/tui.ts` exist in this repo? What host-true listed+execute path starts `runAutoLifecycle` without restoring markdown/JSON Command.Info ownership?
+- **Producer consumed**: `/intake bug` operator packet 2026-09-13T11:20:00Z (quotes preserved; working `/auto` command on OpenCode CLI TUI; not Cursor-only)
+- **EARLY_RESEARCH posture**: intake-time Context7 fetch of live OpenCode TUI plugin / commands docs (`/anomalyco/opencode`) — not a substitute for `/research`
+- **ID policy**: highest existing research id was **R-0130**. This entry is **R-0131**. Do **not** wipe, renumber, or rewrite R-0120..R-0130. `ID_NAMESPACE_BOOTSTRAP=0` → continuation (no bootstrap).
+
+### Web / docs / code sources (2026-09-13)
+
+- Context7 `/anomalyco/opencode` — `packages/opencode/specs/tui-plugins.md`: TUI plugins **must** be listed in `tui.json`; **no directory auto-discovery**. Loader reads **only** the module **default export object**. Expected shape: `export default { id?, tui }` where `tui: TuiPlugin = async (api, options, meta) => { ... }`. Named exports ignored. A module **cannot** export both `server` and `tui`.
+- Same spec — `api.keymap.registerLayer({ commands: [{ name, title, category, namespace: "palette", slashName, run }], bindings: [{ key, cmd, desc }] })`. Command field is **`name`**, not `id`. Bindings require a **`key`**. Palette listing uses `namespace: "palette"` plus `slashName`.
+- Same spec — `packages/opencode/specs/v2/tui-command-shim.md`: replace old command APIs with keymap `registerLayer` (`slashName` + `run()`).
+- Host TUI (`packages/tui/src/app.tsx`): built-in `/models` is a keymap command with `name: "model.list"`, `slashName: "models"`, `slashAliases`, `run` opens a dialog — **function**, not a prompt template.
+- Protocol `GET /api/command` (`v2.command.list`) returns **Command.Info** (markdown `.opencode/commands/*.md` / JSON `template`) — **not** TUI keymap slash commands. Peers (`/ask`, `/quick`, …) remain listed because they are markdown Command.Info.
+- Kit working tree (already present): `.opencode/tui.json` lists `"./plugins/its-magic-auto/tui.ts"` (BUG-0020 C-limb); `.opencode/plugins/its-magic-auto/tui.ts` uses **`Plugin.define({ setup })`**, `keymap.layer` / `registerLayer` with command **`id: "its-magic.auto"`** (not `name`), `slash`/`slashName` `"auto"`, and `bindings: ["its-magic.auto"]` **without a key**; default export is the `Plugin.define` result, **not** `{ id, tui }`. `.opencode/commands/auto.md` **absent**. `orchestrator.ts` still `editor.add({ name: "auto", execute })` → `runAutoLifecycle`.
+
+### Gap confirmation (intake)
+
+- BUG-0020 DONE shipped E2: honest desktop Command.Info cannot list execute-only `/auto`; C-limb = documented **CLI TUI `/auto`** via shipping `tui.json`. Static `test_bug0020_*` passed on contract/file presence. Operator on **OpenCode CLI TUI** (this kit repo, files already present — not unpublished-upgrade miss) still has **no `/auto`** in the slash list.
+- Live symptom: type `/auto ` (trailing space) **without** command highlighting → send as chat. Host/model: `+ Thought: Confirming auto mode intent · 1.3s` then **“Auto mode enabled. Describe the task you want handled.”** That is **LLM treating `/auto ` as a prompt**, not plugin `execute` / `runAutoLifecycle`, and not OpenCode permission `--auto`.
+- Likely API mismatch vs live TUI plugin module: kit `Plugin.define({ setup })` + `id` + keyless `bindings` vs live `export default { id, tui }` + `api.keymap.registerLayer` + command `name` + binding `key`. `tui.json` listing a file that the loader cannot bind as a TUI plugin is sufficient to explain silent missing `/auto`.
+- Do **not** restore STOP-only `auto.md` (BUG-0018). Do **not** flip BUG-0020 to OPEN (C-limb was the claimed fix; this is a new live-falsification).
+
+### Alternatives (intake recommendation; discovery/architecture lock)
+
+| Option | Summary | Intake verdict |
+|---|---|---|
+| **1** | Persist **NEW BUG-0021**; live-falsify BUG-0020 C-limb CLI TUI `/auto`; keep BUG-0020 DONE; research/architecture must deliver a **listed, working** `/auto` (or proven host-true equivalent) that runs `runAutoLifecycle` — tests must not be file-existence-only | **Recommended** |
+| 2 | Restore STOP-only `.opencode/commands/auto.md` | **Rejected** — recreates BUG-0018 |
+| 3 | Reopen BUG-0020 | **Rejected** — C-limb was the claimed CLI TUI fix; new live-falsification |
+| 4 | Tell operator Cursor-only | **Rejected** — operator expects OpenCode `/auto` |
+
+### Seeds for `/discovery` / `/research` (not locked here)
+
+- Confirm CLI TUI plugin load: does the host consume kit `Plugin.define({ setup })` default export, or only `{ id, tui }`?
+- Align `tui.ts` to live `api.keymap.registerLayer` (`name`, `slashName`, bindings `{ key, cmd }`) **without** restoring `auto.md`.
+- Prove `/auto` is **highlighted/listed** in CLI TUI (not free-text) **and** `run()` reaches `runAutoLifecycle` (or documented `OPENCODE_*`).
+- Tests: additive `test_bug0021_*` must not be “`tui.json` lists tui.ts / slash string present” only (that closed BUG-0020 C-limb falsely). Keep `test_bug0018_*` (`auto.md` absent). Do not weaken `test_bug0020_*` except compose-only if architecture supersedes C-limb.
+- Fail-closed token if CLI TUI still cannot list/invoke while `tui.json` is present (new `OPENCODE_*` vs reuse of `OPENCODE_AUTO_SLASH_LISTING_UNSUPPORTED` / desktop token).
+
+### Decision gate
+
+- **decision_gate=false** for intake persistence. Exact host-true listed+execute path remains a `/research` DQ.
+- **Status**: current. **Next**: `/discovery` for **BUG-0021**.
+
+## R-0132 - US-0139 Persistent code intelligence and bounded context engine research
+
+- **Date**: 2026-09-13
+- **Topic**: Close discovery DQ1–DQ10; pick winning backend-neutral `CodeIntelligenceProvider` + bounded `code_context` pack (no `# US-0139` / DEC-0139 this phase)
+- **Linked**: US-0139 (OPEN), R-0131 / BUG-0021 (OPEN — OUT; do not reuse this id), R-0130 / DEC-0138 / US-0138 (DONE compose-only — `TOKEN_PROFILE` consume), R-0129 / DEC-0137 / US-0137 (DONE compose-only — PolicyEngine/ToolBroker search stubs), R-0128 / DEC-0136 / US-0136 (DONE compose-only — sessions/attestation `context_pack_hash` stub), R-0127 / DEC-0135 / US-0135 (DONE compose-only), R-0122 / DEC-0134 / US-0134, R-0121 / DEC-0133 / US-0133, R-0060 / DEC-0065 / US-0082 (DONE compose-only — `materialize_codebase_map.py`), US-0053 / US-0096 layered memory, US-0076 freshness, masterplan §§17/18/21.3/30 `code-intelligence`+`context-engine`/32 Phase 2/36/R1/R2/R8; sibling US-0140..US-0148 OUT OF SCOPE (US-0140 lifecycle, US-0141 OS sandbox, US-0142 browser, US-0144 critic content); BUG-0020 DONE not reopened
+- **Confidence**: high for two-package split + nested AFT **read** adapter + unstub existing `itsm_*` names + deterministic TOKEN_PROFILE caps + do-not-extend DEC-0038; medium for exact token/file/hit integers (architecture may pin)
+- **Status**: current
+- **Query**: DQ1–DQ10 from discovery D1–D10
+- **Producer consumed**: discovery `rp-auto-20260913-us0139-discovery-po-20260913T165500Z-US-0139` (`proof_hash` `C49A557A4028330D420A97DFEC8D53472F3BF26BCDAB948D13A4C9270FCCE881`, ttl `2026-09-13T17:55:00Z`) — RUNTIME_PROOF_VALID MATCH at research issue time `2026-09-13T17:15:00Z`; sovereign-critic of discovery PASS (`rp-auto-20260913-us0139-sovereign-critic-techlead-20260913T170500Z-US-0139` / `9C5FDD68B6EB59577B6CF4E5CBE6E7969CE418AA4D700B65F0CB0C994FDE28CB`; 0 blocking; anti_slop_aggregate=10; degraded_mode=false); marker `tl-US0139-research-20260913T171500Z-fresh`
+- **EARLY_RESEARCH posture**: scratchpad `EARLY_RESEARCH=1` — cortexkit/aft (JSON-over-stdio, one warm process per project root, Pi plugin hoists write/edit — analog not adopted as SOT); TokenGate / Matrix Context / ContextPipe (budgeted explainable packing; learned compression rejected)
+- **ID policy**: highest existing research id was **R-0131** (BUG-0021). This entry is **R-0132**. Do **not** wipe, renumber, or rewrite R-0120..R-0131. Do **not** reuse R-0130 (US-0138) or R-0131 (BUG-0021). `ID_NAMESPACE_BOOTSTRAP=0` → continuation (no bootstrap).
+- **Compose base**: discovery D1–D10 unchanged. Do not author `# US-0139` or `decisions/DEC-0139.md`. Do not reopen US-0138 / US-0137 / US-0136 / US-0135 / BUG-0020. Do not mutate US-0140+. Do not amend isolation loader internals, `noTools: "builtin"`, KernelBridge, auth-models, RoleCatalog/SessionSupervisor internals, PolicyEngine decision tables, or `@its-magic/config` loaders. Fake-model CI default **held**. Fake-AFT in CI (no live AFT/network). Never read `.env`.
+
+### Web / docs / analog sources (2026-09-13)
+
+- https://github.com/cortexkit/aft — AFT is a Rust binary with JSON-over-stdio; **one persistent process per project root** (BridgePool), trigram + semantic + Tree-sitter + LSP + call graph. Host adapters **hoist** `read`/`write`/`edit`/`grep` and add `aft_*` (outline, search, callgraph, refactor, ast_grep_replace). **Analog only**: we need a **read adapter**, not the Pi plugin (`@cortexkit/aft-pi`) that registers mutation tools into sessions (violates D2 / R2).
+- https://github.com/cortexkit/aft/blob/main/packages/pi-plugin/README.md — mutation surface includes `aft_delete` / `aft_move` / `aft_transform` / `aft_refactor` / `ast_grep_replace`; binary resolve order cache → npm platform package → PATH → cargo → GitHub release. Use that pin ladder **behind** our adapter; do not import the plugin.
+- https://github.com/Mario-Vishal/tokengate — rank/dedup/budget retrieved chunks with an audit of kept vs dropped; default strategies keep **lossy LLM compression off** because aggressive shrink dropped linking entities and broke answers. Aligns with AC-5 reproducibility: **deterministic** pack, no LLM-in-the-loop compression.
+- https://github.com/agent-matrix/matrix-context — hybrid BM25+dense fusion, greedy pack under a token budget scored by relevance/importance/recency − redundancy, fully inspectable kept/dropped. Pattern seed for `code_context` explainability; not adopted as a dependency.
+- https://arxiv.org/abs/2609.00749 — ContextPipe: context assembly as a budgeted, auditable, replayable pipeline (Plan/Bind/Optimize/Execute/Feedback) with EXPLAIN-style traces. Supports storing source refs + content hash without stuffing full history.
+- In-tree compose (do not amend internals): `standalone/packages/policy-engine/src/types.ts` `STUB_TOOLS` (`itsm_search`/`outline`/`symbol`/`references`/`callers`/`impact` plus later-story stubs); `standalone/packages/tool-broker/src/catalog.ts` `SEARCH_STUBS` + `READ_PLUS_SEARCH`; `standalone/packages/config/src/types.ts` `TOKEN_PROFILE` + `AUTO_PHASE_INCLUDE`/`AUTO_PHASE_EXCLUDE` + `SOVEREIGN_MEMORY`; `scripts/materialize_codebase_map.py` sentinel `<!-- its-magic:codebase-map-bootstrap v1 -->`, `[CODEBASE_MAP_OK]`, `CODEBASE_MAP_BLOCKED:*`.
+
+### Critic NB closures (discovery `us0139dsc-*`, non-blocking → research locks)
+
+| Critic theme | Resolution in R-0132 |
+|---|---|
+| Fail-closed edges named; stale index, AFT/LSP/embeddings unavailable, secret/.env deny, its-indexd OUT (challenger-001) | **LOCKED DQ7 / DQ8 / DQ5 / DQ10** |
+| `code-intelligence` + `context-engine` boundary; ToolBroker unstub `itsm_*` via provider; PolicyEngine/config/RoleCatalog compose-only; US-0140 OUT (architect-002) | **LOCKED DQ1 / DQ4 / DQ9**; this entry closes DQ1–DQ10 + Approach **A1 (A\*)**; architecture authors `# US-0139` + **DEC-0139** |
+| No provider/context-engine code; no R-0132/DEC-0139/# US-0139 from critic; no its-indexd; no DONE (subtractor-003) | **Held** this research phase: R-0132 authored; still no `# US-0139` / `decisions/DEC-0139.md` / no packages / no its-indexd |
+
+### DQ1 — Package split + injection (LOCKED)
+
+- **Winner**: new `standalone/packages/code-intelligence` (`@its-magic/code-intelligence`) **and** `standalone/packages/context-engine` (`@its-magic/context-engine`) per masterplan §30 / D9. Both `private: true`, `version: 0.0.0`, `type: module`, `engines.node >=22.19.0`, export `./src/index.ts`. Workspaces glob `packages/*` already covers them.
+- **AFT adapter nested** under `code-intelligence/src/aft/` as the v1 `CodeIntelligenceProvider` implementation. **Reject** a third public `@its-magic/aft-adapter` this story (Yagni; backend swap remains an internal constructor). Architecture may later promote the adapter if `its-indexd` needs a sibling package — not now.
+- **No Pi imports.** Neither package depends on `@earendil-works/pi-*` or `@cortexkit/aft-pi`. Extend US-0133..0138 Pi-import grep to these two packages. Type-only imports from `@its-magic/config` (TOKEN_PROFILE / phase include-exclude / SOVEREIGN_MEMORY) are allowed. Do **not** import PolicyEngine **internals**; ToolBroker **injects** a `CodeIntelligenceProvider` into search-tool handlers. `context-engine` calls the provider interface, not AFT protocol.
+- **Reject A2** (fold into `runtime-core`): package does not exist; US-0140 owns workflow.
+- **Reject A3** (sibling public `packages/aft-adapter` now): extra npm surface without a second backend.
+- **Reject A4** (load AFT Pi plugin into sessions): hoists write/edit; violates D2 / R1 / R2.
+- Kit `files` continues to omit `standalone/` (DEC-0120). Do not add a Biome override.
+
+### DQ2 — AFT process model (LOCKED)
+
+- **Winner**: **sidecar** persistent warm AFT process **per repo root**, JSON-over-stdio (BridgePool analog). Not in-process WASM this story.
+- Version pin: adapter-owned semver of the AFT binary; resolve cache → npm platform package → PATH. Architecture pins the version string. Windows + Linux required.
+- **Read-only allowlist** of protocol methods mapped onto provider: status, search (lexical+semantic), outline, symbol/zoom, references, callers/callees, impact, diagnostics, refresh. **Never register** `write`/`edit`/`apply_patch`/`aft_delete`/`aft_move`/`aft_transform`/`aft_refactor`/`ast_grep_replace` into production sessions. If the binary exposes them, the adapter returns `INTEL_MUTATION_DENIED` and does not forward. Production mutations stay `itsm_edit`/`itsm_write`/`itsm_patch` via existing PolicyEngine (compose, do not rewrite).
+- CI uses a **fake adapter** (no live binary, no network, no GitHub release download). Optional operator `doctor` is out of CI.
+
+### DQ3 — Ranking + TOKEN_PROFILE bounds (LOCKED)
+
+- **Winner**: **deterministic** weighted rank + greedy pack until the first cap. **Not** learned / LLM-in-the-loop (TokenGate: lossy compression dropped linking entities).
+- Suggested default weights (architecture may pin integers): exact symbol > lexical exact > semantic > graph edge > tests > git recency > active AC > architecture/decision refs. Redundancy penalty for duplicate paths (MMR-style, fixed λ).
+- **Bounded** means hard caps on **tokens AND files AND hits**. Consume US-0138 `TOKEN_PROFILE` (no new RuntimeConfig domain):
+
+| Profile | Max tokens (pack body) | Max files | Max hits |
+|---|---|---|---|
+| `lean` | 6000 | 8 | 16 |
+| `balanced` | 12000 | 16 | 32 |
+| `full` | 24000 | 32 | 64 |
+
+- First cap wins; remainder recorded as `CONTEXT_BUDGET` with dropped-id audit (inspectable, not stuffed). Giant prompt bodies never enter the ranker.
+
+### DQ4 — Per-phase exclusion (LOCKED)
+
+- **Winner**: **session assembler** in `context-engine` owns include/exclude. Provider is retrieval-only and must not inject transcripts, `.env`, secrets, whole backlog, or command markdown.
+- Default exclude set (D4 / §18.2): previous-role transcripts, secrets/credential blobs, whole backlog/history, giant static prompts, `.env`. Consume `AUTO_PHASE_INCLUDE` / `AUTO_PHASE_EXCLUDE` and `SOVEREIGN_MEMORY` from resolved config (inject flags; do not import config loaders).
+- HOT/WARM/COLD layering compose US-0053 / US-0096 (narrow-read, not rewrite). When `SOVEREIGN_MEMORY=1`, inject a **size-capped digest** only (architecture pins e.g. 1500 tokens); never the full ledger.
+- Compose US-0136: assembler runs in a **fresh** role session; fill the attestation `context_pack_hash` stub with this story’s pack hash. Do **not** rewrite SessionSupervisor / RoleCatalog internals.
+
+### DQ5 — Source refs + content hash (LOCKED)
+
+- **Winner**: owned pack envelope, **not** an extension of `compute_strict_proof_hash` / DEC-0038.
+- Schema (v1): `{ schema_version, token_profile, source_refs: [{ kind, path, start?, end?, snippet_sha256 }], ranked_ids, exclude_set_hash, content_hash }`.
+- Algorithm: SHA-256 of canonical sorted-key JSON of those fields **excluding** `content_hash`. Snippets hashed; **full source and secrets never persisted**. Never read `.env`.
+- Persist: gitignored runtime JSON under the existing isolated `agentDir` analog (compose DEC-0133). Optional evidence pointer (path + hash) in phase artifacts. **SQLite deferred** to US-0140 operational metadata. Python validators ignore unknown sidecar keys (compose US-0136).
+
+### DQ6 — Derived codebase-map (LOCKED)
+
+- **Winner**: **compose** `scripts/materialize_codebase_map.py` (US-0082 / DEC-0065 / R-0060). Do **not** rewrite the Python contract, sentinel, `[CODEBASE_MAP_OK]`, or `CODEBASE_MAP_BLOCKED:*`.
+- Fresh / missing map → invoke materializer (lifecycle trigger compose architecture). Bootstrap-sentinel maps may be refreshed by the materializer as today.
+- **Non-bootstrap** operator maps: **preserve body**; write coverage/version as a sibling gitignored or generated metadata file (architecture pins `codebase-map.meta.json` vs HTML comment). Map is **derived**, not the index database. US-0076 freshness compose-only.
+
+### DQ7 — Benchmark harness; its-indexd OUT (LOCKED)
+
+- Harness lives under `standalone/tests/fixtures/code-intel` + a `bench` entry exported from `code-intelligence` (fake-model, fake-AFT). Measures §17.7: NL lookup, exact symbol, callers, tests, impact, cross-language ref, recent changes, fixture “monorepo” latency, token use, stale-index recovery.
+- Goal is **measured agent usefulness**, not Cursor-parity marketing. Live AFT / paid embeddings **never CI**.
+- **`crates/its-indexd` remains OUT**. Evidence that could later open a story: documented AC-7 failures on latency/coverage that the AFT read adapter cannot recover after N measured runs. This story does not author that crate.
+
+### DQ8 — Degradation + incremental refresh (LOCKED)
+
+- **Winner**: **partial pack + reason codes**, not fail-closed empty context when a backend is down (AC-8). Silent empty pack is forbidden.
+- Reason-code family **`INTEL_*` / `CONTEXT_*`**: `INTEL_AFT_UNAVAILABLE`, `INTEL_LSP_UNAVAILABLE`, `INTEL_EMBEDDINGS_UNAVAILABLE`, `INTEL_INDEX_STALE`, `INTEL_INDEX_UNAVAILABLE`, `INTEL_MUTATION_DENIED`, `CONTEXT_EXCLUSION`, `CONTEXT_BUDGET`. Fallback order: AFT read → lexical/git/artifact-only. Embeddings optional; lexical+structure still produce a pack.
+- `refresh(changes?: Path[])` is incremental. Stale index: serve pack with `INTEL_INDEX_STALE` and trigger refresh; do not block the phase on AFT health.
+
+### DQ9 — Kernel compose (LOCKED)
+
+- **Unstub existing names**: `itsm_search` / `itsm_outline` / `itsm_symbol` / `itsm_references` / `itsm_callers` / `itsm_impact` via ToolBroker handlers calling the injected provider. **Do not** invent parallel `aft_*` / `intel_*` tool names for production sessions.
+- Empty isolation loader + `noTools: "builtin"` **held**. KernelBridge locate/handshake **unamended**. PolicyEngine decision tables **unamended** (search names already stub-listed). Config consume-only (`TOKEN_PROFILE`, phase include/exclude, `SOVEREIGN_MEMORY`) — **no new RuntimeConfig domain**. Fake-model CI **held**.
+
+### DQ10 — `test_us0139_*` Win+Linux fake-model inventory (LOCKED)
+
+Primary: `standalone/tests/contract` (`node:test`) Windows + Linux. Fake-model + fake-AFT CI. No paid/model/AFT-download calls.
+
+1. `test_us0139_provider_interface`
+2. `test_us0139_aft_mutation_denied`
+3. `test_us0139_ranking_bounds_token_profile`
+4. `test_us0139_phase_exclusion`
+5. `test_us0139_pack_hash_and_refs`
+6. `test_us0139_derived_map_compose`
+7. `test_us0139_benchmark_smoke`
+8. `test_us0139_incremental_refresh`
+9. `test_us0139_aft_unavailable_partial_pack`
+10. `test_us0139_lsp_unavailable_partial_pack`
+11. `test_us0139_embeddings_unavailable_partial_pack`
+12. `test_us0139_index_stale_recovery`
+
+Markers cover AC-1..AC-8: provider methods, mutation deny/route, TOKEN_PROFILE caps, exclusion list, hash/refs, derived map compose, benchmark smoke, incremental refresh, each degradation class.
+
+### Approach verdict
+
+| Approach | Summary | Verdict |
+|---|---|---|
+| **A1 (A\*)** | Two packages `@its-magic/code-intelligence` + `@its-magic/context-engine` (no Pi); nested AFT **read** adapter (sidecar per root); ToolBroker unstub existing `itsm_*`; deterministic rank + TOKEN_PROFILE caps; assembler exclusion; pack hash ≠ DEC-0038; compose `materialize_codebase_map`; benchmark; its-indexd OUT; partial-pack degradation | **WINNER** |
+| A2 | Fold into `runtime-core` | **Rejected** — §30 / US-0140 |
+| A3 | Sibling public `packages/aft-adapter` this story | **Rejected** — Yagni until second backend |
+| A4 | Load `@cortexkit/aft-pi` into Pi sessions | **Rejected** — hoists write/edit; D2 / R1 / R2 |
+| A5 | In-process AFT / no persistent warm process | **Rejected** — §17.3 persistent backend |
+| A6 | Own Rust `its-indexd` this story | **Rejected** — Boundaries / D7 |
+| A7 | Learned ranking or LLM compression | **Rejected** — AC-5 reproducibility; TokenGate breakage |
+| A8 | Extend `compute_strict_proof_hash` / DEC-0038 | **Rejected** — D5 |
+| A9 | Rewrite `materialize_codebase_map.py` | **Rejected** — D6 / R-0060 / DEC-0065 |
+| A10 | New RuntimeConfig context domain | **Rejected** — D3 consume-only; existing flags suffice |
+| A11 | SQLite as pack persistence | **Rejected** — US-0140 operational store |
+| A12 | Rewrite PolicyEngine / config / auth / KernelBridge / `noTools` | **Rejected** — D2 / D9 compose |
+| A13 | Fail-closed empty pack when AFT/LSP/embeddings down | **Rejected** — AC-8 safe degradation |
+
+**Can this be simpler?** Loading the AFT Pi plugin looks smaller and fails D2 (mutation hoist) plus R1 (Pi imports outside pi-kernel). One mega-package mixing retrieval and packing fails the architect NB (provider vs assembler). A1 (two named packages + nested read adapter + existing tool names) is the simplest design that meets AC-1..AC-8.
+
+**Approach seed for `/architecture`**: **A1 (A\*)**. **Companion DEC: yes → DEC-0139** Required → Accepted in `/architecture` (do **not** author `decisions/DEC-0139.md` this phase). Recommend architecture H1 **`# US-0139`** (not `## US-0139`). `decision_gate=false`.
+
+### Architecture seeds preview (within SPRINT_MAX_TASKS=12)
+
+T-anch (`# US-0139` + DEC-0139), T-001 `packages/code-intelligence` + `packages/context-engine` + Pi-import grep, T-002 `CodeIntelligenceProvider` + nested AFT read adapter sidecar + fake adapter, T-003 ToolBroker unstub `itsm_*` (no PolicyEngine rewrite), T-004 `code_context` ranking + TOKEN_PROFILE caps, T-005 per-phase exclusion assembler, T-006 source refs + content hash (not DEC-0038), T-007 derived codebase-map compose materialize, T-008 benchmark harness (its-indexd OUT), T-009 degradation + incremental refresh, T-010 `test_us0139_*` Win+Linux fake-model. (= 11 tasks)
+
+### Risks
+
+- **R1 (MEDIUM)**: AFT binary/platform drift on Windows vs Linux. Mitigation: fake adapter in CI; version pin; doctor optional.
+- **R2 (MEDIUM)**: Nested adapter vs later `its-indexd` swap friction. Mitigation: provider interface is the swap boundary; promote package only with evidence (D7).
+- **R3 (LOW)**: TOKEN_PROFILE integer caps too tight/loose. Mitigation: architecture pins; tests lock winners; profiles remain orthogonal to thinking.
+- **R4 (MEDIUM)**: Accidental AFT mutation leak if protocol surface grows. Mitigation: allowlist + `INTEL_MUTATION_DENIED` + test 2.
+- **R5 (LOW)**: Operators treat codebase-map as the index. Mitigation: DQ6 derived-only; map is not the DB.
+- **R6 (LOW)**: Pack hash confused with DEC-0038 runtime proof. Mitigation: DQ5 separate envelope; do not extend `compute_strict_proof_hash`.
+
+### Decision gate
+
+- **decision_gate=false** — DQ1–DQ10 LOCKED; winning approach **A1 (A\*)**; companion DEC **yes (DEC-0139)**.
+- **Status**: US-0139 remains **OPEN** (US-0045). **Next**: sovereign-critic of research, then `/architecture` in a fresh **tech-lead** subagent. Do not spawn architecture or critic from this research chat.
+
+## R-0133 - BUG-0022 `/auto` Task-spawns inherit parent chat model instead of role_catalog
+
+- **Date**: 2026-09-13
+- **Topic**: Cursor `/auto` with `MODEL_RESOLVE=role_catalog` still Task-spawns producers as parent inherit (`cursor-grok-4.6`) and critics as hardcoded `composer-2.5-fast` (catalog **release**), so isolation `model_id` does not match the role-based example catalog
+- **Linked**: BUG-0022 (OPEN), US-0101 DONE / DEC-0086 (compose; do not reopen), US-0102 DONE / DEC-0087 (compose; `resolve_model_for_phase` + `role_catalog`), DEC-0104 / US-0104 (`select_critic_model`), US-0130 (critic overlay `MODEL_SOVEREIGN-CRITIC` > `roles.critic`), BUG-0021 OPEN (distinct OpenCode CLI TUI listing — do not merge), BUG-0020 DONE (do not reopen), US-0139 OPEN (concurrent; authored **R-0132** — do not wipe/reuse)
+- **Confidence**: high that `role_catalog` is **not** live on `/auto` Task spawn despite scratchpad flags; high that `scripts/model_tier_lib.py` is **present** (operator “file missing” claim live-falsified); high that copying `model-catalog.local.json` alone cannot fix silent inherit; medium on exact critic hardcode site (orchestrator Task arg vs agent frontmatter vs `select_critic_model` not invoked)
+- **Status**: current (intake research; not a substitute for `/research`)
+- **Query**: Why does `/auto` pass `model: inherit` (and critic `composer-2.5-fast`) when `MODEL_RESOLVE=role_catalog` and `resolve_model_for_phase` / `select_critic_model` exist?
+- **Producer consumed**: `/intake bug` operator packet 2026-09-13T11:37:00Z (quotes preserved; `/auto` must pass `Task.model` from `role_catalog`)
+- **EARLY_RESEARCH posture**: intake-time Cursor docs (`https://cursor.com/docs/subagents`) — `model: inherit` matches parent; explicit model ID runs regardless of parent. Not a substitute for `/research`
+- **ID policy**: highest existing research id at write time was **R-0132** (US-0139). Operator packet expected R-0132 after R-0131; US-0139 `/research` authored R-0132 first. This entry is **R-0133**. Do **not** wipe, renumber, or rewrite R-0120..R-0132. `ID_NAMESPACE_BOOTSTRAP=0` → continuation (no bootstrap).
+
+### Web / docs / code sources (2026-09-13)
+
+- Cursor docs `/websites/cursor` subagents: frontmatter `model: inherit` instructs the subagent to match the parent agent’s configured model; `model: <slug>` (example `gpt-5.6-sol`) runs that ID regardless of parent (`https://cursor.com/docs/subagents`).
+- Kit `.cursor/agents/po.mdc` and `.cursor/agents/release.mdc` ship `model: inherit`. `.cursor/agents/curator.mdc` ships `model: fast`. `dev` / `qa` / `tech-lead` / `security` have no `model:` frontmatter. No `.cursor/agents/qe.mdc`.
+- Scratchpad (this repo): `MODEL_RESOLVE=role_catalog`, `MODEL_CATALOG=.cursor/model-catalog.local.example.role-based-balanced_cursor_only.json`, `MODEL_FALLBACK=inherit`, `CROSS_MODEL_REVIEW=1`. Comments say copy example → `.cursor/model-catalog.local.json` to activate.
+- Example catalog JSON `roles`: po=`gpt-5.6-sol-high`, sa=`gpt-5.6-sol-high`, dev=`cursor-grok-4.6-high`, qa=`cursor-grok-4.6-high`, security=`claude-fable-5-1-thinking-high`, release=`composer-2.5-fast`, critic=`gpt-5.6-luna-medium`. Tiers cheap=`composer-2.5`, balanced=`cursor-grok-4.6-high`, strong=`gpt-5.6-sol-high`. **No** `qe` / `curator` / `tech-lead` keys. `notes` still say Claude Opus 4.8 for PO/SA — **stale vs JSON**.
+- Glob 0: `.cursor/model-catalog.local.json` absent.
+- `scripts/model_tier_lib.py` **exists** (`resolve_model_for_phase`, `role_catalog` branch, `LOGICAL_ROLE_TO_CATALOG_KEY` tech-lead→sa, curator→dev). `PHASE_LOGICAL_ROLE` has **no** `closure` / `sprint-plan` (None → default `"dev"`). No `AUTO_ROLE_CLOSURE` / `qe` in `resolve_logical_role`. Template twin present.
+- `scripts/sovereign_critic_lib.py` **exists** (`select_critic_model`; overlay pin > `roles.critic` when `role_catalog`). Operator “same class of gap as missing sovereign_critic_lib.py” is **falsified** for missing-file; related only as unused helper if orchestrator never calls it.
+- Live `/auto` this session: producer Task `model: inherit`; isolation `model_id=cursor-grok-4.6`. Critic Task `composer-2.5-fast` (catalog **release**, not **critic**). Recent US-0138/US-0139 isolation often `cursor-grok-4.6-high` producers + `composer-2.5-fast` critic — still not catalog po/sa/critic slugs.
+
+### Gap confirmation (intake) — live-falsify “role_catalog already active”
+
+- **US-0101 / US-0102 / DEC-0087 shipped the resolver contract.** Scratchpad `MODEL_RESOLVE=role_catalog` does **not** by itself execute catalog slugs. This `/auto` inherited the parent chat model. That live-falsifies “role_catalog already active.”
+- Operator claim “`scripts/model_tier_lib.py` is missing” is **false**. Live gap is spawn path: orchestrator did not pass resolver output into Task `model:`. Silent `MODEL_FALLBACK=inherit` plus agent frontmatter `inherit` explains parent Grok isolation without invoking `MODEL_ROLE_SLUG_UNKNOWN` / `MODEL_RESOLVE_FALLBACK` as an attested miss.
+- Copying the example to `.cursor/model-catalog.local.json` is **insufficient** while Task still uses inherit.
+- Alignment follow-on (not a substitute for spawn wiring): catalog JSON keys omit `qe` / `curator` / `tech-lead`; lib maps some names **if called**; closure/`qe` still unmapped.
+
+### Alternatives (intake recommendation; discovery/architecture lock)
+
+| Option | Summary | Intake verdict |
+|---|---|---|
+| **1** | Persist **NEW BUG-0022**; `/auto` must pass `Task.model` from `role_catalog` (`resolve_model_for_phase` / `select_critic_model`) or fail-closed `MODEL_*` / documented `MODEL_RESOLVE_FALLBACK` — not silent parent inherit; critic uses `roles.critic`; align phase→role names | **Recommended** |
+| 2 | Reopen US-0102 | **Rejected** — story DONE; this is a spawn-path bug |
+| 3 | Merge into BUG-0021 | **Rejected** — OpenCode CLI TUI listing ≠ Cursor model inherit |
+| 4 | Operator copies `local.json` only | **Rejected as insufficient** — orchestrator still inherit even if path works |
+
+### Seeds for `/discovery` / `/research` (not locked here)
+
+- Wire `/auto` Task spawn to pass `model:` from `resolve_model_for_phase` per phase/role when `MODEL_RESOLVE=role_catalog`.
+- Critic spawn must call `select_critic_model` / `roles.critic` (not hardcoded `composer-2.5-fast` / catalog release).
+- Decide fail-closed vs attested `MODEL_RESOLVE_FALLBACK` when lookup misses — **not** silent parent inherit.
+- Align catalog keys vs DEC-0051 roles (`sa`↔`tech-lead`, `qe`/`curator`/closure/`sprint-plan`).
+- Agent frontmatter: `po.mdc` / `release.mdc` `inherit` vs catalog slugs; `curator.mdc` `fast` vs cheap/`composer-2.5`.
+- Tests: additive `test_bug0022_*` that spawn path passes resolver/critic slugs (or fail-closed `MODEL_*`). Do not flip US-0101/0102 OPEN. Do not merge BUG-0021.
+
+### Decision gate
+
+- **decision_gate=false** for intake persistence. Exact spawn-wiring + role-key mapping remain `/research` DQs.
+- **Status**: current. **Next**: `/discovery` for **BUG-0022**.
+
+## R-0134 - BUG-0021 OpenCode CLI TUI still has no invokable `/auto` after BUG-0020 tui.json (research)
+
+- **Date**: 2026-09-13
+- **Topic**: Close discovery DQ1–DQ8; pick winning D5 axis so OpenCode CLI TUI lists and invokes `/auto` as a real keymap slash command whose `run()` starts `runAutoLifecycle` (or documented `OPENCODE_*`) without restoring STOP-only `auto.md` / JSON `commands.auto`+`template`
+- **Linked**: BUG-0021 (DONE), R-0131 (intake compose; C-limb live-falsified — do not wipe), R-0126 (E2 C-limb claimed CLI TUI `/auto` via `tui.json` — live-falsified; do not wipe; do not rewrite historical `# BUG-0020`), R-0125, R-0124, R-0120, BUG-0020 DONE (do not reopen ACs / S0140), BUG-0019 DONE, BUG-0018 DONE (do not restore STOP-only `auto.md`), BUG-0015 DONE, BUG-0017 DONE, US-0124, US-0125, US-0069; R-0132 (US-0139) and R-0133 (BUG-0022) are distinct — do not wipe/reuse
+- **Confidence**: high that `tui.json` listing a file is not enough because the TUI loader `readV1Plugin(..., "tui")` requires default export `{ id?, tui }` with `typeof tui === "function"` and rejects `Plugin.define({ setup })`; high that CLI slash listing is keymap `namespace: "palette"` + `slashName`, not `GET /api/command`; high that “Auto mode enabled…” is LLM chat not lifecycle; medium for exact non-colliding binding key string (architecture may bikeshed)
+- **Status**: delivered (delivery closure trailer below; curator refresh **2026-09-13T21:40:00Z**)
+- **Query**: DQ1–DQ8 from discovery D1–D10
+- **Producer consumed**: discovery `rp-auto-20260913-bug0021-discovery-po-20260913T115000Z-BUG-0021` (`proof_hash` `671EB358E9E97D7C953D5B098E7FDC5B97544D2481A38931E6D537DE27A7291A`, ttl `2026-09-13T12:50:00Z`) — RUNTIME_PROOF_VALID MATCH at research issue time `2026-09-13T12:00:00Z`; sovereign-critic of discovery PASS (`composer-2.5`; 0 blocking; anti_slop_aggregate=10; `bug0021dsc-*`; `model_resolve_fallback=MODEL_RESOLVE_FALLBACK` from `gpt-5.6-luna-medium`); marker `tl-BUG0021-research-20260913T120000Z-fresh`
+- **EARLY_RESEARCH posture**: scratchpad `EARLY_RESEARCH=1` — live Context7 `/anomalyco/opencode` + raw `dev` `tui-plugins.md` / `tui-command-shim.md` / `plugin/shared.ts` `readV1Plugin` / TUI `runtime.ts` + public v2 CLI plugin + RPC docs (not a substitute for this entry; compose R-0131)
+- **ID policy**: highest existing research id was **R-0133** (BUG-0022 intake). This entry is **R-0134**. Do **not** wipe, renumber, or rewrite R-0120..R-0133. Do **not** reuse R-0131 (BUG-0021 intake), R-0132 (US-0139), or R-0133 (BUG-0022). `ID_NAMESPACE_BOOTSTRAP=0` → continuation (no bootstrap).
+- **Compose base**: discovery D1–D10 unchanged. Do not author `# BUG-0021` or a new DEC this phase. Do not reopen BUG-0020 / BUG-0019 / BUG-0018 ACs. Do not mutate BUG-0022 / US-0139+. Do not restore `.opencode/commands/auto.md`.
+
+### Web / docs / code sources (2026-09-13 live-fetch)
+
+- Context7 `/anomalyco/opencode` + raw https://github.com/anomalyco/opencode/blob/dev/packages/opencode/specs/tui-plugins.md — TUI plugins **must** be listed in `tui.json` (no directory auto-discovery). Loader reads **only** the module **default export object**. Expected shape: `export default { id?, tui }` where `tui: TuiPlugin = async (api, options, meta) => { ... }`. Named exports ignored. A module **cannot** export both `server` and `tui`. File/path plugins **must** export a non-empty `id`.
+- Same spec — `api.keymap.registerLayer({ commands: [{ name, title, category, namespace: "palette", slashName, run }], bindings: [{ key, cmd, desc }] })`. Command field is **`name`**, not `id`. Bindings objects are `{ key, cmd, desc }`. Palette / slash listing uses `namespace: "palette"` plus `slashName` (optional `slashAliases`). `api.client` is the current runtime client. `--pure` / `OPENCODE_PURE` skips **external** TUI plugins only.
+- Same spec — activation: TUI runtime stores `plugin: entry.module.tui` and calls `plugin.plugin(api, options, meta)` (`packages/opencode/src/plugin/tui/runtime.ts`).
+- Live `dev` `packages/opencode/src/plugin/shared.ts` `readV1Plugin(mod, spec, "tui")`: requires `mod.default` to be a record with `typeof tui === "function"`; missing `tui` → `TypeError: Plugin ${spec} must default export an object with tui()`; load is `fail("failed to load tui plugin")` and the plugin is skipped (no `tui()` → no toast from kit setup).
+- https://github.com/anomalyco/opencode/blob/dev/packages/opencode/specs/v2/tui-command-shim.md — replace `api.command.register` with keymap `registerLayer` (`name` + `slashName` + `run()` + bindings `{ key, cmd }`).
+- https://opencode.ai/v2/docs/build/plugins/cli/ — **different authoring API**: `Plugin.define({ setup })` from `@opencode/plugin/tui` + `context.keymap.layer({ commands: [{ id, slash: { name }, run }], bindings: ["id"] })`. That is the public **CLI plugin** shape, not the `tui.json` file-plugin loader. `cli.json` is for CLI-only packages against remote servers.
+- https://opencode.ai/v2/docs/build/plugins/rpc/ — server `ctx.rpc.register(Rpc, impl)`; TUI/CLI client `context.client.rpc(Rpc)` (for `{ id, tui }` use **`api.client.rpc`**). HTTP `client.rpc` subclient. Kit orchestrator already registers `ITS_MAGIC_AUTO_RPC` id `"its-magic.auto"` wrapping `runAutoLifecycle`.
+- Protocol `GET /api/command` (`v2.command.list`) returns `Command.Info[]` (markdown `.opencode/commands/*.md` / JSON `template`) — **not** TUI keymap slash commands. Peers (`/ask`, `/quick`, …) list because they are Command.Info.
+- GitHub [anomalyco/opencode#36505](https://github.com/anomalyco/opencode/issues/36505) (closed on `v2`): some installed builds parsed `tui.json` but did not activate external TUI plugins. Residual risk if the operator binary predates that runtime; not a reason to restore `auto.md`.
+- Kit working tree (unchanged this phase): `.opencode/tui.json` + template twin list `"./plugins/its-magic-auto/tui.ts"`; `its-magic-auto/tui.ts` is `Plugin.define({ setup })`, command **`id`**, keyless `bindings: ["its-magic.auto"]` / `{ cmd, desc }`, default export = `Plugin.define` result (**no `tui` function**); `orchestrator.ts` `editor.add({ name: "auto", execute })` → `runAutoLifecycle` + RPC register; `.opencode/commands/auto.md` **absent**.
+
+### Gap confirmation (code + live)
+
+- BUG-0020 DONE shipped E2 C-limb: honest desktop Command.Info cannot list execute-only `/auto`; claimed CLI TUI `/auto` via shipping `tui.json`. Static `test_bug0020_*` passed on file/comment presence (`tui.json` lists `tui.ts`). Operator on **OpenCode CLI TUI** (`opencode`, not `--pure`) still has **no `/auto`**. **R-0126 C-limb** “CLI TUI `/auto` via `tui.json` works” is **live-falsified**. Do **not** rewrite historical `# BUG-0020`.
+- Live symptom: `/auto ` (trailing space, not highlighted) sends chat; model roleplays “Auto mode enabled. Describe the task you want handled.” That is **LLM prompt handling**, not `runAutoLifecycle`, and not OpenCode permission `--auto`.
+- Sufficient root cause (live loader): `tui.json` lists a file whose default export is `Plugin.define({ setup })`. `readV1Plugin(..., "tui")` requires `tui()`. The module is skipped. `setup()` never runs, so `OPENCODE_AUTO_SLASH_LISTING_UNSUPPORTED` toast never fires — **silent miss**.
+- Secondary mismatches if a different loader ever called the current `registerSlashListing`: command field `id` vs live `name`; keyless bindings vs `{ key, cmd }`.
+- Do **not** restore STOP-only `auto.md` (BUG-0018). Do **not** JSON `commands.auto`+`template` (0018-class; D6). Do **not** reopen BUG-0020 ACs / S0140.
+
+### Critic NB closures (discovery `bug0021dsc-*`, non-blocking → research locks)
+
+| Critic theme | Resolution in R-0134 |
+|---|---|
+| Proof fail-closed + Status OPEN (challenger-001) | **Consumed**: discovery hash MATCH before TTL `2026-09-13T12:50:00Z`; Status remains OPEN; auto.md stays absent (D4) |
+| Layer = CLI TUI keymap vs Command.Info; research owns D5 A–D + R-0134 (architect-002) | **LOCKED**: this entry closes DQ1–DQ8 + Axis **A**; architecture authors additive `# BUG-0021` (no companion DEC) |
+| No DONE; no STOP-only restore; no BUG-0020 reopen; no BUG-0022 mutate (subtractor-003) | **Held**: additive `# BUG-0021` supersedes R-0126 C-limb listing claim only; Status OPEN; D4/D8 held |
+
+### DQ1 — Loader default-export shape (LOCKED)
+
+- **Yes. CLI TUI `tui.json` loader consumes only `mod.default` as `{ id?, tui }`.** Named exports ignored. `readV1Plugin` requires `typeof default.tui === "function"`. File plugins must export non-empty `id`.
+- `Plugin.define({ setup })` (public CLI plugin docs / kit `tui.ts`) is **not** a TUI module. Missing `tui()` → load skip. **Kit default export is sufficient to explain silent missing `/auto`** even with a correct `tui.json` path.
+- Server plugin `its-magic-auto/index.ts` stays `Plugin.define` (server directory load). Do **not** add `tui` to that module (cannot export both `server` and `tui`).
+- **deferred_to_architecture**: exact `id` string (recommend keep `"its-magic.auto.tui"`); TypeScript types from `@opencode-ai/plugin/tui` (`TuiPlugin` / `TuiPluginModule`).
+
+### DQ2 — Command `name` vs `id`; bindings `key` required? (LOCKED)
+
+- Live TUI keymap command identity is **`name`** (examples: `"demo.open"`, `"plugin.command"`, host `/models` uses `name: "model.list"`). Field **`id` is not the documented registerLayer command key**. Using only `id` can drop the command if the host reads `name`.
+- Bindings in the TUI plugin spec are objects **`{ key, cmd, desc }`**. A `key` is required on each binding object (examples never omit it). Kit keyless `bindings: ["its-magic.auto"]` is the **CLI Plugin.define** shape, not `registerLayer`. A `{ cmd, desc }` row without `key` can fail binding parse and drop the layer.
+- Slash / palette listing is driven by **`namespace: "palette"` + `slashName`** (and optional `slashAliases`), not by the key. A command can be registered with `commands: [...]` and bindings in the same or a separate layer. Recommend **both**: `slashName: "auto"` **and** a non-colliding key so which-key/shortcuts work and the layer validates.
+- Host-true key: avoid `ctrl+p` (`keybinds.command_list`), `ctrl+x` (leader), and the shim example `ctrl+shift+p`. Spec demo uses `ctrl+shift+m`. **Recommend `ctrl+shift+a`** (`cmd: "its-magic.auto"`). Architecture may bikeshed the exact chord; tests lock the winner.
+- Recommend command `name: "its-magic.auto"` (matches RPC id / `cmd`) and `slashName: "auto"`. Retain extra `slash: { name: "auto" }` so existing `test_bug0019_*` string contracts stay green (host may ignore unknown fields).
+
+### DQ3 — CLI slash list source vs `GET /api/command` (LOCKED)
+
+- **CLI TUI `/` list for keymap commands = `slashName` + `namespace: "palette"`** on a loaded TUI plugin layer. That is **not** `GET /api/command`.
+- **`GET /api/command` / `v2.command.list` = Command.Info** (markdown `.opencode/commands/*.md` + JSON `template` + MCP + skills). Peers list because they are markdown Command.Info. `/auto` does not, because `auto.md` is absent **by design** (BUG-0018) and plugin `editor.add` is **not** a Command.Info merge source (R-0126 DQ1 — compose, desktop out of scope).
+- Operator CLI TUI missing `/auto` while peers remain is **expected** until the TUI plugin **loads and registers** `slashName: "auto"`. Shipping `tui.json` without a `{ id, tui }` module cannot list `/auto`.
+
+### DQ4 — Host-true `run()` → `runAutoLifecycle` (LOCKED)
+
+- TUI `run()` is **client-side** inside `tui(api)`. Server lifecycle stays `orchestrator.ts` `editor.add({ name: "auto", execute })` → `runAutoLifecycle` (BUG-0015 attach; keep).
+- Documented client path: **`api.client.rpc(ITS_MAGIC_AUTO_RPC).runAutoLifecycle({ sessionID, prompt, delivery })`** (v2 RPC docs; public CLI analog is `context.client.rpc`). Orchestrator already `ctx.rpc.register(ITS_MAGIC_AUTO_RPC, { runAutoLifecycle: runAutoLifecycleRpc })`.
+- Keep existing HTTP POST `/rpc/its-magic.auto/runAutoLifecycle` as fallback. Prefer `api.client.rpc`. Do **not** SessionPrompt / Command.Info template expansion. Do **not** treat LLM chat as execute.
+- `keymap.runCommand(name)` is forced programmatic execution of the **same** keymap command, not a second path to the server. Dispatch to RPC from `run()`.
+- If client RPC is missing after listing succeeds → `OPENCODE_AUTO_TUI_DISPATCH_UNSUPPORTED` (compose BUG-0019).
+
+### DQ5 — Fail-closed tokens (LOCKED)
+
+| Code | When |
+|---|---|
+| Existing `OPENCODE_AUTO_SLASH_LISTING_UNSUPPORTED` | `tui()` **ran** but `api.keymap.registerLayer` (and any documented keymap API) is missing — toast from `tui()` |
+| Existing `OPENCODE_AUTO_TUI_DISPATCH_UNSUPPORTED` | Listed `/auto` `run()` cannot reach `runAutoLifecycle` / RPC |
+| Existing `OPENCODE_AUTO_DESKTOP_COMMAND_INFO_LISTING_UNSUPPORTED` | Desktop Command.Info silent-miss (compose BUG-0020) — **do not reuse** for CLI TUI |
+| Existing `OPENCODE_AUTO_MARKDOWN_COLLISION` | Leftover `auto.md` (compose BUG-0018) — **do not reuse** for listing-miss |
+| Existing `OPENCODE_PLUGIN_DISPATCH_ATTACH_UNSUPPORTED` | Server `editor.add` attach missing (compose BUG-0015) |
+| **Additive** `OPENCODE_AUTO_CLI_TUI_PLUGIN_LOAD_UNSUPPORTED` (architecture may bikeshed the exact string) | `tui.json` **lists** the TUI module **but** the host skipped it (`readV1Plugin` / no `tui()` / init fail / #36505-class no external load). **Must not** silent-miss. Kit `tui.ts` **cannot toast if it never loads** — document in runbook + comments; emit from a path that still runs (plugin-manager / session error / orchestrator-adjacent notice if host exposes load failure). After Axis A reshape, this token is the residual host-cannot-load case, not the expected happy path |
+
+- Silent miss with `tui.json` present is the defect. Token-only is not delivery (D1/D9): listed `/auto` **and** lifecycle (or honest `OPENCODE_*`).
+- **deferred_to_architecture**: exact additive token string; how load-skip is visible when `tui()` never runs.
+
+### DQ6 — Tests + companion DEC (LOCKED)
+
+**Winning architecture shape**: additive `# BUG-0021` **superseding R-0126 / `# BUG-0020` C-limb** “CLI TUI `/auto` via `tui.json` works”. **No companion DEC** (same class as BUG-0019 / BUG-0020). Do **not** rewrite historical `# BUG-0020` body. Do **not** weaken `test_bug0018_*` / `test_bug0019_*` / `test_bug0020_*` except compose-only comments that C-limb file-presence is not the CLI listing proof.
+
+**Additive `test_bug0021_*` (8 markers; not `tui.json`-path-only / slash-string-only; no live OpenCode CLI TUI probe required in CI — default contract tests like 0018/0019/0020; architecture may add an optional live probe outside default CI)**:
+
+1. `test_bug0021_tui_default_export_id_tui_shape` — default export is `{ id, tui }` with a `tui` function; **not** `Plugin.define({ setup })` as the TUI default. Quote/lock `readV1Plugin` contract (`must default export an object with tui()`). Active + template.
+2. `test_bug0021_registerLayer_name_slashName_palette_key` — `registerLayer` command uses **`name`** (not only `id`), `slashName: "auto"`, `namespace: "palette"`, bindings `{ key, cmd }` with a non-empty `key`. Not keyless `bindings: ["its-magic.auto"]` as the only binding form.
+3. `test_bug0021_run_rpc_to_runAutoLifecycle` — `tui` `run()` dispatches via `api.client.rpc` / `ITS_MAGIC_AUTO_RPC` → `runAutoLifecycle`; not SessionPrompt; not Command.Info `template`; not LLM chat.
+4. `test_bug0021_no_auto_md_no_json_template` — compose 0018/0019: no OpenCode `auto.md`; no JSON/JSONC `commands.auto`+`template`.
+5. `test_bug0021_fail_closed_load_token` — additive CLI-TUI load-skip token present and **not** aliased onto desktop / markdown-collision / keymap-API-missing tokens; runbook documents silent-skip when `tui()` never runs.
+6. `test_bug0021_slash_list_is_keymap_not_command_info` — contract: CLI TUI slash = keymap `slashName`; `GET /api/command` is Command.Info peers; `tui.json` does **not** feed Command.Info (compose 0020 picker contract; this marker is CLI-TUI listing, not desktop).
+7. `test_bug0021_active_template_parity` — `tui.ts` / `tui.json` / token wiring / no-`auto.md` byte-parity (D10).
+8. `test_bug0021_upgrade_copies_tui_shape_still_prunes_auto_md` — upgrade `--host opencode|both` copies the reshaped TUI module onto already-C-limb trees; still **prunes** leftover `auto.md`; no general sweeper.
+
+Keep `slash: { name: "auto" }` and `slashName: "auto"` so `test_bug0019_tui_slash_auto_listing_surface` remains green unless architecture explicitly compose-amends that marker.
+
+### DQ7 — Consumer upgrade (LOCKED)
+
+- Already-C-limb trees have `.opencode/tui.json` listing `tui.ts` and a **wrong-shaped** `tui.ts`. Upgrade is **copy-on-add / overwrite of framework-owned TUI module** (`its-magic-auto/tui.ts` + template twin) plus the targeted leftover `auto.md` prune. `tui.json` path can stay (already shipped).
+- Active ↔ template parity (D10). `its-magic --mode upgrade --host opencode|both` delivers the reshaped surface.
+- Do **not** restore STOP-only `auto.md`. Do **not** prune `.cursor/commands/auto.md` or `.opencode/agents/auto.md`. Do **not** reopen BUG-0020 ACs / S0140.
+- Runbook recipe (architecture/execute): (1) upgrade to the BUG-0021 release; (2) `upgrade --host opencode|both`; (3) restart OpenCode CLI TUI (`opencode`, not `--pure`); (4) `/auto` is highlighted/listed and starts lifecycle — or documented `OPENCODE_*` (not LLM Auto mode).
+
+### DQ8 — Other CLI listing APIs; Axes B/C; `--pure` (LOCKED)
+
+- **Axis B (other CLI listing API)** = public `Plugin.define` + `keymap.layer` (`id` / `slash: { name }` / keyless `bindings: [id]`) and/or `cli.json`. Kit **already shipped** that authoring shape (BUG-0019) **and** `tui.json` (BUG-0020). Operator CLI TUI still has no `/auto`. Internal TUI loader does **not** directory-auto-discover `plugins/<name>/tui.ts` and does **not** accept `Plugin.define` as a TUI module. **Reject Axis B as the winner.** Do **not** ship kit `cli.json` (`test_bug0019` forbids it).
+- **Axis C (host-true real command not chat)** is the **outcome constraint**, delivered **by Axis A**: keymap `slashName: "auto"` + `run()` → RPC → `runAutoLifecycle`. Not LLM “Auto mode enabled”. Not markdown STOP. **Not a separate implementation axis.**
+- **Axis D (file-existence-only)** is **rejected as a product/test axis** (D7). Keep shipping `tui.json` as the load **path**, not as the proof of listing.
+- **`--pure` out of scope** (D8). Host skips external TUI plugins under `--pure`; do not claim `/auto` there.
+- If Axis A reshape still does not list on a given operator binary (#36505-class): fail-closed `OPENCODE_AUTO_CLI_TUI_PLUGIN_LOAD_UNSUPPORTED` + runbook; **do not** restore `auto.md`; **do not** add Command.Info `template`.
+
+### Fix-axis verdict (D5)
+
+| Axis | Summary | Verdict |
+|---|---|---|
+| **A** | Reshape `its-magic-auto/tui.ts` to live `{ id, tui }` + `api.keymap.registerLayer` (`name` / `slashName: "auto"` / `namespace: "palette"` / bindings `{ key, cmd }`); keep `tui.json` listing; `run()` → `api.client.rpc` → `runAutoLifecycle`; keep `editor.add` execute owner | **WINNER** |
+| B | Other CLI listing API (`Plugin.define` / `keymap.layer` / `cli.json` / directory discovery) | **Rejected as winner** — already shipped; `tui.json` loader does not consume it |
+| C | Host-true real command not chat | **Delivered by A** — not a separate stack; reject LLM/markdown substitutes |
+| D | File-existence-only (`tui.json` lists `tui.ts` / slash string present) | **Rejected** as product/test axis (live-falsified C-limb) |
+
+**Can this be simpler?** Leaving `Plugin.define` and hoping directory discovery lists `/auto` looks smaller and already failed (BUG-0019 + BUG-0020). Restoring `auto.md` looks smaller and recreates BUG-0018. Dual-export `{ setup, tui }` / two default exports cannot satisfy `readV1Plugin`. Axis A (one default export `{ id, tui }` in the already-listed file) is the simplest design that meets D1/D9.
+
+**Approach seed for `/architecture`**: **Axis A**. **Companion DEC: no.** Recommend architecture H1 **`# BUG-0021`** (additive; do **not** rewrite `# BUG-0020`). `decision_gate=false`.
+
+### Architecture seeds preview (within SPRINT_MAX_TASKS=12)
+
+T-anch (`# BUG-0021`; no new DEC), T-001 reshape `tui.ts` default export `{ id, tui }` (active + template), T-002 `registerLayer` `name` + `slashName: "auto"` + `namespace: "palette"` + `{ key, cmd }`, T-003 `run()` → `api.client.rpc(ITS_MAGIC_AUTO_RPC)` → `runAutoLifecycle` (keep `editor.add`), T-004 fail-closed tokens (reuse LISTING/DISPATCH; additive LOAD; do not reuse desktop), T-005 `test_bug0021_*` 8 markers (not file-existence-only), T-006 upgrade `--host opencode|both` copies shape + still prunes `auto.md`, T-007 runbook CLI TUI recipe + `--pure` out of scope. (= 8 tasks)
+
+### Risks
+
+- **R1 (MEDIUM)**: Operator OpenCode binary predates v2 external TUI plugin activation (#36505 class). Mitigation: Axis A still required; residual → `OPENCODE_AUTO_CLI_TUI_PLUGIN_LOAD_UNSUPPORTED` + runbook; do not restore `auto.md`.
+- **R2 (MEDIUM)**: Binding key collides with a builtin / operator `tui.json` `keybinds`. Mitigation: recommend `ctrl+shift+a`; slash listing does not depend on the chord; architecture + tests lock the string.
+- **R3 (LOW)**: `test_bug0019_*` string contracts (`keymap.layer` / `name: "auto"`) break if extras are dropped. Mitigation: keep `slash: { name: "auto" }` + `registerLayer`; compose-amend 0019 only if required.
+- **R4 (LOW)**: `api.client.rpc` vs `context.client.rpc` bikeshed on `{ id, tui }` vs Plugin.define. Mitigation: DQ4 locks `api.client` for TUI modules; keep HTTP RPC fallback; DISPATCH token if both fail.
+- **R5 (LOW)**: Operators treat desktop Command.Info `/auto` as in-scope. Mitigation: D8 / R-0126 compose; this bug is CLI TUI only.
+
+### Decision gate
+
+- **decision_gate=false** — DQ1–DQ8 LOCKED; winning approach **Axis A**; companion DEC **no**. Live docs do not create a governance fork (implement the documented TUI module shape).
+- **Status**: **delivered** (delivery closure trailer below; curator refresh **2026-09-13T21:40:00Z**).
+
+- **Delivery closure (2026-09-13T21:40:00Z, curator, `orchestrator_run_id=auto-20260913-bug0021`)**: **`BUG-0021`** **DONE**; sprint **`S0146`** **released**; Axis A `{ id, tui }` + `slashName: "auto"` + rpc → `runAutoLifecycle` + retained `editor.add` + `OPENCODE_AUTO_CLI_TUI_PLUGIN_LOAD_UNSUPPORTED` + upgrade overwrite + 8/8 `test_bug0021_*` + bug0020 8/8 + bug0019 7/7 + bug0018 6/6 delivered per **R-0134** / **Axis A** / **`# BUG-0021`** (no companion DEC); compose **BUG-0020** / **BUG-0019** / **BUG-0018** / **R-0126** (DONE preserved); honest residual: live CLI TUI not probed; #36505; no auto.md restore; portfolio **9 OPEN** stories (US-0140..US-0148), **1 OPEN** bug (BUG-0022 OUT — not scheduled); explicit bug-target segment terminal — orchestrator STOP after critic hook (do **not** drain-advance to BUG-0022 / US-0140 / US-0139).
+- **Freshness review (2026-09-13, curator refresh-context BUG-0021)**: R-0134 marked **delivered** (BUG-0021 DONE). R-0131 intake entry remains **current** compose base (not outdated). R-0126 / R-0125 / R-0124 remain **delivered** compose bases (not wiped). R-0133 (BUG-0022) and R-0135 (US-0140) remain **current** (not this segment). No duplicate R-ids to merge. Unlinked prune deferred (no operator request).
+
+## R-0135 - US-0140 Canonical lifecycle and gate orchestrator research
+
+- **Date**: 2026-09-13
+- **Topic**: Close discovery DQ1–DQ10; pick winning owned `WorkflowEngine` + CommandRouter + GateEngine + crash-resume (no `# US-0140` / DEC-0140 this phase)
+- **Linked**: US-0140 (OPEN), R-0134 / BUG-0021 (OPEN — OUT; do not reuse this id), R-0133 / BUG-0022 (OPEN — OUT), R-0132 / DEC-0139 / US-0139 (DONE compose-only — context packs), R-0130 / DEC-0138 / US-0138 (DONE compose-only — RuntimeConfig / loop caps), R-0129 / DEC-0137 / US-0137 (DONE compose-only — PolicyEngine/ToolBroker), R-0128 / DEC-0136 / US-0136 (DONE compose-only — SessionSupervisor `spawn`/`end`/`discardOrphans`), R-0122 / DEC-0134 / US-0134 (KernelBridge consume validators), R-0121 / DEC-0133 / US-0133, BUG-0006 / DEC-0051 spawn-only, US-0039 KEEP release gate chain, US-0045 status authority, DEC-0069 resume pairing; masterplan §§14/16/25.4/27/30 `runtime-core`/32 Phase 3/35 Kernel/gates/37 DoD 3/4/9/10; sibling US-0141..US-0148 OUT OF SCOPE (US-0143 `/auto`/`/quick` drain, US-0144 critic content, US-0145 deploy targets, US-0146 CLI/TUI); BUG-0020 DONE not reopened
+- **Confidence**: high for §30 nested `runtime-core` (not sibling `packages/workflow`) + spawn-only graph + KernelBridge consume-not-copy + artifacts-vs-SQLite + fresh-role crash resume; medium for exact SQLite filename and `AUTO_IMPLEMENTATION_LOOP` key path inside resolved config (architecture may pin)
+- **Status**: current
+- **Query**: DQ1–DQ10 from discovery D1–D10
+- **Producer consumed**: discovery `rp-auto-20260913-us0140-discovery-po-20260913T201500Z-US-0140` (`proof_hash` `297A65DF1274B4DC7BD10782CDF794F5E8A0882DFCF0CB8BAD472348F1E9F3EB`, ttl `2026-09-13T21:15:00Z`) — RUNTIME_PROOF_VALID MATCH at research issue time `2026-09-13T20:35:00Z`; sovereign-critic of discovery PASS (`rp-auto-20260913-us0140-sovereign-critic-techlead-20260913T202500Z-US-0140` / `209EE4747DD662653ED169C674726073197B25A4768F5C83EAB18F96BA9D7994`; 0 blocking; anti_slop_aggregate=10; degraded_mode=false); marker `tl-US0140-research-20260913T203500Z-fresh`
+- **EARLY_RESEARCH posture**: scratchpad `EARLY_RESEARCH=1` — Temporal durable-execution replay vs LangGraph phase checkpoints (replay trap for LLM sessions — analog, not adopted); Node `node:sqlite` DatabaseSync vs better-sqlite3 native compile; GitHub required status checks as ordered-gate analog (not a merge-queue product)
+- **ID policy**: highest existing research id was **R-0134** (BUG-0021). This entry is **R-0135**. Do **not** wipe, renumber, or rewrite R-0120..R-0134. Do **not** reuse R-0130 (US-0138), R-0131 (BUG-0021 intake), R-0132 (US-0139), R-0133 (BUG-0022), or R-0134 (BUG-0021 research). `ID_NAMESPACE_BOOTSTRAP=0` → continuation (no bootstrap). Parent orchestrator hint R-0134 is **ineligible**.
+- **Compose base**: discovery D1–D10 unchanged. Do not author `# US-0140` or `decisions/DEC-0140.md`. Do not reopen US-0139 / US-0138 / US-0137 / US-0136 / US-0135 / BUG-0020. Do not mutate US-0141+ or BUG-0021 / BUG-0022. Do not amend isolation loader internals, `noTools: "builtin"`, KernelBridge locate/handshake/allowlist internals, auth-models, RoleCatalog/SessionSupervisor internals, PolicyEngine decision tables, or `@its-magic/config` loaders. Fake-model CI default **held**. Never read `.env`.
+
+### Web / docs / analog sources (2026-09-13)
+
+- https://nodejs.org/dist/latest-v22.x/docs/api/sqlite.html — `node:sqlite` `DatabaseSync` ships in Node 22.5+; flag dropped in 22.13; **Stability 1.1** (active development) on the v22 line this repo pins (`engines.node >=22.19.0`). Sync API, `:memory:` for tests, no `node-gyp`. Analog **winner** for operational metadata; wrap thinly so a later better-sqlite3 swap is possible if the experimental API churns.
+- https://sqg.dev/blog/sqlite-driver-benchmark/ — better-sqlite3 remains faster and more ergonomic (`.transaction()`); native compile fails on Windows/Alpine CI. **Reject as required v1 dep** (D8 Win+Linux fake-model). `bun:sqlite` is bun-only. `sql.js` WASM is not the production SOT.
+- https://dreaming.press/posts/resume-crashed-ai-agent-durable-execution-replay-trap.html — Temporal journals event history and **replays workflow code**; LLM/tool calls must be Activities or replay diverges. LangGraph checkpoints restore **state** at a node boundary and re-enter; they are not durable execution. **Adopt checkpoint + fresh spawn**, not Temporal replay of specialist sessions (violates R3 / D7).
+- https://docs.langchain.com/oss/python/langgraph/use-time-travel — nodes after a checkpoint re-execute, including LLM calls. Confirms we must **not** resume an old Pi conversation; spawn a **fresh correct-role** session (compose US-0136 `SessionSupervisor.spawn` + `discardOrphans`).
+- https://docs.github.com/en/repositories/configuring-branches-and-merges-in-your-repository/managing-protected-branches/about-protected-branches — required status checks are an **ordered fail-closed gate** analog (tests/review before merge). Maps to D4: tests → independent QA → UAT → docs/artifacts. Not a merge-queue product; publish/deploy remains US-0145.
+- In-tree compose (do not amend internals): `standalone/packages/role-runtime/src/types.ts` `SessionSupervisorApi.spawn|end|discardOrphans`; `standalone/packages/kernel-bridge/src/types.ts` `runValidator` + `ALLOWED_VALIDATOR_NAMES` (missing name → `KERNEL_VALIDATOR_MISSING`); `standalone/packages/config/src/types.ts` `DELIVERY_MODE` / `retryTest.AUTO_LOOP_MAX_CYCLES` / autonomy flags (consume `AUTO_IMPLEMENTATION_LOOP` from resolved flags/shared/compat — **no new RuntimeConfig domain**); `standalone/packages/policy-engine` + `tool-broker` allowlist/`policy_hash`; `standalone/packages/context-engine` packs; `.gitignore` already gitignores `**/.its-magic/context-packs/` (extend analog `**/.its-magic/runtime/` at execute, not this phase).
+
+### Critic NB closures (discovery `us0140dsc-*`, non-blocking → research locks)
+
+| Critic theme | Resolution in R-0135 |
+|---|---|
+| Fail-closed edges named; US-0143 drain OUT; credentials/.env OUT; R-0135 stub only (challenger-001) | **LOCKED DQ2 / DQ7 / DQ10**; this entry is R-0135 (not R-0134) |
+| `runtime-core` compose US-0136..0139 + KernelBridge consume-only; US-0143/0144/0145/0146 OUT (architect-002) | **LOCKED DQ1 / DQ5 / DQ9**; this entry closes DQ1–DQ10 + Approach **A1 (A\*)**; architecture authors `# US-0140` + **DEC-0140** |
+| No R-0135/DEC-0140/`# US-0140` from critic; no /research spawn; US-0139 DONE compose-only (subtractor-003) | **Held** this research phase: R-0135 authored; still no `# US-0140` / `decisions/DEC-0140.md` / no `packages/runtime-core` code |
+
+### DQ1 — Package split + injection (LOCKED)
+
+- **Winner**: new `standalone/packages/runtime-core` (`@its-magic/runtime-core`) per masterplan §30 / D1. Nested **`workflow/`** (CommandRouter + WorkflowEngine + typed phase graph + **nested GateEngine**), **`runs/`** (SQLite operational store), **`recovery/`** (crash reconcile), **`stop-matrix/`** (reason-code mirror of kit; consume, do not fork). npm `private: true`, `version: 0.0.0`, `type: module`, `engines.node >=22.19.0`, export `./src/index.ts`. Workspaces glob `packages/*` already covers it. Package **does not exist** today (glob 0 files).
+- **No Pi imports.** `package.json` must not depend on `@earendil-works/pi-*`. Extend US-0133..0139 Pi-import grep to `packages/runtime-core`. Type-only / public-API imports from `@its-magic/role-runtime`, `@its-magic/policy-engine`, `@its-magic/config`, `@its-magic/context-engine`, `@its-magic/kernel-bridge` are allowed. Those packages **do not** import workflow internals (injection from runtime-core / CLI later).
+- **Reject A2** (sibling `standalone/packages/workflow`): extra npm surface vs §30 layout; GateEngine would split from runs/recovery.
+- **Reject A3** (fold into `role-runtime`): US-0136 already rejected folding workflow into SessionSupervisor.
+- **Reject** `packages/release-runtime` this story: US-0145 owns deploy **targets**; D4/D5 GateEngine is **lifecycle gates**, not publish adapters.
+- Kit `files` continues to omit `standalone/` (DEC-0120). Do not add a Biome override.
+
+### DQ2 — CommandRouter vs kit commands (LOCKED)
+
+- **Winner**: owned CommandRouter implements §14.3 seven steps (target/config → preconditions → role/model/tool/context → **fresh-session spawn** → KernelBridge validators → evidence → next-state intent). **No 200-line prompt is the engine.** Host Cursor/OpenCode `/auto` plugins remain **scheduling-only** (BUG-0006 / DEC-0051). Do **not** restore STOP-only `auto.md`.
+- **Consume** Python validators via existing `KernelBridge.runValidator` (DEC-0134). **Do not copy** validators to TypeScript (R6). Unknown/unlisted name → existing `KERNEL_VALIDATOR_MISSING` (do **not** amend KernelBridge allowlist this story).
+- **`/auto` and `/quick`**: **fail-closed stub** (not omit). Router **accepts the names** so operators do not get a generic unknown-command miss, then returns **`WORKFLOW_ROUTE_DEFERRED`** (US-0143 owns drain + compressed routes). AC-1 command coverage list does **not** require implementing those routes here. `ask` / `memory-audit` / `map-codebase` / `security-review` are **programmatic entry points** that still run the seven steps (spawn-only when agent work is required); their **content** stays compose (US-0139 map, US-0144 critic content OUT).
+
+### DQ3 — Phase-graph encoding (LOCKED)
+
+- **Winner**: **typed TypeScript graph** with named nodes/edges and a precondition table. Machine-readable kit manifest extraction is **§14.5 v1.x**, not this story (avoid dual-SOT with `.cursor/commands/*.md`).
+- Canonical edges: intake → discovery → research → architecture → sprint-plan → plan-verify → execute ↔ qa (bounded) → verify-work → release → closure → refresh-context.
+- **`ultra_lean`**: consume US-0138 `DELIVERY_MODE`; **skip** `plan-verify` via an explicit skip edge + skip evidence (not delete the node). Do not invent US-0143 compressed `/auto`/`/quick` graphs.
+- Next-state intent schema (v1): `{ schema_version, next_phase, next_role, stop_reason?, skip_reason?, gate_code? }`. Architecture may pin field names.
+
+### DQ4 — Bounded execute/QA + supplementary hooks (LOCKED)
+
+- **Winner**: WorkflowEngine owns the execute ↔ qa loop. Cap source = resolved config **`AUTO_IMPLEMENTATION_LOOP`** (flags/shared/compat) + **`retryTest.AUTO_LOOP_MAX_CYCLES`**. **No new RuntimeConfig domain.** Exhaust → fail-closed `WORKFLOW_LOOP_CAP` (architecture may pin alias to existing `FIX_FAILED` / `BLOCK_RETRY_CAP_EXHAUSTED` compose-only).
+- Decision gates, `security-review`, and critics **spawn supplementary fresh sessions** via SessionSupervisor (compose US-0136). They **do not** replace the producer role (AC-3 / §14.1). Critic **content** remains US-0144 OUT — this story only schedules the hook slot when `CROSS_MODEL_REVIEW=1` is already on the resolved config (consume flag; do not implement lens prompts).
+
+### DQ5 — Release GateEngine (LOCKED)
+
+- **Winner**: **nested** `runtime-core/workflow/gates` (or `workflow/release-gates`) as GateEngine **methods**, not a sibling package. Ordered fail-closed chain (US-0039 KEEP / §35 / GitHub required-check analog):
+  1. check-in tests
+  2. independent QA evidence
+  3. UAT evidence (`uat-planner` / existing KernelBridge names)
+  4. documentation / release artifacts
+  5. fail-closed reason (no bypass)
+- Suggested codes (architecture may pin): `RELEASE_TESTS_FAILED`, `RELEASE_QA_MISSING`, `RELEASE_UAT_FAILED`, `RELEASE_ARTIFACTS_MISSING`, `RELEASE_PREMATURE`. Publish/deploy **targets** are US-0145 OUT. Release **cannot** mark DONE (DQ6).
+
+### DQ6 — Closure exclusive DONE (LOCKED)
+
+- **Winner**: Closure is the **only** writer of backlog Status OPEN→DONE and acceptance checks (US-0045 / §25.4). Release writes release artifacts + **release-evidence** envelope; it must not call status reconcile as a side effect.
+- Closure preconditions: valid release-evidence `{ release_run_id, tests_pass, qa_pass, uat_pass, artifact_refs[] }` then KernelBridge `validate_closure_verification` + `status-reconcile`. Isolation/runtime-proof rows for the **closure phase** are written by closure, not by release.
+- Premature closure (no release evidence) → `CLOSURE_RELEASE_EVIDENCE_MISSING`.
+
+### DQ7 — SQLite operational store (LOCKED)
+
+- **Winner**: **`node:sqlite` `DatabaseSync`** inside `runtime-core/runs/` (zero native addon; matches `engines.node >=22.19.0`; `:memory:` in CI). Thin `RunsStore` wrapper so architecture/execute can swap better-sqlite3 later if Node 22 Stability 1.1 churns.
+- **Path**: gitignored **`.its-magic/runtime/ops.sqlite`** (compose US-0139 `**/.its-magic/context-packs/`; execute adds gitignore analog). Never commit the DB. Schema (v1, architecture may pin columns): `runs`, `sessions`, `audit`, `process_handles`, `index_meta` — operational only.
+- **Reject** SQLite as authority for backlog/acceptance/decisions/sprint DONE (D6 / §27.1). If SQLite claims complete and repo artifacts disagree → `RECOVERY_FALSE_COMPLETION`.
+- **Reject** bun:sqlite, sql.js as production SOT, Temporal as the store.
+
+### DQ8 — Restart algorithm (LOCKED)
+
+- **Winner** (maps §27.3 + DEC-0069): on runtime restart:
+  1. READ `handoffs/resume_brief.md` + `docs/engineering/state.md` + active work item (repo canonical)
+  2. READ last SQLite run record (operational only)
+  3. **Reject false completion** when SQLite/session claims PASS but repo evidence/backlog/status disagree
+  4. `SessionSupervisor.discardOrphans()` (abort+dispose live Pi sessions without `end` attestation — compose US-0136; do not rewrite supervisor)
+  5. Reconstruct next schedulable phase from the **typed graph** + resume_brief pairing
+  6. Spawn a **fresh correct-role** session — never restore parent transcripts / old-role conversation
+- Analog: LangGraph **checkpoint at phase boundary**. **Reject Temporal replay** of specialist LLM turns (replay trap). Stale resume_brief → existing `RESUME_BRIEF_STALE` (fail-closed, no advance).
+
+### DQ9 — Spawn injection + kernel compose (LOCKED)
+
+- CommandRouter spawn payload consumes: US-0136 RoleCatalog + SessionSupervisor; US-0137 tool allowlist + `policy_hash`; US-0138 phase/delivery/autonomy flags; US-0139 `code_context` pack + `context_pack_hash`; US-0134 KernelBridge locate/handshake/validators.
+- Empty isolation loader + `noTools: "builtin"` **held**. KernelBridge internals **unamended**. PolicyEngine tables **unamended**. Config loaders **unamended**. Context-engine ranking **unamended**. Fake-model CI **held**.
+
+### DQ10 — `test_us0140_*` Win+Linux fake-model inventory (LOCKED)
+
+Primary: `standalone/tests/contract` (`node:test`) Windows + Linux. Fake-model CI. In-memory SQLite. No paid model calls. No Temporal/LangGraph deps.
+
+1. `test_us0140_command_coverage` — AC-1 programmatic commands + `/auto`/`/quick` stub `WORKFLOW_ROUTE_DEFERRED`
+2. `test_us0140_phase_graph_preconditions` — AC-2 graph + skip-plan-verify under `ultra_lean`
+3. `test_us0140_spawn_only_orchestrator` — host scheduling-only; no in-process producer
+4. `test_us0140_bounded_execute_qa` — AC-3 loop cap
+5. `test_us0140_critics_supplement_not_substitute` — AC-3 hook slot
+6. `test_us0140_release_gate_order` — AC-4 ordered fail-closed
+7. `test_us0140_release_not_closure` — AC-5 release cannot DONE
+8. `test_us0140_sqlite_non_authority` — AC-6
+9. `test_us0140_crash_resume_fresh_role` — AC-7 orphan discard + fresh spawn
+10. `test_us0140_validator_fail_blocks` — AC-8 / §35
+11. `test_us0140_qa_uat_fail_blocks` — AC-8
+12. `test_us0140_e2e_standard_lifecycle` — AC-8 happy path intake→refresh (fake sessions) + premature-closure block
+
+Markers cover AC-1..AC-8. Architecture may rename 5/12 if sprint task split requires it; **count stays 12**.
+
+### Approach verdict
+
+| Approach | Summary | Verdict |
+|---|---|---|
+| **A1 (A\*)** | `@its-magic/runtime-core` nested workflow/runs/recovery/stop-matrix; nested GateEngine; typed TS graph; CommandRouter 7-step + KernelBridge consume; `/auto`/`/quick` fail-closed stub; `node:sqlite` ops DB; checkpoint + fresh-role resume; 12 `test_us0140_*` | **WINNER** |
+| A2 | Sibling `standalone/packages/workflow` | **Rejected** — DQ1 / §30 |
+| A3 | Fold into `role-runtime` | **Rejected** — US-0136 A2 already rejected |
+| A4 | Temporal durable-execution engine | **Rejected** — LLM replay trap; extra infra; D7 wants fresh spawn |
+| A5 | LangGraph as the workflow engine | **Rejected** — not spawn-only; analog checkpoint only |
+| A6 | Copy Python validators into TypeScript | **Rejected** — R6 / DEC-0134 |
+| A7 | SQLite as canonical lifecycle/DONE | **Rejected** — D6 / §27.1 |
+| A8 | Implement `/auto`/`/quick` drain this story | **Rejected** — US-0143 / D2 |
+| A9 | Merge release + closure | **Rejected** — D5 / §25.4 |
+| A10 | Rewrite PolicyEngine / config / KernelBridge / `noTools` / context-engine | **Rejected** — D9 compose |
+| A11 | Require better-sqlite3 native addon | **Rejected** for v1 — Windows/Alpine compile; optional later swap |
+| A12 | bun:sqlite or sql.js production SOT | **Rejected** — bun-only / WASM |
+| A13 | Resume old Pi session on crash | **Rejected** — D7 / R3 |
+
+**Can this be simpler?** Folding workflow into SessionSupervisor or a sibling `packages/workflow` looks smaller and fails §30 / US-0136 isolation. Temporal looks like a complete orchestrator and fails the LLM replay trap plus spawn-only. A1 (one nested runtime-core package + KernelBridge consume + artifact-canonical SQLite) is the simplest design that meets AC-1..AC-8.
+
+**Approach seed for `/architecture`**: **A1 (A\*)**. **Companion DEC: yes → DEC-0140** Required → Accepted in `/architecture` (do **not** author `decisions/DEC-0140.md` this phase). Recommend architecture H1 **`# US-0140`** (not `## US-0140`). `decision_gate=false`.
+
+### Architecture seeds preview (within SPRINT_MAX_TASKS=12)
+
+T-anch (`# US-0140` + DEC-0140), T-001 `packages/runtime-core` + nested dirs + Pi-import grep, T-002 typed phase graph + next-state intent + ultra_lean plan-verify skip, T-003 CommandRouter 7-step + `/auto`/`/quick` stub, T-004 SessionSupervisor spawn injection (catalog/policy/config/context/KernelBridge), T-005 bounded execute↔QA, T-006 nested GateEngine order, T-007 closure exclusive DONE + release-evidence, T-008 `node:sqlite` RunsStore gitignored, T-009 crash reconcile + `discardOrphans` + fresh role, T-010 `test_us0140_*` Win+Linux fake-model. (= 11 tasks)
+
+### Risks
+
+- **R1 (MEDIUM)**: `node:sqlite` Stability 1.1 API churn on Node 22. Mitigation: thin `RunsStore`; tests use `:memory:`; optional better-sqlite3 later.
+- **R2 (MEDIUM)**: Dual-SOT vs kit `/auto` Python if CommandRouter silently diverges. Mitigation: consume KernelBridge validators; `/auto` stubbed until US-0143; stop-matrix nested mirror not a second writer.
+- **R3 (LOW)**: Operators treat SQLite run PASS as story DONE. Mitigation: DQ6/DQ7 tests; `RECOVERY_FALSE_COMPLETION`.
+- **R4 (MEDIUM)**: Crash resume reuses a live Pi session. Mitigation: mandatory `discardOrphans` + fresh spawn test 9.
+- **R5 (LOW)**: GateEngine grows into US-0145 deploy adapters. Mitigation: D4/D9; no `packages/release-runtime` this story.
+- **R6 (LOW)**: `AUTO_IMPLEMENTATION_LOOP` key path bikeshed in resolved config. Mitigation: architecture pins; consume-only; no new domain.
+
+### Decision gate
+
+- **decision_gate=false** — DQ1–DQ10 LOCKED; winning approach **A1 (A\*)**; companion DEC **yes (DEC-0140)**.
+- **Status**: **delivered** (delivery closure trailer below; curator refresh **2026-09-13T23:15:00Z**).
+
+- **Delivery closure (2026-09-13T23:15:00Z, curator, `orchestrator_run_id=auto-20260913-us0140`)**: **`US-0140`** **DONE**; sprint **`S0147`** **released**; A1 `@its-magic/runtime-core` nested CommandRouter 7-step + typed phase graph + nested GateEngine `RELEASE_*` + closure-exclusive DONE + `node:sqlite` RunsStore + crash resume `discardOrphans` + fresh role + `/auto`/`/quick` `WORKFLOW_ROUTE_DEFERRED` + 12/12 `test_us0140_*` delivered per **R-0135** / **A1** / **`# US-0140`** / **DEC-0140**; compose **US-0133** / **US-0134** / **US-0135** / **US-0136** / **US-0137** / **US-0138** / **US-0139** (DONE preserved); portfolio **8 OPEN** stories (US-0141..US-0148), **1 OPEN** bug (BUG-0022 OUT — not scheduled); drain story **6 of 10** — orchestrator drain-advance → **US-0141** after critic hook (curator STOP; do **not** spawn discovery).
+- **Freshness review (2026-09-13, curator refresh-context US-0140)**: R-0135 marked **delivered** (US-0140 DONE). R-0134 (BUG-0021) and R-0132 (US-0139) remain **delivered** compose bases (not wiped). R-0133 (BUG-0022) remains **current** (not this segment). No duplicate R-ids to merge. Unlinked prune deferred (no operator request).
+
+## R-0136 - BUG-0023 OpenCode CLI TUI listed `/auto` toasts OPENCODE_AUTO_TUI_DISPATCH_UNSUPPORTED (dispatch)
+
+- **Date**: 2026-09-13
+- **Topic**: After BUG-0021 DONE listed `/auto` in OpenCode CLI TUI (`{ id, tui }` + `registerLayer`), invoking that listed command toasts `OPENCODE_AUTO_TUI_DISPATCH_UNSUPPORTED` instead of starting `runAutoLifecycle`
+- **Linked**: BUG-0023 (OPEN), BUG-0021 DONE / R-0134 / R-0131 (listing limb — compose; do **not** wipe; do **not** reopen ACs / S0146), R-0124 (BUG-0019 listing+DISPATCH tokens defined — live dispatch still fail-closed), R-0126 / BUG-0020 DONE (desktop OUT except do not reopen), BUG-0019 DONE, BUG-0018 DONE (do not restore STOP-only `auto.md`), BUG-0015 DONE, BUG-0022 OPEN (Cursor inherit — distinct; do not merge; do not drain), US-0124, US-0125, US-0069; R-0135 (US-0140) distinct — do not wipe/reuse
+- **Confidence**: high that listing succeeded and dispatch is a **new live-falsification** of R-0134 DQ4 / `# BUG-0021` AC-2 “`run()` → `api.client.rpc` → `runAutoLifecycle`”; high that kit `dispatchRunAutoLifecycle` toasts `OPENCODE_AUTO_TUI_DISPATCH_UNSUPPORTED` when `api.client` is missing **or** `client.rpc(ITS_MAGIC_AUTO_RPC).runAutoLifecycle` and HTTP POST `/rpc/its-magic.auto/runAutoLifecycle` both fail; medium on exact host client shape (`api.client.rpc` vs SDK `get`/`post` vs public CLI `context.client.rpc` + `Rpc.define`) — `/research` locks
+- **Status**: current (intake research; not a substitute for `/research`)
+- **Query**: Why does listed CLI TUI `/auto` toast `OPENCODE_AUTO_TUI_DISPATCH_UNSUPPORTED` instead of reaching server `runAutoLifecycle`? What host-true `run()` path starts lifecycle without restoring markdown/JSON Command.Info ownership?
+- **Producer consumed**: `/intake bug` operator packet 2026-09-13T23:35:00Z (German intent + prior `/ask` toast; listing succeeded)
+- **EARLY_RESEARCH posture**: intake-time live-fetch OpenCode v2 RPC (`https://opencode.ai/v2/docs/build/plugins/rpc/`) + Context7 `/anomalyco/opencode` TUI plugin `api.client` — not a substitute for `/research`. Compose **R-0124** / **R-0134** (do not wipe R-0124, R-0126, R-0131, R-0134, R-0135).
+- **ID policy**: highest existing research id was **R-0135** (US-0140). This entry is **R-0136**. Do **not** wipe, renumber, or rewrite R-0120..R-0135. Do **not** reuse R-0131 (BUG-0021 intake), R-0134 (BUG-0021 research), R-0133 (BUG-0022), or R-0124 (BUG-0019). `ID_NAMESPACE_BOOTSTRAP=0` → continuation (no bootstrap).
+
+### Web / docs / code sources (2026-09-13 live-fetch)
+
+- Context7 `/anomalyco/opencode` `packages/opencode/specs/tui-plugins.md`: `tui(api)` top-level groups include **`api.client`**, `api.keymap`, `api.ui.toast`. Minimal module remains `export default { id, tui }`. This confirms BUG-0021 listing shape; it does **not** document `api.client.rpc(Rpc)`.
+- Same Context7 SDK snippets: TUI `api.client` is the **OpencodeClient** network API (`client.session.get`, `client.vcs.status`, `client.tui.showToast` via `.get` / `.post` + URL paths). That is **not** the public RPC subclient example.
+- Live `https://opencode.ai/v2/docs/build/plugins/rpc/` (fetched this intake):
+  - Define with **`Rpc.define({ id, methods, errors?, events? })`** from `@opencode/plugin/rpc` (JSON Schema or Standard Schema). Kit `ITS_MAGIC_AUTO_RPC` is a **plain JSON object**, not `Rpc.define`.
+  - Implement in **server** `Plugin.define({ setup })`: **`await ctx.rpc.register(Acme, impl)`**. Same plugin can then `ctx.rpc(Acme)`. Kit orchestrator uses `ctx.rpc.register(ITS_MAGIC_AUTO_RPC, { runAutoLifecycle })` **if** `ctx.rpc.register` exists (optional; catch swallows).
+  - Call from HTTP: `OpenCode.make({ baseUrl })` then **`client.rpc(Acme)`**.
+  - Call from a **TUI plugin** in public docs: **`Plugin.define({ setup(context) { context.client.rpc(Acme) } })`** from `@opencode/plugin/tui` — the **CLI plugin** shape, **not** the `{ id, tui }` file-plugin `tui(api)` loader that BUG-0021 locked.
+- Kit working tree (unchanged this intake): `.opencode/plugins/its-magic-auto/tui.ts` `{ id, tui }`; `run()` → `dispatchRunAutoLifecycle({ api, client: api?.client })`; prefer `client.rpc(ITS_MAGIC_AUTO_RPC)` then `client.post`/`client.request` `{ url: "/rpc/its-magic.auto/runAutoLifecycle", method: "POST", body: { input } }`; else toast `OPENCODE_AUTO_TUI_DISPATCH_UNSUPPORTED`. Orchestrator keeps `editor.add` + optional RPC register. `.opencode/commands/auto.md` **absent**.
+- Compose **R-0134 DQ4**: documented path was `api.client.rpc(ITS_MAGIC_AUTO_RPC)` for `{ id, tui }`; architecture R4 (`api.client.rpc` vs `context.client.rpc` mismatch) was **LOW**. Operator toast is that mismatch **live-falsified**.
+- Compose **R-0124**: DISPATCH token **defined**; live dispatch still fail-closed is a **new** falsification of “listed `/auto` starts `runAutoLifecycle`”.
+- `tests/bug0021_opencode_cli_tui_plugin_load_test.py` marker 3 asserts `"api.client.rpc" in src` — string presence, **not** a live/mocked RPC round-trip. CI `UAT_PROBE_FORBIDDEN` did not live-probe dispatch (BUG-0021 honest residual).
+
+### Gap confirmation (intake)
+
+- BUG-0021 DONE shipped Axis A listing. Operator on **OpenCode CLI TUI** (`opencode`, not `--pure`) now **invokes listed** `/auto`. Toast title `its-magic /auto`, body `OPENCODE_AUTO_TUI_DISPATCH_UNSUPPORTED`. Lifecycle does **not** start.
+- Kit toast path matches `dispatchRunAutoLifecycle` else-branch (no usable `client.rpc(...).runAutoLifecycle` and HTTP fallback failed or `client` missing).
+- Leading hypotheses (not locked): (H1) `{ id, tui }` `api.client` has no `.rpc`; (H2) `.rpc` exists but requires `Rpc.define` not a plain JSON object; (H3) server `ctx.rpc.register` never ran so the method is unregistered; (H4) HTTP POST URL/body shape ≠ host RPC HTTP. `/research` picks winner.
+- Do **not** restore STOP-only `auto.md` (BUG-0018). Do **not** reopen BUG-0021 ACs (listing limb still true). Do **not** merge BUG-0022.
+
+### Alternatives (intake recommendation; discovery/architecture lock)
+
+| Option | Summary | Intake verdict |
+|---|---|---|
+| **1** | Persist **NEW BUG-0023**; keep BUG-0021 DONE; listed `/auto` must reach `runAutoLifecycle`; tests must not be string-in-source only | **Recommended** |
+| 2 | Restore STOP-only `.opencode/commands/auto.md` | **Rejected** — recreates BUG-0018 |
+| 3 | Reopen BUG-0021 | **Rejected** — listing limb succeeded; dispatch is new live-falsification |
+| 4 | Merge BUG-0022 | **Rejected** — Cursor Task inherit ≠ OpenCode TUI dispatch |
+| 5 | Tell operator Cursor-only | **Rejected** — operator wants OpenCode `/auto` to start lifecycle |
+| 6 | Treat DISPATCH toast as success (fail-closed “worked”) | **Rejected** — operator outcome is lifecycle start, not toast |
+
+### Seeds for `/discovery` / `/research` (not locked here)
+
+- Confirm `{ id, tui }` `api.client` vs public `context.client.rpc(Rpc.define)` vs SDK `get`/`post`.
+- Align kit `ITS_MAGIC_AUTO_RPC` plain JSON vs `Rpc.define`; server `ctx.rpc.register` vs `await ctx.rpc.register`.
+- Keep `editor.add` execute owner. Do not SessionPrompt / Command.Info template / LLM chat.
+- Fail-closed: reuse `OPENCODE_AUTO_TUI_DISPATCH_UNSUPPORTED` until dispatch works; do not reuse listing/load/desktop/markdown-collision tokens for this miss.
+- Tests: additive `test_bug0023_*` host-true mock that `run()` invokes `runAutoLifecycle` (or fail-closed only when client/RPC truly absent). Keep 0021/0020/0019/0018 compose. No live OpenCode CI probe unless architecture opts in (`UAT_PROBE_FORBIDDEN` remains default).
+- Upgrade: dispatch-path change must copy to already-Axis-A trees; still prune leftover `auto.md`.
+
+### Decision gate
+
+- **decision_gate=false** for intake persistence. Exact host-true dispatch path remains a `/research` DQ.
+- **Status**: current. **Next**: `/discovery` for **BUG-0023**.
+
+## R-0137 - BUG-0023 OpenCode CLI TUI listed `/auto` toasts OPENCODE_AUTO_TUI_DISPATCH_UNSUPPORTED (research)
+
+- **Date**: 2026-09-13
+- **Topic**: Close discovery DQ1–DQ8; pick winning D5 axis so listed OpenCode CLI TUI `/auto` **starts** `runAutoLifecycle` (DISPATCH toast is the defect, not success) without restoring STOP-only `auto.md` / JSON `commands.auto`+`template`
+- **Linked**: BUG-0023 (DONE), R-0136 (intake compose — do **not** wipe), R-0134 / BUG-0021 DONE (listing limb — compose; do **not** reopen ACs / S0146; do **not** wipe), R-0124 (DISPATCH token defined — live dispatch still fail-closed residual until operator re-probe), R-0126 / BUG-0020 DONE, BUG-0019 DONE, BUG-0018 DONE (do not restore STOP-only `auto.md`), BUG-0015 DONE, BUG-0022 OPEN (Cursor inherit — distinct; do not merge; do not drain), US-0124, US-0125, US-0069; R-0135 (US-0140) distinct — do **not** wipe/reuse. **ID collision**: US-0141 discovery also stubbed R-0137 — this heading is **BUG-0023**; US-0141 `/research` continues at **R-0138**
+- **Confidence**: high that kit `ITS_MAGIC_AUTO_RPC` plain JSON + optional swallowed `ctx.rpc.register` + invented HTTP POST `{ url: "/rpc/its-magic.auto/runAutoLifecycle", body: { input } }` is **not** the host-true v2 RPC contract (`Rpc.define` + `await ctx.rpc.register` + `client.rpc(Defined).method(input)`); high that BUG-0021 marker 3 (`"api.client.rpc" in src`) closed listing AC-2 without a mock round-trip; medium on whether `{ id, tui }` `api.client` already has `.rpc` as a mixin on the generated OpencodeClient (H1) vs only after `Rpc.define` branding (H2) — architecture uses the documented `client.rpc(Defined)` call and OpenCode.make fallback if `.rpc` is missing
+- **Status**: delivered (delivery closure trailer below; curator refresh **2026-09-14T01:25:00Z**)
+- **Query**: DQ1–DQ8 from discovery D1–D10; D5 winner among A/B/C/D
+- **Producer consumed**: discovery `rp-auto-20260913-bug0023-discovery-po-20260913T234500Z-BUG-0023` (`proof_hash` `FF27FC4ABB23499336FC068B07F68960B3496FCBE24A79DF6D85FD0F649975AC`, ttl `2026-09-14T00:45:00Z`) — RUNTIME_PROOF_VALID MATCH at research issue time `2026-09-13T23:55:00Z`; sovereign-critic of discovery PASS (`composer-2.5`; 0 blocking; anti_slop_aggregate=10; `bug0023dsc-*`; `model_resolve_fallback=MODEL_RESOLVE_FALLBACK` from `gpt-5.6-luna-medium`; no critic `runtime_proof_id` in hot state — consume CRITIC_PASS from state checkpoint); marker `tl-BUG0023-research-20260913T235500Z-fresh`
+- **EARLY_RESEARCH posture**: scratchpad `EARLY_RESEARCH=1` — live-fetch OpenCode v2 RPC `https://opencode.ai/v2/docs/build/plugins/rpc/` + CLI plugin `https://opencode.ai/v2/docs/build/plugins/cli/` + Context7 `/anomalyco/opencode` `packages/opencode/specs/tui-plugins.md` (`api.client`) + raw `dev` tui-plugins.md (compose R-0136; not a substitute)
+- **ID policy**: highest existing research heading was **R-0136** (BUG-0023 intake). This entry is **R-0137**. Do **not** wipe, renumber, or rewrite R-0120..R-0136. Do **not** reuse R-0131 (BUG-0021 intake), R-0134 (BUG-0021 research), R-0133 (BUG-0022), R-0135 (US-0140), or R-0136 (BUG-0023 intake). `ID_NAMESPACE_BOOTSTRAP=0` → continuation (no bootstrap).
+- **Compose base**: discovery D1–D10 unchanged. Do not author `# BUG-0023` or a new DEC this phase. Do not reopen BUG-0021 / BUG-0020 / BUG-0019 / BUG-0018 ACs. Do not mutate BUG-0022 / US-0140+ / US-0141. Do not restore `.opencode/commands/auto.md`.
+
+### Web / docs / code sources (2026-09-13 live-fetch)
+
+- Live `https://opencode.ai/v2/docs/build/plugins/rpc/` (re-fetched this research):
+  - Define with **`Rpc.define({ id, methods, errors?, events? })`** from `@opencode/plugin/rpc` (JSON Schema or Standard Schema / Zod / Valibot / ArkType). Kit `ITS_MAGIC_AUTO_RPC` is a **plain JSON object** (`as const`), not `Rpc.define`.
+  - Implement in **server** `Plugin.define({ setup })`: **`await ctx.rpc.register(Acme, impl)`**. Same plugin can then `ctx.rpc(Acme)`. Method input is the schema object itself (`search: async (input, context) => …`; HTTP/TUI call `acme.search({ query: "hello" })` — **not** `{ input: payload }`).
+  - Call from HTTP: `OpenCode.make({ baseUrl })` then **`client.rpc(Acme)`** — this **is** the documented HTTP path. No public example of raw `POST /rpc/{id}/{method}` with `{ input }`.
+  - Call from a **TUI/CLI plugin** in public RPC docs: `Plugin.define({ setup(context) { context.client.rpc(Acme) } })` from `@opencode/plugin/tui`.
+- Live `https://opencode.ai/v2/docs/build/plugins/cli/`: `context.client` is the **generated OpenCode client** (`context.client.plugin.list({ location })` → `.data`). That page does **not** show `.rpc`. Combined with RPC docs, `.rpc(Defined)` is an extension on that same client for custom plugin methods.
+- Context7 `/anomalyco/opencode` + raw `dev` `packages/opencode/specs/tui-plugins.md`: `{ id, tui }` file plugins; `tui(api)` groups include **`api.client`** (“always reflects the current runtime client”). Spec examples use generated SDK methods (`client.session.get`). Spec does **not** document `api.client.rpc(Rpc)`. Historical TUI `createTuiApi` exposes `get client() { return input.sdk.client }`.
+- GitHub [anomalyco/opencode#46105](https://github.com/anomalyco/opencode/pull/46105) (merged typed plugin RPC): clients call registered methods through **one generic HTTP endpoint** + `client.rpc` facades — confirms Axis A, not invented per-method POST bodies.
+- GitHub [anomalyco/opencode#44950](https://github.com/anomalyco/opencode/issues/44950) `ctx.invoke.register` is a **related V2 server hook** (“No routes in this ticket”) — **not** a documented TUI `run()` path. Do not adopt as Axis B winner.
+- Kit working tree (unchanged this phase): `.opencode/plugins/its-magic-auto/tui.ts` `{ id, tui }`; `dispatchRunAutoLifecycle` prefers `client.rpc(plain JSON)` then `client.post`/`request` `{ url: "/rpc/its-magic.auto/runAutoLifecycle", method: "POST", body: { input: payload } }`; else toast `OPENCODE_AUTO_TUI_DISPATCH_UNSUPPORTED`. Orchestrator `editor.add` + `if (ctx?.rpc && typeof ctx.rpc.register === "function") { try { ctx.rpc.register(plain JSON, …); catch swallow } }`. `.opencode/commands/auto.md` **absent**.
+- Compose **R-0134 DQ4**: assumed `api.client.rpc(plain ITS_MAGIC_AUTO_RPC)` for `{ id, tui }`; architecture R4 (`api.client.rpc` vs `context.client.rpc`) was **LOW**. Operator DISPATCH toast **live-falsified** that assumption. Listing limb still true.
+- Compose **R-0124**: DISPATCH token **defined**; live dispatch fail-closed is still a **new** falsification of “listed `/auto` starts `runAutoLifecycle`”.
+- `tests/bug0021_opencode_cli_tui_plugin_load_test.py` marker 3 asserts `"api.client.rpc" in src` — string presence, **not** a mocked RPC round-trip. Keep that marker green; **do not** treat it as BUG-0023 proof.
+
+### Gap confirmation (code + live)
+
+- BUG-0021 DONE shipped Axis A **listing**. Operator on **OpenCode CLI TUI** (`opencode`, not `--pure`) **invokes listed** `/auto`. Toast title `its-magic /auto`, body `OPENCODE_AUTO_TUI_DISPATCH_UNSUPPORTED`. Lifecycle does **not** start. DISPATCH toast is the **defect**, not success (D1/D9).
+- Kit else-path matches: no usable `client.rpc(…).runAutoLifecycle` **and** HTTP fallback failed or `client` missing.
+- **H1** (medium): `{ id, tui }` `api.client` may be generated OpencodeClient **without** `.rpc` → kit skips to invented POST.
+- **H2** (high): even if `.rpc` exists, live docs require **`Rpc.define`**, not plain JSON — `client.rpc(plain)` may throw (caught) or return an object without `runAutoLifecycle`.
+- **H3** (high): orchestrator register is **optional**, **not awaited**, **swallows errors**, and passes **plain JSON**. If host `ctx.rpc.register` requires `Rpc.define`, the method is **unregistered** even when TUI `.rpc` works.
+- **H4** (high): kit HTTP `POST /rpc/its-magic.auto/runAutoLifecycle` + `{ input: payload }` is **not** the documented host HTTP (`OpenCode.make` + `client.rpc(Defined).runAutoLifecycle(payload)`).
+- Do **not** restore STOP-only `auto.md` (BUG-0018). Do **not** reopen BUG-0021 ACs (listing limb still true). Do **not** merge BUG-0022. Do **not** switch TUI default export back to `Plugin.define` (re-breaks listing).
+
+### Critic NB closures (discovery `bug0023dsc-*`, non-blocking → research locks)
+
+| Critic theme | Resolution in R-0137 |
+|---|---|
+| Proof fail-closed + Status OPEN; H1–H4 named (challenger-001) | **Consumed**: discovery hash MATCH before TTL `2026-09-14T00:45:00Z`; Status remains OPEN; auto.md stays absent (D4); H1–H4 closed below |
+| Layer = dispatch; research owns D5 A–D + R-0137; architecture owns `# BUG-0023` + companion DEC (`bug0023dsc-architect-002`) | **LOCKED**: this entry closes DQ1–DQ8 + Axis **A**; architecture authors additive `# BUG-0023`; **companion DEC no** (not proven required — same class as BUG-0019/0020/0021; critic “companion DEC” is a later-phase hint, not a governance fork) |
+| No DONE; no STOP-only restore; no BUG-0021 reopen; no BUG-0022 mutate (`bug0023dsc-subtractor-003`) | **Held**: Status OPEN; D4/D8 held; no `# BUG-0023` this phase |
+
+### DQ1 — `{ id, tui }` `api.client` vs `.rpc(Rpc.define)` (LOCKED)
+
+- **`api.client` is the current runtime / generated OpencodeClient** (`tui-plugins.md`; CLI docs analog `context.client.plugin.list`). Spec + SDK snippets document **`.get`/`.post` + resource methods**, not `api.client.rpc(Rpc)`.
+- Public v2 RPC documents **`client.rpc(Rpc.define(…))`** on (1) `OpenCode.make({ baseUrl })` and (2) Plugin.define `context.client`. File-plugin `{ id, tui }` should use the **same** call if `api.client.rpc` is present (it is the same sdk client). If `typeof api.client.rpc !== "function"`, construct **`OpenCode.make({ baseUrl })` from the connected client** and call `.rpc(Defined)` — do **not** invent POST `{input}`.
+- **deferred_to_architecture**: exact import specifier (`@opencode/plugin/rpc` vs `@opencode-ai/plugin/rpc`); how to read `baseUrl` from `api.client` when `.rpc` is missing.
+
+### DQ2 — `Rpc.define` vs plain JSON (LOCKED)
+
+- **Yes. Host-true contract is `Rpc.define({ id, methods })`.** Kit plain JSON is a schema-shaped lookalike, not the branded definition `client.rpc` / `ctx.rpc.register` document.
+- Share **one** `ITS_MAGIC_AUTO_RPC = Rpc.define({ id: "its-magic.auto", methods: { runAutoLifecycle: { input, output } } })` used by TUI dispatch **and** orchestrator register (duplicate plain objects today).
+- Keep JSON Schema in `input`/`output` (docs allow JSON Schema without extra deps). Architecture may bikeshed Zod if the host import is already present.
+- Method call shape: **`rpc.runAutoLifecycle(payload)`** (payload = `{ sessionID?, prompt?, delivery? }`), **not** `{ input: payload }`.
+
+### DQ3 — Does CLI TUI run `ctx.rpc.register`? (LOCKED)
+
+- Orchestrator **attempts** register only when `ctx.rpc.register` exists; **does not await**; **swallows** errors; passes **plain JSON**. That is sufficient for H3: method can be **unregistered** on a host that requires `Rpc.define` even when TUI `.rpc` exists.
+- **Fix**: `await ctx.rpc.register(Defined, { runAutoLifecycle: runAutoLifecycleRpc })` when register exists. Missing `ctx.rpc` remains attach-optional (BUG-0019): TUI then fail-closes DISPATCH **only** if client/RPC truly cannot dispatch (D6). Do **not** treat missing register as attach failure.
+- Keep `editor.add({ name: "auto", execute })` (DQ6 / Axis C). Register wraps `runAutoLifecycleRpc` → `runAutoLifecycle`; TUI `run()` is **not** the execute owner.
+
+### DQ4 — HTTP fallback shape (LOCKED)
+
+- **Host-true HTTP = `OpenCode.make({ baseUrl }).rpc(Defined).runAutoLifecycle(payload)`** (v2 RPC “Call / HTTP”).
+- Kit `client.post({ url: "/rpc/its-magic.auto/runAutoLifecycle", body: { input } })` is **not** documented. Keep it only as a last-ditch probe if architecture proves the generated client uses that URL internally; **do not** make it the primary fallback.
+- Prefer: (1) `api.client.rpc(Defined)` (2) `OpenCode.make` `.rpc(Defined)` (3) DISPATCH toast. Never SessionPrompt / Command.Info `template`.
+
+### DQ5 — Axis B other TUI→server invoke (LOCKED)
+
+- Documented custom TUI→server methods **are** `client.rpc(Rpc.define)` (Axis A). Plugin.define `context.client.rpc` is the **same** RPC, not a second stack — switching the TUI module back to `Plugin.define` **re-breaks BUG-0021 listing**.
+- `ctx.invoke.register` (#44950) is server-side, no TUI `run()` docs, **rejected** as winner.
+- `keymap.dispatch` / `runCommand` is the same keymap command, not a server path.
+- SessionPrompt / Command.Info `template` / LLM chat / markdown STOP **forbidden** (D4).
+- **Reject Axis B as the winner.** No other documented TUI→server custom invoke that hits `runAutoLifecycle` without RPC.
+
+### DQ6 — Axis C keep `editor.add` (LOCKED)
+
+- **Keep `orchestrator.ts` `editor.add({ name: "auto", execute })` → `runAutoLifecycle`.** TUI `run()` **dispatches** to that server owner via RPC; it must **not** become execute owner, Command.Info, or SessionPrompt.
+- Server `its-magic-auto/index.ts` stays `Plugin.define` (no `tui` export — cannot export both).
+
+### DQ7 — `test_bug0023_*` + companion DEC (LOCKED)
+
+**Winning architecture shape**: additive `# BUG-0023` **superseding `# BUG-0021` / R-0134 DQ4** “listed `/auto` `run()` → `api.client.rpc(plain JSON)` starts lifecycle”. **No companion DEC** (same class as BUG-0019 / BUG-0020 / BUG-0021). Do **not** rewrite historical `# BUG-0021` / `# BUG-0019` / `# BUG-0018` bodies. Do **not** weaken `test_bug0021_*` / `test_bug0020_*` / `test_bug0019_*` / `test_bug0018_*` except compose-only comments that `"api.client.rpc" in src` is **not** dispatch proof.
+
+**Additive `test_bug0023_*` (8 markers; not listing-only; not `"OPENCODE_AUTO_TUI_DISPATCH_UNSUPPORTED" in src` only; no live OpenCode CLI TUI probe required in CI — `UAT_PROBE_FORBIDDEN` default; architecture may add an optional live probe outside default CI)**:
+
+1. `test_bug0023_rpc_define_shared_contract` — `ITS_MAGIC_AUTO_RPC` is `Rpc.define` (or documented equivalent) with `id: "its-magic.auto"` + `runAutoLifecycle` in **both** TUI module and orchestrator; **not** plain-JSON-only.
+2. `test_bug0023_dispatch_mock_invokes_runAutoLifecycle` — host-true **mock**: `dispatchRunAutoLifecycle` / `run()` with a client whose `.rpc(Defined).runAutoLifecycle` **is actually invoked** (not string-in-source only).
+3. `test_bug0023_http_fallback_is_client_rpc_not_invented_post` — primary/fallback documented path is `client.rpc(Defined)` / `OpenCode.make(…).rpc`; invented `POST /rpc/…` + `{ input }` is not the happy path.
+4. `test_bug0023_orchestrator_await_register_defined_rpc` — `await ctx.rpc.register(Defined, { runAutoLifecycle })` when register exists; keep `editor.add`.
+5. `test_bug0023_keep_editor_add_no_auto_md` — compose C/D: `editor.add` present; no OpenCode `auto.md`; no JSON `commands.auto`+`template`.
+6. `test_bug0023_dispatch_token_only_when_rpc_absent` — DISPATCH toast **only** when client/RPC truly absent; not reused as listing/load/desktop/markdown-collision.
+7. `test_bug0023_active_template_parity` — TUI dispatch-path + RPC define + no-`auto.md` byte-parity (D10).
+8. `test_bug0023_upgrade_copies_dispatch_still_prunes_auto_md` — upgrade `--host opencode|both` copies the dispatch-path change onto already-Axis-A trees; still **prunes** leftover `auto.md`.
+
+Keep `test_bug0021_run_rpc_to_runAutoLifecycle` green (`"api.client.rpc"` string still present).
+
+### DQ8 — Consumer upgrade; reject Axis D (LOCKED)
+
+- Already-Axis-A trees have `{ id, tui }` + `slashName: "auto"` + plain-JSON `dispatchRunAutoLifecycle`. Upgrade is **overwrite of framework-owned TUI module + orchestrator RPC register** (active + template) plus leftover `auto.md` prune.
+- Active ↔ template parity (D10). `its-magic --mode upgrade --host opencode|both` delivers the dispatch surface.
+- **Reject Axis D** (markdown/JSON template as the fix). Do **not** restore STOP-only `auto.md`. Do **not** prune `.cursor/commands/auto.md` or `.opencode/agents/auto.md`.
+- `--pure` out of scope (D8). Cursor `/auto` and BUG-0022 OUT.
+
+### Fix-axis verdict (D5)
+
+| Axis | Summary | Verdict |
+|---|---|---|
+| **A** | Host-true `Rpc.define` + TUI `api.client.rpc(Defined)` / `OpenCode.make().rpc(Defined)` so `dispatchRunAutoLifecycle` hits `await ctx.rpc.register(Defined, { runAutoLifecycle })`; keep `{ id, tui }` listing; keep `editor.add` | **WINNER** |
+| B | Other documented TUI→server invoke (not SessionPrompt) | **Rejected as winner** — no documented custom path besides `client.rpc`; Plugin.define TUI re-breaks listing; `ctx.invoke` is not TUI `run()` |
+| C | Keep `editor.add` as execute owner | **Held as constraint** — delivered **by A**; TUI `run()` dispatches, does not own execute |
+| D | Restore markdown / JSON `commands.auto`+`template` | **Rejected** (BUG-0018 class; D4) |
+
+**Can this be simpler?** Restoring `auto.md` looks smaller and recreates BUG-0018. Switching TUI back to `Plugin.define` looks like the RPC docs example and **re-breaks listing**. Dual-export `{ setup, tui }` cannot satisfy `readV1Plugin`. Axis A (same `{ id, tui }` file; branded `Rpc.define` + await register + `client.rpc(Defined)`) is the simplest design that meets D1/D9.
+
+**Approach seed for `/architecture`**: **Axis A**. **Companion DEC: no.** Recommend architecture H1 **`# BUG-0023`** (additive; do **not** rewrite `# BUG-0021`). `decision_gate=false`.
+
+### Architecture seeds preview (within SPRINT_MAX_TASKS=12)
+
+T-anch (`# BUG-0023`; no new DEC), T-001 shared `Rpc.define` contract (active + template TUI + orchestrator), T-002 `await ctx.rpc.register(Defined, { runAutoLifecycle })`, T-003 `dispatchRunAutoLifecycle` → `client.rpc(Defined).runAutoLifecycle(payload)` + OpenCode.make fallback if `.rpc` missing (keep `editor.add`), T-004 DISPATCH honest only when client/RPC truly absent, T-005 `test_bug0023_*` 8 markers (mock invoke, not string-in-source only), T-006 upgrade `--host opencode|both` copies dispatch path + still prunes `auto.md`, T-007 runbook CLI TUI dispatch recipe + `--pure` out. (= 8 tasks)
+
+### Risks
+
+- **R1 (MEDIUM)**: `{ id, tui }` `api.client` has no `.rpc` mixin. Mitigation: DQ1 OpenCode.make fallback from connected baseUrl; DISPATCH only if both fail.
+- **R2 (MEDIUM)**: `@opencode/plugin/rpc` import unresolved in file plugins (host aliases `@opencode/plugin/tui` at runtime; rpc may need the same). Mitigation: architecture pins specifier; fail-closed DISPATCH if define/register cannot load — **not** `auto.md`.
+- **R3 (LOW)**: `test_bug0021_*` string contract (`"api.client.rpc"`) breaks if extras dropped. Mitigation: keep `api.client.rpc(Defined)` call site.
+- **R4 (LOW)**: Operators treat DISPATCH toast as “working fail-closed”. Mitigation: D1/D9; runbook; tests require mock invoke.
+- **R5 (LOW)**: US-0141 `/research` expected R-0137. Mitigation: this heading is BUG-0023; US-0141 continues at **R-0138** (US-0141 discovery already named the collision).
+
+### Decision gate
+
+- **decision_gate=false** — DQ1–DQ8 LOCKED; winning approach **Axis A**; companion DEC **no**. Live docs do not create a governance fork (implement the documented RPC contract).
+- **Status**: **delivered** (delivery closure trailer below; curator refresh **2026-09-14T01:25:00Z**).
+
+- **Delivery closure (2026-09-14T01:25:00Z, curator, `orchestrator_run_id=auto-20260913-bug0023`)**: **`BUG-0023`** **DONE**; sprint **`S0148`** **released**; Axis A shared `Rpc.define` `rpc.ts` + `await ctx.rpc.register` + TUI `client.rpc(Defined)` / `OpenCode.make` fallback + invented POST removed + DISPATCH only when client/RPC truly absent + keep `{ id, tui }` + `editor.add` + upgrade overwrite + 8/8 `test_bug0023_*` + bug0021 8/8 + bug0020 8/8 + bug0019 7/7 + bug0018 6/6 delivered per **R-0137** / **Axis A** / **`# BUG-0023`** (no companion DEC); compose **BUG-0021** / **BUG-0020** / **BUG-0019** / **BUG-0018** / **R-0134** / **R-0136** (DONE preserved); honest residual: live CLI TUI not probed; DISPATCH possible until operator re-probe; no auto.md restore; portfolio **8 OPEN** stories (US-0141..US-0148), **1 OPEN** bug (BUG-0022 OUT — not scheduled); explicit bug-target segment terminal — orchestrator STOP (do **not** drain-advance to BUG-0022 / US-0141).
+- **Freshness review (2026-09-14, curator refresh-context BUG-0023)**: R-0137 marked **delivered** (BUG-0023 DONE). R-0136 intake entry remains **current** compose base (not outdated). R-0134 / R-0126 / R-0124 remain **delivered** compose bases (not wiped). R-0133 (BUG-0022) and R-0138 (US-0141) remain **current** (not this segment). No duplicate R-ids to merge. Unlinked prune deferred (no operator request).
+
+## R-0138 - US-0141 Application runtime and pluggable execution backends research
+
+- **Date**: 2026-09-14
+- **Topic**: Close discovery DQ1–DQ10; pick winning owned `AppRuntime` + `ProcessManager` + `ExecutionBackend` (no `# US-0141` / Accepted `DEC-0141.md` this phase)
+- **Linked**: US-0141 (OPEN), R-0137 / BUG-0023 (OPEN — OUT; **this heading is US-0141**, do not wipe R-0137), R-0136 / BUG-0023 intake (OUT; do not wipe), R-0135 / DEC-0140 / US-0140 (DONE compose-only — `RunsStore.process_handles` reserved stub), R-0130 / DEC-0138 / US-0138 (config / loop caps consume), R-0129 / DEC-0137 / US-0137 (PolicyEngine Layer A consume; Layer B profiles in scope as **profiles**, not micro-VM), R-0128 / DEC-0136 / US-0136 (SessionSupervisor fresh DEV spawn), R-0085 / US-0098 (Connect block + `.cursor/dev-environment.json` input), R-0068 / US-0086 / DEC-0070 (`remote.json` input compatibility), US-0065 (`uat_probe_lib.detect_stack_profile` consume-not-replace), US-0085 `.env` deny; sibling US-0142 browser OUT; US-0143 `/auto`/`/quick` drain OUT; OS micro-VM future OUT; BUG-0021 DONE / BUG-0022 OPEN / BUG-0023 OPEN — do not mutate
+- **Confidence**: high for sibling `@its-magic/app-runtime` composing US-0140 `RunsStore` (not nested in workflow/GateEngine) + CLI-first Docker + typed WSL/SSH adapters + AppRuntime-owned restart (HEALTHCHECK is status-only); medium for exact npm alias vs masterplan §30 `execution-runtime`/`dev-environment` split (architecture may pin alias; v1 is one package)
+- **Status**: **delivered** (delivery closure trailer below; curator refresh **2026-09-14T02:50:00Z**)
+- **Query**: DQ1–DQ10 from discovery D1–D10
+- **Producer consumed**: discovery `rp-auto-20260913-us0141-discovery-po-20260913T235000Z-US-0141` (`proof_hash` `D7ED017CC467CA58699EC839313FC31A06C1B126E3A13389BA158A093ED9A9B7`, ttl `2026-09-14T00:50:00Z`) — RUNTIME_PROOF_VALID MATCH at research issue time `2026-09-14T00:10:00Z`; sovereign-critic of discovery PASS (`rp-auto-20260913-us0141-sovereign-critic-techlead-20260914T000000Z-US-0141` / `28F5D714A2BE94B4F910A07FB49191B0BF7832E480BCCB1C01927D020E84306F`; 0 blocking; anti_slop_aggregate=10; degraded_mode=false; marker `critic-US0141-discovery-20260914T000000Z-fresh`); marker `tl-US0141-research-20260914T001000Z-fresh`
+- **EARLY_RESEARCH posture**: scratchpad `EARLY_RESEARCH=1` — Docker HEALTHCHECK vs orchestrator restart; dockerode vs docker CLI; WSL `wsl.exe` interop; SSH/`DOCKER_HOST=ssh://` contexts; Dev Containers `CLIHostType`; Chump `ExecutionBackend` `name`/`execute`/`health_check`; Node `child_process.spawn` AbortSignal/timeout; do **not** re-litigate DEC-0140 `node:sqlite`
+- **ID policy**: highest existing research heading is **R-0137** (BUG-0023 research). This entry is **R-0138**. Discovery notes that said **R-0137** for US-0141 are **stale** — live-inventory wins. Do **not** wipe, renumber, or rewrite R-0120..R-0137. Do **not** reuse R-0135 (US-0140), R-0136 (BUG-0023 intake), or R-0137 (BUG-0023 research). `ID_NAMESPACE_BOOTSTRAP=0` → continuation (no bootstrap).
+- **Compose base**: discovery D1–D10 unchanged. Do not author `# US-0141` or `decisions/DEC-0141.md`. Do not reopen US-0133..US-0140. Do not mutate US-0142+ or BUG-0021 / BUG-0022 / BUG-0023. Do not amend isolation loader internals, `noTools: "builtin"`, KernelBridge, auth-models, RoleCatalog/SessionSupervisor internals, PolicyEngine decision tables, `@its-magic/config` loaders, or runtime-core workflow/GateEngine. Fake-model CI default **held**. Never read `.env`. Kit `files` omit `standalone/`. Do not restore `.opencode/commands/auto.md`. Do not ship kit `cli.json` or plugin-local `its-magic-auto/tui.json`.
+- **Sovereign memory**: `SOVEREIGN_MEMORY=1`; `build_injection_digest_block` returned `(no sovereign memory entries)` (read-only). No `mistakes.jsonl` write (no `fix_failed` / `revert_applied` / `plan_fidelity_violation` / `scope_creep`).
+
+### ID collision correction (mandatory)
+
+Discovery + vision stubbed US-0141 research as **R-0137** while highest heading was R-0136. BUG-0023 `/research` authored **`## R-0137`** first (OpenCode TUI DISPATCH). Live-inventory: **R-0137 is BUG-0023**. This US-0141 entry is **`## R-0138`**. Do not wipe R-0136 or R-0137. Architecture must cite **R-0138**, not R-0137, for US-0141.
+
+### Web / docs / analog sources (2026-09-14)
+
+- https://docs.docker.com/engine/containers/start-containers-automatically — restart policies apply when the **main process exits**, not when HEALTHCHECK flips unhealthy.
+- https://www.stephenli.ca/docker-healthcheck-does-not-actually-do-anything-without-an-orchestrator (2024) + moby/moby#28400 / #47548 — HEALTHCHECK is **status-only** without Swarm/K8s/autoheal. **AppRuntime owns** capture → classify → optional fresh DEV → rebuild/restart → cap.
+- https://github.com/apocas/dockerode — Node Docker Remote API client (promises, streams, inspect). Valid later swap; **not** v1 required (extra socket/auth surface vs CI fake backends).
+- https://nodejs.org/api/child_process.html — `spawn(command, args, { cwd, env, stdio, signal, timeout, killSignal })`; AbortSignal cancels; **do not** `shell: true` for operator-supplied command lines (PolicyEngine Layer A already classifies shell). Pipe stdout/stderr into the log ring; do **not** `stdio: 'ignore'` + `unref()` for managed apps (orphans).
+- https://learn.microsoft.com/en-us/windows/dev-environment/wsl-interop + WSL basic commands — typed adapter: `wsl.exe -d <distro> [--cd <linuxCwd>] -- <cmd>`; probe `wsl.exe -l -q` / missing binary → fail-closed. `wslpath` for Windows↔Linux paths (Dev Containers analog).
+- https://code.visualstudio.com/docs/containers/ssh + Docker contexts — remote Docker: `docker context` / `DOCKER_HOST=ssh://user@host`; **key auth**, `BatchMode=yes`, known_hosts; password SSH unsupported for `DOCKER_HOST`. Compose US-0086 `remote.json` as **input** (names-only); never read `.env`.
+- https://github.com/devcontainers/cli/blob/39685cf1/src/spec-common/cliHost.ts — `CLIHostType = 'local' | 'wsl' | 'container' | 'ssh'` (typed host, not a product dependency).
+- https://raw.githubusercontent.com/repairman29/chump/main/docs/architecture/EXECUTION_BACKENDS.md — `ExecutionBackend` trait `name()` / `execute()` / `health_check()`; **shell out** to `docker`/`ssh` (no extra crate); missing binary → helpful error, not panic. Unknown `CHUMP_EXECUTION` **falls back to local with a warning** — **reject that fallback for its-magic** (AC-8 unsupported backend must fail-closed).
+- Xec `LocalAdapter` / `DockerAdapter` / `SSHAdapter` (timeouts, cancellation, remote Docker) — analog for AbortSignal + per-backend timeout; not a dependency.
+- In-tree compose (do not amend internals): `standalone/packages/runtime-core/src/runs/store.ts` `process_handles (id, run_id, reserved)` + `reserveProcessHandle`; `scripts/uat_probe_lib.py` `detect_stack_profile` (package.json→node, pyproject/setup.py→python, go.mod→go, `*.csproj`→dotnet, pom.xml→java, else None/`generated`); `scripts/dev_environment_lib.py` Connect/`DEV_SERVER_*`; US-0086 reason codes `REMOTE_*` remain **input routing**, not AppRuntime execution codes.
+
+### Critic NB closures (discovery `us0141dsc-*`, non-blocking → research locks)
+
+| Critic theme | Resolution in R-0138 |
+|---|---|
+| Proof fail-closed; Status OPEN; R-0137 collision → live-inventory R-0138 (challenger-001) | **LOCKED DQ10 / ID policy**; this entry is R-0138 (not R-0137); Status remains OPEN; ACs unchecked |
+| Compose US-0140 `process_handles`; local+Docker core v1; research owns R-0138; architecture owns DEC-0141 + `# US-0141`; US-0142 browser OUT (architect-002) | **LOCKED DQ1 / DQ2 / DQ3 / DQ7**; Approach **A1 (A\*)**; architecture authors `# US-0141` + **DEC-0141** Accepted |
+| No app-runtime code; no architecture/DEC/R-heading from critic; no /research spawn (subtractor-003) | **Held** this research phase: R-0138 authored; still no `# US-0141` / `decisions/DEC-0141.md` / no `packages/app-runtime` code |
+
+### DQ1 — Package split + injection (LOCKED)
+
+- **Winner**: new sibling `standalone/packages/app-runtime` (`@its-magic/app-runtime`). Contains `AppRuntime` facade (§19.2), `ProcessManager` (§19.3), `ExecutionBackend` interface + adapters (§19.4), stack profiles, bounded self-debug (§19.5). npm `private: true`, `version: 0.0.0`, `type: module`, `engines.node >=22.19.0`, export `./src/index.ts`. Workspaces glob `packages/*` already covers it. Package **does not exist** today.
+- **Compose, do not nest in workflow**: depend on `@its-magic/runtime-core` **public** `RunsStore` API to persist/extend `process_handles`. Do **not** put AppRuntime inside `runtime-core/workflow/` or GateEngine. US-0140 reserved the table; this story fills it.
+- **No Pi imports.** `package.json` must not depend on `@earendil-works/pi-*`. Type-only / public-API imports from `@its-magic/runtime-core`, `@its-magic/role-runtime`, `@its-magic/policy-engine`, `@its-magic/config` are allowed. Those packages **do not** import app-runtime internals (injection from CLI / runtime-core later).
+- **§30 mapping**: masterplan lists `execution-runtime` + `dev-environment` as **siblings** of `runtime-core`. v1 **merges both** into `app-runtime` (one facade = AppRuntime). Architecture **may** set the npm name to `@its-magic/execution-runtime` if they prefer the §30 literal; research recommends **`app-runtime`** (matches discovery D1 + public type `AppRuntime`). Do **not** ship two packages this story.
+- **Reject A2** (nested `runtime-core/src/runtime/`): mixes process lifecycle with CommandRouter/GateEngine; §30 lists a sibling package.
+- **Reject A3** (two packages `execution-runtime` + `dev-environment`): YAGNI for v1; AppRuntime is one operator-facing facade.
+- **Reject A12** (fold into `tool-broker`): Layer A semantic ≠ Layer B execution (§26.2). ToolBroker may later expose `itsm_app_*`; unstub is **optional seed**, not the package home.
+- Kit `files` continues to omit `standalone/` (DEC-0120). Do not add a Biome override. Do not add standalone to kit workspaces.
+
+### DQ2 — `process_handles` schema + writer (LOCKED)
+
+- **Winner**: **additive schema extend** of US-0140 `process_handles` (keep `id`, `run_id`, `reserved` for back-compat; `ALTER TABLE` / recreate-if-empty in tests). Suggested columns (architecture may pin names): `phase_id`, `backend`, `identity_kind` (`process`\|`container`\|`service`), `identity`, `command`, `cwd`, `ports_json`, `url`, `readiness`, `started_at`, `crash_count`, `restart_count`, `log_ring_ref`.
+- **Who writes**: `ProcessManager` via new `RunsStore` public methods (e.g. `upsertProcessHandle` / `listProcessHandlesForRun`). Workflow `reserveProcessHandle` remains a **claim token**; AppRuntime fills the row. Do **not** reimplement RunsStore, CommandRouter, GateEngine, or crash-resume DONE authority.
+- **Log ring storage**: **files** under gitignored `.its-magic/runtime/logs/` + in-memory ring (default **256 lines**); SQLite stores **refs**, not megabyte BLOBs. Compose US-0140 gitignore analog `**/.its-magic/runtime/`.
+- **Reject** a second SQLite file for processes. **Reject** SQLite as DONE/backlog authority (DEC-0140 held).
+
+### DQ3 — Backend matrix + diagnostics (LOCKED)
+
+- **Core v1 (must work without adapters)**: `local` + `docker` (`docker-local`). Implementation: Node `child_process.spawn` (local) + **CLI-first** `docker` / `docker compose` spawn (docker). Thin `DockerClient` interface so dockerode can swap later; **do not require dockerode** v1.
+- **Typed adapters (AC-3)**: `wsl` (`wsl.exe` + distro + `wslpath`) and `ssh` / `remote-docker` (`ssh -o BatchMode=yes -o ConnectTimeout=5` and/or `docker --context` / `DOCKER_HOST=ssh://`). Connectivity **health_check** before execute (Chump analog): missing binary / daemon / distro / SSH → fail-closed, not silent local fallback.
+- **Compose US-0086** `remote.json` / `REMOTE_*` codes as **input target selection**. AppRuntime execution codes are **`BACKEND_*` / `APP_RUNTIME_*`** (do not overload `REMOTE_AUTOMATION_MODE_OFF` for “docker missing”).
+- **Unsupported backend** (AC-8): fail-closed `BACKEND_UNSUPPORTED` — **reject Chump’s unknown→local warning fallback**.
+- Micro-VM / sandbox backend: **interface stub only** → `BACKEND_UNSUPPORTED` (future; D9).
+
+Suggested codes (architecture may pin): `BACKEND_UNKNOWN`, `BACKEND_UNAVAILABLE`, `BACKEND_DOCKER_UNAVAILABLE`, `BACKEND_WSL_UNAVAILABLE`, `BACKEND_SSH_UNAVAILABLE`, `BACKEND_UNSUPPORTED`, `BACKEND_CONNECTIVITY_FAILED`, `BACKEND_TIMEOUT`.
+
+### DQ4 — Stack discovery (LOCKED)
+
+- **Winner**: **port** `uat_probe_lib.detect_stack_profile` semantics into TypeScript (do **not** spawn Python; do **not** rewrite the Python lib). Order: `package.json`→`node`; `pyproject.toml`/`setup.py`→`python`; `go.mod`→`go`; `*.csproj`→`dotnet`; `pom.xml`→`java`.
+- **Unknown stack**: fail-closed `APP_RUNTIME_UNSUPPORTED_STACK` **unless** operator override `DEV_SERVER_COMMAND` / profile `start_command` is present (deterministic fallback — compose US-0065 / US-0098). `generated` README heuristic stays kit-side; standalone does not invent a fourth fallback.
+- Consume `.cursor/dev-environment.json` + Connect field **names** (US-0098) as **input**; AppRuntime **owns execution**. Do not replace `uat_probe_lib` or `dev_environment_lib.py`.
+
+### DQ5 — Bounded remediation (LOCKED)
+
+- **Winner**: AppRuntime-owned loop matching §19.5: capture logs → classify → optional **fresh DEV** session (`SessionSupervisor.spawn`, compose US-0136; do not rewrite supervisor) → rebuild/restart → stop at cap with deterministic reason `APP_RUNTIME_RESTART_CAP_EXHAUSTED`.
+- **Cap source**: default **3**; override `APP_RUNTIME_RESTART_MAX` from **resolved config/scratchpad** if present. **No new RuntimeConfig domain / loader rewrite** (compose US-0138). Orthogonal to execute↔QA `AUTO_IMPLEMENTATION_LOOP` (do not share the same counter).
+- **Classification taxonomy** (architecture may pin): `start_failed`, `health_failed`, `crash`, `timeout`, `connectivity`, `unsupported_stack`, `unsupported_backend`.
+- **Docker HEALTHCHECK**: read status as a **health signal** only. Do **not** treat daemon restart-policy or HEALTHCHECK as the remediation owner (industry: status-only without Swarm).
+- **Reject** unbounded restart; **reject** PM2/forever as ProcessManager.
+
+### DQ6 — Test/build evidence + log budget (LOCKED)
+
+- **Winner**: every test/build/start command through `ExecutionBackend.execute` persists §21.2 JSON: `{ command, backend, exit_code, duration_ms, stdout_ref, stderr_ref }` plus `reason_code?`. Large logs: full files on disk; **summarize** (head/tail + error-line extract, default model budget **8 KiB**) — do not ingest megabytes into LLM context.
+- In-memory ring default **256 lines**; file refs in `process_handles.log_ring_ref`. Architecture may pin exact summarizer.
+
+### DQ7 — Connect/health + cleanup (LOCKED)
+
+- **Winner**: expose `url` / `ports` / `health` / `health_path` using US-0098 Connect **field names** (`connect_endpoint`, `health_path`, `service_id`, `container_id`, `env_refs` names-only). **US-0142 consumes**; this story does **not** drive Playwright/CDP.
+- **Secrets**: never read `.env` (US-0085); redact Authorization/Cookie in logs (compose US-0135 `redact.ts` / US-0137).
+- **Cleanup**: `ProcessManager.stop` after success, failure, cancellation (`AbortSignal`), and **runtime restart**. Compose US-0140 `discardOrphans` for **sessions**; AppRuntime **reaps process/container orphans** (`PROCESS_ORPHAN_REAPED`) — workflow does not kill apps.
+- Health probes: TCP listen and/or HTTP GET `health_path` with timeout; process-alive is insufficient for AC-1/AC-7 URL exposure.
+
+### DQ8 — `test_us0141_*` Win+Linux inventory (LOCKED)
+
+Primary: `standalone/tests/contract` (`node:test`) Windows + Linux. Fake-model CI. In-memory SQLite. **No paid model calls.** **No required live Docker daemon** for contract tests (fake `ExecutionBackend`); live Docker/WSL/SSH chaos is skippable with `BACKEND_*_UNAVAILABLE` when the binary/daemon is absent (assert the reason code, do not skip the fail-closed path).
+
+1. `test_us0141_app_runtime_lifecycle` — AC-1 discover/start/stop/restart/health/bounded logs
+2. `test_us0141_process_manager_identity` — AC-2 identity, command/cwd, ports/URL, readiness, start time, ring, crash/restart, owning run/phase
+3. `test_us0141_backend_local_docker_core` — AC-3 local + docker core (fake docker client)
+4. `test_us0141_backend_wsl_ssh_adapters` — AC-3 typed adapters + connectivity diagnostics
+5. `test_us0141_stack_profiles` — AC-4 Node/Python/Go/Java/.NET + unknown fail/fallback
+6. `test_us0141_self_debug_cap` — AC-5 classify + fresh-DEV slot + restart cap reason
+7. `test_us0141_test_build_evidence` — AC-6 structured exit/duration/stdout/stderr + summarize
+8. `test_us0141_connect_handoff_no_browser` — AC-7 URL/ports/health for US-0142; no browser driver
+9. `test_us0141_cleanup_success_fail_cancel` — AC-7 cleanup
+10. `test_us0141_chaos_crash_timeout_restart` — AC-8 crash/timeout/restart
+11. `test_us0141_chaos_docker_remote_disconnect` — AC-8 docker stack + remote disconnect (fake)
+12. `test_us0141_unsupported_backend` — AC-8 `BACKEND_UNSUPPORTED` fail-closed (not local fallback)
+
+Markers cover AC-1..AC-8. Architecture may rename; **count stays 12**. Expect sprint **S0148** at `/sprint-plan` (S0147 = US-0140).
+
+### DQ9 — Compose vs rewrite (LOCKED)
+
+- **Layer A held** (US-0137 path/shell/secret/policy_hash). **Layer B this story** = execution **profiles** (`trusted_local`→local, `isolated_dev`→docker) per §26.3 — **not** micro-VM (`untrusted_repo` sandbox → `BACKEND_UNSUPPORTED`).
+- Do **not** rewrite KernelBridge, workflow/GateEngine/CommandRouter, config loaders, context-engine ranking, `noTools`, isolation loader, auth-models.
+- Optional ToolBroker `itsm_app_*` unstub is a **seed**, not a rewrite of PolicyEngine tables.
+
+### DQ10 — Kit boundary + R-id (LOCKED)
+
+- `package.json` `files` omit `standalone/` — **held**. No kit `cli.json`. No plugin-local `tui.json`. No `.opencode/commands/auto.md` restore. `FRAMEWORK_KIT_REPO=1`. Do not npm-publish or git push.
+- **R-id**: this heading is **R-0138**. R-0137 remains BUG-0023. Do not drain bugs.
+
+### Approach verdict
+
+| Approach | Summary | Verdict |
+|---|---|---|
+| **A1 (A\*)** | Sibling `@its-magic/app-runtime` (no Pi) composing `runtime-core` RunsStore; AppRuntime + ProcessManager + CLI-first Docker + WSL/SSH adapters; AppRuntime-owned restart; 12 `test_us0141_*` | **WINNER** |
+| A2 | Nested `runtime-core/src/runtime/` | **Rejected** — DQ1 / §30 sibling |
+| A3 | Two packages `execution-runtime` + `dev-environment` | **Rejected** — YAGNI v1 |
+| A4 | dockerode **is** AppRuntime | **Rejected** — adapter, not facade; optional later `DockerClient` swap |
+| A5 | Kit Python only (`dev_environment_lib` / `uat_probe_lib` as the runtime) | **Rejected** — standalone TS owns execution |
+| A6 | PM2 / forever / systemd as ProcessManager | **Rejected** — extra dep; AppRuntime owns cap |
+| A7 | Docker HEALTHCHECK / `--restart` as remediation owner | **Rejected** — status-only / exit-only |
+| A8 | Implement browser UAT here | **Rejected** — US-0142 |
+| A9 | Micro-VM / Firecracker v1 | **Rejected** — D9 future |
+| A10 | Rewrite workflow / GateEngine / PolicyEngine / config / KernelBridge / `noTools` | **Rejected** — D2/D9 compose |
+| A11 | Require live Docker/WSL/SSH in CI | **Rejected** — fake backends + fail-closed unavailable codes |
+| A12 | Fold into `tool-broker` | **Rejected** — Layer A ≠ Layer B |
+| A13 | Unknown backend → silent local (Chump warning fallback) | **Rejected** — AC-8 fail-closed |
+| A14 | Second SQLite or better-sqlite3 for processes | **Rejected** — compose DEC-0140 `node:sqlite` |
+
+**Can this be simpler?** Nested runtime-core looks smaller and couples process lifecycle to the workflow engine. Two §30 packages look “more aligned” and double npm/test surface. dockerode looks “more native” and adds a socket client we can avoid by spawning `docker` like Chump. A1 (one sibling package + compose RunsStore + CLI-first backends) is the simplest design that meets AC-1..AC-8.
+
+**Approach seed for `/architecture`**: **A1 (A\*)**. **Companion DEC: yes → DEC-0141** Required → Accepted in `/architecture` (do **not** author `decisions/DEC-0141.md` this phase). Recommend architecture H1 **`# US-0141`** (not `## US-0141`). `decision_gate=false`.
+
+### Architecture seeds preview (within SPRINT_MAX_TASKS=12)
+
+T-anch (`# US-0141` + DEC-0141), T-001 `packages/app-runtime` + Pi-import grep + runtime-core compose, T-002 `process_handles` additive schema + ProcessManager, T-003 `ExecutionBackend` local+docker CLI-first + health_check, T-004 WSL + SSH/remote-docker adapters + diagnostics, T-005 stack profiles + unknown fail/fallback, T-006 bounded self-debug + `APP_RUNTIME_RESTART_MAX` + fresh DEV slot, T-007 test/build evidence + log summarize, T-008 Connect handoff (no browser) + cleanup/orphan reap, T-009 chaos fixtures (fake backends), T-010 `test_us0141_*` Win+Linux fake-model. (= 11 tasks)
+
+### Suggested fail-closed reason codes (architecture locks)
+
+`APP_RUNTIME_PROFILE_UNKNOWN`, `APP_RUNTIME_START_FAILED`, `APP_RUNTIME_HEALTH_FAILED`, `APP_RUNTIME_RESTART_CAP_EXHAUSTED`, `APP_RUNTIME_UNSUPPORTED_STACK`, `APP_RUNTIME_CLEANUP_FAILED`, `BACKEND_UNKNOWN`, `BACKEND_UNAVAILABLE`, `BACKEND_DOCKER_UNAVAILABLE`, `BACKEND_WSL_UNAVAILABLE`, `BACKEND_SSH_UNAVAILABLE`, `BACKEND_UNSUPPORTED`, `BACKEND_CONNECTIVITY_FAILED`, `BACKEND_TIMEOUT`, `PROCESS_CRASHED`, `PROCESS_ORPHAN_REAPED`. Do not overload `REMOTE_*`, `RELEASE_*`, `WORKFLOW_*`, or `DEV_ENV_*` as the primary AppRuntime family (compose those as inputs).
+
+### Risks
+
+- **R1 (MEDIUM)**: Live Docker/WSL/SSH absent on CI hosts. Mitigation: DQ8 fake backends; unavailable codes are asserted, not skipped.
+- **R2 (MEDIUM)**: Operators treat US-0098 JSON or HEALTHCHECK as the owner. Mitigation: D3/DQ5; runtime owns execution; tests 3/6.
+- **R3 (LOW)**: Log files leak secrets. Mitigation: names-only env; redact compose US-0135/0137; never read `.env`.
+- **R4 (MEDIUM)**: Orphan processes after runtime crash. Mitigation: DQ7 reap + test 9; compose `discardOrphans` for sessions only.
+- **R5 (LOW)**: npm name bikeshed `app-runtime` vs `execution-runtime`. Mitigation: architecture pins; one package either way.
+- **R6 (LOW)**: ToolBroker `itsm_app_*` scope creep. Mitigation: optional seed; PolicyEngine tables unamended.
+
+### Decision gate
+
+- **decision_gate=false** — DQ1–DQ10 LOCKED; winning approach **A1 (A\*)**; companion DEC **yes (DEC-0141)**.
+
+- **Delivery closure (2026-09-14T02:50:00Z, curator, `orchestrator_run_id=auto-20260913-us0141`)**: **`US-0141`** **DONE**; sprint **`S0149`** **released**; A1 `@its-magic/app-runtime` AppRuntime + ProcessManager + CLI-first local/Docker + WSL/SSH/remote-Docker adapters + additive `process_handles` + AppRuntime-owned restart + stack profiles + Connect handoff no browser + 12/12 `test_us0141_*` delivered per **R-0138** / **A1** / **`# US-0141`** / **DEC-0141**; compose **US-0133** / **US-0134** / **US-0135** / **US-0136** / **US-0137** / **US-0138** / **US-0139** / **US-0140** (DONE preserved); portfolio **7 OPEN** stories (US-0142..US-0148), **1 OPEN** bug (BUG-0022 OUT — not scheduled); drain story **7 of 10** — orchestrator drain-advance → **US-0142** after critic hook (curator STOP; do **not** spawn discovery).
+- **Freshness review (2026-09-14, curator refresh-context US-0141)**: R-0138 marked **delivered** (US-0141 DONE). R-0137 (BUG-0023) and R-0135 (US-0140) remain **delivered** compose bases (not wiped). R-0133 (BUG-0022) remains **current** (not this segment). No duplicate R-ids to merge. Unlinked prune deferred (no operator request).
+
+## R-0139 - US-0142 Owned browser UAT and evidence runtime research
+
+- **Date**: 2026-09-14
+- **Topic**: Close discovery DQ1–DQ10; pick winning owned Playwright + authorized-CDP browser UAT composing US-0141 `connectHandoff` (no `# US-0142` / Accepted `DEC-0142.md` this phase)
+- **Linked**: US-0142 (OPEN), R-0138 / DEC-0141 / US-0141 (DONE compose-only — `ConnectHandoff`), R-0079 / US-0093 (KEEP `uat.json` / `browser_evidence_refs` / `classify_step` contract, REPLACE Cursor-MCP backend as v1 authority), US-0065 probe catalog, R-0111 / US-0128 (no fake browser PASS; kit-slice `UAT_PROBE_FORBIDDEN` waives held), US-0135 / `redact.ts` (headers/tokens), US-0137 / DEC-0137 / R-0129 (`itsm_browser` STUB → promote), US-0085 `.env` deny, US-0140 / DEC-0140 / R-0135 GateEngine consume-not-rewrite; sibling US-0143 `/auto` drain OUT; pixel visual baseline OUT; OS micro-VM OUT; BUG-0021 DONE / BUG-0022 OPEN / BUG-0023 DONE — do not mutate; do not wipe R-0138 / R-0136 / R-0137
+- **Confidence**: high for sibling `@its-magic/browser-uat` (Playwright isolated `launch`+`newContext` + typed CDP `connectOverCDP` adapter; Cursor MCP not v1 authority); medium for exact retry-cap integer and CDP operator UX copy (architecture may pin)
+- **Status**: **current**
+- **Query**: DQ1–DQ10 from discovery D1–D10
+- **Producer consumed**: discovery `rp-auto-20260913-us0142-discovery-po-20260914T031000Z-US-0142` (`proof_hash` `5FF73D3703330EABE49AA2A07FE6DBD56DAFE5972B489A85309D5CD1A83A1DCB`, ttl `2026-09-14T04:10:00Z`) — RUNTIME_PROOF_VALID MATCH at research issue time `2026-09-14T03:30:00Z`; sovereign-critic of discovery PASS (`rp-auto-20260913-us0142-sovereign-critic-techlead-20260914T032000Z-US-0142` / `38E19C9FCCEE8C5C0A52EEDE4EC8520C1E08A73E8B0A51720E9609D0F574A441`; 0 blocking; anti_slop_aggregate=10; degraded_mode=false; marker `critic-US0142-discovery-20260914T032000Z-fresh`); marker `tl-US0142-research-20260914T033000Z-fresh`
+- **EARLY_RESEARCH posture**: scratchpad `EARLY_RESEARCH=1` — Playwright isolation vs CDP attach; Chrome 136+ default-profile CDP block; trace/HAR secret leakage; playwright vs playwright-core install; do **not** re-litigate DEC-0141 `connectHandoff` field names
+- **ID policy**: highest existing research heading is **R-0138** (US-0141). This entry is **R-0139**. Do **not** wipe, renumber, or rewrite R-0120..R-0138. Do **not** reuse R-0138 (US-0141), R-0136 (BUG-0023 intake), or R-0137 (BUG-0023 research). `ID_NAMESPACE_BOOTSTRAP=0` → continuation (no bootstrap).
+- **Compose base**: discovery D1–D10 unchanged. Do not author `# US-0142` or `decisions/DEC-0142.md`. Do not reopen US-0133..US-0141. Do not mutate US-0143+ or BUG-0021 / BUG-0022 / BUG-0023. Do not amend isolation loader internals, `noTools: "builtin"`, KernelBridge, auth-models store, RoleCatalog/SessionSupervisor internals, PolicyEngine decision tables (promote `itsm_browser` from `STUB_TOOLS` only), `@its-magic/config` loaders, or runtime-core workflow/GateEngine. Fake-model CI default **held**. Never read `.env`. Kit `files` omit `standalone/`. Do not restore `.opencode/commands/auto.md`. Do not ship kit `cli.json` or plugin-local `its-magic-auto/tui.json`.
+- **Sovereign memory**: `SOVEREIGN_MEMORY=1`; `build_injection_digest_block` returned `None` / (no sovereign memory entries) (read-only). No `mistakes.jsonl` write (no `fix_failed` / `revert_applied` / `plan_fidelity_violation` / `scope_creep`).
+
+### Critic NB closures (discovery `us0142dsc-*`, non-blocking → research locks)
+
+| Critic theme | Resolution in R-0139 |
+|---|---|
+| Proof fail-closed; Status OPEN; R-0139 stub only — R-0138/R-0136/R-0137 held (challenger-001) | **LOCKED DQ10 / ID policy**; this entry is R-0139; Status remains OPEN; ACs unchecked |
+| Compose US-0141 `connectHandoff`; research owns R-0139; architecture owns DEC-0142 + `# US-0142`; US-0143 drain OUT; pixel baseline OUT (architect-002) | **LOCKED DQ1 / DQ9 / DQ10**; Approach **A1 (A\*)**; architecture authors `# US-0142` + **DEC-0142** Accepted |
+| No browser-uat code; no architecture/DEC/R-heading from critic; no /research spawn (subtractor-003) | **Held** this research phase: R-0139 authored; still no `# US-0142` / `decisions/DEC-0142.md` / no `packages/browser-uat` code |
+
+### Web / docs / analog sources (2026-09-14)
+
+- https://playwright.dev/docs/browser-contexts — isolated `BrowserContext` is a cheap incognito-like profile (cookies/storage isolated). Library pattern: `chromium.launch()` + `browser.newContext()` + `context.newPage()`. **Winner for AC-1 isolated/headless.**
+- https://playwright.dev/docs/api/class-browsertype#browser-type-connect-over-cdp — `connectOverCDP` attaches to an existing Chromium-family browser. Lower fidelity than Playwright's native protocol. Chromium-only.
+- https://playwright.dev/docs/api/class-browsertype (launchPersistentContext) — persistent `userDataDir`; **Chrome default User Data is not automatable**. Closing a persistent context **closes the browser**. Unsuitable as the primary “developer browser stays alive” path.
+- https://developer.chrome.com/blog/remote-debugging-port (2025-03-17, Chrome 136+) — `--remote-debugging-port` / `--remote-debugging-pipe` **ignored** on the default Chrome data directory. Must pair with `--user-data-dir` pointing at a **non-standard** directory. Copying the daily profile is operator-optional and out of kit automation.
+- https://playwright.dev/docs/api/class-browser — after CDP attach, **`browser.disconnect()`** leaves the process running; **`browser.close()`** kills it. Authorized mode must disconnect, not close, unless the operator asked the runtime to launch the dedicated profile.
+- https://github.com/microsoft/playwright/issues/19992 — Playwright has **no** reliable built-in trace redaction; traces can contain passwords, cookies, Authorization, DOM values, console dumps. Treat `trace.zip` as secret-class; gitignore; never upload/share; post-process HAR/network summaries.
+- https://playwright.dev/docs/api/class-tracing — HAR `content: "omit"` + `mode: "minimal"` reduces bodies/cookies but is **not** sufficient alone. Compose US-0135 `redactAudit` / `redactSecretShaped` on network summaries and HAR JSON before persist.
+- https://playwright.dev/docs/library + playwright-core npm — `playwright-core` is logic-only (no browser download). Isolated CI may `npx playwright install chromium` optionally. Contract tests use a **fake driver** (US-0141 analog); live Chromium is skippable with `BROWSER_UNAVAILABLE` — assert the code, do not skip the fail-closed path.
+- In-tree compose (do not amend internals): `standalone/packages/app-runtime` `ConnectHandoff` (`connect_endpoint`, `health_path`, `service_id`, `container_id`, `env_refs` names-only, `url`, `ports`, `health`); `scripts/uat_probe_lib.py` `classify_step` / `browser_smoke` / `browser_evidence_refs` / `UAT_BROWSER_PROBE_MODE` (`cursor`\|`http_fallback`\|`playwright_fallback`); PolicyEngine `STUB_TOOLS` includes `itsm_browser` → `POLICY_STUB_TOOL_DENIED`; US-0135 `redact.ts`; US-0128 surrogate does **not** authorize fake browser PASS on webapp slices.
+
+### DQ1 — Package split + injection (LOCKED)
+
+- **Winner**: new sibling `standalone/packages/browser-uat` (`@its-magic/browser-uat`). Contains `BrowserUAT` facade (§20), isolated Playwright driver, typed CDP adapter, evidence writer, UAT executor plug-in. npm `private: true`, `version: 0.0.0`, `type: module`, `engines.node >=22.19.0`, export `./src/index.ts`. Workspaces glob `packages/*` already covers it. Package **does not exist** today. Matches masterplan §30 `browser-uat/`.
+- **Who owns what**: `BrowserUAT` owns session lifecycle, evidence, UAT mapping. `PlaywrightDriver` owns `chromium.launch` + `newContext`. `CdpAdapter` owns `connectOverCDP` + `disconnect`. ToolBroker calls **public** `BrowserUAT` / typed `itsm_browser` actions — does **not** import Playwright or CDP internals.
+- **Connect consumption**: import **public** `ConnectHandoff` type + call `AppRuntime.connectHandoff(id)` (or a narrow injected port). Navigate to `connect_endpoint` / `url`; probe `health_path`. Do **not** import ProcessManager/ExecutionBackend internals. Do **not** reimplement AppRuntime.
+- **No Pi imports.** `package.json` must not depend on `@earendil-works/pi-*`.
+- **Reject A2** (nested under `app-runtime`): mixes browser UAT with process lifecycle; §30 lists a sibling package.
+- **Reject A3** (fold into `tool-broker`): Layer A policy ≠ Layer B browser backend (same split as US-0141 vs tool-broker).
+- Kit `files` continues to omit `standalone/` (DEC-0120). Do not add standalone to kit workspaces.
+
+### DQ2 — Two-mode matrix (LOCKED)
+
+| Mode | API | Profile | Close semantics | Use |
+|---|---|---|---|---|
+| **isolated** (default for CI/regression) | `chromium.launch({ headless })` + `browser.newContext()` | fresh cookies/storage | `context.close()` then `browser.close()` **OK** (Playwright-owned) | AC-1 reproducible / headless |
+| **authorized CDP** | operator Chrome/Chromium with `--remote-debugging-port` **and** dedicated `--user-data-dir`; runtime `chromium.connectOverCDP(endpoint)` | existing logged-in dedicated profile | **`browser.disconnect()`** — developer browser **stays alive** | AC-1 logged-in / extensions |
+| **dedicated persistent** (optional helper) | `launchPersistentContext(dedicatedDir)` | Playwright-owned dedicated dir — **never** default Chrome User Data | close **does** kill that helper browser | operator-opt-in only; not the CDP “stay alive” path |
+
+- **Chrome 136+**: default User Data dir is **not** automatable. Pointing CDP/`userDataDir` at the daily profile → fail-closed `BROWSER_CDP_DEFAULT_PROFILE_FORBIDDEN` (architecture may pin the token). Operator must authorize a **dedicated** debug profile.
+- **Authorization UX**: explicit operator approval (debug port + dedicated profile path as names-only config). Missing port/profile/approval → `BROWSER_CDP_UNAUTHORIZED` (not silent isolated fallback).
+- **Reject A7**: `launchPersistentContext` against default Chrome User Data.
+- **Reject A15**: `browser.close()` after `connectOverCDP` as the default authorized teardown (kills the operator session).
+
+### DQ3 — Typed tool schema (LOCKED)
+
+- **Winner**: single structured `itsm_browser` tool with typed `action` enum covering AC-2: `open`, `navigate`, `snapshot`, `click`, `type`, `select`, `wait`, `screenshot`, `console`, `network`, `download`, `upload`, `accessibility`. Matches §20.2 preference (one schema, not a dozen tools).
+- **Promote**: remove `itsm_browser` from PolicyEngine `STUB_TOOLS` so it is no longer `POLICY_STUB_TOOL_DENIED`. Register a live handler in ToolBroker that delegates to `BrowserUAT`. Do **not** rewrite PolicyEngine path/shell/secret tables; compose `denySecretOrTraversal` unchanged.
+- **Role capability**: **QA** is the primary allowlisted caller. CDP attach additionally requires explicit operator approval. Other roles remain deny-by-default unless architecture adds a documented allowlist. Orchestrator remains spawn-only (no browser tools).
+- **Snapshot**: accessibility/ARIA (or DOM) summary — **not** pixel visual baseline (`toHaveScreenshot` OUT per D9 / §20.7).
+- **Reject** many discrete MCP-shaped tools as the standalone v1 surface (Cursor MCP remains host-only compatibility).
+
+### DQ4 — UAT planner (LOCKED)
+
+- **Winner**: **reuse** `uat_probe_lib.classify_step` kinds (`process_health` \| `cli_smoke` \| `browser_smoke` \| `api_health` / api probe \| `manual_operator`). Standalone `BrowserUAT` is the **executor plug-in** for `browser_smoke` (and automatable UI reclass). Do **not** fork a second classifier.
+- **`UAT_BROWSER_PROBE_MODE`**: kit default **`cursor` held** (US-0093 KEEP). Add additive mode **`owned`** (standalone Playwright+CDP is v1 authority for this story’s runtime). Do **not** replace the kit default (Reject A12). Unknown mode still collapses to `cursor` on the kit Python path.
+- **`FRAMEWORK_KIT_REPO=1`**: kit-slice `browser_smoke` waives with `UAT_PROBE_FORBIDDEN` **remain**. This story must **not** weaken `UAT_PROBE_FORBIDDEN` for `.env` / intake-evidence / secret-token deny or for other stories’ waived probes (US-0128 surrogate inventory held). US-0142 contract tests **lift** `browser_smoke` for **this story’s** applicable fixtures only.
+- Kit `playwright_fallback` / `http_fallback` remain host compatibility; they are **not** the standalone authority.
+
+### DQ5 — Evidence schema (LOCKED)
+
+- Persist compatible `uat.json` `probe_results[]` + US-0093 `browser_evidence_refs` (screenshot paths, console/network **summaries**, navigation URL). Additive fields (architecture may pin names): `snapshot_summary`, `trace_ref`, `duration_ms`, `browser_backend` (`isolated`\|`cdp`), `app_runtime_ref` (from `ConnectHandoff.service_id` / handle id — **not** secrets).
+- **Redaction (mandatory before persist)**: strip/redact `Authorization`, `Cookie`, `Set-Cookie`, tokens, password/form fields from logs, network summaries, HAR JSON. HAR record with `content: "omit"` then run US-0135 `redactAudit` / `redactSecretShaped` (extend header-key coverage if needed; do not rewrite the auth-models store).
+- **Traces**: gitignored under `.its-magic/runtime/browser-evidence/` (compose US-0140 gitignore analog). Never inline secrets. Do not treat trace.zip as shareable. Evidence-gap (PASS without required refs) → `UAT_BROWSER_PROBE_FAILED` (US-0093 `validate_browser_evidence` held).
+- **Reject** storing raw HAR/trace in SQLite or sprint markdown.
+
+### DQ6 — Credential paths (LOCKED)
+
+Authenticated flows (AC-6), in order:
+
+1. **Authorized CDP dedicated profile** (operator already logged in).
+2. **Opaque externally injected test account** (secret value never in the prompt/tool args; names-only env refs like US-0141 `env_refs`; injection the model cannot `itsm_read`).
+3. **Explicit operator approval** step (ASK) before any credential-bearing action.
+
+- Browser agent **cannot** read credentials from project files. **Never read `.env`**. Compose US-0085 + PolicyEngine secret deny. Typing passwords from repo files → `UAT_PROBE_FORBIDDEN` / `BROWSER_CREDENTIAL_FORBIDDEN`.
+- **Reject** storageState JSON checked into the repo with live cookies.
+
+### DQ7 — Fail-closed taxonomy + retry (LOCKED)
+
+Keep existing UAT families: `UAT_PROBE_PASS`, `UAT_PROBE_FAILED`, `UAT_PROBE_TIMEOUT`, `UAT_PROBE_UNRESOLVED`, `UAT_PROBE_FORBIDDEN`, `UAT_BROWSER_UNAVAILABLE`, `UAT_BROWSER_PROBE_FAILED`, `UAT_BROWSER_PROBE_TIMEOUT`.
+
+Additive **`BROWSER_*`** family (architecture may pin tokens; do not overload `APP_RUNTIME_*` / `BACKEND_*` / `REMOTE_*`):
+
+`BROWSER_UNAVAILABLE`, `BROWSER_CDP_UNAUTHORIZED`, `BROWSER_CDP_DEFAULT_PROFILE_FORBIDDEN`, `BROWSER_CRASHED`, `BROWSER_WAIT_TIMEOUT`, `BROWSER_ASSERTION_FAILED`, `BROWSER_CONSOLE_ERROR`, `BROWSER_NETWORK_FAILED`, `BROWSER_EVIDENCE_GAP`, `BROWSER_CREDENTIAL_FORBIDDEN`, `BROWSER_RETRY_CAP_EXHAUSTED`.
+
+- **Retry cap**: new `BROWSER_RETRY_MAX` default **2**, from resolved config/scratchpad if present. **Orthogonal** to US-0141 `APP_RUNTIME_RESTART_MAX` (do not share the counter). Missing CDP authorization is **not** retried into isolated mode.
+- **No silent PASS / no fake browser PASS** (US-0128). Kit-slice waives stay `UAT_PROBE_FORBIDDEN`, not `UAT_PROBE_PASS`.
+
+### DQ8 — `test_us0142_*` Win+Linux inventory (LOCKED)
+
+Primary: `standalone/tests/contract` (`node:test`) Windows + Linux. Fake-model CI. **No paid model calls.** **No required live Chrome/Chromium** for contract tests (fake `BrowserDriver` / fake CDP endpoint); live Playwright install is skippable with `BROWSER_UNAVAILABLE` when the binary is absent (assert the reason code). Fixture app: in-process HTTP server (not live Docker). Visual `toHaveScreenshot` **not** in the inventory.
+
+1. `test_us0142_isolated_launch_context` — AC-1 isolated/headless `launch`+`newContext`
+2. `test_us0142_cdp_connect_disconnect` — AC-1 `connectOverCDP` + `disconnect` leaves session
+3. `test_us0142_cdp_unauthorized_and_default_profile` — AC-5/AC-1 fail-closed missing auth + default User Data forbidden
+4. `test_us0142_itsm_browser_typed_actions` — AC-2 action enum (incl. snapshot/a11y, not pixel)
+5. `test_us0142_uat_planner_browser_smoke` — AC-3 classify + compatible `uat.json` (owned mode)
+6. `test_us0142_kit_forbidden_unweakened` — AC-3 `UAT_PROBE_FORBIDDEN` held for kit-slice / secrets
+7. `test_us0142_evidence_schema_connect_ref` — AC-4 screenshot/snapshot/console/network/url/trace/duration/backend/`app_runtime_ref`
+8. `test_us0142_redact_headers_cookies_tokens` — AC-7
+9. `test_us0142_credential_deny_no_env` — AC-6 no project-file / `.env` credential read
+10. `test_us0142_fail_closed_retry_cap` — AC-5 crash/wait/console/network/evidence-gap + cap
+11. `test_us0142_e2e_happy_uat_gate` — AC-8 app launch → action → evidence → UAT PASS
+12. `test_us0142_e2e_failure_and_exploratory_spec` — AC-8 failure path + exploratory→regression **without** visual-diff blocker
+
+Markers cover AC-1..AC-8. Architecture may rename; **count stays 12**. Expect sprint **S0150** at `/sprint-plan` (S0149 = US-0141).
+
+### DQ9 — Compose vs replace (LOCKED)
+
+- **US-0093**: KEEP contract (`classify_step`, `uat.json`, `browser_evidence_refs`, evidence-required-on-PASS). **REPLACE backend** for standalone: owned Playwright+CDP is v1 authority; Cursor browser MCP is **host-only** compatibility, not this runtime.
+- **US-0065**: probe catalog kinds unchanged.
+- **US-0128**: no fake browser PASS; kit waived `browser_smoke` stays forbidden on framework slices.
+- **US-0141**: Connect/health/ports only — consume `connectHandoff`; do not start/stop processes here.
+- Do **not** rewrite GateEngine / CommandRouter / workflow. Do not implement US-0143 drain. Do not restore `.opencode/commands/auto.md`.
+
+### DQ10 — Kit boundary + R-id (LOCKED)
+
+- `package.json` `files` omit `standalone/` — **held**. No kit `cli.json`. No plugin-local `tui.json`. No `.opencode/commands/auto.md` restore. `FRAMEWORK_KIT_REPO=1`. Do not npm-publish or git push.
+- **R-id**: this heading is **R-0139**. Do not wipe R-0138 (US-0141) or R-0136/R-0137 (BUG-0023).
+
+### Approach verdict
+
+| Approach | Summary | Verdict |
+|---|---|---|
+| **A1 (A\*)** | Sibling `@its-magic/browser-uat` (no Pi) composing US-0141 `ConnectHandoff`; Playwright isolated core + typed CDP adapter; fail-closed `BROWSER_*` / `UAT_*`; 12 `test_us0142_*` | **WINNER** |
+| A2 | Nested under `app-runtime` | **Rejected** — DQ1 / §30 sibling |
+| A3 | Fold into `tool-broker` | **Rejected** — Layer A ≠ Layer B |
+| A4 | Cursor MCP remains v1 authority | **Rejected** — D3 REPLACE backend |
+| A5 | Puppeteer as driver | **Rejected** — extra stack; Playwright already specified |
+| A6 | Selenium / WebDriver | **Rejected** — heavier; weaker traces |
+| A7 | `launchPersistentContext` on default Chrome User Data | **Rejected** — Chrome 136+ / Playwright docs |
+| A8 | Pixel visual baseline / `toHaveScreenshot` v1 | **Rejected** — D9 / §20.7 |
+| A9 | Implement US-0143 `/auto` drain | **Rejected** — D9 |
+| A10 | Rewrite GateEngine / workflow | **Rejected** — D1/DQ9 compose |
+| A11 | Require live Chrome in CI | **Rejected** — fake driver + `BROWSER_UNAVAILABLE` |
+| A12 | Replace kit `UAT_BROWSER_PROBE_MODE` default `cursor` | **Rejected** — KEEP US-0093; add `owned` |
+| A13 | Silent / fake browser PASS | **Rejected** — US-0128 |
+| A14 | Kit Python Playwright as standalone runtime | **Rejected** — standalone TS owns execution |
+| A15 | `browser.close()` after CDP as default teardown | **Rejected** — kills operator session |
+
+**Can this be simpler?** Nesting in app-runtime looks smaller and couples UAT to process lifecycle. Tool-broker fold looks “one less package” and mixes policy with Playwright. Cursor-MCP-only looks cheapest and fails AC-1 isolated CI plus “without Cursor plugins.” A1 (one sibling package + compose Connect + Playwright core + CDP adapter) is the simplest design that meets AC-1..AC-8.
+
+**Approach seed for `/architecture`**: **A1 (A\*)**. **Companion DEC: yes → DEC-0142** Required → Accepted in `/architecture` (do **not** author `decisions/DEC-0142.md` this phase). Recommend architecture H1 **`# US-0142`** (not `## US-0142`). `decision_gate=false`.
+
+### Architecture seeds preview (within SPRINT_MAX_TASKS=12)
+
+T-anch (`# US-0142` + DEC-0142), T-001 `packages/browser-uat` + Pi-import grep + consume `connectHandoff`, T-002 isolated Playwright `launch`+`newContext`, T-003 CDP adapter `connectOverCDP`+`disconnect`+dedicated profile, T-004 promote `itsm_browser` typed actions, T-005 UAT planner plug-in + additive `owned` mode + kit `UAT_PROBE_FORBIDDEN` held, T-006 evidence schema + redaction + gitignored traces, T-007 credential deny + opaque injection / operator approval, T-008 fail-closed `BROWSER_*`/`UAT_*` + `BROWSER_RETRY_MAX`, T-009 E2E happy+failure fixtures (in-process app), T-010 `test_us0142_*` Win+Linux fake-driver. (= 11 tasks)
+
+### Suggested fail-closed reason codes (architecture locks)
+
+`BROWSER_UNAVAILABLE`, `BROWSER_CDP_UNAUTHORIZED`, `BROWSER_CDP_DEFAULT_PROFILE_FORBIDDEN`, `BROWSER_CRASHED`, `BROWSER_WAIT_TIMEOUT`, `BROWSER_ASSERTION_FAILED`, `BROWSER_CONSOLE_ERROR`, `BROWSER_NETWORK_FAILED`, `BROWSER_EVIDENCE_GAP`, `BROWSER_CREDENTIAL_FORBIDDEN`, `BROWSER_RETRY_CAP_EXHAUSTED`. Keep `UAT_BROWSER_UNAVAILABLE`, `UAT_BROWSER_PROBE_FAILED`, `UAT_BROWSER_PROBE_TIMEOUT`, `UAT_PROBE_FORBIDDEN`. Do not overload `APP_RUNTIME_*`, `BACKEND_*`, `REMOTE_*`, or `WORKFLOW_*` as the primary browser family.
+
+### Risks
+
+- **R1 (HIGH)**: Playwright traces/HAR leak cookies and Authorization. Mitigation: DQ5 omit+redact; gitignore traces; treat as secret-class; AC-7 tests.
+- **R2 (HIGH)**: Operators try to CDP-attach the daily Chrome profile (Chrome 136+ silently ignores debug port). Mitigation: DQ2 dedicated `--user-data-dir`; `BROWSER_CDP_DEFAULT_PROFILE_FORBIDDEN`.
+- **R3 (MEDIUM)**: Live Chromium absent on CI. Mitigation: DQ8 fake driver; `BROWSER_UNAVAILABLE` asserted, not skipped.
+- **R4 (MEDIUM)**: `browser.close()` after CDP kills a logged-in developer session. Mitigation: DQ2 `disconnect()`.
+- **R5 (MEDIUM)**: Weakening kit `UAT_PROBE_FORBIDDEN` to make US-0142 green. Mitigation: DQ4/DQ9; test 6.
+- **R6 (LOW)**: Credential injection visible to the model. Mitigation: DQ6 names-only; PolicyEngine secret deny; never read `.env`.
+- **R7 (LOW)**: npm name bikeshed vs §30. Mitigation: research pins `browser-uat`; architecture may alias.
+
+### Decision gate
+
+- **decision_gate=false** — DQ1–DQ10 LOCKED; winning approach **A1 (A\*)**; companion DEC **yes (DEC-0142)**.
+
+## R-0140 - BUG-0024 OpenCode CLI TUI listed `/auto` still toasts OPENCODE_AUTO_TUI_DISPATCH_UNSUPPORTED after BUG-0023 Axis A (live dispatch)
+
+- **Date**: 2026-09-14
+- **Topic**: After BUG-0023 DONE (S0148 Axis A: `Rpc.define` + `client.rpc(Defined)` + await `ctx.rpc.register`; mock-invoke tests; live CLI `UAT_PROBE_FORBIDDEN`), operator listed `/auto` still toasts `OPENCODE_AUTO_TUI_DISPATCH_UNSUPPORTED` instead of starting `runAutoLifecycle`. Axis A **files are present**. Live dispatch is **falsified**.
+- **Linked**: BUG-0024 (OPEN), BUG-0023 DONE / **R-0137** / **R-0136** (Axis A compose — do **not** wipe; do **not** reopen ACs / S0148), R-0134 / BUG-0021 DONE (listing limb — toast title proves listed invoke; do **not** reopen), R-0124 (DISPATCH token defined), R-0126 / BUG-0020 DONE (desktop OUT), BUG-0019 DONE, BUG-0018 DONE (do **not** restore STOP-only `auto.md`), BUG-0022 OPEN (Cursor inherit — distinct; do not merge; do not drain), US-0124, US-0125, US-0069; R-0138 (US-0141) / R-0139 (US-0142) distinct — do not wipe/reuse
+- **Confidence**: high that Axis A files shipped and live listed `/auto` still hits the DISPATCH toast; high that CI mock-invoke cannot prove live `client.rpc(Defined)`; medium on exact live gap among H1–H5 — `/discovery` / `/research` lock
+- **Status**: current (intake research; not a substitute for `/research`)
+- **Query**: Why does listed CLI TUI `/auto` still toast `OPENCODE_AUTO_TUI_DISPATCH_UNSUPPORTED` after Axis A files are present? What host-true `tui(api)` client wiring starts `runAutoLifecycle` without restoring markdown/JSON Command.Info ownership?
+- **Producer consumed**: `/intake bug` operator packet 2026-09-14T03:50:00Z (German `/ask` repo-vs-plan + “was läuft nun wieder falsch?”; live DISPATCH toast; Axis A files present)
+- **EARLY_RESEARCH posture**: intake-time live-fetch OpenCode v2 RPC (`https://opencode.ai/v2/docs/build/plugins/rpc/`) + Context7 `/websites/opencode_ai_v2` TUI `context.client.rpc` + `/anomalyco/opencode` TUI plugin `api.client` — not a substitute for `/research`. Compose **R-0137** / **R-0136** / **R-0134** / **R-0124** (do not wipe R-0136, R-0137, R-0138, R-0139).
+- **ID policy**: highest existing research heading was **R-0139** (US-0142). This entry is **R-0140**. Do **not** wipe, renumber, or rewrite R-0120..R-0139. Do **not** reuse R-0136 (BUG-0023 intake), R-0137 (BUG-0023 research), R-0138 (US-0141), or R-0139 (US-0142). `ID_NAMESPACE_BOOTSTRAP=0` → continuation (no bootstrap).
+
+### Web / docs / code sources (2026-09-14 live-fetch)
+
+- Live `https://opencode.ai/v2/docs/build/plugins/rpc/` (re-fetched this intake):
+  - Define with **`Rpc.define({ id, methods })`** from `@opencode/plugin/rpc`. Kit `rpc.ts` now uses `Rpc.define` (optional peer; else **local** `define` that returns the spec).
+  - Implement in **server** `Plugin.define({ setup })`: **`await ctx.rpc.register(Acme, impl)`**. Kit orchestrator still **skips** register when `ctx.rpc.register` is absent.
+  - Call from HTTP: `OpenCode.make({ baseUrl })` then **`client.rpc(Acme)`**. Kit uses this as fallback **only if** `resolveClientBaseUrl(client)` finds a string; **no** silent `http://localhost:4096`.
+  - Call from a **TUI plugin** in public docs: **`Plugin.define({ setup(context) { context.client.rpc(Acme) } })`** from `@opencode/plugin/tui` — the **CLI plugin** shape, **not** the `{ id, tui }` file-plugin `tui(api)` loader that BUG-0021 locked. That mismatch remains live.
+- Context7 `/websites/opencode_ai_v2` “Call RPC from a plugin using context.client”: same `Plugin.define({ setup })` + `context.client.rpc(Acme)` example.
+- Context7 `/anomalyco/opencode` `packages/opencode/specs/tui-plugins.md`: `{ id, tui }` file plugins; `tui(api)` groups include **`api.client`**. Spec examples use generated SDK methods (`client.session.get`). Spec does **not** document `api.client.rpc(Rpc)`.
+- Kit working tree (this intake; Axis A present, live dispatch still toasting):
+  - `.opencode/plugins/its-magic-auto/rpc.ts` — `Rpc.define` + `runAutoLifecycle`
+  - `.opencode/plugins/its-magic-auto/tui.ts` — `{ id, tui }`; `run: async (input) => dispatchRunAutoLifecycle({ api, client: api?.client }, input)`; DISPATCH toast if `!client`, import fail, `!Defined`, no `client.rpc` method, no `runAutoLifecycle` on subclient, no `baseUrl`, or `@opencode/client` unusable; **all RPC try/catch swallowed** → same toast
+  - `.opencode/plugins/orchestrator.ts` — `await ctx.rpc.register(...)` **if** `ctx.rpc.register` exists; keep `editor.add`
+  - `.opencode/tui.json` lists `./plugins/its-magic-auto/tui.ts`
+  - `.opencode/commands/auto.md` **absent**
+- Compose **R-0137** winning Axis A (`Rpc.define` + `client.rpc(Defined)`): **files shipped**, **live CLI not probed** (`UAT_PROBE_FORBIDDEN`). Operator toast is that residual **live-falsified**.
+- Compose **R-0136** H1–H4: still candidates. Additive H5: local `Rpc.define` fallback is not host-true `Defined`, so `client.rpc(Defined)` does not return `runAutoLifecycle`.
+
+### Gap confirmation (intake)
+
+- BUG-0023 DONE shipped Axis A. Operator `/ask`: “prüfe das repo is alles so wie nach dem letzten bug geplant vorhanden? was läuft nun wieder falsch?”
+- Files **are present**. Listed `/auto` still toasts title `its-magic /auto`, body `OPENCODE_AUTO_TUI_DISPATCH_UNSUPPORTED`. Lifecycle does **not** start.
+- Leading hypotheses (not locked): (H1) `{ id, tui }` `api.client` missing so `run()` `{ api, client: api?.client }` toasts immediately; (H2) `.rpc` missing or requires host-true `Rpc.define` branding (H5 local define); (H3) server `ctx.rpc.register` never ran; (H4) `OpenCode.make` fallback never runs (`baseUrl` absent / `@opencode/client` unusable) and errors swallowed. `/research` picks winner.
+- Do **not** restore STOP-only `auto.md` (BUG-0018). Do **not** reopen BUG-0023 ACs (slice still true; live limb is new). Do **not** reopen BUG-0021. Do **not** merge BUG-0022.
+
+### Alternatives (intake recommendation; discovery/architecture lock)
+
+| Option | Summary | Intake verdict |
+|---|---|---|
+| **1** | Persist **NEW BUG-0024**; keep BUG-0023 DONE; listed `/auto` must reach `runAutoLifecycle` on live CLI; tests must catch this live miss (not mock-only if that is the gap) | **Recommended** |
+| 2 | Reopen BUG-0023 ACs / S0148 | **Rejected** — slice closed honestly with `UAT_PROBE_FORBIDDEN`; this is a new live-falsification |
+| 3 | Reopen BUG-0021 | **Rejected** — listing limb succeeded (toast title proves listed invoke) |
+| 4 | Merge BUG-0022 | **Rejected** — Cursor Task inherit ≠ OpenCode TUI dispatch |
+| 5 | Restore STOP-only `.opencode/commands/auto.md` | **Rejected** — recreates BUG-0018 |
+| 6 | Treat Axis A files present as success | **Rejected** — operator asked what is wrong again |
+| 7 | Cursor-only as product outcome | **Rejected** — Cursor IDE `/auto` is the working path **until fix**, not done |
+
+### Seeds for `/discovery` / `/research` (not locked here)
+
+- Confirm whether live TUI `tui(api)` actually has `api.client` / `client.rpc` / `baseUrl`.
+- Align file-plugin `{ id, tui }` vs public `Plugin.define({ setup })` `context.client.rpc(Rpc.define)`.
+- Confirm orchestrator `ctx.rpc.register` runs in the CLI TUI host (not skipped).
+- Do not silent-default `localhost:4096`. Do not re-invent POST `{ input }`.
+- Keep `editor.add` execute owner. Do not SessionPrompt / Command.Info template / LLM chat.
+- Fail-closed: reuse `OPENCODE_AUTO_TUI_DISPATCH_UNSUPPORTED` until **live** dispatch works; honest `OPENCODE_*` only when host-true cannot dispatch.
+- Tests: additive `test_bug0024_*` that would have failed BUG-0023’s mock-only suite on the live miss (missing `api.client` / swallowed RPC). Keep 0023/0021/0020/0019/0018 compose. `UAT_PROBE_FORBIDDEN` remains default unless architecture opts in.
+- Upgrade: live dispatch-path change must copy to already-Axis-A trees; still prune leftover `auto.md`.
+
+### Decision gate
+
+- **decision_gate=false** for intake persistence. Exact host-true live client wiring remains a `/research` DQ.
+- **Status**: current. **Next**: `/discovery` for **BUG-0024**.
+
+## R-0141 - US-0143 Delivery routing and full-autonomy scheduler research
+
+- **Date**: 2026-09-14
+- **Topic**: Close discovery DQ1–DQ10; pick winning owned `/auto`/`/quick` scheduler inside `@its-magic/runtime-core` (no `# US-0143` / Accepted `DEC-0143.md` this phase)
+- **Linked**: US-0143 (OPEN), R-0140 / BUG-0024 (OPEN — OUT; do not wipe/reuse), R-0139 / DEC-0142 / US-0142 (DONE compose-only), R-0138 / DEC-0141 / US-0141 (DONE compose-only), R-0135 / DEC-0140 / US-0140 (DONE compose-only — `WORKFLOW_ROUTE_DEFERRED` stub to lift), R-0106 / US-0118 / DEC-0118 L8, R-0107 / US-0119 / DEC-0119, R-0081 / US-0095 / DEC-0078 native chain, R-0082 / US-0096 / DEC-0082 delivery modes, US-0070 / DEC-0052 phase policy, BUG-0006 / DEC-0051 spawn-only; sibling US-0144 critic *content* OUT (hooks compose only); US-0145 parallel/deploy OUT; US-0146 CLI/TUI OUT; BUG-0021 DONE / BUG-0022 OPEN / BUG-0023 DONE / BUG-0024 OPEN — do not mutate
+- **Confidence**: high for compose-in-place CommandRouter lift of deferred routes + WorkflowEngine-owned §14.4 drain loop + unamended GateEngine + YAML stop-matrix consume + independent axes; medium for exact mega_quick canonical node list (architecture pins; tests+acceptance non-skippable)
+- **Status**: **delivered** (delivery closure trailer below; curator refresh **2026-09-14T09:30:00Z**)
+- **Query**: DQ1–DQ10 from discovery D1–D10
+- **Producer consumed**: discovery `rp-auto-20260913-us0143-discovery-po-20260914T063000Z-US-0143` (`proof_hash` `F80760B9FF4DA073C0AF5DDE847206E021A7C47FFE74B9B8A6E477BB27739FD4`, ttl `2026-09-14T07:30:00Z`) — RUNTIME_PROOF_VALID MATCH at research issue time `2026-09-14T06:50:00Z`; sovereign-critic of discovery PASS (`rp-auto-20260913-us0143-sovereign-critic-techlead-20260914T064000Z-US-0143` / `C02F9C52420F869751C412D3D30BB9D324447C6BF1768ED5CB3246BDCCC7EDD0`; 0 blocking; anti_slop_aggregate=10; degraded_mode=false; marker `critic-US0143-discovery-20260914T064000Z-fresh`); marker `tl-US0143-research-20260914T065000Z-fresh`
+- **EARLY_RESEARCH posture**: scratchpad `EARLY_RESEARCH=1` — Graph Harness / SGH (immutable plan + bounded recovery); deterministic vs LLM orchestration (Conductor-style zero-token router); capability vs permission autonomy (AAL≠ACL); do **not** re-litigate DEC-0140 GateEngine / `node:sqlite` / spawn-only
+- **ID policy**: highest existing research heading is **R-0140** (BUG-0024 intake). This entry is **R-0141**. Do **not** wipe, renumber, or rewrite R-0138 / R-0139 / R-0140. Do **not** reuse R-0139 (US-0142) or R-0140 (BUG-0024). `ID_NAMESPACE_BOOTSTRAP=0` → continuation (no bootstrap).
+- **Compose base**: discovery D1–D10 unchanged. Do not author `# US-0143` or `decisions/DEC-0143.md`. Do not reopen US-0133..US-0142. Do not mutate US-0144+ or BUG-0023 / BUG-0024. Do not amend GateEngine `RELEASE_GATE_ORDER`, isolation loader, `noTools: "builtin"`, KernelBridge allowlist internals, auth-models, RoleCatalog/SessionSupervisor internals, PolicyEngine decision tables, or `@its-magic/config` loaders. Fake-model CI default **held**. Never read `.env`. Kit `files` omit `standalone/`. Do not restore `.opencode/commands/auto.md`. Do not ship kit `cli.json` or plugin-local `its-magic-auto/tui.json`.
+- **Sovereign memory**: `SOVEREIGN_MEMORY=1`; `build_injection_digest` returned `(no sovereign memory entries)` (read-only). No `mistakes.jsonl` write (no `fix_failed` / `revert_applied` / `plan_fidelity_violation` / `scope_creep`).
+
+### Web / docs / analog sources (2026-09-14)
+
+- https://arxiv.org/html/2604.11378v1 — Graph Harness / SGH: lift control from implicit LLM context into an explicit static graph; plan immutable for a plan version; planning / execution / recovery separated; bounded recovery with escalation (retry → local patch → replan). Analog **winner** for `/auto` as typed runtime state, not a prompt. Position paper — consume the commitments, do not take a Go engine dependency.
+- https://dreaming.press/posts/deterministic-vs-llm-orchestration-for-multi-agent-systems.html — Microsoft Conductor: agents stay LLM-powered; routing is first-match conditions (zero tokens). LLM supervisors burn budget re-deriving a known table and are not reproducible. **Adopt** typed TS graph + L8 lookup as the router; **reject** a model that decides whether a hard stop is relaxable.
+- https://0to1.nl/post/2026-07-08-llm-for-loop/ — control plane vs data plane: scheduler answers “should something run now?” in table-tested code; recovery is a server-side operation, not an LLM guess.
+- https://github.com/sipyourdrink-ltd/bernstein/blob/main/docs/architecture/WHY_DETERMINISTIC.md — Bernstein: no LLM in the scheduling loop; bugs in the scheduler are reproducible tests. Maps to `test_us0143_*` hermetic fake-model CI.
+- https://arxiv.org/abs/2607.23438 — capability (ACL) ≠ permission (AAL). High capability under `AUTONOMY_PRESET=full` must still be constrained by Allowed Autonomy (YAML `security_hard`). Models never raise their own permission.
+- https://dzone.com/articles/algorithmic-circuit-breakers-agent-safety — hard stops are external, stateful, fail-closed circuit breakers — not prompt text.
+- In-tree compose (do not amend internals): `standalone/packages/runtime-core/src/workflow/command-router.ts` `DEFERRED_COMMANDS=["/auto","/quick"]` → `WORKFLOW_ROUTE_DEFERRED` `implemented: false`; `workflow-engine.ts` execute↔QA only (no drain); `gates/gate-engine.ts` `RELEASE_GATE_ORDER` held; `config-view.ts` currently `lookupDeliveryMode` only; `@its-magic/config` already has `expandAutonomyPreset` / `PRESET_DEFINITIONS`; `scripts/work_kind_routing_lib.py` L8; `scripts/data/autonomy_stop_matrix.yaml` US-0119 SOT; `RunsStore.audit` operational table; `handoffs/autonomy_repair_ledger/` kit JSONL; `standalone/tests/contract/us0140.contract.test.ts` `test_us0140_command_coverage` currently asserts deferred.
+
+### Critic NB closures (discovery `us0143dsc-*`, non-blocking → research locks)
+
+| Critic theme | Resolution in R-0141 |
+|---|---|
+| Proof fail-closed; Status OPEN; R-0141 stub only; R-0139 US-0142 + R-0140 BUG-0024 held; AC-6 terminals named (challenger-001) | **LOCKED DQ7 / DQ10 / ID policy**; this entry is R-0141; Status remains OPEN; ACs unchecked |
+| Compose US-0140 CommandRouter/WorkflowEngine; research owns R-0141; architecture owns DEC-0143 + `# US-0143`; US-0144 content OUT; host scheduling-only (architect-002) | **LOCKED DQ1 / DQ2 / DQ6 / DQ9**; Approach **A1 (A\*)**; architecture authors `# US-0143` + **DEC-0143** Accepted |
+| No /auto drain code; no architecture/DEC/R-heading from critic; no restore auto.md; no /research spawn (subtractor-003) | **Held** this research phase: R-0141 authored; still no `# US-0143` / `decisions/DEC-0143.md` / no drain implementation code |
+
+### DQ1 — Package split (LOCKED)
+
+- **Winner**: implement `/auto` and `/quick` **inside** existing `@its-magic/runtime-core` (`standalone/packages/runtime-core`). Nested helper `workflow/delivery-router.ts` (L8 + axes + compressed plans) used by CommandRouter and WorkflowEngine. **No** sibling `packages/auto-scheduler`. **No Pi**.
+- CommandRouter **implements** the deferred names (lift stub). WorkflowEngine **owns** the §14.4 `while run active` drain loop. GateEngine tables **unamended**.
+- **Reject A2** (sibling auto-scheduler package): extra npm surface vs D1 / §30 `runtime-core`.
+- **Reject A3** (prompt-only / restore `.opencode/commands/auto.md`): D3 / D9; host plugins stay scheduling-only (DEC-0051).
+- Kit `files` omit `standalone/` (DEC-0120). Do not add a Biome override. Do not add standalone to kit workspaces.
+
+### DQ2 — Lift `WORKFLOW_ROUTE_DEFERRED` (LOCKED)
+
+- **Winner**: `CommandRouter.route("/auto"|"/quick")` returns an **implemented** `RouteScheduled` (`ok: true`, `implemented: true`, plan + independent axes). It does **not** run the 7-step producer path for the scheduler command itself (scheduler is not a canonical phase). `WorkflowEngine.runAuto` / `runQuick` then walks the resolved phase plan via existing `route(phase)` 7-step. Programmatic 16-command path **unamended**.
+- Fate of `DEFERRED_COMMANDS`: **empty after this story** (or removed). Keep `WORKFLOW_ROUTE_DEFERRED` in `stop-matrix/codes.ts` for unknown future stubs; `/auto`/`/quick` must not return it.
+- Execute **must compose-amend** `test_us0140_command_coverage` so it no longer expects deferred `/auto`/`/quick` (US-0140 ACs stay DONE; this is contract evolution, not a reopen). Additive `test_us0143_*` own the new behavior.
+- **Reject** rewriting GateEngine `RELEASE_GATE_ORDER`. **Reject** keeping deferred as the happy path (AC-1).
+
+### DQ3 — Independent axes + config-view (LOCKED)
+
+- **Winner**: extend consume-only `ConfigView` with **independent** lookups: `lookupDeliveryMode` (exists), `lookupTokenProfile`, `lookupVoice` / CAVEMAN, `lookupAutonomyPreset`, `lookupWorkKindRouting`. Do **not** fold axes (masterplan §15 / D2). Consume US-0138 RuntimeConfig fields already present (`token.TOKEN_PROFILE`, `autonomy.AUTONOMY_PRESET`, `workKind.WORK_KIND_ROUTING`, CAVEMAN flags). **No new RuntimeConfig domain / loader rewrite**.
+- Compressed modes still require mandatory tests + acceptance evidence (AC-2). Token/voice/preset must not silently change lifecycle shape.
+
+### DQ4 — DEC-0118 L8 precedence (LOCKED)
+
+- **Winner**: TS **L8 adapter** in `runtime-core` (`resolveDeliveryRoute`) porting `scripts/work_kind_routing_lib.py` semantics with golden vectors vs Python fixtures. Precedence: `start-from` > explicit `DELIVERY_MODE` > `AUTO_PHASE_*` > `WORK_KIND_ROUTING` recommendation > default standard. Conflict → `WORK_KIND_DELIVERY_MODE_CONFLICT` fail-closed (explicit wins, conflict surfaced). Mid-story `DELIVERY_MODE` switch forbidden (DEC-0082).
+- `WORK_KIND_ROUTING=0` → zero-overhead early return `(standard, full_plan, WORK_KIND_ROUTING_OFF)` without classifier (compose US-0118 Q8).
+- **Do not** add `work_kind_classify` to KernelBridge `ALLOWED_VALIDATOR_NAMES` (US-0140 compose: allowlist unamended). Python libs remain kit SOT for Cursor/OpenCode; standalone consumes via TS adapter + parity tests.
+- **Reject** LLM classification of work-kind.
+
+### DQ5 — Preset expand + stop matrix (LOCKED)
+
+- **Winner**: call existing `@its-magic/config` `expandAutonomyPreset` **before** `runAuto`/`runQuick` (already ports `PRESET_DEFINITIONS`; explicit per-flag > preset > default). Do not duplicate the table in runtime-core.
+- Stop matrix: **consume** `scripts/data/autonomy_stop_matrix.yaml` via kernel locate path (file read, not a new validator). Additive `security_hard` rows for AC-6 codes that are missing (do **not** weaken existing US-0119 `security_hard`). Mirror codes into `stop-matrix/codes.ts` (consume-not-fork; tests assert YAML ⊇ TS for hard stops). Models never decide relaxability.
+- **Reject** encoding the matrix in prompts. **Reject** a second TS-only writer.
+
+### DQ6 — Drain loop owner + caps (LOCKED)
+
+- **Winner**: `WorkflowEngine` owns `while run active` (masterplan §14.4). `CommandRouter` resolves `/auto`/`/quick` to a plan; it does not drain.
+- Caps consume resolved config (no new domain): `AUTO_LOOP_MAX_CYCLES` / `retryTest` (exists), `AUTO_BACKLOG_MAX_STORIES`, `AUTO_BACKLOG_ON_BLOCK`, `AUTO_EXECUTE_MAX_ITEMS`, `AUTO_BLOCK_RETRY_MAX`, `AUTO_PAUSE_REQUEST`, `AUTO_QUIET`, operator approvals. Exhaust → existing `WORKFLOW_LOOP_CAP` / `BLOCK_RETRY_CAP_EXHAUSTED` plus additive `BUDGET_EXHAUSTED` when token/cost cap hits.
+- This run `AUTO_BUG_QUEUE=0` (do not drain BUG-0024), but AC-5 requires the **axis**: bug drain obeys `AUTO_BUG_QUEUE` / `AUTO_BUG_MAX_ITEMS` when enabled; mutex vs story drain without `bug-target` (compose US-0087). Default-off is correct.
+- Operator authority: pause, skip, approval gates, and `AUTONOMY_PRESET=none` remain operator-visible and non-bypassable.
+
+### DQ7 — AC-6 non-relaxable set (LOCKED)
+
+Map onto YAML `security_hard` **plus additive codes** (do not weaken US-0119 rows). Even under `AUTONOMY_PRESET=full`:
+
+| AC-6 terminal | Mapping |
+|---|---|
+| Security-hard gates | Existing YAML `security_hard` (isolation, runtime proof, role/ownership, intake, `AUTO_SCHEDULER_CONFLICT`, `RESUME_BRIEF_STALE` when auto-refresh off, `SECURITY_REVIEW_CRITICAL_FINDING`, …) |
+| Unresolved decisions | Additive `DECISION_UNRESOLVED` (`stop_reason=decision_gate`) |
+| Incompatible kernel | Additive `KERNEL_INCOMPATIBLE` (compose `KERNEL_VALIDATOR_MISSING`) |
+| Failed mandatory quality evidence | Existing `RELEASE_*` / QA/UAT fail **classified security_hard** for this scheduler (GateEngine order unamended; no bypass) |
+| Budget exhaustion | Additive `BUDGET_EXHAUSTED` + existing `WORKFLOW_LOOP_CAP` |
+| Ambiguous resume | Existing `RESUME_BRIEF_STALE` + additive `RESUME_AMBIGUOUS` |
+
+Architecture may pin exact code strings. AAL≠ACL analog: full preset raises capability, not permission to skip these.
+
+### DQ8 — Audit / repair ledger + mid-resume (LOCKED)
+
+- **Winner**: dual-write. `RunsStore.audit` (operational, already exists) + append-only kit JSONL `handoffs/autonomy_repair_ledger/<orchestrator_run_id>.jsonl` (compose US-0119). Repo artifacts (`state.md`, `resume_brief.md`, backlog) remain **canonical** for phase/resume (DEC-0140). SQLite must not be the SOT for stops (`RECOVERY_FALSE_COMPLETION` held).
+- Ledger fields (architecture may pin): phase selection, retries, skips, stop reason, resume choice, repair kind, cap remaining, axis snapshot (`DELIVERY_MODE` / `TOKEN_PROFILE` / voice / `AUTONOMY_PRESET` / `WORK_KIND`).
+- Mid-process resume: compose US-0140 `discardOrphans` + fresh correct-role spawn; reconstruct next phase from resume_brief + typed graph + audit. Never restore an old specialist transcript. Never switch `DELIVERY_MODE` mid-story.
+
+### DQ9 — `/quick` vs `mega_quick` vs `ultra_lean` + critic hooks (LOCKED)
+
+- **`/auto`**: §14.4 scheduler; delivery mode from L8 (standard / ultra_lean / mega_quick).
+- **`/quick`**: explicit command that **forces** mega_quick-shaped plan (same compressed graph as `DELIVERY_MODE=mega_quick`). Not a prompt. Not an alias that skips tests.
+- **`ultra_lean`**: existing skip-plan-verify edge held (US-0140). Still tests + acceptance.
+- **`mega_quick` / `/quick`**: kit macro `["quick"]` (DEC-0082) maps onto a **compressed canonical node set** that **must** still produce test evidence and acceptance/UAT evidence and still hit GateEngine before release/closure. Architecture pins nodes; research lock: may skip discovery/research/architecture/sprint-plan/plan-verify for eligible mini work; **must not** skip execute/qa (or equivalent test evidence), verify-work/UAT, or GateEngine. Eligibility remains US-0096 (≤3 ACs, single component, no companion DEC).
+- Critic hooks: existing `scheduleSupplementaryHooks` when `CROSS_MODEL_REVIEW=1`. **Content** (lenses, memory, convergence) is US-0144 OUT — this story only schedules the slot.
+
+### DQ10 — `test_us0143_*` + kit + R-id (LOCKED)
+
+Primary: `standalone/tests/contract` (`node:test`) Windows + Linux. Fake-model CI. In-memory SQLite. No paid model calls.
+
+1. `test_us0143_auto_route_implemented` — AC-1 `/auto` no longer `WORKFLOW_ROUTE_DEFERRED`
+2. `test_us0143_quick_route_implemented` — AC-1 `/quick` implemented
+3. `test_us0143_standard_lifecycle_auto` — AC-2 standard + tests/acceptance
+4. `test_us0143_compressed_ultra_lean_mega_quick` — AC-2 compressed still tests+acceptance
+5. `test_us0143_axis_independence` — AC-2 five axes do not fold
+6. `test_us0143_l8_precedence_start_from` — AC-3 start-from / DELIVERY_MODE / AUTO_PHASE_* win
+7. `test_us0143_work_kind_conflict` — AC-3 `WORK_KIND_DELIVERY_MODE_CONFLICT`
+8. `test_us0143_preset_expand_stop_matrix` — AC-4 expand-before-run + YAML consume
+9. `test_us0143_drain_caps_operator_authority` — AC-5 multi-item drain + caps + pause/approval
+10. `test_us0143_nonrelaxable_terminals` — AC-6 all six terminals under `full`
+11. `test_us0143_audit_ledger_mid_resume` — AC-7 ledger + mid-process resume fresh role
+12. `test_us0143_autonomy_disabled` — AC-8 `AUTONOMY_PRESET=none` byte-identical / no silent relax
+
+Markers cover AC-1..AC-8. Architecture may rename; **count stays 12**. Expected sprint **S0151** (S0150 = US-0142). Compose-amend `test_us0140_command_coverage`. Kit `files` omit `standalone/`. No `auto.md` restore. No kit `cli.json` / plugin-local `tui.json`. **R-id**: this heading is **R-0141**. Do not wipe R-0139 / R-0140.
+
+### Approach verdict
+
+| Approach | Summary | Verdict |
+|---|---|---|
+| **A1 (A\*)** | CommandRouter implements deferred `/auto`/`/quick` inside `@its-magic/runtime-core`; nested DeliveryRouter; WorkflowEngine owns drain loop; GateEngine unamended; YAML stop matrix consume; TS L8 adapter; 12 `test_us0143_*` | **WINNER** |
+| A2 | Sibling `packages/auto-scheduler` | **Rejected** — D1 / §30 |
+| A3 | Prompt-only scheduler / restore `auto.md` | **Rejected** — D3 / D9 |
+| A4 | Rewrite GateEngine tables | **Rejected** — D1 |
+| A5 | Fork stop-matrix YAML writer / prompt-encoded stops | **Rejected** — D5 |
+| A6 | LangGraph / Temporal as `/auto` engine | **Rejected** — R-0135 replay trap / spawn-only |
+| A7 | Fold scheduler into role-runtime | **Rejected** — US-0136 A2 |
+| A8 | Amend KernelBridge allowlist to run work-kind as validator | **Rejected** — US-0140 compose |
+| A9 | Implement US-0144 critic/memory content | **Rejected** — D9 |
+| A10 | CLI/TUI ownership (US-0146) | **Rejected** — D9 |
+| A11 | Silent mid-story `DELIVERY_MODE` switch | **Rejected** — DEC-0082 |
+| A12 | Weaken `security_hard` under `full` preset | **Rejected** — AC-6 / AAL≠ACL |
+| A13 | SQLite as stop/DONE SOT | **Rejected** — DEC-0140 |
+| A14 | Keep `WORKFLOW_ROUTE_DEFERRED` as happy path | **Rejected** — AC-1 |
+| A15 | LLM work-kind / stop-relaxability classifier | **Rejected** — D3 / D5 |
+
+**Can this be simpler?** In-place `CommandRouter.route` without a DeliveryRouter helper looks smaller and mixes 7-step with drain. A sibling package looks “cleaner” and fails D1. A prompt scheduler looks like today’s kit `/auto` and fails reproducibility. A1 (one existing package + lift deferred + engine-owned loop + consume YAML/L8) is the simplest design that meets AC-1..AC-8.
+
+**Approach seed for `/architecture`**: **A1 (A\*)**. **Companion DEC: yes → DEC-0143** Required → Accepted in `/architecture` (do **not** author `decisions/DEC-0143.md` this phase). Recommend architecture H1 **`# US-0143`** (not `## US-0143`). `decision_gate=false`.
+
+### Architecture seeds preview (within SPRINT_MAX_TASKS=12)
+
+T-anch (`# US-0143` + DEC-0143), T-001 lift `DEFERRED_COMMANDS` + `RouteScheduled` + compose-amend `test_us0140_command_coverage`, T-002 ConfigView independent axis lookups + preset expand-before-run, T-003 TS L8 adapter + conflict code + golden vectors, T-004 compressed graphs (ultra_lean held; mega_quick/`/quick` tests+acceptance), T-005 WorkflowEngine `runAuto`/`runQuick` §14.4 loop, T-006 drain/bulk/retry/skip/quiet/pause/approval caps, T-007 YAML stop-matrix consume + AC-6 additive `security_hard`, T-008 audit + repair JSONL + mid-resume `discardOrphans`, T-009 critic-hook slot only (US-0144 content OUT), T-010 `test_us0143_*` Win+Linux fake-model. (= 11 tasks)
+
+### Suggested fail-closed reason codes (architecture locks)
+
+Keep: `WORKFLOW_ROUTE_DEFERRED` (unused for `/auto`/`/quick`), `WORKFLOW_LOOP_CAP`, `WORK_KIND_DELIVERY_MODE_CONFLICT`, `WORK_KIND_ROUTING_OFF`, `RESUME_BRIEF_STALE`, `KERNEL_VALIDATOR_MISSING`, `RELEASE_*`. Additive: `KERNEL_INCOMPATIBLE`, `DECISION_UNRESOLVED`, `BUDGET_EXHAUSTED`, `RESUME_AMBIGUOUS`, `QUALITY_EVIDENCE_FAILED` (or classify existing QA/UAT/RELEASE fail as `security_hard`). Do not overload `OPENCODE_*` (BUG-0024 OUT) or `BROWSER_*` (US-0142 compose).
+
+### Risks
+
+- **R1 (MEDIUM)**: `test_us0140_command_coverage` breaks when deferred is lifted. Mitigation: DQ2 compose-amend in T-001; keep US-0140 ACs DONE.
+- **R2 (MEDIUM)**: mega_quick node list bikeshed vs kit `["quick"]` macro. Mitigation: DQ9 non-skippable tests/acceptance/GateEngine; architecture pins nodes.
+- **R3 (LOW)**: Dual-write ledger drift vs repo artifacts. Mitigation: DQ8 SQLite non-authority; `RECOVERY_FALSE_COMPLETION`.
+- **R4 (MEDIUM)**: Operators treat `AUTONOMY_PRESET=full` as permission to skip hard stops. Mitigation: DQ7 YAML `security_hard`; test 10.
+- **R5 (LOW)**: L8 TS adapter drifts from Python kit SOT. Mitigation: golden vectors; Python remains kit SOT.
+- **R6 (LOW)**: Drain accidentally picks BUG-0024. Mitigation: `AUTO_BUG_QUEUE=0`; sibling boundary tests; do not drain bugs this story’s execute.
+
+### Decision gate
+
+- **decision_gate=false** — DQ1–DQ10 LOCKED; winning approach **A1 (A\*)**; companion DEC **yes (DEC-0143)**.
+- **Status**: **delivered** (delivery closure trailer below; curator refresh **2026-09-14T09:30:00Z**). Historical **Next** superseded by ship segment close.
+
+- **Delivery closure (2026-09-14T09:30:00Z, curator, `orchestrator_run_id=auto-20260913-us0143`)**: **`US-0143`** **DONE**; sprint **`S0151`** **released**; A1 in-place CommandRouter lift of `/auto`/`/quick` + nested DeliveryRouter + WorkflowEngine §14.4 drain + GateEngine unamended + YAML stop-matrix consume + AC-6 additive `security_hard` + TS L8 adapter + independent axes + 12/12 `test_us0143_*` + us0133–us0142 compose delivered per **R-0141** / **DEC-0143** / **`# US-0143`**; US-0144 critic *content* OUT (hook slot only); honest residual: live browser not probed; `harness_fail_zero_claimed=false`; portfolio **5 OPEN** stories (US-0144..US-0148), **1 OPEN** bug (BUG-0022 OUT — not scheduled); drain story **9 of 10** — orchestrator sovereign-critic (refresh-context) then drain-advance **US-0144** (curator STOP).
+- **Freshness review (2026-09-14, curator refresh-context US-0143)**: R-0141 marked **delivered** (US-0143 DONE). R-0139 / R-0140 remain **delivered** compose bases (not wiped). R-0138 remains **delivered**. No duplicate R-ids to merge. Unlinked prune deferred (no operator request).
+
 

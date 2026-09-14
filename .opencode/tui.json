@@ -1,0 +1,6 @@
+{
+  "$schema": "https://opencode.ai/tui.json",
+  // BUG-0020 / R-0126: CLI TUI plugin load only. Does NOT list /auto in desktop Command.Info.
+  // BUG-0021 / R-0134: listing is the load path, not proof of /auto. Loader requires default export { id, tui }.
+  "plugin": ["./plugins/its-magic-auto/tui.ts"]
+}

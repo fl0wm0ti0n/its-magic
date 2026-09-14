@@ -36,7 +36,7 @@ PLUGIN_PATH = REPO_ROOT / "template" / ".opencode" / "plugins" / "orchestrator.t
 PACKAGE_JSON = REPO_ROOT / "package.json"
 RUNBOOK = REPO_ROOT / "docs" / "engineering" / "runbook.md"
 
-# 15-file inventory (DQ1 LOCKED).
+# 14-file inventory (BUG-0018: colliding auto.md retired; 12 lifecycle + quick + ask).
 EXPECTED_COMMANDS: tuple[str, ...] = (
     "intake",
     "discovery",
@@ -50,7 +50,6 @@ EXPECTED_COMMANDS: tuple[str, ...] = (
     "release",
     "closure",
     "refresh-context",
-    "auto",
     "quick",
     "ask",
 )
@@ -172,7 +171,7 @@ def _normalize_for_clone_guard(text: str, phase_id: str) -> str:
 
 
 def test_us0125_command_inventory():
-    """Marker 1 (AC-1): 15 files present; no extra; no .gitkeep after populate."""
+    """Marker 1 (AC-1): 14 files present; no extra; no .gitkeep after populate."""
     assert COMMANDS_DIR.is_dir(), "template/.opencode/commands missing"
     md_files = sorted(p.name for p in COMMANDS_DIR.glob("*.md"))
     expected = sorted(f"{name}.md" for name in EXPECTED_COMMANDS)
@@ -295,18 +294,17 @@ def test_us0125_missing_command_does_not_disable_plugin():
         assert (dst_opencode / "agents" / "auto.md").is_file(), (
             "auto agent must remain after /quick command is deleted"
         )
-        # Remaining 14 commands still present.
+        # Remaining 13 commands still present (14 inventory minus deleted quick.md).
         remaining = sorted(p.name for p in (dst_opencode / "commands").glob("*.md"))
-        assert len(remaining) == 14, f"expected 14 commands after deletion, got {len(remaining)}"
+        assert len(remaining) == 13, f"expected 13 commands after deletion, got {len(remaining)}"
 
 
 def test_us0125_auto_command_dispatch_only():
-    """Marker 8 (AC-1, AC-7): auto.md ≤ 20 lines + no ctx.session.create /
-    Session.create / spawn logic literals in the BODY (frontmatter
-    description 'spawn-only' is allowed — it is a description, not spawn logic)
-    + agent: auto frontmatter present."""
+    """Marker 8 (AC-1, AC-7): if auto.md exists → ≤ 20 lines + no spawn
+    literals + agent: auto; absence is OK (BUG-0018 plugin-only /auto)."""
     auto_path = COMMANDS_DIR / "auto.md"
-    assert auto_path.is_file(), "auto.md missing"
+    if not auto_path.is_file():
+        return
     text = auto_path.read_text(encoding="utf-8")
     line_count = len(text.splitlines())
     assert line_count <= 20, f"auto.md {line_count} lines > 20"
@@ -375,8 +373,9 @@ def test_us0125_no_new_npm_runtime():
 
 
 def test_us0125_command_frontmatter_shape():
-    """Marker 11 (AC-1, AC-8): 15 files — description present; agent present
-    for 14 (omitted for /ask); no model: in any; subtask: false only on /auto."""
+    """Marker 11 (AC-1, AC-8): 14 files — description present; agent present
+    for 13 (omitted for /ask); no model: in any; subtask: false not set on
+    remaining markdown commands (plugin-owned /auto after BUG-0018)."""
     for name in EXPECTED_COMMANDS:
         path = COMMANDS_DIR / f"{name}.md"
         assert path.is_file(), f"missing {name}.md"
@@ -401,19 +400,15 @@ def test_us0125_command_frontmatter_shape():
             )
             # /ask must not have subtask: false.
             assert not re.search(r"^subtask:\s*false", fm, re.MULTILINE), (
-                "ask.md must not set subtask: false (only /auto)"
+                "ask.md must not set subtask: false"
             )
         else:
             assert re.search(r"^agent:\s*\S", fm, re.MULTILINE), (
                 f"{name}.md missing agent: frontmatter"
             )
-            if name == "auto":
-                assert re.search(r"^subtask:\s*false\s*$", fm, re.MULTILINE), (
-                    "auto.md must have subtask: false (DQ5 dispatch-only)"
-                )
-            else:
-                # Lifecycle commands must NOT set subtask: false (only /auto).
-                assert not re.search(r"^subtask:\s*false", fm, re.MULTILINE), (
-                    f"{name}.md must not set subtask: false (only /auto)"
-                )
+            # Lifecycle / convenience commands must NOT set subtask: false
+            # (retired colliding auto.md was the only markdown with that key).
+            assert not re.search(r"^subtask:\s*false", fm, re.MULTILINE), (
+                f"{name}.md must not set subtask: false"
+            )
 

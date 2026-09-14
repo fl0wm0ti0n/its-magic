@@ -1,0 +1,31 @@
+{
+	"schema_version": 1,
+	"kernel_version": "0.1.3-10",
+	"validators": [
+		"intake_evidence_validate",
+		"bug_issue_validate",
+		"pack_json_validate",
+		"validate_closure_verification",
+		"ledger_validate",
+		"model_tier_validate",
+		"uat-planner",
+		"status-reconcile"
+	],
+	"artifact_keys": [
+		"vision",
+		"backlog",
+		"acceptance",
+		"architecture",
+		"decisions_index",
+		"research",
+		"state",
+		"decisions_dir",
+		"sprints",
+		"handoffs",
+		"release_queue",
+		"release_notes",
+		"traceability",
+		"work_packs",
+		"sovereign"
+	]
+}

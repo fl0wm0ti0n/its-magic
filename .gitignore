@@ -14,6 +14,7 @@ backups/
 .cursor/model-catalog.local.json
 .opencode/model-catalog.local.json
 .its-magic/config.local.json
+.its-magic/model-catalog.local.json
 
 # Template hook state (not shipped)
 template/.cursor/hooks/*.jsonl
@@ -42,3 +43,23 @@ homebrew-tap/
 # US-0090 Caveman input sidecar originals (DEC-0073 §3)
 docs/.caveman-originals/**
 !docs/.caveman-originals/.gitkeep
+
+# US-0133 standalone TypeScript workspace (not kit publish)
+standalone/node_modules/
+standalone/**/node_modules/
+standalone/**/*.tsbuildinfo
+standalone/.runtime-isolation/
+
+# US-0136 session attestation JSONL (OS-config / temp only; never the project tree)
+**/session-attestations.jsonl
+
+# US-0137 policy/audit JSONL (OS-config / temp only; never the project tree)
+**/policy-audit.jsonl
+**/policy-approvals.json
+
+# US-0139 derived map metadata + runtime context packs (not the index DB)
+docs/engineering/codebase-map.meta.json
+**/.its-magic/context-packs/
+
+# US-0140 operational SQLite (never commit the DB)
+**/.its-magic/runtime/

@@ -21,6 +21,12 @@ setup stays in the root `README.md` (user channel).
   runbook `## Cross-host runtime configuration (US-0131)`, architecture `# US-0131`, `decisions/DEC-0131.md`.
 - **US-0132** — Cursor/OpenCode model configuration contract (four surfaces; reject generic `model.json`); traceability:
   runbook `## Cursor/OpenCode model configuration contract (US-0132)`, architecture `# US-0132`, `decisions/DEC-0132.md`.
+- **BUG-0018** — OpenCode plugin-only `/auto` (markdown not sole owner); traceability:
+  runbook `### OpenCode markdown `/auto` vs plugin execute (BUG-0018 / R-0120)`, architecture `# BUG-0018`.
+- **BUG-0019** — OpenCode TUI slash listing for `/auto` after plugin-only ownership; traceability:
+  runbook `### OpenCode `/auto` slash listing after plugin-only ownership (BUG-0019 / R-0124)`, architecture `# BUG-0019`.
+- **BUG-0020** — OpenCode desktop Command.Info cannot list execute-only `/auto`; CLI TUI via `tui.json`; traceability:
+  runbook `### OpenCode desktop Command.Info `/auto` listing (BUG-0020 / R-0126)`, architecture `# BUG-0020`.
 
 ## Quality gates
 
@@ -38,6 +44,14 @@ setup stays in the root `README.md` (user channel).
   runbook `### OpenCode `/auto` dispatch attach reason codes (BUG-0015)`, architecture `# BUG-0015`.
 - **BUG-0016** — OpenCode Layer-1 role permissions vs kit duties (bash ask; S* globs; release duty paths); traceability:
   architecture `# BUG-0016`, `decisions/DEC-0122.md` §2.
+- **BUG-0017** — OpenCode pack LF / Linux slash commands (scoped `.gitattributes` + guard CR inventory); traceability:
+  runbook `### OpenCode pack LF / Linux slash commands (BUG-0017 / R-0118)`, architecture `# BUG-0017`.
+- **BUG-0018** — OpenCode plugin-only `/auto` (no colliding `auto.md`; leftover prune); traceability:
+  runbook `### OpenCode markdown `/auto` vs plugin execute (BUG-0018 / R-0120)`, architecture `# BUG-0018`.
+- **BUG-0019** — OpenCode TUI slash lists `/auto` via `its-magic-auto/tui.ts` keymap; traceability:
+  runbook `### OpenCode `/auto` slash listing after plugin-only ownership (BUG-0019 / R-0124)`, architecture `# BUG-0019`.
+- **BUG-0020** — OpenCode desktop Command.Info `/auto` listing unsupported; CLI TUI via `tui.json`; traceability:
+  runbook `### OpenCode desktop Command.Info `/auto` listing (BUG-0020 / R-0126)`, architecture `# BUG-0020`.
 - **US-0126** — OpenCode host operator runbook, cross-host reason-code catalog, and `--scope=opencode-adapter` parity; traceability:
   runbook `## OpenCode host operator runbook (US-0126)`, architecture `# US-0126`.
 - **US-0130** — Operator-pinned sovereign-critic model (`MODEL_SOVEREIGN-CRITIC` + catalog `roles.critic`); traceability:
@@ -46,13 +60,19 @@ setup stays in the root `README.md` (user channel).
   runbook `## Cross-host runtime configuration (US-0131)`, architecture `# US-0131`, `decisions/DEC-0131.md`.
 - **US-0132** — Cursor/OpenCode model configuration contract; traceability:
   runbook `## Cursor/OpenCode model configuration contract (US-0132)`, architecture `# US-0132`, `decisions/DEC-0132.md`.
+- **US-0134** — KernelBridge consume contract + four `KERNEL_*` handshake codes; traceability:
+  runbook `### KernelBridge consume contract + upgrade (US-0134 / R-0122 / DEC-0134)`, architecture `# US-0134`, `decisions/DEC-0134.md`.
 
 ## Architecture notes
 
+- **BUG-0017** — OpenCode pack LF / Linux slash commands; traceability:
+  runbook `### OpenCode pack LF / Linux slash commands (BUG-0017 / R-0118)`, architecture `# BUG-0017`.
 - **US-0122** — OpenCode role agents and Layer-1 permission table; traceability:
   architecture `# US-0122`, `decisions/DEC-0122.md`.
 - **US-0125** — Thin OpenCode commands and Python validator bridge (dispatch-only `.opencode/commands/`; Python validators remain fail-closed SOT); traceability:
   architecture `# US-0125`, `decisions/DEC-0125.md`.
+- **US-0133** — Unpublished standalone Pi kernel workspace (kit `files` omit `standalone/`; owned `AgentKernel`); traceability:
+  runbook `### Unpublished standalone Pi kernel workspace (US-0133 / R-0121)`, architecture `# US-0133`, `decisions/DEC-0133.md`.
 - High-level contracts live in `docs/engineering/architecture.md` (search for story ids).
 - Installer ownership is driven by `docs/engineering/context/installer-owned-paths.manifest`.
 - Template parity: changes in repo root often require the same edit under `template/`.

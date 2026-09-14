@@ -123,8 +123,11 @@ def test_bug0015_concurrent_reentry_fail_closed():
 
 
 def test_bug0015_auto_md_dispatch_only_static():
-    """Marker 6 (AC-6): auto.md ≤20 lines; no spawn literals (active + template)."""
+    """Marker 6 (AC-6): if auto.md exists → ≤20 lines / STOP / no spawn;
+    absence is OK (BUG-0018 owns collision removal)."""
     for path in (AUTO_MD, ACTIVE_AUTO_MD):
+        if not path.is_file():
+            continue
         text = path.read_text(encoding="utf-8")
         lines = text.splitlines()
         assert len(lines) <= 20, f"{path} has {len(lines)} lines > 20"

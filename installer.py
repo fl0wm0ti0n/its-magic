@@ -312,6 +312,223 @@ def posix_relpath(rel):
 def is_model_config_preserve_path(rel):
     return posix_relpath(rel) in MODEL_CONFIG_PRESERVE_RELPATHS
 
+
+# BUG-0018: retired colliding markdown `/auto` (not a DEC-0132 preserve path).
+RETIRED_OPENCODE_AUTO_MD_REL = ".opencode/commands/auto.md"
+OPENCODE_AUTO_MARKDOWN_COLLISION = "OPENCODE_AUTO_MARKDOWN_COLLISION"
+
+
+def prune_retired_opencode_auto_md(target_root, source_root, host):
+    """Targeted prune of leftover consumer `.opencode/commands/auto.md`.
+
+    Invoked from upgrade --host opencode|both when the kit template no longer
+    ships that path. Not a general template-absent sweeper. Does not prune
+    `.opencode/agents/auto.md` or `.cursor/commands/auto.md`.
+    Unlink failure prints [OPENCODE_AUTO_MARKDOWN_COLLISION] and continues.
+    """
+    if host not in ("opencode", "both"):
+        return "skipped-host"
+    rel = RETIRED_OPENCODE_AUTO_MD_REL
+    src = os.path.join(source_root, *rel.split("/"))
+    if os.path.isfile(src):
+        return "template-still-ships"
+    dst = os.path.join(target_root, *rel.split("/"))
+    if not os.path.isfile(dst):
+        return "absent"
+    try:
+        os.unlink(dst)
+        return "pruned"
+    except OSError:
+        print(
+            f"[{OPENCODE_AUTO_MARKDOWN_COLLISION}] leftover {rel} could not be "
+            "removed; delete the file then re-run upgrade --host opencode|both"
+        )
+        return "unlink-failed"
+
+
+# BUG-0019: TUI slash listing surface copied onto already-pruned consumers.
+# BUG-0023: also overwrite shared rpc.ts + orchestrator register path (copy2).
+OPENCODE_AUTO_LISTING_RELS = (
+    ".opencode/plugins/its-magic-auto/index.ts",
+    ".opencode/plugins/its-magic-auto/tui.ts",
+    ".opencode/plugins/its-magic-auto/rpc.ts",
+    ".opencode/plugins/orchestrator.ts",
+)
+
+
+def _resolve_listing_source(source_root, rel):
+    """Prefer source_root/rel; fall back to source_root/template/rel (kit-root)."""
+    primary = os.path.join(source_root, *rel.split("/"))
+    if os.path.isfile(primary):
+        return primary
+    nested = os.path.join(source_root, "template", *rel.split("/"))
+    if os.path.isfile(nested):
+        return nested
+    return None
+
+
+def copy_opencode_auto_listing_surface(target_root, source_root, host):
+    """Copy BUG-0019 TUI listing files onto already-pruned consumer trees.
+
+    BUG-0021: overwrites framework-owned `.opencode/plugins/its-magic-auto/tui.ts`
+    even when dest exists (`shutil.copy2`; not copy-if-absent) so C-limb
+    `Plugin.define` trees receive reshaped `{ id, tui }`. Identical dest is skipped.
+    BUG-0023: also overwrites `rpc.ts` + orchestrator register path (not
+    copy-if-absent) so already-Axis-A trees receive branded Rpc.define dispatch.
+    Invoked from upgrade --host opencode|both. Not a general sweeper.
+    Does not restore `.opencode/commands/auto.md`.
+    """
+    if host not in ("opencode", "both"):
+        return "skipped-host"
+    copied = []
+    for rel in OPENCODE_AUTO_LISTING_RELS:
+        src = _resolve_listing_source(source_root, rel)
+        if not src:
+            continue
+        dst = os.path.join(target_root, *rel.split("/"))
+        if os.path.isfile(dst) and filecmp.cmp(src, dst, shallow=False):
+            continue
+        ensure_parent(dst)
+        shutil.copy2(src, dst)
+        copied.append(rel)
+    if copied:
+        return "copied"
+    return "unchanged"
+
+
+# BUG-0020: project tui.json is the CLI TUI load path (not desktop Command.Info).
+OPENCODE_TUI_JSON_REL = ".opencode/tui.json"
+OPENCODE_TUI_PLUGIN_SPEC = "./plugins/its-magic-auto/tui.ts"
+OPENCODE_TUI_JSONC_COMMENT = (
+    "BUG-0020 / BUG-0021: CLI TUI plugin load only. "
+    "Does NOT list /auto in desktop Command.Info. "
+    "Listing is the load path, not proof of /auto."
+)
+
+
+def is_opencode_tui_json_merge_path(rel):
+    """True for consumer `.opencode/tui.json` (not template twin; not plugin-local)."""
+    return posix_relpath(rel) == OPENCODE_TUI_JSON_REL
+
+
+def _strip_jsonc(text):
+    """Strip // and /* */ comments from JSONC; do not strip inside strings."""
+    out = []
+    i = 0
+    n = len(text or "")
+    in_string = False
+    escape = False
+    while i < n:
+        ch = text[i]
+        if in_string:
+            out.append(ch)
+            if escape:
+                escape = False
+            elif ch == "\\":
+                escape = True
+            elif ch == '"':
+                in_string = False
+            i += 1
+            continue
+        if ch == '"':
+            in_string = True
+            out.append(ch)
+            i += 1
+            continue
+        if ch == "/" and i + 1 < n:
+            nxt = text[i + 1]
+            if nxt == "/":
+                i += 2
+                while i < n and text[i] not in "\n\r":
+                    i += 1
+                continue
+            if nxt == "*":
+                i += 2
+                while i + 1 < n and not (text[i] == "*" and text[i + 1] == "/"):
+                    if text[i] in "\n\r":
+                        out.append(text[i])
+                    i += 1
+                i = i + 2 if i + 1 < n else n
+                continue
+        out.append(ch)
+        i += 1
+    return "".join(out)
+
+
+def _plugin_entry_names(plugins):
+    names = []
+    if not isinstance(plugins, list):
+        return names
+    for item in plugins:
+        if isinstance(item, str):
+            names.append(item)
+        elif isinstance(item, (list, tuple)) and item:
+            names.append(item[0])
+    return names
+
+
+def _write_tui_jsonc(path, data):
+    """Write JSONC preserving operator keys; comment asserts CLI-TUI-only."""
+    dumped = json.dumps(data, indent=2, ensure_ascii=False)
+    lines = dumped.splitlines()
+    out = []
+    inserted = False
+    for line in lines:
+        out.append(line)
+        if not inserted and '"$schema"' in line:
+            out.append(f"  // {OPENCODE_TUI_JSONC_COMMENT}")
+            inserted = True
+    if not inserted and out:
+        # After opening brace.
+        rebuilt = [out[0], f"  // {OPENCODE_TUI_JSONC_COMMENT}"]
+        rebuilt.extend(out[1:])
+        out = rebuilt
+    with open(path, "w", encoding="utf-8", newline="\n") as fh:
+        fh.write("\n".join(out) + "\n")
+
+
+def copy_or_merge_opencode_tui_json(target_root, source_root, host):
+    """Copy-if-absent or JSONC-merge tui.json plugin spec (BUG-0020).
+
+    Invoked from upgrade --host opencode|both. If consumer tui.json is absent,
+    copy the template. If it exists, merge `./plugins/its-magic-auto/tui.ts`
+    into the plugin array without wholesale overwrite of theme/keybinds/attention.
+    Does not restore `.opencode/commands/auto.md`. Does not ship plugin-local
+    `its-magic-auto/tui.json`.
+    """
+    if host not in ("opencode", "both"):
+        return "skipped-host"
+    src = _resolve_listing_source(source_root, OPENCODE_TUI_JSON_REL)
+    if not src:
+        return "source-missing"
+    dst = os.path.join(target_root, *OPENCODE_TUI_JSON_REL.split("/"))
+    if not os.path.isfile(dst):
+        ensure_parent(dst)
+        shutil.copy2(src, dst)
+        return "copied"
+    try:
+        with open(dst, "r", encoding="utf-8") as fh:
+            raw = fh.read()
+        data = json.loads(_strip_jsonc(raw))
+    except (OSError, json.JSONDecodeError, TypeError, ValueError):
+        return "unchanged-unparsed"
+    if not isinstance(data, dict):
+        return "unchanged-unparsed"
+    plugins = data.get("plugin")
+    names = _plugin_entry_names(plugins if isinstance(plugins, list) else [])
+    if OPENCODE_TUI_PLUGIN_SPEC in names:
+        return "unchanged"
+    if isinstance(plugins, list):
+        plugins.append(OPENCODE_TUI_PLUGIN_SPEC)
+        data["plugin"] = plugins
+    else:
+        data["plugin"] = [OPENCODE_TUI_PLUGIN_SPEC]
+    if "$schema" not in data:
+        data["$schema"] = "https://opencode.ai/tui.json"
+    _write_tui_jsonc(dst, data)
+    return "merged"
+
+
 # After merge (local > baseline > example), these must be non-empty (fail closed).
 REQUIRED_SCRATCHPAD_KEYS = (
     "MAGIC_CONTEXT_STRICT",
@@ -1361,6 +1578,11 @@ def main():
                     scratchpad_example_status = "added"
                 continue
 
+            if is_opencode_tui_json_merge_path(rel):
+                # BUG-0020: existing operator tui.json is JSONC-merged, not overwritten.
+                unchanged += 1
+                continue
+
             if cat == "framework":
                 if filecmp.cmp(src, dst, shallow=False):
                     unchanged += 1
@@ -1383,6 +1605,10 @@ def main():
                 if not filecmp.cmp(src, dst, shallow=False):
                     review.append(rel)
                 continue
+
+        copy_opencode_auto_listing_surface(target_root, source_root, host)
+        copy_or_merge_opencode_tui_json(target_root, source_root, host)
+        prune_retired_opencode_auto_md(target_root, source_root, host)
 
         if not run_kit_config_postinstall(target_root, source_root, "upgrade", print_ok=True):
             return 1

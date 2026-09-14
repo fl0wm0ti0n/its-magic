@@ -1,9 +1,30 @@
 // US-0124 — OpenCode orchestrator plugin (spawn-only `/auto`).
 // BUG-0015 — interactive `/auto` dispatch attach + shared runAutoLifecycle.
+// BUG-0018 — leftover `.opencode/commands/auto.md` fail-closed; installer owns prune
+// (plugin does not delete). Cite R-0120; no DEC-0124/0125 amend.
+// BUG-0019 — TUI listing is sibling its-magic-auto/; this file retains editor.add
+// execute + additive RPC wrapper around runAutoLifecycle. Cite R-0124.
+// BUG-0020 — desktop Command.Info cannot list execute-only /auto; emit
+// OPENCODE_AUTO_DESKTOP_COMMAND_INFO_LISTING_UNSUPPORTED (not TUI-toast-only).
+// C-limb CLI TUI /auto via project .opencode/tui.json is the load path, not
+// listing proof. Keep editor.add execute (do not restore auto.md). Cite R-0126.
+// Compose BUG-0018 A* / BUG-0019 E*.
+// BUG-0021 — CLI TUI listed-but-skipped residual: emit
+// OPENCODE_AUTO_CLI_TUI_PLUGIN_LOAD_UNSUPPORTED when the host exposes TUI load
+// skip for the listed spec (session-visible, not TUI-toast-only; must not
+// block editor.add). Cite R-0134 / # BUG-0021. Residual #36505.
+// BUG-0023 — await ctx.rpc.register(ITS_MAGIC_AUTO_RPC, { runAutoLifecycle })
+// using shared Rpc.define from ./its-magic-auto/rpc.ts. Keep editor.add.
+// Drop plain-JSON register and non-awaited swallow. Cite R-0137 / # BUG-0023.
 // Composes US-0069 phase→role matrix, US-0092 stop-matrix (Python SOT),
 // US-0023/US-0048/BUG-0006 spawn isolation, US-0005 hook enforcement.
 // See decisions/DEC-0124.md §1–§10 for the locked contract.
 // See docs/engineering/architecture.md # BUG-0015 (cite R-0114; no DEC amend).
+// See docs/engineering/architecture.md # BUG-0018 (cite R-0120; no companion DEC).
+
+import { existsSync } from "node:fs";
+import { join } from "node:path";
+import { ITS_MAGIC_AUTO_RPC } from "./its-magic-auto/rpc.ts";
 
 type PluginDefineFn = (spec: any) => any;
 let Plugin: { define: PluginDefineFn } = {
@@ -35,7 +56,25 @@ export const REASON_CODES = {
   PLUGIN_DISPATCH_ATTACH_UNSUPPORTED:
     "OPENCODE_PLUGIN_DISPATCH_ATTACH_UNSUPPORTED",
   AUTO_ALREADY_RUNNING: "OPENCODE_AUTO_ALREADY_RUNNING",
+  // BUG-0018 additive (US-0126 owns full table; runbook stub only)
+  AUTO_MARKDOWN_COLLISION: "OPENCODE_AUTO_MARKDOWN_COLLISION",
+  // BUG-0019 additive (US-0126 owns full table; runbook stub only)
+  AUTO_SLASH_LISTING_UNSUPPORTED: "OPENCODE_AUTO_SLASH_LISTING_UNSUPPORTED",
+  AUTO_TUI_DISPATCH_UNSUPPORTED: "OPENCODE_AUTO_TUI_DISPATCH_UNSUPPORTED",
+  // BUG-0020 additive (US-0126 owns full table; runbook stub only).
+  // Not markdown-collision and not TUI-keymap-missing.
+  AUTO_DESKTOP_COMMAND_INFO_LISTING_UNSUPPORTED:
+    "OPENCODE_AUTO_DESKTOP_COMMAND_INFO_LISTING_UNSUPPORTED",
+  // BUG-0021 additive (US-0126 owns full table; runbook stub only).
+  // Listed-but-skipped tui.json load; not desktop, not markdown-collision,
+  // not keymap-API-missing after tui() ran.
+  AUTO_CLI_TUI_PLUGIN_LOAD_UNSUPPORTED:
+    "OPENCODE_AUTO_CLI_TUI_PLUGIN_LOAD_UNSUPPORTED",
 } as const;
+
+// Shared Rpc.define lives in ./its-magic-auto/rpc.ts (BUG-0023). Re-export
+// so existing importers keep ITS_MAGIC_AUTO_RPC. RPC id: "its-magic.auto".
+export { ITS_MAGIC_AUTO_RPC };
 
 // US-0069 / DEC-0051 phase→role matrix (compose, not amend). The plugin
 // resolves phase_id → role here; it does NOT copy the agent permission array
@@ -503,6 +542,36 @@ export function persistIsolationViaPython(
 }
 
 /**
+ * BUG-0018 leftover defense (installer owns prune; this function must not
+ * delete `.opencode/commands/auto.md`). Best-effort `ctx.directory` / cwd.
+ * Sync existsSync only — plugin does not unlink/rm the leftover file.
+ */
+export function leftoverAutoMarkdownExists(ctx: any): boolean {
+  try {
+    const roots: string[] = [];
+    if (typeof ctx?.directory === "string" && ctx.directory.trim()) {
+      roots.push(ctx.directory);
+    }
+    try {
+      if (typeof process !== "undefined" && typeof process.cwd === "function") {
+        roots.push(process.cwd());
+      }
+    } catch {
+      // ignore cwd probe failures — detection is best-effort
+    }
+    for (const root of roots) {
+      const candidate = join(root, ".opencode", "commands", "auto.md");
+      if (existsSync(candidate)) {
+        return true;
+      }
+    }
+  } catch {
+    return false;
+  }
+  return false;
+}
+
+/**
  * Shared internal lifecycle entry (CF4 / DQ2 / DQ4).
  * Owns: in-flight mutex, first-phase selection, spawnPhase + dispatchStopMatrix
  * loop, IsolationEvidence durable write. Used by interactive transform execute
@@ -512,6 +581,12 @@ export async function runAutoLifecycle(
   ctx: any,
   opts: AutoLifecycleOpts,
 ): Promise<AutoLifecycleResult> {
+  if (leftoverAutoMarkdownExists(ctx)) {
+    return {
+      ok: false,
+      reasonCode: REASON_CODES.AUTO_MARKDOWN_COLLISION,
+    };
+  }
   if (opts.attachSupported === false) {
     clearAutoMutex();
     return {
@@ -625,6 +700,243 @@ export async function runAutoLifecycle(
   }
 }
 
+/**
+ * Thin RPC wrapper around `runAutoLifecycle` for TUI `run()` dispatch (BUG-0019).
+ * TUI keymap `run` lives in the CLI process; this handler runs on the server plugin.
+ */
+export async function runAutoLifecycleRpc(
+  ctxOrInput: any = {},
+  inputOrCtx: any = {},
+): Promise<AutoLifecycleResult> {
+  // Host RPC calls (input, context). Kit callers pass (ctx, input).
+  const firstIsPluginCtx =
+    ctxOrInput &&
+    typeof ctxOrInput === "object" &&
+    (typeof ctxOrInput.session === "object" ||
+      typeof ctxOrInput.command === "object" ||
+      typeof ctxOrInput.rpc === "object" ||
+      typeof ctxOrInput.tool === "object" ||
+      typeof ctxOrInput.directory === "string");
+  const ctx = firstIsPluginCtx ? ctxOrInput : inputOrCtx;
+  const input = firstIsPluginCtx ? inputOrCtx ?? {} : ctxOrInput ?? {};
+  return runAutoLifecycle(ctx, {
+    orchestratorSessionId: input.sessionID ?? "tui-auto",
+    prompt: input.prompt,
+    delivery: input.delivery,
+    attachSupported: true,
+  });
+}
+
+/**
+ * Command.Info picker rows (`ctx.command.list` / GET /api/command). Not TUI keymap,
+ * not editor.add, not tui.json. Missing list() → treat as no `auto` row (fail-closed).
+ */
+export function commandInfoListHasAuto(ctx: any): boolean {
+  const listFn = ctx?.command?.list;
+  if (typeof listFn !== "function") {
+    return false;
+  }
+  try {
+    const rows = listFn.call(ctx.command);
+    const arr = Array.isArray(rows)
+      ? rows
+      : Array.isArray(rows?.commands)
+        ? rows.commands
+        : [];
+    return arr.some((row: any) => row && row.name === "auto");
+  } catch {
+    return false;
+  }
+}
+
+export type DesktopListingEmitChannel =
+  | "desktop-notify"
+  | "session-notice"
+  | "setup-session-error";
+
+export type DesktopListingEmitResult = {
+  emitted: boolean;
+  channel: DesktopListingEmitChannel;
+  reasonCode: string;
+};
+
+/**
+ * Desktop-visible fail-closed when Command.Info cannot list execute-only `/auto`
+ * while plugin execute is registered (BUG-0020).
+ *
+ * Channels, first success:
+ * 1. desktop/session notification API if present (`session.alert` / `app.notify` /
+ *    GUI toast that is **not** TUI `tui.toast`);
+ * 2. session-visible system/error notice in the current desktop session;
+ * 3. plugin `setup` session-error return so the GUI surfaces
+ *    OPENCODE_AUTO_DESKTOP_COMMAND_INFO_LISTING_UNSUPPORTED.
+ *
+ * Must not be CLI TUI toast-only. Must not add a Command.Info `auto` template row.
+ * Must not block `editor.add` or TUI keymap. Must not call `tui.toast` / `ui.toast`.
+ */
+export function emitDesktopCommandInfoListingUnsupported(
+  ctx: any,
+): DesktopListingEmitResult {
+  const reasonCode =
+    REASON_CODES.AUTO_DESKTOP_COMMAND_INFO_LISTING_UNSUPPORTED;
+  const message =
+    "OpenCode desktop Command.Info cannot list execute-only /auto while plugin execute is registered. Start auto from CLI TUI /auto (opencode, not --pure). " +
+    reasonCode;
+
+  // Channel 1: desktop/session notification — NOT TUI tui.toast / ui.toast.
+  const desktopNotify =
+    (typeof ctx?.session?.alert === "function" &&
+      ctx.session.alert.bind(ctx.session)) ||
+    (typeof ctx?.app?.notify === "function" && ctx.app.notify.bind(ctx.app)) ||
+    (typeof ctx?.gui?.notify === "function" && ctx.gui.notify.bind(ctx.gui)) ||
+    (typeof ctx?.desktop?.notify === "function" &&
+      ctx.desktop.notify.bind(ctx.desktop));
+  if (desktopNotify) {
+    try {
+      desktopNotify({
+        title: "its-magic /auto",
+        message,
+        variant: "error",
+        reasonCode,
+      });
+      return { emitted: true, channel: "desktop-notify", reasonCode };
+    } catch {
+      // fall through
+    }
+  }
+
+  // Channel 2: session-visible system/error notice in the current desktop session.
+  const sessionNotice =
+    (typeof ctx?.session?.error === "function" &&
+      ctx.session.error.bind(ctx.session)) ||
+    (typeof ctx?.session?.system === "function" &&
+      ctx.session.system.bind(ctx.session)) ||
+    (typeof ctx?.system?.notice === "function" &&
+      ctx.system.notice.bind(ctx.system));
+  if (sessionNotice) {
+    try {
+      sessionNotice({
+        message,
+        reasonCode,
+        level: "error",
+      });
+      return { emitted: true, channel: "session-notice", reasonCode };
+    } catch {
+      // fall through
+    }
+  }
+
+  // Channel 3: setup session-error return (caller attaches sessionError).
+  // Not TUI-toast-only — never call tui.toast / ui.toast here.
+  if (ctx && typeof ctx === "object") {
+    try {
+      ctx.__itsMagicDesktopCommandInfoListingUnsupported = {
+        reasonCode,
+        message,
+      };
+    } catch {
+      // ignore
+    }
+  }
+  return { emitted: true, channel: "setup-session-error", reasonCode };
+}
+
+export type CliTuiLoadEmitChannel =
+  | "desktop-notify"
+  | "session-notice"
+  | "setup-session-error";
+
+export type CliTuiLoadEmitResult = {
+  emitted: boolean;
+  channel: CliTuiLoadEmitChannel;
+  reasonCode: string;
+};
+
+function hostExposesCliTuiPluginLoadSkip(ctx: any): boolean {
+  const spec = "./plugins/its-magic-auto/tui.ts";
+  const failed = ctx?.tui?.failedPlugins ?? ctx?.plugin?.failedTui ?? ctx?.tui?.loadErrors;
+  if (Array.isArray(failed) && failed.some((row: any) => String(row).includes(spec) || String(row?.spec ?? "").includes(spec))) {
+    return true;
+  }
+  return Boolean(
+    ctx?.tui?.pluginLoadSkipped ||
+      ctx?.plugin?.tuiSkipped ||
+      ctx?.tui?.loadError ||
+      ctx?.tui?.externalPluginLoadUnsupported,
+  );
+}
+
+/**
+ * Session-visible fail-closed when tui.json lists the TUI module but the host
+ * skipped it (`readV1Plugin` / no tui() / #36505-class). BUG-0021 residual.
+ *
+ * Must not be TUI-toast-only. Must not block editor.add. Must not restore auto.md.
+ * Must not reuse desktop Command.Info / markdown-collision / LISTING tokens.
+ */
+export function emitCliTuiPluginLoadUnsupported(ctx: any): CliTuiLoadEmitResult {
+  const reasonCode = REASON_CODES.AUTO_CLI_TUI_PLUGIN_LOAD_UNSUPPORTED;
+  const message =
+    "OpenCode CLI TUI listed ./plugins/its-magic-auto/tui.ts but skipped the plugin (tui() never runs). Residual host-cannot-load (#36505). Do not restore auto.md. " +
+    reasonCode;
+
+  // Channel 1: session/desktop notification — NOT TUI tui.toast / ui.toast.
+  const desktopNotify =
+    (typeof ctx?.session?.alert === "function" &&
+      ctx.session.alert.bind(ctx.session)) ||
+    (typeof ctx?.app?.notify === "function" && ctx.app.notify.bind(ctx.app)) ||
+    (typeof ctx?.gui?.notify === "function" && ctx.gui.notify.bind(ctx.gui)) ||
+    (typeof ctx?.desktop?.notify === "function" &&
+      ctx.desktop.notify.bind(ctx.desktop));
+  if (desktopNotify) {
+    try {
+      desktopNotify({
+        title: "its-magic /auto",
+        message,
+        variant: "error",
+        reasonCode,
+      });
+      return { emitted: true, channel: "desktop-notify", reasonCode };
+    } catch {
+      // fall through
+    }
+  }
+
+  // Channel 2: session-visible system/error notice.
+  const sessionNotice =
+    (typeof ctx?.session?.error === "function" &&
+      ctx.session.error.bind(ctx.session)) ||
+    (typeof ctx?.session?.system === "function" &&
+      ctx.session.system.bind(ctx.session)) ||
+    (typeof ctx?.system?.notice === "function" &&
+      ctx.system.notice.bind(ctx.system));
+  if (sessionNotice) {
+    try {
+      sessionNotice({
+        message,
+        reasonCode,
+        level: "error",
+      });
+      return { emitted: true, channel: "session-notice", reasonCode };
+    } catch {
+      // fall through
+    }
+  }
+
+  // Channel 3: setup session-error return (caller attaches sessionError).
+  // Not TUI-toast-only — never call tui.toast / ui.toast here.
+  if (ctx && typeof ctx === "object") {
+    try {
+      ctx.__itsMagicCliTuiPluginLoadUnsupported = {
+        reasonCode,
+        message,
+      };
+    } catch {
+      // ignore
+    }
+  }
+  return { emitted: true, channel: "setup-session-error", reasonCode };
+}
+
 // --- Plugin setup (DEC-0124 §1 + §8 + BUG-0015 attach) --------------------
 // ctx.tool.hook("execute.before") is the write-guard (DQ8). Detection is
 // path-based, NOT permission-array-based: the plugin does not duplicate the
@@ -643,15 +955,25 @@ export interface OrchestratorApi {
   invokeHeadless: (prompt: string, opts?: InvokeOptions) => HeadlessResult;
   buildHeadlessArgv: (prompt: string) => HeadlessArgv;
   runAutoLifecycle: (opts: AutoLifecycleOpts) => Promise<AutoLifecycleResult>;
+  runAutoLifecycleRpc: (input: {
+    sessionID?: string;
+    prompt?: string;
+    delivery?: string;
+  }) => Promise<AutoLifecycleResult>;
   reasonCodes: typeof REASON_CODES;
   phaseRoleMatrix: Record<string, string>;
   attachSupported: boolean;
   attachReasonCode?: string;
+  desktopCommandInfoListingUnsupported?: boolean;
+  desktopCommandInfoListingReasonCode?: string;
+  cliTuiPluginLoadUnsupported?: boolean;
+  cliTuiPluginLoadReasonCode?: string;
+  sessionError?: string;
 }
 
 const plugin = Plugin.define({
   id: "its-magic.orchestrator",
-  setup(ctx: any): OrchestratorApi {
+  async setup(ctx: any): Promise<OrchestratorApi> {
     if (ctx?.tool && typeof ctx.tool.hook === "function") {
       ctx.tool.hook("execute.before", () => {
         return {
@@ -727,6 +1049,41 @@ const plugin = Plugin.define({
       }
     }
 
+    // BUG-0023: await branded Rpc.define register so TUI `run()` can reach
+    // runAutoLifecycle. Missing ctx.rpc remains attach-optional (BUG-0019) —
+    // TUI fail-closes DISPATCH only when client/RPC truly cannot dispatch.
+    if (ctx?.rpc && typeof ctx.rpc.register === "function") {
+      try {
+        await ctx.rpc.register(ITS_MAGIC_AUTO_RPC, {
+          runAutoLifecycle: runAutoLifecycleRpc,
+        });
+      } catch {
+        // RPC optional at attach time
+      }
+    }
+
+    // BUG-0020: desktop Command.Info silent-miss is the defect. Emit after
+    // editor.add when list() has no name === "auto" while execute is registered.
+    // Non-blocking for attach + TUI keymap. Must not add a Command.Info template.
+    let desktopListingUnsupported = false;
+    let desktopListingReasonCode: string | undefined;
+    if (attachSupported && !commandInfoListHasAuto(ctx)) {
+      const emission = emitDesktopCommandInfoListingUnsupported(ctx);
+      desktopListingUnsupported = true;
+      desktopListingReasonCode = emission.reasonCode;
+    }
+
+    // BUG-0021: listed-but-skipped residual. Best-effort only if the host
+    // exposes TUI load skip for the listed spec. After editor.add (must not
+    // block attach). Session-visible notice, not TUI-toast-only.
+    let cliTuiPluginLoadUnsupported = false;
+    let cliTuiPluginLoadReasonCode: string | undefined;
+    if (hostExposesCliTuiPluginLoadSkip(ctx)) {
+      const loadEmission = emitCliTuiPluginLoadUnsupported(ctx);
+      cliTuiPluginLoadUnsupported = true;
+      cliTuiPluginLoadReasonCode = loadEmission.reasonCode;
+    }
+
     const api: OrchestratorApi = {
       spawnPhase: (args: SpawnArgs) => spawnPhase(ctx, args),
       dispatchStopMatrix,
@@ -740,12 +1097,22 @@ const plugin = Plugin.define({
               ? opts.attachSupported
               : attachSupported,
         }),
+      runAutoLifecycleRpc: (input: {
+        sessionID?: string;
+        prompt?: string;
+        delivery?: string;
+      }) => runAutoLifecycleRpc(ctx, input ?? {}),
       reasonCodes: REASON_CODES,
       phaseRoleMatrix: PHASE_ROLE_MATRIX,
       attachSupported,
       attachReasonCode: attachSupported
         ? undefined
         : REASON_CODES.PLUGIN_DISPATCH_ATTACH_UNSUPPORTED,
+      desktopCommandInfoListingUnsupported: desktopListingUnsupported,
+      desktopCommandInfoListingReasonCode: desktopListingReasonCode,
+      cliTuiPluginLoadUnsupported,
+      cliTuiPluginLoadReasonCode,
+      sessionError: desktopListingReasonCode ?? cliTuiPluginLoadReasonCode,
     };
     return api;
   },

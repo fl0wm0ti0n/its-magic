@@ -1,0 +1,25 @@
+{
+  "name": "@its-magic/standalone",
+  "version": "0.0.0",
+  "private": true,
+  "type": "module",
+  "description": "Unpublished in-tree TypeScript workspace for the standalone runtime (code name only; not npm its-magic).",
+  "engines": {
+    "node": ">=22.19.0"
+  },
+  "workspaces": [
+    "apps/*",
+    "packages/*"
+  ],
+  "scripts": {
+    "typecheck": "tsc --noEmit -p tsconfig.json",
+    "lint": "biome check .",
+    "format": "biome format --write .",
+    "test": "node --experimental-strip-types --test tests/contract/*.test.ts tests/unit/*.test.ts"
+  },
+  "devDependencies": {
+    "@biomejs/biome": "2.2.4",
+    "@types/node": "22.18.0",
+    "typescript": "5.9.2"
+  }
+}

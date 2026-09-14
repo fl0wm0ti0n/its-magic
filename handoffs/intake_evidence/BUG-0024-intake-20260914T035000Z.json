@@ -1,0 +1,74 @@
+{
+  "selected_pack": "small-intake-pack",
+  "intake_run_id": "cursor-20260913-BUG0024-intake",
+  "writer_id": "po-cursor-20260913-BUG0024-intake",
+  "INTAKE_GUIDED_MODE": 1,
+  "INTAKE_WORK_ITEM_KIND": "bug",
+  "requested_mode": "bug",
+  "intake_boundary_utc": "2026-09-14T03:50:00Z",
+  "ID_NAMESPACE_BOOTSTRAP": 0,
+  "bug_id": "BUG-0024",
+  "asked_topics": [
+    "outcome_success_criteria",
+    "impacted_components",
+    "constraints_compatibility_risks",
+    "required_tests_acceptance_checks",
+    "done_definition"
+  ],
+  "missing_topics": [],
+  "assumptions_confirmed": "(none)",
+  "topic_coverage": [
+    {
+      "topic_key": "outcome_success_criteria",
+      "satisfied_by": "answer_ref",
+      "quoted_user_text": "was läuft nun wieder falsch?",
+      "intake_run_id": "cursor-20260913-BUG0024-intake",
+      "turn_index": 0,
+      "ref": "ie:cursor-20260913-BUG0024-intake:0:ee5b48d35ee75efc"
+    },
+    {
+      "topic_key": "impacted_components",
+      "satisfied_by": "answer_ref",
+      "quoted_user_text": "Live OpenCode CLI TUI: toast title its-magic /auto, body OPENCODE_AUTO_TUI_DISPATCH_UNSUPPORTED.",
+      "intake_run_id": "cursor-20260913-BUG0024-intake",
+      "turn_index": 1,
+      "ref": "ie:cursor-20260913-BUG0024-intake:1:cc40f14c58976982"
+    },
+    {
+      "topic_key": "constraints_compatibility_risks",
+      "satisfied_by": "answer_ref",
+      "quoted_user_text": "prüfe das repo is alles so wie nach dem letzten bug geplant vorhanden?",
+      "intake_run_id": "cursor-20260913-BUG0024-intake",
+      "turn_index": 2,
+      "ref": "ie:cursor-20260913-BUG0024-intake:2:e7e21d4212216e5f"
+    },
+    {
+      "topic_key": "required_tests_acceptance_checks",
+      "satisfied_by": "delegation_ref",
+      "quoted_user_text": "Tests that would have caught this live miss (not mock-only if that is the gap).",
+      "intake_run_id": "cursor-20260913-BUG0024-intake",
+      "turn_index": 3,
+      "ref": "ie:cursor-20260913-BUG0024-intake:3:a16ff974386830f4",
+      "delegation_scope": "OpenCode CLI TUI live-dispatch test contract: host-true tui(api) client wiring vs mock-only invoke; keep UAT_PROBE_FORBIDDEN for live CLI unless architecture invents a better non-live contract",
+      "delegation_rationale": "Operator did not specify a harness. BUG-0023 mock-invoke closed Axis A without proving live client.rpc(Defined). Discovery/research must lock additive test_bug0024_* that would fail the current live miss (missing api.client / client.rpc / baseUrl / swallowed RPC errors). CI remains UAT_PROBE_FORBIDDEN for launching live OpenCode CLI unless a better contract exists.",
+      "delegation_confidence": "high"
+    },
+    {
+      "topic_key": "done_definition",
+      "satisfied_by": "answer_ref",
+      "quoted_user_text": "/intake bug siehe chat verlauf",
+      "intake_run_id": "cursor-20260913-BUG0024-intake",
+      "turn_index": 4,
+      "ref": "ie:cursor-20260913-BUG0024-intake:4:79441891af5bb0a2"
+    }
+  ],
+  "duplicate_check_pass": true,
+  "duplicate_check_notes": "NEW bug. Distinct from BUG-0023 DONE (S0148 Axis A: Rpc.define + client.rpc(Defined) + await register; slice mock+inspection; live CLI UAT_PROBE_FORBIDDEN). This is Axis A live-falsified: listed /auto still toasts OPENCODE_AUTO_TUI_DISPATCH_UNSUPPORTED; Axis A files are present. Do not reopen BUG-0023 ACs / S0148 / DONE. Distinct from BUG-0021 DONE (listing works — toast title proves listed invoke). Distinct from BUG-0022 OPEN (Cursor Task model inherit — do not merge, do not drain). Distinct from BUG-0020 DONE desktop Command.Info. Distinct from BUG-0019 DONE tokens. Distinct from BUG-0018 DONE (do not restore STOP-only auto.md). Do not mutate US-0133..US-0148.",
+  "decomposition_verdict": "single_bug",
+  "decomposition_rationale": "Operator already invoked /intake bug — treat as accept. One outcome: listed OpenCode CLI TUI /auto starts runAutoLifecycle (lifecycle advances), not a fail-closed DISPATCH toast as the operator-visible result. Axis A files present; live dispatch still fail-closed. Fail-closed OPENCODE_* remains valid only when the host truly cannot dispatch. Not Cursor-only as the product outcome (Cursor IDE /auto is the working path until fix). Not OpenCode --auto. Not LLM Auto mode. Not restore auto.md.",
+  "research_id": "R-0140",
+  "sibling_not_persisted": "Do not reopen BUG-0023/0021/0020/0019/0018 ACs; do not restore STOP-only auto.md / JSON commands.auto+template; do not merge/drain BUG-0022; do not mutate US-0133..US-0148; do not prune .opencode/agents/auto.md or Cursor .cursor/commands/auto.md",
+  "argv_wins_over_scratchpad": "INTAKE_WORK_ITEM_KIND=story in scratchpad; explicit /intake bug wins for this run",
+  "WORK_KIND_ROUTING": 0,
+  "EARLY_RESEARCH": 1
+}

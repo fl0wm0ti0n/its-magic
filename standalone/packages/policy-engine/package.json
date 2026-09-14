@@ -1,0 +1,13 @@
+{
+	"name": "@its-magic/policy-engine",
+	"version": "0.0.0",
+	"private": true,
+	"type": "module",
+	"description": "Owned PolicyEngine decision tables. No Pi SDK imports.",
+	"engines": {
+		"node": ">=22.19.0"
+	},
+	"exports": {
+		".": "./src/index.ts"
+	}
+}

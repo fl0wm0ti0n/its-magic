@@ -1,0 +1,71 @@
+{
+  "selected_pack": "small-intake-pack",
+  "intake_run_id": "cursor-20260913-BUG0023-intake",
+  "writer_id": "po-cursor-20260913-BUG0023-intake",
+  "INTAKE_GUIDED_MODE": 1,
+  "INTAKE_WORK_ITEM_KIND": "bug",
+  "requested_mode": "bug",
+  "intake_boundary_utc": "2026-09-13T23:35:00Z",
+  "ID_NAMESPACE_BOOTSTRAP": 0,
+  "bug_id": "BUG-0023",
+  "asked_topics": [
+    "outcome_success_criteria",
+    "impacted_components",
+    "constraints_compatibility_risks",
+    "required_tests_acceptance_checks",
+    "done_definition"
+  ],
+  "missing_topics": [],
+  "assumptions_confirmed": "(none)",
+  "topic_coverage": [
+    {
+      "topic_key": "outcome_success_criteria",
+      "satisfied_by": "answer_ref",
+      "quoted_user_text": "mach es möglich, dass der /auto befehl nicht fehlschlägt",
+      "intake_run_id": "cursor-20260913-BUG0023-intake",
+      "turn_index": 0,
+      "ref": "ie:cursor-20260913-BUG0023-intake:0:e21f42c192d4f723"
+    },
+    {
+      "topic_key": "impacted_components",
+      "satisfied_by": "answer_ref",
+      "quoted_user_text": "Operator on OpenCode CLI TUI (opencode, not --pure) now invokes listed /auto (BUG-0021 listing limb succeeded). Toast title its-magic /auto then body OPENCODE_AUTO_TUI_DISPATCH_UNSUPPORTED.",
+      "intake_run_id": "cursor-20260913-BUG0023-intake",
+      "turn_index": 1,
+      "ref": "ie:cursor-20260913-BUG0023-intake:1:41f0f9a9a06afbaf"
+    },
+    {
+      "topic_key": "constraints_compatibility_risks",
+      "satisfied_by": "answer_ref",
+      "quoted_user_text": "Not Cursor-only. Not OpenCode --auto permissions. Not LLM \"Auto mode enabled.\"",
+      "intake_run_id": "cursor-20260913-BUG0023-intake",
+      "turn_index": 2,
+      "ref": "ie:cursor-20260913-BUG0023-intake:2:a318f72f9046b23e"
+    },
+    {
+      "topic_key": "required_tests_acceptance_checks",
+      "satisfied_by": "answer_ref",
+      "quoted_user_text": "CI did not live-probe dispatch (UAT_PROBE_FORBIDDEN). Do not reopen BUG-0021 ACs / S0146.",
+      "intake_run_id": "cursor-20260913-BUG0023-intake",
+      "turn_index": 3,
+      "ref": "ie:cursor-20260913-BUG0023-intake:3:40c0529eb14ea389"
+    },
+    {
+      "topic_key": "done_definition",
+      "satisfied_by": "answer_ref",
+      "quoted_user_text": "They want /auto to start lifecycle, not fail-closed toast.",
+      "intake_run_id": "cursor-20260913-BUG0023-intake",
+      "turn_index": 4,
+      "ref": "ie:cursor-20260913-BUG0023-intake:4:649baab7dacde6b9"
+    }
+  ],
+  "duplicate_check_pass": true,
+  "duplicate_check_notes": "NEW bug. Distinct from BUG-0021 DONE (S0146 listing limb: listed /auto via { id, tui } + registerLayer; CI did not live-probe dispatch). This is dispatch: listed /auto toasts OPENCODE_AUTO_TUI_DISPATCH_UNSUPPORTED instead of starting runAutoLifecycle. Do not reopen BUG-0021 ACs / S0146. Distinct from BUG-0022 OPEN (Cursor Task model inherit — do not merge, do not drain). Distinct from BUG-0020 DONE (desktop Command.Info). Distinct from BUG-0019 DONE (static listing tokens; live dispatch fail-closed is new live-falsification of listed /auto starts runAutoLifecycle). Distinct from BUG-0018 DONE (do not restore STOP-only auto.md). Do not mutate US-0133..US-0148 / US-0140.",
+  "decomposition_verdict": "single_bug",
+  "decomposition_rationale": "Operator already invoked /intake bug — treat as accept. One outcome: listed OpenCode CLI TUI /auto starts plugin execute/run() → runAutoLifecycle (lifecycle advances), not a fail-closed toast as the operator-visible result. Fail-closed OPENCODE_* remains valid only when the host truly cannot dispatch; papering over with markdown/JSON template is forbidden. Not Cursor-only. Not OpenCode --auto. Not LLM Auto mode.",
+  "research_id": "R-0136",
+  "sibling_not_persisted": "Do not reopen BUG-0021/0020/0019/0018 ACs; do not restore STOP-only auto.md / JSON commands.auto+template; do not merge BUG-0022; do not mutate US-0133..US-0148; do not drain BUG-0022",
+  "argv_wins_over_scratchpad": "INTAKE_WORK_ITEM_KIND=story in scratchpad; explicit /intake bug wins for this run",
+  "WORK_KIND_ROUTING": 0,
+  "EARLY_RESEARCH": 1
+}

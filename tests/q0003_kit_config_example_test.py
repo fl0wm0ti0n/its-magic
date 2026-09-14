@@ -109,6 +109,33 @@ def test_q0003_malformed_after_strip_is_host_config_invalid(tmp_path: Path) -> N
     assert exc.value.code == hrc.HOST_CONFIG_INVALID
 
 
+def test_q0003_rejects_global_opencode_config_target(
+    tmp_path: Path, monkeypatch: pytest.MonkeyPatch, capsys: pytest.CaptureFixture[str]
+) -> None:
+    home = tmp_path / "home"
+    target = home / ".config" / "opencode"
+    target.mkdir(parents=True)
+    monkeypatch.setenv("HOME", str(home))
+    monkeypatch.setenv("USERPROFILE", str(home))
+    monkeypatch.setattr(
+        sys,
+        "argv",
+        [
+            "installer.py",
+            "--target",
+            str(target),
+            "--mode",
+            "missing",
+            "--host",
+            "both",
+        ],
+    )
+
+    assert installer.main() == 1
+    assert "INSTALL_TARGET_GLOBAL_OPENCODE_FORBIDDEN" in capsys.readouterr().out
+    assert not (target / ".its-magic").exists()
+
+
 def test_q0003_upgrade_copies_example_from_template_only_layout(tmp_path: Path) -> None:
     example_bytes = EXAMPLE_TEMPLATE.read_bytes()
     src = tmp_path / "pkg"

@@ -5,8 +5,8 @@ $packageName = 'its-magic'
 # UPDATE: url and checksum before each release
 # BUG-0017 / R-0118 NB1: before creating the GitHub tag this zip downloads,
 # run `npm run guard:installer` (must PASS). No choco-specific EOL post-process.
-$url         = 'https://github.com/fl0wm0ti0n/its-magic/archive/refs/tags/v0.1.3-8.zip'
-$checksum    = '99487cc6996aa49c3b62019ad5f52fac05cf3e28e7d02ad0722fc31ab4d86308'
+$url         = 'https://github.com/fl0wm0ti0n/its-magic/archive/refs/tags/v0.1.3-11.zip'
+$checksum    = '0681dcdba156b8d90910bbbfbc56c91d5ecd861d898b4ecfeb700685a7736d02'
 $checksumType= 'sha256'
 
 # --- Download & extract ---
@@ -55,3 +55,9 @@ Write-Host ""
 Write-Host "  Run: its-magic --help" -ForegroundColor White
 Write-Host ""
 [Console]::OutputEncoding = $prev
+
+
+
+
+
+
