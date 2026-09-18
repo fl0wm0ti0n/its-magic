@@ -34,6 +34,7 @@ export {
 	canonicalizeAgainstWorktree,
 	denySecretOrTraversal,
 	isCuratorIntentPath,
+	isParallelDevWorktreePath,
 	isProductionSourcePath,
 	isReleaseArtifactPath,
 	isSecretPath,

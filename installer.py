@@ -898,6 +898,43 @@ def run_kit_config_postinstall(target_root, source_root, mode, print_ok=True):
     return True
 
 
+def _load_standalone_runtime_install_lib():
+    lib_path = os.path.join(os.path.dirname(os.path.abspath(__file__)), "scripts", "standalone_runtime_install_lib.py")
+    spec = importlib.util.spec_from_file_location("standalone_runtime_install_lib", lib_path)
+    if spec is None or spec.loader is None:
+        raise RuntimeError("[STANDALONE_BOOTSTRAP_FAILED] standalone_runtime_install_lib missing")
+    mod = importlib.util.module_from_spec(spec)
+    spec.loader.exec_module(mod)
+    return mod
+
+
+def classify_project_adoption_profile(target_root):
+    lib = _load_standalone_runtime_install_lib()
+    return lib.classify_project_adoption_profile(target_root)
+
+
+def bootstrap_standalone_runtime_installer_hook(target_root, source_root, script_dir=None, print_ok=True):
+    """Standalone runtime bootstrap (post host-config refresh, pre runbook bootstrap)."""
+    script_dir = script_dir or normalize(os.path.dirname(os.path.abspath(__file__)))
+    lib = _load_standalone_runtime_install_lib()
+    ok, code = lib.bootstrap_standalone_runtime_installer_hook(
+        target_root,
+        source_root,
+        script_dir,
+    )
+    if print_ok and ok:
+        print("[STANDALONE_POSTINSTALL_OK] standalone runtime bootstrap complete.")
+    if not ok and code:
+        print(f"[STANDALONE_BOOTSTRAP_FAILED] reason={code}")
+    return ok
+
+
+def run_standalone_postinstall(target_root, source_root, script_dir, print_ok=True):
+    return bootstrap_standalone_runtime_installer_hook(
+        target_root, source_root, script_dir=script_dir, print_ok=print_ok
+    )
+
+
 def run_cursor_surface_postinstall_hooks(target_root, source_root, mode, host, print_ok=True):
     """Run Cursor-surface post-install hooks only when --host includes cursor.
 
@@ -1366,7 +1403,7 @@ def main():
         add_help=False,
     )
     parser.add_argument("--target", help="Target repository path")
-    parser.add_argument("--mode", choices=["missing", "overwrite", "interactive", "upgrade"], help="Install mode")
+    parser.add_argument("--mode", choices=["missing", "overwrite", "interactive", "upgrade", "uninstall-standalone"], help="Install mode")
     parser.add_argument("--backup", action="store_true", help="Backup files before overwriting")
     parser.add_argument("--create", action="store_true", help="Create target directory if missing")
     parser.add_argument("--clean-repo", action="store_true", help="Remove installed workflow artifacts")
@@ -1387,6 +1424,16 @@ def main():
     )
     parser.add_argument(
         "--kit-config-postinstall",
+        action="store_true",
+        help=argparse.SUPPRESS,
+    )
+    parser.add_argument(
+        "--standalone-postinstall",
+        action="store_true",
+        help=argparse.SUPPRESS,
+    )
+    parser.add_argument(
+        "--standalone-bootstrap",
         action="store_true",
         help=argparse.SUPPRESS,
     )
@@ -1445,6 +1492,27 @@ def main():
             return 1
         ok = run_kit_config_postinstall(target_root, source_root, mode, print_ok=True)
         return 0 if ok else 1
+
+    if args.standalone_postinstall or args.standalone_bootstrap:
+        target_root = normalize(args.target) if args.target else normalize(".")
+        if not os.path.isdir(source_root):
+            print("[INSTALL_SOURCE_ERROR] template directory is missing. Reinstall its-magic package.")
+            return 1
+        if not os.path.isdir(target_root):
+            print(f"[STANDALONE_BOOTSTRAP_FAILED] TARGET_MISSING: {target_root}")
+            return 1
+        ok = run_standalone_postinstall(target_root, source_root, script_dir, print_ok=True)
+        return 0 if ok else 1
+
+    if args.mode == "uninstall-standalone":
+        target_root = normalize(args.target) if args.target else normalize(".")
+        if not os.path.isdir(target_root):
+            print(f"[UNINSTALL_STANDALONE_ERROR] TARGET_MISSING: {target_root}")
+            return 1
+        lib = _load_standalone_runtime_install_lib()
+        lib.uninstall_standalone(target_root)
+        print("[UNINSTALL_STANDALONE_OK] standalone product removed; host trees preserved.")
+        return 0
 
     if args.validate_install_completeness:
         target_root = normalize(args.target) if args.target else normalize(".")
@@ -1612,6 +1680,8 @@ def main():
 
         if not run_kit_config_postinstall(target_root, source_root, "upgrade", print_ok=True):
             return 1
+        if not run_standalone_postinstall(target_root, source_root, script_dir, print_ok=True):
+            return 1
         if not run_cursor_surface_postinstall_hooks(
             target_root, source_root, "upgrade", host, print_ok=True
         ):
@@ -1713,6 +1783,8 @@ def main():
                 shutil.copy2(src, dst)
 
     if not run_kit_config_postinstall(target_root, source_root, mode, print_ok=True):
+        return 1
+    if not run_standalone_postinstall(target_root, source_root, script_dir, print_ok=True):
         return 1
     if not run_cursor_surface_postinstall_hooks(
         target_root, source_root, mode, host, print_ok=True

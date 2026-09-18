@@ -169,11 +169,11 @@
 - [x] US-0141: Application runtime and pluggable execution backends — discovery, process management, local/Docker/WSL/SSH, tests, repair, and chaos coverage (8 ACs)
 - [x] US-0142: Owned browser UAT and evidence runtime — Playwright/CDP, typed actions, compatible UAT planning, complete evidence, credentials, and E2E tests (8 ACs)
 - [x] US-0143: Delivery routing and full-autonomy scheduler — standard/lean/quick routes, work-kind, phase precedence, drain, hard stops, ledgers, and tests (8 ACs)
-- [ ] US-0144: Sovereign memory, reviews, and convergence — decision ledger, bounded memory, critics, deferrals, evidence-based convergence, and contract tests (8 ACs)
-- [ ] US-0145: Parallel development, release/deploy, self-healing, and closure — worktree arbitration, resource caps, target gates, bounded repair, and ownership (9 ACs)
-- [ ] US-0146: CLI, TUI, and operational observability — operator commands, status/timeline, panels, metrics, responsive logs, and cross-platform integration tests (8 ACs)
-- [ ] US-0147: Installation, update, and existing-project adoption — fresh setup, non-destructive migration, host coexistence, docs, preservation, and lifecycle tests (8 ACs)
-- [ ] US-0148: Stable control protocol and recoverable daemon — versioned commands/events, reconnect, local security, reconciliation, protocol tests, and future-client boundary (8 ACs)
+- [x] US-0144: Sovereign memory, reviews, and convergence — decision ledger, bounded memory, critics, deferrals, evidence-based convergence, and contract tests (8 ACs)
+- [x] US-0145: Parallel development, release/deploy, self-healing, and closure — worktree arbitration, resource caps, target gates, bounded repair, and ownership (9 ACs)
+- [x] US-0146: CLI, TUI, and operational observability — operator commands, status/timeline, panels, metrics, responsive logs, and cross-platform integration tests (8 ACs)
+- [x] US-0147: Installation, update, and existing-project adoption — fresh setup, non-destructive migration, host coexistence, docs, preservation, and lifecycle tests (8 ACs)
+- [x] US-0148: Stable control protocol and recoverable daemon — versioned commands/events, reconnect, local security, reconciliation, protocol tests, and future-client boundary (8 ACs)
 
 ## Bug acceptance (canonical)
 

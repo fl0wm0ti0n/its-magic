@@ -1,3 +1,244 @@
+## Execute PASS handoff — US-0148 / S0156 — next `/qa` (fresh qa; no critic)
+
+- sprint_id: S0156
+- story_id: US-0148 (Status OPEN — authority docs/product/backlog.md)
+- bug_id: (none)
+- companion_dec: DEC-0148 Accepted (decisions/DEC-0148.md)
+- research_anchor: R-0148 (DQ1–DQ10 LOCKED)
+- architecture_anchor: docs/engineering/architecture.md # US-0148
+- approach: A1 — `@its-magic/protocol` + `apps/daemon` loopback JSON-RPC/WebSocket + `OperatorTransport`/`DaemonTransport` + per-run SQLite event log + restart reconcile + twelve `test_us0148_*`
+- orchestrator_run_id: auto-20260917-us0148
+- parent_orchestrator_run_id: auto-20260917-us0146
+- fresh_context_marker: dev-US0148-execute-20260917T220000Z-fresh
+- timestamp: 2026-09-17T22:00:00Z (UTC)
+- model_id: inherit (CROSS_MODEL_REVIEW=0)
+- execute_verdict: EXECUTE_PASS
+- decision_gate: false
+- sprint_status: EXECUTE_PASS (backlog OPEN per US-0045 — not mutated; AC-1..AC-8 unchecked)
+- task_count: 12 (T-anch + T-001..T-011; all DONE)
+- tests: standalone npm **167/167** PASS (twelve `test_us0148_*` + prior suite; US-0146 in-process held)
+- consumed_sprint_plan_proof: rp-auto-20260917-us0148-sprint-plan-techlead-20260917T213000Z-US-0148 / E9CED6541917EAFB8C9727E95E46AC57941165FC2C61017A0F9431E6E1A22A62 — MATCH; not STALE (ttl 2026-09-17T22:30:00Z; consumed_at 2026-09-17T22:00:00Z)
+- runtime_proof_id: rp-auto-20260917-us0148-execute-dev-20260917T220000Z-US-0148
+- proof_hash: 4E95757067D26F6502C94856C7F746046F57A7291A52FAD5F68CF818B694ABD5
+- proof_ttl: 2026-09-17T23:00:00Z
+- compose_guards: US-0133..US-0147 DONE not reopened; US-0145 OUT of daemon; US-0146 `InProcessTransport` doubles; no auto.md; no kit cli.json/tui.json; no US-0148 DONE; no AC tick; no npm publish; no git push
+- key_deliverables:
+  - standalone/packages/protocol
+  - standalone/apps/daemon
+  - standalone/packages/runtime-core/src/daemon-client/
+  - docs/engineering/operator/daemon-protocol.md
+  - standalone/tests/contract/us0148.contract.test.ts (12 markers)
+  - CLI/TUI `resolveOperatorTransport` wiring
+- next_scheduled_phase: /qa
+- next_scheduled_role: qa
+- stop_condition: STOP after execute. Orchestrator MUST spawn /qa in fresh qa (BUG-0006). CROSS_MODEL_REVIEW=0 — do NOT spawn sovereign-critic. Do NOT spawn /qa from this execute subagent. Do NOT mark US-0148 DONE. Do NOT tick acceptance.
+
+---
+
+## Execute PASS handoff — US-0145 / S0155 — next `/qa` (fresh qa; no critic)
+
+- sprint_id: S0155
+- story_id: US-0145 (Status OPEN — authority docs/product/backlog.md)
+- bug_id: (none)
+- companion_dec: DEC-0145 Accepted (decisions/DEC-0145.md)
+- research_anchor: R-0145 (DQ1–DQ10 LOCKED)
+- architecture_anchor: docs/engineering/architecture.md # US-0145
+- approach: A1 — nested `workflow/delivery/` + `runDeliveryOperation` + `delivery_runtime_bridge.py` + default-off parallel/healing + QA arbiter + ReleaseTargetAdapter registry + additive gates + bounded post-deploy healing; twelve `test_us0145_*`
+- orchestrator_run_id: auto-20260917-us0146
+- parent_orchestrator_run_id: auto-20260913-us0144
+- fresh_context_marker: dev-US0145-execute-20260917T203000Z-fresh
+- timestamp: 2026-09-17T20:30:00Z (UTC)
+- model_id: inherit (CROSS_MODEL_REVIEW=0)
+- execute_verdict: EXECUTE_PASS
+- decision_gate: false
+- sprint_status: EXECUTE_PASS (backlog OPEN per US-0045 — not mutated; AC-1..AC-9 unchecked)
+- task_count: 12 (T-anch + T-001..T-011; all DONE)
+- tests: standalone npm **153/153** PASS (twelve `test_us0145_*` + prior suite)
+- consumed_sprint_plan_proof: rp-auto-20260917-us0146-sprint-plan-techlead-20260917T224500Z-US-0145 / 1D245D8D23B03B11DC8AF39FB6A6E5FCC59562510A2F4AA365D708E9ADF947BC — MATCH; not STALE (ttl 2026-09-17T23:45:00Z; consumed_at 2026-09-17T20:30:00Z)
+- runtime_proof_id: rp-auto-20260917-us0146-execute-dev-20260917T203000Z-US-0145
+- proof_hash: A4B28543B669F4D1E2D65A0063E138D538AA5FC80DC4EFA71BCB96C8ED8A04FB
+- proof_ttl: 2026-09-17T21:30:00Z
+- compose_guards: US-0140..US-0147 DONE not reopened; US-0148 OUT; no auto.md; no kit cli.json/tui.json; no US-0145 DONE; no AC tick; no npm publish; no git push; RELEASE_GATE_ORDER literal unamended
+- key_deliverables:
+  - standalone/packages/runtime-core/src/workflow/delivery/*
+  - standalone/packages/kernel-bridge runDeliveryOperation + contract delivery_operations
+  - scripts/delivery_runtime_bridge.py
+  - handoffs/deploy_results/ ledger path (jsonl append)
+  - standalone/tests/contract/us0145.contract.test.ts (12 markers)
+  - role catalog phase `qa-arbiter`; PolicyEngine `.its-magic/worktrees/` allowlist
+- next_scheduled_phase: /qa
+- next_scheduled_role: qa
+- stop_condition: STOP after execute. Orchestrator MUST spawn /qa in fresh qa (BUG-0006). CROSS_MODEL_REVIEW=0 — do NOT spawn sovereign-critic. Do NOT spawn /qa from this execute subagent. Do NOT mark US-0145 DONE. Do NOT tick acceptance.
+
+---
+
+## Execute PASS handoff — US-0147 / S0154 — next `/qa` (fresh qa; no critic)
+
+- sprint_id: S0154
+- story_id: US-0147 (Status OPEN — authority docs/product/backlog.md)
+- bug_id: (none)
+- companion_dec: DEC-0147 Accepted (decisions/DEC-0147.md)
+- research_anchor: R-0144 (DQ1–DQ10 LOCKED)
+- architecture_anchor: docs/engineering/architecture.md # US-0147
+- approach: A1 — triple-installer parity + template `.its-magic/standalone/` mirror + `bootstrap_standalone_runtime_installer_hook` + adoption classifier + kernel preflight + `runtime-metadata.json` + explicit `itsm setup browser`; ten `test_us0147_*`
+- orchestrator_run_id: auto-20260917-us0146
+- parent_orchestrator_run_id: auto-20260913-us0144
+- fresh_context_marker: dev-US0147-execute-20260917T205500Z-fresh
+- timestamp: 2026-09-17T20:55:00Z (UTC)
+- model_id: inherit (CROSS_MODEL_REVIEW=0)
+- execute_verdict: EXECUTE_PASS
+- decision_gate: false
+- sprint_status: EXECUTE_PASS (backlog OPEN per US-0045 — not mutated; AC-1..AC-8 unchecked)
+- task_count: 12 (T-anch + T-001..T-011; all DONE)
+- tests: pytest `tests/us0147_contract_test.py` → **10/10** `test_us0147_*`; standalone npm **140/140** PASS
+- metadata: `python scripts/check-user-visible-metadata.py --repo .` → exit 0
+- triad: `python scripts/enforce-triad-hot-surface.py --rollover` + `--check` → exit 0
+- consumed_sprint_plan_proof: rp-auto-20260917-us0146-sprint-plan-techlead-20260917T205000Z-US-0147 / 71466A385CB3FFA1503D35BAA34BD51CD8A592C2038D8570762DCB32D3EBF9A5 — MATCH; not STALE (ttl 2026-09-17T21:50:00Z; consumed_at 2026-09-17T20:55:00Z)
+- runtime_proof_id: rp-auto-20260917-us0146-execute-dev-20260917T205500Z-US-0147
+- proof_hash: 4130FD8893FD5035C4A1927F18B4BA0D0026C35CA31D22F08E183D7E9A10EB4A
+- proof_ttl: 2026-09-17T21:55:00Z
+- compose_guards: US-0140..US-0146 DONE not reopened; US-0145/0148 OUT; no auto.md; no kit cli.json/tui.json; no US-0147 DONE; no AC tick; no npm publish; no git push
+- key_deliverables:
+  - scripts/standalone_runtime_install_lib.py
+  - installer.py / installer.ps1 / installer.sh hook wiring
+  - installer-owned-paths.manifest (+ template mirror)
+  - template/.its-magic/standalone/ scaffold
+  - runbook US-0147 sections (+ template parity)
+  - tests/us0147_contract_test.py
+- next_scheduled_phase: /qa
+- next_scheduled_role: qa
+- stop_condition: STOP after execute. Orchestrator MUST spawn /qa in fresh qa (BUG-0006). CROSS_MODEL_REVIEW=0 — do NOT spawn sovereign-critic. Do NOT spawn /qa from this execute subagent. Do NOT mark US-0147 DONE. Do NOT tick acceptance.
+
+---
+
+## Execute PASS handoff — US-0146 / S0153 — next `/qa` (fresh qa; no critic)
+
+- sprint_id: S0153
+- story_id: US-0146 (Status OPEN — authority docs/product/backlog.md)
+- bug_id: (none)
+- companion_dec: DEC-0146 Accepted (decisions/DEC-0146.md)
+- research_anchor: R-0143 (DQ1–DQ10 LOCKED)
+- architecture_anchor: docs/engineering/architecture.md # US-0146
+- approach: A1 — sibling `@its-magic/cli` + `@its-magic/tui` thin clients of `runtime-core/src/operator/` facades; nine `test_us0146_*`; Pi only on auth/models
+- orchestrator_run_id: auto-20260917-us0146
+- parent_orchestrator_run_id: auto-20260913-us0144
+- fresh_context_marker: dev-US0146-execute-20260917T191500Z-fresh
+- timestamp: 2026-09-17T19:15:00Z (UTC)
+- model_id: inherit (CROSS_MODEL_REVIEW=0)
+- execute_verdict: EXECUTE_PASS
+- decision_gate: false
+- sprint_status: EXECUTE_PASS (backlog OPEN per US-0045 — not mutated; AC-1..AC-8 unchecked)
+- task_count: 12 (T-anch + T-001..T-011; all DONE)
+- tests: standalone `us0146.contract.test.ts` → **9/9** `test_us0146_*`; full standalone npm test **140/140** PASS
+- metadata: `python scripts/check-user-visible-metadata.py --repo .` → exit 0
+- triad: `python scripts/enforce-triad-hot-surface.py --check` → exit 0
+- consumed_sprint_plan_proof: rp-auto-20260917-us0146-sprint-plan-techlead-20260917T190000Z-US-0146 / EBCD4602E5B769D72298C7305EB819963A9DD9EC55A075634E35B1F055118524 — MATCH; not STALE (ttl 2026-09-17T20:00:00Z; consumed_at 2026-09-17T19:15:00Z)
+- runtime_proof_id: rp-auto-20260917-us0146-execute-dev-20260917T191500Z-US-0146
+- proof_hash: BD51976EB4FA13C40374644DDA75183AEE6352E292FE86584A09AFAB2C8298F0
+- proof_ttl: 2026-09-17T20:15:00Z
+- compose_guards: US-0140..US-0144 DONE not reopened; US-0145/0147/0148 OUT; no auto.md; no kit cli.json/tui.json; no US-0146 DONE; no AC tick; no npm publish; no git push
+- key_deliverables:
+  - standalone/packages/runtime-core/src/operator/*
+  - standalone/apps/cli/src/run.ts + facade wiring
+  - standalone/apps/tui (new)
+  - standalone/tests/contract/us0146.contract.test.ts
+- next_scheduled_phase: /qa
+- next_scheduled_role: qa
+- stop_condition: STOP after execute. Orchestrator MUST spawn /qa in fresh qa (BUG-0006). CROSS_MODEL_REVIEW=0 — do NOT spawn sovereign-critic. Do NOT spawn /qa from this execute subagent. Do NOT mark US-0146 DONE. Do NOT tick acceptance.
+
+---
+
+## Execute PASS handoff (proof renewal) — US-0144 / S0152 — next /qa (fresh qa; no critic)
+
+- sprint_id: S0152
+- story_id: US-0144 (Status OPEN — authority docs/product/backlog.md)
+- bug_id: (none)
+- companion_dec: DEC-0144 Accepted (decisions/DEC-0144.md) — not mutated
+- research_anchor: R-0142 — not mutated
+- architecture_anchor: docs/engineering/architecture.md # US-0144 — not mutated
+- orchestrator_run_id: auto-20260913-us0144
+- parent_orchestrator_run_id: auto-20260913-us0143
+- fresh_context_marker: dev-US0144-execute-renewal-20260915T205647Z-fresh
+- timestamp: 2026-09-15T20:56:47Z (UTC)
+- model_id: inherit (MODEL_RESOLVE=alias_only; CROSS_MODEL_REVIEW=0)
+- execute_verdict: PASS (renewal)
+- decision_gate: false
+- sprint_status: EXECUTE_PASS held (backlog OPEN per US-0045 — not mutated; AC-1..AC-8 unchecked)
+- task_count: 11 (T-anch + T-001..T-010 DONE — no re-implement)
+- tests: standalone us0144.contract.test.ts → **12/12** test_us0144_* PASS (renewal confirm)
+- CROSS_MODEL_REVIEW: 0 — no sovereign-critic after this renewal
+- runtime_proof_id: rp-auto-20260913-us0144-execute-dev-20260915T205647Z-US-0144
+- proof_hash: D96619C8EC66525BDDF6E057C93B5DC91D0FC937258C2FC0846492E7B2503DCC
+- proof_issued_at: 2026-09-15T20:56:47Z
+- proof_ttl_seconds: 3600
+- proof_ttl: 2026-09-15T21:56:47Z
+- stale_replaced: rp-auto-20260913-us0144-execute-dev-20260915T193016Z-US-0144 / CE7965C7341692EAF05B4476CDE9667A2CEBBB0196180AFD9B7F670C72E3DCF5 (TTL expired 2026-09-15T20:30:16Z)
+- native_chain_active: true
+- native_chain_continuing: true
+- next_scheduled_phase: /qa
+- next_scheduled_role: qa
+- stop_condition: STOP after execute proof renewal. Orchestrator MUST spawn /qa in fresh qa (BUG-0006). Do NOT spawn sovereign-critic (CROSS_MODEL_REVIEW=0). Do NOT spawn /qa from this execute. Do NOT mark US-0144 DONE. Do NOT tick acceptance.
+
+---
+
+## Execute PASS handoff — US-0144 / S0152 — sovereign-critic (execute) then `/qa` (fresh qa)
+
+- sprint_id: S0152
+- story_id: US-0144 (Status OPEN — authority docs/product/backlog.md)
+- bug_id: (none)
+- companion_dec: DEC-0144 Accepted (decisions/DEC-0144.md)
+- research_anchor: R-0142 (DQ1–DQ10 LOCKED; do not wipe R-0120..R-0142; R-0141 remains US-0143)
+- architecture_anchor: docs/engineering/architecture.md # US-0144
+- approach: A1 LOCKED — nested SovereignRuntime in @its-magic/runtime-core (no sibling package, no Pi); KernelBridge.runSovereignOperation closed 9-op; scripts/sovereign_runtime_bridge.py; SOVEREIGN_RUNTIME=0 default-off; US-0143 drain/GateEngine compose-only; 12 test_us0144_*
+- orchestrator_run_id: auto-20260913-us0144
+- parent_orchestrator_run_id: auto-20260913-us0143
+- fresh_context_marker: dev-US0144-execute-20260915T193016Z-fresh
+- timestamp: 2026-09-15T19:30:16Z (UTC)
+- model_id: cursor-grok-4.6-high (CROSS_MODEL_REVIEW=1 — required on isolation)
+- execute_verdict: PASS
+- decision_gate: false
+- sprint_status: EXECUTE_PASS (backlog OPEN per US-0045 — not mutated; AC-1..AC-8 unchecked)
+- task_count: 11 (T-anch + T-001..T-010; all DONE)
+- tests: standalone `us0144.contract.test.ts` → **12/12** `test_us0144_*`; us0143 TS **12/12** held; pytest `tests/us0143_contract_test.py` **12/12** held
+- typecheck: `cd standalone && npm run typecheck` → exit 0 (prior execute pass)
+- metadata: `python scripts/check-user-visible-metadata.py --repo .` → exit 0 (prior execute pass)
+- uat: placeholder (execute not verify-work). No `.env` reads. No US-0145+. No GateEngine rewrite.
+- compose_guards: architecture.md / DEC-0144 / R-0142 UNCHANGED; US-0143 drain/GateEngine RELEASE_GATE_ORDER unamended at SR=0; Python sovereign library schemas unmodified; KernelBridge additive runSovereignOperation only; kit files omit standalone/; US-0133..US-0143 DONE not reopened; BUG-* not mutated; S0146..S0151 not mutated; no DONE flip; no AC tick; auto.md not restored; no sibling package; no Pi
+- key_deliverables:
+  - standalone/packages/runtime-core/src/workflow/sovereign-runtime.ts
+  - KernelBridge.runSovereignOperation + handshake + kernel-contract.json sovereign_operations
+  - scripts/sovereign_runtime_bridge.py (closed 9-op dispatcher)
+  - CommandRouter.assemblePreSpawnContext + SpawnRequest.bootstrap + supervisor one-delivery ack
+  - scheduleSupplementaryHooks lift; AutoRunResult/HookResult.sovereign
+  - standalone/tests/contract/us0144.contract.test.ts (12 architecture-owned markers)
+- runtime_proof_id: rp-auto-20260913-us0144-execute-dev-20260915T193016Z-US-0144
+- proof_hash: CE7965C7341692EAF05B4476CDE9667A2CEBBB0196180AFD9B7F670C72E3DCF5
+- proof_ttl: 2026-09-15T20:30:16Z
+- consumed_sprint_plan_proof: rp-auto-20260913-us0144-sprint-plan-techlead-20260915T190058Z-US-0144 / 066EE36FB0930C2329F33590FD2508B233596EC59437D35EEA4BF4EE64C5E60D — MATCH. TTL 2026-09-15T20:00:58Z
+- consumed_critic_proof: rp-auto-20260913-us0144-sovereign-critic-techlead-20260915T190942Z-US-0144 / 627EACF74549FD0D6936F7A3BADEEF75CEE483377F4E2F05538DF33B4913CF0F — MATCH; anti_slop=10; 0 blocking; marker=critic-US0144-sprintplan-20260915T190942Z-fresh; degraded_mode=false
+- next_scheduled_phase: sovereign-critic (execute) then /qa (role=qa)
+- next_scheduled_role: tech-lead (critic), then qa
+- stop_condition: STOP after execute. Orchestrator MUST spawn sovereign-critic of execute then MUST spawn /qa in fresh qa (BUG-0006). Do NOT spawn qa from this execute subagent. Do NOT spawn critic. Do NOT mark US-0144 DONE. Do NOT tick acceptance. Require `/qa` in a new subagent/chat after critic.
+
+### critic_evidence
+
+```json
+{
+  "producer_model_id": "cursor-grok-4.6-high",
+  "critic_model_id": "composer-2.5-fast",
+  "anti_slop_aggregate": 10,
+  "rework_generation": 0,
+  "degraded_mode": false,
+  "findings_path": "handoffs/sovereign_critic_findings.jsonl",
+  "finding_ids": ["us0144sp-challenger-001", "us0144sp-architect-002", "us0144sp-subtractor-003"],
+  "verdict": "PASS",
+  "blocking_count": 0,
+  "reviewed_phase_id": "sprint-plan"
+}
+```
+
+---
+
 ## Execute PASS handoff — US-0143 / S0151 — sovereign-critic (execute) then `/qa` (fresh qa)
 
 - sprint_id: S0151

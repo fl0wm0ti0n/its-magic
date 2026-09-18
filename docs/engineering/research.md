@@ -14684,4 +14684,554 @@ Keep: `WORKFLOW_ROUTE_DEFERRED` (unused for `/auto`/`/quick`), `WORKFLOW_LOOP_CA
 - **Delivery closure (2026-09-14T09:30:00Z, curator, `orchestrator_run_id=auto-20260913-us0143`)**: **`US-0143`** **DONE**; sprint **`S0151`** **released**; A1 in-place CommandRouter lift of `/auto`/`/quick` + nested DeliveryRouter + WorkflowEngine §14.4 drain + GateEngine unamended + YAML stop-matrix consume + AC-6 additive `security_hard` + TS L8 adapter + independent axes + 12/12 `test_us0143_*` + us0133–us0142 compose delivered per **R-0141** / **DEC-0143** / **`# US-0143`**; US-0144 critic *content* OUT (hook slot only); honest residual: live browser not probed; `harness_fail_zero_claimed=false`; portfolio **5 OPEN** stories (US-0144..US-0148), **1 OPEN** bug (BUG-0022 OUT — not scheduled); drain story **9 of 10** — orchestrator sovereign-critic (refresh-context) then drain-advance **US-0144** (curator STOP).
 - **Freshness review (2026-09-14, curator refresh-context US-0143)**: R-0141 marked **delivered** (US-0143 DONE). R-0139 / R-0140 remain **delivered** compose bases (not wiped). R-0138 remains **delivered**. No duplicate R-ids to merge. Unlinked prune deferred (no operator request).
 
+## R-0142 — Sovereign runtime composition for US-0144
 
+- **Date**: 2026-09-15. **Story**: US-0144. **Status**: current. **Confidence**: high.
+- **Recommendation**: Add a nested sovereign-runtime integration to `@its-magic/runtime-core`. It uses a narrow, typed KernelBridge operation to compose the existing Python libraries; no Pi, sibling package, arbitrary script runner, schema port, or GateEngine/US-0143 drain rewrite.
+- **DQ1/DQ2**: Extend only `WorkflowEngine.scheduleSupplementaryHooks`; preserve `CommandRouter`, `runAuto`/`runQuick`, drain behavior, and `RELEASE_GATE_ORDER`. Lift the existing `critic_content: false` hook slot instead of adding a scheduler path.
+- **DQ3/DQ4**: Keep Python ledger schemas authoritative. Store model/session/run metadata as append-only sidecar evidence keyed by `decision_id`; inject only `build_injection_digest_block` after phase context and before role instructions, never the full memory store.
+- **DQ5/DQ6**: Resolve critic model pinning through the bridge; explicitly record same-model degraded mode. Spawn fresh Challenger/Architect/Subtractor and role-manifest sessions as supplementary reviews only, never producer replacements.
+- **DQ7/DQ8**: Preserve per-candidate decision gates and `SOVEREIGN_DRAIN_AUTO_ACCEPT=0`. Consume code-evaluated `evaluate_convergence`; only open blocking critic findings block convergence and smoke surrogates never imply browser PASS.
+- **DQ9/DQ10**: Return progress, caps, non-convergence reasons, and partial-delivery evidence through runtime results and artifacts, not CLI/TUI. Add 12 hermetic `test_us0144_*` contract tests covering bridge admission, fresh review separation, model collision/degraded state, bounded digest, ledger sidecar, deferral gate, convergence pass/fail, blocking-only critic rule, smoke truthfulness, and US-0143/GateEngine boundaries.
+- **Rejected**: a general KernelBridge script runner, TypeScript ports of sovereign Python schemas, prompt-only critic content, a separate package, Pi, browser success claims, and US-0145/US-0146 work.
+- **Evidence**: `standalone/packages/runtime-core/src/workflow/workflow-engine.ts` `scheduleSupplementaryHooks`; `standalone/packages/kernel-bridge/src/{types,handshake,spawn}.ts`; `scripts/{decision_ledger_lib,sovereign_critic_lib,sovereign_memory_lib,sovereign_role_manifest_lib,sovereign_loop_lib,sovereign_convergence_lib}.py`; `standalone/tests/contract/us0143.contract.test.ts`.
+- **Next**: architecture may author `# US-0144` and DEC-0144, then materialize S0152. No status or acceptance mutation.
+
+### R-0142 Amendment — critic blocker closure
+
+- **Typed bridge**: add only `KernelBridge.runSovereignOperation()` for the closed operation set `memory_digest`, `critic_model`, `role_review_plan`, `decision_session_append`, `drain_candidate_gate`, `convergence_evaluate`, and `partial_delivery_write`. Add this set to `its_magic/kernel-contract.json`; invoke only `scripts/sovereign_runtime_bridge.py --operation <allowlisted-name> --request-json <compact-json>`. Require a successful handshake, a resolved `sovereign` artifact path, operation admission, a v1 request/response envelope, 16 KiB request and 64 KiB response caps, 5 s operations (15 s convergence), and fail closed with `KERNEL_SOVEREIGN_*` codes. Only sidecar and partial-delivery operations may write.
+- **Pre-spawn context**: `CommandRouter.assemblePreSpawnContext()` constructs immutable bootstrap text before `SessionSupervisor.spawn`, ordered `phase context -> bounded memory digest -> role objective`. The first verified fresh session receives it exactly once; no transcript is restored. Memory enabled plus digest failure blocks spawning; disabled memory is zero-I/O. This does not alter routing or drain logic.
+- **Ledger sidecar**: retain the exact 12-field ledger. Add `handoffs/sovereign_decision_sessions/<run>.jsonl` with a deterministic `event_id`, decision/session/parent-session/model/degraded fields, and a ledger path. Require matching ledger evidence before append; duplicate event IDs are idempotent; malformed/torn existing tails and fsync failures fail closed without repair.
+- **Deferral gate**: `SovereignRuntime.gateDrainCandidate()` is the only candidate-materialization path. Explicit `SOVEREIGN_DRAIN_AUTO_ACCEPT=0` overrides a preset; each candidate records an explicit operator decision, and absent accept returns `SOVEREIGN_DRAIN_OPERATOR_DECISION_REQUIRED` before any materialization or deferral mutation.
+- **Result contract**: `afterProducerBoundary()` returns critic/degraded evidence, supplementary role-review dispatches, convergence/evidence/cap state, and partial-delivery reference only for cap/timeout/non-convergence. Only open blocking findings block convergence; smoke surrogates never assert browser success.
+- **Test inventory**: the 12 named tests are KernelBridge admission; bridge JSON/timeout failure; pre-spawn ordering; memory bounds/default-off; model collision/degraded mode; supplementary manifest reviews; ledger schema preservation; sidecar idempotency/torn-write; preset-zero candidate gate; per-candidate approval; blocking-only convergence/smoke truthfulness; and caps/progress/partial delivery plus US-0143/GateEngine boundaries.
+
+#### Executable contract detail
+
+- The bridge request is exactly `{schema_version:1,request_id,operation,orchestrator_run_id,payload}` and the response is exactly `{schema_version:1,request_id,operation,ok,result}` or `{schema_version:1,request_id,operation,ok:false,reason_code}`. `kernel-contract.json` gains an additive `sovereign_operations` array and the handshake/parser admits neither an unknown operation nor arbitrary arguments. The only subprocess is `python scripts/sovereign_runtime_bridge.py --operation <allowlisted-name> --request-json <compact-json>`.
+- `SpawnRequest` gains optional immutable `bootstrap: { text:string, context_hash:string, digest_entry_ids:string[], digest_char_count:number, role_objective_applied:boolean }`; `SessionSupervisor` records `context_hash` in its attestation and invokes `session.run(bootstrap.text)` once after fresh-session verification. No bootstrap is accepted on a continued session. `CommandRouter` produces this value before `spawn` with the required context/digest/role order.
+- A sidecar row is `{schema_version:1,event_id,ts,orchestrator_run_id,decision_id,phase_id,role,phase_session_id,parent_phase_session_id,producer_model_id,critic_model_id,critic_degraded,ledger_path}`. `event_id` is SHA-256 of version, run, decision, and session ID. The bridge validates the canonical ledger entry before append; a missing ledger returns `SOVEREIGN_LEDGER_DECISION_NOT_FOUND`, duplicate IDs return `idempotent:true`, and malformed/torn tail or fsync failure returns `SOVEREIGN_LEDGER_SIDECAR_PARTIAL_WRITE` or `SOVEREIGN_LEDGER_SIDECAR_APPEND_FAILED` without repair.
+- `advance_sovereign_loop` may return a candidate bundle but never materializes one. `SovereignRuntime.gateDrainCandidate` is the exclusive materialization boundary and is called for every bundle item. If the effective explicitly-precedent flag is `0`, only `operator_decision:accept` permits materialization; all other outcomes return `SOVEREIGN_DRAIN_OPERATOR_DECISION_REQUIRED` before a story, intake, or deferral mutation.
+- `SovereignRuntime.afterProducerBoundary` returns a discriminated result with `ok`, `critic`, `role_reviews`, `convergence`, `goal_progress`, `caps`, and optional `partial_delivery_ref`; a failure returns `{ok:false,reason_code}`. `AutoRunResult` and hook results carry this structured evidence rather than a boolean. The 12 tests assert these fields and both direct and drain-generated candidate paths.
+
+#### Activation and propagation locks
+
+- `SOVEREIGN_RUNTIME=0|1` is default `0`. When `0`, no sovereign bridge operation, sidecar file, memory read, critic/model resolution, role-review dispatch, deferral gate, convergence evaluation, or partial-delivery write occurs; existing US-0143 behavior is byte-compatible. When `1`, every requested operation is fail-closed.
+- Operation schemas are closed: `memory_digest` returns `block`, `entry_ids`, and `char_count`; `critic_model` returns `critic_model_id` and `degraded`; `role_review_plan` returns capped `objective` and `dispatches`; `decision_session_append` returns `event_id` and `idempotent`; `drain_candidate_gate` returns `candidate_id`, `decision_gate`, `operator_decision`, and `materialize`; `convergence_evaluate` returns the five-conjunct result; `partial_delivery_write` returns `path`. Any missing, extra, mismatched, or over-cap field returns `KERNEL_SOVEREIGN_REQUEST_INVALID` or `KERNEL_SOVEREIGN_RESPONSE_INVALID`; unavailable operations, timeout, and subprocess errors return `KERNEL_SOVEREIGN_OPERATION_MISSING`, `KERNEL_SOVEREIGN_TIMEOUT`, and `KERNEL_SOVEREIGN_FAILED` respectively.
+- Bootstrap delivery must return `{session_id, bootstrap_context_hash, bootstrap_delivered:true}` from the supervisor. The router compares the returned hash with the immutable request hash before producer work; a false/missing/mismatched acknowledgment aborts and records `SOVEREIGN_BOOTSTRAP_DELIVERY_FAILED`.
+- `SovereignRuntimeResult = {ok:true, evidence:{critic,role_reviews,convergence,goal_progress,caps,partial_delivery_ref?}} | {ok:false,reason_code,remediation}`. `HookResult` and `AutoRunResult` expose `sovereign?: SovereignRuntimeResult`; a false result stops the affected producer boundary and cannot be converted to success by a caller.
+
+#### Architecture-critic compatibility amendment
+
+- `R-0142` is the authoritative US-0144 research record. Compatibility is explicit: `CROSS_MODEL_REVIEW=1` always retains the US-0143 scheduling-only critic session; `SOVEREIGN_RUNTIME=0` adds no content, bridge call, or artifact write; only `CROSS_MODEL_REVIEW=1 && SOVEREIGN_RUNTIME=1` enables sovereign content after the existing hook. Tests cover all four flag combinations.
+- The bridge fixes its executable, script-relative path, working directory, environment allowlist, operation names, and JSON schemas in source. Neither manifest nor caller selects a path, argument, environment, or schema. The manifest is admission evidence only.
+- The supervisor, not the router, validates an immutable optional bootstrap at every fresh producer spawn and records a one-delivery acknowledgement before returning the session. Supplementary sessions receive no producer bootstrap and producer ownership remains unchanged.
+- A session sidecar append requires an already-valid canonical 12-field ledger row with the same decision ID. Canonical ledger append precedes sidecar append; a missing/disabled ledger fails `SOVEREIGN_LEDGER_DECISION_NOT_FOUND`, sidecar failure leaves the canonical row as honest residue, and no operation repairs, truncates, or overwrites either file.
+- The candidate gate is exclusive only for **US-0144 sovereign-generated** candidates. Legacy US-0143 drain materialization is untouched when sovereign runtime is disabled. Sovereign candidates persist `accept|reject|defer|pending`; zero never defaults to acceptance.
+- The closed bridge also admits `deferral_append` and `deferral_list`, each delegating only to the existing sovereign-loop library with versioned payload/result schemas. They cannot materialize a candidate or alter US-0143 drain routing.
+
+#### Research attestation — architecture handoff (2026-09-15T18:43:00Z)
+
+- **Attestation**: Existing `## R-0142` heading and prior amendments are retained. This subsection only closes critic-required gaps vs discovery D1–D10, DQ1–DQ10, and AC-1..AC-8. Research is complete for `/architecture`. **R-0141** (US-0143) is held. DEC-0144, architecture `# US-0144`, and `sprints/S0152/` are OUT of this phase’s authorship.
+- **Consumed discovery critic**: `rp-auto-20260913-us0144-sovereign-critic-techlead-20260915T183700Z-US-0144` / `8FBC3E6CA685876B732A307F584BDB8DFFB9B32185E8E8CBAA73BF0A6677A9CE` — independent `compute_strict_proof_hash` MATCH; not STALE (ttl `2026-09-15T19:37:00Z`; consumed_at `2026-09-15T18:43:00Z`). Producer `rp-auto-20260913-us0144-discovery-po-20260915T183419Z-US-0144` / `560B4D3028D921EA85B9893CC2D378D74B7F6FA3DA35A2F74A60A334448CBBBC` MATCH; not STALE. Blocking findings: 0. NBs `us0144dsc-*` resolved. Compose-race ask from `us0144dsc-challenger-001` closed below.
+- **Closed operation set (9)**: `memory_digest`, `critic_model`, `role_review_plan`, `decision_session_append`, `drain_candidate_gate`, `convergence_evaluate`, `partial_delivery_write`, `deferral_append`, `deferral_list`. `deferral_append` returns `{deferral_id}`; `deferral_list` returns `{count,deferral_ids}` (ids only, cap = existing loop max). Both delegate to `append_deferral` / `list_open_deferrals` and cannot materialize candidates. One in-flight `runSovereignOperation` per `orchestrator_run_id`; overlapping Python writers fail closed `KERNEL_SOVEREIGN_FAILED`.
+- **Compose functions (no schema port)**: `decision_ledger_lib.py` 12-field `LEDGER_SCHEMA_FIELDS` including `plan_fidelity`; `build_injection_digest_block`; `select_critic_model`; `list_obligations_for_phase` + `dispatch_role_review` (discovery DQ6 name `review_obligations` maps here — do not invent a new Python API); `append_deferral` / `list_open_deferrals` / `advance_sovereign_loop`; `evaluate_convergence`. New executable `scripts/sovereign_runtime_bridge.py` does not exist yet (execute). `KernelBridge` today has locate/handshake/`spawnPythonScript`/`runValidator` only — add `runSovereignOperation()`; do not reuse validator admission.
+- **QA plan-fidelity (AC-1 / DQ3)**: canonical ledger remains the 12-field JSONL; QA reads `plan_fidelity` plus sidecar `handoffs/sovereign_decision_sessions/<run>.jsonl` keyed by `decision_id` (session/model/run). No TS dual-write of ledger fields.
+- **AC map**: AC-1 ledger+sidecar; AC-2 digest-only pre-spawn; AC-3 fresh supplementary reviews; AC-4 `select_critic_model` + degraded; AC-5 deferral ops + `SOVEREIGN_DRAIN_AUTO_ACCEPT=0`; AC-6 code-evaluated five-conjunct + blocking-only + smoke never browser PASS; AC-7 `afterProducerBoundary` progress/caps/partial-delivery; AC-8 twelve `test_us0144_*` below. Kit `files` omit `standalone/`. No `.opencode/commands/auto.md` restore.
+- **Tests**: `test_us0144_kernel_bridge_admission`; `test_us0144_bridge_json_timeout_fail_closed`; `test_us0144_pre_spawn_context_order`; `test_us0144_memory_bounds_default_off`; `test_us0144_model_collision_degraded`; `test_us0144_supplementary_manifest_reviews`; `test_us0144_ledger_schema_preserved`; `test_us0144_sidecar_idempotent_torn_write`; `test_us0144_drain_gate_preset_zero`; `test_us0144_per_candidate_operator_decision`; `test_us0144_blocking_only_convergence_smoke_truth`; `test_us0144_caps_progress_partial_delivery_boundaries`. Four `CROSS_MODEL_REVIEW` × `SOVEREIGN_RUNTIME` combinations live inside these twelve, not a thirteenth test.
+- **DQ1–DQ10 LOCKED**: DQ1 nested runtime-core + typed KernelBridge, no Pi/sibling; DQ2 lift `critic_content:false` via `scheduleSupplementaryHooks` only, GateEngine/`runAuto`/`runQuick`/US-0143 drain unamended; DQ3 Python ledger + sidecar; DQ4 `build_injection_digest_block` order phase→digest→role; DQ5 `select_critic_model` + pinning + degraded; DQ6 supplementary `dispatch_role_review`; DQ7 deferral gate + ops, zero never auto-accept; DQ8 `evaluate_convergence`; DQ9 runtime results/artifacts not CLI/TUI; DQ10 twelve tests + kit omit + R-0142.
+- **Next**: orchestrator sovereign-critic of research, then `/architecture` (may attest existing DEC-0144 / `# US-0144`; sprint-plan owns S0152). No status or acceptance mutation.
+
+### R-0142 delivery closure trailer (US-0144 / S0152)
+
+- **Status**: **delivered** (curator refresh-context **2026-09-17T18:25:00Z**; `auto-20260913-us0144`; `runtime_proof_id=rp-auto-20260913-us0144-refresh-context-curator-20260917T182500Z-US-0144`).
+- **Evidence**: `decisions/DEC-0144.md` Accepted; `# US-0144` architecture attestation; `standalone/tests/contract/us0144.contract.test.ts` 12/12; `sprints/S0152/closure-verification.md` CLOSURE_PASS; compose US-0143/R-0141 DONE preserved; US-0145+ OUT.
+- **Held**: R-0141 (US-0143) and prior R-* delivery trailers not wiped.
+
+## R-0143 — CLI, TUI, and operational observability for US-0146
+
+- **Date**: 2026-09-17. **Story**: US-0146. **Status**: **delivered** (delivery closure trailer below; curator refresh **2026-09-17T20:25:00Z**). **Confidence**: high.
+- **Linked**: US-0146 (OPEN), R-0142 / DEC-0144 / US-0144 (DONE compose-only — operator-visible sovereign fields read-only), R-0141 / DEC-0143 / US-0143 (DONE — `/auto`/`/quick` RouteScheduled), R-0138 / DEC-0141 / US-0141 (AppRuntime), R-0139 / DEC-0142 / US-0142 (browser evidence), US-0139 index, US-0135 / DEC-0135 auth-models, US-0080 / DEC-0062 token-cost, R-0135 / DEC-0140 / US-0140 (CommandRouter / `PROGRAMMATIC_COMMANDS`), BUG-0006 / DEC-0051 spawn-only; US-0145 / US-0147 / US-0148 OUT; BUG-0021 / BUG-0023 DONE OpenCode host TUI OUT
+- **Producer consumed**: discovery `rp-auto-20260917-us0146-discovery-po-20260917T183626Z-US-0146` / `EF26D4E4E08FB368A8E9B879D01901DBD5DC180D9D0EC2A9F5EAA44EEF04F859` — `compute_strict_proof_hash` MATCH at research issue `2026-09-17T18:42:00Z`; not STALE (ttl `2026-09-17T19:36:26Z`). CROSS_MODEL_REVIEW=0 — no sovereign-critic. `fresh_context_marker=tl-US0146-research-20260917T184200Z-fresh`
+- **ID policy**: highest delivered heading **R-0142** (US-0144). This entry is **R-0143**. Do **not** wipe or reuse R-0142. Do **not** reuse R-0141 for US-0146.
+- **Recommendation**: **A1 (A\*)** — complete sibling `@its-magic/cli` (`standalone/apps/cli`) and add `@its-magic/tui` (`standalone/apps/tui`) as **thin clients** of `@its-magic/runtime-core` operator surfaces. Add a nested, read-mostly `operator/` module in runtime-core exporting `OperatorCommandFacade` (delegates to existing `CommandRouter` + `WorkflowEngine` without forking routing tables) and `OperatorObservabilityService` (status, timeline, metrics snapshots). Keep US-0135 `dispatchItsmCommand` + `pi-kernel` `AuthRuntimeAdapter` **only** on `auth`/`models` argv paths. No Pi imports on new workflow/observability paths. No rewrite of WorkflowEngine, CommandRouter, or GateEngine. No US-0148 daemon protocol in v1 — local in-process attach/reconnect only.
+- **Rejected**: nesting CLI/TUI inside runtime-core apps folder; workflow logic in TUI; Pi on non-auth paths; rewriting CommandRouter/GateEngine; duplicating token-cost ledgers; kit `bin/its-magic.js` as `itsm`; restore `.opencode/commands/auto.md`; kit `cli.json` / plugin `its-magic-auto/tui.json`; US-0145/US-0147/US-0148 bodies; graphical clients; general observability sibling package unless architecture proves necessity (default compose US-0080 + runtime APIs).
+- **Evidence**: `standalone/apps/cli/src/index.ts` (Phase-0 stub); `standalone/packages/runtime-core/src/workflow/{command-router,workflow-engine,types}.ts` (`PROGRAMMATIC_COMMANDS`, `SCHEDULER_COMMANDS`); `standalone/packages/auth-models/src/cli.ts` (`dispatchItsmCommand`); `standalone/packages/app-runtime/src/app-runtime.ts`; `standalone/tests/contract/us0140.contract.test.ts`, `us0143.contract.test.ts`, `us0144.contract.test.ts`; `handoffs/token_cost_runs/` (US-0080 evidence layout).
+- **Next**: `/architecture` authors `# US-0146` + **DEC-0146** Accepted; sprint-plan materializes **S0153**. No status or acceptance mutation this phase.
+
+### DQ1 — Package layout (LOCKED)
+
+- **Winner**: sibling apps `@its-magic/cli` + new `@its-magic/tui` under `standalone/apps/`; nested `runtime-core/src/operator/` for shared facades (not a third published “observability” package in v1).
+- CLI completes stub: interactive REPL + direct argv dispatch through `OperatorCommandFacade`.
+- TUI depends on same facades + event subscription; **replaceable** — panel contract is typed DTOs, not embedded workflow rules.
+- **Pi boundary**: only `auth`/`models` continue `createAuthRuntimeAdapter()` compose (US-0135). Workflow/status/timeline paths import runtime-core + app-runtime + index/browser adapters only.
+- **Reject** nesting apps inside runtime-core; **reject** new Pi session spawns from CLI/TUI for operator commands.
+
+### DQ2 — Command routing and AC-1 vocabulary (LOCKED)
+
+- **Winner**: single facade maps AC-1 surface names to existing router inputs:
+  - Lifecycle slash equivalents → `PROGRAMMATIC_COMMANDS` strings (`intake`, `discovery`, …) via `CommandRouter.route` / programmatic entry (same as US-0140 contract tests).
+  - `auto` → scheduler `/auto`; `quick` → `/quick` (US-0143 `RouteScheduled`).
+  - `ask`, `status`, `resume`, `index`, `app`, `browser` → dedicated facade methods that call the correct runtime service or router precondition path without new command names.
+  - `auth`, `models` → delegate to `dispatchItsmCommand` unchanged.
+- Interactive mode: line editor parses same tokens as argv; no second vocabulary.
+- Kit installer `its-magic` bin remains US-0147 OUT.
+- **Reject** duplicating CommandRouter 7-step inside CLI; **reject** prompt-only slash emulation.
+
+### DQ3 — Status aggregation AC-2 (LOCKED)
+
+- **Winner**: `OperatorObservabilityService.buildStatusSnapshot()` returns one read-only DTO composing:
+  - Project/work item/sprint/phase/role/model/backend from `RunsStore` + repo pointers (`handoffs/resume_brief.md`, backlog row, sprint folder when present).
+  - App health from US-0141 `AppRuntime` health probe API (no restart side effects on status-only).
+  - Index health from US-0139 index service snapshot.
+  - Browser evidence summary from US-0142 read APIs / artifact refs (no fake PASS).
+  - Token/cost from US-0080 latest run evidence (`handoffs/token_cost_runs/`, scripts validators) — **read-only**, no second ledger writer.
+  - Sovereign caps/progress/partial-delivery refs from US-0144 `AutoRunResult.sovereign` / hook evidence when `SOVEREIGN_RUNTIME=1`; omitted when disabled (byte-compatible).
+- CLI `itsm status` and TUI status panel consume the same snapshot.
+
+### DQ4 — Timeline AC-3 (LOCKED)
+
+- **Winner**: `buildRunTimeline()` merges ordered events from:
+  - `RunsStore` audit rows (phase transitions, PASS/FAIL, stop reasons).
+  - Repository evidence links (`handoffs/*.md`, sprint `progress.md`, sovereign sidecar when enabled).
+- Each entry: `{ts, phase_id, role, outcome, stop_reason?, session_id?, evidence_refs[]}`; rework shown as repeated phase_id with incrementing attempt metadata from audit.
+- SQLite is operational, not canonical DONE authority (compose DEC-0140); timeline labels repo gaps honestly when audit and repo diverge.
+
+### DQ5 — TUI client-only AC-4 (LOCKED)
+
+- **Winner**: `@its-magic/tui` is a replaceable terminal client (architecture picks minimal stack — e.g. readline + ANSI regions or small component lib); **no** OpenCode plugin host, **no** Pi TUI SDK on workflow paths.
+- Panels (all subscribe to facade streams/DTOs): conversation transcript view; current phase/role; timeline strip; tool call list; changed-files list; app/log bounded summary; browser-evidence summary; model/cost strip.
+- Narrow-terminal: collapsible panels + priority order (phase > status > timeline > tools); tested in AC-8.
+- Workflow ownership stays in runtime-core; TUI never calls GateEngine or drain directly.
+
+### DQ6 — Metrics AC-5 (LOCKED)
+
+- **Winner**: `buildMetricsSnapshot()` composes US-0080 totals (tokens, cache, cost, `metric_source`) as authoritative accounting; adds derived counters from RunsStore audit + tool-broker summaries: phase duration, tool call counts, index latency samples, file/test counters, browser probe outcomes, retries, context-pack size estimates from existing config-view/token profile keys.
+- CLI/TUI display metrics; they do **not** append `token_cost_runs` rows — producers remain execute/QA paths per US-0080.
+- Conflicts surface as explicit `metrics_stale` / `evidence_missing` flags, not silent overwrite.
+
+### DQ7 — Approval and failure UX AC-6 (LOCKED)
+
+- **Winner**: shared `OperatorPrompts` module (used by CLI and TUI) wrapping decision-gate / stop-matrix terminal prompts:
+  - Interactive: keyed choices with visible default + `?` help; width-aware wrapping (min cols 40).
+  - Non-interactive: require explicit flags/env (`ITS_MAGIC_APPROVE=…`, `--yes`/`--no` only where architecture pins safe codes); otherwise fail-closed `OPERATOR_INPUT_REQUIRED`.
+  - Windows + Linux: UTF-8 stdout/stderr; no POSIX-only escape assumptions without Windows fallbacks.
+- Maps to existing `DECISION_UNRESOLVED`, drain operator gates (US-0144 when enabled), pause/skip caps — no new relaxability.
+
+### DQ8 — Bounded logs and streams AC-7 (LOCKED)
+
+- **Winner**: log/event views cap at N lines/chars (architecture pins N; research default 200 lines / 32 KiB visible) with `{truncated, total_bytes, evidence_path}` footer pointing to full files under `handoffs/` or app log paths.
+- Reuse US-0141 log ring/summary helpers when present; otherwise facade-owned tail-with-cap.
+- TUI streams poll/subscribe with backpressure drop + “N more events” summary, never unbounded in-memory buffers.
+
+### DQ9 — Local reconnect, cancel, tests AC-8 (LOCKED)
+
+- **Winner**: v1 **in-process** `OperatorSession` handle: CLI/TUI attach to a running `WorkflowEngine` instance in the same Node process (or child supervisor started by `itsm auto`); reconnect = re-bind listeners + refresh snapshots; **not** US-0148 socket protocol.
+- Cancel maps to existing stop-matrix / `AUTO_PAUSE_REQUEST` / workflow cancel tokens — no parallel cancel API.
+- **Reject** shipping daemon, versioned event schema, or cross-process replay (US-0148).
+
+### DQ10 — Tests, kit, R-id (LOCKED)
+
+Primary: `standalone/tests/contract` (`node:test`) Windows + Linux; fake-model; in-memory SQLite; no paid calls.
+
+1. `test_us0146_cli_command_parity_programmatic_and_scheduler` — AC-1 argv + slash mapping; `/auto`/`/quick` scheduled
+2. `test_us0146_cli_auth_models_delegate_isolated` — AC-1 `auth`/`models` use dispatchItsmCommand only; stub message gone for workflow commands
+3. `test_us0146_status_snapshot_compose_read_only` — AC-2 fields present; no dual-write token ledger
+4. `test_us0146_run_timeline_evidence_links` — AC-3 ordering, rework, evidence refs
+5. `test_us0146_tui_panels_client_only_boundaries` — AC-4 no CommandRouter import in tui package workflow path
+6. `test_us0146_metrics_token_cost_compose_no_conflict` — AC-5 US-0080 authority + derived counters
+7. `test_us0146_approval_prompt_interactive_noninteractive` — AC-6 Win/Linux width + non-interactive fail-closed
+8. `test_us0146_bounded_log_summary_evidence_ref` — AC-7 truncation + pointer
+9. `test_us0146_local_reconnect_cancel_narrow_terminal` — AC-8 attach/detach, cancel, cols≤40 layout
+
+Count **9** named tests (architecture may split/merge; stay 8–10). Kit `files` omit `standalone/`. No `auto.md` restore. No kit `cli.json` / plugin `tui.json`. **R-id**: **R-0143**. Expected sprint **S0153**.
+
+### Approach verdict
+
+| Approach | Summary | Verdict |
+|---|---|---|
+| **A1 (A\*)** | Sibling cli+tui apps + runtime-core `operator/` facades; compose US-0140/0143/0141/0142/0139/0080/0144 read-only; auth-only Pi | **WINNER** |
+| A2 | Third `@its-magic/observability` package | **Rejected** — D1 default compose unless arch proves |
+| A3 | Fat CLI owns WorkflowEngine | **Rejected** — violates D1/D5 |
+| A4 | OpenCode plugin as standalone `itsm` | **Rejected** — D10 OUT |
+| A5 | Prompt-only operator surface | **Rejected** — AC-1/AC-8 need programmatic parity |
+| A6 | US-0148 daemon early | **Rejected** — D8/D9 |
+| A7 | Graphical IDE/web client | **Rejected** — D5/D10 |
+
+**decision_gate=false** — DQ1–DQ10 LOCKED; companion **DEC-0146** Required → Accepted at `/architecture` only.
+
+### Research attestation — architecture handoff (2026-09-17T18:42:00Z)
+
+- Consumed discovery: `rp-auto-20260917-us0146-discovery-po-20260917T183626Z-US-0146` / `EF26D4E4E08FB368A8E9B879D01901DBD5DC180D9D0EC2A9F5EAA44EEF04F859` — MATCH; not STALE.
+- **DQ1–DQ10 LOCKED** as above. **AC map**: AC-1 DQ2; AC-2 DQ3; AC-3 DQ4; AC-4 DQ5; AC-5 DQ6; AC-6 DQ7; AC-7 DQ8; AC-8 DQ9+DQ10.
+- Do not author `# US-0146`, `decisions/DEC-0146.md`, or `sprints/S0153/` this phase. Do not mutate backlog Status/ACs. **Next**: `/architecture` (fresh tech-lead). CROSS_MODEL_REVIEW=0 — do not spawn sovereign-critic.
+
+### R-0143 delivery closure trailer (US-0146 / S0153)
+
+- **Status**: **delivered** (curator refresh-context **2026-09-17T20:25:00Z**; `auto-20260917-us0146`; `runtime_proof_id=rp-auto-20260917-us0146-refresh-context-curator-20260917T202500Z-US-0146`).
+- **Evidence**: `decisions/DEC-0146.md` Accepted; `# US-0146` architecture attestation; `standalone/tests/contract/us0146.contract.test.ts` 9/9; `standalone/packages/runtime-core/src/operator/` facades; `standalone/apps/cli` + `standalone/apps/tui`; `sprints/S0153/closure-verification.md` CLOSURE_PASS; compose US-0140..US-0144 / R-0142 DONE preserved; US-0145/US-0147/US-0148 OUT.
+- **Held**: R-0142 (US-0144) and prior R-* delivery trailers not wiped.
+
+## R-0144 — Installation, update, and existing-project adoption for US-0147
+
+- **Date**: 2026-09-17. **Story**: US-0147. **Status**: **delivered** (delivery closure trailer below; curator refresh **2026-09-17T21:50:00Z**). **Confidence**: high.
+- **Linked**: US-0147 (DONE), R-0143 / DEC-0146 / US-0146 (DONE — install **wires** `itsm`/CLI/TUI; do not rewrite operator facades), R-0142 / DEC-0144 / US-0144 (DONE compose-only), US-0134 / DEC-0134 kernel-bridge handshake, US-0135 auth-models, US-0138 config (LegacyScratchpadAdapter defer), US-0008/US-0018 installers + manifest, US-0055 installer QA parity, US-0142 browser-uat (Playwright), `its_magic/kernel-contract.json`, FRAMEWORK_KIT_REPO=1; US-0145 / US-0148 OUT; BUG-0022 OPEN not drained
+- **Producer consumed**: discovery `rp-auto-20260917-us0146-discovery-po-20260917T202630Z-US-0147` / `E4BFB3F6E8C862AB6870B31EE226FE09254916918EE3638977AE05C0070BDA91` — `compute_strict_proof_hash` MATCH at research issue `2026-09-17T20:30:00Z`; not STALE (ttl `2026-09-17T21:26:30Z`). CROSS_MODEL_REVIEW=0 — no sovereign-critic. `fresh_context_marker=tl-US0147-research-20260917T203000Z-fresh`
+- **ID policy**: highest delivered heading **R-0143** (US-0146). This entry is **R-0144**. Do **not** wipe or reuse R-0143. Do **not** reuse R-0143 body for US-0147.
+- **Recommendation**: **A1 (A\*)** — extend **triple-installer parity** (`installer.py` / `installer.ps1` / `installer.sh`) and `installer-owned-paths.manifest` (active + `template/` mirror) with an additive **standalone product bootstrap** that (1) delivers a **template-mirrored** `standalone/` workspace into the target repo under **`.its-magic/standalone/`** (gitignored runtime deps + lockfile), (2) runs a **deterministic post-install hook** (`bootstrap_standalone_runtime_installer_hook`) — `npm ci` (or `npm install --omit=dev` when architecture pins production-only) inside that tree, writes **`itsm` shim** (`.its-magic/bin/itsm` + optional repo-root `bin/itsm` only when operator opts in), (3) records **kernel compatibility metadata** (`its_magic/kernel-contract.json` + `supported-kernel-range.json` + `its_magic/.its-magic-version`) into `.its-magic/standalone/runtime-metadata.json`, (4) exposes **browser prerequisite** as explicit subcommand `itsm setup browser` (Playwright chromium; compose US-0142 package), (5) implements **adoption detector** reusing US-0134 three-marker kernel locate + host-profile classification without mutating `.cursor/` / `.opencode/`. Kit npm `files` may continue to **omit** repo-root `standalone/` for publish guard; consumer delivery is **manifest + template mirror**, not unpublished npm workspace. FRAMEWORK_KIT_REPO dev clones use in-tree `standalone/` directly when `locateMode=kit-dev`.
+- **Rejected**: shipping standalone only via npm `files` without template mirror (breaks US-0084 parity); rewriting Cursor/OpenCode host trees; forced scratchpad migration at install (§13.2); new host adapters; separate fourth installer entrypoint without PS1/sh/py parity; prebuilt opaque binary bundle as sole v1 path; US-0148 daemon/socket install; npm-publish/git-push; reading `.env`; duplicating kernel validators outside kernel-bridge
+- **Evidence**: `package.json` `files` lists `template/` + installers, **no** `standalone/`; `standalone/package.json` private workspace `apps/cli` bin `itsm`; `docs/engineering/context/installer-owned-paths.manifest` has no standalone paths today; `installer.py` host-config + scratchpad post-install hooks (pattern for new hook); `standalone/packages/kernel-bridge` locate + `KERNEL_*` handshake; US-0146 delivered `standalone/apps/cli` + `tui` + `runtime-core/src/operator/`; `its_magic/kernel-contract.json` schema_version 1
+- **Next**: `/architecture` authors `# US-0147` + **DEC-0147** Accepted; sprint-plan materializes **S0154**. No status or acceptance mutation this phase.
+
+### DQ1 — Standalone packaging under FRAMEWORK_KIT_REPO (LOCKED)
+
+- **Winner**: **template-mirrored workspace delivery** — add `template/.its-magic/standalone/` (or `template/standalone/` with manifest path pinned at architecture) containing the **same** workspace layout as repo-root `standalone/` (apps + packages + lockfile). Install/upgrade copies refresh **framework-owned** files per US-0018 clean/upgrade semantics; **never** overwrites operator-local trees under `.its-magic/runtime/`, `config.local.json`, scratchpad locals.
+- **Kit-dev**: when target is the framework repo (`standalone/package.json` child of kernel root), bootstrap **symlink or path pin** to repo-root `standalone/` to avoid duplicate `node_modules` (architecture pins one mode; default **use in-tree** for kit-dev only).
+- **Published npm kit**: continues to ship `template/`; standalone operator bits arrive via template mirror + post-install `npm ci`, not by adding `standalone/` to root `files` (keeps `guard_installer_publish` stable).
+- **Reject** consumer-only git submodule; **reject** checking `node_modules` into template.
+
+### DQ2 — Installer extension vs sibling script (LOCKED)
+
+- **Winner**: **extend `installer.py`** with `bootstrap_standalone_runtime_installer_hook` invoked from existing post-install ordering (after host-config example refresh, before runbook bootstrap — exact index architecture-pins); **PS1/sh** call the same Python function via `installer.py` subcommand for triple parity (US-0055 / US-0008).
+- **Repair entry**: `its-magic --mode upgrade --standalone-bootstrap` (and `--mode missing` path) re-runs hook idempotently; diagnostics reason `STANDALONE_BOOTSTRAP_FAILED` with stderr capture.
+- **Reject** standalone-only `.ps1` logic fork; **reject** replacing `its-magic.js` with `itsm`.
+
+### DQ3 — Adoption detector and host profiles (LOCKED)
+
+- **Winner**: `classifyProjectAdoptionProfile(target_root)`:
+  - **fresh**: kernel three-marker locate fails → AC-2 fresh-init path (template skeleton only).
+  - **existing-its-magic**: three-marker locate succeeds → **adopt** (AC-3); never rewrite `docs/product/backlog.md` body, `handoffs/`, `decisions/`, or sprint history.
+  - **host_profile**: `cursor-only` (`.cursor/commands` or rules present; no `.opencode`), `opencode-only` (`.opencode` tree; no material `.cursor` commands), `both-host`, `standalone-only` (markers without host dirs) — **advisory** in v1 install UX (runbook table); fail-closed **`ADOPT_PARTIAL_MARKERS`** when 1–2 of 3 kernel markers match.
+- Compose US-0134 `locateProjectKernel` — do not fork marker list.
+- **Reject** destructive “normalize layout” step; **reject** auto-deleting host folders.
+
+### DQ4 — Fresh init template set (LOCKED)
+
+- **Winner**: fresh install uses existing **`template/`** manifest paths (docs/handoffs/decisions/sprints scaffolding) with **starter backlog/acceptance** from template product docs — **no** copy of historical US-0001..US-0132 backlog from framework source repo (masterplan §33).
+- Optional `template/docs/product/backlog.starter.md` rename/swap at architecture; research default: keep template backlog **minimal** and document “import historical backlog” as out-of-band operator action.
+- **Reject** cloning full `docs/product/backlog.md` from kit repo into consumer fresh projects.
+
+### DQ5 — Preservation matrix and interrupted update (LOCKED)
+
+- **Winner**: authoritative split = manifest **`install_include_paths`** (framework refresh) vs explicit **deny_overwrite** set (locals, credentials, browser profiles, `project source` outside manifest, `.its-magic/runtime/**`, operator auth stores). Upgrade mode follows US-0018: refresh framework copies; **never** touch `*.local.*`, scratchpad.local, gitignored secrets.
+- **Interrupted update**: staging dir `.its-magic/install-staging/<run_id>/`; commit on success → update `runtime-metadata.json`; on failure rollback staging only + emit `INSTALL_INTERRUPTED_ROLLBACK_OK` with preserved user layers list.
+- **Reject** copying user artifacts into `template/` during install.
+
+### DQ6 — Kernel/runtime compatibility delivery (LOCKED)
+
+- **Winner**: every install/upgrade runs **kernel-bridge preflight** (`getKernelVersion` + `readContractManifest` + semver range) before `itsm` shim is written; persist summary to `.its-magic/standalone/runtime-metadata.json` (`kernel_version`, `contract_schema_version`, `supported_range`, `validators[]` hash).
+- Surface existing **`KERNEL_*`** family (US-0134) via CLI `itsm doctor` or `its-magic --mode upgrade` stderr; architecture locks any new **`INSTALL_*`** codes without duplicating handshake logic.
+- **Reject** second version file; **reject** skipping handshake when `FRAMEWORK_KIT_REPO=1`.
+
+### DQ7 — Browser prerequisites (LOCKED)
+
+- **Winner**: **explicit operator step** `itsm setup browser` (and documented runbook prerequisite for browser UAT) runs Playwright browser install scoped to `.its-magic/standalone/node_modules` (compose `@its-magic/browser-uat` / US-0142). Install **does not** silently download browsers in CI unless `ITS_MAGIC_INSTALL_BROWSER=1`.
+- **Offline/airgap**: fail-closed `INSTALL_BROWSER_OFFLINE` with runbook offline bundle guidance (documentation-only v1; no mandatory airgap tarball).
+- **Rollback**: failed browser setup does **not** roll back framework install; leaves `browser_prereq=missing` flag in metadata.
+
+### DQ8 — Scratchpad/config coexistence (LOCKED)
+
+- **Winner**: v1 install **does not** invoke `LegacyScratchpadAdapter` migration (masterplan §13.2 defer). Diagnostics may **WARN** `SCRATCHPAD_LEGACY_KEYS_PRESENT` when scratchpad-only keys exist; pointer to US-0138 config JSON path in runbook.
+- Host-neutral `.its-magic/config*.json` refresh follows existing installer host-config hooks — unchanged semantics.
+- **Reject** forced scratchpad rewrite at adopt.
+
+### DQ9 — Uninstall and coexistence (LOCKED)
+
+- **Winner**: `its-magic --mode uninstall-standalone` (name architecture-pins) removes: `.its-magic/standalone/` workspace, `itsm` shims, install-staging, runtime-metadata; **preserves** `.cursor/`, `.opencode/`, `its_magic/` framework copy, user locals, project source, browser profiles under user data dirs.
+- Coexistence with older kit: detect `.its-magic-version` / `its_magic/.its-magic-version` mismatch → advisory `KIT_VERSION_COEXISTENCE` (no auto-removal of older kit files).
+- **Reject** uninstall that deletes host IDE config.
+
+### DQ10 — Tests, kit, R-id (LOCKED)
+
+Primary: pytest + installer fixture repos (compose US-0055); optional `standalone/tests/contract` smoke for `itsm --version` after bootstrap; Windows + Linux CI matrix.
+
+1. `test_us0147_fresh_install_manifest_parity` — AC-1/AC-2 triple-installer + template mirror
+2. `test_us0147_upgrade_preserves_user_layers` — AC-5 locals untouched
+3. `test_us0147_adopt_cursor_only_repo` — AC-3/AC-4
+4. `test_us0147_adopt_opencode_only_repo` — AC-3/AC-4
+5. `test_us0147_adopt_both_hosts_repo` — AC-3/AC-4
+6. `test_us0147_interrupted_update_rollback` — AC-1 rollback guidance
+7. `test_us0147_kernel_mismatch_fail_closed` — AC-6 diagnostics
+8. `test_us0147_browser_setup_explicit_gate` — AC-1 browser prereq
+9. `test_us0147_uninstall_preserves_hosts` — AC-7/AC-9
+10. `test_us0147_runbook_sections_present` — AC-7 template parity
+
+Count **10** named tests (architecture may split; stay 8–12). **R-id**: **R-0144**. Expected sprint **S0154**. Kit publish guard unchanged unless architecture adds template standalone mirror to manifest tests.
+
+### Approach verdict
+
+| Approach | Summary | Verdict |
+|---|---|---|
+| **A1 (A\*)** | Manifest + template mirror `.its-magic/standalone/` + installer hook + `itsm` shim + kernel preflight + explicit browser setup | **WINNER** |
+| A2 | Add `standalone/` to npm `files` only | **Rejected** — publish/parity risk |
+| A3 | Separate `install-standalone.sh` without triple parity | **Rejected** — D1/US-0055 |
+| A4 | Rewrite hosts during adopt | **Rejected** — D5/D6 |
+| A5 | Forced scratchpad migration | **Rejected** — D8/§13.2 |
+| A6 | US-0148 daemon install | **Rejected** — D10 |
+| A7 | npm publish standalone product | **Rejected** — D10 |
+
+**decision_gate=false** — DQ1–DQ10 LOCKED; companion **DEC-0147** Required → Accepted at `/architecture` only.
+
+### Research attestation — architecture handoff (2026-09-17T20:30:00Z)
+
+- Consumed discovery: `rp-auto-20260917-us0146-discovery-po-20260917T202630Z-US-0147` / `E4BFB3F6E8C862AB6870B31EE226FE09254916918EE3638977AE05C0070BDA91` — MATCH; not STALE.
+- **Discovery D1–D10** reflected in DQ1–DQ10 above. **AC map**: AC-1 DQ1+DQ2+DQ6+DQ7; AC-2 DQ4; AC-3 DQ3; AC-4 DQ3; AC-5 DQ5; AC-6 DQ6; AC-7 DQ8+DQ9+runbook; AC-8 DQ10.
+- Do not author `# US-0147`, `decisions/DEC-0147.md`, or `sprints/S0154/` this phase. Do not mutate backlog Status/ACs. **Next**: `/architecture` (fresh tech-lead). CROSS_MODEL_REVIEW=0 — do not spawn sovereign-critic.
+
+### R-0144 delivery closure trailer (US-0147 / S0154)
+
+- **Status**: **delivered** (curator refresh-context **2026-09-17T21:50:00Z**; `auto-20260917-us0146`; `runtime_proof_id=rp-auto-20260917-us0146-refresh-context-curator-20260917T215000Z-US-0147`).
+- **Evidence**: `decisions/DEC-0147.md` Accepted; `# US-0147`; `tests/us0147_contract_test.py` **10/10**; `scripts/standalone_runtime_install_lib.py` + triple installers + `installer-owned-paths.manifest` + `template/.its-magic/standalone/`; `sprints/S0154/closure-verification.md` CLOSURE_PASS; compose US-0140..US-0146 / **R-0143** DONE preserved; US-0145/US-0148 OUT.
+- **Held**: R-0143 (US-0146) and prior R-* delivery trailers not wiped.
+
+## R-0145 — Parallel development, release/deploy, self-healing, and closure for US-0145
+
+- **Date**: 2026-09-17. **Story**: US-0145. **Status**: **delivered** (delivery closure trailer below; curator refresh **2026-09-17T21:18:00Z**). **Confidence**: high.
+- **Linked**: US-0145 (OPEN), R-0144 / DEC-0147 / US-0147 (DONE — install/bootstrap IN; do not rewrite), R-0143 / DEC-0146 / US-0146 (DONE — `itsm` observe/trigger only), R-0142 / DEC-0144 / US-0144 (DONE compose-only), R-0141 / DEC-0143 / US-0143 (DONE — drain/`runAuto`/`runQuick` IN; no CommandRouter rewrite), US-0140 / DEC-0140 (`closure.ts`, `writeReleaseEvidence`, `releaseCannotMarkDone`), US-0108 `scripts/parallel_dev_arbiter.py` / DEC-0108, US-0109 `scripts/self_healing_deploy_lib.py` / DEC-0109, US-0107 deferral register, US-0045 status authority, US-0080 token-cost caps, US-0142 browser smoke evidence, US-0136 session isolation; US-0148 OUT; BUG-0022 OPEN not drained; FRAMEWORK_KIT_REPO=1
+- **Producer consumed**: discovery `rp-auto-20260917-us0146-discovery-po-20260917T200000Z-US-0145` / `D65648EBD8A325F98E69B718A2E81A9D04778B92C1C9F3CD690EE6160E21143C` — `compute_strict_proof_hash` MATCH at research issue `2026-09-17T22:00:00Z`; discovery D1–D10 unchanged. CROSS_MODEL_REVIEW=0 — no sovereign-critic. `fresh_context_marker=tl-US0145-research-20260917T220000Z-fresh`
+- **ID policy**: highest delivered heading **R-0144** (US-0147). This entry is **R-0145**. Do **not** wipe or reuse R-0144. Do **not** reuse R-0144 body for US-0145.
+- **Recommendation**: **A1 (A\*)** — add nested **`workflow/delivery/`** in `@its-magic/runtime-core` with **`ParallelDevCoordinator`** (optional post-execute fork) and **`ReleaseDeployPipeline`** (typed targets + post-deploy healing) as **thin TS orchestrators** over a new closed **`KernelBridge.runDeliveryOperation()`** surface (mirror `runSovereignOperation` pattern) backed by **`scripts/delivery_runtime_bridge.py`** dispatching to existing **`parallel_dev_arbiter.py`** and **`self_healing_deploy_lib.py`** (no TS ports of git/worktree/healing logic). Default-off: `SOVEREIGN_PARALLEL_DEV=0` and `AUTO_SOVEREIGN_SELF_HEALING_DEPLOY=0` preserve byte-identical paths. **`WorkflowEngine`** calls coordinators at pinned phase boundaries (**after execute PASS**, before independent QA merge path; **after release artifact PASS**, before closure handoff) without amending US-0143 **`runAuto`/`runQuick`** drain loop or **`RELEASE_GATE_ORDER`**. **`ReleaseTarget`** registry (git/GitHub, npm, ssh_command, docker, custom_command) with dry-run/apply, idempotency keys, and per-target result ledger JSONL under `handoffs/deploy_results/` (architecture pins path). Secrets via existing config/secrets injection — **no `.env` reads**. Compose US-0146 operator surfaces for observe-only of parallel/deploy state.
+- **Rejected**: rewriting **`CommandRouter`** / US-0143 drain; amending **`RELEASE_GATE_ORDER`** or GateEngine table order; TS reimplementation of US-0108/0109; sibling `@its-magic/parallel-dev` package; Pi on orchestration path; prompt-only parallel/deploy; release phase calling **`applyClosure`** or flipping DONE; claiming RELEASE_PASS when deploy deferred; US-0148 daemon protocol; live npm-publish/git-push in CI; restore `.opencode/commands/auto.md`; kit `cli.json` / plugin `tui.json`; US-0144 critic content expansion
+- **Evidence**: `scripts/parallel_dev_arbiter.py` (worktree CRUD, pick artifact, resource lock); `scripts/self_healing_deploy_lib.py` (`DEPLOY_HEALING_*`, `DEPLOY_DEFERRED` via US-0107); `standalone/packages/runtime-core/src/workflow/closure.ts` (`releaseCannotMarkDone`, `applyClosure`); `gate-engine.ts` `RELEASE_GATE_ORDER` (5 steps); `workflow-engine.ts` `writeRelease`/`close`; `standalone/tests/contract/us0140.contract.test.ts` closure ownership tests; `handoffs/release_queue.md` release notes must not claim deploy PASS on deferral
+- **Next**: `/architecture` authors `# US-0145` + **DEC-0145** Accepted; sprint-plan materializes **S0155**. No status or acceptance mutation this phase.
+
+### DQ1 — Parallel orchestration owner (LOCKED)
+
+- **Winner**: **`ParallelDevCoordinator`** nested under `runtime-core/src/workflow/delivery/parallel-dev.ts`, owned by **`WorkflowEngine`** — invoked only when `lookupParallelDev(config)` true (`SOVEREIGN_PARALLEL_DEV=1` + scratchpad keys per DEC-0108).
+- **Hook point**: optional branch **after execute phase completes with PASS** (architecture pins ordering vs independent QA): spawn N isolated DEV sessions against worktrees via bridge op `parallel_dev_spawn`; main working tree remains read-only for producer edits until arbiter merge.
+- **US-0143**: `/auto`/`/quick` drain unchanged; parallel mode is **orthogonal** — scheduler may set `parallel_dev_requested` flag in run metadata; coordinator no-ops when disabled.
+- **Reject** embedding parallel inside `DeliveryRouter` drain loop; **reject** KernelBridge-only with no WorkflowEngine owner (unobservable phase transitions).
+
+### DQ2 — Worktree lifecycle (LOCKED)
+
+- **Winner**: compose **`parallel_dev_arbiter.py`** via `runDeliveryOperation("parallel_dev_*")` ops: `create_worktrees`, `list_active`, `cleanup_orphans`, `merge_winner` — reuse DEC-0108 reason codes and `handoffs/parallel_dev_pick.json` v1 schema.
+- **Roots**: worktrees under `.its-magic/worktrees/<run_id>/` (gitignored); **PolicyEngine** allowlist extended additively for that root only (architecture pins); Win/Linux git required — fail-closed `PARALLEL_DEV_WORKTREE_CREATE_FAILED` when git missing.
+- **Orphans**: coordinator `cleanup_orphans` on run end + resume `discardOrphans` pattern compose US-0143 repair ledger.
+- **Reject** TS git subprocess port; **reject** mutating main tree before QA arbiter merge.
+
+### DQ3 — QA arbiter session (LOCKED)
+
+- **Winner**: fresh **`role-runtime` supervisor** session `phase_id=qa-arbiter` (not producer role) consumes **candidate evidence packages** `{candidate_id, worktree_path, test_report_refs[], diff_stat_ref, token_cost_ref, model_ids[], anti_slop_score?}` built by coordinator from each parallel instance.
+- **Outcomes**: `winner_selected` → controlled merge via bridge `parallel_dev_merge_winner`; `reject_all` → `PARALLEL_DEV_SELECTION_NO_PASS` halt; `merge_conflict` → evidence + no DONE flip.
+- **Compose US-0136** spawn isolation; **no producer self-arbitration** — arbiter session_id ≠ any candidate DEV session_id.
+- **Reject** inline LLM merge without evidence package; **reject** critic hook substituting for QA arbiter (US-0144 compose-only).
+
+### DQ4 — Resource guard configuration (LOCKED)
+
+- **Winner**: unified **`DeliveryResourceGuard`** reading scratchpad keys (DEC-0108 parallel caps + DEC-0109 deploy retry caps) **and** US-0080 run token/cost totals **and** runtime counters (active worktrees, concurrent test workers, browser slots from US-0142) with fail-closed codes: `PARALLEL_DEV_RESOURCE_CAP_EXHAUSTED`, `DELIVERY_WALL_CLOCK_EXCEEDED`, `DELIVERY_TOKEN_BUDGET_EXHAUSTED`, `DELIVERY_CONCURRENT_TEST_CAP`.
+- **Config surface**: `ConfigView` lookups only — no new top-level RuntimeConfig domain in v1; architecture may add nested `delivery.*` keys later.
+- **Reject** unbounded parallel spawn; **reject** silent cap ignore.
+
+### DQ5 — ReleaseTarget type system (LOCKED)
+
+- **Winner**: TS **`ReleaseTargetKind`** union + **`ReleaseTargetAdapter`** interface `{kind, describe(), dryRun(ctx), apply(ctx), verify(ctx)}` with **`ReleaseTargetContext`** carrying `kernelRoot`, `sprint_id`, `orchestrator_run_id`, `secrets_ref` (resolved via config secrets API — env key names only, no `.env` file read).
+- **Kinds v1**: `git_github` (compose kit release-trigger / changelog contracts), `npm` (local registry dry-run default), `ssh_command`, `docker`, `custom_command` — each emits **`DeployTargetResult`** `{target_id, kind, ok, reason_code?, stdout_ref?, artifact_sha?}` appended to deploy results ledger.
+- **Idempotency**: `target_run_key = hash(orchestrator_run_id, sprint_id, target_id, attempt)`; replays return prior result when `deploy_idempotent_replay=1`.
+- **Reject** hard-coded single-target-only; **reject** reading `.env` for credentials.
+
+### DQ6 — Gate composition (LOCKED)
+
+- **Winner**: extend **`ReleaseGateInput`** additively with optional `deploy_targets_pass?: boolean`, `approval_granted?: boolean`, `target_policy_ok?: boolean` evaluated **inside** `createGateEngine().evaluate()` **after** existing five steps succeed — **without** inserting new names into **`RELEASE_GATE_ORDER`** array (compose-only: extra conjuncts on `fail_closed_reason` step).
+- **Release evidence envelope** gains optional `deploy_results_ref` and `approval_ref` — closure still requires tests/qa/uat/artifacts as today.
+- **Reject** reordering `RELEASE_GATE_ORDER`; **reject** skipping QA/UAT when deploy enabled.
+
+### DQ7 — Deploy smoke + repair loop (LOCKED)
+
+- **Winner**: **`ReleaseDeployPipeline.runPostDeployHealing()`** after target `apply` PASS composes **`self_healing_deploy_lib.py`** via bridge ops `deploy_smoke_probe`, `deploy_healing_retry` with caps `AUTO_SOVEREIGN_DEPLOY_RETRY_MAX`.
+- **Smoke evidence**: health endpoint + optional acceptance smoke path; browser probes compose US-0142 read APIs when `probe_kind` includes acceptance — no fake PASS.
+- **Repair loop**: on smoke FAIL, spawn **fresh DEV** repair slot (BUG-0006) with bounded attempts → rebuild release artifacts → re-apply targets; does **not** re-enter full execute from step 1.
+- **Reject** infinite retry; **reject** repair inside closure phase.
+
+### DQ8 — Deferral + truthfulness (LOCKED)
+
+- **Winner**: exhausted healing calls US-0107 **`append_deferral(work_item_kind=deploy)`** with canonical **`DEPLOY_DEFERRED`** / `DEPLOY_HEALING_DEFERRED` reason; **`writeReleaseEvidence`** throws or returns fail-closed when any target not OK — **no** `RELEASE_PASS` in `handoffs/releases/*` or `release_queue.md` while deferred.
+- **Operator surfaces**: US-0146 status/timeline show `deploy_state=deferred` + deferral ref; release notes template adds explicit **DEPLOY_DEFERRED** section when applicable.
+- **Reject** reporting “released” on deploy fail; **reject** closure without release envelope when deploy was required by policy.
+
+### DQ9 — Closure boundary (LOCKED)
+
+- **Winner**: enforce existing **`releaseCannotMarkDone()`** on all release-phase writers; **`applyClosure()`** sole DONE authority — add contract tests mirroring `us0140` patterns forbidding `status_written: DONE` from release helpers.
+- **Forbidden paths**: release handler calling `applyClosure`; closure without `envelopeValid` release evidence; parallel merge writing backlog Status.
+- **Successful release** returns `{ marked_done: false, deploy_results_ref?, release_run_id }` then orchestrator runs **separate closure phase** only.
+
+### DQ10 — Tests, kit, R-id (LOCKED)
+
+Primary: `standalone/tests/contract/us0145.contract.test.ts` (`node:test`) + fake git/target doubles; optional pytest bridge self-tests; Windows + Linux CI; no live npm publish, no git push, no paid network.
+
+1. `test_us0145_parallel_default_off_byte_identical` — AC-1 boundary default-off
+2. `test_us0145_worktree_isolation_no_main_mutation` — AC-1
+3. `test_us0145_resource_guard_fail_closed` — AC-2
+4. `test_us0145_qa_arbiter_fresh_session_winner_merge` — AC-3
+5. `test_us0145_qa_arbiter_reject_all_evidence` — AC-3
+6. `test_us0145_release_target_matrix_dry_run` — AC-4 (kinds smoke)
+7. `test_us0145_release_gates_compose_order_unchanged` — AC-5
+8. `test_us0145_deploy_target_failure_no_release_pass` — AC-5/AC-7
+9. `test_us0145_smoke_repair_success_bounded` — AC-6
+10. `test_us0145_smoke_repair_exhausted_deferred` — AC-6/AC-7
+11. `test_us0145_release_cannot_mark_done` — AC-8/AC-9
+12. `test_us0145_closure_requires_valid_release_envelope` — AC-8/AC-9
+
+Count **12** named tests. Kit `files` omit `standalone/`. **R-id**: **R-0145**. Expected sprint **S0155**.
+
+### Approach verdict
+
+| Approach | Summary | Verdict |
+|---|---|---|
+| **A1 (A\*)** | Nested `workflow/delivery/` + `runDeliveryOperation` bridge to US-0108/0109; WorkflowEngine hooks; ReleaseTarget registry; GateEngine compose-only | **WINNER** |
+| A2 | TS port of parallel_dev + healing | **Rejected** — D1/D6 |
+| A3 | Parallel inside US-0143 drain rewrite | **Rejected** — D1/D10 |
+| A4 | Sibling delivery package | **Rejected** — D1 default nested |
+| A5 | Prompt-only deploy | **Rejected** — AC-4..AC-7 |
+| A6 | Amend `RELEASE_GATE_ORDER` | **Rejected** — D5 |
+| A7 | Release marks DONE | **Rejected** — D8/AC-8 |
+| A8 | US-0148 daemon deploy control | **Rejected** — D10 |
+
+**decision_gate=false** — DQ1–DQ10 LOCKED; companion **DEC-0145** Required → Accepted at `/architecture` only.
+
+### Risks and mitigations
+
+| Risk | Mitigation |
+|---|---|
+| Git worktree flaky on Windows | Pin paths under `.its-magic/worktrees/`; contract tests with fake git double; fail-closed create |
+| Bridge timeout on merge | Dedicated timeout per op; `PARALLEL_DEV_MERGE_TIMEOUT` evidence |
+| Deploy secrets mishandling | Config secrets API only; redact in deploy results ledger |
+| Gate/order regression | Golden test asserting `RELEASE_GATE_ORDER` literal unchanged |
+| Operator truthfulness | DEPLOY_DEFERRED blocks release notes PASS token; queue row flags |
+
+### Research attestation — architecture handoff (2026-09-17T22:00:00Z)
+
+- Consumed discovery: `rp-auto-20260917-us0146-discovery-po-20260917T200000Z-US-0145` / `D65648EBD8A325F98E69B718A2E81A9D04778B92C1C9F3CD690EE6160E21143C` — MATCH.
+- **Discovery D1–D10** reflected in DQ1–DQ10 above. **AC map**: AC-1 DQ1+DQ2; AC-2 DQ4; AC-3 DQ3; AC-4 DQ5; AC-5 DQ6; AC-6 DQ7; AC-7 DQ8; AC-8 DQ9; AC-9 DQ10.
+- Do not author `# US-0145`, `decisions/DEC-0145.md`, or `sprints/S0155/` this phase. Do not mutate backlog Status/ACs. **Next**: `/architecture` (fresh tech-lead). CROSS_MODEL_REVIEW=0 — do not spawn sovereign-critic.
+
+### R-0145 delivery closure trailer (US-0145 / S0155)
+
+- **Status**: **delivered** (curator refresh-context **2026-09-17T21:18:00Z**; `auto-20260917-us0146`; `runtime_proof_id=rp-auto-20260917-us0146-refresh-context-curator-20260917T211800Z-US-0145`).
+- **Evidence**: `decisions/DEC-0145.md` Accepted; `# US-0145`; `standalone/tests/contract/us0145.contract.test.ts` **13/13**; `scripts/delivery_runtime_bridge.py` + `workflow/delivery/`; `sprints/S0155/closure-verification.md` CLOSURE_PASS; compose US-0140..US-0147 / **R-0144** DONE preserved; US-0148 OUT.
+- **Held**: R-0144 (US-0147) and prior R-* delivery trailers not wiped.
+
+## R-0148 — Stable control protocol and recoverable daemon for US-0148
+
+- **Date**: 2026-09-17. **Story**: US-0148. **Status**: **OPEN** (research complete; execute not started). **Confidence**: high.
+- **Linked**: US-0148 (OPEN), R-0145 / DEC-0145 / US-0145 (DONE — compose-only), R-0144 / DEC-0147 / US-0147 (DONE), R-0143 / DEC-0146 / US-0146 (DONE — CLI/TUI + `runtime-core/src/operator/` **must migrate** to daemon clients; preserve command vocabulary), R-0142 / DEC-0144 / US-0144 (DONE compose-only), R-0141 / DEC-0143 / US-0143 (DONE — scheduling IN; no CommandRouter rewrite), US-0140 `PROGRAMMATIC_COMMANDS`, US-0136 session isolation, US-0135 auth-models redaction, `runs/store` + `recovery/crash-resume`, masterplan §29.3 / §30 (`apps/daemon`, `packages/protocol`), §32 Phase 8 JSON-RPC; BUG-0022 OPEN not drained; FRAMEWORK_KIT_REPO=1
+- **Producer consumed**: discovery `rp-auto-20260917-us0148-discovery-po-20260917T211000Z-US-0148` / `F9FCC16A49352472DADA88CEA509768C50E3EDCD5CE614EE53AFE07462CCA4AC` — `compute_strict_proof_hash` MATCH at research issue `2026-09-17T21:12:00Z`; not STALE (ttl `2026-09-17T22:10:00Z`). CROSS_MODEL_REVIEW=0 — no sovereign-critic. `fresh_context_marker=tl-US0148-research-20260917T211200Z-fresh`
+- **ID policy**: highest delivered heading **R-0145** (US-0145). This entry is **R-0148**. Do **not** wipe or reuse R-0145. Do **not** reuse R-0145 body for US-0148.
+- **Recommendation**: **A1 (A\*)** — add sibling **`@its-magic/protocol`** (`standalone/packages/protocol`) with **versioned JSON schemas** (`protocol_version`, `min_client_version`, typed `RuntimeCommand` / `RuntimeEvent` unions mirroring masterplan §29.3 inventory) and **`@its-magic/daemon`** app (`standalone/apps/daemon`) as a **thin local host** that owns **one** in-process `WorkflowEngine` + existing operator facades (`OperatorCommandFacade`, `OperatorObservabilityService`, `OperatorPrompts`) and exposes **JSON-RPC 2.0** on **loopback-only HTTP** (`127.0.0.1` / `::1` bind; default-deny `0.0.0.0`) plus a **separate ordered event channel** (architecture chooses **WebSocket** or **SSE** on same listener) with monotonic **`seq`** per `run_id`, **`after_seq` replay cursor**, and bounded fan-out. CLI/TUI gain a **`DaemonTransport`** adapter (default-on when daemon reachable; honest fallback to legacy in-process only for contract doubles — architecture pins removal). **No workflow logic** in daemon beyond delegation; **no Pi** on wire paths. Restart path composes **`crashResume()`** + **`RunsStore`** reconciliation with repo evidence; resume spawns **fresh** role sessions (US-0136); orphan process cleanup policy architecture-pins.
+- **Rejected**: moving `WorkflowEngine` into CLI/TUI; rewriting `CommandRouter` / `GateEngine`; Pi on protocol; remote bind by default; distributed workers v1; shipping web/Android/IDE clients; TS-only protocol without versioned schema module; duplicating US-0146 operator routing; US-0145 delivery orchestration in daemon; restore `.opencode/commands/auto.md`; kit `cli.json` / plugin `tui.json`; npm-publish; git push; `.env` reads
+- **Evidence**: no `standalone/apps/daemon` or `packages/protocol` today; US-0146 `OperatorSession` in-process reconnect (`standalone/packages/runtime-core/src/operator/operator-session.ts`); `OperatorCommandFacade` routes to `CommandRouter` without daemon; `createRunsStore` / `crashResume` in `runtime-core`; masterplan layout §30; discovery D1–D10 in backlog `discovery_notes`
+- **Next**: `/architecture` authors `# US-0148` + **DEC-0148** Accepted; sprint-plan materializes **S0156**. No status or acceptance mutation this phase.
+
+### DQ1 — Local transport (LOCKED)
+
+- **Winner**: **JSON-RPC 2.0 over loopback HTTP** (masterplan Phase 8 alignment) on **`127.0.0.1` only** with architecture-pinned port file **`.its-magic/daemon/listen.json`** (`host`, `port`, `protocol_version`). Methods map 1:1 to control ops (`daemon.ping`, `run.start`, `run.attach`, `command.submit`, `approval.respond`, `run.cancel`, `status.snapshot`). **Reject** raw stdin protocol; **reject** default remote exposure.
+- **Event channel**: same listener exposes **`/v1/events`** (WebSocket or SSE — architecture picks one) carrying **`RuntimeEvent`** envelopes with monotonic **`seq`**; RPC errors use JSON-RPC codes + story reason families (`PROTOCOL_*`, `DAEMON_*`).
+- **Windows/Linux**: loopback HTTP avoids pipe/socket divergence in v1; optional future Unix domain socket is additive, not v1 blocker.
+
+### DQ2 — Package layout (LOCKED)
+
+- **Winner**: sibling **`standalone/packages/protocol`** (`@its-magic/protocol`) exports schema version constants, TypeScript types, JSON Schema (or zod) artifacts, and redaction helpers; **`standalone/apps/daemon`** depends on `runtime-core` + `protocol` only (no cli/tui imports).
+- **Client SDK**: thin **`protocol-client`** module colocated in `protocol` or `runtime-core/src/daemon-client/` (architecture pins) consumed by `@its-magic/cli` and `@its-magic/tui`.
+- **Reject** nesting protocol only inside cli; **reject** generated code without checked-in schema sources.
+
+### DQ3 — Ordered event stream (LOCKED)
+
+- **Winner**: daemon maintains **per-run append-only event log** (SQLite table keyed by `run_id`, `seq` auto-increment) fed by hooks on `WorkflowEngine` / observability facades (architecture pins injection points — compose existing operator timeline sources, no duplicate emitters).
+- **Subscribe**: clients pass `after_seq`; server streams in-order; **backpressure** when client lag > `DAEMON_EVENT_LAG_MAX` (architecture pins): switch to **bounded summary events** + `evidence_ref` (compose US-0146 log caps pattern).
+- **Replay boundary**: on reconnect, client MUST send last acknowledged `seq`; server replays `[after_seq+1 .. head]` then live; gaps fail-closed `EVENT_SEQ_GAP`.
+- **Reject** unbounded in-memory-only log without persistence across daemon restart.
+
+### DQ4 — CLI/TUI migration (LOCKED)
+
+- **Winner**: introduce **`OperatorTransport`** interface `{ submitCommand, subscribeEvents, attachRun, cancel, respondApproval }` with implementations **`InProcessTransport`** (existing `OperatorSession` + facades) and **`DaemonTransport`** (protocol-client). Production default: attempt daemon attach via listen file; on `DAEMON_UNREACHABLE` fail with actionable start hint (not silent in-process for AC-3).
+- **US-0146 tests**: keep **`test_us0146_*`** green via in-process doubles; add **`test_us0148_*`** for cross-process paths — do **not** rewrite US-0146 contract semantics in place.
+- **Command vocabulary**: unchanged AC-1 names; daemon RPC wraps same `OperatorCommandFacade` outcomes.
+- **Reject** breaking `itsm` argv surface; **reject** duplicating routing tables in daemon.
+
+### DQ5 — Schema versioning (LOCKED)
+
+- **Winner**: **`protocol_version`** semver on wire + **`capabilities`** object negotiated on `daemon.hello` (client sends `client_version`, `supported_protocol_range`; server responds active version + method allowlist). Unsupported methods → JSON-RPC `-32601` + **`PROTOCOL_COMMAND_UNSUPPORTED`** with migration doc link slug.
+- **Mismatch**: fail-closed **`PROTOCOL_VERSION_MISMATCH`** when client outside supported range (AC-5); no silent downgrade except explicit `force_compat=1` test flag.
+- **Reject** implicit version from npm package only without on-wire handshake.
+
+### DQ6 — Restart reconciliation (LOCKED)
+
+- **Winner**: on daemon startup, run **`crashResume(repo, store)`** then **`reconcileOperationalLedger()`** (architecture pins helper composing `RunsStore` + repo `handoffs/resume_brief.md` / sprint pointers). Orphan **child PIDs** and stale **attach tokens** cleaned per policy table (architecture pins TTLs).
+- **Resume work**: only via **fresh** `SessionSupervisor` sessions (US-0136); daemon never resurrects old role session_ids.
+- **Reject** auto-continuing LLM turns from pre-crash session handles; **reject** writing backlog Status from daemon.
+
+### DQ7 — Local authn/z (LOCKED)
+
+- **Winner**: daemon generates **ephemeral bearer token** at start → **`.its-magic/daemon/client.token`** (0600-class); all RPC/event connections require `Authorization: Bearer …`. **Client roles**: `controller` (commands, cancel, approvals) vs `observer` (read-only events/status) encoded in attach handshake; default single-controller lock with **`DAEMON_CONTROLLER_BUSY`** when second controller attaches (concurrent observers allowed — DQ9).
+- **Origin identity**: each client sends `client_id` + `client_kind` (`cli`|`tui`|`test`) in `daemon.hello`; logged to RunsStore audit.
+- **Remote**: bind **`0.0.0.0`** disabled unless `ITS_MAGIC_DAEMON_REMOTE=1` + explicit allowlist (architecture pins); default **AC-4 safe**.
+- **Reject** trusting localhost without token (multi-user hosts).
+
+### DQ8 — Secret redaction (LOCKED)
+
+- **Winner**: **`protocol`** exports **`redactEventPayload()`** applying same rules as US-0135 / operator observability (API keys, bearer tokens, `.env`-shaped strings) on **every outbound event** and RPC result serializer; unit-tested golden vectors shared with US-0146 redaction tests where applicable.
+- **Reject** client-side-only redaction; **reject** logging raw approval payloads.
+
+### DQ9 — Concurrent clients (LOCKED)
+
+- **Winner**: **one controller** + **N observers** per active run; approval requests route to **first attached controller**; if none, queue with timeout → `APPROVAL_NO_CONTROLLER` (fail-closed). Observers receive redacted events only.
+- **Cancel**: controller `run.cancel` maps to existing stop-matrix / `OperatorSession.cancel` delegation.
+- **Reject** last-writer-wins approvals without audit trail.
+
+### DQ10 — Tests, kit, R-id (LOCKED)
+
+Primary: `standalone/tests/contract/us0148.contract.test.ts` (`node:test`) with in-process daemon fixture (loopback port 0) + fake slow consumers; Windows + Linux CI; no remote network.
+
+1. `test_us0148_protocol_version_mismatch_fail_closed` — AC-5
+2. `test_us0148_schema_command_event_roundtrip` — AC-1
+3. `test_us0148_daemon_delegates_no_duplicate_workflow` — AC-2
+4. `test_us0148_cli_attach_ordered_events` — AC-3
+5. `test_us0148_reconnect_replay_after_seq` — AC-3 / AC-7
+6. `test_us0148_loopback_bind_default_deny_remote` — AC-4
+7. `test_us0148_wire_payload_secret_redaction` — AC-4
+8. `test_us0148_event_backpressure_summary_mode` — AC-7
+9. `test_us0148_concurrent_observer_controller_roles` — AC-7
+10. `test_us0148_approval_routing_single_controller` — AC-7
+11. `test_us0148_cancel_propagates_to_runtime` — AC-7
+12. `test_us0148_crash_restart_reconcile_fresh_sessions` — AC-6
+
+Count **12** named tests. Kit `files` omit `standalone/` unless architecture proves template mirror needed (default **omit**). **R-id**: **R-0148**. Expected sprint **S0156**. **AC-8** satisfied by **`docs/engineering/operator/daemon-protocol.md`** (architecture path) describing RPC methods, event types, reconnect, and deferred client profiles — no shipped remote clients.
+
+### Approach verdict
+
+| Approach | Summary | Verdict |
+|---|---|---|
+| **A1 (A\*)** | `@its-magic/protocol` + loopback JSON-RPC + ordered event log + thin `apps/daemon` delegating to runtime-core operator/workflow | **WINNER** |
+| A2 | In-process only; extend `OperatorSession` | **Rejected** — D4/AC-3 cross-process |
+| A3 | WebSocket-only custom protocol (no JSON-RPC) | **Rejected** — Phase 8 / deferred clients |
+| A4 | Nested protocol inside `runtime-core` only | **Rejected** — D2 / masterplan §30 |
+| A5 | Workflow rules in daemon | **Rejected** — D3/AC-2 |
+| A6 | Remote-first daemon | **Rejected** — D5/AC-4 |
+| A7 | Pi transport on wire | **Rejected** — D1 |
+
+**decision_gate=false** — DQ1–DQ10 LOCKED; companion **DEC-0148** Required → Accepted at `/architecture` only.
+
+### Risks and mitigations
+
+| Risk | Mitigation |
+|---|---|
+| US-0146 regression during transport swap | `OperatorTransport` interface; keep in-process path for US-0146 contracts |
+| Event log growth | Per-run retention cap + evidence refs; SQLite vacuum policy |
+| Windows loopback/firewall edge cases | Bind explicit `127.0.0.1`; contract test on CI matrix |
+| Controller race on attach | Single-controller lock + audit reason codes |
+| Restart partial ledger | `crashResume` + fail-closed `RECONCILE_INCOMPLETE` with operator doc |
+| Secret leak on stream | Central `redactEventPayload` + golden tests |
+
+### Test strategy
+
+- **Contract**: `us0148.contract.test.ts` covers all **`test_us0148_*`** IDs above; uses ephemeral daemon on port 0 and mock `WorkflowEngine` where needed for determinism.
+- **Integration**: one test spawns real `apps/daemon` child process + cli attach (optional S0156 task if too heavy for contract file — architecture may split).
+- **Compatibility**: US-0146 suite must remain green without daemon running (in-process doubles).
+- **Platforms**: Windows + Linux in `standalone` npm test harness; no macOS-only socket assumptions in v1.
+
+### Research attestation — architecture handoff (2026-09-17T21:12:00Z)
+
+- Consumed discovery: `rp-auto-20260917-us0148-discovery-po-20260917T211000Z-US-0148` / `F9FCC16A49352472DADA88CEA509768C50E3EDCD5CE614EE53AFE07462CCA4AC` — MATCH.
+- **Discovery D1–D10** reflected in DQ1–DQ10 above. **AC map**: AC-1 DQ2+DQ5; AC-2 DQ4; AC-3 DQ3+DQ4; AC-4 DQ1+DQ7+DQ8; AC-5 DQ5; AC-6 DQ6; AC-7 DQ10; AC-8 DQ10 docs.
+- Do not author `# US-0148`, `decisions/DEC-0148.md`, or `sprints/S0156/` this phase. Do not mutate backlog Status/ACs. **Next**: `/architecture` (fresh tech-lead). CROSS_MODEL_REVIEW=0 — do not spawn sovereign-critic.
+
+- **Delivery closure (2026-09-17T23:35:00Z, curator, `orchestrator_run_id=auto-20260917-us0148`)**: **`US-0148`** **DONE**; sprint **`S0156`** **released**; A1 `@its-magic/protocol` + loopback JSON-RPC daemon + ordered event log + `DaemonTransport` + twelve **`test_us0148_*`** + `docs/engineering/operator/daemon-protocol.md` delivered per **R-0148** / **DEC-0148** / **`# US-0148`**; compose **US-0133..US-0147** DONE (US-0146 clients migrate); honest residual: live browser not probed; npm publish skipped. Portfolio **0 OPEN** stories; **2 OPEN** bugs (BUG-0022, BUG-0024 OUT — not scheduled); drain story **1 of 3** with budget **2** remaining — **`drain_terminated_reason=no_open_stories`**; orchestrator STOP (do **not** drain-advance).

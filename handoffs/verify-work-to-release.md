@@ -1,3 +1,111 @@
+# Handoff: /verify-work → /release — US-0148 / S0156
+
+- **Sprint**: S0156
+- **Story**: US-0148 (Status OPEN — do NOT mark DONE)
+- **Bug**: (none)
+- **Orchestrator Run**: auto-20260917-us0148
+- **Parent Run**: auto-20260917-us0146
+- **Phase Transition**: /verify-work Complete → /release
+- **Timestamp**: 2026-09-17T22:30:00Z
+- **Fresh context marker**: qa-US0148-verify-20260917T223000Z-fresh
+- **Delivery mode**: ultra_lean
+- **Macro phase**: build+verify
+- **model_id**: inherit (CROSS_MODEL_REVIEW=0)
+- **Consumed qa_to_verify**: sprints/S0156/qa-findings.md (qa PASS 222500Z; marker qa-US0148-qa-20260917T222500Z-fresh)
+
+## Verify-Work Verdict
+
+**PASS** — UAT 9/9 (8 ACs + convergence_smoke); 0 failed; scoped node 14/14 us0148 contract (12/12 locked `test_us0148_*`, duration_ms 1190.0857 this pass); probe_kind=contract_tests_primary; 6 live classes UAT_PROBE_FORBIDDEN including live Chrome; fake_browser_pass_claimed=false; live_chrome_probed=false; isolation execute+qa+verify-work PASS; backlog Status remains OPEN; AC-1..AC-8 unchecked; harness_fail_zero_claimed=false; no live npm publish/git push.
+
+## Evidence Summary
+
+| Gate | Result |
+|------|--------|
+| UAT steps | 9 passed / 0 failed |
+| AC-1..AC-8 | 8/8 PASS (slice; backlog ACs unchecked) |
+| convergence_smoke | pass |
+| node us0148 contract | 14/14 PASS (12/12 locked markers) |
+| Isolation compliance | PASS (execute + qa + verify-work) |
+| Strict-proof triad | VALID MATCH not-STALE (execute + qa) + ISSUED verify-work |
+| Live Chrome probed | false |
+| Fake live-Chrome PASS | none |
+| QA_PASS | confirmed (consumed) |
+
+## Runtime proofs (full rp-auto-…)
+
+- verify-work: `rp-auto-20260917-us0148-verify-work-qa-20260917T223000Z-US-0148` / `3CBE82E5A0ED983A1031BF24BC2FD4E0BB41E1C3B21C9D3EBB93C73E61C94A6D` / ttl 2026-09-17T23:30:00Z
+- qa (consumed): `rp-auto-20260917-us0148-qa-qa-20260917T222500Z-US-0148` / `BBE54BEC118319917F07862D641170BBC4FD9A17C5858249BF2C93EE3D307D61`
+- execute: `rp-auto-20260917-us0148-execute-dev-20260917T220000Z-US-0148` / `4E95757067D26F6502C94856C7F746046F57A7291A52FAD5F68CF818B694ABD5`
+- plan-verify: `rp-auto-20260917-us0148-plan-verify-qa-20260917T222500Z-US-0148` / `7B4A71D4749E4B56E0590A103F586F513EE97C0F0E38CC92BAA2AD7620846B8A` (ultra_lean merged; not spawned)
+
+## Next Phase
+
+- **Phase**: /release (orchestrator spawn)
+- **Spawn Role**: release (fresh subagent per BUG-0006)
+- **Do NOT**: mark US-0148 DONE; tick acceptance.md; tick backlog ACs; spawn /release from this qa subagent; claim fake live-Chrome PASS; mutate US-0149+.
+
+## Stop Conditions
+
+- stop_reason: (not terminal — native_chain_continuing)
+- stop_phase: verify-work
+- intended_resume_phase: release
+- native_chain_continuing: true
+
+---
+# Handoff: /verify-work → /release — US-0147 / S0154
+
+- **Sprint**: S0154
+- **Story**: US-0147 (Status OPEN — do NOT mark DONE)
+- **Bug**: (none)
+- **Orchestrator Run**: auto-20260917-us0146
+- **Parent Run**: auto-20260913-us0144
+- **Phase Transition**: /verify-work Complete → /release
+- **Timestamp**: 2026-09-17T21:20:00Z
+- **Fresh context marker**: qa-US0147-verify-20260917T212000Z-fresh
+- **Delivery mode**: ultra_lean
+- **Macro phase**: build+verify
+- **model_id**: inherit (CROSS_MODEL_REVIEW=0)
+- **Consumed qa_to_verify**: sprints/S0154/qa-findings.md (qa PASS 211000Z; marker qa-US0147-qa-20260917T211000Z-fresh)
+
+## Verify-Work Verdict
+
+**PASS** — UAT 9/9 (8 ACs + convergence_smoke); 0 failed; pytest 10/10 `test_us0147_*` (0.11s this pass); probe_kind=contract_tests_primary; 6 live classes UAT_PROBE_FORBIDDEN including live Chrome; fake_browser_pass_claimed=false; live_chrome_probed=false; isolation execute+qa+verify-work PASS; backlog Status remains OPEN; AC-1..AC-8 unchecked; harness_fail_zero_claimed=false.
+
+## Evidence Summary
+
+| Gate | Result |
+|------|--------|
+| UAT steps | 9 passed / 0 failed |
+| AC-1..AC-8 | 8/8 PASS (slice; backlog ACs unchecked) |
+| convergence_smoke | pass |
+| pytest us0147 | 10/10 PASS |
+| Isolation compliance | PASS (execute + qa + verify-work) |
+| Strict-proof triad | VALID MATCH not-STALE (execute + qa) + ISSUED verify-work |
+| Live Chrome probed | false |
+| Fake live-Chrome PASS | none |
+| QA_PASS | confirmed (consumed) |
+
+## Runtime proofs (full rp-auto-…)
+
+- verify-work: `rp-auto-20260917-us0146-verify-work-qa-20260917T212000Z-US-0147` / `D53214A54301469C6CACC27988350CC3FD3739F1E99738DBCBFE9B6974E70310` / ttl 2026-09-17T22:20:00Z
+- qa (consumed): `rp-auto-20260917-us0146-qa-qa-20260917T211000Z-US-0147` / `7E4E7E06144D91A7AAF7575922B9BB89E764465E12DCEEFC002B781B9096272E`
+- execute: `rp-auto-20260917-us0146-execute-dev-20260917T205500Z-US-0147` / `4130FD8893FD5035C4A1927F18B4BA0D0026C35CA31D22F08E183D7E9A10EB4A`
+- plan-verify: `rp-auto-20260917-us0146-plan-verify-qa-20260917T211000Z-US-0147` / `A4A8AC207D43E2C72383A1F0DE96364E04DFE687D98EE590ED1A922BCBA7A8FC` (ultra_lean SKIPPED placeholder; not spawned)
+
+## Next Phase
+
+- **Phase**: /release (orchestrator spawn)
+- **Spawn Role**: release (fresh subagent per BUG-0006)
+- **Do NOT**: mark US-0147 DONE; tick acceptance.md; tick backlog ACs; spawn /release from this qa subagent; claim fake live-Chrome PASS; mutate US-0148+.
+
+## Stop Conditions
+
+- stop_reason: (not terminal — native_chain_continuing)
+- stop_phase: verify-work
+- intended_resume_phase: release
+- native_chain_continuing: true
+
+---
 # Handoff: /verify-work → /release — US-0143 / S0151
 
 - **Sprint**: S0151

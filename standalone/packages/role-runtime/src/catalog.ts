@@ -70,6 +70,7 @@ export function createDefaultRoleCatalog(): RoleCatalog {
 			},
 			execute: { canonical_role: "dev", allowed_roles: ["dev"] },
 			qa: { canonical_role: "qa", allowed_roles: ["qa"] },
+			"qa-arbiter": { canonical_role: "qa", allowed_roles: ["qa"] },
 			"verify-work": { canonical_role: "qa", allowed_roles: ["qa"] },
 			release: { canonical_role: "release", allowed_roles: ["release"] },
 			closure: {

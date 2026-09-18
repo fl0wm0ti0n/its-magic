@@ -29,6 +29,9 @@ export interface ReleaseGateInput {
 	uat_pass: boolean;
 	artifact_refs: readonly string[];
 	premature?: boolean;
+	deploy_targets_pass?: boolean;
+	approval_granted?: boolean;
+	target_policy_ok?: boolean;
 }
 
 export interface ReleaseGatePass {
@@ -60,6 +63,15 @@ export class GateEngine {
 			return fail(RELEASE_ARTIFACTS_MISSING, "release_artifacts", 3);
 		}
 		if (input.premature) {
+			return fail(RELEASE_PREMATURE, "fail_closed_reason", 4);
+		}
+		if (input.deploy_targets_pass === false) {
+			return fail(RELEASE_PREMATURE, "fail_closed_reason", 4);
+		}
+		if (input.approval_granted === false) {
+			return fail(RELEASE_PREMATURE, "fail_closed_reason", 4);
+		}
+		if (input.target_policy_ok === false) {
 			return fail(RELEASE_PREMATURE, "fail_closed_reason", 4);
 		}
 		return { ok: true, step_reached: RELEASE_GATE_ORDER };

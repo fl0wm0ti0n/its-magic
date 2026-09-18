@@ -8,7 +8,12 @@ export interface ConfigView {
 	shared?: Record<string, string>;
 	compat?: Record<string, string>;
 	retryTest?: { AUTO_LOOP_MAX_CYCLES?: number; AUTO_BLOCK_RETRY_MAX?: number };
-	sovereign?: { CROSS_MODEL_REVIEW?: string };
+	sovereign?: {
+		CROSS_MODEL_REVIEW?: string;
+		SOVEREIGN_RUNTIME?: string;
+		SOVEREIGN_MEMORY?: string;
+		SOVEREIGN_DRAIN_AUTO_ACCEPT?: string;
+	};
 	phase?: Record<string, string>;
 }
 
@@ -42,6 +47,24 @@ export function lookupLoopCap(config: ConfigView): number {
 
 export function lookupCrossModelReview(config: ConfigView): boolean {
 	return config.sovereign?.CROSS_MODEL_REVIEW === "1";
+}
+
+export function lookupSovereignRuntime(config: ConfigView): boolean {
+	const raw =
+		config.sovereign?.SOVEREIGN_RUNTIME ??
+		config.autonomy?.flags?.SOVEREIGN_RUNTIME ??
+		config.shared?.SOVEREIGN_RUNTIME ??
+		"0";
+	return raw === "1";
+}
+
+export function lookupSovereignMemory(config: ConfigView): boolean {
+	const raw =
+		config.sovereign?.SOVEREIGN_MEMORY ??
+		config.autonomy?.flags?.SOVEREIGN_MEMORY ??
+		config.shared?.SOVEREIGN_MEMORY ??
+		"0";
+	return raw === "1";
 }
 
 export function lookupDeliveryMode(config: ConfigView): string {
@@ -121,4 +144,12 @@ export function lookupAutoPhaseKeys(config: ConfigView): boolean {
 
 export function collectAutonomyOverrides(config: ConfigView): Record<string, string> {
 	return { ...(config.autonomy?.flags ?? {}) };
+}
+
+export function lookupParallelDev(config: ConfigView): boolean {
+	return flagOf(config, "SOVEREIGN_PARALLEL_DEV", "0") === "1";
+}
+
+export function lookupSelfHealingDeploy(config: ConfigView): boolean {
+	return flagOf(config, "AUTO_SOVEREIGN_SELF_HEALING_DEPLOY", "0") === "1";
 }

@@ -17,7 +17,7 @@ export interface SpawnCapture {
 export type SpawnFn = (
 	command: string,
 	args: string[],
-	opts: { cwd: string; timeoutMs: number; windowsHide: boolean },
+	opts: { cwd: string; timeoutMs: number; windowsHide: boolean; env?: NodeJS.ProcessEnv },
 ) => Promise<SpawnCapture>;
 
 function decodeLimited(chunks: Buffer[]): string {
@@ -60,6 +60,7 @@ export const defaultSpawn: SpawnFn = (command, args, opts) => {
 				timeout: opts.timeoutMs,
 				signal: AbortSignal.timeout(opts.timeoutMs),
 				stdio: ["ignore", "pipe", "pipe"],
+				env: opts.env,
 			});
 		} catch (err) {
 			const error = err as NodeJS.ErrnoException;

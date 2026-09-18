@@ -30,6 +30,7 @@ export interface SidecarAttestation {
 	fresh: boolean;
 	attestation_event: AttestationEvent;
 	degraded_mode?: boolean;
+	bootstrap_context_hash?: string;
 	attestation_hash: string;
 }
 

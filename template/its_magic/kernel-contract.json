@@ -1,6 +1,6 @@
 {
 	"schema_version": 1,
-	"kernel_version": "0.1.3-10",
+	"kernel_version": "0.1.3-11",
 	"validators": [
 		"intake_evidence_validate",
 		"bug_issue_validate",
@@ -27,5 +27,25 @@
 		"traceability",
 		"work_packs",
 		"sovereign"
+	],
+	"sovereign_operations": [
+		"memory_digest",
+		"critic_model",
+		"role_review_plan",
+		"decision_session_append",
+		"deferral_append",
+		"deferral_list",
+		"drain_candidate_gate",
+		"convergence_evaluate",
+		"partial_delivery_write"
+	],
+	"delivery_operations": [
+		"parallel_dev_spawn",
+		"parallel_dev_create_worktrees",
+		"parallel_dev_list_active",
+		"parallel_dev_cleanup_orphans",
+		"parallel_dev_merge_winner",
+		"deploy_smoke_probe",
+		"deploy_healing_retry"
 	]
 }

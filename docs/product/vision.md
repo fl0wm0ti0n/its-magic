@@ -2559,3 +2559,63 @@ AI coding assistants in Cursor lose context across sessions, produce fragmented 
 - **Design / UX refs**: masterplan §§22 (producer/critic + three lenses + role reviews + pinning), 24 (ledger/memory/deferrals/code-evaluated convergence + critic/smoke fixes), 32 Phase 7 (sovereign parity; parallel DEV is US-0145), 38 (parity DoD: ledger, critic, memory, role reviews, deferrals, goal convergence); MultiCritique independent critics [Findings EMNLP 2025](https://aclanthology.org/2025.findings-emnlp.78); [bounded memory control over more context](https://arxiv.org/html/2601.11653); [origin-bound memory authority](https://ar5iv.labs.arxiv.org/html/2606.24322); US-0143 critic-hook slot only.
 - **Research asks**: DQ1–DQ10 for **`/research`** → expected **`R-0142`** (highest heading is **`R-0141`** US-0143). Do not author `## R-0142` this phase. Do not wipe **R-0141** (US-0143). Do not author `# US-0144` or **DEC-0144**. Next: orchestrator sovereign-critic of discovery, then `/research` (tech-lead).
 
+## Discovery Notes — US-0146
+
+- **Operator value proposition**: Operate and inspect the standalone agent from coherent local CLI/TUI surfaces — start, ask, approve, pause, resume, and inspect status/timeline/metrics/evidence without an IDE.
+- **Product-facing constraints (discovery-locked)**:
+  - Complete sibling `@its-magic/cli` (`standalone/apps/cli` Phase-0 stub) and add replaceable `@its-magic/tui` (`standalone/apps/tui`) as **clients of runtime services**. **No Pi** on new command paths. **Do not** rewrite WorkflowEngine / CommandRouter / GateEngine. **Do not** nest CLI/TUI inside `@its-magic/runtime-core`.
+  - Command set is AC-1 `itsm` interactive + direct (`auto`, `intake`, `ask`, `status`, `resume`, `models`, `auth`, `index`, `app`, `browser`) plus US-0140 lifecycle slash equivalents and US-0143 `/auto`/`/quick`. Compose US-0135 `auth`/`models`.
+  - Status/timeline/metrics compose US-0141 app health, US-0142 browser evidence, US-0139 index, US-0144 operator-visible caps/progress, US-0080 token-cost evidence (no conflicting accounting).
+  - TUI stays client-only and replaceable. Approval/failure UX must work on Windows and Linux, interactive and non-interactive. Large streams use bounded summaries.
+  - AC-8 reconnect is local client re-attach, not the US-0148 daemon protocol.
+- **Out of scope this story**: Parallel DEV/deploy (US-0145); install/migration (US-0147); daemon/control protocol (US-0148 — compose later); graphical IDE/web/mobile clients; restore `.opencode/commands/auto.md`; kit `cli.json`; plugin-local `its-magic-auto/tui.json`. Kit `files` omit `standalone/` unless architecture later proves otherwise. Do not npm-publish or git push. Never read `.env`.
+- **Sibling boundary**: US-0140..US-0144 DONE — compose only; do not reopen. US-0145/US-0147/US-0148 OPEN — do not mutate bodies. BUG-0021/BUG-0023 DONE OpenCode TUI listing — do not reopen. BUG-0022 OPEN — do not drain.
+- **Discovery locks D1–D10**: see `docs/product/backlog.md` **`## US-0146`** `discovery_notes` and `handoffs/po_to_tl.md` discovery handoff.
+- **Design / UX refs**: masterplan §§28 (status line, timeline, metrics compose token-cost), 29.1–29.2 (`itsm` command set; TUI as client of runtime services; §29.3 daemon OUT to US-0148), 32 Phase 8 (operator product surface; install/daemon split to US-0147/US-0148), 37 DoD items 10/12 (pause/resume + emit audit data from local surfaces).
+- **Research asks**: DQ1–DQ10 for **`/research`** → expected **`R-0143`** (highest heading is **`R-0142`** US-0144). Do not author `## R-0143` this phase. Do not wipe **R-0142**. Do not author `# US-0146` or **DEC-0146**. Next: `/research` (tech-lead). CROSS_MODEL_REVIEW=0 — no sovereign-critic.
+
+## Discovery Notes — US-0147
+
+- **Operator value proposition**: Install, update, and adopt existing its-magic repositories safely so the standalone runtime can operate the same project without destroying Cursor/OpenCode compatibility paths, local secrets, or user-authored artifacts.
+- **Product-facing constraints (discovery-locked)**:
+  - Extend triple-installer parity (`installer.ps1` / `installer.sh` / `installer.py`) + `template/` / `installer-owned-paths.manifest` to **wire** US-0146 **`itsm`** CLI/runtime from `standalone/` — installers stay bootstrap/copy orchestrators; **do not** rewrite `.cursor/` or `.opencode/` host trees.
+  - Fresh repos get required artifact structures without importing the historical US-0001..US-0132 backlog. Existing repos are detected and adopted non-destructively; scratchpad migration is **not** mandatory at first adopt (§13.2 timing → architecture).
+  - Preservation: never overwrite local config, credentials, browser profiles, project source, or user artifacts; never copy secrets into tracked templates.
+  - Diagnostics explain kernel/runtime mismatches, unavailable host capabilities, migration actions, and rollback. Operator docs cover setup, auth, adoption, coexistence, update, uninstall, troubleshooting (active + `template/` runbook parity).
+- **Out of scope this story**: Parallel DEV/deploy (US-0145); daemon/control protocol (US-0148); **building new** Cursor/OpenCode adapters; npm-publish; git push. Never read `.env`.
+- **Sibling boundary**: US-0140..US-0146 DONE — compose only (especially US-0146 install wiring); do not reopen. US-0145/US-0148 OPEN — do not mutate bodies. BUG-0022 OPEN — do not drain.
+- **Discovery locks D1–D10**: see `docs/product/backlog.md` **`## US-0147`** `discovery_notes` and `handoffs/po_to_tl.md` discovery handoff.
+- **Design / UX refs**: masterplan §3 (host coexistence), §13.2 (`LegacyScratchpadAdapter` compose), §32 Phase 8 (installation/update + migration from existing hosts), §37 DoD (install + open existing project), §39 (non-goals — no host deletion), §43 (OpenCode/Cursor remain compatibility).
+- **Research asks**: DQ1–DQ10 for **`/research`** → expected **`R-0144`** (highest delivered heading is **`R-0143`** US-0146). Do not author `## R-0144` this phase. Do not wipe **R-0143**. Do not author `# US-0147` or **DEC-0147**. Next: `/research` (tech-lead). CROSS_MODEL_REVIEW=0 — no sovereign-critic.
+
+## Discovery Notes — US-0148
+
+- **Operator value proposition**: Stable local control protocol and recoverable daemon so CLI/TUI (and later remote/web/IDE/mobile/watch clients) can attach to long-running work, stream ordered events, and reconnect without duplicating workflow logic in clients.
+- **Product-facing constraints (discovery-locked)**:
+  - Thin `standalone/apps/daemon` + versioned protocol types (package placement = architecture DQ) — **delegate all behavior** to runtime services; no workflow ownership in the daemon.
+  - Versioned commands/events cover runtime control, agent deltas, approvals, run-state, tools, browser evidence, status, cancel, and errors (masterplan §29.3).
+  - CLI/TUI (US-0146 delivered) become daemon clients; cross-process reconnect supersedes in-process-only `OperatorSession` attach for production paths.
+  - Local transport is safe by default (loopback/socket permissions, client identity, redaction); remote bind disabled unless explicitly configured.
+  - Daemon restart reconciles SQLite operational state with repository evidence; orphan cleanup per policy; resume only through fresh role sessions.
+- **Out of scope this story**: Shipping web/Android/watch/VS Code/distributed-worker/remote Debian **clients** v1; new Cursor/OpenCode adapters; npm-publish; git push. Never read `.env`.
+- **Sibling boundary**: US-0133..US-0147 DONE — compose only (especially US-0146 CLI/TUI, US-0140 commands, US-0136 sessions); do not reopen. BUG-0022 OPEN — do not drain.
+- **Discovery locks D1–D10**: see `docs/product/backlog.md` **`## US-0148`** `discovery_notes` and `handoffs/po_to_tl.md` discovery handoff.
+- **Design / UX refs**: masterplan §29.3 (control protocol from day one), §30 (`apps/daemon`, `packages/protocol`), §32 Phase 8 (JSON-RPC/control protocol + daemon mode), §37 DoD, Story 15; compose US-0146 operator surfaces, `runtime-core` `runs/store` + `recovery/crash-resume`.
+- **Research asks**: DQ1–DQ10 for **`/research`** → expected **`R-0148`** (highest delivered heading is **`R-0145`** US-0145). Do not author `## R-0148` this phase. Do not wipe **R-0145**. Do not author `# US-0148` or **DEC-0148**. Next: `/research` (tech-lead). CROSS_MODEL_REVIEW=0 — no sovereign-critic.
+
+## Discovery Notes — US-0145
+
+- **Operator value proposition**: Optionally run isolated parallel DEV candidates, publish through typed deploy targets with gate-checked evidence, recover from bounded post-deploy failures, and let **closure alone** reconcile story status after a successful release.
+- **Product-facing constraints (discovery-locked)**:
+  - Parallel mode is **optional** after the core lifecycle; release/closure safety applies even when parallel mode is off.
+  - Parallel DEV uses isolated git worktrees + distinct sessions/models, independent tests, and **no** main working-tree mutation before QA arbiter merge (compose US-0108 `parallel_dev_arbiter.py`).
+  - Resource guards bound instances, cost/tokens, CPU/RAM, worktrees, concurrent tests/browsers, and wall-clock time.
+  - Release/deploy uses typed targets (git/GitHub, npm, SSH, Docker, custom) with mandatory quality + approval + target-policy gates and auditable per-target results.
+  - Post-deploy smoke may trigger a capped repair/rebuild/release/redeploy loop (compose US-0109 self-healing deploy); exhausted repair records deferral — failed deploy is never “released”.
+  - Release and closure remain **separate phases** — release must not mark backlog DONE (compose `closure.ts` / US-0045).
+- **Out of scope this story**: US-0148 daemon/control protocol; graphical clients; rewriting US-0143 CommandRouter drain; US-0144 sovereign critic *content*; new Cursor/OpenCode adapters; npm-publish; git push. Never read `.env`.
+- **Sibling boundary**: US-0140..US-0147 DONE — compose only (especially US-0143 scheduling, US-0146 operator observe/trigger surfaces); do not reopen. **US-0148 OPEN** — do not mutate body. BUG-0022 OPEN — do not drain.
+- **Discovery locks D1–D10**: see `docs/product/backlog.md` **`## US-0145`** `discovery_notes` and `handoffs/po_to_tl.md` discovery handoff.
+- **Design / UX refs**: masterplan §23 (parallel worktree arbitrage), §25 (release/deploy self-healing + separate closure), §32 Phase 7 (sovereign parity parallel + self-healing deploy), §38 (parity DoD); compose US-0108 parallel arbiter, US-0109 deploy smoke/repair, US-0140 phase graph release→closure→refresh.
+- **Research asks**: DQ1–DQ10 for **`/research`** → expected **`R-0145`** (highest delivered heading is **`R-0144`** US-0147). Do not author `## R-0145` this phase. Do not wipe **R-0144**. Do not author `# US-0145` or **DEC-0145**. Next: `/research` (tech-lead). CROSS_MODEL_REVIEW=0 — no sovereign-critic.
+

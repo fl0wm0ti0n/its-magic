@@ -738,6 +738,25 @@ function Invoke-KitConfigPostinstall {
   if ($LASTEXITCODE -ne 0) { exit $LASTEXITCODE }
 }
 
+function Invoke-StandalonePostinstall {
+  param(
+    [string]$TargetRoot,
+    [string]$Mode
+  )
+  $installerPy = Join-Path $scriptDir "installer.py"
+  if (-not (Test-Path $installerPy -PathType Leaf)) {
+    Write-Host "[STANDALONE_BOOTSTRAP_FAILED] installer.py missing next to installer.ps1."
+    exit 1
+  }
+  $py = Get-Command python -ErrorAction SilentlyContinue
+  if (-not $py) {
+    Write-Host "[STANDALONE_BOOTSTRAP_FAILED] PYTHON_NOT_FOUND: Python is required for standalone bootstrap."
+    exit 1
+  }
+  & python $installerPy --standalone-postinstall --target $TargetRoot --mode $Mode
+  if ($LASTEXITCODE -ne 0) { exit $LASTEXITCODE }
+}
+
 function Invoke-ScratchpadPostinstall {
   param(
     [string]$TargetRoot,
@@ -1067,6 +1086,7 @@ if ($mode -eq "upgrade") {
   Invoke-PruneRetiredOpencodeAutoMd -TargetRoot $targetRoot -SourceRoot $sourceRoot -HostValue $hostValue
 
   Invoke-KitConfigPostinstall -TargetRoot $targetRoot -Mode "upgrade"
+  Invoke-StandalonePostinstall -TargetRoot $targetRoot -Mode "upgrade"
   Invoke-ScratchpadPostinstall -TargetRoot $targetRoot -Mode "upgrade"
   Invoke-OpencodeModelCatalogHook -TargetRoot $targetRoot
   Invoke-InstallCompletenessValidation -TargetRoot $targetRoot
@@ -1160,6 +1180,7 @@ foreach ($rel in $files) {
 }
 
 Invoke-KitConfigPostinstall -TargetRoot $targetRoot -Mode $mode
+Invoke-StandalonePostinstall -TargetRoot $targetRoot -Mode $mode
 Invoke-ScratchpadPostinstall -TargetRoot $targetRoot -Mode $mode
 Invoke-OpencodeModelCatalogHook -TargetRoot $targetRoot
 Invoke-InstallCompletenessValidation -TargetRoot $targetRoot

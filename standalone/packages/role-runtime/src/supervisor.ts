@@ -16,10 +16,12 @@ import {
 	SESSION_CONTINUATION_DENIED,
 	SESSION_REUSED_ACROSS_PHASE,
 	SESSION_TRANSCRIPT_CARRYOVER,
+	SOVEREIGN_BOOTSTRAP_DELIVERY_FAILED,
 } from "./errors.ts";
 import type { AgentKernel, KernelSession } from "./kernel-port.ts";
 import { assertOrchestratorSchedulingOnly } from "./orchestrator-gate.ts";
 import type {
+	BootstrapAck,
 	ContinuationContract,
 	SessionSupervisorApi,
 	SessionSupervisorOptions,
@@ -82,14 +84,16 @@ class BoundSession implements SupervisedSession {
 	readonly phase_id: string;
 	readonly role_id: string;
 	readonly contract: ContinuationContract;
+	readonly bootstrap_ack?: BootstrapAck;
 
-	constructor(handle: LiveHandle, fresh: boolean) {
+	constructor(handle: LiveHandle, fresh: boolean, bootstrapAck?: BootstrapAck) {
 		this.kernelSession = handle.session;
 		this.kernel_session_id = handle.session.sessionId;
 		this.fresh = fresh;
 		this.phase_id = handle.phase_id;
 		this.role_id = handle.role_id;
 		this.contract = handle.contract;
+		this.bootstrap_ack = bootstrapAck;
 	}
 
 	async run(text: string): Promise<void> {
@@ -192,6 +196,12 @@ export class SessionSupervisor implements SessionSupervisorApi {
 	}
 
 	private continueSession(req: SpawnRequest, role_id: string): SupervisedSession {
+		if (req.bootstrap) {
+			throw new RoleRuntimeError(
+				SOVEREIGN_BOOTSTRAP_DELIVERY_FAILED,
+				"bootstrap is not accepted on continued sessions",
+			);
+		}
 		const contract = req.continuation as ContinuationContract;
 		validateContractShape(contract);
 		const handle = this.live.get(contract.kernel_session_id);
@@ -266,15 +276,30 @@ export class SessionSupervisor implements SessionSupervisorApi {
 			);
 		}
 		this.live.set(id, handle);
-		this.emit("spawn", handle, {});
-		this.emit("start", handle, { started_at: iso(this.now()) });
-		return new BoundSession(handle, true);
+		this.emit("spawn", handle, {
+			bootstrap_context_hash: req.bootstrap?.context_hash,
+		});
+		this.emit("start", handle, {
+			started_at: iso(this.now()),
+			bootstrap_context_hash: req.bootstrap?.context_hash,
+		});
+		const bound = new BoundSession(handle, true);
+		if (req.bootstrap) {
+			await bound.run(req.bootstrap.text);
+			const ack: BootstrapAck = {
+				session_id: id,
+				bootstrap_context_hash: req.bootstrap.context_hash,
+				bootstrap_delivered: true,
+			};
+			return new BoundSession(handle, true, ack);
+		}
+		return bound;
 	}
 
 	private emit(
 		event: "spawn" | "start" | "end",
 		handle: LiveHandle,
-		extra: { started_at?: string; ended_at?: string },
+		extra: { started_at?: string; ended_at?: string; bootstrap_context_hash?: string },
 	): void {
 		const record = withAttestationHash({
 			orchestrator_run_id: handle.orchestrator_run_id,
@@ -284,7 +309,7 @@ export class SessionSupervisor implements SessionSupervisorApi {
 			kernel_session_id: handle.session.sessionId,
 			kernel_process_instance: this.kernel_process_instance,
 			model_id: handle.model_id,
-			context_pack_hash: stubContextPackHash(),
+			context_pack_hash: extra.bootstrap_context_hash ?? stubContextPackHash(),
 			policy_hash: handle.policy_hash,
 			created_at: handle.created_at,
 			started_at: extra.started_at,
@@ -293,6 +318,7 @@ export class SessionSupervisor implements SessionSupervisorApi {
 			fresh: handle.fresh,
 			attestation_event: event,
 			degraded_mode: handle.degraded_mode || undefined,
+			bootstrap_context_hash: extra.bootstrap_context_hash,
 		});
 		this.attestations.append(record);
 	}

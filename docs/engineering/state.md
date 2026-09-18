@@ -9,1044 +9,826 @@
 - Retrieval policy for `/ask`: prefer latest targeted sections first and expand
   only when unresolved.
 
-## Sovereign-critic checkpoint — sprint-plan US-0143 / S0151 / auto-20260913-us0143 (role=tech-lead critic, spawn 074000Z)
+## Active checkpoint — US-0148 / S0156 / auto-20260917-us0148
 
-- phase_id=sovereign-critic
-- reviewed_phase_id=sprint-plan
-- role=tech-lead
-- story_id=US-0143
-- sprint_id=S0151
-- orchestrator_run_id=auto-20260913-us0143
-- parent_orchestrator_run_id=auto-20260913-us0142
-- delivery_mode=ultra_lean
-- macro_phase=plan (critic of sprint-plan; /execute next per native chain)
-- model_id=composer-2.5-fast (CROSS_MODEL_REVIEW=1 — required; distinct slug vs producer cursor-grok-4.6-high → degraded_mode=false)
-- fresh_context_marker=critic-US0143-sprintplan-20260914T074000Z-fresh
-- timestamp=2026-09-14T07:40:00Z
-- verdict=CRITIC_PASS
-- decision_gate=false
-- blocking_count=0
-- non_blocking_count=3
-- anti_slop_aggregate=10
-- lenses=challenger+architect+subtractor (all three; degraded_mode=false)
-- finding_ids=us0143sp-challenger-001,us0143sp-architect-002,us0143sp-subtractor-003
-- issue_keys=ik_us0143sp_proof_failclosed_pass,ik_us0143sp_layer_execute_owns_next,ik_us0143sp_scope_yagni_pass
-- sprint_plan_confirmed=SPRINT_PLAN_PASS; S0151 11 tasks T-anch+T-001..T-010 1:1 seeds; 8/8 AC surjective; 12 test_us0143_* markers; plan-verify SKIPPED; glob 0 delivery-router.ts + 0 test_us0143_* (expected pre-execute); backlog ## US-0143 Status OPEN; acceptance unchecked
-- s0150_not_mutated=true (git diff sprints/S0150/ empty; sprints/S0150/sprint.md story_id=US-0142 orchestrator_run_id=auto-20260913-us0142 unchanged)
-- backlog_status=OPEN (## US-0143 — critic does not mutate)
-- sibling_boundary=US-0141/0142 DONE compose-only not reopened; US-0133..US-0140 DONE compose-only not reopened; US-0144+ not mutated; BUG-0021 DONE / BUG-0022 OPEN / BUG-0023 DONE / BUG-0024 OPEN not mutated/drained; S0146/S0147/S0148/S0149/S0150 not mutated
-- producer_runtime_proof_id=rp-auto-20260913-us0143-sprint-plan-techlead-20260914T073000Z-US-0143
-- producer_proof_hash=63708536512D56BA8B5497D2C082299E4376DD495B12388125500454CACF46BE (MATCH)
-- producer_proof_ttl=2026-09-14T08:30:00Z
-- proof_consume=RUNTIME_PROOF_VALID at 2026-09-14T07:40:00Z before ttl (hash MATCH; full 64 hex verified)
-- producer_proof_hash_recomputed=true (critic independent compute_strict_proof_hash positional args — byte-identical MATCH; proof_ttl_seconds int)
-- next_scheduled_phase=execute
-- next_scheduled_role=dev
-- plan-verify=SKIPPED (ultra_lean_not_in_resolved_phase_plan)
-- companion_dec=DEC-0143 Accepted
-- resume_brief=last=sovereign-critic (sprint-plan); next=orchestrator /execute; native_chain_continuing=true; plan-verify SKIPPED
-- stop_condition=STOP after sovereign-critic PASS. Orchestrator MUST Task-spawn /execute in fresh dev subagent (BUG-0006). Do NOT spawn /execute from this critic. Do NOT rework sprint-plan. Do NOT mark US-0143 DONE. Do NOT tick acceptance.
+- phase_id=refresh-context; role=curator; verdict=REFRESH_CONTEXT_PASS; timestamp=2026-09-17T23:35:00Z
+- fresh_context_marker=cur-US0148-refresh-20260917T233500Z-fresh
+- runtime_proof_id=rp-auto-20260917-us0148-refresh-context-curator-20260917T233500Z-US-0148
+- proof_hash=9C1B0ADF0FA13FA89BEEAE0E78A6A9A4747F4070B5D98A8A8795BE47AD064C64
+- proof_ttl=2026-09-18T00:35:00Z
+- consumed_closure_proof=rp-auto-20260917-us0148-closure-curator-20260917T233100Z-US-0148 / D6502C63BA6C3BA5E55C9ED2FB7ABDF9A21139864465391A4FBD08DF8965D6F1 (MATCH)
+- US-0148_status=DONE; segment_closed=true; stop_reason=completed (no OPEN portfolio stories)
+- drain_advance_action=not_applicable; independent_open_story_count=0; drain_terminated_reason=no_open_stories
+- drain_story_index=1 of 3; backlog_drain_stories_remaining_budget=2; native_chain_continuing=false
+- triad_rollover: packs y (closure), z+aa (refresh checkpoints); enforce-triad --check PASS
+- full_refresh_checkpoint_archive=docs/engineering/state-archive/state-pack-20260917-aa.md
+- resume_brief=REFRESH_CONTEXT_PASS; next=none (orchestrator STOP — do not drain-advance)
 
-### Isolation evidence (US-0048 / DEC-0029 / US-0104 v2) — sovereign-critic of sprint-plan US-0143
+## Release checkpoint — US-0148 / S0156 / auto-20260917-us0148 (role=release)
 
-- phase_id=sovereign-critic
-- role=tech-lead
-- story_id=US-0143
-- sprint_id=S0151
-- model_id=composer-2.5-fast
-- fresh_context_marker=critic-US0143-sprintplan-20260914T074000Z-fresh (NEW per US-0048 / BUG-0006; not reused from tl-US0143-sprintplan-20260914T073000Z-fresh)
-- timestamp=2026-09-14T07:40:00Z (UTC)
-- orchestrator_run_id=auto-20260913-us0143
-- evidence_ref=handoffs/sovereign_critic_findings.jsonl (us0143sp-*); sprints/S0151/sprint.md; sprints/S0151/tasks.md; handoffs/tl_to_dev.md; docs/engineering/state.md sprint-plan checkpoint; handoffs/resume_brief.md
-- Fresh tech-lead critic subagent per BUG-0006 / US-0048 isolation; narrow-read only. No .env reads, no US-0143 Status mutation, no acceptance tick, no US-0133..US-0142 reopen, no US-0144+ mutation, no BUG-0021/0022/0023/0024 mutation, no S0150 mutation, no /execute spawn from critic, no drain implementation code.
-
-### Strict runtime proof (DEC-0038) — sovereign-critic sprint-plan US-0143
-
-- runtime_proof_id=rp-auto-20260913-us0143-sovereign-critic-techlead-20260914T074000Z-US-0143
-- phase_id=sovereign-critic, role=tech-lead, story_id=US-0143, sprint_id=S0151
-- proof_issued_at=2026-09-14T07:40:00Z
-- proof_ttl_seconds=3600, proof_ttl=2026-09-14T08:40:00Z
-- proof_hash=7160CC3A4196D877AD05173752D4B4640E83F682D60603AF224487E653783E9A
-- Hash via `from scripts.token_cost_lib import compute_strict_proof_hash` (positional; compact sorted-key JSON).
-- Canonical hashed payload: {"orchestrator_run_id":"auto-20260913-us0143","phase_id":"sovereign-critic","proof_issued_at":"2026-09-14T07:40:00Z","proof_ttl_seconds":3600,"role":"tech-lead","runtime_proof_id":"rp-auto-20260913-us0143-sovereign-critic-techlead-20260914T074000Z-US-0143"}
-- Isolation extras (not hashed): delivery_mode=ultra_lean; macro_phase=plan; model_id=composer-2.5-fast; sprint_id=S0151; story_id=US-0143; reviewed_phase_id=sprint-plan; degraded_mode=false
-- hash_recompute_confirmation=true (compute_strict_proof_hash → 7160CC3A4196D877AD05173752D4B4640E83F682D60603AF224487E653783E9A; independently MATCH; 64 hex verified)
-- Consumed sprint-plan producer proof: rp-auto-20260913-us0143-sprint-plan-techlead-20260914T073000Z-US-0143 / 63708536512D56BA8B5497D2C082299E4376DD495B12388125500454CACF46BE — independent MATCH; not STALE (ttl 2026-09-14T08:30:00Z; consumed_at 2026-09-14T07:40:00Z)
-- independent_checks=sprint-plan proof SHA-256 MATCH+not-STALE; S0150 not mutated; sovereign_critic_validate.py --enforce PASS; US-0127 auto_resolve_nonblocking_for_run resolved 3 rows
-
-### Non-blocking carry-forwards (informational, sprint-plan critic)
-
-- NB1 (challenger / us0143sp-challenger-001): sprint-plan proof MATCH+not-STALE; S0150 not mutated; 11 tasks 8/8 AC surjective; 12 markers locked; plan-verify SKIPPED; architecture critic us0143arc-* routed execute awareness.
-- NB2 (architect / us0143sp-architect-002): /execute owns runtime-core lift + delivery-router.ts + 12 tests; GateEngine unamended; US-0144 content OUT; S0151 id lock held.
-- NB3 (subtractor / us0143sp-subtractor-003): no extra tasks; no sibling auto-scheduler; no auto.md restore; no /execute spawn from critic (BUG-0006); no S0150 overwrite.
-
-### Triad hot-surface verification tuple (DEC-0054) — sovereign-critic sprint-plan US-0143
-
-- surface=docs/engineering/state.md (isolation + sovereign-critic checkpoint append-bottom)
-- companion=handoffs/sovereign_critic_findings.jsonl (us0143sp-* append); handoffs/resume_brief.md (prepend-top)
-- artifact_ordering: findings JSONL append; resume_brief.md prepend-top; state.md append-bottom (DEC-0040)
-- Active context surface preamble present
-
-## Execute checkpoint — US-0143 / S0151 / auto-20260913-us0143 (role=dev)
-
-- phase_id=execute
-- role=dev
-- story_id=US-0143
-- sprint_id=S0151
-- orchestrator_run_id=auto-20260913-us0143
-- parent_orchestrator_run_id=auto-20260913-us0142
-- delivery_mode=ultra_lean
-- macro_phase=build+verify
-- model_id=cursor-grok-4.6-high (CROSS_MODEL_REVIEW=1 — required)
-- fresh_context_marker=dev-US0143-execute-20260914T075000Z-fresh
-- timestamp=2026-09-14T07:50:00Z (UTC)
-- verdict=EXECUTE_PASS
-- decision_gate=false
-- AUTO_QUIET=1
-- native_chain_continuing=true
-- drain_story_index=9 of 10
-- backlog_status=OPEN (## US-0143 — not mutated; AC-1..AC-8 unchecked)
-- tests=pytest 12/12 us0143; standalone npm test 118/118 (12/12 us0143; us0133..us0142 green)
-- approach=A1 runtime-core RouteScheduled + runAuto/runQuick; GateEngine unamended
-- sibling_boundary=US-0141/0142 DONE compose-only; US-0144+ not mutated; BUG-0024 OPEN not drained; S0146..S0150 not mutated
-- next_scheduled_phase=sovereign-critic (execute) then /qa
-- next_scheduled_role=tech-lead (critic), then qa
-- resume_brief=last=execute; next=orchestrator sovereign-critic then /qa; native_chain_continuing=true
-- stop_condition=STOP after execute. Orchestrator MUST spawn sovereign-critic of execute then /qa. Do NOT spawn /qa from this execute.
-
-### Isolation evidence (US-0048 / DEC-0029 / US-0104 v2) — execute US-0143
-
-- phase_id=execute
-- role=dev
-- story_id=US-0143
-- sprint_id=S0151
-- model_id=cursor-grok-4.6-high
-- fresh_context_marker=dev-US0143-execute-20260914T075000Z-fresh
-- timestamp=2026-09-14T07:50:00Z (UTC)
-- orchestrator_run_id=auto-20260913-us0143
-- evidence_ref=handoffs/dev_to_qa.md; sprints/S0151/summary.md
-- Fresh dev subagent per BUG-0006 / US-0048. No .env reads. Status remains OPEN. No AC ticks. No /qa spawn.
-
-### Strict runtime proof (DEC-0038) — execute US-0143
-
-- runtime_proof_id=rp-auto-20260913-us0143-execute-dev-20260914T075000Z-US-0143
-- phase_id=execute, role=dev, story_id=US-0143, sprint_id=S0151
-- proof_issued_at=2026-09-14T07:50:00Z
-- proof_ttl_seconds=3600, proof_ttl=2026-09-14T08:50:00Z
-- proof_hash=068EE18ED77C5006D984A0E14FC101FD9288183ECC72F4925F1E674FE7CB997A
-- Canonical hashed payload: {"orchestrator_run_id":"auto-20260913-us0143","phase_id":"execute","proof_issued_at":"2026-09-14T07:50:00Z","proof_ttl_seconds":3600,"role":"dev","runtime_proof_id":"rp-auto-20260913-us0143-execute-dev-20260914T075000Z-US-0143"}
-- Isolation extras (not hashed): delivery_mode=ultra_lean; macro_phase=build+verify; model_id=cursor-grok-4.6-high; sprint_id=S0151; story_id=US-0143
-- hash_recompute_confirmation=true (compute_strict_proof_hash → 068EE18ED77C5006D984A0E14FC101FD9288183ECC72F4925F1E674FE7CB997A MATCH)
-- Consumed sprint-plan: rp-auto-20260913-us0143-sprint-plan-techlead-20260914T073000Z-US-0143 / 63708536512D56BA8B5497D2C082299E4376DD495B12388125500454CACF46BE MATCH
-- Consumed critic: rp-auto-20260913-us0143-sovereign-critic-techlead-20260914T074000Z-US-0143 / 7160CC3A4196D877AD05173752D4B4640E83F682D60603AF224487E653783E9A MATCH
-
-### Triad hot-surface verification tuple (DEC-0054) — execute US-0143
-
-- surface=docs/engineering/state.md
-- pre_write: enforce-triad-hot-surface.py --check STATE_ARCHIVE_REQUIRED 1215/1200 → --rollover units=1 pack_ref=docs/engineering/state-archive/state-pack-20260914.md (archived `## Sovereign-critic checkpoint — release US-0142`; archived_body_lines=79; preamble_lines=11; retained_body_lines=1136; retained_units=13)
-- boundary=Sovereign-critic checkpoint release US-0142
-- moved=1
-- retained=13
-- pack_ref=docs/engineering/state-archive/state-pack-20260914.md
-- artifact_ordering: state.md append-bottom; resume_brief.md prepend-top; handoffs/dev_to_qa.md prepend-top
-
-## Sovereign-critic checkpoint — execute US-0143 / S0151 / auto-20260913-us0143 (role=tech-lead critic, spawn 080000Z)
-
-- phase_id=sovereign-critic
-- reviewed_phase_id=execute
-- role=tech-lead
-- story_id=US-0143
-- sprint_id=S0151
-- orchestrator_run_id=auto-20260913-us0143
-- parent_orchestrator_run_id=auto-20260913-us0142
-- delivery_mode=ultra_lean
-- macro_phase=build+verify (critic of execute; /qa next per native chain)
-- model_id=composer-2.5-fast (CROSS_MODEL_REVIEW=1 — required; distinct slug vs producer cursor-grok-4.6-high → degraded_mode=false)
-- fresh_context_marker=critic-US0143-execute-20260914T080000Z-fresh
-- timestamp=2026-09-14T08:00:00Z
-- verdict=CRITIC_PASS
-- decision_gate=false
-- blocking_count=0
-- non_blocking_count=3
-- anti_slop_aggregate=10
-- lenses=challenger+architect+subtractor (all three; degraded_mode=false)
-- finding_ids=us0143ex-challenger-001,us0143ex-architect-002,us0143ex-subtractor-003
-- issue_keys=ik_us0143ex_proof_failclosed_pass,ik_us0143ex_layer_qa_owns_next,ik_us0143ex_scope_yagni_pass
-- execute_confirmed=EXECUTE_PASS; RouteScheduled for /auto+/quick; DEFERRED_COMMANDS=[]; delivery-router.ts + runAuto/runQuick; GateEngine RELEASE_GATE_ORDER unamended; pytest 12/12 us0143; dev summary 118/118 standalone npm test; backlog ## US-0143 Status OPEN; acceptance unchecked
-- s0150_not_mutated=true (git diff sprints/S0150/ empty)
-- backlog_status=OPEN (## US-0143 — critic does not mutate)
-- sibling_boundary=US-0141/0142 DONE compose-only not reopened; US-0144+ not mutated; BUG-0021 DONE / BUG-0022 OPEN / BUG-0023 DONE / BUG-0024 OPEN not mutated/drained; S0146/S0147/S0148/S0149/S0150 not mutated
-- producer_runtime_proof_id=rp-auto-20260913-us0143-execute-dev-20260914T075000Z-US-0143
-- producer_proof_hash=068EE18ED77C5006D984A0E14FC101FD9288183ECC72F4925F1E674FE7CB997A (MATCH)
-- producer_proof_ttl=2026-09-14T08:50:00Z
-- proof_consume=RUNTIME_PROOF_VALID at 2026-09-14T08:00:00Z before ttl (hash MATCH; full 64 hex verified)
-- producer_proof_hash_recomputed=true (critic independent compute_strict_proof_hash positional args — byte-identical MATCH; proof_ttl_seconds int)
-- next_scheduled_phase=/qa
-- next_scheduled_role=qa
-- resume_brief=last=sovereign-critic (execute); next=orchestrator /qa; native_chain_continuing=true
-- stop_condition=STOP after sovereign-critic PASS. Orchestrator MUST Task-spawn /qa in fresh qa subagent (BUG-0006). Do NOT spawn /qa from this critic. Do NOT rework execute. Do NOT mark US-0143 DONE. Do NOT tick acceptance.
-
-### Isolation evidence (US-0048 / DEC-0029 / US-0104 v2) — sovereign-critic of execute US-0143
-
-- phase_id=sovereign-critic
-- role=tech-lead
-- story_id=US-0143
-- sprint_id=S0151
-- model_id=composer-2.5-fast
-- fresh_context_marker=critic-US0143-execute-20260914T080000Z-fresh (NEW per US-0048 / BUG-0006; not reused from dev-US0143-execute-20260914T075000Z-fresh)
-- timestamp=2026-09-14T08:00:00Z (UTC)
-- orchestrator_run_id=auto-20260913-us0143
-- evidence_ref=handoffs/sovereign_critic_findings.jsonl (us0143ex-*); sprints/S0151/summary.md; handoffs/dev_to_qa.md; standalone/packages/runtime-core/src/workflow/{command-router,delivery-router,workflow-engine}.ts; tests/us0143_contract_test.py; standalone/tests/contract/us0143.contract.test.ts; docs/engineering/state.md execute checkpoint
-- Fresh tech-lead critic subagent per BUG-0006 / US-0048 isolation; narrow-read only. No .env reads, no US-0143 Status mutation, no acceptance tick, no US-0133..US-0142 reopen, no US-0144+ mutation, no BUG-0021/0022/0023/0024 mutation, no S0150 mutation, no /qa spawn from critic (BUG-0006).
-
-### Strict runtime proof (DEC-0038) — sovereign-critic execute US-0143
-
-- runtime_proof_id=rp-auto-20260913-us0143-sovereign-critic-techlead-20260914T080000Z-US-0143
-- phase_id=sovereign-critic, role=tech-lead, story_id=US-0143, sprint_id=S0151
-- proof_issued_at=2026-09-14T08:00:00Z
-- proof_ttl_seconds=3600, proof_ttl=2026-09-14T09:00:00Z
-- proof_hash=D783D0AD90F37DCA1C7C508AED1472A6350CB074F9B2574F5466694C721C7318
-- Canonical hashed payload: {"orchestrator_run_id":"auto-20260913-us0143","phase_id":"sovereign-critic","proof_issued_at":"2026-09-14T08:00:00Z","proof_ttl_seconds":3600,"role":"tech-lead","runtime_proof_id":"rp-auto-20260913-us0143-sovereign-critic-techlead-20260914T080000Z-US-0143"}
-- Isolation extras (not hashed): delivery_mode=ultra_lean; macro_phase=build+verify; model_id=composer-2.5-fast; sprint_id=S0151; story_id=US-0143; reviewed_phase_id=execute
-- hash_recompute_confirmation=true (compute_strict_proof_hash → D783D0AD90F37DCA1C7C508AED1472A6350CB074F9B2574F5466694C721C7318 MATCH)
-- Consumed execute: rp-auto-20260913-us0143-execute-dev-20260914T075000Z-US-0143 / 068EE18ED77C5006D984A0E14FC101FD9288183ECC72F4925F1E674FE7CB997A MATCH
-
-### Triad hot-surface verification tuple (DEC-0054) — sovereign-critic execute US-0143
-
-- surface=docs/engineering/state.md (isolation + sovereign-critic checkpoint append-bottom)
-- companion=handoffs/sovereign_critic_findings.jsonl (us0143ex-* append); handoffs/resume_brief.md (prepend-top)
-- artifact_ordering: findings JSONL append; resume_brief.md prepend-top; state.md append-bottom (DEC-0040)
-- Active context surface preamble present
-
-## QA checkpoint — US-0143 / S0151 / auto-20260913-us0143 (role=qa)
-
-- phase_id=qa
-- role=qa
-- story_id=US-0143
-- sprint_id=S0151
-- orchestrator_run_id=auto-20260913-us0143
-- parent_orchestrator_run_id=auto-20260913-us0142
-- delivery_mode=ultra_lean
-- macro_phase=build+verify
-- model_id=cursor-grok-4.6-high (CROSS_MODEL_REVIEW=1 — required)
-- fresh_context_marker=qa-US0143-qa-20260914T081000Z-fresh
-- timestamp=2026-09-14T08:10:00Z (UTC)
-- verdict=QA_PASS
-- decision_gate=false
-- AUTO_QUIET=1
-- native_chain_continuing=true
-- drain_story_index=9 of 10
-- backlog_status=OPEN (## US-0143 — not mutated; AC-1..AC-8 unchecked)
-- tests=pytest 12/12 us0143 (0.07s); scoped node:test 12/12 duration_ms 257.356; standalone npm test 118/118 (12/12 us0143; us0133..us0142 green)
-- uat=9/9 pass; probe_kind=contract_tests_primary; live browser UAT_PROBE_FORBIDDEN; fake_browser_pass_claimed=false; live_chrome_probed=false; harness_fail_zero_claimed=false; convergence_smoke=pass
-- approach=A1 runtime-core RouteScheduled + runAuto/runQuick; GateEngine unamended
-- sibling_boundary=US-0141/0142 DONE compose-only; US-0144+ not mutated; BUG-0024 OPEN not drained; S0146..S0150 not mutated
-- next_scheduled_phase=sovereign-critic (qa) then /verify-work
-- next_scheduled_role=tech-lead (critic), then qa
-- resume_brief=last=qa; next=orchestrator sovereign-critic then /verify-work; native_chain_continuing=true
-- stop_condition=STOP after qa. Orchestrator MUST spawn sovereign-critic of qa then /verify-work. Do NOT spawn /verify-work from this qa.
-
-### Isolation evidence (US-0048 / DEC-0029 / US-0104 v2) — qa US-0143
-
-- phase_id=qa
-- role=qa
-- story_id=US-0143
-- sprint_id=S0151
-- model_id=cursor-grok-4.6-high
-- fresh_context_marker=qa-US0143-qa-20260914T081000Z-fresh
-- timestamp=2026-09-14T08:10:00Z (UTC)
-- orchestrator_run_id=auto-20260913-us0143
-- evidence_ref=sprints/S0151/qa-findings.md; sprints/S0151/uat.json
-- Fresh qa subagent per BUG-0006 / US-0048. No .env reads. Status remains OPEN. No AC ticks. No /verify-work spawn.
-
-### Strict runtime proof (DEC-0038) — qa US-0143
-
-- runtime_proof_id=rp-auto-20260913-us0143-qa-qa-20260914T081000Z-US-0143
-- phase_id=qa, role=qa, story_id=US-0143, sprint_id=S0151
-- proof_issued_at=2026-09-14T08:10:00Z
-- proof_ttl_seconds=3600, proof_ttl=2026-09-14T09:10:00Z
-- proof_hash=765DB2CB51DB25837EB43557146792DEEC4E084152FEA1FAB0214C556A53E66D
-- Canonical hashed payload: {"orchestrator_run_id":"auto-20260913-us0143","phase_id":"qa","proof_issued_at":"2026-09-14T08:10:00Z","proof_ttl_seconds":3600,"role":"qa","runtime_proof_id":"rp-auto-20260913-us0143-qa-qa-20260914T081000Z-US-0143"}
-- Isolation extras (not hashed): delivery_mode=ultra_lean; macro_phase=build+verify; model_id=cursor-grok-4.6-high; sprint_id=S0151; story_id=US-0143
-- hash_recompute_confirmation=true (compute_strict_proof_hash → 765DB2CB51DB25837EB43557146792DEEC4E084152FEA1FAB0214C556A53E66D MATCH)
-- Consumed execute: rp-auto-20260913-us0143-execute-dev-20260914T075000Z-US-0143 / 068EE18ED77C5006D984A0E14FC101FD9288183ECC72F4925F1E674FE7CB997A MATCH
-- Consumed critic: rp-auto-20260913-us0143-sovereign-critic-techlead-20260914T080000Z-US-0143 / D783D0AD90F37DCA1C7C508AED1472A6350CB074F9B2574F5466694C721C7318 MATCH
-
-### Triad hot-surface verification tuple (DEC-0054) — qa US-0143
-
-- surface=docs/engineering/state.md
-- pre_write: enforce-triad-hot-surface.py --check STATE_ARCHIVE_REQUIRED 1238/1200 → --rollover units=1 pack_ref=docs/engineering/state-archive/state-pack-20260914-b.md (archived `## Sovereign-critic checkpoint — closure US-0142`; archived_body_lines=79; preamble_lines=11; retained_body_lines=1159; retained_units=14)
-- boundary=Sovereign-critic checkpoint closure US-0142
-- moved=1
-- retained=14
-- pack_ref=docs/engineering/state-archive/state-pack-20260914-b.md
-- companion=handoffs/resume_brief.md (prepend-top); sprints/S0151/qa-findings.md; sprints/S0151/uat.json
-- artifact_ordering: qa-findings.md write; uat.json write; resume_brief.md prepend-top; state.md append-bottom (DEC-0040); then --rollover/--check
-- Active context surface preamble present
-
-## Sovereign-critic checkpoint — qa US-0143 / S0151 / auto-20260913-us0143 (role=tech-lead critic, spawn 082000Z)
-
-- phase_id=sovereign-critic
-- reviewed_phase_id=qa
-- role=tech-lead
-- story_id=US-0143
-- sprint_id=S0151
-- orchestrator_run_id=auto-20260913-us0143
-- parent_orchestrator_run_id=auto-20260913-us0142
-- delivery_mode=ultra_lean
-- macro_phase=build+verify (critic of qa; /verify-work next per native chain)
-- model_id=composer-2.5-fast (CROSS_MODEL_REVIEW=1 — required; distinct slug vs producer cursor-grok-4.6-high → degraded_mode=false)
-- fresh_context_marker=critic-US0143-qa-20260914T082000Z-fresh
-- timestamp=2026-09-14T08:20:00Z
-- verdict=CRITIC_PASS
-- decision_gate=false
-- blocking_count=0
-- non_blocking_count=3
-- anti_slop_aggregate=10
-- lenses=challenger+architect+subtractor (all three; degraded_mode=false)
-- finding_ids=us0143qa-challenger-001,us0143qa-architect-002,us0143qa-subtractor-003
-- issue_keys=ik_us0143qa_proof_uat_slice_pass,ik_us0143qa_layer_verify_work_owns_next,ik_us0143qa_scope_yagni_pass
-- qa_confirmed=QA_PASS; pytest 12/12 test_us0143_* (critic re-run 0.07s); uat.json 9/9 contract_tests_primary; live_chrome_probed=false; fake_browser_pass_claimed=false; harness_fail_zero_claimed=false; GateEngine RELEASE_GATE_ORDER unamended; backlog ## US-0143 Status OPEN; acceptance unchecked; backlog ACs unchecked
-- s0146_s0150_not_mutated=true
-- backlog_status=OPEN (## US-0143 — critic does not mutate)
-- sibling_boundary=US-0141/0142 DONE compose-only not reopened; US-0144+ not mutated; BUG-0021 DONE / BUG-0022 OPEN / BUG-0023 DONE / BUG-0024 OPEN not mutated/drained; S0146/S0147/S0148/S0149/S0150 not mutated
-- producer_runtime_proof_id=rp-auto-20260913-us0143-qa-qa-20260914T081000Z-US-0143
-- producer_proof_hash=765DB2CB51DB25837EB43557146792DEEC4E084152FEA1FAB0214C556A53E66D (MATCH)
-- producer_proof_ttl=2026-09-14T09:10:00Z
-- proof_consume=RUNTIME_PROOF_VALID at 2026-09-14T08:20:00Z before ttl (hash MATCH; full 64 hex verified)
-- producer_proof_hash_recomputed=true (critic independent compute_strict_proof_hash positional args — byte-identical MATCH; proof_ttl_seconds int)
-- next_scheduled_phase=/verify-work
-- next_scheduled_role=qa
-- resume_brief=last=sovereign-critic (qa); next=orchestrator /verify-work; native_chain_continuing=true
-- stop_condition=STOP after sovereign-critic PASS. Orchestrator MUST Task-spawn /verify-work in fresh qa subagent (BUG-0006). Do NOT spawn /verify-work from this critic. Do NOT mark US-0143 DONE. Do NOT tick acceptance. Do NOT tick backlog ACs.
-
-### Isolation evidence (US-0048 / DEC-0029 / US-0104 v2) — sovereign-critic of qa US-0143
-
-- phase_id=sovereign-critic
-- role=tech-lead
-- story_id=US-0143
-- sprint_id=S0151
-- model_id=composer-2.5-fast
-- fresh_context_marker=critic-US0143-qa-20260914T082000Z-fresh (NEW per US-0048 / BUG-0006; not reused from qa-US0143-qa-20260914T081000Z-fresh)
-- timestamp=2026-09-14T08:20:00Z (UTC)
-- orchestrator_run_id=auto-20260913-us0143
-- evidence_ref=handoffs/sovereign_critic_findings.jsonl (us0143qa-*); sprints/S0151/qa-findings.md; sprints/S0151/uat.json; sprints/S0151/summary.md; docs/engineering/state.md qa checkpoint
-- Fresh tech-lead critic subagent per BUG-0006 / US-0048 isolation; narrow-read only. No .env reads, no US-0143 Status mutation, no acceptance tick, no backlog AC ticks, no US-0133..US-0142 reopen, no US-0144+ mutation, no BUG-0021/0022/0023/0024 mutation, no S0150 mutation, no /verify-work spawn from critic (BUG-0006).
-
-### Strict runtime proof (DEC-0038) — sovereign-critic qa US-0143
-
-- runtime_proof_id=rp-auto-20260913-us0143-sovereign-critic-techlead-20260914T082000Z-US-0143
-- phase_id=sovereign-critic, role=tech-lead, story_id=US-0143, sprint_id=S0151
-- proof_issued_at=2026-09-14T08:20:00Z
-- proof_ttl_seconds=3600, proof_ttl=2026-09-14T09:20:00Z
-- proof_hash=29BBA735CC14DC03ECBC47A8689924FF6E882B76393086F46722B52B685758ED
-- Canonical hashed payload: {"orchestrator_run_id":"auto-20260913-us0143","phase_id":"sovereign-critic","proof_issued_at":"2026-09-14T08:20:00Z","proof_ttl_seconds":3600,"role":"tech-lead","runtime_proof_id":"rp-auto-20260913-us0143-sovereign-critic-techlead-20260914T082000Z-US-0143"}
-- Isolation extras (not hashed): delivery_mode=ultra_lean; macro_phase=build+verify; model_id=composer-2.5-fast; sprint_id=S0151; story_id=US-0143; reviewed_phase_id=qa
-- hash_recompute_confirmation=true (compute_strict_proof_hash → 29BBA735CC14DC03ECBC47A8689924FF6E882B76393086F46722B52B685758ED MATCH)
-- Consumed qa: rp-auto-20260913-us0143-qa-qa-20260914T081000Z-US-0143 / 765DB2CB51DB25837EB43557146792DEEC4E084152FEA1FAB0214C556A53E66D MATCH
-
-### Triad hot-surface verification tuple (DEC-0054) — sovereign-critic qa US-0143
-
-- surface=docs/engineering/state.md (isolation + sovereign-critic checkpoint append-bottom)
-- companion=handoffs/sovereign_critic_findings.jsonl (us0143qa-* append); handoffs/resume_brief.md (prepend-top)
-- artifact_ordering: findings JSONL append; resume_brief.md prepend-top; state.md append-bottom (DEC-0040)
-- Active context surface preamble present
-
-## Verify-work checkpoint — US-0143 / S0151 / auto-20260913-us0143 (role=qa)
-
-- phase_id=verify-work
-- role=qa
-- story_id=US-0143 (Status OPEN — not flipped DONE)
+- phase_id=release
+- role=release
+- story_id=US-0148 (Status OPEN — not flipped DONE)
 - bug_id=(none)
-- sprint_id=S0151
-- orchestrator_run_id=auto-20260913-us0143
-- parent_orchestrator_run_id=auto-20260913-us0142
+- sprint_id=S0156
+- orchestrator_run_id=auto-20260917-us0148
+- parent_orchestrator_run_id=auto-20260917-us0146
+- delivery_mode=ultra_lean
+- macro_phase=ship
+- model_id=inherit (CROSS_MODEL_REVIEW=0)
+- fresh_context_marker=rel-US0148-release-20260917T230000Z-fresh
+- timestamp=2026-09-17T23:00:00Z (UTC wall-clock)
+- verdict=RELEASE_PASS
+- decision_gate=false
+- RELEASE_PUBLISH_MODE=confirm (publish skipped — no operator confirm)
+- SYNC_POLICY_MODE=disabled
+- blocking_count=0
+- tests=scoped us0148 14/14 this pass (1189.5198ms; 12/12 locked); npm 167/167 qa attestation held
+- UAT=9/9 populated; verified_ready=true; contract_tests_primary; live_chrome_probed=false
+- queue_status=S0156=released
+- consumed_verify_work_proof=rp-auto-20260917-us0148-verify-work-qa-20260917T223000Z-US-0148 / 3CBE82E5A0ED983A1031BF24BC2FD4E0BB41E1C3B21C9D3EBB93C73E61C94A6D (MATCH before TTL 2026-09-17T23:30:00Z; consumed_at=2026-09-17T23:00:00Z)
+- next_scheduled_phase=/closure
+- next_scheduled_role=qe
+- stop_condition=STOP after RELEASE_PASS. Orchestrator MUST Task-spawn /closure in fresh qe (BUG-0006). CROSS_MODEL_REVIEW=0 — no sovereign-critic of release. Do NOT mark US-0148 DONE. Do NOT tick acceptance. Do NOT npm-publish. Do NOT git push. Do NOT spawn /closure from this release subagent.
+
+### Isolation evidence (US-0048 / DEC-0029 / US-0104 v2) — release US-0148
+
+- phase_id=release
+- role=release
+- model_id=inherit (CROSS_MODEL_REVIEW=0)
+- fresh_context_marker=rel-US0148-release-20260917T230000Z-fresh (NEW per US-0048 / BUG-0006; not reused from qa-US0148-verify-20260917T223000Z-fresh)
+- timestamp=2026-09-17T23:00:00Z (UTC)
+- orchestrator_run_id=auto-20260917-us0148
+- story_id=US-0148
+- sprint_id=S0156
+- evidence_ref=sprints/S0156/release-findings.md; handoffs/releases/S0156-release-notes.md; handoffs/release_queue.md (S0156 row)
+- Prior lifecycle isolation present: execute=`dev-US0148-execute-20260917T220000Z-fresh`; qa=`qa-US0148-qa-20260917T222500Z-fresh`; verify-work=`qa-US0148-verify-20260917T223000Z-fresh`; release=`rel-US0148-release-20260917T230000Z-fresh`
+- Fresh release subagent per BUG-0006; no .env reads. No US-0148 Status DONE flip. No acceptance tick. No closure from this subagent.
+
+### Strict runtime proof (DEC-0038) — release US-0148
+
+- runtime_proof_id=rp-auto-20260917-us0148-release-release-20260917T230000Z-US-0148
+- phase_id=release, role=release, story_id=US-0148, sprint_id=S0156
+- proof_issued_at=2026-09-17T23:00:00Z
+- proof_ttl_seconds=3600, proof_ttl=2026-09-18T00:00:00Z
+- proof_hash=F64BAEC98392A3A814ABE2902FF6C85EE86DF7FCF8BD6FEA3450CC56FF5219E6
+- Hash via `from scripts.token_cost_lib import compute_strict_proof_hash` (positional; compact sorted-key JSON).
+- Canonical hashed payload: {"orchestrator_run_id":"auto-20260917-us0148","phase_id":"release","proof_issued_at":"2026-09-17T23:00:00Z","proof_ttl_seconds":3600,"role":"release","runtime_proof_id":"rp-auto-20260917-us0148-release-release-20260917T230000Z-US-0148"}
+- Isolation extras (not hashed): delivery_mode=ultra_lean; macro_phase=ship; model_id=inherit; sprint_id=S0156; story_id=US-0148; CROSS_MODEL_REVIEW=0; drain_story_index=1 of 3
+- consumed_verify_work_proof (not hashed): rp-auto-20260917-us0148-verify-work-qa-20260917T223000Z-US-0148 / 3CBE82E5A0ED983A1031BF24BC2FD4E0BB41E1C3B21C9D3EBB93C73E61C94A6D — MATCH; not STALE at 2026-09-17T23:00:00Z
+- consumed_qa_proof (not hashed): rp-auto-20260917-us0148-qa-qa-20260917T222500Z-US-0148 / BBE54BEC118319917F07862D641170BBC4FD9A17C5858249BF2C93EE3D307D61 — MATCH; not STALE at 2026-09-17T23:00:00Z
+- consumed_execute_proof (not hashed): rp-auto-20260917-us0148-execute-dev-20260917T220000Z-US-0148 / 4E95757067D26F6502C94856C7F746046F57A7291A52FAD5F68CF818B694ABD5 — MATCH; not STALE at 2026-09-17T23:00:00Z
+- hash_recompute_confirmation=true (compute_strict_proof_hash → f64baec98392a3a814abe2902ff6c85ee86df7fcf8bd6fea3450cc56ff5219e6; independently MATCH; 64 hex verified; stored uppercase)
+
+### Phase boundary status (DEC-0069 AC-10) — release US-0148
+
+- phase_id=release
+- verdict=RELEASE_PASS
+- story_id=US-0148 OPEN
+- sprint_id=S0156
+- next_phase=closure
+- next_role=qe
+
+## Research checkpoint — US-0145 / auto-20260917-us0146 (role=tech-lead)
+
+- phase_id=research
+- role=tech-lead
+- model_id=inherit (MODEL_RESOLVE=alias_only; CROSS_MODEL_REVIEW=0)
+- story_id=US-0145 (Status OPEN — not flipped DONE; AC-1..AC-9 unchecked)
+- bug_id=(none)
+- sprint_id=(none yet; expected S0155 at sprint-plan)
+- orchestrator_run_id=auto-20260917-us0146
+- parent_orchestrator_run_id=auto-20260913-us0144
 - delivery_mode=ultra_lean
 - resolved_phase_plan=[spec, plan, build+verify, ship]
 - reinstatement_mode=none
 - memory_layer=pack
-- macro_phase=build+verify (verify-work; /release not spawned)
+- macro_phase=plan (research complete; architecture + sprint-plan remain in plan macro)
+- skipped_phases=[intake]
+- verdict=RESEARCH_PASS
+- decision_gate=false
+- timestamp=2026-09-17T22:00:00Z
+- fresh_context_marker=tl-US0145-research-20260917T220000Z-fresh
 - AUTO_QUIET=1
-- CROSS_MODEL_REVIEW=1
-- backlog_drain_active=true
-- drain_story_index=9 of 10
+- AUTO_FLOW_MODE=full_autonomy
+- AUTO_SOVEREIGN=0
+- CROSS_MODEL_REVIEW=0
+- FRAMEWORK_KIT_REPO=1
+- EARLY_RESEARCH=0
 - native_chain_active=true
 - native_chain_continuing=true
-- model_id=cursor-grok-4.6-high (CROSS_MODEL_REVIEW=1 — required on isolation)
-- producer_model_id=cursor-grok-4.6-high
-- critic_model_id=composer-2.5-fast
-- fresh_context_marker=qa-US0143-verify-20260914T083000Z-fresh
-- timestamp=2026-09-14T08:30:00Z
-- verdict=VERIFY_WORK_PASS (A1 independently re-verified; pytest 12/12 test_us0143_*; UAT populated 9/9 re-attested; contract_tests_primary; live_chrome_probed=false; decision_gate=false)
-- verify_work_verdict=PASS
-- blocking_count=0
-- non_blocking_count=3
-- research_anchor=R-0141 (DQ1-DQ10 LOCKED, cited, not rewritten)
-- companion_dec=DEC-0143 Accepted
-- architecture_anchor=docs/engineering/architecture.md # US-0143 (not mutated)
-- tests=pytest 12 passed in 0.07s (12/12 test_us0143_*); standalone npm 118/118 qa attestation (not re-run this pass)
-- uat=populated; verified_ready=true; contract_tests_primary; 6 waived UAT_PROBE_FORBIDDEN (live Chrome not probed); no fake live-Chrome PASS; harness_fail_zero_claimed=false; fake_browser_pass_claimed=false
-- backlog_status=OPEN (## US-0143 — Status OPEN)
-- acceptance_US-0143=unchecked (unchanged)
-- backlog_acs=AC-1..AC-8 unchecked (closure/QE)
-- sibling_boundary=US-0133..US-0142 DONE compose-only not reopened; US-0144+ not mutated; BUG-0021 DONE / BUG-0022 OPEN / BUG-0023 DONE / BUG-0024 OPEN not mutated/drained; S0146/S0147/S0148/S0149/S0150 not overwritten
-- fake_browser_pass_claimed=false
-- live_chrome_probed=false
-- next_scheduled_phase=sovereign-critic (verify-work) then /release (fresh release)
-- next_scheduled_role=tech-lead (critic), then release
-- resume_brief=last=verify-work; next=orchestrator sovereign-critic then /release; native_chain_continuing=true
-- stop_condition=STOP after verify-work PASS. Orchestrator MUST spawn sovereign-critic of verify-work then MUST spawn /release in fresh release (BUG-0006). Do NOT spawn release or critic from this qa. Do NOT mark US-0143 DONE. Do NOT tick acceptance. Do NOT tick backlog ACs. Do NOT reopen US-0133..US-0142. Do NOT mutate BUG-0021/0022/0023/0024. Do NOT restore auto.md. Do NOT claim fake live-Chrome PASS.
+- drain_story_index=3 of 3
+- backlog_drain_stories_remaining_budget=0
+- research_anchor=R-0145 (docs/engineering/research.md ## R-0145; DQ1–DQ10 LOCKED; A1 workflow/delivery + runDeliveryOperation)
+- companion_dec=DEC-0145 (architecture-owned; not authored)
+- expected_sprint=S0155
+- approach=A1 (A*) LOCKED
+- sibling_boundary=US-0140..US-0147 DONE compose-only; US-0148 OPEN body not mutated; BUG-0022 OPEN not drained
+- US-0145_status=OPEN
+- AC_ticks=unchecked (AC-1..AC-9 remain `[ ]`)
+- next_scheduled_phase=architecture
+- next_scheduled_role=tech-lead
+- resume_brief=last=research; next=/architecture (tech-lead); macro=plan
+- stop_condition=STOP after RESEARCH_PASS. Orchestrator MUST spawn /architecture in fresh tech-lead. CROSS_MODEL_REVIEW=0 — do NOT spawn sovereign-critic. Do NOT mark US-0145 DONE. Do NOT tick AC. Do NOT npm-publish. Do NOT git push.
 
-### Traceability index (DEC-0010) — verify-work US-0143
+### Isolation evidence (US-0048 / DEC-0029 / US-0104 v2) — research US-0145
+
+- phase_id=research
+- role=tech-lead
+- story_id=US-0145
+- sprint_id=none
+- model_id=inherit (CROSS_MODEL_REVIEW=0)
+- fresh_context_marker=tl-US0145-research-20260917T220000Z-fresh (NEW per US-0048 / BUG-0006)
+- timestamp=2026-09-17T22:00:00Z (UTC)
+- orchestrator_run_id=auto-20260917-us0146
+- parent_orchestrator_run_id=auto-20260913-us0144
+- delivery_mode=ultra_lean
+- macro_phase=plan
+- resolved_phase_plan=[spec, plan, build+verify, ship]
+- skipped_phases=[intake]
+- native_chain_active=true
+- native_chain_continuing=true
+- CROSS_MODEL_REVIEW=0
+- evidence_ref=docs/engineering/research.md ## R-0145; handoffs/po_to_tl.md Research handoff US-0145; handoffs/resume_brief.md; docs/product/backlog.md ## US-0145 discovery_notes (read-only)
+- Fresh tech-lead subagent per BUG-0006 / US-0048; narrow-read TOKEN_PROFILE=lean. No .env. No backlog Status/AC mutation. No US-0148 body mutation. No architecture H1. No DEC-0145.md. No sprints/S0155/. No /architecture spawn from this subagent. No npm publish. No git push.
+
+### Strict runtime proof (DEC-0038) — research US-0145
+
+- runtime_proof_id=rp-auto-20260917-us0146-research-techlead-20260917T220000Z-US-0145
+- phase_id=research, role=tech-lead, story_id=US-0145, sprint_id=none
+- proof_issued_at=2026-09-17T22:00:00Z
+- proof_ttl_seconds=3600, proof_ttl=2026-09-17T23:00:00Z
+- proof_hash=CBBD28E0CA404A019F3919AA8870EA7FCC2699CC7AD4576F5F9CEA0323F222C6
+- Hash via `from scripts.token_cost_lib import compute_strict_proof_hash` (positional; compact sorted-key JSON).
+- Canonical hashed payload: {"orchestrator_run_id":"auto-20260917-us0146","phase_id":"research","proof_issued_at":"2026-09-17T22:00:00Z","proof_ttl_seconds":3600,"role":"tech-lead","runtime_proof_id":"rp-auto-20260917-us0146-research-techlead-20260917T220000Z-US-0145"}
+- Isolation extras (not hashed): delivery_mode=ultra_lean; macro_phase=plan; model_id=inherit; sprint_id=none; story_id=US-0145; skipped_phases=[intake]; CROSS_MODEL_REVIEW=0; native_chain_active=true; native_chain_continuing=true; drain_story_index=3 of 3; backlog_drain_stories_remaining_budget=0
+- hash_recompute_confirmation=true (compute_strict_proof_hash → CBBD28E0CA404A019F3919AA8870EA7FCC2699CC7AD4576F5F9CEA0323F222C6 MATCH; 64 hex verified; stored uppercase)
+- consumed_discovery_proof=rp-auto-20260917-us0146-discovery-po-20260917T200000Z-US-0145 / D65648EBD8A325F98E69B718A2E81A9D04778B92C1C9F3CD690EE6160E21143C — RUNTIME_PROOF_VALID (MATCH at consumed_at 2026-09-17T22:00:00Z)
+
+### Phase boundary status (DEC-0069 AC-10) — research US-0145
+
+- phase_boundary=research
+- next_scheduled_phase=architecture
+- next_scheduled_role=tech-lead
+- segment_work_item_kind=story
+- story_id=US-0145 OPEN
+- macro_phase=plan
+- drain_story_index=3 of 3
+- backlog_drain_stories_remaining_budget=0
+
+### Triad hot-surface verification tuple (DEC-0054) — research US-0145
+
+- surface=docs/engineering/state.md (append-bottom) + handoffs/po_to_tl.md (append-newest) + handoffs/resume_brief.md (prepend-top) + docs/engineering/research.md ## R-0145 (append-bottom)
+- companion=docs/product/backlog.md ## US-0145 discovery_notes (read-only)
+- artifact_ordering: po_to_tl append-newest; state.md append-bottom; resume_brief.md prepend-top (DEC-0040)
+- pre_write: enforce-triad-hot-surface.py --check STATE_ARCHIVE_REQUIRED state 1216/1200 + po_to_tl 652/650
+- post_append: --rollover --json state `{"boundary":"triad-rollover|state","moved":1,"pack_ref":"docs/engineering/state-archive/state-pack-20260917-p.md","retained_checkpoints":12,"retained_lines":1145}` + po_to_tl `{"boundary":"triad-rollover|po_to_tl","moved":1,"pack_ref":"handoffs/archive/po-to-tl-pack-20260917-f.md","retained_lines":602,"retained_sections":12}`; Research handoff US-0145 retained at true end
+- architecture.md not touched; arch_linkage_guard.py not run
+- final_check=PASS
+
+## Architecture checkpoint — US-0145 / auto-20260917-us0146 (role=tech-lead)
+
+- phase_id=architecture
+- role=tech-lead
+- model_id=inherit (MODEL_RESOLVE=alias_only; CROSS_MODEL_REVIEW=0)
+- story_id=US-0145 (Status OPEN — not flipped DONE; AC-1..AC-9 unchecked)
+- bug_id=(none)
+- sprint_id=(none yet; expected S0155 at sprint-plan)
+- orchestrator_run_id=auto-20260917-us0146
+- parent_orchestrator_run_id=auto-20260913-us0144
+- delivery_mode=ultra_lean
+- resolved_phase_plan=[spec, plan, build+verify, ship]
+- reinstatement_mode=none
+- memory_layer=pack
+- macro_phase=plan (architecture = second of research+architecture+sprint-plan)
+- skipped_phases=[intake]
+- verdict=ARCHITECTURE_PASS
+- decision_gate=false
+- timestamp=2026-09-17T22:30:00Z
+- fresh_context_marker=tl-US0145-architecture-20260917T223000Z-fresh
+- AUTO_QUIET=1
+- AUTO_FLOW_MODE=full_autonomy
+- AUTO_SOVEREIGN=0
+- CROSS_MODEL_REVIEW=0
+- FRAMEWORK_KIT_REPO=1
+- EARLY_RESEARCH=0
+- native_chain_active=true
+- native_chain_continuing=true
+- drain_story_index=3 of 3
+- backlog_drain_stories_remaining_budget=0
+- research_anchor=docs/engineering/research.md ## R-0145 (DQ1–DQ10 LOCKED; A1)
+- architecture_anchor=docs/engineering/architecture.md # US-0145
+- companion_dec=DEC-0145 (Accepted — decisions/DEC-0145.md)
+- consumed_research_proof=rp-auto-20260917-us0146-research-techlead-20260917T220000Z-US-0145 / CBBD28E0CA404A019F3919AA8870EA7FCC2699CC7AD4576F5F9CEA0323F222C6 (MATCH; not STALE at consume)
+- expected_sprint=S0155
+- sibling_boundary=US-0140..US-0147 DONE compose-only; US-0148 OPEN bodies not mutated; BUG-0022 OPEN not drained
+- US-0145_status=OPEN
+- AC_ticks=unchecked (AC-1..AC-9 remain `[ ]`)
+- acceptance_US-0145=unchecked
+- next_scheduled_phase=sprint-plan
+- next_scheduled_role=tech-lead
+- resume_brief=last=architecture; next=/sprint-plan (tech-lead); native_chain_continuing=true
+- stop_condition=STOP after ARCHITECTURE_PASS. Do NOT spawn /sprint-plan from this subagent chat per BUG-0006. CROSS_MODEL_REVIEW=0 — no sovereign-critic. Do NOT mark US-0145 DONE. Do NOT tick AC.
+
+### Isolation evidence (US-0048 / DEC-0029 / US-0104 v2) — architecture US-0145
+
+- phase_id=architecture
+- role=tech-lead
+- story_id=US-0145
+- sprint_id=none
+- model_id=inherit (CROSS_MODEL_REVIEW=0)
+- fresh_context_marker=tl-US0145-architecture-20260917T223000Z-fresh (NEW exact; distinct from tl-US0145-research-*)
+- timestamp=2026-09-17T22:30:00Z (UTC)
+- orchestrator_run_id=auto-20260917-us0146
+- parent_orchestrator_run_id=auto-20260913-us0144
+- delivery_mode=ultra_lean
+- macro_phase=plan
+- resolved_phase_plan=[spec, plan, build+verify, ship]
+- skipped_phases=[intake]
+- native_chain_active=true
+- native_chain_continuing=true
+- CROSS_MODEL_REVIEW=0
+- evidence_ref=docs/engineering/architecture.md # US-0145; decisions/DEC-0145.md; docs/engineering/research.md ## R-0145; docs/product/backlog.md ## US-0145 discovery_notes (read-only); handoffs/po_to_tl.md; handoffs/resume_brief.md
+- Fresh tech-lead subagent per BUG-0006 / US-0048; narrow-read TOKEN_PROFILE=lean. No .env. No backlog Status/AC mutation. No US-0148 body mutation. No npm publish. No git push. No /sprint-plan spawn.
+
+### Strict runtime proof (DEC-0038) — architecture US-0145
+
+- runtime_proof_id=rp-auto-20260917-us0146-architecture-techlead-20260917T223000Z-US-0145
+- phase_id=architecture, role=tech-lead, story_id=US-0145, sprint_id=none
+- proof_issued_at=2026-09-17T22:30:00Z
+- proof_ttl_seconds=3600, proof_ttl=2026-09-17T23:30:00Z
+- proof_hash=80F3C316829DD9A44996EE4BD61E4FF3AAC0FCF3DC276D02B7FC9585FDA5FBE9
+- Hash via `from scripts.token_cost_lib import compute_strict_proof_hash` (positional; compact sorted-key JSON).
+- Canonical hashed payload: {"orchestrator_run_id":"auto-20260917-us0146","phase_id":"architecture","proof_issued_at":"2026-09-17T22:30:00Z","proof_ttl_seconds":3600,"role":"tech-lead","runtime_proof_id":"rp-auto-20260917-us0146-architecture-techlead-20260917T223000Z-US-0145"}
+- Isolation extras (not hashed): delivery_mode=ultra_lean; macro_phase=plan; model_id=inherit; sprint_id=none; story_id=US-0145; skipped_phases=[intake]; CROSS_MODEL_REVIEW=0; native_chain_active=true; native_chain_continuing=true; drain_story_index=3 of 3; backlog_drain_stories_remaining_budget=0
+- consumed_research_proof (not hashed): rp-auto-20260917-us0146-research-techlead-20260917T220000Z-US-0145 / CBBD28E0CA404A019F3919AA8870EA7FCC2699CC7AD4576F5F9CEA0323F222C6 — MATCH; not STALE at 2026-09-17T22:30:00Z
+- hash_recompute_confirmation=true (compute_strict_proof_hash → 80f3c316829dd9a44996ee4bd61e4ff3aac0fcf3dc276d02b7fc9585fda5fbe9; independently MATCH; 64 hex verified; stored uppercase)
+
+### Phase boundary status (DEC-0069 AC-10) — architecture US-0145
+
+- phase_id=architecture
+- verdict=ARCHITECTURE_PASS
+- story_id=US-0145 OPEN
+- next_phase=sprint-plan
+- next_role=tech-lead
+- drain_advance_action=complete (segment terminal after ship+refresh for US-0145; expect BACKLOG_MAX_STORIES_REACHED on next refresh-context)
+
+### Triad hot-surface verification tuple (DEC-0054) — architecture US-0145
+
+- surface=docs/engineering/state.md (append-bottom) + handoffs/po_to_tl.md (append-newest) + handoffs/resume_brief.md (prepend-top) + docs/engineering/architecture.md (append # US-0145)
+- companion=decisions/DEC-0145.md; docs/engineering/decisions.md DEC-0145 Accepted stub
+- pre_write: baseline_h2_count=0
+- post_append: --rollover --json architecture `{"boundary":"triad-rollover|architecture","moved":1,"pack_ref":"docs/engineering/architecture-archive/architecture-pack-20260917-b.md","retained_story_sections":21}` + state `{"boundary":"triad-rollover|state","moved":2,"pack_ref":"docs/engineering/state-archive/state-pack-20260917-q.md","retained_checkpoints":11,"retained_lines":1124}`; Architecture handoff US-0145 retained at true end of po_to_tl
+- `--check-arch-heading-policy --baseline-h2-count 0` PASS; final `--check` PASS
+- codebase_map: `[CODEBASE_MAP_OK] preserved_existing trigger=architecture`
+- baseline_h2_count=0
+
+## Sprint-plan checkpoint — US-0145 / S0155 / auto-20260917-us0146 (role=tech-lead)
+
+- phase_id=sprint-plan
+- role=tech-lead
+- story_id=US-0145 (Status OPEN — not flipped DONE; AC-1..AC-9 unchecked)
+- bug_id=(none)
+- sprint_id=S0155
+- orchestrator_run_id=auto-20260917-us0146
+- parent_orchestrator_run_id=auto-20260913-us0144
+- delivery_mode=ultra_lean
+- resolved_phase_plan=[spec, plan, build+verify, ship]
+- reinstatement_mode=none
+- memory_layer=pack
+- macro_phase=build+verify (next — execute first phase of build+verify; plan macro terminal at sprint-plan)
+- skipped_phases=[intake, plan-verify]
+- verdict=SPRINT_PLAN_PASS
+- decision_gate=false
+- timestamp=2026-09-17T22:45:00Z
+- fresh_context_marker=tl-US0145-sprintplan-20260917T224500Z-fresh
+- AUTO_QUIET=1
+- AUTO_FLOW_MODE=full_autonomy
+- AUTO_SOVEREIGN=0
+- CROSS_MODEL_REVIEW=0
+- FRAMEWORK_KIT_REPO=1
+- native_chain_active=true
+- native_chain_continuing=true
+- drain_story_index=3 of 3
+- backlog_drain_stories_remaining_budget=0
+- research_anchor=docs/engineering/research.md ## R-0145 (DQ1–DQ10 LOCKED; A1)
+- architecture_anchor=docs/engineering/architecture.md # US-0145
+- companion_dec=DEC-0145 (Accepted)
+- consumed_architecture_proof=rp-auto-20260917-us0146-architecture-techlead-20260917T223000Z-US-0145 / 80F3C316829DD9A44996EE4BD61E4FF3AAC0FCF3DC276D02B7FC9585FDA5FBE9 (MATCH; not STALE at consume)
+- task_count=12 (T-anch + T-001..T-011 at SPRINT_MAX_TASKS cap)
+- plan_verify=SKIPPED (ultra_lean; reason=ultra_lean_skipped; no QA spawn)
+- sibling_boundary=US-0140..US-0147 DONE compose-only; US-0148 OPEN body not mutated; BUG-0022 OPEN not drained
+- US-0145_status=OPEN
+- AC_ticks=unchecked (AC-1..AC-9 remain `[ ]`)
+- acceptance_US-0145=unchecked
+- next_scheduled_phase=execute
+- next_scheduled_role=dev
+- resume_brief=last=sprint-plan S0155; next=/execute (dev); macro_phase=build+verify
+- ultra_lean_note=plan-verify SKIPPED; CROSS_MODEL_REVIEW=0 — no sovereign-critic; after sprint-plan next=/execute only
+- stop_condition=STOP after sprint-plan PASS. Orchestrator MUST spawn /execute in fresh dev subagent (BUG-0006). Do NOT spawn execute, plan-verify, or critic from this tech-lead. Do NOT mark US-0145 DONE. Do NOT tick acceptance.
+
+### Traceability index (DEC-0010) — sprint-plan US-0145
 
 | Story | Sprint | Tasks | Status | Evidence |
 |-------|--------|-------|--------|----------|
-| US-0143 | S0151 | T-anch + T-001..T-010 | PASS | sprints/S0151/uat.json; sprints/S0151/uat.md; sprints/S0151/verify-work-findings.md; sprints/S0151/verify-work-verdict.json; sprints/S0151/summary.md |
+| US-0145 | S0155 | T-anch + T-001..T-011 | PLANNED | |
 
-Pre-handoff: no OPEN or DONE story in S0151 lacks a traceability index entry (US-0143 only).
+### Isolation evidence (US-0048 / DEC-0029 / US-0104 v2) — sprint-plan US-0145
 
-### Isolation evidence (US-0048 / DEC-0029 / US-0104 v2) — verify-work US-0143
+- phase_id=sprint-plan
+- role=tech-lead
+- model_id=inherit (CROSS_MODEL_REVIEW=0)
+- fresh_context_marker=tl-US0145-sprintplan-20260917T224500Z-fresh (NEW per US-0048 / BUG-0006; not reused from tl-US0145-architecture-20260917T223000Z-fresh)
+- timestamp=2026-09-17T22:45:00Z (UTC)
+- orchestrator_run_id=auto-20260917-us0146
+- story_id=US-0145
+- sprint_id=S0155
+- evidence_ref=sprints/S0155/sprint.md; sprints/S0155/tasks.md; sprints/S0155/progress.md; handoffs/tl_to_dev.md; docs/product/backlog.md ## US-0145; handoffs/resume_brief.md
+- Fresh tech-lead subagent per BUG-0006 / US-0048 isolation; narrow-read only. No .env reads. No US-0145 Status DONE flip. No acceptance tick. No US-0140..US-0147 reopen. No /execute or /plan-verify or critic spawn from this subagent.
+
+### Strict runtime proof (DEC-0038) — sprint-plan US-0145
+
+- runtime_proof_id=rp-auto-20260917-us0146-sprint-plan-techlead-20260917T224500Z-US-0145
+- phase_id=sprint-plan, role=tech-lead, story_id=US-0145, sprint_id=S0155
+- proof_issued_at=2026-09-17T22:45:00Z
+- proof_ttl_seconds=3600, proof_ttl=2026-09-17T23:45:00Z
+- proof_hash=1D245D8D23B03B11DC8AF39FB6A6E5FCC59562510A2F4AA365D708E9ADF947BC
+- Hash via `from scripts.token_cost_lib import compute_strict_proof_hash` (positional; compact sorted-key JSON).
+- Canonical hashed payload: {"orchestrator_run_id":"auto-20260917-us0146","phase_id":"sprint-plan","proof_issued_at":"2026-09-17T22:45:00Z","proof_ttl_seconds":3600,"role":"tech-lead","runtime_proof_id":"rp-auto-20260917-us0146-sprint-plan-techlead-20260917T224500Z-US-0145"}
+- Isolation extras (not hashed): delivery_mode=ultra_lean; macro_phase=plan; model_id=inherit; sprint_id=S0155; story_id=US-0145; skipped_phases=[intake, plan-verify]; CROSS_MODEL_REVIEW=0; native_chain_active=true; native_chain_continuing=true; drain_story_index=3 of 3; backlog_drain_stories_remaining_budget=0
+- consumed_architecture_proof (not hashed): rp-auto-20260917-us0146-architecture-techlead-20260917T223000Z-US-0145 / 80F3C316829DD9A44996EE4BD61E4FF3AAC0FCF3DC276D02B7FC9585FDA5FBE9 — MATCH; not STALE at 2026-09-17T22:45:00Z
+- hash_recompute_confirmation=true (compute_strict_proof_hash → 1d245d8d23b03b11dc8af39fb6a6e5fcc59562510a2f4aa365d708e9adf947bc; independently MATCH; 64 hex verified; stored uppercase)
+
+### Phase boundary status (DEC-0069 AC-10) — sprint-plan US-0145
+
+- phase_id=sprint-plan
+- verdict=SPRINT_PLAN_PASS
+- story_id=US-0145 OPEN
+- sprint_id=S0155
+- next_phase=execute
+- next_role=dev
+- drain_advance_action=complete (segment terminal after ship+refresh for US-0145; expect BACKLOG_MAX_STORIES_REACHED on next refresh-context)
+
+### Triad hot-surface verification tuple (DEC-0054) — sprint-plan US-0145
+
+- surface=docs/engineering/state.md (append-bottom) + handoffs/tl_to_dev.md (prepend-top) + handoffs/resume_brief.md (prepend-top)
+- companion=sprints/S0155/sprint.md; sprints/S0155/tasks.md; sprints/S0155/progress.md
+- architecture.md not mutated this phase
+
+### Isolation evidence (US-0048 / DEC-0029) — execute US-0145
+
+- phase_id=execute
+- role=dev
+- model_id=inherit (CROSS_MODEL_REVIEW=0)
+- fresh_context_marker=dev-US0145-execute-20260917T203000Z-fresh (NEW per US-0048 / BUG-0006)
+- timestamp=2026-09-17T20:30:00Z (UTC)
+- orchestrator_run_id=auto-20260917-us0146
+- story_id=US-0145
+- sprint_id=S0155
+- evidence_ref=sprints/S0155/progress.md; sprints/S0155/t-anch-verification.md; handoffs/dev_to_qa.md; standalone/tests/contract/us0145.contract.test.ts; scripts/delivery_runtime_bridge.py
+- Fresh dev subagent per BUG-0006; narrow-read only. No .env reads. No US-0145 Status DONE flip. No acceptance tick. No US-0140..US-0147 reopen.
+
+### Strict runtime proof (DEC-0038) — execute US-0145
+
+- runtime_proof_id=rp-auto-20260917-us0146-execute-dev-20260917T203000Z-US-0145
+- phase_id=execute, role=dev, story_id=US-0145, sprint_id=S0155
+- proof_issued_at=2026-09-17T20:30:00Z
+- proof_ttl_seconds=3600, proof_ttl=2026-09-17T21:30:00Z
+- proof_hash=A4B28543B669F4D1E2D65A0063E138D538AA5FC80DC4EFA71BCB96C8ED8A04FB
+- Hash via `from scripts.token_cost_lib import compute_strict_proof_hash` (positional; compact sorted-key JSON).
+- Canonical hashed payload: {"orchestrator_run_id":"auto-20260917-us0146","phase_id":"execute","proof_issued_at":"2026-09-17T20:30:00Z","proof_ttl_seconds":3600,"role":"dev","runtime_proof_id":"rp-auto-20260917-us0146-execute-dev-20260917T203000Z-US-0145"}
+- Isolation extras (not hashed): delivery_mode=ultra_lean; macro_phase=build+verify; model_id=inherit; sprint_id=S0155; story_id=US-0145; CROSS_MODEL_REVIEW=0; drain_story_index=3 of 3
+- consumed_sprint_plan_proof (not hashed): rp-auto-20260917-us0146-sprint-plan-techlead-20260917T224500Z-US-0145 / 1D245D8D23B03B11DC8AF39FB6A6E5FCC59562510A2F4AA365D708E9ADF947BC — MATCH; not STALE at 2026-09-17T20:30:00Z
+- hash_recompute_confirmation=true (compute_strict_proof_hash → a4b28543b669f4d1e2d65a0063e138d538aa5fc80dc4efa71bcb96c8ed8a04fb; independently MATCH; 64 hex verified; stored uppercase)
+
+### Phase boundary status (DEC-0069 AC-10) — execute US-0145
+
+- phase_id=execute
+- verdict=EXECUTE_PASS
+- story_id=US-0145 OPEN
+- sprint_id=S0155
+- next_phase=qa
+- next_role=qa
+
+### Isolation evidence (US-0048 / DEC-0029) — qa US-0145
+
+- phase_id=qa
+- role=qa
+- model_id=inherit (CROSS_MODEL_REVIEW=0)
+- fresh_context_marker=qa-US0145-qa-20260917T201200Z-fresh (NEW per US-0048 / BUG-0006)
+- timestamp=2026-09-17T20:12:00Z (UTC)
+- orchestrator_run_id=auto-20260917-us0146
+- story_id=US-0145
+- sprint_id=S0155
+- evidence_ref=sprints/S0155/qa-findings.md; sprints/S0155/plan-verify.json; sprints/S0155/uat.json; sprints/S0155/uat.md
+- Fresh qa subagent per BUG-0006; no .env reads. No US-0145 Status DONE flip. No acceptance tick. No verify-work/release/closure from this subagent.
+
+### Strict runtime proof (DEC-0038) — qa US-0145
+
+- runtime_proof_id=rp-auto-20260917-us0146-qa-qa-20260917T201200Z-US-0145
+- phase_id=qa, role=qa, story_id=US-0145, sprint_id=S0155
+- proof_issued_at=2026-09-17T20:12:00Z
+- proof_ttl_seconds=3600, proof_ttl=2026-09-17T21:12:00Z
+- proof_hash=D2388F57C5CBD53846C10E4660BFE056F30A8A27B4334D4DE606673F845299C6
+- Hash via `from scripts.token_cost_lib import compute_strict_proof_hash` (positional; compact sorted-key JSON).
+- Canonical hashed payload: {"orchestrator_run_id":"auto-20260917-us0146","phase_id":"qa","proof_issued_at":"2026-09-17T20:12:00Z","proof_ttl_seconds":3600,"role":"qa","runtime_proof_id":"rp-auto-20260917-us0146-qa-qa-20260917T201200Z-US-0145"}
+- Isolation extras (not hashed): delivery_mode=ultra_lean; macro_phase=build+verify; model_id=inherit; sprint_id=S0155; story_id=US-0145; CROSS_MODEL_REVIEW=0; drain_story_index=3 of 3
+- consumed_execute_proof (not hashed): rp-auto-20260917-us0146-execute-dev-20260917T203000Z-US-0145 / A4B28543B669F4D1E2D65A0063E138D538AA5FC80DC4EFA71BCB96C8ED8A04FB — MATCH; not STALE at 2026-09-17T20:12:00Z
+- hash_recompute_confirmation=true (compute_strict_proof_hash → d2388f57c5cbd53846c10e4660bfe056f30a8a27b4334d4de606673f845299c6; independently MATCH; 64 hex verified; stored uppercase)
+
+### Strict runtime proof (DEC-0038) — plan-verify US-0145 (ultra_lean merged at qa)
+
+- runtime_proof_id=rp-auto-20260917-us0146-plan-verify-qa-20260917T201200Z-US-0145
+- phase_id=plan-verify, role=qa, story_id=US-0145, sprint_id=S0155
+- proof_issued_at=2026-09-17T20:12:00Z
+- proof_ttl_seconds=3600, proof_ttl=2026-09-17T21:12:00Z
+- proof_hash=5403D8DD25F475A2CB5F3E1551842BD6454954FAD847842F9F9BC4CFD115B0BC
+- Canonical hashed payload: {"orchestrator_run_id":"auto-20260917-us0146","phase_id":"plan-verify","proof_issued_at":"2026-09-17T20:12:00Z","proof_ttl_seconds":3600,"role":"qa","runtime_proof_id":"rp-auto-20260917-us0146-plan-verify-qa-20260917T201200Z-US-0145"}
+- hash_recompute_confirmation=true
+
+### Phase boundary status (DEC-0069 AC-10) — qa US-0145
+
+- phase_id=qa
+- verdict=QA_PASS
+- story_id=US-0145 OPEN
+- sprint_id=S0155
+- next_phase=verify-work
+- next_role=qa
+
+## Verify-work checkpoint — US-0145 / S0155 / auto-20260917-us0146 (role=qa)
 
 - phase_id=verify-work
 - role=qa
-- model_id=cursor-grok-4.6-high (CROSS_MODEL_REVIEW=1 — required)
-- sprint_id=S0151
-- story_id=US-0143
-- fresh_context_marker=qa-US0143-verify-20260914T083000Z-fresh (NEW per US-0048 / BUG-0006; not reused from qa-US0143-qa-20260914T081000Z-fresh, critic-US0143-qa-20260914T082000Z-fresh, or dev-US0143-execute-20260914T075000Z-fresh)
-- timestamp=2026-09-14T08:30:00Z (UTC)
-- orchestrator_run_id=auto-20260913-us0143
+- story_id=US-0145 (Status OPEN — not flipped DONE)
+- bug_id=(none)
+- sprint_id=S0155
+- orchestrator_run_id=auto-20260917-us0146
+- parent_orchestrator_run_id=auto-20260913-us0144
 - delivery_mode=ultra_lean
 - macro_phase=build+verify
-- evidence_ref=sprints/S0151/uat.json; sprints/S0151/uat.md; sprints/S0151/verify-work-findings.md; sprints/S0151/verify-work-verdict.json
-- Fresh qa subagent per BUG-0006 / US-0048 isolation, no prior chat history. Narrow-read only. Sovereign memory digest: `(no sovereign memory entries)` (read-only). No .env reads, no US-0143 Status DONE flip, no acceptance tick, no backlog AC ticks, no US-0133..US-0142 reopen, no BUG-0021/0022/0023/0024 mutation, no S0148/S0149/S0150 mutation, no /release spawn, no auto.md restore.
-
-### Strict runtime proof (DEC-0038) — verify-work US-0143
-
-- runtime_proof_id=rp-auto-20260913-us0143-verify-work-qa-20260914T083000Z-US-0143
-- phase_id=verify-work, role=qa, story_id=US-0143, sprint_id=S0151
-- proof_issued_at=2026-09-14T08:30:00Z
-- proof_ttl_seconds=3600, proof_ttl=2026-09-14T09:30:00Z
-- proof_hash=297208B8063764DDD9013F8F620EC3382773ED180B70D3D235DA843482CD0110
-- Hash via from scripts.token_cost_lib import compute_strict_proof_hash (positional, compact sorted-key JSON).
-- Canonical hashed payload: {"orchestrator_run_id":"auto-20260913-us0143","phase_id":"verify-work","proof_issued_at":"2026-09-14T08:30:00Z","proof_ttl_seconds":3600,"role":"qa","runtime_proof_id":"rp-auto-20260913-us0143-verify-work-qa-20260914T083000Z-US-0143"}
-- Isolation extras (not hashed): delivery_mode=ultra_lean, macro_phase=build+verify, model_id=cursor-grok-4.6-high, sprint_id=S0151, story_id=US-0143
-- hash_recompute_confirmation=true (compute_strict_proof_hash -> 297208B8063764DDD9013F8F620EC3382773ED180B70D3D235DA843482CD0110; 64 hex verified)
-- Consumed qa producer proof: rp-auto-20260913-us0143-qa-qa-20260914T081000Z-US-0143 / 765DB2CB51DB25837EB43557146792DEEC4E084152FEA1FAB0214C556A53E66D - independent MATCH, not STALE (ttl 2026-09-14T09:10:00Z, consumed_at 2026-09-14T08:30:00Z)
-- Consumed critic of qa proof: rp-auto-20260913-us0143-sovereign-critic-techlead-20260914T082000Z-US-0143 / 29BBA735CC14DC03ECBC47A8689924FF6E882B76393086F46722B52B685758ED - independent MATCH, not STALE (ttl 2026-09-14T09:20:00Z, consumed_at 2026-09-14T08:30:00Z, anti_slop=10, blocking_count=0, degraded_mode=false, findings us0143qa-* informational)
-- Consumed execute proof: rp-auto-20260913-us0143-execute-dev-20260914T075000Z-US-0143 / 068EE18ED77C5006D984A0E14FC101FD9288183ECC72F4925F1E674FE7CB997A - independent MATCH, not STALE (ttl 2026-09-14T08:50:00Z, consumed_at 2026-09-14T08:30:00Z)
-
-### Non-blocking carry-forwards (informational, qa critic)
-
-- NB1 (challenger / us0143qa-challenger-001): qa+execute proofs MATCH+not-STALE; 12/12 independently re-verified; UAT 9/9 contract_tests_primary honest; 6 live classes UAT_PROBE_FORBIDDEN; reject fake live-Chrome PASS.
-- NB2 (architect / us0143qa-architect-002): runtime-core lift + delivery-router.ts; WorkflowEngine drain; GateEngine unamended; /verify-work owns verified_ready; US-0144 content OUT.
-- NB3 (subtractor / us0143qa-subtractor-003): no DONE / no AC ticks / no live Chrome browser_smoke / no sibling auto-scheduler / no auto.md restore / BUG-0024 not drained; no /release spawn from this qa (BUG-0006).
-
-### Triad hot-surface verification tuple (DEC-0054) — verify-work US-0143
-
-- surface=docs/engineering/state.md (isolation + verify-work checkpoint append-bottom)
-- companion=handoffs/resume_brief.md (prepend); handoffs/verify-work-to-release.md (prepend); sprints/S0151/{uat,verify-work-findings,verify-work-verdict,progress,summary}
-- artifact_ordering: sprint pack update, resume_brief.md prepend-top, verify-work-to-release.md prepend-top, state.md append-bottom (DEC-0040)
-- post_append: `--check` STATE_ARCHIVE_REQUIRED `state` 1250/1200 units=15/80 → `--rollover --json` `{"boundary":"triad-rollover|state","moved":1,"pack_ref":"docs/engineering/state-archive/state-pack-20260914-d.md","retained_checkpoints":14,"retained_lines":1129}` then final `--check` PASS
-- pack_ref=docs/engineering/state-archive/state-pack-20260914-d.md
-- boundary=Refresh-context checkpoint US-0142
-- moved=1
-- retained=14
-- Active context surface preamble present
-- final `--check` PASS (`state` 1129/1200)
-
-## Sovereign-critic checkpoint — verify-work US-0143 / S0151 / auto-20260913-us0143 (role=tech-lead critic, spawn 084000Z)
-
-- phase_id=sovereign-critic
-- reviewed_phase_id=verify-work
-- role=tech-lead
-- story_id=US-0143
-- sprint_id=S0151
-- orchestrator_run_id=auto-20260913-us0143
-- parent_orchestrator_run_id=auto-20260913-us0142
-- delivery_mode=ultra_lean
-- macro_phase=build+verify (critic of verify-work; /release next per native chain)
-- model_id=composer-2.5-fast (CROSS_MODEL_REVIEW=1 — required; distinct slug vs producer cursor-grok-4.6-high → degraded_mode=false)
-- fresh_context_marker=critic-US0143-verify-20260914T084000Z-fresh
-- timestamp=2026-09-14T08:40:00Z
-- verdict=CRITIC_PASS
+- model_id=inherit (CROSS_MODEL_REVIEW=0)
+- fresh_context_marker=qa-US0145-verify-20260917T203500Z-fresh
+- timestamp=2026-09-17T20:35:00Z (UTC wall-clock)
+- verdict=VERIFY_WORK_PASS
 - decision_gate=false
+- AUTO_QUIET=1
+- CROSS_MODEL_REVIEW=0
+- drain_story_index=3 of 3
+- backlog_drain_stories_remaining_budget=0
 - blocking_count=0
-- non_blocking_count=3
-- anti_slop_aggregate=10
-- lenses=challenger+architect+subtractor (all three; degraded_mode=false)
-- finding_ids=us0143vfy-challenger-001,us0143vfy-architect-002,us0143vfy-subtractor-003
-- issue_keys=ik_us0143vfy_proof_uat_populated_pass,ik_us0143vfy_layer_release_owns_next,ik_us0143vfy_scope_yagni_pass
-- verify_work_confirmed=VERIFY_WORK_PASS; uat.json populated 9/9 verified_ready=true; probe_kind=contract_tests_primary; contract_test_failed=0; live_chrome_probed=false; fake_browser_pass_claimed=false; harness_fail_zero_claimed=false; 6 waived UAT_PROBE_FORBIDDEN; isolation execute+qa+verify-work PASS; backlog ## US-0143 Status OPEN; acceptance unchecked; backlog ACs unchecked
-- s0146_s0150_not_mutated=true
-- backlog_status=OPEN (## US-0143 — critic does not mutate)
-- sibling_boundary=US-0141/0142 DONE compose-only not reopened; US-0144+ not mutated; BUG-0021 DONE / BUG-0022 OPEN / BUG-0023 DONE / BUG-0024 OPEN not mutated/drained; S0146/S0147/S0148/S0149/S0150 not mutated
-- producer_runtime_proof_id=rp-auto-20260913-us0143-verify-work-qa-20260914T083000Z-US-0143
-- producer_proof_hash=297208B8063764DDD9013F8F620EC3382773ED180B70D3D235DA843482CD0110 (MATCH)
-- producer_proof_ttl=2026-09-14T09:30:00Z
-- proof_consume=RUNTIME_PROOF_VALID at 2026-09-14T08:40:00Z before ttl (hash MATCH; full 64 hex verified)
-- producer_proof_hash_recomputed=true (critic independent compute_strict_proof_hash positional args — byte-identical MATCH; proof_ttl_seconds int)
+- tests=scoped us0145 13/13 this pass (250.4606ms); npm 153/153 qa attestation held
+- UAT=10/10 populated; verified_ready=true; contract_tests_primary; live_chrome_probed=false
+- consumed_qa_proof=rp-auto-20260917-us0146-qa-qa-20260917T201200Z-US-0145 / D2388F57C5CBD53846C10E4660BFE056F30A8A27B4334D4DE606673F845299C6 (MATCH before TTL 2026-09-17T21:12:00Z; consumed_at=2026-09-17T20:35:00Z)
 - next_scheduled_phase=/release
 - next_scheduled_role=release
-- resume_brief=last=sovereign-critic (verify-work); next=orchestrator /release; native_chain_continuing=true
-- stop_condition=STOP after sovereign-critic PASS. Orchestrator MUST Task-spawn /release in fresh release subagent (BUG-0006). Do NOT spawn /release from this critic. Do NOT mark US-0143 DONE. Do NOT tick acceptance. Do NOT tick backlog ACs.
+- macro_phase_next=ship
+- stop_condition=STOP after VERIFY_WORK_PASS. Orchestrator MUST Task-spawn /release in fresh release (BUG-0006). Do NOT mark US-0145 DONE. Do NOT tick acceptance. Do NOT npm-publish. Do NOT git push. Do NOT spawn /release from this qa subagent.
 
-### Isolation evidence (US-0048 / DEC-0029 / US-0104 v2) — sovereign-critic of verify-work US-0143
-
-- phase_id=sovereign-critic
-- role=tech-lead
-- story_id=US-0143
-- sprint_id=S0151
-- model_id=composer-2.5-fast
-- fresh_context_marker=critic-US0143-verify-20260914T084000Z-fresh (NEW per US-0048 / BUG-0006; not reused from qa-US0143-verify-20260914T083000Z-fresh or critic-US0143-qa-20260914T082000Z-fresh)
-- timestamp=2026-09-14T08:40:00Z (UTC)
-- orchestrator_run_id=auto-20260913-us0143
-- evidence_ref=handoffs/sovereign_critic_findings.jsonl (us0143vfy-*); sprints/S0151/uat.json; sprints/S0151/uat.md; sprints/S0151/verify-work-findings.md; sprints/S0151/verify-work-verdict.json; docs/engineering/state.md verify-work checkpoint
-- Fresh tech-lead critic subagent per BUG-0006 / US-0048 isolation; narrow-read only. Sovereign memory digest: `(no sovereign memory entries)` (read-only). No .env reads, no US-0143 Status mutation, no acceptance tick, no backlog AC ticks, no US-0133..US-0142 reopen, no US-0144+ mutation, no BUG-0021/0022/0023/0024 mutation, no S0150 mutation, no /release spawn from critic (BUG-0006).
-
-### Strict runtime proof (DEC-0038) — sovereign-critic verify-work US-0143
-
-- runtime_proof_id=rp-auto-20260913-us0143-sovereign-critic-techlead-20260914T084000Z-US-0143
-- phase_id=sovereign-critic, role=tech-lead, story_id=US-0143, sprint_id=S0151
-- proof_issued_at=2026-09-14T08:40:00Z
-- proof_ttl_seconds=3600, proof_ttl=2026-09-14T09:40:00Z
-- proof_hash=0FEA31EDAE4B4F12E87EE937276B0A1958DBC3A8D12AC02240C793F2396C4269
-- Canonical hashed payload: {"orchestrator_run_id":"auto-20260913-us0143","phase_id":"sovereign-critic","proof_issued_at":"2026-09-14T08:40:00Z","proof_ttl_seconds":3600,"role":"tech-lead","runtime_proof_id":"rp-auto-20260913-us0143-sovereign-critic-techlead-20260914T084000Z-US-0143"}
-- Isolation extras (not hashed): delivery_mode=ultra_lean; macro_phase=build+verify; model_id=composer-2.5-fast; sprint_id=S0151; story_id=US-0143; reviewed_phase_id=verify-work
-- hash_recompute_confirmation=true (compute_strict_proof_hash → 0fea31edae4b4f12e87ee937276b0a1958dbc3a8d12ac02240c793f2396c4269 MATCH uppercase normalized)
-- Consumed verify-work: rp-auto-20260913-us0143-verify-work-qa-20260914T083000Z-US-0143 / 297208B8063764DDD9013F8F620EC3382773ED180B70D3D235DA843482CD0110 MATCH
-
-### Non-blocking carry-forwards (informational, verify-work critic)
-
-- NB1 (challenger / us0143vfy-challenger-001): verify-work proof MATCH+not-STALE; UAT populated 9/9 contract_tests_primary honest; 6 live classes UAT_PROBE_FORBIDDEN; reject fake live-Chrome PASS; isolation execute+qa+verify-work chain present.
-- NB2 (architect / us0143vfy-architect-002): /release owns gate-1 + ship; verify-work owns verified_ready; US-0144 content OUT; BUG-0024 not drained.
-- NB3 (subtractor / us0143vfy-subtractor-003): no DONE / no AC ticks / no /release spawn from critic (BUG-0006); Status OPEN; orchestrator owns /release fresh release.
-
-### Triad hot-surface verification tuple (DEC-0054) — sovereign-critic verify-work US-0143
-
-- surface=docs/engineering/state.md (isolation + sovereign-critic checkpoint append-bottom)
-- companion=handoffs/sovereign_critic_findings.jsonl (us0143vfy-* append); handoffs/resume_brief.md (prepend-top)
-- artifact_ordering: findings JSONL append; resume_brief.md prepend-top; state.md append-bottom (DEC-0040)
-- ledger_note=AI_DECISION_LEDGER=1 patch_ledger_cross_model_reviewed returned CROSS_MODEL_FINDINGS_INVALID (CROSS_MODEL_REVIEW not DecisionType) — non-blocking; findings JSONL authoritative
-- US-0127 auto_resolve_nonblocking_for_run(verify-work) resolved=0
-- post_append: `--check` STATE_ARCHIVE_REQUIRED `state` 1209/1200 units=15/80 → `--rollover --json` `{"boundary":"triad-rollover|state","moved":1,"pack_ref":"docs/engineering/state-archive/state-pack-20260914-e.md","retained_checkpoints":14,"retained_lines":1096}` then final `--check` PASS
-- pack_ref=docs/engineering/state-archive/state-pack-20260914-e.md
-- boundary=Sovereign-critic checkpoint verify-work US-0143
-- moved=1
-- retained=14
-- Active context surface preamble present
-- final `--check` PASS (`state` 1096/1200)
-
-## Release checkpoint — US-0143 / auto-20260913-us0143 (role=release)
-
-- phase_id=release
-- role=release
-- story_id=US-0143 (Status OPEN — not flipped DONE)
-- sprint_id=S0151
-- orchestrator_run_id=auto-20260913-us0143
-- parent_orchestrator_run_id=auto-20260913-us0142
-- delivery_mode=ultra_lean
-- macro_phase=ship
-- model_id=composer-2.5-fast (CROSS_MODEL_REVIEW=1)
-- fresh_context_marker=rel-US0143-release-20260914T085000Z-fresh
-- timestamp=2026-09-14T08:50:00Z (UTC)
-- verdict=RELEASE_PASS
-- RELEASE_PUBLISH_MODE=confirm → publish skipped (no operator confirm this turn; npm_published=false)
-- SYNC_POLICY_MODE=disabled → push_decision=not_eligible
-- queue_status=S0151 released (handoffs/release_queue.md)
-- release_notes_ref=handoffs/releases/S0151-release-notes.md
-- release_findings_ref=sprints/S0151/release-findings.md
-- backlog_status=OPEN (## US-0143 — not mutated per US-0045)
-- acceptance_US-0143=unchecked
-- backlog_ACs=NOT ticked
-- gate_chain=check_in_tests:PASS;qa:PASS;uat:PASS;isolation:PASS;strict_runtime_proof:PASS;finalization:PASS
-- harness_fail_zero_claimed=false
-- live_chrome_probed=false
-- probe_kind=contract_tests_primary
-- consumed_verify_work=rp-auto-20260913-us0143-verify-work-qa-20260914T083000Z-US-0143 / 297208B8063764DDD9013F8F620EC3382773ED180B70D3D235DA843482CD0110 MATCH @08:50:00Z before TTL 09:30:00Z
-- consumed_critic_verify_work=rp-auto-20260913-us0143-sovereign-critic-techlead-20260914T084000Z-US-0143 / 0FEA31EDAE4B4F12E87EE937276B0A1958DBC3A8D12AC02240C793F2396C4269 MATCH
-- next_scheduled_phase=sovereign-critic (release)
-- next_scheduled_role=tech-lead (critic)
-- resume_brief=last=release; next=orchestrator sovereign-critic then /closure; native_chain_continuing=true
-- stop_condition=STOP after RELEASE_PASS. Orchestrator MUST spawn sovereign-critic of release then /closure (fresh qe). Do NOT spawn closure from this release subagent. Do NOT mark US-0143 DONE. Do NOT tick acceptance or backlog ACs.
-
-### Isolation evidence (US-0048 / DEC-0029 / US-0104 v2) — release US-0143
-
-- phase_id=release
-- role=release
-- story_id=US-0143
-- sprint_id=S0151
-- model_id=composer-2.5-fast
-- fresh_context_marker=rel-US0143-release-20260914T085000Z-fresh (NEW per US-0048 / BUG-0006)
-- timestamp=2026-09-14T08:50:00Z (UTC)
-- orchestrator_run_id=auto-20260913-us0143
-- evidence_ref=sprints/S0151/release-findings.md; handoffs/releases/S0151-release-notes.md; handoffs/release_queue.md (S0151 row)
-- Fresh release subagent per BUG-0006 / US-0048 isolation; narrow-read from phase-context.md. Sovereign memory digest: `(no sovereign memory entries)` (read-only). No .env reads. No backlog/acceptance mutation. No npm publish. No git push.
-
-### Strict runtime proof (DEC-0038) — release US-0143
-
-- runtime_proof_id=rp-auto-20260913-us0143-release-release-20260914T085000Z-US-0143
-- phase_id=release, role=release, story_id=US-0143, sprint_id=S0151
-- proof_issued_at=2026-09-14T08:50:00Z
-- proof_ttl_seconds=3600, proof_ttl=2026-09-14T09:50:00Z
-- proof_hash=0CBF9393607650A4B90A5BD0DB82EC22A72C8B8169F02D8D273087EB1C755C29
-- Canonical hashed payload: {"orchestrator_run_id":"auto-20260913-us0143","phase_id":"release","proof_issued_at":"2026-09-14T08:50:00Z","proof_ttl_seconds":3600,"role":"release","runtime_proof_id":"rp-auto-20260913-us0143-release-release-20260914T085000Z-US-0143"}
-- Isolation extras (not hashed): delivery_mode=ultra_lean; macro_phase=ship; model_id=composer-2.5-fast; sprint_id=S0151; story_id=US-0143
-- hash_recompute_confirmation=true (compute_strict_proof_hash positional → 0CBF9393607650A4B90A5BD0DB82EC22A72C8B8169F02D8D273087EB1C755C29 MATCH)
-- Consumed verify-work: rp-auto-20260913-us0143-verify-work-qa-20260914T083000Z-US-0143 / 297208B8063764DDD9013F8F620EC3382773ED180B70D3D235DA843482CD0110 MATCH
-
-## Sovereign-critic checkpoint — release US-0143 / S0151 / auto-20260913-us0143 (role=tech-lead critic, spawn 090000Z)
-
-- phase_id=sovereign-critic
-- role=tech-lead
-- reviewed_phase_id=release
-- producer_role=release
-- story_id=US-0143 (Status OPEN — not flipped DONE)
-- bug_id=(none)
-- sprint_id=S0151
-- orchestrator_run_id=auto-20260913-us0143
-- parent_orchestrator_run_id=auto-20260913-us0142
-- delivery_mode=ultra_lean
-- macro_phase=ship (sovereign-critic of release; /closure next)
-- AUTO_QUIET=1
-- CROSS_MODEL_REVIEW=1
-- producer_model_id=composer-2.5-fast
-- critic_model_id=composer-2.5-fast
-- degraded_mode=true
-- anti_slop_aggregate=10
-- blocking_count=0
-- rework_generation=0
-- finding_ids=us0143rel-challenger-001,us0143rel-architect-002,us0143rel-subtractor-003
-- fresh_context_marker=critic-US0143-release-20260914T090000Z-fresh
-- timestamp=2026-09-14T09:00:00Z (UTC)
-- verdict=CRITIC_PASS (RELEASE_PASS upheld; decision_gate=false)
-- release_confirmed=RELEASE_PASS; gates 1/2/3/4/4b green; pytest 12/12 test_us0143_*; npm 118/118 qa attestation; queue S0151 released; npm_published=false; acceptance unchecked; Status OPEN (correct per US-0120/DEC-0082)
-- backlog_status=OPEN (## US-0143 — critic does not mutate)
-- acceptance_US-0143=unchecked (unchanged — closure owns tick)
-- backlog_acs=AC-1..AC-8 unchecked (closure/QE)
-- sibling_boundary=US-0141/0142 DONE compose-only not reopened; US-0144+ not mutated; BUG-0021 DONE / BUG-0022 OPEN / BUG-0023 DONE / BUG-0024 OPEN not mutated/drained; S0146/S0147/S0148/S0149/S0150 not overwritten; s0150_not_mutated=true (git diff sprints/S0150/ empty)
-- fake_browser_pass_claimed=false
-- live_chrome_probed=false
-- harness_fail_zero_claimed=false
-- npm_published=false
-- next_scheduled_phase=/closure (fresh qe)
-- next_scheduled_role=qe
-- resume_brief=last=sovereign-critic (release); next=orchestrator /closure; native_chain_continuing=true
-- stop_condition=STOP after CRITIC_PASS. Orchestrator MUST Task-spawn `/closure` in fresh **qe** subagent (BUG-0006). Do NOT spawn /closure from this critic. Do NOT rework release. Do NOT mark US-0143 DONE. Do NOT tick acceptance. Do NOT tick backlog ACs. Do NOT reopen US-0133..US-0142. Do NOT mutate BUG-0021/0022/0023/0024. Do NOT npm-publish. Do NOT git push.
-
-### Isolation evidence (US-0048 / DEC-0029 / US-0104 v2) — sovereign-critic of release US-0143
-
-- phase_id=sovereign-critic
-- role=tech-lead
-- model_id=composer-2.5-fast (CROSS_MODEL_REVIEW=1 — required)
-- fresh_context_marker=critic-US0143-release-20260914T090000Z-fresh (NEW per US-0048 / BUG-0006; not reused from rel-US0143-release-20260914T085000Z-fresh or critic-US0143-verify-20260914T084000Z-fresh)
-- timestamp=2026-09-14T09:00:00Z (UTC)
-- orchestrator_run_id=auto-20260913-us0143
-- delivery_mode=ultra_lean
-- macro_phase=ship
-- evidence_ref=handoffs/sovereign_critic_findings.jsonl (us0143rel-challenger-001, us0143rel-architect-002, us0143rel-subtractor-003) + handoffs/releases/S0151-release-notes.md + sprints/S0151/release-findings.md + handoffs/release_queue.md (S0151 row) + docs/engineering/state.md release checkpoint US-0143
-- Fresh tech-lead critic subagent per BUG-0006 / US-0048 isolation, no prior chat history. Narrow-read only. Sovereign memory digest: `(no sovereign memory entries)` (read-only). No .env reads, no US-0143 Status DONE flip, no acceptance tick, no backlog AC ticks, no US-0133..US-0142 reopen, no BUG-0021/0022/0023/0024 mutation, no S0150 mutation, no /closure spawn from critic.
-
-### Strict runtime proof (DEC-0038) — sovereign-critic release US-0143
-
-- runtime_proof_id=rp-auto-20260913-us0143-sovereign-critic-techlead-20260914T090000Z-US-0143
-- phase_id=sovereign-critic, role=tech-lead, story_id=US-0143, sprint_id=S0151
-- proof_issued_at=2026-09-14T09:00:00Z
-- proof_ttl_seconds=3600, proof_ttl=2026-09-14T10:00:00Z
-- proof_hash=D46B9E058FFA039BF74FB894B668F3A5E9C907F6DF683B626A9C5EFA5240BB46
-- Canonical hashed payload: {"orchestrator_run_id":"auto-20260913-us0143","phase_id":"sovereign-critic","proof_issued_at":"2026-09-14T09:00:00Z","proof_ttl_seconds":3600,"role":"tech-lead","runtime_proof_id":"rp-auto-20260913-us0143-sovereign-critic-techlead-20260914T090000Z-US-0143"}
-- Isolation extras (not hashed): delivery_mode=ultra_lean, macro_phase=ship, model_id=composer-2.5-fast, producer_model_id=composer-2.5-fast, reviewed_phase_id=release, sprint_id=S0151, story_id=US-0143, degraded_mode=true
-- hash_recompute_confirmation=true (compute_strict_proof_hash → D46B9E058FFA039BF74FB894B668F3A5E9C907F6DF683B626A9C5EFA5240BB46; 64 hex verified)
-- Consumed release producer proof: rp-auto-20260913-us0143-release-release-20260914T085000Z-US-0143 / 0CBF9393607650A4B90A5BD0DB82EC22A72C8B8169F02D8D273087EB1C755C29 — independent MATCH, not STALE (ttl 2026-09-14T09:50:00Z, consumed_at 2026-09-14T09:00:00Z, anti_slop=10, blocking_count=0, degraded_mode=true, findings us0143rel-* informational)
-- independent_checks=release proof SHA-256 MATCH+not-STALE; queue S0151=released; backlog OPEN; acceptance unchecked; npm_published=false; fake_browser_pass_claimed=false; live_chrome_probed=false; harness_fail_zero_claimed=false; sovereign_critic_validate.py --enforce PASS; US-0127 auto_resolve_nonblocking_for_run(release) resolved 0 rows
-
-### Non-blocking carry-forwards (informational, release critic)
-
-- NB1 (challenger / us0143rel-challenger-001): release proof MATCH+not-STALE; OPEN+unchecked correct at release boundary; 12/12 pytest; 6 UAT_PROBE_FORBIDDEN honest; no fake live-Chrome PASS; npm_published=false; publish skipped under confirm.
-- NB2 (architect / us0143rel-architect-002): /closure owns DONE+tick; release layering held; delivery-router compose; S0150 notes unamended; US-0144+ OUT.
-- NB3 (subtractor / us0143rel-subtractor-003): no DONE flip; no acceptance tick; no /closure spawn from critic (BUG-0006); readme 3f FAIL_nonblocking precedent; BUG-0024 not drained.
-
-### Triad hot-surface verification tuple (DEC-0054) — sovereign-critic release US-0143
-
-- surface=docs/engineering/state.md (isolation + sovereign-critic checkpoint append-bottom)
-- companion=handoffs/sovereign_critic_findings.jsonl (us0143rel-* append); handoffs/resume_brief.md (prepend-top)
-- artifact_ordering: findings JSONL append; resume_brief.md prepend-top; state.md append-bottom (DEC-0040)
-- Active context surface preamble present
-
-## Closure checkpoint — US-0143 / S0151 / auto-20260913-us0143 (role=qe)
-
-- phase_id=closure
-- role=qe
-- bug_id=(none)
-- story_id=US-0143
-- sprint_id=S0151
-- orchestrator_run_id=auto-20260913-us0143
-- parent_orchestrator_run_id=auto-20260913-us0142
-- delivery_mode=ultra_lean
-- macro_phase=ship (phase 2 of 3: release → closure → refresh-context per DEC-0082)
-- model_id=cursor-grok-4.6-high (CROSS_MODEL_REVIEW=1 — required on isolation)
-- fresh_context_marker=qe-US0143-closure-20260914T091000Z-fresh
-- timestamp=2026-09-14T09:10:00Z
-- verdict=CLOSURE_PASS
-- decision_gate=false
-- blocking_count=0
-- AUTO_ROLE_CLOSURE=empty → default qe (US-0120 / DEC-0051)
-- AUTO_QUIET=1
-- drain_story_index=9 of 10
-- native_chain_active=true
-- native_chain_continuing=true
-- backlog_status=DONE (## US-0143 — Status OPEN→DONE; AC-1..AC-8 ticked this spawn; authority docs/product/backlog.md per US-0045)
-- acceptance_US-0143=ticked ([x] primary row in docs/product/acceptance.md; 8 ACs not listed as separate acceptance.md checkboxes)
-- sibling_boundary=US-0144..US-0148 OPEN out of scope; US-0133..US-0142 DONE compose-only; BUG-0021 DONE not mutated; BUG-0022 OPEN not mutated; BUG-0023 DONE not mutated; BUG-0024 OPEN not mutated; S0146..S0150 not mutated
-- queue=S0151 remains released (not mutated)
-- publish=skipped (confirm mode — not executed)
-- sync=not_eligible (SYNC_POLICY_MODE=disabled)
-- closure_verification=sprints/S0151/closure-verification.md
-- architecture_anchor=docs/engineering/architecture.md # US-0143 (read-only)
-- research_anchor=R-0141 (DQ1–DQ10 LOCKED; cited; not rewritten)
-- companion_dec=DEC-0143 Accepted
-- approach=A1 LOCKED
-- next_scheduled_phase=sovereign-critic (closure)
-- next_scheduled_role=tech-lead (critic)
-- resume_brief=last=closure; next=orchestrator sovereign-critic then /refresh-context (curator); native_chain_continuing=true
-- stop_condition=STOP after closure PASS. Orchestrator MUST Task-spawn sovereign-critic (closure) then /refresh-context in a fresh curator subagent (BUG-0006). Do NOT spawn /refresh-context from this closure. Do NOT spawn critic. Do NOT reopen US-0133..US-0142. Do NOT mutate US-0144+ or BUG-0021/BUG-0022/BUG-0023/BUG-0024. Do not npm-publish. Do not git push. Do not restore auto.md. Do not read .env.
-
-### Traceability index (DEC-0010) — closure US-0143
+### Traceability index (DEC-0010) — verify-work US-0145
 
 | Story | Sprint | Tasks | Status | Evidence |
 |-------|--------|-------|--------|----------|
-| US-0143 | S0151 | T-anch + T-001..T-010 | DONE (CLOSURE_PASS) | sprints/S0151/closure-verification.md; docs/product/backlog.md ## US-0143 DONE; docs/product/acceptance.md [x] |
+| US-0145 | S0155 | T-anch + T-001..T-011 | PASS (slice) | sprints/S0155/uat.json; sprints/S0155/verify-work-verdict.json; sprints/S0155/verify-work-findings.md; sprints/S0155/qa-findings.md |
 
-### Isolation evidence (US-0048 / DEC-0029 / US-0104 v2) — closure US-0143
+### Isolation evidence (US-0048 / DEC-0029 / US-0104 v2) — verify-work US-0145
+
+- phase_id=verify-work
+- role=qa
+- model_id=inherit (CROSS_MODEL_REVIEW=0)
+- fresh_context_marker=qa-US0145-verify-20260917T203500Z-fresh (NEW per US-0048 / BUG-0006; not reused from qa-US0145-qa-20260917T201200Z-fresh)
+- timestamp=2026-09-17T20:35:00Z (UTC)
+- orchestrator_run_id=auto-20260917-us0146
+- story_id=US-0145
+- sprint_id=S0155
+- evidence_ref=sprints/S0155/verify-work-findings.md; sprints/S0155/verify-work-verdict.json; sprints/S0155/uat.json; sprints/S0155/uat.md
+- Prior lifecycle isolation present: execute=`dev-US0145-execute-20260917T203000Z-fresh`; qa=`qa-US0145-qa-20260917T201200Z-fresh`; verify-work=`qa-US0145-verify-20260917T203500Z-fresh`
+- Fresh qa subagent per BUG-0006; no .env reads. No US-0145 Status DONE flip. No acceptance tick. No release/closure from this subagent.
+
+### Strict runtime proof (DEC-0038) — verify-work US-0145
+
+- runtime_proof_id=rp-auto-20260917-us0146-verify-work-qa-20260917T203500Z-US-0145
+- phase_id=verify-work, role=qa, story_id=US-0145, sprint_id=S0155
+- proof_issued_at=2026-09-17T20:35:00Z
+- proof_ttl_seconds=3600, proof_ttl=2026-09-17T21:35:00Z
+- proof_hash=6E7478A319411B1C11B728E5F1CCE75C3D04E9DB805A5B408E4AE50E4E7AF731
+- Hash via `from scripts.token_cost_lib import compute_strict_proof_hash` (positional; compact sorted-key JSON).
+- Canonical hashed payload: {"orchestrator_run_id":"auto-20260917-us0146","phase_id":"verify-work","proof_issued_at":"2026-09-17T20:35:00Z","proof_ttl_seconds":3600,"role":"qa","runtime_proof_id":"rp-auto-20260917-us0146-verify-work-qa-20260917T203500Z-US-0145"}
+- Isolation extras (not hashed): delivery_mode=ultra_lean; macro_phase=build+verify; model_id=inherit; sprint_id=S0155; story_id=US-0145; CROSS_MODEL_REVIEW=0; drain_story_index=3 of 3
+- consumed_qa_proof (not hashed): rp-auto-20260917-us0146-qa-qa-20260917T201200Z-US-0145 / D2388F57C5CBD53846C10E4660BFE056F30A8A27B4334D4DE606673F845299C6 — MATCH; not STALE at 2026-09-17T20:35:00Z
+- consumed_execute_proof (not hashed): rp-auto-20260917-us0146-execute-dev-20260917T203000Z-US-0145 / A4B28543B669F4D1E2D65A0063E138D538AA5FC80DC4EFA71BCB96C8ED8A04FB — MATCH; not STALE at 2026-09-17T20:35:00Z
+- hash_recompute_confirmation=true (compute_strict_proof_hash → 6e7478a319411b1c11b728e5f1cce75c3d04e9db805a5b408e4ae50e4e7af731; independently MATCH; 64 hex verified; stored uppercase)
+
+### Phase boundary status (DEC-0069 AC-10) — verify-work US-0145
+
+- phase_id=verify-work
+- verdict=VERIFY_WORK_PASS
+- story_id=US-0145 OPEN
+- sprint_id=S0155
+- next_phase=release
+- next_role=release
+
+## Release checkpoint — US-0145 / S0155 / auto-20260917-us0146 (role=release)
+
+- phase_id=release
+- role=release
+- story_id=US-0145 (Status OPEN — not flipped DONE)
+- bug_id=(none)
+- sprint_id=S0155
+- orchestrator_run_id=auto-20260917-us0146
+- parent_orchestrator_run_id=auto-20260913-us0144
+- delivery_mode=ultra_lean
+- macro_phase=ship
+- model_id=inherit (CROSS_MODEL_REVIEW=0)
+- fresh_context_marker=rel-US0145-release-20260917T210000Z-fresh
+- timestamp=2026-09-17T21:00:00Z (UTC wall-clock)
+- verdict=RELEASE_PASS
+- decision_gate=false
+- RELEASE_PUBLISH_MODE=confirm (publish skipped — no operator confirm)
+- SYNC_POLICY_MODE=disabled
+- blocking_count=0
+- tests=scoped us0145 13/13 this pass (269.0238ms); npm 153/153 qa attestation held
+- UAT=10/10 populated; verified_ready=true; contract_tests_primary; live_chrome_probed=false
+- queue_status=S0155=released
+- consumed_verify_work_proof=rp-auto-20260917-us0146-verify-work-qa-20260917T203500Z-US-0145 / 6E7478A319411B1C11B728E5F1CCE75C3D04E9DB805A5B408E4AE50E4E7AF731 (MATCH before TTL 2026-09-17T21:35:00Z; consumed_at=2026-09-17T21:00:00Z)
+- next_scheduled_phase=/closure
+- next_scheduled_role=qe
+- stop_condition=STOP after RELEASE_PASS. Orchestrator MUST Task-spawn /closure in fresh qe (or curator if qe unavailable — closure-only status reconciliation NOT here). Do NOT mark US-0145 DONE. Do NOT tick acceptance. Do NOT npm-publish. Do NOT git push. Do NOT spawn /closure from this release subagent.
+
+### Isolation evidence (US-0048 / DEC-0029 / US-0104 v2) — release US-0145
+
+- phase_id=release
+- role=release
+- model_id=inherit (CROSS_MODEL_REVIEW=0)
+- fresh_context_marker=rel-US0145-release-20260917T210000Z-fresh (NEW per US-0048 / BUG-0006; not reused from qa-US0145-verify-20260917T203500Z-fresh)
+- timestamp=2026-09-17T21:00:00Z (UTC)
+- orchestrator_run_id=auto-20260917-us0146
+- story_id=US-0145
+- sprint_id=S0155
+- evidence_ref=sprints/S0155/release-findings.md; handoffs/releases/S0155-release-notes.md; handoffs/release_queue.md (S0155 row)
+- Prior lifecycle isolation present: execute=`dev-US0145-execute-20260917T203000Z-fresh`; qa=`qa-US0145-qa-20260917T201200Z-fresh`; verify-work=`qa-US0145-verify-20260917T203500Z-fresh`; release=`rel-US0145-release-20260917T210000Z-fresh`
+- Fresh release subagent per BUG-0006; no .env reads. No US-0145 Status DONE flip. No acceptance tick. No closure from this subagent.
+
+### Strict runtime proof (DEC-0038) — release US-0145
+
+- runtime_proof_id=rp-auto-20260917-us0146-release-release-20260917T210000Z-US-0145
+- phase_id=release, role=release, story_id=US-0145, sprint_id=S0155
+- proof_issued_at=2026-09-17T21:00:00Z
+- proof_ttl_seconds=3600, proof_ttl=2026-09-17T22:00:00Z
+- proof_hash=9CAE011E6F55AB8B9DE623DC6C24E1B92E80EE506A2A019BFD93BD8B16EF9C6B
+- Hash via `from scripts.token_cost_lib import compute_strict_proof_hash` (positional; compact sorted-key JSON).
+- Canonical hashed payload: {"orchestrator_run_id":"auto-20260917-us0146","phase_id":"release","proof_issued_at":"2026-09-17T21:00:00Z","proof_ttl_seconds":3600,"role":"release","runtime_proof_id":"rp-auto-20260917-us0146-release-release-20260917T210000Z-US-0145"}
+- Isolation extras (not hashed): delivery_mode=ultra_lean; macro_phase=ship; model_id=inherit; sprint_id=S0155; story_id=US-0145; CROSS_MODEL_REVIEW=0; drain_story_index=3 of 3
+- consumed_verify_work_proof (not hashed): rp-auto-20260917-us0146-verify-work-qa-20260917T203500Z-US-0145 / 6E7478A319411B1C11B728E5F1CCE75C3D04E9DB805A5B408E4AE50E4E7AF731 — MATCH; not STALE at 2026-09-17T21:00:00Z
+- consumed_qa_proof (not hashed): rp-auto-20260917-us0146-qa-qa-20260917T201200Z-US-0145 / D2388F57C5CBD53846C10E4660BFE056F30A8A27B4334D4DE606673F845299C6 — MATCH; not STALE at 2026-09-17T21:00:00Z
+- consumed_execute_proof (not hashed): rp-auto-20260917-us0146-execute-dev-20260917T203000Z-US-0145 / A4B28543B669F4D1E2D65A0063E138D538AA5FC80DC4EFA71BCB96C8ED8A04FB — MATCH; not STALE at 2026-09-17T21:00:00Z
+- hash_recompute_confirmation=true (compute_strict_proof_hash → 9cae011e6f55ab8b9de623dc6c24e1b92e80ee506a2a019bfd93bd8b16ef9c6b; independently MATCH; 64 hex verified; stored uppercase)
+
+### Phase boundary status (DEC-0069 AC-10) — release US-0145
+
+- phase_id=release
+- verdict=RELEASE_PASS
+- story_id=US-0145 OPEN
+- sprint_id=S0155
+- next_phase=closure
+- next_role=qe
+
+## Closure checkpoint — US-0145 / S0155 / auto-20260917-us0146 (role=curator)
 
 - phase_id=closure
-- role=qe
-- story_id=US-0143
-- sprint_id=S0151
-- model_id=cursor-grok-4.6-high (CROSS_MODEL_REVIEW=1 — required)
-- fresh_context_marker=qe-US0143-closure-20260914T091000Z-fresh (NEW per US-0048 / BUG-0006; not reused from rel-US0143-release-20260914T085000Z-fresh or critic-US0143-release-20260914T090000Z-fresh)
-- timestamp=2026-09-14T09:10:00Z (UTC)
-- orchestrator_run_id=auto-20260913-us0143
-- delivery_mode=ultra_lean
-- macro_phase=ship
-- native_chain_continuing=true
-- next_scheduled_phase=sovereign-critic (closure)
-- evidence_ref=sprints/S0151/closure-verification.md
-- Fresh qe subagent per BUG-0006 / US-0048 isolation; no prior chat history carried forward. Narrow-read only. Sovereign memory digest: `(no sovereign memory entries)` (read-only). No .env reads, no credentials, no intake JSON mutation, no US-0133..US-0142 reopen, no US-0144+ or BUG-0021/BUG-0022/BUG-0023/BUG-0024 mutation, no /refresh-context spawn from this subagent, no critic spawn, no npm publish, no git push. Cursor Task has no qe subagent_type; this slot is qe closure executor only (isolation role=qe, not curator).
-- Isolation compliance: execute=PASS; qa=PASS; verify-work=PASS; sovereign-critic(verify-work)=PASS; release=PASS; sovereign-critic(release)=PASS (degraded_mode=true; blocking=0; anti_slop=10); closure=PASS (this marker).
-
-### Strict runtime proof (DEC-0038) — closure US-0143
-
-- runtime_proof_id=rp-auto-20260913-us0143-closure-qe-20260914T091000Z-US-0143
-- phase_id=closure, role=qe, story_id=US-0143, sprint_id=S0151
-- proof_issued_at=2026-09-14T09:10:00Z
-- proof_ttl_seconds=3600, proof_ttl=2026-09-14T10:10:00Z
-- proof_hash=8FAC89F43E7E098EEEB1CC9C6018286C6D5DD55746E8B640D6F6824A0B4E275D
-- Hash via `from scripts.token_cost_lib import compute_strict_proof_hash` (positional; compact sorted-key JSON).
-- Canonical hashed payload: {"orchestrator_run_id":"auto-20260913-us0143","phase_id":"closure","proof_issued_at":"2026-09-14T09:10:00Z","proof_ttl_seconds":3600,"role":"qe","runtime_proof_id":"rp-auto-20260913-us0143-closure-qe-20260914T091000Z-US-0143"}
-- Isolation extras (not hashed): delivery_mode=ultra_lean; macro_phase=ship; model_id=cursor-grok-4.6-high; sprint_id=S0151; story_id=US-0143
-- hash_recompute_confirmation=true (compute_strict_proof_hash → 8FAC89F43E7E098EEEB1CC9C6018286C6D5DD55746E8B640D6F6824A0B4E275D; 64 hex verified)
-- Producer release proof consumed: rp-auto-20260913-us0143-release-release-20260914T085000Z-US-0143 (0CBF9393607650A4B90A5BD0DB82EC22A72C8B8169F02D8D273087EB1C755C29) — RUNTIME_PROOF_VALID at closure issue (before ttl 2026-09-14T09:50:00Z; consumed 2026-09-14T09:10:00Z; independent compute_strict_proof_hash MATCH; 64 hex).
-- Producer critic proof consumed: rp-auto-20260913-us0143-sovereign-critic-techlead-20260914T090000Z-US-0143 (D46B9E058FFA039BF74FB894B668F3A5E9C907F6DF683B626A9C5EFA5240BB46) — RUNTIME_PROOF_VALID (ttl 2026-09-14T10:00:00Z; independent MATCH; degraded_mode=true; verdict PASS; blocking=0; anti_slop=10).
-
-### Triad hot-surface verification tuple (DEC-0054) — closure US-0143
-
-- surface=docs/engineering/state.md (isolation + closure checkpoint append-bottom)
-- companion=sprints/S0151/closure-verification.md; docs/product/backlog.md; docs/product/acceptance.md; handoffs/resume_brief.md
-- artifact_ordering: backlog status flip; acceptance tick; state.md append-bottom (DEC-0040); closure-verification.md create; resume_brief.md prepend-top
-- post_write: `arch_linkage_guard.py --pre` exit 0 → `enforce-triad-hot-surface.py --rollover` `rollover_complete units=1` pack_state=`docs/engineering/state-archive/state-pack-20260914-g.md` (archived `## Sovereign-critic checkpoint — discovery US-0143 / auto-20260913-us0143 (role=tech-lead critic, spawn 064000Z)`; archived_body_lines=75; preamble_lines=11; retained_body_lines=1166; retained_units=15) → `arch_linkage_guard.py --post` exit 0; final `--check` PASS
-- boundary=Sovereign-critic checkpoint discovery US-0143
-- moved=1
-- retained=15
-- pack_ref=docs/engineering/state-archive/state-pack-20260914-g.md
-- triad_check=PASS
-- Active context surface preamble present
-
-## Sovereign-critic checkpoint — closure US-0143 / S0151 / auto-20260913-us0143 (role=tech-lead critic, spawn 092000Z)
-
-- phase_id=sovereign-critic
-- reviewed_phase_id=closure
-- producer_role=qe
-- role=tech-lead
-- story_id=US-0143 (Status DONE — critic does not mutate)
+- role=curator
+- story_id=US-0145 (Status DONE — canonical flip this spawn)
 - bug_id=(none)
-- sprint_id=S0151
-- orchestrator_run_id=auto-20260913-us0143
-- parent_orchestrator_run_id=auto-20260913-us0142
-- delivery_mode=ultra_lean
-- macro_phase=ship (sovereign-critic of closure; /refresh-context next)
-- AUTO_QUIET=1
-- CROSS_MODEL_REVIEW=1
-- producer_model_id=cursor-grok-4.6-high
-- critic_model_id=composer-2.5-fast
-- degraded_mode=false
-- anti_slop_aggregate=10
-- blocking_count=0
-- rework_generation=0
-- finding_ids=us0143cl-challenger-001,us0143cl-architect-002,us0143cl-subtractor-003
-- fresh_context_marker=critic-US0143-closure-20260914T092000Z-fresh
-- timestamp=2026-09-14T09:20:00Z (UTC)
-- verdict=CRITIC_PASS (CLOSURE_PASS upheld; decision_gate=false)
-- closure_confirmed=CLOSURE_PASS; backlog ## US-0143 Status DONE; acceptance [x]; backlog AC-1..AC-8 [x]; closure-verification.md CLOSURE_PASS; closure_role=qe; queue S0151 released (read-only)
-- backlog_status=DONE (## US-0143 — critic does not mutate)
-- acceptance_US-0143=ticked (unchanged by critic)
-- sibling_boundary=US-0144..US-0148 OPEN not mutated; US-0133..US-0142 DONE not reopened; BUG-0021 DONE / BUG-0022 OPEN / BUG-0023 DONE / BUG-0024 OPEN not mutated; S0146..S0150 not mutated
-- fake_browser_pass_claimed=false
-- live_chrome_probed=false
-- harness_fail_zero_claimed=false
-- next_scheduled_phase=/refresh-context (fresh curator)
-- next_scheduled_role=curator
-- resume_brief=last=sovereign-critic (closure); next=orchestrator /refresh-context; native_chain_continuing=true
-- stop_condition=STOP after CRITIC_PASS. Orchestrator MUST Task-spawn `/refresh-context` in fresh **curator** subagent (BUG-0006). Do NOT spawn /refresh-context from this critic. Do NOT reopen US-0143 or US-0133..US-0142. Do NOT mutate US-0144+ or BUG-0021/0022/0023/0024. Do NOT npm-publish. Do NOT git push.
-
-### Isolation evidence (US-0048 / DEC-0029 / US-0104 v2) — sovereign-critic of closure US-0143
-
-- phase_id=sovereign-critic
-- role=tech-lead
-- model_id=composer-2.5-fast (CROSS_MODEL_REVIEW=1 — required)
-- fresh_context_marker=critic-US0143-closure-20260914T092000Z-fresh (NEW per US-0048 / BUG-0006; not reused from qe-US0143-closure-20260914T091000Z-fresh)
-- timestamp=2026-09-14T09:20:00Z (UTC)
-- orchestrator_run_id=auto-20260913-us0143
+- sprint_id=S0155
+- orchestrator_run_id=auto-20260917-us0146
+- parent_orchestrator_run_id=auto-20260913-us0144
 - delivery_mode=ultra_lean
 - macro_phase=ship
-- evidence_ref=handoffs/sovereign_critic_findings.jsonl (us0143cl-*) + sprints/S0151/closure-verification.md + docs/product/backlog.md ## US-0143 + docs/product/acceptance.md + docs/engineering/state.md closure checkpoint
-- Fresh tech-lead critic subagent per BUG-0006 / US-0048 isolation, no prior chat history. Narrow-read only. Sovereign memory digest: `(no sovereign memory entries)` (read-only). No .env reads, no US-0143 Status mutation, no acceptance/backlog AC mutation, no US-0133..US-0142 reopen, no US-0144+ mutation, no BUG-0021/0022/0023/0024 mutation, no /refresh-context spawn from critic.
+- model_id=inherit (MODEL_RESOLVE=alias_only; CROSS_MODEL_REVIEW=0)
+- fresh_context_marker=cur-US0145-closure-20260917T211700Z-fresh
+- timestamp=2026-09-17T21:17:00Z (UTC wall-clock)
+- verdict=CLOSURE_PASS
+- decision_gate=false
+- AUTO_QUIET=1
+- AUTO_FLOW_MODE=full_autonomy
+- AUTO_SOVEREIGN=0
+- CROSS_MODEL_REVIEW=0
+- native_chain_active=true
+- native_chain_continuing=true
+- drain_advance_action=not_applicable (refresh-context owns drain bookkeeping; budget 0 → expect BACKLOG_MAX_STORIES_REACHED after refresh — not forbidden here)
+- drain_story_index=3 of 3
+- backlog_drain_stories_remaining_budget=0
+- blocking_count=0
+- queue_status=released (S0155 — not mutated)
+- tests=scoped us0145 node:test 13/13 (held from release); npm 153/153 qa attestation held; US-0071 metadata exit 0 held
+- UAT=10/10 populated; contract_tests_primary; live_chrome_probed=false
+- SOVEREIGN_RUNTIME_default_off=HELD
+- US0144_boundaries=HELD (not reopened)
+- backlog_status=DONE (## US-0145 — Status DONE; AC-1..AC-9 checked this spawn)
+- acceptance_row=checked (- [x] US-0145)
+- sibling_boundary=US-0148 OPEN out of scope; US-0133..US-0147 DONE compose-only; BUG-* not mutated
+- publish=skipped (RELEASE_PUBLISH_MODE=confirm; npm_published=false)
+- sync=not_eligible (SYNC_POLICY_MODE=disabled)
+- live_chrome_probed=false
+- fake_browser_pass_claimed=false
+- harness_fail_zero_claimed=false
+- consumed_release_proof=rp-auto-20260917-us0146-release-release-20260917T210000Z-US-0145 / 9CAE011E6F55AB8B9DE623DC6C24E1B92E80EE506A2A019BFD93BD8B16EF9C6B (MATCH before TTL 2026-09-17T22:00:00Z; consumed_at=2026-09-17T21:17:00Z)
+- next_scheduled_phase=/refresh-context
+- next_scheduled_role=curator
+- resume_brief=last=closure PASS; next=/refresh-context (CROSS_MODEL_REVIEW=0; no critic); native_chain_continuing=true
+- stop_condition=STOP after closure PASS. Orchestrator MUST Task-spawn /refresh-context in fresh curator. Do NOT spawn refresh-context from this closure. Do NOT drain-advance to US-0148 from closure. Do NOT reopen US-0144. Do NOT mutate US-0148 or BUG-* beyond refresh ownership. Do NOT npm-publish. Do NOT git push.
+- Fresh curator subagent per BUG-0006 / US-0048 isolation; operator isolation role=curator. Narrow-read only. No .env reads.
 
-### Strict runtime proof (DEC-0038) — sovereign-critic closure US-0143
+### Isolation evidence (US-0048 / DEC-0029 / US-0104 v2) — closure US-0145
 
-- runtime_proof_id=rp-auto-20260913-us0143-sovereign-critic-techlead-20260914T092000Z-US-0143
-- phase_id=sovereign-critic, role=tech-lead, story_id=US-0143, sprint_id=S0151
-- proof_issued_at=2026-09-14T09:20:00Z
-- proof_ttl_seconds=3600, proof_ttl=2026-09-14T10:20:00Z
-- proof_hash=551F41898F349A769FB97AE138FC4651B236E9AD3153BF3B35923DD60CD0A9C3
-- Canonical hashed payload: {"orchestrator_run_id":"auto-20260913-us0143","phase_id":"sovereign-critic","proof_issued_at":"2026-09-14T09:20:00Z","proof_ttl_seconds":3600,"role":"tech-lead","runtime_proof_id":"rp-auto-20260913-us0143-sovereign-critic-techlead-20260914T092000Z-US-0143"}
-- Isolation extras (not hashed): delivery_mode=ultra_lean, macro_phase=ship, model_id=composer-2.5-fast, producer_model_id=cursor-grok-4.6-high, reviewed_phase_id=closure, sprint_id=S0151, story_id=US-0143, degraded_mode=false
-- hash_recompute_confirmation=true (compute_strict_proof_hash → 551F41898F349A769FB97AE138FC4651B236E9AD3153BF3B35923DD60CD0A9C3; 64 hex verified)
-- Consumed closure producer proof: rp-auto-20260913-us0143-closure-qe-20260914T091000Z-US-0143 / 8FAC89F43E7E098EEEB1CC9C6018286C6D5DD55746E8B640D6F6824A0B4E275D — independent MATCH, not STALE (ttl 2026-09-14T10:10:00Z, consumed_at 2026-09-14T09:20:00Z, anti_slop=10, blocking_count=0, degraded_mode=false, findings us0143cl-* informational)
-- independent_checks=closure proof SHA-256 MATCH+not-STALE; backlog DONE; acceptance [x]; US-0144 OPEN; validate_closure_verification OK; sovereign_critic_validate.py --enforce PASS; US-0127 auto_resolve_nonblocking_for_run(closure) resolved 0 rows
+- phase_id=closure
+- role=curator
+- model_id=inherit (CROSS_MODEL_REVIEW=0)
+- fresh_context_marker=cur-US0145-closure-20260917T211700Z-fresh (NEW per US-0048 / BUG-0006; not reused from rel-US0145-release-20260917T210000Z-fresh)
+- timestamp=2026-09-17T21:17:00Z (UTC)
+- orchestrator_run_id=auto-20260917-us0146
+- story_id=US-0145
+- sprint_id=S0155
+- evidence_ref=sprints/S0155/closure-verification.md
+- Prior lifecycle isolation present: execute=`dev-US0145-execute-20260917T203000Z-fresh`; qa=`qa-US0145-qa-20260917T201200Z-fresh`; verify-work=`qa-US0145-verify-20260917T203500Z-fresh`; release=`rel-US0145-release-20260917T210000Z-fresh`; closure=`cur-US0145-closure-20260917T211700Z-fresh`
 
-### Non-blocking carry-forwards (informational, closure critic)
+### Strict runtime proof (DEC-0038) — closure US-0145
 
-- NB1 (challenger / us0143cl-challenger-001): closure proof MATCH+not-STALE; role=qe hashed; exclusive closure mutations; US-0144 OPEN; US-0141/0142 DONE held; no refresh spawn from critic.
-- NB2 (architect / us0143cl-architect-002): /refresh-context owns ship phase 3; closure layering held; release artifacts read-only; DEC-0040 ordering confirmed.
-- NB3 (subtractor / us0143cl-subtractor-003): no US-0144 drain; no DONE revert; no /refresh-context spawn from critic (BUG-0006); harness_fail_zero_claimed=false honest residual.
+- runtime_proof_id=rp-auto-20260917-us0146-closure-curator-20260917T211700Z-US-0145
+- phase_id=closure, role=curator, story_id=US-0145, sprint_id=S0155
+- proof_issued_at=2026-09-17T21:17:00Z
+- proof_ttl_seconds=3600, proof_ttl=2026-09-17T22:17:00Z
+- proof_hash=C766E8605FE599CF0C4C505A41030334EC60D7C401AB08569D76720B36BFB7F5
+- Hash via `from scripts.token_cost_lib import compute_strict_proof_hash` (positional; compact sorted-key JSON).
+- Canonical hashed payload: {"orchestrator_run_id":"auto-20260917-us0146","phase_id":"closure","proof_issued_at":"2026-09-17T21:17:00Z","proof_ttl_seconds":3600,"role":"curator","runtime_proof_id":"rp-auto-20260917-us0146-closure-curator-20260917T211700Z-US-0145"}
+- Isolation extras (not hashed): delivery_mode=ultra_lean; macro_phase=ship; model_id=inherit; sprint_id=S0155; story_id=US-0145; CROSS_MODEL_REVIEW=0; drain_story_index=3 of 3; backlog_drain_stories_remaining_budget=0
+- consumed_release_proof (not hashed): rp-auto-20260917-us0146-release-release-20260917T210000Z-US-0145 / 9CAE011E6F55AB8B9DE623DC6C24E1B92E80EE506A2A019BFD93BD8B16EF9C6B — MATCH; not STALE at 2026-09-17T21:17:00Z
+- hash_recompute_confirmation=true (compute_strict_proof_hash → c766e8605fe599cf0c4c505a41030334ec60d7c401ab08569d76720b36bfb7f5; independently MATCH; 64 hex verified; stored uppercase)
 
-### Triad hot-surface verification tuple (DEC-0054) — sovereign-critic closure US-0143
+### Phase boundary status (DEC-0069 AC-10) — closure US-0145
 
-- surface=docs/engineering/state.md (isolation + sovereign-critic checkpoint append-bottom)
-- companion=handoffs/sovereign_critic_findings.jsonl (us0143cl-* append); handoffs/resume_brief.md (prepend-top)
-- artifact_ordering: findings JSONL append; resume_brief.md prepend-top; state.md append-bottom (DEC-0040)
-- Active context surface preamble present
+- phase_id=closure
+- verdict=CLOSURE_PASS
+- story_id=US-0145 DONE
+- sprint_id=S0155
+- next_phase=refresh-context
+- next_role=curator
 
-## Refresh-context checkpoint — US-0143 / S0151 / auto-20260913-us0143 (role=curator)
+## Refresh-context checkpoint — US-0145 / S0155 / auto-20260917-us0146 (role=curator)
 
 - phase_id=refresh-context
 - role=curator
-- bug_id=(none)
-- story_id=US-0143 (Status DONE — upheld; not reopened)
-- sprint_id=S0151
-- orchestrator_run_id=auto-20260913-us0143
-- parent_orchestrator_run_id=auto-20260913-us0142
+- bug_id=(none — BUG-0006 / US-0048 isolation only)
+- story_id=US-0145 (Status DONE — upheld; not reopened; no Status/AC mutation)
+- sprint_id=S0155
+- orchestrator_run_id=auto-20260917-us0146
+- parent_orchestrator_run_id=auto-20260913-us0144
 - delivery_mode=ultra_lean
 - resolved_phase_plan=[spec, plan, build+verify, ship]
 - reinstatement_mode=none
 - memory_layer=pack
-- macro_phase=ship (refresh-context — phase 3 of 3 per DEC-0082; segment terminal)
-- model_id=composer-2.5 (CROSS_MODEL_REVIEW=1 — required on isolation)
-- fresh_context_marker=cur-US0143-refresh-20260914T093000Z-fresh
-- timestamp=2026-09-14T09:30:00Z
+- macro_phase=ship (refresh-context — segment terminal for US-0145 ultra_lean ship macro)
+- model_id=inherit (MODEL_RESOLVE=alias_only; CROSS_MODEL_REVIEW=0)
+- fresh_context_marker=cur-US0145-refresh-20260917T211800Z-fresh
+- timestamp=2026-09-17T21:18:00Z (UTC wall-clock)
 - verdict=REFRESH_CONTEXT_PASS
 - segment_closed=true
 - stop_phase=refresh-context
-- stop_reason=completed
-- backlog_status=DONE (## US-0143 — unchanged)
-- acceptance_US-0143=[x] (unchanged)
-- backlog_acs=AC-1..AC-8 [x] (unchanged)
-- queue_status=S0151=released (unchanged)
-- sibling_boundary=US-0144..US-0148 OPEN not mutated; US-0133..US-0142 DONE not reopened; BUG-0021 DONE not mutated; BUG-0022 OPEN not mutated; BUG-0023 DONE not mutated; BUG-0024 OPEN not mutated
-- approach=A1 LOCKED (R-0141 DQ1—DQ10 delivered; cite `# US-0143`)
-- companion_dec=DEC-0143 Accepted
-- independent_open_story_count=5 (US-0144..US-0148 OPEN)
-- independent_open_bug_count=1 (BUG-0022 OPEN OUT — not scheduled)
-- drain_story_index=9 of 10
-- drain_advance_action=not_applicable (curator STOP; orchestrator owns critic then drain-advance)
-- next_drain_candidate=US-0144 (P0; not materialized by curator)
-- backlog_drain_active=true
+- stop_reason=completed (BACKLOG_MAX_STORIES_REACHED — orchestrator hard stop; do NOT drain-advance)
 - native_chain_active=true
-- native_chain_continuing=true
+- native_chain_continuing=false (segment terminal; AUTO_BACKLOG_MAX_STORIES cap reached)
+- drain_advance_action=not_applicable (budget 0; not forbidden — curator segment bookkeeping)
+- backlog_status=DONE (## US-0145 — unchanged)
+- acceptance_US-0145=[x] (unchanged)
+- backlog_acs=AC-1..AC-9 [x] (unchanged)
+- queue_status=S0155=released (unchanged)
+- sibling_boundary=US-0148 OPEN not mutated; US-0133..US-0147 DONE not reopened; BUG-* not mutated
+- approach=A1 LOCKED (R-0145 DQ1—DQ10 delivered; cite `# US-0145`)
+- companion_dec=DEC-0145 Accepted
+- independent_open_story_count=1 (US-0148 P1 OPEN — not materialized)
+- independent_open_bug_count=1 (BUG-0022 OPEN OUT — not scheduled)
+- drain_story_index=3 of 3
+- backlog_drain_stories_remaining_budget=0
+- AUTO_BACKLOG_MAX_STORIES=3
+- next_drain_candidate=US-0148 (OPEN P1; not materialized; drain-advance not_applicable)
+- backlog_drain_active=true
+- drain_terminated=true
 - AUTO_QUIET=1
-- SOVEREIGN_MEMORY=1
-- SOVEREIGN_GOAL_MODE=goal_convergence
-- research_closure=R-0141 US-0143 delivery closure trailer appended (R-0139/R-0140 not wiped)
-- sovereign_memory_retrospective=docs/engineering/sovereign-memory/retrospectives/S0151.md
-- sovereign_memory_promotion=SOVEREIGN_MEMORY_PROMOTION_SKIPPED (informational; AI_DECISION_LEDGER=1 but ledger empty/missing for auto-20260913-us0143)
-- sovereign_memory_digest=(no sovereign memory entries) (read-only; SOVEREIGN_MEMORY=1)
+- AUTO_SOVEREIGN=0
+- CROSS_MODEL_REVIEW=0
+- research_closure=R-0145 US-0145 delivery closure trailer appended (R-0144 not wiped)
+- sovereign_memory_retrospective=skipped (SOVEREIGN_MEMORY=0)
+- sovereign_memory_promotion=SOVEREIGN_MEMORY_PROMOTION_SKIPPED (informational)
+- sovereign_memory_digest=(no sovereign memory entries) (read-only)
 - codebase_map_refresh=skipped (CODEBASE_MAP_REFRESH_ON_ROLLOVER unset)
 - fake_browser_pass_claimed=false
 - live_chrome_probed=false
 - harness_fail_zero_claimed=false
 - npm_published=false
-- next_scheduled_phase=sovereign-critic (refresh-context) then orchestrator drain-advance US-0144
-- next_scheduled_role=tech-lead (critic hook only)
-- resume_brief=last=refresh-context; next=orchestrator sovereign-critic (refresh-context) then drain-advance US-0144; native_chain_continuing=true
-- stop_condition=STOP after refresh-context PASS. Orchestrator MUST Task-spawn sovereign-critic (refresh-context) then drain-advance US-0144 (BUG-0006). Do NOT spawn discovery or critic from this curator. Do NOT revert US-0143 DONE. Do NOT mutate US-0144+ backlog content beyond compact pointers. Do not npm-publish. Do not git push. Do not restore auto.md.
+- next_scheduled_phase=none
+- next_scheduled_role=(none)
+- resume_brief=last=refresh-context; stop_reason=completed; segment_closed=true; BACKLOG_MAX_STORIES_REACHED; next=none (do not drain-advance; do not spawn US-0148)
+- stop_condition=STOP after REFRESH_CONTEXT_PASS. Orchestrator MUST NOT drain-advance. Expect BACKLOG_MAX_STORIES_REACHED hard stop. Do NOT spawn discovery or US-0148 materialization. Do NOT spawn sovereign-critic (CROSS_MODEL_REVIEW=0). Do NOT reopen US-0144. Do NOT mutate US-0148+ backlog content beyond compact pointers. Do not npm-publish. Do not git push.
 
-### Traceability index (DEC-0010) — refresh-context US-0143
+### Traceability index (DEC-0010) — refresh-context US-0145
 
 | Story | Sprint | Tasks | Refresh | Evidence |
 |-------|--------|-------|---------|----------|
-| US-0143 | S0151 | T-anch + T-001..T-010 | REFRESH_CONTEXT_PASS (segment_closed) | sprints/S0151/summary.md; sprints/S0151/closure-verification.md; handoffs/releases/S0151-release-notes.md; retrospective S0151.md |
+| US-0145 | S0155 | T-anch + T-001..T-011 | REFRESH_CONTEXT_PASS (segment_closed) | sprints/S0155/summary.md; sprints/S0155/closure-verification.md; handoffs/releases/S0155-release-notes.md; research.md R-0145 delivery closure trailer |
 
-### Isolation evidence (US-0048 / DEC-0029 / US-0104 v2) — refresh-context US-0143
+### Isolation evidence (US-0048 / DEC-0029 / US-0104 v2) — refresh-context US-0145
 
 - phase_id=refresh-context
 - role=curator
-- story_id=US-0143
-- sprint_id=S0151
-- model_id=composer-2.5 (CROSS_MODEL_REVIEW=1 — required)
-- fresh_context_marker=cur-US0143-refresh-20260914T093000Z-fresh (NEW per US-0048 / BUG-0006; not reused from critic-US0143-closure-20260914T092000Z-fresh or qe-US0143-closure-20260914T091000Z-fresh)
-- timestamp=2026-09-14T09:30:00Z (UTC)
-- orchestrator_run_id=auto-20260913-us0143
+- story_id=US-0145
+- sprint_id=S0155
+- model_id=inherit (CROSS_MODEL_REVIEW=0)
+- fresh_context_marker=cur-US0145-refresh-20260917T211800Z-fresh (NEW per US-0048 / BUG-0006; not reused from cur-US0145-closure-20260917T211700Z-fresh)
+- timestamp=2026-09-17T21:18:00Z (UTC)
+- orchestrator_run_id=auto-20260917-us0146
 - delivery_mode=ultra_lean
 - macro_phase=ship
 - native_chain_active=true
-- native_chain_continuing=true
+- native_chain_continuing=false
 - stop_phase=refresh-context
-- stop_reason=completed
+- stop_reason=completed (BACKLOG_MAX_STORIES_REACHED)
 - drain_advance_action=not_applicable
-- evidence_ref=sprints/S0151/summary.md; sprints/S0151/closure-verification.md; handoffs/releases/S0151-release-notes.md; handoffs/resume_brief.md; docs/engineering/decisions.md; docs/engineering/research.md ## R-0141; docs/engineering/sovereign-memory/retrospectives/S0151.md; docs/product/backlog.md ## US-0143 DONE; docs/product/acceptance.md US-0143 [x]; docs/engineering/state.md (this checkpoint)
-- Fresh curator subagent per BUG-0006 / US-0048 isolation; no prior chat history carried forward. Narrow-read only. No .env reads, no credentials, no backlog/acceptance mutation, no intake JSON mutation, no US-0133..US-0142 reopen, no US-0144+ content mutation beyond compact pointers, no BUG-0021/BUG-0022/BUG-0023/BUG-0024 mutation, no discovery spawn, no drain-advance from curator, no npm publish, no git push, no auto.md restore.
-- Producer closure proof consumed: rp-auto-20260913-us0143-closure-qe-20260914T091000Z-US-0143 (8FAC89F43E7E098EEEB1CC9C6018286C6D5DD55746E8B640D6F6824A0B4E275D) — RUNTIME_PROOF_VALID at refresh-context issue (before ttl 2026-09-14T10:10:00Z; consumed 2026-09-14T09:30:00Z; independent compute_strict_proof_hash MATCH).
-- Producer critic-of-closure proof consumed: rp-auto-20260913-us0143-sovereign-critic-techlead-20260914T092000Z-US-0143 (551F41898F349A769FB97AE138FC4651B236E9AD3153BF3B35923DD60CD0A9C3) — RUNTIME_PROOF_VALID (independent MATCH; ttl 2026-09-14T10:20:00Z; anti_slop=10; 0 blocking; degraded_mode=false).
+- evidence_ref=sprints/S0155/summary.md; sprints/S0155/closure-verification.md; handoffs/releases/S0155-release-notes.md; handoffs/resume_brief.md; docs/engineering/decisions.md; docs/engineering/research.md ## R-0145; docs/product/backlog.md ## US-0145 DONE; docs/product/acceptance.md US-0145 [x]
+- Fresh curator subagent per BUG-0006 / US-0048 isolation; no prior chat history. Narrow-read only. No .env reads. No backlog/acceptance Status or AC mutation. No US-0148+ content authorship. No discovery spawn. No drain-advance. No npm publish. No git push.
+- Producer closure proof consumed: rp-auto-20260917-us0146-closure-curator-20260917T211700Z-US-0145 / C766E8605FE599CF0C4C505A41030334EC60D7C401AB08569D76720B36BFB7F5 — compute_strict_proof_hash MATCH; not STALE (ttl 2026-09-17T22:17:00Z; consumed 2026-09-17T21:18:00Z)
 
-### Strict runtime proof (DEC-0038) — refresh-context US-0143
+### Strict runtime proof (DEC-0038) — refresh-context US-0145
 
-- runtime_proof_id=rp-auto-20260913-us0143-refresh-context-curator-20260914T093000Z-US-0143
-- phase_id=refresh-context, role=curator, story_id=US-0143, sprint_id=S0151
-- proof_issued_at=2026-09-14T09:30:00Z
-- proof_ttl_seconds=3600, proof_ttl=2026-09-14T10:30:00Z
-- proof_hash=51EF41BFD6AACEFD353DFA1A884E90A063CBAE098FA1D27E5076315E37366731
+- runtime_proof_id=rp-auto-20260917-us0146-refresh-context-curator-20260917T211800Z-US-0145
+- phase_id=refresh-context, role=curator, story_id=US-0145, sprint_id=S0155
+- proof_issued_at=2026-09-17T21:18:00Z
+- proof_ttl_seconds=3600, proof_ttl=2026-09-17T22:18:00Z
+- proof_hash=947B5DCD1A38240E3A2935C3A158FFF3FB42A1A58E22C1B9933E941FD429B415
 - Hash via `from scripts.token_cost_lib import compute_strict_proof_hash` (positional; compact sorted-key JSON).
-- Canonical hashed payload: {"orchestrator_run_id":"auto-20260913-us0143","phase_id":"refresh-context","proof_issued_at":"2026-09-14T09:30:00Z","proof_ttl_seconds":3600,"role":"curator","runtime_proof_id":"rp-auto-20260913-us0143-refresh-context-curator-20260914T093000Z-US-0143"}
-- Isolation extras (not hashed): delivery_mode=ultra_lean; macro_phase=ship; model_id=composer-2.5; sprint_id=S0151; story_id=US-0143; drain_story_index=9 of 10
-- hash_recompute_confirmation=true (compute_strict_proof_hash → 51EF41BFD6AACEFD353DFA1A884E90A063CBAE098FA1D27E5076315E37366731; 64 hex verified)
-- Consumed closure producer proof: rp-auto-20260913-us0143-closure-qe-20260914T091000Z-US-0143 / 8FAC89F43E7E098EEEB1CC9C6018286C6D5DD55746E8B640D6F6824A0B4E275D — independent MATCH; not STALE (ttl 2026-09-14T10:10:00Z; curator wall-clock 2026-09-14T09:30:00Z)
-- Consumed critic-of-closure proof: rp-auto-20260913-us0143-sovereign-critic-techlead-20260914T092000Z-US-0143 / 551F41898F349A769FB97AE138FC4651B236E9AD3153BF3B35923DD60CD0A9C3 — independent MATCH; not STALE (ttl 2026-09-14T10:20:00Z)
+- Canonical hashed payload: {"orchestrator_run_id":"auto-20260917-us0146","phase_id":"refresh-context","proof_issued_at":"2026-09-17T21:18:00Z","proof_ttl_seconds":3600,"role":"curator","runtime_proof_id":"rp-auto-20260917-us0146-refresh-context-curator-20260917T211800Z-US-0145"}
+- Isolation extras (not hashed): delivery_mode=ultra_lean; macro_phase=ship; model_id=inherit; sprint_id=S0155; story_id=US-0145; drain_story_index=3 of 3; backlog_drain_stories_remaining_budget=0; CROSS_MODEL_REVIEW=0; AUTO_SOVEREIGN=0; drain_advance_action=not_applicable; native_chain_continuing=false
+- hash_recompute_confirmation=true (compute_strict_proof_hash → 947B5DCD1A38240E3A2935C3A158FFF3FB42A1A58E22C1B9933E941FD429B415 MATCH; 64 hex verified; stored uppercase)
+- Consumed closure producer proof: rp-auto-20260917-us0146-closure-curator-20260917T211700Z-US-0145 / C766E8605FE599CF0C4C505A41030334EC60D7C401AB08569D76720B36BFB7F5 — independent MATCH; not STALE
 
-### Phase boundary status (US-0088 / DEC-0069 AC-10) — refresh-context US-0143
+### Phase boundary status (DEC-0069 AC-10) — refresh-context US-0145
 
 - phase_boundary=refresh-context
-- next_scheduled_phase=sovereign-critic (refresh-context) then orchestrator drain-advance US-0144
+- next_scheduled_phase=none
 - segment_work_item_kind=story
-- story_id=US-0143 DONE
-- sprint_id=S0151
-- dec_id=DEC-0143
-- prior_story_id=US-0143
-- next_story_id=US-0144 (OPEN; not materialized)
-- drain_story_index=9 of 10
-- drain_advance_action=not_applicable (curator STOP)
+- story_id=US-0145 DONE
+- sprint_id=S0155
+- dec_id=DEC-0145
+- prior_story_id=US-0145
+- next_story_id=US-0148 (OPEN P1; not materialized; drain-advance not_applicable)
+- drain_story_index=3 of 3
+- backlog_drain_stories_remaining_budget=0
+- drain_advance_action=not_applicable (budget 0; orchestrator MUST NOT drain-advance — BACKLOG_MAX_STORIES_REACHED)
 
-### Triad hot-surface verification tuple (DEC-0054) — refresh-context US-0143
+### Triad hot-surface verification tuple (DEC-0054) — refresh-context US-0145
 
 - surface=docs/engineering/state.md (isolation + refresh-context checkpoint append-bottom)
-- companion=docs/engineering/decisions.md (compact pack prepend); sprints/S0151/summary.md (context-pack prepend); handoffs/resume_brief.md (prepend-top); docs/engineering/sovereign-memory/retrospectives/S0151.md (create); docs/engineering/research.md ## R-0141 (delivery closure trailer)
-- pre_write: `arch_linkage_guard.py --pre` exit 0 → `enforce-triad-hot-surface.py --rollover` idempotent (no units moved; hot surfaces within caps) → `arch_linkage_guard.py --post` exit 0 → `enforce-triad-hot-surface.py --check` PASS
-- post_write: `arch_linkage_guard.py --pre` exit 0 → `enforce-triad-hot-surface.py --rollover` `rollover_complete units=2` pack_state=`docs/engineering/state-archive/state-pack-20260914-i.md` (archived `## Sovereign-critic checkpoint — research US-0143` through `## Architecture checkpoint — US-0143`; archived_body_lines=162; preamble_lines=11; retained_body_lines=1123; retained_units=14); prior single-unit pack `docs/engineering/state-archive/state-pack-20260914-h.md` (`## Research checkpoint — US-0143`; archived_body_lines=84; retained_units=15) from same post-write rollover pass → `arch_linkage_guard.py --post` exit 0; final `--check` PASS
-- boundary=Sovereign-critic research US-0143 + Architecture US-0143 (post_write); Research US-0143 (pack h)
-- moved=3
-- retained=14
-- pack_ref=docs/engineering/state-archive/state-pack-20260914-h.md + docs/engineering/state-archive/state-pack-20260914-i.md
-- triad_check=PASS
-- artifact_ordering: decisions.md compact pack prepend; summary.md context-pack prepend; resume_brief.md prepend-top; state.md append-bottom; retrospective create; research.md R-0141 trailer append (DEC-0040)
-- Active context surface preamble present
+- companion=docs/engineering/decisions.md (compact pack prepend); sprints/S0155/summary.md (context-pack prepend); handoffs/resume_brief.md (prepend-top); docs/engineering/research.md ## R-0145 (delivery closure trailer)
+- artifact_ordering: resume_brief.md prepend-top; state.md append-bottom (DEC-0040)
+- pre_write: enforce-triad-hot-surface.py --check STATE_ARCHIVE_REQUIRED 1273/1200 → --rollover exit 0 (rollover_complete units=1; pack=docs/engineering/state-archive/state-pack-20260917-t.md) → `--check` PASS
+- post_append: enforce-triad-hot-surface.py --check STATE_ARCHIVE_REQUIRED 1304/1200 → --rollover exit 0 (rollover_complete units=2; pack=docs/engineering/state-archive/state-pack-20260917-u.md) → `--check` PASS
+- arch_linkage_guard: --pre PASS; --post informational ARCH_LINKAGE_ROLLOVER_BLOCKED (BUG-0010..0012 H1 stubs in architecture archive — no pack rollback; hot surface check authoritative)
+- final_check=PASS
 
-## Sovereign-critic checkpoint — refresh-context US-0143 / S0151 / auto-20260913-us0143 (role=tech-lead critic, spawn 094000Z)
+## Orchestrator run terminal — auto-20260917-us0146 (BACKLOG_MAX_STORIES_REACHED)
 
-- phase_id=sovereign-critic
-- reviewed_phase_id=refresh-context
-- producer_role=curator
-- role=tech-lead
-- story_id=US-0143 (Status DONE — critic does not mutate)
-- bug_id=(none)
-- sprint_id=S0151
-- orchestrator_run_id=auto-20260913-us0143
-- parent_orchestrator_run_id=auto-20260913-us0142
-- delivery_mode=ultra_lean
-- macro_phase=ship (sovereign-critic of refresh-context; orchestrator drain-advance US-0144 next)
-- AUTO_QUIET=1
-- CROSS_MODEL_REVIEW=1
-- producer_model_id=composer-2.5
-- critic_model_id=composer-2.5-fast
-- degraded_mode=false
-- anti_slop_aggregate=10
-- blocking_count=0
-- rework_generation=0
-- finding_ids=us0143rfx-challenger-001,us0143rfx-architect-002,us0143rfx-subtractor-003
-- fresh_context_marker=critic-US0143-refresh-20260914T094000Z-fresh
-- timestamp=2026-09-14T09:40:00Z (UTC)
-- verdict=CRITIC_PASS (REFRESH_CONTEXT_PASS upheld; decision_gate=false)
-- refresh_confirmed=REFRESH_CONTEXT_PASS; retrospective S0151.md present; sprints/S0151/summary.md segment terminal; backlog ## US-0143 Status DONE; acceptance [x]; stop_reason=completed (not segment exhausted); drain_story_index=9 of 10; US-0144 OPEN (not materialized by curator or critic)
-- backlog_status=DONE (## US-0143 — critic does not mutate)
-- acceptance_US-0143=ticked (unchanged by critic)
-- sibling_boundary=US-0144..US-0148 OPEN not mutated; US-0133..US-0142 DONE not reopened; BUG-0021 DONE / BUG-0022 OPEN / BUG-0023 DONE / BUG-0024 OPEN not mutated
-- fake_browser_pass_claimed=false
-- live_chrome_probed=false
-- harness_fail_zero_claimed=false
-- drain_advance_action=not_applicable (critic STOP; orchestrator owns drain-advance US-0144)
-- next_scheduled_phase=orchestrator drain-advance US-0144
-- next_scheduled_role=orchestrator
-- resume_brief=last=sovereign-critic (refresh-context); next=orchestrator drain-advance US-0144; native_chain_continuing=true; drain_advance_action will be spawned by orchestrator
-- stop_condition=STOP after CRITIC_PASS. Orchestrator MUST drain-advance US-0144 (BUG-0006). Do NOT spawn US-0144 discovery from this critic. Do NOT call advance_sovereign_loop from critic. Do NOT revert US-0143 DONE. Do NOT mutate US-0144+ backlog content. Do NOT npm-publish. Do NOT git push.
-
-### Isolation evidence (US-0048 / DEC-0029 / US-0104 v2) — sovereign-critic of refresh-context US-0143
-
-- phase_id=sovereign-critic
-- role=tech-lead
-- model_id=composer-2.5-fast (CROSS_MODEL_REVIEW=1 — required)
-- fresh_context_marker=critic-US0143-refresh-20260914T094000Z-fresh (NEW per US-0048 / BUG-0006; not reused from cur-US0143-refresh-20260914T093000Z-fresh)
-- timestamp=2026-09-14T09:40:00Z (UTC)
-- orchestrator_run_id=auto-20260913-us0143
-- delivery_mode=ultra_lean
-- macro_phase=ship
-- evidence_ref=handoffs/sovereign_critic_findings.jsonl (us0143rfx-*) + docs/engineering/sovereign-memory/retrospectives/S0151.md + sprints/S0151/summary.md + docs/engineering/state.md refresh-context checkpoint
-- Fresh tech-lead critic subagent per BUG-0006 / US-0048 isolation, no prior chat history. Narrow-read only. Sovereign memory digest: `(no sovereign memory entries)` (read-only). No .env reads, no US-0143 Status mutation, no acceptance/backlog AC mutation, no US-0144+ content authorship, no discovery spawn, no drain-advance from critic, no advance_sovereign_loop from critic.
-
-### Strict runtime proof (DEC-0038) — sovereign-critic refresh-context US-0143
-
-- runtime_proof_id=rp-auto-20260913-us0143-sovereign-critic-techlead-20260914T094000Z-US-0143
-- phase_id=sovereign-critic, role=tech-lead, story_id=US-0143, sprint_id=S0151
-- proof_issued_at=2026-09-14T09:40:00Z
-- proof_ttl_seconds=3600, proof_ttl=2026-09-14T10:40:00Z
-- proof_hash=DBE92BF1D3E7670E2A33057CEE94378FD64F251D24030E335984CB146F3C1037
-- Canonical hashed payload: {"orchestrator_run_id":"auto-20260913-us0143","phase_id":"sovereign-critic","proof_issued_at":"2026-09-14T09:40:00Z","proof_ttl_seconds":3600,"role":"tech-lead","runtime_proof_id":"rp-auto-20260913-us0143-sovereign-critic-techlead-20260914T094000Z-US-0143"}
-- Isolation extras (not hashed): delivery_mode=ultra_lean, macro_phase=ship, model_id=composer-2.5-fast, producer_model_id=composer-2.5, reviewed_phase_id=refresh-context, sprint_id=S0151, story_id=US-0143, degraded_mode=false
-- hash_recompute_confirmation=true (compute_strict_proof_hash → DBE92BF1D3E7670E2A33057CEE94378FD64F251D24030E335984CB146F3C1037; 64 hex verified)
-- Consumed refresh-context producer proof: rp-auto-20260913-us0143-refresh-context-curator-20260914T093000Z-US-0143 / 51EF41BFD6AACEFD353DFA1A884E90A063CBAE098FA1D27E5076315E37366731 — independent MATCH, not STALE (ttl 2026-09-14T10:30:00Z, consumed_at 2026-09-14T09:40:00Z, anti_slop=10, blocking_count=0, degraded_mode=false, findings us0143rfx-* informational)
-- independent_checks=refresh-context proof SHA-256 MATCH+not-STALE; retrospective S0151.md; stop_reason=completed; US-0144 OPEN; sovereign_critic_validate.py --enforce PASS; US-0127 auto_resolve_nonblocking_for_run(refresh-context) resolved 0 rows; AI_DECISION_LEDGER patch_ledger_cross_model_reviewed(refresh-context/curator)
-
-### Non-blocking carry-forwards (informational, refresh-context critic)
-
-- NB1 (challenger / us0143rfx-challenger-001): refresh proof MATCH+not-STALE; stop_reason=completed; drain 9 of 10; US-0144 OPEN; no discovery/drain from critic.
-- NB2 (architect / us0143rfx-architect-002): orchestrator owns drain-advance; compact-only refresh layering held; sovereign memory digest empty read-only.
-- NB3 (subtractor / us0143rfx-subtractor-003): no US-0144 content; no advance_sovereign_loop; no DONE revert; BUG-0006 spawn boundaries upheld.
-
-### Triad hot-surface verification tuple (DEC-0054) — sovereign-critic refresh-context US-0143
-
-- surface=docs/engineering/state.md (isolation + sovereign-critic checkpoint append-bottom)
-- companion=handoffs/sovereign_critic_findings.jsonl (us0143rfx-* append); handoffs/resume_brief.md (prepend-top)
-- artifact_ordering: findings JSONL append; resume_brief.md prepend-top; state.md append-bottom (DEC-0040)
-- Active context surface preamble present
-
-## Orchestrator materialize — US-0144 drain-advance (auto-20260913-us0144)
-
+- timestamp=2026-09-17T21:20:00Z
 - invocation_mode=auto
+- orchestrator_run_id=auto-20260917-us0146
+- parent_orchestrator_run_id=auto-20260913-us0144
+- AUTO_FLOW_MODE=full_autonomy
+- native_chain_active=true
+- native_chain_continuing=false
+- stop_phase=refresh-context
+- stop_reason=completed
+- stop_subreason=BACKLOG_MAX_STORIES_REACHED
+- AUTO_BACKLOG_DRAIN=1
+- AUTO_BACKLOG_MAX_STORIES=3
+- drain_story_index=3 of 3
+- backlog_drain_stories_remaining_budget=0
+- drain_advance_action=not_applicable
+- stories_shipped_this_run=[US-0146/S0153, US-0147/S0154, US-0145/S0155]
+- consumed_refresh_proof=rp-auto-20260917-us0146-refresh-context-curator-20260917T211800Z-US-0145 / 947B5DCD1A38240E3A2935C3A158FFF3FB42A1A58E22C1B9933E941FD429B415 (MATCH)
+- DEC-0069_pairing=PASS (resume_brief + state refresh US-0145)
+- next_open_story=US-0148 (P1; requires fresh /auto with new drain budget)
+- CROSS_MODEL_REVIEW=0
+- outer_cycle_note=native in-chat chain complete; no mandatory re-/auto for cap exhaustion
+
+## Orchestrator materialize — US-0148 new run (auto-20260917-us0148)
+
+- timestamp=2026-09-17T21:09:00Z
+- invocation_mode=auto
+- orchestrator_run_id=auto-20260917-us0148
+- parent_orchestrator_run_id=auto-20260917-us0146
+- prior_stop_subreason=BACKLOG_MAX_STORIES_REACHED
 - AUTO_FLOW_MODE=full_autonomy
 - native_chain_active=true
 - native_chain_continuing=true
 - drain_advance_action=spawned
-- timestamp=2026-09-14T09:45:00Z
-- orchestrator_run_id=auto-20260913-us0144
-- parent_orchestrator_run_id=auto-20260913-us0143
-- story_id=US-0144
+- story_id=US-0148
 - delivery_mode=ultra_lean
 - resolved_phase_plan=[spec, plan, build+verify, ship]
 - reinstatement_mode=none
@@ -1055,119 +837,384 @@ Pre-handoff: no OPEN or DONE story in S0151 lacks a traceability index entry (US
 - resolved_start_phase=discovery
 - next_scheduled_phase=discovery
 - next_scheduled_role=po
-- resolution_source=scratchpad
+- resolution_source=scratchpad + backlog_selection
+- resolution_status=resolved
 - AUTO_BACKLOG_DRAIN=1
-- AUTO_BUG_QUEUE=0
-- AUTO_LOOP_MAX_CYCLES=50
-- outer_cycle_index=33
-- drain_story_index=10 of 10
-- backlog_drain_stories_remaining_budget=0
-- research_next=R-0142
-- expected_sprint=S0152
-- companion_dec=DEC-0144 (architecture)
-- US-0143_status=DONE
-- US-0144_status=OPEN
-- sovereign_loop_action=continue
-- stop_phase=refresh-context
-- stop_reason=completed
-- consumed_refresh_critic=rp-auto-20260913-us0143-sovereign-critic-techlead-20260914T094000Z-US-0143 / DBE92BF1D3E7670E2A33057CEE94378FD64F251D24030E335984CB146F3C1037 MATCH
+- AUTO_BACKLOG_MAX_STORIES=3
+- AUTO_STORY_SELECTION=priority_then_backlog_order
+- drain_story_index=1 of 3
+- backlog_drain_stories_remaining_budget=2
+- segment_work_item_kind=story
+- CROSS_MODEL_REVIEW=0
+- research_stub=R-0148
+- expected_sprint=S0156
+- companion_dec=DEC-0148
+- US-0148_status=OPEN
+- intake_evidence_ref=handoffs/intake_evidence/US-0133-0148-intake-20260911.json
 - artifact_ordering: resume_brief.md prepend-top; state.md append-bottom (DEC-0040)
 
-### Triad hot-surface verification tuple (DEC-0054) — orchestrator drain-advance US-0144
-
-- surface=docs/engineering/state.md
-- pre_write: enforce-triad-hot-surface.py --check STATE_ARCHIVE_REQUIRED 1238/1200 → --rollover units=1 pack_ref=docs/engineering/state-archive/state-pack-20260914-j.md (archived `## Sovereign-critic checkpoint — architecture US-0143`; archived_body_lines=77; preamble_lines=11; retained_body_lines=1161; retained_units=14)
-- boundary=Sovereign-critic checkpoint architecture US-0143
-- moved=1
-- retained=14
-- pack_ref=docs/engineering/state-archive/state-pack-20260914-j.md
-- post_check=PASS
-
-## Discovery checkpoint — US-0144 / auto-20260913-us0144 (role=po)
+## Discovery checkpoint — US-0148 / auto-20260917-us0148 (role=po)
 
 - phase_id=discovery
 - role=po
-- story_id=US-0144
-- sprint_id=(none yet; expected S0152 at sprint-plan)
-- orchestrator_run_id=auto-20260913-us0144
-- parent_orchestrator_run_id=auto-20260913-us0143
+- model_id=inherit (MODEL_RESOLVE=alias_only; CROSS_MODEL_REVIEW=0)
+- story_id=US-0148 (Status OPEN — not flipped DONE; AC-1..AC-8 unchecked)
+- bug_id=(none)
+- sprint_id=(none yet; expected S0156 at sprint-plan)
+- orchestrator_run_id=auto-20260917-us0148
+- parent_orchestrator_run_id=auto-20260917-us0146
+- delivery_mode=ultra_lean
+- resolved_phase_plan=[spec, plan, build+verify, ship]
+- reinstatement_mode=none
+- memory_layer=pack
+- macro_phase=spec (intake held at handoffs/intake_evidence/US-0133-0148-intake-20260911.json — not re-intaken)
+- skipped_phases=[intake]
+- verdict=DISCOVERY_PASS
+- decision_gate=false
+- timestamp=2026-09-17T21:10:00Z
+- fresh_context_marker=po-US0148-discovery-20260917T211000Z-fresh
+- AUTO_QUIET=1
+- AUTO_FLOW_MODE=full_autonomy
+- AUTO_SOVEREIGN=0
+- CROSS_MODEL_REVIEW=0
+- FRAMEWORK_KIT_REPO=1
+- EARLY_RESEARCH=0
+- native_chain_active=true
+- native_chain_continuing=true
+- drain_story_index=1 of 3
+- backlog_drain_stories_remaining_budget=2
+- AUTO_BACKLOG_MAX_STORIES=3
+- AUTO_STORY_SELECTION=priority_then_backlog_order (sole OPEN story US-0148 P1)
+- D1-D10=LOCKED (thin daemon+protocol delegate-only; versioned events; CLI/TUI clients; local authZ; restart reconcile SQLite+repo; test_us0148_*; OUT remote clients v1/npm/git/.env)
+- research_stub=R-0148 (PO does not author heading; R-0145=US-0145 held)
+- companion_dec=DEC-0148 (architecture-owned; not authored)
+- expected_sprint=S0156
+- sibling_boundary=US-0133..US-0147 DONE compose-only; BUG-0022 OPEN not drained
+- US-0148_status=OPEN
+- AC_ticks=unchecked (AC-1..AC-8 remain `[ ]`)
+- acceptance_US-0148=unchecked
+- next_scheduled_phase=research
+- next_scheduled_role=tech-lead
+- resume_brief=last=discovery; next=/research (tech-lead); macro=spec until research completes; native_chain_continuing=true
+- po_to_tl_rollover=handoffs/archive/po-to-tl-pack-20260917-g.md (moved=2; retained_lines=572; post-discovery append)
+- stop_condition=STOP after DISCOVERY_PASS. Orchestrator MUST spawn /research in fresh tech-lead. CROSS_MODEL_REVIEW=0 — do NOT spawn sovereign-critic. Do NOT mark US-0148 DONE. Do NOT tick AC. Do NOT npm-publish. Do NOT git push.
+
+### Isolation evidence (US-0048 / DEC-0029 / US-0104 v2) — discovery US-0148
+
+- phase_id=discovery
+- role=po
+- story_id=US-0148
+- sprint_id=none
+- model_id=inherit (CROSS_MODEL_REVIEW=0)
+- fresh_context_marker=po-US0148-discovery-20260917T211000Z-fresh (NEW per US-0048 / BUG-0006)
+- timestamp=2026-09-17T21:10:00Z (UTC)
+- orchestrator_run_id=auto-20260917-us0148
+- parent_orchestrator_run_id=auto-20260917-us0146
 - delivery_mode=ultra_lean
 - macro_phase=spec
 - resolved_phase_plan=[spec, plan, build+verify, ship]
 - skipped_phases=[intake]
-- timestamp=2026-09-14T09:50:00Z
-- fresh_context_marker=po-US0144-discovery-20260914T095000Z-fresh
-- model_id=cursor-grok-4.6-high
-- CROSS_MODEL_REVIEW=1
+- native_chain_active=true
+- native_chain_continuing=true
+- CROSS_MODEL_REVIEW=0
+- evidence_ref=docs/product/backlog.md ## US-0148 discovery_notes; docs/product/vision.md ## Discovery Notes — US-0148; handoffs/po_to_tl.md Discovery handoff US-0148; handoffs/intake_evidence/US-0133-0148-intake-20260911.json (read-only); handoffs/resume_brief.md
+- Fresh po subagent per BUG-0006 / US-0048 isolation; narrow-read from phase-context.md + backlog ## US-0148 only. TOKEN_PROFILE=lean. No .env reads. No US-0148 Status mutation. No acceptance tick. No BUG-* mutation. No architecture H1. No DEC-0148. No ## R-0148. No /research spawn from this subagent. No npm publish. No git push.
+
+### Strict runtime proof (DEC-0038) — discovery US-0148
+
+- runtime_proof_id=rp-auto-20260917-us0148-discovery-po-20260917T211000Z-US-0148
+- phase_id=discovery, role=po, story_id=US-0148, sprint_id=none
+- proof_issued_at=2026-09-17T21:10:00Z
+- proof_ttl_seconds=3600, proof_ttl=2026-09-17T22:10:00Z
+- proof_hash=F9FCC16A49352472DADA88CEA509768C50E3EDCD5CE614EE53AFE07462CCA4AC
+- Hash via `from scripts.token_cost_lib import compute_strict_proof_hash` (positional; compact sorted-key JSON).
+- Canonical hashed payload: {"orchestrator_run_id":"auto-20260917-us0148","phase_id":"discovery","proof_issued_at":"2026-09-17T21:10:00Z","proof_ttl_seconds":3600,"role":"po","runtime_proof_id":"rp-auto-20260917-us0148-discovery-po-20260917T211000Z-US-0148"}
+- Isolation extras (not hashed): delivery_mode=ultra_lean; macro_phase=spec; model_id=inherit; sprint_id=none; story_id=US-0148; skipped_phases=[intake]; CROSS_MODEL_REVIEW=0; native_chain_active=true; native_chain_continuing=true; drain_story_index=1 of 3; backlog_drain_stories_remaining_budget=2
+- hash_recompute_confirmation=true (compute_strict_proof_hash → F9FCC16A49352472DADA88CEA509768C50E3EDCD5CE614EE53AFE07462CCA4AC MATCH; 64 hex verified; stored uppercase)
+
+## Research checkpoint — US-0148 / auto-20260917-us0148 (role=tech-lead)
+
+- phase_id=research
+- role=tech-lead
+- model_id=inherit (MODEL_RESOLVE=alias_only; CROSS_MODEL_REVIEW=0)
+- story_id=US-0148 (Status OPEN — not flipped DONE; AC-1..AC-8 unchecked)
+- bug_id=(none)
+- sprint_id=(none yet; expected S0156 at sprint-plan)
+- orchestrator_run_id=auto-20260917-us0148
+- parent_orchestrator_run_id=auto-20260917-us0146
+- delivery_mode=ultra_lean
+- resolved_phase_plan=[spec, plan, build+verify, ship]
+- reinstatement_mode=none
+- memory_layer=pack
+- macro_phase=plan (research complete; architecture + sprint-plan remain in plan macro)
+- skipped_phases=[intake]
+- verdict=RESEARCH_PASS
+- decision_gate=false
+- timestamp=2026-09-17T21:12:00Z
+- fresh_context_marker=tl-US0148-research-20260917T211200Z-fresh
 - AUTO_QUIET=1
+- AUTO_FLOW_MODE=full_autonomy
+- AUTO_SOVEREIGN=0
+- CROSS_MODEL_REVIEW=0
+- FRAMEWORK_KIT_REPO=1
+- EARLY_RESEARCH=0
+- native_chain_active=true
+- native_chain_continuing=true
+- drain_story_index=1 of 3
+- backlog_drain_stories_remaining_budget=2
+- research_anchor=R-0148 (docs/engineering/research.md ## R-0148; DQ1–DQ10 LOCKED; A1 protocol + daemon + DaemonTransport)
+- companion_dec=DEC-0148 (architecture-owned; not authored)
+- expected_sprint=S0156
+- approach=A1 (A*) LOCKED
+- sibling_boundary=US-0133..US-0147 DONE compose-only; BUG-0022 OPEN not drained
+- US-0148_status=OPEN
+- AC_ticks=unchecked (AC-1..AC-8 remain `[ ]`)
+- next_scheduled_phase=architecture
+- next_scheduled_role=tech-lead
+- resume_brief=last=research; next=/architecture (tech-lead); macro=plan
+- stop_condition=STOP after RESEARCH_PASS. Orchestrator MUST spawn /architecture in fresh tech-lead. CROSS_MODEL_REVIEW=0 — do NOT spawn sovereign-critic. Do NOT mark US-0148 DONE. Do NOT tick AC. Do NOT npm-publish. Do NOT git push.
+
+### Isolation evidence (US-0048 / DEC-0029 / US-0104 v2) — research US-0148
+
+- phase_id=research
+- role=tech-lead
+- story_id=US-0148
+- sprint_id=none
+- model_id=inherit (CROSS_MODEL_REVIEW=0)
+- fresh_context_marker=tl-US0148-research-20260917T211200Z-fresh (NEW per US-0048 / BUG-0006)
+- timestamp=2026-09-17T21:12:00Z (UTC)
+- orchestrator_run_id=auto-20260917-us0148
+- parent_orchestrator_run_id=auto-20260917-us0146
+- delivery_mode=ultra_lean
+- macro_phase=plan
+- resolved_phase_plan=[spec, plan, build+verify, ship]
+- skipped_phases=[intake]
+- native_chain_active=true
+- native_chain_continuing=true
+- CROSS_MODEL_REVIEW=0
+- evidence_ref=docs/engineering/research.md ## R-0148; handoffs/po_to_tl.md Discovery handoff US-0148; handoffs/resume_brief.md; docs/product/backlog.md ## US-0148 discovery_notes (read-only)
+- Fresh tech-lead subagent per BUG-0006 / US-0048; narrow-read TOKEN_PROFILE=lean. No .env. No backlog Status/AC mutation. No architecture H1. No DEC-0148.md. No sprints/S0156/. No /architecture spawn from this subagent. No npm publish. No git push.
+
+### Strict runtime proof (DEC-0038) — research US-0148
+
+- runtime_proof_id=rp-auto-20260917-us0148-research-techlead-20260917T211200Z-US-0148
+- phase_id=research, role=tech-lead, story_id=US-0148, sprint_id=none
+- proof_issued_at=2026-09-17T21:12:00Z
+- proof_ttl_seconds=3600, proof_ttl=2026-09-17T22:12:00Z
+- proof_hash=5F986CEE216B57CFD2DB191C8C4CE1CD9539596DCA6A35AEB9E91CE4729B0A4C
+- Hash via `from scripts.token_cost_lib import compute_strict_proof_hash` (positional; compact sorted-key JSON).
+- Canonical hashed payload: {"orchestrator_run_id":"auto-20260917-us0148","phase_id":"research","proof_issued_at":"2026-09-17T21:12:00Z","proof_ttl_seconds":3600,"role":"tech-lead","runtime_proof_id":"rp-auto-20260917-us0148-research-techlead-20260917T211200Z-US-0148"}
+- Isolation extras (not hashed): delivery_mode=ultra_lean; macro_phase=plan; model_id=inherit; sprint_id=none; story_id=US-0148; skipped_phases=[intake]; CROSS_MODEL_REVIEW=0; native_chain_active=true; native_chain_continuing=true; drain_story_index=1 of 3; backlog_drain_stories_remaining_budget=2
+- hash_recompute_confirmation=true (compute_strict_proof_hash → 5F986CEE216B57CFD2DB191C8C4CE1CD9539596DCA6A35AEB9E91CE4729B0A4C MATCH; 64 hex verified; stored uppercase)
+- consumed_discovery_proof=rp-auto-20260917-us0148-discovery-po-20260917T211000Z-US-0148 / F9FCC16A49352472DADA88CEA509768C50E3EDCD5CE614EE53AFE07462CCA4AC — RUNTIME_PROOF_VALID (MATCH at consumed_at 2026-09-17T21:12:00Z)
+
+### Phase boundary status (DEC-0069 AC-10) — research US-0148
+
+- phase_boundary=research
+- next_scheduled_phase=architecture
+- next_scheduled_role=tech-lead
+
+## Architecture checkpoint — US-0148 / auto-20260917-us0148 (role=tech-lead)
+
+- phase_id=architecture
+- role=tech-lead
+- model_id=inherit (MODEL_RESOLVE=alias_only; CROSS_MODEL_REVIEW=0)
+- story_id=US-0148 (Status OPEN — not flipped DONE; AC-1..AC-8 unchecked)
+- bug_id=(none)
+- sprint_id=(none yet; expected S0156 at sprint-plan)
+- orchestrator_run_id=auto-20260917-us0148
+- parent_orchestrator_run_id=auto-20260917-us0146
+- delivery_mode=ultra_lean
+- resolved_phase_plan=[spec, plan, build+verify, ship]
+- reinstatement_mode=none
+- memory_layer=pack
+- macro_phase=plan (architecture complete; sprint-plan remains in plan macro)
+- skipped_phases=[intake]
+- verdict=ARCHITECTURE_PASS
+- decision_gate=false
+- timestamp=2026-09-17T21:14:00Z
+- fresh_context_marker=tl-US0148-architecture-20260917T211400Z-fresh
+- AUTO_QUIET=1
+- AUTO_FLOW_MODE=full_autonomy
+- AUTO_SOVEREIGN=0
+- CROSS_MODEL_REVIEW=0
 - FRAMEWORK_KIT_REPO=1
 - native_chain_active=true
 - native_chain_continuing=true
-- drain_story_index=10 of 10
-- verdict=DISCOVERY_PASS
-- decision_gate=false
-- US-0144_status=OPEN
+- drain_story_index=1 of 3
+- backlog_drain_stories_remaining_budget=2
+- research_anchor=R-0148 (docs/engineering/research.md ## R-0148; DQ1–DQ10 LOCKED; A1)
+- architecture_anchor=docs/engineering/architecture.md # US-0148
+- companion_dec=DEC-0148 (Accepted)
+- expected_sprint=S0156
+- approach=A1 (A*) LOCKED
+- sibling_boundary=US-0133..US-0147 DONE compose-only; BUG-0022 OPEN not drained
+- US-0148_status=OPEN
 - AC_ticks=unchecked (AC-1..AC-8 remain `[ ]`)
-- intake_held=handoffs/intake_evidence/US-0133-0148-intake-20260911.json (not mutated)
-- sovereign_memory=SOVEREIGN_MEMORY=1; build_injection_digest_block returned `(no sovereign memory entries)` (read-only). No mistakes.jsonl write.
-- research_next=R-0142 (PO does not author heading; R-0141=US-0143 held)
-- companion_dec=DEC-0144 (architecture only)
-- expected_sprint=S0152
-- D-locks=D1 runtime-core compose (no Pi; no sibling unless architecture proves; GateEngine unamended; do not rewrite US-0143 drain); D2 ledger additive; D3 bounded digest; D4 fresh reviews + lift critic_content:false; D5 critic pinning + degraded same-model; D6 deferrals/drain-generate gates; D7 code-evaluated convergence + US-0127/US-0128; D8 operator-visible caps/progress; D9 12 test_us0144_*; D10 OUT US-0145/0146/auto.md/cli.json/tui.json
-- sibling_boundary=do not mutate US-0143 DONE, US-0145+, BUG-0024; do not reopen US-0103..US-0110 / US-0127 / US-0128
-- next=orchestrator sovereign-critic of discovery, then /research (fresh tech-lead). Do not spawn research or critic from this discovery chat.
-- evidence_ref=docs/product/backlog.md ## US-0144 discovery_notes; docs/product/vision.md ## Discovery Notes — US-0144; handoffs/po_to_tl.md discovery handoff; handoffs/resume_brief.md
+- acceptance_US-0148=unchecked
+- next_scheduled_phase=sprint-plan
+- next_scheduled_role=tech-lead
+- resume_brief=last=architecture; next=/sprint-plan (tech-lead); macro=plan
+- stop_condition=STOP after ARCHITECTURE_PASS. Orchestrator MUST spawn /sprint-plan in fresh tech-lead. CROSS_MODEL_REVIEW=0 — do NOT spawn sovereign-critic. Do NOT mark US-0148 DONE. Do NOT tick AC. Do NOT npm-publish. Do NOT git push.
 
-### Strict runtime proof (DEC-0038) — discovery US-0144
+### Isolation evidence (US-0048 / DEC-0029 / US-0104 v2) — architecture US-0148
 
-- runtime_proof_id=rp-auto-20260913-us0144-discovery-po-20260914T095000Z-US-0144
-- phase_id=discovery, role=po, story_id=US-0144, sprint_id=none
-- proof_issued_at=2026-09-14T09:50:00Z
-- proof_ttl_seconds=3600, proof_ttl=2026-09-14T10:50:00Z
-- proof_hash=04F2563AD77B0D0E519ADDF46FF3AA25445C58DF5BCD30FEB933929D7C4A0594
-- Canonical hashed payload: {"orchestrator_run_id":"auto-20260913-us0144","phase_id":"discovery","proof_issued_at":"2026-09-14T09:50:00Z","proof_ttl_seconds":3600,"role":"po","runtime_proof_id":"rp-auto-20260913-us0144-discovery-po-20260914T095000Z-US-0144"}
-- Isolation extras (not hashed): delivery_mode=ultra_lean, macro_phase=spec, model_id=cursor-grok-4.6-high, sprint_id=none, story_id=US-0144, skipped_phases=[intake], native_chain_active=true, native_chain_continuing=true
-- hash_recompute_confirmation=true (compute_strict_proof_hash → 04f2563ad77b0d0e519addf46ff3aa25445c58df5bcd30feb933929d7c4a0594; independently MATCH; 64 hex verified; stored uppercase)
+- phase_id=architecture
+- role=tech-lead
+- story_id=US-0148
+- sprint_id=none
+- model_id=inherit (CROSS_MODEL_REVIEW=0)
+- fresh_context_marker=tl-US0148-architecture-20260917T211400Z-fresh (NEW per US-0048 / BUG-0006)
+- timestamp=2026-09-17T21:14:00Z (UTC)
+- orchestrator_run_id=auto-20260917-us0148
+- parent_orchestrator_run_id=auto-20260917-us0146
+- delivery_mode=ultra_lean
+- macro_phase=plan
+- resolved_phase_plan=[spec, plan, build+verify, ship]
+- skipped_phases=[intake]
+- native_chain_active=true
+- native_chain_continuing=true
+- CROSS_MODEL_REVIEW=0
+- evidence_ref=docs/engineering/architecture.md # US-0148; decisions/DEC-0148.md; docs/engineering/research.md ## R-0148; handoffs/po_to_tl.md Architecture handoff US-0148; handoffs/resume_brief.md; docs/product/backlog.md ## US-0148 discovery_notes (read-only)
+- Fresh tech-lead subagent per BUG-0006 / US-0048; narrow-read TOKEN_PROFILE=lean. No .env. No backlog Status/AC mutation. No sprints/S0156/. No /sprint-plan spawn from this subagent. No npm publish. No git push.
 
-### Triad hot-surface verification tuple (DEC-0054) — discovery US-0144
+### Strict runtime proof (DEC-0038) — architecture US-0148
 
-- surface=docs/engineering/state.md (append-bottom) + handoffs/po_to_tl.md (append-newest) + handoffs/resume_brief.md (prepend-top)
-- post_append_rollover=`{"boundary":"triad-rollover|state","moved":1,"pack_ref":"docs/engineering/state-archive/state-pack-20260914-k.md","retained_checkpoints":14,"retained_lines":1137}` + `{"boundary":"triad-rollover|po_to_tl","moved":1,"pack_ref":"handoffs/archive/po-to-tl-pack-20260914.md","retained_lines":614,"retained_sections":13}`
-- architecture.md not rolled; arch_linkage_guard.py not run
-- artifact_ordering: backlog/vision discovery notes; po_to_tl append; resume_brief prepend; state.md append-bottom (DEC-0040)
-- Active context surface preamble present
-- final_check=PASS
+- runtime_proof_id=rp-auto-20260917-us0148-architecture-techlead-20260917T211400Z-US-0148
+- phase_id=architecture, role=tech-lead, story_id=US-0148, sprint_id=none
+- proof_issued_at=2026-09-17T21:14:00Z
+- proof_ttl_seconds=3600, proof_ttl=2026-09-17T22:14:00Z
+- proof_hash=AC546FD44FE347547D9DD92F79C906DC71B2212DD27969336F73F9475C48708D
+- Hash via `from scripts.token_cost_lib import compute_strict_proof_hash` (positional; compact sorted-key JSON).
+- Canonical hashed payload: {"orchestrator_run_id":"auto-20260917-us0148","phase_id":"architecture","proof_issued_at":"2026-09-17T21:14:00Z","proof_ttl_seconds":3600,"role":"tech-lead","runtime_proof_id":"rp-auto-20260917-us0148-architecture-techlead-20260917T211400Z-US-0148"}
+- Isolation extras (not hashed): delivery_mode=ultra_lean; macro_phase=plan; model_id=inherit; sprint_id=none; story_id=US-0148; skipped_phases=[intake]; CROSS_MODEL_REVIEW=0; native_chain_active=true; native_chain_continuing=true; drain_story_index=1 of 3; backlog_drain_stories_remaining_budget=2
+- hash_recompute_confirmation=true (compute_strict_proof_hash → AC546FD44FE347547D9DD92F79C906DC71B2212DD27969336F73F9475C48708D MATCH; 64 hex verified; stored uppercase)
+- consumed_research_proof=rp-auto-20260917-us0148-research-techlead-20260917T211200Z-US-0148 / 5F986CEE216B57CFD2DB191C8C4CE1CD9539596DCA6A35AEB9E91CE4729B0A4C — RUNTIME_PROOF_VALID (MATCH at consumed_at 2026-09-17T21:14:00Z)
 
-## Orchestrator stop — NATIVE_CHAIN_UNAVAILABLE after US-0144 discovery (auto-20260913-us0144)
+### Phase boundary status (DEC-0069 AC-10) — architecture US-0148
 
+- phase_boundary=architecture
+- next_scheduled_phase=sprint-plan
+- next_scheduled_role=tech-lead
+
+## Sprint-plan checkpoint — US-0148 / S0156 / auto-20260917-us0148 (role=tech-lead)
+
+- phase_id=sprint-plan
+- role=tech-lead
+- story_id=US-0148 (Status OPEN — not flipped DONE; AC-1..AC-8 unchecked)
+- bug_id=(none)
+- sprint_id=S0156
+- orchestrator_run_id=auto-20260917-us0148
+- parent_orchestrator_run_id=auto-20260917-us0146
+- delivery_mode=ultra_lean
+- resolved_phase_plan=[spec, plan, build+verify, ship]
+- reinstatement_mode=none
+- memory_layer=pack
+- macro_phase=build+verify (next — execute first phase of build+verify; plan macro terminal at sprint-plan)
+- skipped_phases=[intake, plan-verify]
+- verdict=SPRINT_PLAN_PASS
+- decision_gate=false
+- timestamp=2026-09-17T21:30:00Z
+- fresh_context_marker=tl-US0148-sprintplan-20260917T213000Z-fresh
+- AUTO_QUIET=1
+- AUTO_FLOW_MODE=full_autonomy
+- AUTO_SOVEREIGN=0
+- CROSS_MODEL_REVIEW=0
+- FRAMEWORK_KIT_REPO=1
+- native_chain_active=true
+- native_chain_continuing=true
+- drain_story_index=1 of 3
+- backlog_drain_stories_remaining_budget=2
+- research_anchor=docs/engineering/research.md ## R-0148 (DQ1–DQ10 LOCKED; A1)
+- architecture_anchor=docs/engineering/architecture.md # US-0148
+- companion_dec=DEC-0148 (Accepted)
+- consumed_architecture_proof=rp-auto-20260917-us0148-architecture-techlead-20260917T211400Z-US-0148 / AC546FD44FE347547D9DD92F79C906DC71B2212DD27969336F73F9475C48708D (MATCH; not STALE at consume)
+- task_count=12 (T-anch + T-001..T-011 at SPRINT_MAX_TASKS cap)
+- plan_verify=SKIPPED (ultra_lean; reason=ultra_lean_skipped; no QA spawn)
+- sibling_boundary=US-0133..US-0147 DONE compose-only (US-0146 client migration IN); US-0145 OUT of daemon; BUG-0022 OPEN not drained
+- US-0148_status=OPEN
+- AC_ticks=unchecked (AC-1..AC-8 remain `[ ]`)
+- acceptance_US-0148=unchecked
+- next_scheduled_phase=execute
+- next_scheduled_role=dev
+- resume_brief=last=sprint-plan S0156; next=/execute (dev); macro_phase=build+verify
+- ultra_lean_note=plan-verify SKIPPED; CROSS_MODEL_REVIEW=0 — no sovereign-critic; after sprint-plan next=/execute only
+- stop_condition=STOP after sprint-plan PASS. Orchestrator MUST spawn /execute in fresh dev subagent (BUG-0006). Do NOT spawn execute, plan-verify, or critic from this tech-lead. Do NOT mark US-0148 DONE. Do NOT tick acceptance.
+
+### Traceability index (DEC-0010) — sprint-plan US-0148
+
+| Story | Sprint | Tasks | Status | Evidence |
+|-------|--------|-------|--------|----------|
+| US-0148 | S0156 | T-anch + T-001..T-011 | PLANNED | |
+
+### Isolation evidence (US-0048 / DEC-0029 / US-0104 v2) — sprint-plan US-0148
+
+- phase_id=sprint-plan
+- role=tech-lead
+- model_id=inherit (CROSS_MODEL_REVIEW=0)
+- fresh_context_marker=tl-US0148-sprintplan-20260917T213000Z-fresh (NEW per US-0048 / BUG-0006; not reused from tl-US0148-architecture-20260917T211400Z-fresh)
+- timestamp=2026-09-17T21:30:00Z (UTC)
+- orchestrator_run_id=auto-20260917-us0148
+- story_id=US-0148
+- sprint_id=S0156
+- evidence_ref=sprints/S0156/sprint.md; sprints/S0156/tasks.md; sprints/S0156/progress.md; handoffs/tl_to_dev.md; docs/product/backlog.md ## US-0148; handoffs/resume_brief.md
+- Fresh tech-lead subagent per BUG-0006 / US-0048 isolation; narrow-read only. No .env reads. No US-0148 Status DONE flip. No acceptance tick. No US-0133..US-0147 reopen. No /execute or /plan-verify or critic spawn from this subagent.
+
+### Strict runtime proof (DEC-0038) — sprint-plan US-0148
+
+- runtime_proof_id=rp-auto-20260917-us0148-sprint-plan-techlead-20260917T213000Z-US-0148
+- phase_id=sprint-plan, role=tech-lead, story_id=US-0148, sprint_id=S0156
+- proof_issued_at=2026-09-17T21:30:00Z
+- proof_ttl_seconds=3600, proof_ttl=2026-09-17T22:30:00Z
+- proof_hash=E9CED6541917EAFB8C9727E95E46AC57941165FC2C61017A0F9431E6E1A22A62
+- Hash via `from scripts.token_cost_lib import compute_strict_proof_hash` (positional; compact sorted-key JSON).
+- Canonical hashed payload: {"orchestrator_run_id":"auto-20260917-us0148","phase_id":"sprint-plan","proof_issued_at":"2026-09-17T21:30:00Z","proof_ttl_seconds":3600,"role":"tech-lead","runtime_proof_id":"rp-auto-20260917-us0148-sprint-plan-techlead-20260917T213000Z-US-0148"}
+- Isolation extras (not hashed): delivery_mode=ultra_lean; macro_phase=plan; model_id=inherit; sprint_id=S0156; story_id=US-0148; skipped_phases=[intake, plan-verify]; CROSS_MODEL_REVIEW=0; native_chain_active=true; native_chain_continuing=true; drain_story_index=1 of 3; backlog_drain_stories_remaining_budget=2
+- consumed_architecture_proof (not hashed): rp-auto-20260917-us0148-architecture-techlead-20260917T211400Z-US-0148 / AC546FD44FE347547D9DD92F79C906DC71B2212DD27969336F73F9475C48708D — MATCH; not STALE at 2026-09-17T21:30:00Z
+- hash_recompute_confirmation=true (compute_strict_proof_hash → e9ced6541917eafb8c9727e95e46ac57941165fc2c61017a0f9431e6e1a22a62; independently MATCH; 64 hex verified; stored uppercase)
+
+### Phase boundary status (DEC-0069 AC-10) — sprint-plan US-0148
+
+- phase_id=sprint-plan
+- verdict=SPRINT_PLAN_PASS
+- story_id=US-0148 OPEN
+- sprint_id=S0156
+- next_phase=execute
+- next_role=dev
+- drain_advance_action=pending (segment continues after US-0148 ship+refresh)
+
+### Triad hot-surface verification tuple (DEC-0054) — sprint-plan US-0148
+
+- surface=docs/engineering/state.md (append-bottom) + handoffs/tl_to_dev.md (prepend-top) + handoffs/resume_brief.md (prepend-top)
+- companion=sprints/S0156/sprint.md; sprints/S0156/tasks.md; sprints/S0156/progress.md
+- architecture.md not mutated this phase
+
+## Architecture linkage auto-repair audit (US-0129)
+
+- timestamp: 2026-09-17T21:34:06Z
+- restored_headings: # BUG-0010, # BUG-0011, # BUG-0012
+- pack_ref: docs/engineering/architecture-archive/architecture-pack-20260628.md
+
+## Orchestrator run terminal — auto-20260917-us0148 (completed / empty drain queue)
+
+- timestamp=2026-09-17T23:36:00Z
 - invocation_mode=auto
+- orchestrator_run_id=auto-20260917-us0148
+- parent_orchestrator_run_id=auto-20260917-us0146
 - AUTO_FLOW_MODE=full_autonomy
 - native_chain_active=true
 - native_chain_continuing=false
-- stop_reason=error
-- fail_closed_code=NATIVE_CHAIN_UNAVAILABLE
-- fail_detail=Task tool denied — Cursor usage limit (out of usage); cannot spawn sovereign-critic of discovery
-- stop_phase=discovery
+- stop_phase=refresh-context
+- stop_reason=completed
+- stop_subreason=no_open_stories
+- AUTO_BACKLOG_DRAIN=1
+- AUTO_BACKLOG_MAX_STORIES=3
+- drain_story_index=1 of 3
+- backlog_drain_stories_remaining_budget=2
 - drain_advance_action=not_applicable
-- timestamp=2026-09-14T10:05:00Z
-- orchestrator_run_id=auto-20260913-us0144
-- parent_orchestrator_run_id=auto-20260913-us0143
-- story_id=US-0144
-- delivery_mode=ultra_lean
-- resolved_phase_plan=[spec, plan, build+verify, ship]
-- skipped_phases=[intake]
-- next_scheduled_phase=sovereign-critic (discovery)
-- next_scheduled_role=tech-lead
-- research_next=R-0142
-- expected_sprint=S0152
-- companion_dec=DEC-0144 (architecture)
-- AUTO_LOOP_MAX_CYCLES=50
-- outer_cycle_index=33
-- drain_story_index=10 of 10
-- backlog_drain_stories_remaining_budget=0
-- discovery_MATCH=rp-auto-20260913-us0144-discovery-po-20260914T095000Z-US-0144 / 04F2563AD77B0D0E519ADDF46FF3AA25445C58DF5BCD30FEB933929D7C4A0594
-- US-0143_status=DONE
-- US-0144_status=OPEN
-- AUTO_QUIET=1
-- artifact_ordering: resume_brief.md prepend-top; state.md append-bottom (DEC-0040)
-
+- stories_shipped_this_run=[US-0148/S0156]
+- consumed_refresh_proof=rp-auto-20260917-us0148-refresh-context-curator-20260917T233500Z-US-0148 / 9C1B0ADF0FA13FA89BEEAE0E78A6A9A4747F4070B5D98A8A8795BE47AD064C64 (MATCH)
+- portfolio_open_stories=0
+- open_bugs_not_drained=[BUG-0022, BUG-0024]
+- CROSS_MODEL_REVIEW=0
+- note=Drain budget unused (2 remaining); use bug-target= for bugs or new stories via /intake

@@ -35,7 +35,14 @@ import {
 	lookupLoopCap,
 	lookupPauseRequest,
 	lookupQuiet,
+	lookupSovereignRuntime,
+	lookupParallelDev,
 } from "./config-view.ts";
+import {
+	createParallelDevCoordinator,
+	kernelBridgeDeliveryAdapter,
+	type ParallelDevCoordinator,
+} from "./delivery/index.ts";
 import {
 	appendRepairLedger,
 	assertCannotRelax,
@@ -45,6 +52,11 @@ import {
 } from "./delivery-router.ts";
 import { createGateEngine, type ReleaseGateInput } from "./gates/gate-engine.ts";
 import { roleForPhase } from "./phase-graph.ts";
+import {
+	createSovereignRuntime,
+	type SovereignRuntime,
+	type SovereignRuntimeResult,
+} from "./sovereign-runtime.ts";
 import { type NextStateIntent, type ReleaseEvidence, WorkflowError } from "./types.ts";
 
 export interface ExecuteQaCycle {
@@ -52,6 +64,7 @@ export interface ExecuteQaCycle {
 	qa: RouteOk;
 	critic?: SupervisedSession;
 	security?: SupervisedSession;
+	sovereign?: SovereignRuntimeResult;
 	qa_pass: boolean;
 }
 
@@ -62,6 +75,13 @@ export interface ExecuteQaLoopResult {
 	supplementary_roles: string[];
 	intent: NextStateIntent;
 	codes?: string[];
+	sovereign?: SovereignRuntimeResult;
+}
+
+export interface HookResult {
+	critic?: SupervisedSession;
+	security?: SupervisedSession;
+	sovereign?: SovereignRuntimeResult;
 }
 
 export interface DrainItem {
@@ -103,26 +123,32 @@ export interface AutoRunResult {
 	codes?: string[];
 	ledger_path?: string;
 	critic_scheduled: boolean;
-	critic_content: false;
+	critic_content: boolean;
+	sovereign?: SovereignRuntimeResult;
 	resumed?: boolean;
 }
 
 export interface WorkflowEngineDeps {
 	supervisor: SessionSupervisor;
 	config: ConfigView;
-	kernelBridge?: Pick<KernelBridge, "runValidator" | "runStatusReconcile">;
+	kernelBridge?: Pick<KernelBridge, "runValidator" | "runStatusReconcile"> &
+		Partial<Pick<KernelBridge, "runSovereignOperation" | "runDeliveryOperation">>;
 	env?: NodeJS.ProcessEnv;
 	qaPass?: (cycle: number) => boolean;
+	kernelRoot?: string;
 }
 
 export class WorkflowEngine {
 	readonly router: CommandRouter;
 	private readonly supervisor: SessionSupervisor;
 	private readonly config: ConfigView;
-	private readonly kernelBridge?: Pick<KernelBridge, "runValidator" | "runStatusReconcile">;
+	private readonly kernelBridge?: Pick<KernelBridge, "runValidator" | "runStatusReconcile"> &
+		Partial<Pick<KernelBridge, "runSovereignOperation" | "runDeliveryOperation">>;
 	private readonly env?: NodeJS.ProcessEnv;
 	private readonly qaPass: (cycle: number) => boolean;
 	private readonly gates = createGateEngine();
+	readonly sovereign: SovereignRuntime;
+	readonly parallelDev: ParallelDevCoordinator;
 
 	constructor(deps: WorkflowEngineDeps) {
 		this.supervisor = deps.supervisor;
@@ -130,11 +156,29 @@ export class WorkflowEngine {
 		this.kernelBridge = deps.kernelBridge;
 		this.env = deps.env;
 		this.qaPass = deps.qaPass ?? (() => true);
+		this.sovereign = createSovereignRuntime({
+			config: deps.config,
+			kernelBridge: deps.kernelBridge,
+			kernelRoot: deps.kernelRoot,
+		});
+		const deliveryBridge =
+			deps.kernelBridge?.runDeliveryOperation !== undefined
+				? kernelBridgeDeliveryAdapter(
+						deps.kernelBridge as Pick<KernelBridge, "runDeliveryOperation">,
+					)
+				: undefined;
+		this.parallelDev = createParallelDevCoordinator({
+			config: deps.config,
+			supervisor: deps.supervisor,
+			bridge: deliveryBridge,
+			kernelRoot: deps.kernelRoot,
+		});
 		this.router = createCommandRouter({
 			supervisor: deps.supervisor,
 			config: deps.config,
 			kernelBridge: deps.kernelBridge,
 			env: deps.env,
+			kernelRoot: deps.kernelRoot,
 		});
 	}
 
@@ -212,6 +256,8 @@ export class WorkflowEngine {
 		let processed = 0;
 		let bugs = 0;
 		let criticScheduled = false;
+		let criticContent = false;
+		let sovereignResult: SovereignRuntimeResult | undefined;
 		const now = input.now ?? "2026-09-14T07:50:00Z";
 
 		for (const item of items) {
@@ -267,6 +313,10 @@ export class WorkflowEngine {
 						loop.supplementary_roles.includes("tech-lead")
 					) {
 						criticScheduled = true;
+					}
+					if (loop.sovereign?.ok) {
+						criticContent = true;
+						sovereignResult = loop.sovereign;
 					}
 					if (loop.passed) {
 						qaOk = true;
@@ -344,7 +394,8 @@ export class WorkflowEngine {
 					)
 				: undefined,
 			critic_scheduled: criticScheduled,
-			critic_content: false,
+			critic_content: criticContent,
+			sovereign: sovereignResult,
 			resumed: Boolean(input.resume),
 		};
 	}
@@ -438,6 +489,17 @@ export class WorkflowEngine {
 
 		for (let i = 0; i < max; i += 1) {
 			const execute = await this.requireOk("execute", input);
+			const parallelBefore = this.parallelDev.noopSnapshot();
+			const parallelHook = this.parallelDev.enabled()
+				? await this.parallelDev.afterExecutePass({
+						orchestrator_run_id: input.orchestrator_run_id,
+						story_id: input.orchestrator_run_id,
+						model_id: input.model_id,
+						kernel_root: input.kernelRoot,
+						producer_session_id: execute.session.kernel_session_id,
+					})
+				: parallelBefore;
+			void parallelHook;
 			const hooks = await this.scheduleSupplementaryHooks(execute, input);
 			if (hooks.critic) {
 				supplementary_roles.push(hooks.critic.role_id);
@@ -455,6 +517,7 @@ export class WorkflowEngine {
 				qa,
 				critic: hooks.critic,
 				security: hooks.security,
+				sovereign: hooks.sovereign,
 				qa_pass,
 			});
 			if (qa_pass) {
@@ -463,6 +526,7 @@ export class WorkflowEngine {
 					passed: true,
 					producer_role: execute.role_id,
 					supplementary_roles,
+					sovereign: hooks.sovereign,
 					intent: {
 						schema_version: 1,
 						next_phase: "verify-work",
@@ -503,11 +567,8 @@ export class WorkflowEngine {
 		};
 	}
 
-	async scheduleSupplementaryHooks(
-		producer: RouteOk,
-		input: RouteInput,
-	): Promise<{ critic?: SupervisedSession; security?: SupervisedSession }> {
-		const out: { critic?: SupervisedSession; security?: SupervisedSession } = {};
+	async scheduleSupplementaryHooks(producer: RouteOk, input: RouteInput): Promise<HookResult> {
+		const out: HookResult = {};
 		if (lookupCrossModelReview(this.config)) {
 			out.critic = await this.supervisor.spawn({
 				phase_id: "sovereign-critic",
@@ -518,6 +579,19 @@ export class WorkflowEngine {
 				tools: [],
 				policy_hash: producer.policy_hash,
 			});
+		}
+		if (lookupSovereignRuntime(this.config) && lookupCrossModelReview(this.config)) {
+			const sovereign = await this.sovereign.afterProducerBoundary({
+				orchestrator_run_id: input.orchestrator_run_id,
+				producer_model_id: input.model_id,
+				phase_id: producer.phase_id,
+				producer_role: producer.role_id,
+				producer_evidence_ref: String(producer.session.kernel_session_id),
+			});
+			if (sovereign && sovereign.ok === false) {
+				throw new WorkflowError(sovereign.reason_code, sovereign.remediation);
+			}
+			out.sovereign = sovereign;
 		}
 		return out;
 	}

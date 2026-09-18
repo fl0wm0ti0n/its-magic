@@ -13,6 +13,91 @@ Canonical queue state now lives under:
 
 ---
 
+## Release finalized note (S0156)
+
+- Sprint: `S0156`
+- Story: `US-0148` (Stable control protocol and recoverable daemon — `@its-magic/protocol`; `apps/daemon`; twelve `test_us0148_*` markers)
+- Release: **finalized** (`2026-09-17T23:00:00Z`, `orchestrator_run_id=auto-20260917-us0148`, `fresh_context_marker=rel-US0148-release-20260917T230000Z-fresh`, `runtime_proof_id=rp-auto-20260917-us0148-release-release-20260917T230000Z-US-0148`, `model_id=inherit`)
+- Queue: **`handoffs/release_queue.md`** row **`S0156`** = **`released`** (workflow-only; backlog reconciliation deferred to `/closure`)
+- **Verdict**: **PASS** — mandatory release gates green; scoped node:test 14/14 (`harness_fail_zero_claimed=false`).
+- **Run / verify:** `cd standalone && node --experimental-strip-types --test tests/contract/us0148.contract.test.ts` → 12/12 locked markers; `cd standalone && npm test` → 167/167 qa attestation; metadata guard exit 0. See **`handoffs/releases/S0156-release-notes.md`** **## Run** / **## Verify**.
+- **Operator summary**: start=`cd standalone && node --experimental-strip-types --test tests/contract/us0148.contract.test.ts`; endpoint=loopback daemon per `docs/engineering/operator/daemon-protocol.md`; verify pointer=`handoffs/releases/S0156-release-notes.md` ## Verify.
+- **Gate snapshot**: check_in_tests=PASS; qa=PASS (0 blockers); verify_work=PASS (8/8 ACs; 9/9 UAT); uat=PASS (`contract_tests_primary`; live_chrome_probed=false); isolation=PASS; strict_runtime_proof=PASS; finalization=PASS.
+- **Backlog status**: US-0148 remains **OPEN** — closure deferred
+- **Acceptance**: US-0148 row remains **unchecked**
+- Publish: **`RELEASE_PUBLISH_MODE=confirm`** — skipped (`PUBLISH_CONFIRMATION_REQUIRED`; no operator confirm; `npm_published=false`)
+- Sync: **`SYNC_POLICY_MODE=disabled`** → `push_decision=not_eligible`
+- **Strict runtime proof (release)**: `proof_hash=F64BAEC98392A3A814ABE2902FF6C85EE86DF7FCF8BD6FEA3450CC56FF5219E6`, `proof_ttl=2026-09-18T00:00:00Z`
+- **Next**: orchestrator **`/closure`** (fresh qe; CROSS_MODEL_REVIEW=0 — no release critic)
+
+## Release finalized note (S0155)
+
+- Sprint: `S0155`
+- Story: `US-0145` (Parallel development, release/deploy, self-healing, and closure — `workflow/delivery/`; `delivery_runtime_bridge.py`; thirteen `test_us0145_*` markers)
+- Release: **finalized** (`2026-09-17T21:00:00Z`, `orchestrator_run_id=auto-20260917-us0146`, `fresh_context_marker=rel-US0145-release-20260917T210000Z-fresh`, `runtime_proof_id=rp-auto-20260917-us0146-release-release-20260917T210000Z-US-0145`, `model_id=inherit`)
+- Queue: **`handoffs/release_queue.md`** row **`S0155`** = **`released`** (workflow-only; backlog reconciliation deferred to `/closure`)
+- **Verdict**: **PASS** — mandatory release gates green; scoped node:test 13/13 (`harness_fail_zero_claimed=false`).
+- **Run / verify:** `cd standalone && node --experimental-strip-types --test tests/contract/us0145.contract.test.ts` → 13/13 markers; `cd standalone && npm test` → 153/153 qa attestation; metadata guard exit 0. See **`handoffs/releases/S0155-release-notes.md`** **## Run** / **## Verify**.
+- **Operator summary**: start=`cd standalone && node --experimental-strip-types --test tests/contract/us0145.contract.test.ts`; endpoint=`n/a` (delivery kit slice); verify pointer=`handoffs/releases/S0155-release-notes.md` ## Verify.
+- **Gate snapshot**: check_in_tests=PASS; qa=PASS (0 blockers); verify_work=PASS (9/9 ACs; 10/10 UAT); uat=PASS (`contract_tests_primary`; live_chrome_probed=false); isolation=PASS; strict_runtime_proof=PASS; finalization=PASS.
+- **Backlog status**: US-0145 remains **OPEN** — closure deferred
+- **Acceptance**: US-0145 row remains **unchecked**
+- Publish: **`RELEASE_PUBLISH_MODE=confirm`** — skipped (`PUBLISH_CONFIRMATION_REQUIRED`; no operator confirm; `npm_published=false`)
+- Sync: **`SYNC_POLICY_MODE=disabled`** → `push_decision=not_eligible`
+- **Strict runtime proof (release)**: `proof_hash=9CAE011E6F55AB8B9DE623DC6C24E1B92E80EE506A2A019BFD93BD8B16EF9C6B`, `proof_ttl=2026-09-17T22:00:00Z`
+- **Next**: **`/closure`** (fresh **qe** or **curator** if qe unavailable; CROSS_MODEL_REVIEW=0 — no sovereign-critic of release)
+
+## Release finalized note (S0154)
+
+- Sprint: `S0154`
+- Story: `US-0147` (Installation, update, and existing-project adoption — triple-installer parity; `standalone_runtime_install_lib`; ten `test_us0147_*` markers)
+- Release: **finalized** (`2026-09-17T21:30:00Z`, `orchestrator_run_id=auto-20260917-us0146`, `fresh_context_marker=rel-US0147-release-20260917T213000Z-fresh`, `runtime_proof_id=rp-auto-20260917-us0146-release-release-20260917T213000Z-US-0147`, `model_id=inherit`)
+- Queue: **`handoffs/release_queue.md`** row **`S0154`** = **`released`** (workflow-only; backlog reconciliation deferred to `/closure`)
+- **Verdict**: **PASS** — mandatory release gates green; pytest 10/10 (`harness_fail_zero_claimed=false`).
+- **Run / verify:** `python -m pytest tests/us0147_contract_test.py -q` → 10/10 markers; `cd standalone && npm test` → 140/140 qa attestation; metadata guard exit 0. See **`handoffs/releases/S0154-release-notes.md`** **## Run** / **## Verify**.
+- **Operator summary**: start=`python -m pytest tests/us0147_contract_test.py -q`; endpoint=`n/a` (installer kit); verify pointer=`handoffs/releases/S0154-release-notes.md` ## Verify.
+- **Gate snapshot**: check_in_tests=PASS; qa=PASS (0 blockers); verify_work=PASS (8/8 ACs; 9/9 UAT); uat=PASS (`contract_tests_primary`; live_chrome_probed=false); isolation=PASS; strict_runtime_proof=PASS; finalization=PASS.
+- **Backlog status**: US-0147 remains **OPEN** — closure deferred
+- **Acceptance**: US-0147 row remains **unchecked**
+- Publish: **`RELEASE_PUBLISH_MODE=confirm`** — skipped (`PUBLISH_CONFIRMATION_REQUIRED`; no operator confirm; `npm_published=false`)
+- Sync: **`SYNC_POLICY_MODE=disabled`** → `push_decision=not_eligible`
+- **Strict runtime proof (release)**: `proof_hash=1FBC06A2499FA7614F9336AD60FA6061161C8752C6789026B6FEBF2D801F890B`, `proof_ttl=2026-09-17T22:30:00Z`
+- **Next**: **`/closure`** (fresh **qe**; CROSS_MODEL_REVIEW=0 — no sovereign-critic of release)
+
+## Release finalized note (S0153)
+
+- Sprint: `S0153`
+- Story: `US-0146` (CLI, TUI, and operational observability — `runtime-core` operator facades; `@its-magic/cli` + `@its-magic/tui`; nine `test_us0146_*` markers)
+- Release: **finalized** (`2026-09-17T20:00:00Z`, `orchestrator_run_id=auto-20260917-us0146`, `fresh_context_marker=rel-US0146-release-20260917T200000Z-fresh`, `runtime_proof_id=rp-auto-20260917-us0146-release-release-20260917T200000Z-US-0146`, `model_id=inherit`)
+- Queue: **`handoffs/release_queue.md`** row **`S0153`** = **`released`** (workflow-only; backlog reconciliation deferred to `/closure`)
+- **Verdict**: **PASS** — mandatory release gates green; scoped node:test 9/9 (`harness_fail_zero_claimed=false`).
+- **Run / verify:** `cd standalone && node --experimental-strip-types --test tests/contract/us0146.contract.test.ts` → 9/9 markers; `cd standalone && npm test` → 140/140 qa attestation; metadata guard exit 0. See **`handoffs/releases/S0153-release-notes.md`** **## Run** / **## Verify**.
+- **Operator summary**: start=`cd standalone && node --experimental-strip-types --test tests/contract/us0146.contract.test.ts`; endpoint=`n/a` (contract-test kit); verify pointer=`handoffs/releases/S0153-release-notes.md` ## Verify.
+- **Gate snapshot**: check_in_tests=PASS; qa=PASS (0 blockers); verify_work=PASS (8/8 ACs; 9/9 UAT); uat=PASS (`contract_tests_primary`; live_chrome_probed=false); isolation=PASS; strict_runtime_proof=PASS; finalization=PASS.
+- **Backlog status**: US-0146 remains **OPEN** — closure deferred
+- **Acceptance**: US-0146 row remains **unchecked**
+- Publish: **`RELEASE_PUBLISH_MODE=confirm`** — skipped (`PUBLISH_CONFIRMATION_REQUIRED`; no operator confirm; `npm_published=false`)
+- Sync: **`SYNC_POLICY_MODE=disabled`** → `push_decision=not_eligible`
+- **Strict runtime proof (release)**: `proof_hash=075034FFB7D65AF24C336154875B110ACF7C97992652A1050D59E038113BF85B`, `proof_ttl=2026-09-17T21:00:00Z`
+- **Next**: **`/closure`** (fresh **qe**; CROSS_MODEL_REVIEW=0 — no sovereign-critic of release)
+
+## Release finalized note (S0152)
+
+- Sprint: `S0152`
+- Story: `US-0144` (Sovereign memory, reviews, and convergence — `@its-magic/runtime-core` SovereignRuntime; KernelBridge 9-op; sovereign_runtime_bridge.py; SOVEREIGN_RUNTIME=0 default-off; 12 `test_us0144_*` markers)
+- Release: **finalized** (`2026-09-15T21:23:19Z`, `orchestrator_run_id=auto-20260913-us0144`, `fresh_context_marker=rel-US0144-release-20260915T212319Z-fresh`, `runtime_proof_id=rp-auto-20260913-us0144-release-release-20260915T212319Z-US-0144`, `model_id=inherit`)
+- Queue: **`handoffs/release_queue.md`** row **`S0152`** = **`released`** (workflow-only; backlog reconciliation deferred to `/closure`)
+- **Verdict**: **PASS** — mandatory release gates green; scoped node:test 12/12 (`harness_fail_zero_claimed=false`).
+- **Run / verify:** `cd standalone && node --experimental-strip-types --test tests/contract/us0144.contract.test.ts` → 12 passed; `cd standalone && npm test` → 130/130 qa attestation; metadata guard exit 0. See **`handoffs/releases/S0152-release-notes.md`** **## Run** / **## Verify**.
+- **Operator summary**: start=`cd standalone && node --experimental-strip-types --test tests/contract/us0144.contract.test.ts`; endpoint=`n/a` (contract-test kit); verify pointer=`handoffs/releases/S0152-release-notes.md` ## Verify.
+- **Gate snapshot**: check_in_tests=PASS; qa=PASS (0 blockers); verify_work=PASS (8/8 ACs; 9/9 UAT); uat=PASS (`contract_tests_primary`; live_chrome_probed=false); isolation=PASS; strict_runtime_proof=PASS; finalization=PASS.
+- **Backlog status**: US-0144 remains **OPEN** — closure deferred
+- **Acceptance**: US-0144 row remains **unchecked**
+- Publish: **`RELEASE_PUBLISH_MODE=confirm`** — skipped (`PUBLISH_CONFIRMATION_REQUIRED`; no operator confirm; `npm_published=false`)
+- Sync: **`SYNC_POLICY_MODE=disabled`** → `push_decision=not_eligible`
+- **Strict runtime proof (release)**: `proof_hash=98C39A3FD6D9B17794CC76D5D079E4FEA63C3235E29C0BEEFD37C3849D83E6B5`, `proof_ttl=2026-09-15T22:23:19Z`
+- **Next**: **`/closure`** (fresh **qe**; CROSS_MODEL_REVIEW=0 — no sovereign-critic of release)
+
 ## Release finalized note (S0151)
 
 - Sprint: `S0151`

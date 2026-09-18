@@ -1,3 +1,433 @@
+# Resume Brief — US-0148 REFRESH_CONTEXT_PASS → orchestrator STOP (auto-20260917-us0148)
+
+- **orchestrator_run_id**: auto-20260917-us0148
+- **parent_run**: auto-20260917-us0146
+- **story_id**: US-0148
+- **bug_id**: (none)
+- **sprint_id**: S0156
+- **delivery_mode**: ultra_lean
+- **resolved_phase_plan**: [spec, plan, build+verify, ship]
+- **reinstatement_mode**: none
+- **memory_layer**: pack
+- **macro_phase**: ship (refresh-context segment terminal)
+- **last_completed_phase**: refresh-context
+- **intended_resume_phase**: none
+- **next_scheduled_phase**: none
+- **next_scheduled_role**: (none)
+- **skipped_phases**: [intake, plan-verify]
+- **plan_verify_merged_at_qa**: true (sprints/S0156/plan-verify.json PASS)
+- **verdict**: REFRESH_CONTEXT_PASS
+- **decision_gate**: false
+- **fresh_context_marker**: cur-US0148-refresh-20260917T233500Z-fresh
+- **runtime_proof_id**: rp-auto-20260917-us0148-refresh-context-curator-20260917T233500Z-US-0148
+- **proof_hash**: 9C1B0ADF0FA13FA89BEEAE0E78A6A9A4747F4070B5D98A8A8795BE47AD064C64
+- **proof_ttl**: 2026-09-18T00:35:00Z
+- **producer_runtime_proof_id**: rp-auto-20260917-us0148-closure-curator-20260917T233100Z-US-0148
+- **producer_proof_hash**: D6502C63BA6C3BA5E55C9ED2FB7ABDF9A21139864465391A4FBD08DF8965D6F1 (MATCH; full 64 hex)
+- **model_id**: inherit (CROSS_MODEL_REVIEW=0)
+- **wall_clock**: 2026-09-17T23:35:00Z
+- **drain_story_index**: 1 of 3
+- **backlog_drain_stories_remaining_budget**: 2
+- **drain_advance_action**: not_applicable
+- **drain_terminated**: true
+- **drain_terminated_reason**: no_open_stories
+- **independent_open_story_count**: 0
+- **independent_open_bug_count**: 2 (BUG-0022, BUG-0024 OPEN — not story-drain targets)
+- **native_chain_active**: true
+- **native_chain_continuing**: false
+- **segment_closed**: true
+- **stop_reason**: completed (no OPEN portfolio stories; empty drain queue — budget>0 valid)
+- **stop_phase**: refresh-context
+- **US-0148_status**: DONE (AC-1..AC-8 checked; acceptance [x])
+- **stop_condition**: STOP after REFRESH_CONTEXT_PASS. Orchestrator MUST NOT drain-advance or spawn discovery (no OPEN portfolio stories). Do NOT treat BUG-0022/BUG-0024 as story drain. CROSS_MODEL_REVIEW=0 — no sovereign-critic. Do NOT reopen US-0148. Do NOT npm-publish. Do NOT git push.
+
+---
+
+# Resume Brief — US-0148 CLOSURE_PASS → /refresh-context (auto-20260917-us0148)
+
+- **orchestrator_run_id**: auto-20260917-us0148
+- **parent_run**: auto-20260917-us0146
+- **story_id**: US-0148
+- **bug_id**: (none)
+- **sprint_id**: S0156
+- **delivery_mode**: ultra_lean
+- **resolved_phase_plan**: [spec, plan, build+verify, ship]
+- **reinstatement_mode**: none
+- **memory_layer**: pack
+- **macro_phase**: ship (closure terminal → refresh-context)
+- **last_completed_phase**: closure
+- **intended_resume_phase**: /refresh-context
+- **next_scheduled_phase**: /refresh-context
+- **next_scheduled_role**: curator
+- **skipped_phases**: [intake, plan-verify]
+- **plan_verify_merged_at_qa**: true (sprints/S0156/plan-verify.json PASS)
+- **verdict**: CLOSURE_PASS
+- **decision_gate**: false
+- **fresh_context_marker**: cur-US0148-closure-20260917T233100Z-fresh
+- **runtime_proof_id**: rp-auto-20260917-us0148-closure-curator-20260917T233100Z-US-0148
+- **proof_hash**: D6502C63BA6C3BA5E55C9ED2FB7ABDF9A21139864465391A4FBD08DF8965D6F1
+- **proof_ttl**: 2026-09-18T00:31:00Z
+- **producer_runtime_proof_id**: rp-auto-20260917-us0148-release-release-20260917T230000Z-US-0148
+- **producer_proof_hash**: F64BAEC98392A3A814ABE2902FF6C85EE86DF7FCF8BD6FEA3450CC56FF5219E6 (MATCH; full 64 hex)
+- **model_id**: inherit (CROSS_MODEL_REVIEW=0)
+- **wall_clock**: 2026-09-17T23:31:00Z
+- **drain_story_index**: 1 of 3
+- **backlog_drain_stories_remaining_budget**: 2
+- **native_chain_active**: true
+- **native_chain_continuing**: true
+- **closure_role**: curator (AUTO_ROLE_CLOSURE default qe unavailable → US-0120 alternate)
+- **RELEASE_PUBLISH_MODE**: confirm (publish skipped — no operator confirm)
+- **SYNC_POLICY_MODE**: disabled
+- **queue_status**: S0156=released (not mutated)
+- **US-0148_status**: DONE (AC-1..AC-8 checked; acceptance [x])
+- **stop_condition**: STOP after CLOSURE_PASS. Orchestrator MUST Task-spawn `/refresh-context` in fresh **curator** subagent (BUG-0006). CROSS_MODEL_REVIEW=0 — no sovereign-critic of closure. Do NOT spawn refresh-context from this closure subagent. Do NOT npm-publish. Do NOT git push.
+
+---
+
+# Resume Brief — US-0148 RELEASE_PASS → /closure (auto-20260917-us0148)
+
+- **orchestrator_run_id**: auto-20260917-us0148
+- **parent_run**: auto-20260917-us0146
+- **story_id**: US-0148
+- **bug_id**: (none)
+- **sprint_id**: S0156
+- **delivery_mode**: ultra_lean
+- **resolved_phase_plan**: [spec, plan, build+verify, ship]
+- **reinstatement_mode**: none
+- **memory_layer**: pack
+- **macro_phase**: ship (release terminal → closure)
+- **last_completed_phase**: release
+- **intended_resume_phase**: /closure
+- **next_scheduled_phase**: /closure
+- **next_scheduled_role**: qe
+- **skipped_phases**: [intake, plan-verify]
+- **plan_verify_merged_at_qa**: true (sprints/S0156/plan-verify.json PASS)
+- **verdict**: RELEASE_PASS
+- **decision_gate**: false
+- **fresh_context_marker**: rel-US0148-release-20260917T230000Z-fresh
+- **runtime_proof_id**: rp-auto-20260917-us0148-release-release-20260917T230000Z-US-0148
+- **proof_hash**: F64BAEC98392A3A814ABE2902FF6C85EE86DF7FCF8BD6FEA3450CC56FF5219E6
+- **proof_ttl**: 2026-09-18T00:00:00Z
+- **producer_runtime_proof_id**: rp-auto-20260917-us0148-verify-work-qa-20260917T223000Z-US-0148
+- **producer_proof_hash**: 3CBE82E5A0ED983A1031BF24BC2FD4E0BB41E1C3B21C9D3EBB93C73E61C94A6D (MATCH; full 64 hex)
+- **model_id**: inherit (CROSS_MODEL_REVIEW=0)
+- **wall_clock**: 2026-09-17T23:00:00Z
+- **drain_story_index**: 1 of 3
+- **backlog_drain_stories_remaining_budget**: 2
+- **native_chain_active**: true
+- **native_chain_continuing**: true
+- **RELEASE_PUBLISH_MODE**: confirm (publish skipped — no operator confirm)
+- **SYNC_POLICY_MODE**: disabled
+- **queue_status**: S0156=released
+- **tests**: scoped us0148 14/14 @ release (12/12 locked; 1189.5198ms); npm 167/167 qa attestation
+- **uat**: 9/9; verified_ready=true; live_chrome_probed=false; harness_fail_zero_claimed=false
+- **US-0148_status**: OPEN (AC-1..AC-8 unchecked)
+- **stop_condition**: STOP after RELEASE_PASS. Orchestrator MUST Task-spawn `/closure` in fresh **qe** subagent (BUG-0006). CROSS_MODEL_REVIEW=0 — no sovereign-critic of release. Do NOT spawn /closure from this release subagent. Do NOT mark US-0148 DONE. Do NOT tick AC. Do NOT npm-publish. Do NOT git push.
+
+---
+
+# Resume Brief — US-0148 VERIFY_WORK_PASS → /release (auto-20260917-us0148)
+
+- **orchestrator_run_id**: auto-20260917-us0148
+- **parent_run**: auto-20260917-us0146
+- **story_id**: US-0148
+- **bug_id**: (none)
+- **sprint_id**: S0156
+- **delivery_mode**: ultra_lean
+- **resolved_phase_plan**: [spec, plan, build+verify, ship]
+- **reinstatement_mode**: none
+- **memory_layer**: pack
+- **macro_phase**: build+verify (verify-work terminal → ship)
+- **last_completed_phase**: verify-work
+- **intended_resume_phase**: /release
+- **next_scheduled_phase**: /release
+- **next_scheduled_role**: release
+- **skipped_phases**: [intake, plan-verify]
+- **plan_verify_merged_at_qa**: true (sprints/S0156/plan-verify.json PASS)
+- **verdict**: VERIFY_WORK_PASS
+- **decision_gate**: false
+- **fresh_context_marker**: qa-US0148-verify-20260917T223000Z-fresh
+- **runtime_proof_id**: rp-auto-20260917-us0148-verify-work-qa-20260917T223000Z-US-0148
+- **proof_hash**: 3CBE82E5A0ED983A1031BF24BC2FD4E0BB41E1C3B21C9D3EBB93C73E61C94A6D
+- **proof_ttl**: 2026-09-17T23:30:00Z
+- **producer_runtime_proof_id**: rp-auto-20260917-us0148-qa-qa-20260917T222500Z-US-0148
+- **producer_proof_hash**: BBE54BEC118319917F07862D641170BBC4FD9A17C5858249BF2C93EE3D307D61 (MATCH; full 64 hex)
+- **plan_verify_runtime_proof_id**: rp-auto-20260917-us0148-plan-verify-qa-20260917T222500Z-US-0148
+- **plan_verify_proof_hash**: 7B4A71D4749E4B56E0590A103F586F513EE97C0F0E38CC92BAA2AD7620846B8A
+- **model_id**: inherit (CROSS_MODEL_REVIEW=0)
+- **wall_clock**: 2026-09-17T22:30:00Z
+- **drain_story_index**: 1 of 3
+- **backlog_drain_stories_remaining_budget**: 2
+- **native_chain_active**: true
+- **native_chain_continuing**: true
+- **research_id**: R-0148 (DQ1–DQ10 LOCKED; A1)
+- **companion_dec**: DEC-0148 Accepted
+- **architecture_anchor**: docs/engineering/architecture.md # US-0148
+- **consumed_execute_proof**: rp-auto-20260917-us0148-execute-dev-20260917T220000Z-US-0148 / 4E95757067D26F6502C94856C7F746046F57A7291A52FAD5F68CF818B694ABD5 (MATCH)
+- **blocking_count**: 0
+- **tests**: scoped us0148 14/14 PASS (12/12 locked); npm 167/167 qa attestation
+- **uat**: populated 9/9; verified_ready=true; live_chrome_probed=false; fake_browser_pass_claimed=false; harness_fail_zero_claimed=false
+- **US-0148_status**: OPEN (AC-1..AC-8 unchecked)
+- **stop_condition**: STOP after VERIFY_WORK_PASS. Orchestrator MUST Task-spawn `/release` in fresh **release** subagent (BUG-0006). Do NOT spawn /release from this qa. CROSS_MODEL_REVIEW=0 — no sovereign-critic. Do NOT mark US-0148 DONE. Do NOT tick AC. Do NOT npm-publish. Do NOT git push.
+
+---
+
+# Resume Brief — US-0148 QA_PASS → /verify-work (auto-20260917-us0148)
+
+- **orchestrator_run_id**: auto-20260917-us0148
+- **parent_run**: auto-20260917-us0146
+- **story_id**: US-0148
+- **bug_id**: (none)
+- **sprint_id**: S0156
+- **delivery_mode**: ultra_lean
+- **resolved_phase_plan**: [spec, plan, build+verify, ship]
+- **reinstatement_mode**: none
+- **memory_layer**: pack
+- **macro_phase**: build+verify
+- **last_completed_phase**: qa
+- **intended_resume_phase**: /verify-work
+- **next_scheduled_phase**: /verify-work
+- **next_scheduled_role**: qa
+- **skipped_phases**: [intake, plan-verify]
+- **plan_verify_merged_at_qa**: true (sprints/S0156/plan-verify.json PASS)
+- **verdict**: QA_PASS
+- **decision_gate**: false
+- **fresh_context_marker**: qa-US0148-qa-20260917T222500Z-fresh
+- **runtime_proof_id**: rp-auto-20260917-us0148-qa-qa-20260917T222500Z-US-0148
+- **proof_hash**: BBE54BEC118319917F07862D641170BBC4FD9A17C5858249BF2C93EE3D307D61
+- **proof_ttl**: 2026-09-17T23:25:00Z
+- **plan_verify_runtime_proof_id**: rp-auto-20260917-us0148-plan-verify-qa-20260917T222500Z-US-0148
+- **plan_verify_proof_hash**: 7B4A71D4749E4B56E0590A103F586F513EE97C0F0E38CC92BAA2AD7620846B8A
+- **model_id**: inherit (CROSS_MODEL_REVIEW=0)
+- **wall_clock**: 2026-09-17T22:25:00Z
+- **drain_story_index**: 1 of 3
+- **backlog_drain_stories_remaining_budget**: 2
+- **native_chain_active**: true
+- **native_chain_continuing**: true
+- **research_id**: R-0148 (DQ1–DQ10 LOCKED; A1)
+- **companion_dec**: DEC-0148 Accepted
+- **architecture_anchor**: docs/engineering/architecture.md # US-0148
+- **consumed_execute_proof**: rp-auto-20260917-us0148-execute-dev-20260917T220000Z-US-0148 / 4E95757067D26F6502C94856C7F746046F57A7291A52FAD5F68CF818B694ABD5 (MATCH)
+- **blocking_count**: 0
+- **tests**: standalone npm 167/167 PASS; 12/12 locked test_us0148_*
+- **US-0148_status**: OPEN (AC-1..AC-8 unchecked)
+- **stop_condition**: STOP after QA_PASS. Orchestrator MUST Task-spawn `/verify-work` in fresh **qa** subagent (BUG-0006). Do NOT spawn /verify-work from this qa. CROSS_MODEL_REVIEW=0 — no sovereign-critic. Do NOT mark US-0148 DONE. Do NOT tick AC. Do NOT npm-publish. Do NOT git push.
+
+---
+
+# Resume Brief — US-0148 EXECUTE_PASS → /qa (auto-20260917-us0148)
+
+- **orchestrator_run_id**: auto-20260917-us0148
+- **parent_run**: auto-20260917-us0146
+- **story_id**: US-0148
+- **bug_id**: (none)
+- **sprint_id**: S0156
+- **delivery_mode**: ultra_lean
+- **resolved_phase_plan**: [spec, plan, build+verify, ship]
+- **reinstatement_mode**: none
+- **memory_layer**: pack
+- **macro_phase**: build+verify
+- **last_completed_phase**: execute
+- **intended_resume_phase**: /qa
+- **next_scheduled_phase**: /qa
+- **next_scheduled_role**: qa
+- **skipped_phases**: [intake, plan-verify]
+- **verdict**: EXECUTE_PASS
+- **decision_gate**: false
+- **fresh_context_marker**: dev-US0148-execute-20260917T220000Z-fresh
+- **runtime_proof_id**: rp-auto-20260917-us0148-execute-dev-20260917T220000Z-US-0148
+- **proof_hash**: 4E95757067D26F6502C94856C7F746046F57A7291A52FAD5F68CF818B694ABD5
+- **proof_ttl**: 2026-09-17T23:00:00Z
+- **model_id**: inherit (CROSS_MODEL_REVIEW=0)
+- **wall_clock**: 2026-09-17T22:00:00Z
+- **drain_story_index**: 1 of 3
+- **backlog_drain_stories_remaining_budget**: 2
+- **native_chain_active**: true
+- **native_chain_continuing**: true
+- **research_id**: R-0148 (DQ1–DQ10 LOCKED; A1)
+- **companion_dec**: DEC-0148 Accepted
+- **architecture_anchor**: docs/engineering/architecture.md # US-0148
+- **consumed_sprint_plan_proof**: rp-auto-20260917-us0148-sprint-plan-techlead-20260917T213000Z-US-0148 / E9CED6541917EAFB8C9727E95E46AC57941165FC2C61017A0F9431E6E1A22A62 (MATCH)
+- **task_count**: 12 (T-anch + T-001..T-011; all DONE)
+- **tests**: standalone npm 167/167 PASS
+- **US-0148_status**: OPEN (AC-1..AC-8 unchecked)
+- **stop_condition**: STOP after EXECUTE_PASS. Orchestrator MUST Task-spawn `/qa` in fresh **qa** subagent (BUG-0006). Do NOT spawn /qa from this dev. CROSS_MODEL_REVIEW=0 — no sovereign-critic. Do NOT mark US-0148 DONE. Do NOT tick AC. Do NOT npm-publish. Do NOT git push.
+
+---
+
+# Resume Brief — US-0148 SPRINT_PLAN_PASS → /execute (auto-20260917-us0148)
+
+- **orchestrator_run_id**: auto-20260917-us0148
+- **parent_run**: auto-20260917-us0146
+- **story_id**: US-0148
+- **bug_id**: (none)
+- **sprint_id**: S0156
+- **delivery_mode**: ultra_lean
+- **resolved_phase_plan**: [spec, plan, build+verify, ship]
+- **reinstatement_mode**: none
+- **memory_layer**: pack
+- **macro_phase**: build+verify (next — execute first phase of build+verify; plan macro terminal at sprint-plan)
+- **last_completed_phase**: sprint-plan
+- **intended_resume_phase**: /execute
+- **next_scheduled_phase**: /execute
+- **next_scheduled_role**: dev
+- **skipped_phases**: [intake, plan-verify]
+- **verdict**: SPRINT_PLAN_PASS
+- **decision_gate**: false
+- **fresh_context_marker**: tl-US0148-sprintplan-20260917T213000Z-fresh
+- **runtime_proof_id**: rp-auto-20260917-us0148-sprint-plan-techlead-20260917T213000Z-US-0148
+- **proof_hash**: E9CED6541917EAFB8C9727E95E46AC57941165FC2C61017A0F9431E6E1A22A62
+- **proof_ttl**: 2026-09-17T22:30:00Z
+- **model_id**: inherit (CROSS_MODEL_REVIEW=0)
+- **wall_clock**: 2026-09-17T21:30:00Z
+- **drain_story_index**: 1 of 3
+- **backlog_drain_stories_remaining_budget**: 2
+- **native_chain_active**: true
+- **native_chain_continuing**: true
+- **research_id**: R-0148 (DQ1–DQ10 LOCKED; A1)
+- **companion_dec**: DEC-0148 Accepted
+- **architecture_anchor**: docs/engineering/architecture.md # US-0148
+- **consumed_architecture_proof**: rp-auto-20260917-us0148-architecture-techlead-20260917T211400Z-US-0148 / AC546FD44FE347547D9DD92F79C906DC71B2212DD27969336F73F9475C48708D (MATCH)
+- **task_count**: 12 (T-anch + T-001..T-011)
+- **US-0148_status**: OPEN (AC-1..AC-8 unchecked)
+- **stop_condition**: STOP after SPRINT_PLAN_PASS. Orchestrator MUST Task-spawn `/execute` in fresh **dev** subagent (BUG-0006). Do NOT spawn /execute or /plan-verify from this tech-lead. CROSS_MODEL_REVIEW=0 — no sovereign-critic. plan-verify SKIPPED (`ultra_lean_skipped`). Do NOT mark US-0148 DONE. Do NOT tick AC. Do NOT npm-publish. Do NOT git push.
+
+---
+
+# Resume Brief — US-0148 ARCHITECTURE_PASS → /sprint-plan (auto-20260917-us0148)
+
+- **orchestrator_run_id**: auto-20260917-us0148
+- **parent_run**: auto-20260917-us0146
+- **story_id**: US-0148
+- **bug_id**: (none)
+- **sprint_id**: (none — expected S0156 at /sprint-plan)
+- **delivery_mode**: ultra_lean
+- **resolved_phase_plan**: [spec, plan, build+verify, ship]
+- **reinstatement_mode**: none
+- **memory_layer**: pack
+- **macro_phase**: plan
+- **last_completed_phase**: architecture
+- **intended_resume_phase**: /sprint-plan
+- **next_scheduled_phase**: /sprint-plan
+- **next_scheduled_role**: tech-lead
+- **skipped_phases**: [intake]
+- **verdict**: ARCHITECTURE_PASS
+- **decision_gate**: false
+- **fresh_context_marker**: tl-US0148-architecture-20260917T211400Z-fresh
+- **runtime_proof_id**: rp-auto-20260917-us0148-architecture-techlead-20260917T211400Z-US-0148
+- **proof_hash**: AC546FD44FE347547D9DD92F79C906DC71B2212DD27969336F73F9475C48708D
+- **proof_ttl**: 2026-09-17T22:14:00Z
+- **model_id**: inherit (CROSS_MODEL_REVIEW=0)
+- **wall_clock**: 2026-09-17T21:14:00Z
+- **drain_story_index**: 1 of 3
+- **backlog_drain_stories_remaining_budget**: 2
+- **native_chain_active**: true
+- **native_chain_continuing**: true
+- **research_id**: R-0148 (DQ1–DQ10 LOCKED; A1)
+- **companion_dec**: DEC-0148 Accepted
+- **architecture_anchor**: docs/engineering/architecture.md # US-0148
+- **consumed_research_proof**: rp-auto-20260917-us0148-research-techlead-20260917T211200Z-US-0148 / 5F986CEE216B57CFD2DB191C8C4CE1CD9539596DCA6A35AEB9E91CE4729B0A4C (MATCH)
+- **US-0148_status**: OPEN (AC-1..AC-8 unchecked)
+- **stop_condition**: STOP after ARCHITECTURE_PASS. Orchestrator MUST Task-spawn `/sprint-plan` (tech-lead). Do not spawn sprint-plan from this architecture chat. CROSS_MODEL_REVIEW=0 — no sovereign-critic. Do not mark US-0148 DONE. Do not tick AC. Do not npm-publish. Do not git push.
+
+---
+
+# Resume Brief — US-0148 RESEARCH_PASS → /architecture (auto-20260917-us0148)
+
+- **orchestrator_run_id**: auto-20260917-us0148
+- **parent_run**: auto-20260917-us0146
+- **story_id**: US-0148
+- **bug_id**: (none)
+- **sprint_id**: (none — expected S0156 at /sprint-plan)
+- **delivery_mode**: ultra_lean
+- **resolved_phase_plan**: [spec, plan, build+verify, ship]
+- **reinstatement_mode**: none
+- **memory_layer**: pack
+- **macro_phase**: plan
+- **last_completed_phase**: research
+- **intended_resume_phase**: /architecture
+- **next_scheduled_phase**: /architecture
+- **next_scheduled_role**: tech-lead
+- **skipped_phases**: [intake]
+- **verdict**: RESEARCH_PASS
+- **decision_gate**: false
+- **fresh_context_marker**: tl-US0148-research-20260917T211200Z-fresh
+- **runtime_proof_id**: rp-auto-20260917-us0148-research-techlead-20260917T211200Z-US-0148
+- **proof_hash**: 5F986CEE216B57CFD2DB191C8C4CE1CD9539596DCA6A35AEB9E91CE4729B0A4C
+- **proof_ttl**: 2026-09-17T22:12:00Z
+- **model_id**: inherit (CROSS_MODEL_REVIEW=0)
+- **wall_clock**: 2026-09-17T21:12:00Z
+- **drain_story_index**: 1 of 3
+- **backlog_drain_stories_remaining_budget**: 2
+- **native_chain_active**: true
+- **native_chain_continuing**: true
+- **research_id**: R-0148 (R-0145=US-0145 held; do not wipe)
+- **approach**: A1 (A*) — `@its-magic/protocol` + loopback JSON-RPC daemon + ordered event log; CLI/TUI `DaemonTransport`; delegate to runtime-core operator/workflow
+- **companion_dec**: DEC-0148 Required (architecture Accepts; file not authored)
+- **architecture_anchor**: (none — do not author # US-0148)
+- **consumed_discovery_proof**: rp-auto-20260917-us0148-discovery-po-20260917T211000Z-US-0148 / F9FCC16A49352472DADA88CEA509768C50E3EDCD5CE614EE53AFE07462CCA4AC (MATCH)
+- **US-0148_status**: OPEN (AC-1..AC-8 unchecked)
+- **stop_condition**: STOP after RESEARCH_PASS. Orchestrator MUST Task-spawn `/architecture` (tech-lead). Do not spawn architecture from this research chat. CROSS_MODEL_REVIEW=0 — no sovereign-critic. Do not author DEC-0148 or # US-0148. Do not npm-publish. Do not git push.
+
+---
+
+# Resume Brief — US-0148 DISCOVERY_PASS → /research (auto-20260917-us0148)
+
+- **orchestrator_run_id**: auto-20260917-us0148
+- **parent_run**: auto-20260917-us0146
+- **story_id**: US-0148
+- **bug_id**: (none)
+- **sprint_id**: (none — expected S0156 at /sprint-plan)
+- **delivery_mode**: ultra_lean
+- **resolved_phase_plan**: [spec, plan, build+verify, ship]
+- **reinstatement_mode**: none
+- **memory_layer**: pack
+- **macro_phase**: spec
+- **last_completed_phase**: discovery
+- **intended_resume_phase**: /research
+- **next_scheduled_phase**: /research
+- **next_scheduled_role**: tech-lead
+- **skipped_phases**: [intake]
+- **verdict**: DISCOVERY_PASS
+- **fresh_context_marker**: po-US0148-discovery-20260917T211000Z-fresh
+- **runtime_proof_id**: rp-auto-20260917-us0148-discovery-po-20260917T211000Z-US-0148
+- **proof_hash**: F9FCC16A49352472DADA88CEA509768C50E3EDCD5CE614EE53AFE07462CCA4AC
+- **proof_ttl**: 2026-09-17T22:10:00Z
+- **model_id**: inherit (CROSS_MODEL_REVIEW=0)
+- **wall_clock**: 2026-09-17T21:10:00Z
+- **drain_story_index**: 1 of 3
+- **backlog_drain_stories_remaining_budget**: 2
+- **native_chain_active**: true
+- **native_chain_continuing**: true
+- **research_stub**: R-0148 (architecture-owned heading)
+- **companion_dec**: DEC-0148 (architecture)
+- **expected_sprint**: S0156
+- **intake_held**: handoffs/intake_evidence/US-0133-0148-intake-20260911.json
+- **US-0148_status**: OPEN (AC-1..AC-8 unchecked)
+- **stop_condition**: STOP after DISCOVERY_PASS. Orchestrator MUST Task-spawn `/research` (tech-lead). Do not spawn research from this discovery chat. CROSS_MODEL_REVIEW=0 — no sovereign-critic. Do not author R-0148 or DEC-0148. Do not npm-publish. Do not git push.
+
+---
+
+# Resume Brief — US-0148 materialize → /discovery (auto-20260917-us0148)
+
+- **orchestrator_run_id**: auto-20260917-us0148
+- **parent_run**: auto-20260917-us0146
+- **prior_terminal**: BACKLOG_MAX_STORIES_REACHED (US-0146/0147/0145 shipped)
+- **story_id**: US-0148
+- **delivery_mode**: ultra_lean
+- **resolved_phase_plan**: [spec, plan, build+verify, ship]
+- **intended_resume_phase**: /discovery
+- **drain_story_index**: 1 of 3
+- **backlog_drain_stories_remaining_budget**: 2
+- **research_stub**: R-0148
+- **companion_dec**: DEC-0148
+- **expected_sprint**: S0156
+- **intake_held**: handoffs/intake_evidence/US-0133-0148-intake-20260911.json
+- **wall_clock**: 2026-09-17T21:09:00Z
+- **CROSS_MODEL_REVIEW**: 0
+
+---
+
 # Resume Brief — NATIVE_CHAIN_UNAVAILABLE after US-0144 discovery MATCH (auto-20260913-us0144)
 
 - **orchestrator_run_id**: auto-20260913-us0144

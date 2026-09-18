@@ -10,12 +10,19 @@ import {
 	createDefaultRoleCatalog,
 	resolvePhaseRole,
 	type SessionSupervisor,
+	SOVEREIGN_BOOTSTRAP_DELIVERY_FAILED,
+	type SpawnBootstrap,
 	type SupervisedSession,
 	sha256Canonical,
 	stubContextPackHash,
 } from "@its-magic/role-runtime";
 import { KERNEL_VALIDATOR_MISSING, WORKFLOW_ROUTE_DEFERRED } from "../stop-matrix/codes.ts";
-import { type ConfigView, lookupDeliveryMode } from "./config-view.ts";
+import {
+	type ConfigView,
+	lookupDeliveryMode,
+	lookupSovereignMemory,
+	lookupSovereignRuntime,
+} from "./config-view.ts";
 import { resolveDeliveryRoute } from "./delivery-router.ts";
 import { createNextStateIntent } from "./next-state.ts";
 import {
@@ -26,6 +33,7 @@ import {
 	roleForPhase,
 	shouldSkipPlanVerify,
 } from "./phase-graph.ts";
+import { composeBootstrapText, toSpawnBootstrap } from "./sovereign-runtime.ts";
 import {
 	COMMAND_ROUTER_STEPS,
 	type CommandRouterStep,
@@ -125,21 +133,98 @@ export function isRouteScheduled(result: RouteResult): result is RouteScheduled 
 export interface CommandRouterDeps {
 	supervisor: SessionSupervisor;
 	config: ConfigView;
-	kernelBridge?: Pick<KernelBridge, "runValidator">;
+	kernelBridge?: Pick<KernelBridge, "runValidator"> &
+		Partial<Pick<KernelBridge, "runSovereignOperation">>;
 	env?: NodeJS.ProcessEnv;
+	kernelRoot?: string;
 }
 
 export class CommandRouter {
 	private readonly supervisor: SessionSupervisor;
 	private readonly config: ConfigView;
-	private readonly kernelBridge?: Pick<KernelBridge, "runValidator">;
+	private readonly kernelBridge?: Pick<KernelBridge, "runValidator"> &
+		Partial<Pick<KernelBridge, "runSovereignOperation">>;
 	private readonly env?: NodeJS.ProcessEnv;
+	private readonly kernelRoot?: string;
 
 	constructor(deps: CommandRouterDeps) {
 		this.supervisor = deps.supervisor;
 		this.config = deps.config;
 		this.kernelBridge = deps.kernelBridge;
 		this.env = deps.env;
+		this.kernelRoot = deps.kernelRoot;
+	}
+
+	async assemblePreSpawnContext(input: {
+		phase_id: string;
+		role_id: string;
+		orchestrator_run_id: string;
+		command?: string;
+		scratchpad?: Record<string, string>;
+		kernelRoot?: string;
+	}): Promise<SpawnBootstrap | undefined> {
+		if (!lookupSovereignRuntime(this.config)) {
+			return undefined;
+		}
+		const phaseContext = [
+			"## Phase context",
+			"",
+			`phase_id=${input.phase_id}`,
+			`role_id=${input.role_id}`,
+			`command=${input.command ?? input.phase_id}`,
+		].join("\n");
+		let digestBlock = "";
+		let digest_entry_ids: string[] = [];
+		let digest_char_count = 0;
+		if (lookupSovereignMemory(this.config)) {
+			if (!this.kernelBridge?.runSovereignOperation) {
+				throw new WorkflowError(
+					"KERNEL_SOVEREIGN_FAILED",
+					"memory digest required but KernelBridge is missing",
+				);
+			}
+			const digest = await this.kernelBridge.runSovereignOperation({
+				operation: "memory_digest",
+				kernelRoot: input.kernelRoot ?? this.kernelRoot,
+				request: {
+					schema_version: 1,
+					request_id: crypto.randomUUID(),
+					operation: "memory_digest",
+					orchestrator_run_id: input.orchestrator_run_id,
+					payload: {
+						scratchpad: {
+							SOVEREIGN_MEMORY: "1",
+							SOVEREIGN_RUNTIME: "1",
+							...(input.scratchpad ?? {}),
+						},
+						repo_root: input.kernelRoot ?? this.kernelRoot,
+					},
+				},
+			});
+			if (!digest.ok) {
+				throw new WorkflowError(
+					digest.reason_code,
+					"memory digest failure blocks spawn when memory is enabled",
+				);
+			}
+			digestBlock = String(digest.result.block ?? "");
+			digest_entry_ids = Array.isArray(digest.result.entry_ids)
+				? digest.result.entry_ids.map((id) => String(id))
+				: [];
+			digest_char_count = Number(digest.result.char_count ?? 0);
+		}
+		const roleObjective = `## Role objective\n\n${input.role_id}`;
+		const text = composeBootstrapText({
+			phaseContext,
+			digestBlock: digestBlock || undefined,
+			roleObjective,
+		});
+		return toSpawnBootstrap({
+			text,
+			digest_entry_ids,
+			digest_char_count,
+			role_objective_applied: true,
+		});
 	}
 
 	listCommands(): string[] {
@@ -233,6 +318,13 @@ export class CommandRouter {
 		steps.push("role_model_tool_context");
 
 		// (4) fresh-session spawn — never restore parent transcripts
+		const bootstrap = await this.assemblePreSpawnContext({
+			phase_id: spawnPhase,
+			role_id: resolved.role_id,
+			orchestrator_run_id: input.orchestrator_run_id,
+			command,
+			kernelRoot: input.kernelRoot,
+		});
 		const session = await this.supervisor.spawn({
 			phase_id: spawnPhase,
 			role_id: resolved.role_id,
@@ -241,9 +333,21 @@ export class CommandRouter {
 			tools,
 			policy_hash,
 			parent_phase_session_id: input.parent_phase_session_id ?? null,
+			bootstrap,
 		});
 		if (!session.fresh) {
 			throw new WorkflowError("SESSION_NOT_FRESH", "CommandRouter requires a fresh session");
+		}
+		if (bootstrap) {
+			if (
+				!session.bootstrap_ack?.bootstrap_delivered ||
+				session.bootstrap_ack.bootstrap_context_hash !== bootstrap.context_hash
+			) {
+				throw new WorkflowError(
+					SOVEREIGN_BOOTSTRAP_DELIVERY_FAILED,
+					"bootstrap delivery missing or hash mismatch",
+				);
+			}
 		}
 		steps.push("fresh_session_spawn");
 

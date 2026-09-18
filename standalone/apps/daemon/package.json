@@ -1,0 +1,23 @@
+{
+	"name": "@its-magic/daemon",
+	"version": "0.0.0",
+	"private": true,
+	"type": "module",
+	"description": "Loopback JSON-RPC daemon for US-0148 operator control.",
+	"engines": {
+		"node": ">=22.19.0"
+	},
+	"bin": {
+		"itsm-daemon": "./src/index.ts"
+	},
+	"exports": {
+		".": "./src/index.ts",
+		"./server": "./src/server.ts"
+	},
+	"dependencies": {
+		"@its-magic/protocol": "0.0.0",
+		"@its-magic/runtime-core": "0.0.0",
+		"@its-magic/role-runtime": "0.0.0",
+		"ws": "^8.18.0"
+	}
+}

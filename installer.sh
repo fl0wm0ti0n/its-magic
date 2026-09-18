@@ -234,6 +234,24 @@ kit_config_postinstall() {
   fi
 }
 
+standalone_postinstall() {
+  target_root="$1"
+  mode="$2"
+  installer_py="$SCRIPT_DIR/installer.py"
+  if [ ! -f "$installer_py" ]; then
+    printf "%s\n" "[STANDALONE_BOOTSTRAP_FAILED] installer.py missing next to installer.sh."
+    exit 1
+  fi
+  if command -v python3 >/dev/null 2>&1; then
+    python3 "$installer_py" --standalone-postinstall --target "$target_root" --mode "$mode" || exit $?
+  elif command -v python >/dev/null 2>&1; then
+    python "$installer_py" --standalone-postinstall --target "$target_root" --mode "$mode" || exit $?
+  else
+    printf "%s\n" "[STANDALONE_BOOTSTRAP_FAILED] PYTHON_NOT_FOUND: Python 3 is required for standalone bootstrap."
+    exit 1
+  fi
+}
+
 scratchpad_postinstall() {
   target_root="$1"
   mode="$2"
@@ -936,6 +954,7 @@ if [ "$MODE" = "upgrade" ]; then
   prune_retired_opencode_auto_md "$TARGET_ROOT" "$SOURCE_ROOT" "$HOST"
 
   kit_config_postinstall "$TARGET_ROOT" "upgrade"
+  standalone_postinstall "$TARGET_ROOT" "upgrade"
   scratchpad_postinstall "$TARGET_ROOT" "upgrade"
   opencode_model_catalog_apply "$TARGET_ROOT"
   validate_install_completeness "$TARGET_ROOT"
@@ -1020,6 +1039,7 @@ for rel in $FILES; do
 done
 
 kit_config_postinstall "$TARGET_ROOT" "$MODE"
+standalone_postinstall "$TARGET_ROOT" "$MODE"
 scratchpad_postinstall "$TARGET_ROOT" "$MODE"
 opencode_model_catalog_apply "$TARGET_ROOT"
 validate_install_completeness "$TARGET_ROOT"

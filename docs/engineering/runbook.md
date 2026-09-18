@@ -4773,6 +4773,51 @@ markers; static/fixture only; no live OpenCode probe).
 
 **Release status (S0150 / US-0142)**: **`released`** (`2026-09-14T05:30:00Z`); backlog **OPEN** (closure deferred). Operator verify: **`handoffs/releases/S0150-release-notes.md`** **## Verify**; publish skipped while **`RELEASE_PUBLISH_MODE=confirm`**. Gate-1 evidence: scoped `python -m pytest tests/us0142_contract_test.py -q` 12/12 + US-0071 metadata exit 0 (`harness_fail_zero_claimed=false`).
 
+**Release status (S0152 / US-0144)**: **`released`** (`2026-09-15T21:14:00Z`); backlog **OPEN** (closure deferred). Operator verify: **`handoffs/releases/S0152-release-notes.md`** **## Verify**; publish skipped while **`RELEASE_PUBLISH_MODE=confirm`** (no operator confirm this turn). Gate-1 evidence: scoped `cd standalone && node --experimental-strip-types --test tests/contract/us0144.contract.test.ts` 12/12 + US-0071 metadata exit 0 (`harness_fail_zero_claimed=false`).
+
 **Release status (S0151 / US-0143)**: **`released`** (`2026-09-14T08:50:00Z`); backlog **OPEN** (closure deferred). Operator verify: **`handoffs/releases/S0151-release-notes.md`** **## Verify**; publish skipped while **`RELEASE_PUBLISH_MODE=confirm`** (no operator confirm this turn). Gate-1 evidence: scoped `python -m pytest tests/us0143_contract_test.py -q` 12/12 + US-0071 metadata exit 0 (`harness_fail_zero_claimed=false`).
 
+## Standalone install, update, and adoption (US-0147)
+
+Deliver the standalone operator product (`itsm`, US-0146 CLI/TUI) into consumer repos via **triple-installer parity** (`installer.py` / `installer.ps1` / `installer.sh`) and `bootstrap_standalone_runtime_installer_hook` (after host-config refresh, before runbook bootstrap). Workspace materializes under **`.its-magic/standalone/`** from `template/.its-magic/standalone/` (kit publish omits repo-root `standalone/`). **`FRAMEWORK_KIT_REPO=1`** kit-dev may pin in-tree `standalone/` during bootstrap.
+
+### Fresh setup
+
+1. Install framework files (`its-magic --mode missing|upgrade --target <repo>`).
+2. Hook runs kernel preflight (US-0134 compose) and writes `.its-magic/standalone/runtime-metadata.json`.
+3. Shim: `.its-magic/bin/itsm` → `apps/cli` (optional repo-root `bin/itsm` only when operator opts in).
+4. Browser: run **`itsm setup browser`** explicitly; install does **not** download browsers unless **`ITS_MAGIC_INSTALL_BROWSER=1`**.
+
+### Auth / adoption
+
+- **`classifyProjectAdoptionProfile`**: fresh vs existing-its-magic; host advisory `cursor-only` / `opencode-only` / `both-host`.
+- Fail-closed **`ADOPT_PARTIAL_MARKERS`** when 1–2 of 3 kernel markers match.
+- **No** rewrite of `.cursor/` / `.opencode/`; **no** clone of historical US-0001..US-0132 backlog on fresh init.
+
+### Coexistence / update / uninstall
+
+- **`install_include_paths`** vs **`deny_overwrite`** preserves locals, `.its-magic/runtime/**`, operator auth stores, and project source outside manifest.
+- Interrupted update staging: `.its-magic/install-staging/<run_id>/`; rollback emits **`INSTALL_INTERRUPTED_ROLLBACK_OK`** with preserved user layers list.
+- **`its-magic --mode uninstall-standalone`**: removes standalone tree, shims, staging, runtime-metadata; preserves hosts + `its_magic/` framework copy.
+- Version mismatch advisory: **`KIT_VERSION_COEXISTENCE`**.
+
+### Troubleshooting
+
+| Code | Meaning |
+|------|---------|
+| `STANDALONE_BOOTSTRAP_FAILED` | Mirror copy or `npm ci` failed |
+| `KERNEL_*` | US-0134 handshake (preflight before shim) |
+| `INSTALL_BROWSER_OFFLINE` | Airgap browser setup |
+| `INSTALL_BROWSER_EXPLICIT_GATE` | Set `ITS_MAGIC_INSTALL_BROWSER=1` or run `itsm setup browser` |
+| `SCRATCHPAD_LEGACY_KEYS_PRESENT` | Advisory only; no forced migration |
+
+Repair: `python installer.py --standalone-bootstrap --target <repo>` or `its-magic --mode upgrade --standalone-bootstrap`.
+
+### Tests
+
+`python -m pytest tests/us0147_contract_test.py -v` (exactly 10 `test_us0147_*` markers; Windows + Linux).
+
+**Release status (S0154 / US-0147)**: **`released`** (`2026-09-17T21:30:00Z`); backlog **OPEN** (closure deferred). Operator verify: **`handoffs/releases/S0154-release-notes.md`** **## Verify**; publish skipped while **`RELEASE_PUBLISH_MODE=confirm`** (no operator confirm this turn). Gate-1 evidence: scoped `python -m pytest tests/us0147_contract_test.py -q` 10/10 + US-0071 metadata exit 0 (`harness_fail_zero_claimed=false`).
+
+**Release status (S0155 / US-0145)**: **`released`** (`2026-09-17T21:00:00Z`); backlog **OPEN** (closure deferred). Operator verify: **`handoffs/releases/S0155-release-notes.md`** **## Verify**; publish skipped while **`RELEASE_PUBLISH_MODE=confirm`** (no operator confirm this turn). Gate-1 evidence: scoped `cd standalone && node --experimental-strip-types --test tests/contract/us0145.contract.test.ts` 13/13 + US-0071 metadata exit 0 (`harness_fail_zero_claimed=false`).
 

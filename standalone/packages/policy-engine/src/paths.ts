@@ -158,3 +158,9 @@ export function isReleaseArtifactPath(abs: string, worktreeRoot: string): boolea
 		rel === "CHANGELOG.md".toLowerCase()
 	);
 }
+
+/** US-0145 parallel worktree root (gitignored). */
+export function isParallelDevWorktreePath(abs: string, worktreeRoot: string): boolean {
+	const rel = posixify(relative(resolve(worktreeRoot), abs)).replace(/\\/g, "/");
+	return rel.startsWith(".its-magic/worktrees/") || rel.includes("/.its-magic/worktrees/");
+}

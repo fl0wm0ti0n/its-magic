@@ -1,0 +1,17 @@
+{
+	"$schema": "https://json-schema.org/draft/2020-12/schema",
+	"$id": "https://its-magic.local/schema/runtime-event.json",
+	"title": "RuntimeEvent",
+	"type": "object",
+	"required": ["run_id", "seq", "kind", "protocol_version"],
+	"properties": {
+		"run_id": { "type": "string" },
+		"seq": { "type": "integer", "minimum": 0 },
+		"kind": { "type": "string" },
+		"protocol_version": { "type": "integer", "minimum": 1 },
+		"payload": { "type": "object" },
+		"summary": { "type": "boolean" },
+		"evidence_ref": { "type": "string" }
+	},
+	"additionalProperties": true
+}

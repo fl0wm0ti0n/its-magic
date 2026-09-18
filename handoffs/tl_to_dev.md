@@ -1,3 +1,196 @@
+## Sprint-plan handoff — US-0148 / S0156 — /execute (fresh dev, ultra_lean)
+
+- sprint_id: S0156
+- story_id: US-0148 (Status OPEN — authority docs/product/backlog.md)
+- bug_id: (none)
+- companion_dec: DEC-0148 Accepted (decisions/DEC-0148.md)
+- research_anchor: R-0148 (DQ1–DQ10 LOCKED)
+- architecture_anchor: docs/engineering/architecture.md # US-0148
+- approach: A1 (A*) — `@its-magic/protocol` + `apps/daemon` loopback JSON-RPC/WebSocket + `OperatorTransport`/`DaemonTransport` + per-run SQLite event log + restart reconcile + twelve `test_us0148_*`; compose US-0146 operator facades (in-process doubles for `test_us0146_*`); US-0145 delivery OUT of daemon
+- orchestrator_run_id: auto-20260917-us0148
+- parent_orchestrator_run_id: auto-20260917-us0146
+- fresh_context_marker: tl-US0148-sprintplan-20260917T213000Z-fresh
+- timestamp: 2026-09-17T21:30:00Z (UTC)
+- model_id: inherit (CROSS_MODEL_REVIEW=0)
+- drain_story_index: 1 of 3
+- backlog_drain_stories_remaining_budget: 2
+- sprint_plan_verdict: PASS (SPRINT_PLAN_PASS)
+- decision_gate: false
+- sprint_status: PLANNED (backlog OPEN per US-0045 — not mutated, AC-1..AC-8 unchecked)
+- task_count: 12 (T-anch + T-001..T-011, at SPRINT_MAX_TASKS=12 cap, no split, 1:1 architecture seeds)
+- ac_surjective_map: AC-1→T-001; AC-2→T-002; AC-3→T-003,T-004,T-005,T-006; AC-4→T-002,T-005,T-007; AC-5→T-001,T-007; AC-6→T-008; AC-7→T-003,T-004,T-009; AC-8→T-010,T-011; DC→T-anch
+- task_order: T-anch → T-001 → T-002 → T-003 → T-004 → T-005 → T-006 → T-007 → T-008 → T-009 → T-010 → T-011
+- plan-verify: ultra_lean — NOT in resolved_phase_plan; skipped; no plan-verify QA spawn (`ultra_lean_skipped`; not a QA phase)
+- compose_guards (non-negotiable): DO NOT duplicate workflow rules in daemon; DO NOT implement US-0145 delivery/deploy; DO NOT break US-0146 `test_us0146_*` (in-process transport); DO NOT rewrite CommandRouter/GateEngine; DO NOT restore auto.md; DO NOT add kit cli.json or plugin tui.json; DO NOT read .env; DO NOT reopen US-0133..US-0147 DONE; DO NOT mark US-0148 DONE; DO NOT tick AC; DO NOT npm-publish; DO NOT git push; DEC-0038 tuple unamended
+- first_execute_task: T-anch (NO-OP / verification)
+- key_locked_artifacts: standalone/packages/protocol; standalone/apps/daemon; runtime-core/src/daemon-client/; .its-magic/daemon/listen.json + client.token; docs/engineering/operator/daemon-protocol.md; twelve test_us0148_* contract tests
+- sprint_id_lock: S0156 (S0155=US-0145 released). Do not invent a new id.
+- runtime_proof_id: rp-auto-20260917-us0148-sprint-plan-techlead-20260917T213000Z-US-0148
+- proof_hash: E9CED6541917EAFB8C9727E95E46AC57941165FC2C61017A0F9431E6E1A22A62
+- proof_ttl: 2026-09-17T22:30:00Z
+- consumed_architecture_proof: rp-auto-20260917-us0148-architecture-techlead-20260917T211400Z-US-0148 / AC546FD44FE347547D9DD92F79C906DC71B2212DD27969336F73F9475C48708D — RUNTIME_PROOF_VALID (MATCH before TTL 2026-09-17T22:14:00Z)
+- next_scheduled_phase: /execute (role=dev)
+- next_scheduled_role: dev
+- next_sprint_macro: build+verify
+- stop_condition: STOP after sprint-plan. Orchestrator MUST spawn /execute in fresh dev (BUG-0006). CROSS_MODEL_REVIEW=0 — do NOT spawn sovereign-critic or plan-verify from this tech-lead. Do NOT mark US-0148 DONE. Do NOT tick acceptance. Do NOT implement packages in sprint-plan phase.
+
+---
+
+## Sprint-plan handoff — US-0145 / S0155 — /execute (fresh dev, ultra_lean)
+
+- sprint_id: S0155
+- story_id: US-0145 (Status OPEN — authority docs/product/backlog.md)
+- bug_id: (none)
+- companion_dec: DEC-0145 Accepted (decisions/DEC-0145.md)
+- research_anchor: R-0145 (DQ1–DQ10 LOCKED)
+- architecture_anchor: docs/engineering/architecture.md # US-0145
+- approach: A1 (A*) — nested `workflow/delivery/` + `runDeliveryOperation` + `delivery_runtime_bridge.py` + default-off parallel/healing flags + QA arbiter + ReleaseTargetAdapter registry + additive gates + bounded post-deploy healing; twelve `test_us0145_*`; compose US-0140 closure, US-0143 drain unchanged, US-0146 observe-only, US-0147 install paths
+- orchestrator_run_id: auto-20260917-us0146
+- parent_orchestrator_run_id: auto-20260913-us0144
+- fresh_context_marker: tl-US0145-sprintplan-20260917T224500Z-fresh
+- timestamp: 2026-09-17T22:45:00Z (UTC)
+- model_id: inherit (CROSS_MODEL_REVIEW=0)
+- drain_story_index: 3 of 3
+- sprint_plan_verdict: PASS (SPRINT_PLAN_PASS)
+- decision_gate: false
+- sprint_status: PLANNED (backlog OPEN per US-0045 — not mutated, AC-1..AC-9 unchecked)
+- task_count: 12 (T-anch + T-001..T-011, at SPRINT_MAX_TASKS=12 cap, no split, 1:1 architecture seeds)
+- ac_surjective_map: AC-1→T-002,T-003; AC-2→T-005; AC-3→T-004; AC-4→T-006; AC-5→T-006,T-007,T-009; AC-6→T-008; AC-7→T-008,T-009; AC-8→T-010; AC-9→T-011; DC→T-anch
+- task_order: T-anch → T-001 → T-002 → T-003 → T-004 → T-005 → T-006 → T-007 → T-008 → T-009 → T-010 → T-011
+- plan-verify: ultra_lean — NOT in resolved_phase_plan; skipped; no plan-verify QA spawn (`ultra_lean_skipped`; not a QA phase)
+- compose_guards (non-negotiable): DO NOT rewrite US-0143 CommandRouter/drain; DO NOT amend `RELEASE_GATE_ORDER` literal; DO NOT implement US-0148 daemon; DO NOT restore auto.md; DO NOT add kit cli.json or plugin tui.json; DO NOT read .env; DO NOT reopen US-0140..US-0147 DONE; DO NOT mutate US-0148 body; DO NOT mark US-0145 DONE; DO NOT tick AC; DO NOT npm-publish; DO NOT git push; DEC-0038 tuple unamended
+- first_execute_task: T-anch (NO-OP / verification)
+- key_locked_artifacts: runtime-core/src/workflow/delivery/*; kernel-bridge runDeliveryOperation; scripts/delivery_runtime_bridge.py; handoffs/deploy_results/deploy_results.jsonl; twelve test_us0145_* contract tests
+- sprint_id_lock: S0155 (S0154=US-0147 released). Do not invent a new id.
+- runtime_proof_id: rp-auto-20260917-us0146-sprint-plan-techlead-20260917T224500Z-US-0145
+- proof_hash: 1D245D8D23B03B11DC8AF39FB6A6E5FCC59562510A2F4AA365D708E9ADF947BC
+- proof_ttl: 2026-09-17T23:45:00Z
+- consumed_architecture_proof: rp-auto-20260917-us0146-architecture-techlead-20260917T223000Z-US-0145 / 80F3C316829DD9A44996EE4BD61E4FF3AAC0FCF3DC276D02B7FC9585FDA5FBE9 — RUNTIME_PROOF_VALID (MATCH before TTL 2026-09-17T23:30:00Z)
+- next_scheduled_phase: /execute (role=dev)
+- next_scheduled_role: dev
+- next_sprint_macro: build+verify
+- stop_condition: STOP after sprint-plan. Orchestrator MUST spawn /execute in fresh dev (BUG-0006). CROSS_MODEL_REVIEW=0 — do NOT spawn sovereign-critic or plan-verify from this tech-lead. Do NOT mark US-0145 DONE. Do NOT tick acceptance. Do NOT implement packages in sprint-plan phase.
+
+---
+
+## Sprint-plan handoff — US-0147 / S0154 — /execute (fresh dev, ultra_lean)
+
+- sprint_id: S0154
+- story_id: US-0147 (Status OPEN — authority docs/product/backlog.md)
+- bug_id: (none)
+- companion_dec: DEC-0147 Accepted (decisions/DEC-0147.md)
+- research_anchor: R-0144 (DQ1–DQ10 LOCKED)
+- architecture_anchor: docs/engineering/architecture.md # US-0147
+- approach: A1 (A*) — triple-installer parity + template `.its-magic/standalone/` mirror + `bootstrap_standalone_runtime_installer_hook` + adoption classifier + kernel preflight + `runtime-metadata.json` + explicit `itsm setup browser`; ten `test_us0147_*`; compose US-0146 CLI/TUI (wire only)
+- orchestrator_run_id: auto-20260917-us0146
+- parent_orchestrator_run_id: auto-20260913-us0144
+- fresh_context_marker: tl-US0147-sprintplan-20260917T205000Z-fresh
+- timestamp: 2026-09-17T20:50:00Z (UTC)
+- model_id: inherit (CROSS_MODEL_REVIEW=0)
+- drain_story_index: 2 of 3
+- sprint_plan_verdict: PASS (SPRINT_PLAN_PASS)
+- decision_gate: false
+- sprint_status: PLANNED (backlog OPEN per US-0045 — not mutated, AC-1..AC-8 unchecked)
+- task_count: 12 (T-anch + T-001..T-011, at SPRINT_MAX_TASKS=12 cap, no split, 1:1 architecture seeds)
+- ac_surjective_map: AC-1→T-001,T-002,T-005,T-006,T-007,T-008; AC-2→T-004; AC-3→T-003; AC-4→T-003; AC-5→T-004,T-005; AC-6→T-006; AC-7→T-008,T-009,T-010; AC-8→T-011; DC→T-anch
+- task_order: T-anch → T-001 → T-002 → T-003 → T-004 → T-005 → T-006 → T-007 → T-008 → T-009 → T-010 → T-011
+- plan-verify: ultra_lean — NOT in resolved_phase_plan; skipped; plan-verify.json SKIPPED placeholder (`ultra_lean_skipped`; not a QA phase)
+- compose_guards (non-negotiable): DO NOT rewrite `runtime-core/src/operator/`; DO NOT install US-0148 daemon; DO NOT rewrite host `.cursor/` / `.opencode/`; DO NOT restore auto.md; DO NOT add kit cli.json or plugin tui.json; DO NOT read .env; DO NOT reopen US-0140..US-0146 DONE; DO NOT mutate US-0145/0148 bodies; DO NOT mark US-0147 DONE; DO NOT tick AC; DO NOT npm-publish; DO NOT git push; DEC-0038 tuple unamended
+- first_execute_task: T-anch (NO-OP / verification)
+- key_locked_artifacts: installer.py/ps1/sh; installer-owned-paths.manifest; template/.its-magic/standalone/; ten test_us0147_* fixtures
+- sprint_id_lock: S0154 (S0153=US-0146 released). Do not invent a new id.
+- runtime_proof_id: rp-auto-20260917-us0146-sprint-plan-techlead-20260917T205000Z-US-0147
+- proof_hash: 71466A385CB3FFA1503D35BAA34BD51CD8A592C2038D8570762DCB32D3EBF9A5
+- proof_ttl: 2026-09-17T21:50:00Z
+- consumed_architecture_proof: rp-auto-20260917-us0146-architecture-techlead-20260917T204000Z-US-0147 / 90A68CD12FB24348890E4DCE47CDCE639736C67C6D91F3914542BFF282A366AD — RUNTIME_PROOF_VALID (MATCH before TTL 2026-09-17T21:40:00Z)
+- next_scheduled_phase: /execute (role=dev)
+- next_scheduled_role: dev
+- stop_condition: STOP after sprint-plan. Orchestrator MUST spawn /execute in fresh dev (BUG-0006). CROSS_MODEL_REVIEW=0 — do NOT spawn sovereign-critic or plan-verify from this tech-lead. Do NOT mark US-0147 DONE. Do NOT tick acceptance. Do NOT implement packages in sprint-plan phase.
+
+---
+
+## Sprint-plan handoff — US-0146 / S0153 — /execute (fresh dev, ultra_lean)
+
+- sprint_id: S0153
+- story_id: US-0146 (Status OPEN — authority docs/product/backlog.md)
+- bug_id: (none)
+- companion_dec: DEC-0146 Accepted (decisions/DEC-0146.md)
+- research_anchor: R-0143 (DQ1–DQ10 LOCKED)
+- architecture_anchor: docs/engineering/architecture.md # US-0146
+- approach: A1 (A*) — sibling `@its-magic/cli` + `@its-magic/tui` thin clients of `runtime-core/src/operator/` facades; nine `test_us0146_*`; Pi only on auth/models; in-process OperatorSession; log cap 200/32KiB; TUI readline+ANSI
+- orchestrator_run_id: auto-20260917-us0146
+- parent_orchestrator_run_id: auto-20260913-us0144
+- fresh_context_marker: tl-US0146-sprintplan-20260917T190000Z-fresh
+- timestamp: 2026-09-17T19:00:00Z (UTC)
+- model_id: inherit (CROSS_MODEL_REVIEW=0)
+- sprint_plan_verdict: PASS (SPRINT_PLAN_PASS)
+- decision_gate: false
+- sprint_status: PLANNED (backlog OPEN per US-0045 — not mutated, AC-1..AC-8 unchecked)
+- task_count: 12 (T-anch + T-001..T-011, at SPRINT_MAX_TASKS=12 cap, no split, 1:1 architecture seeds)
+- ac_surjective_map: AC-1→T-002,T-003,T-009; AC-2→T-004; AC-3→T-005; AC-4→T-010; AC-5→T-006; AC-6→T-007; AC-7→T-008; AC-8→T-008,T-009,T-010,T-011; DC→T-anch
+- task_order: T-anch → T-001 → T-002 → T-003 → T-004 → T-005 → T-006 → T-007 → T-008 → T-009 → T-010 → T-011
+- plan-verify: ultra_lean — NOT in resolved_phase_plan; skipped; plan-verify.json SKIPPED placeholder (`ultra_lean_skipped`; not a QA phase)
+- compose_guards (non-negotiable): DO NOT rewrite WorkflowEngine/CommandRouter/GateEngine; DO NOT import Pi on workflow/TUI/observability paths (auth/models only); DO NOT restore auto.md; DO NOT add kit cli.json or plugin tui.json; DO NOT read .env; DO NOT reopen US-0140..US-0144 DONE; DO NOT mutate US-0145/0147/0148 bodies; DO NOT mark US-0146 DONE; DO NOT tick AC; DO NOT npm-publish; DO NOT git push; DEC-0038 tuple unamended
+- first_execute_task: T-anch (NO-OP / verification)
+- key_locked_artifacts: runtime-core/src/operator/*; standalone/apps/cli; standalone/apps/tui (new); nine test_us0146_* contract tests
+- sprint_id_lock: S0153 (S0146=BUG-0021). Do not invent a new id.
+- runtime_proof_id: rp-auto-20260917-us0146-sprint-plan-techlead-20260917T190000Z-US-0146
+- proof_hash: EBCD4602E5B769D72298C7305EB819963A9DD9EC55A075634E35B1F055118524
+- proof_ttl: 2026-09-17T20:00:00Z
+- consumed_architecture_proof: rp-auto-20260917-us0146-architecture-techlead-20260917T185000Z-US-0146 / 5CD3C53F4B194541E3182C1DC53FE3D0C83FE3BEF986B10B509F922E5ED829F1 — RUNTIME_PROOF_VALID (MATCH before TTL 2026-09-17T19:50:00Z)
+- next_scheduled_phase: /execute (role=dev)
+- next_scheduled_role: dev
+- stop_condition: STOP after sprint-plan. Orchestrator MUST spawn /execute in fresh dev (BUG-0006). CROSS_MODEL_REVIEW=0 — do NOT spawn sovereign-critic or plan-verify from this tech-lead. Do NOT mark US-0146 DONE. Do NOT tick acceptance. Do NOT implement packages in sprint-plan phase.
+
+---
+
+## Sprint-plan handoff - US-0144 / S0152 - sovereign-critic (sprint-plan) then /execute (fresh dev, ultra_lean)
+
+- sprint_id: S0152
+- story_id: US-0144 (Status OPEN - authority docs/product/backlog.md)
+- bug_id: (none)
+- companion_dec: DEC-0144 Accepted (decisions/DEC-0144.md)
+- research_anchor: R-0142 (DQ1-DQ10 LOCKED, do not wipe R-0141; R-0141 remains US-0143)
+- architecture_anchor: docs/engineering/architecture.md # US-0144
+- approach: Nested SovereignRuntime in @its-magic/runtime-core; closed 9-op KernelBridge.runSovereignOperation including deferral_append/deferral_list; SOVEREIGN_RUNTIME=0 default-off; US-0143 drain/GateEngine unamended at SR=0; 12 architecture-owned test_us0144_*; four CROSS_MODEL_REVIEW x SOVEREIGN_RUNTIME quadrants bound inside the twelve
+- orchestrator_run_id: auto-20260913-us0144
+- parent_orchestrator_run_id: auto-20260913-us0143
+- fresh_context_marker: tl-US0144-sprintplan-20260915T190058Z-fresh
+- timestamp: 2026-09-15T19:00:58Z (UTC)
+- model_id: cursor-grok-4.6-high (CROSS_MODEL_REVIEW=1 - required on isolation)
+- sprint_plan_verdict: PASS
+- decision_gate: false
+- sprint_status: PLANNED (backlog OPEN per US-0045 - not mutated, AC-1..AC-8 unchecked)
+- task_count: 11 (T-anch + T-001..T-010, within SPRINT_MAX_TASKS=12, no split, 1:1 architecture seeds)
+- ac_surjective_map: AC-1->T-001,T-002,T-006 (T-010 m1,m2,m7,m8); AC-2->T-003,T-004 (T-010 m3,m4); AC-3->T-005 (T-010 m6); AC-4->T-004 (T-010 m5); AC-5->T-007 (T-010 m9,m10); AC-6->T-008 (T-010 m11); AC-7->T-008 (T-010 m12); AC-8->T-009,T-010 (m1-m12 + Q00/Q10/Q01/Q11); DC->T-anch
+- flag_quadrants: Q00=test_us0144_memory_bounds_default_off; Q10=test_us0144_caps_progress_partial_delivery_boundaries; Q01=test_us0144_pre_spawn_context_order; Q11=test_us0144_model_collision_degraded
+- task_order: T-anch -> T-001 -> T-002 -> T-003 -> T-004 -> T-005 -> T-006 -> T-007 -> T-008 -> T-009 -> T-010
+- plan-verify: ultra_lean - NOT in resolved_phase_plan, skipped, plan-verify.json is a SKIPPED placeholder (reason=ultra_lean_skipped; not a QA phase)
+- compose_guards (non-negotiable): DO NOT amend AgentKernel isolation loader / noTools / KernelBridge validator allowlist / auth-models store / PolicyEngine tables / RoleCatalog internals / config loaders except additive runSovereignOperation, DO NOT import Pi, DO NOT add sibling sovereign package, DO NOT restore auto.md, DO NOT rewrite GateEngine RELEASE_GATE_ORDER, DO NOT extend compute_strict_proof_hash, DO NOT rewrite US-0143 drain, DO NOT own credentials or read .env, DO NOT wipe R-0141/R-0142, DO NOT reopen US-0133..US-0143, DO NOT mutate US-0145+ or BUG-* or S0146..S0151, DO NOT mark US-0144 DONE, DO NOT tick AC-1..AC-8, DO NOT mutate intake JSON, DO NOT npm-publish, DO NOT git push
+- critic_nb_execute_awareness:
+  - T-010: assert Q00/Q10/Q01/Q11 on named primary markers; nine-op set; default-off; gateDrainCandidate exclusive for sovereign-generated candidates; credentials OUT (NB1 closed this phase)
+  - T-anch..T-010: keep 1:1 architecture seeds, sprint folder is S0152, execute owns bridge + runtime-core lift + 12 tests (NB2)
+  - T-anch: NO-OP verification, do not add 13th test, do not add sibling package, do not restore auto.md, do not mark DONE, do not design US-0145+ (NB3)
+- first_execute_task: T-anch (NO-OP / verification)
+- key_locked_artifacts:
+  - nested SovereignRuntime in existing @its-magic/runtime-core (no sibling package, no Pi)
+  - KernelBridge.runSovereignOperation 9-op closed set
+  - scripts/sovereign_runtime_bridge.py
+  - sidecar handoffs/sovereign_decision_sessions/<run>.jsonl
+  - gateDrainCandidate exclusive for US-0144 sovereign-generated candidates
+  - 12 test_us0144_* (architecture-owned IDs)
+- sprint_id_lock: S0152 (S0146=BUG-0021, S0147=US-0140, S0148=BUG-0023, S0149=US-0141, S0150=US-0142, S0151=US-0143). Do not reuse. Do not invent a new id.
+- runtime_proof_id: rp-auto-20260913-us0144-sprint-plan-techlead-20260915T190058Z-US-0144
+- proof_hash: 066EE36FB0930C2329F33590FD2508B233596EC59437D35EEA4BF4EE64C5E60D
+- proof_ttl: 2026-09-15T20:00:58Z
+- consumed_architecture_proof: rp-auto-20260913-us0144-architecture-techlead-20260915T185104Z-US-0144 / EA5C872E25AF1F03D79F10C7BF371E55993C7440A4A802BFD6E89505C8548BCD - RUNTIME_PROOF_VALID (MATCH before TTL 2026-09-15T19:51:04Z)
+- consumed_critic_proof: rp-auto-20260913-us0144-sovereign-critic-techlead-20260915T185540Z-US-0144 / 46611DA8682735C7EEBF308F513C065B08A10AD28BD26E32359FCA8B24E4B476 - MATCH, anti_slop=10, 0 blocking, degraded_mode=false, findings us0144arc-* informational; NB1 flag-quadrant binding closed this phase
+- next_scheduled_phase: sovereign-critic (sprint-plan) then /execute (role=dev)
+- next_scheduled_role: tech-lead (critic), then dev
+- stop_condition: STOP after sprint-plan. Orchestrator MUST spawn sovereign-critic of sprint-plan (CROSS_MODEL_REVIEW=1) then MUST spawn /execute in fresh dev (BUG-0006). Do NOT spawn execute, plan-verify, or critic from this tech-lead. Do NOT mark US-0144 DONE. Do NOT tick acceptance. Do NOT reopen US-0133..US-0143. Do NOT mutate US-0145+ or S0146..S0151. Do NOT implement packages this phase.
+
+---
+
 ## Sprint-plan handoff - US-0143 / S0151 - sovereign-critic (sprint-plan) then /execute (fresh dev, ultra_lean)
 
 - sprint_id: S0151

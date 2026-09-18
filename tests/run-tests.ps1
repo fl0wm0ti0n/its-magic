@@ -1741,6 +1741,9 @@ Assert-True "US-0142 kit contract tests pass" ($us0142Contract.ExitCode -eq 0)
 $us0143Contract = Start-Process python -ArgumentList @("-m", "pytest", "tests\us0143_contract_test.py", "-q") -PassThru -NoNewWindow -Wait -WorkingDirectory $root
 Assert-True "US-0143 kit contract tests pass" ($us0143Contract.ExitCode -eq 0)
 
+$us0147Contract = Start-Process python -ArgumentList @("-m", "pytest", "tests\us0147_contract_test.py", "-q") -PassThru -NoNewWindow -Wait -WorkingDirectory $root
+Assert-True "US-0147 kit contract tests pass" ($us0147Contract.ExitCode -eq 0)
+
 # Cleanup
 if (Test-Path (Join-Path $root "tests\.tmp-install")) {
   Remove-Item -Recurse -Force (Join-Path $root "tests\.tmp-install") -ErrorAction SilentlyContinue

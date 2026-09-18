@@ -43,6 +43,7 @@ import {
 	SESSION_TRANSCRIPT_CARRYOVER,
 	SESSION_UNKNOWN_PHASE,
 	SESSION_UNKNOWN_ROLE,
+	SOVEREIGN_BOOTSTRAP_DELIVERY_FAILED,
 } from "./errors.ts";
 import type { AgentKernel, KernelSession, OwnedToolDefinition } from "./kernel-port.ts";
 import {
@@ -52,8 +53,10 @@ import {
 } from "./orchestrator-gate.ts";
 import { createSessionSupervisor, SessionSupervisor } from "./supervisor.ts";
 import type {
+	BootstrapAck,
 	ContinuationContract,
 	SessionSupervisorOptions,
+	SpawnBootstrap,
 	SpawnRequest,
 	SupervisedSession,
 } from "./types.ts";
@@ -70,6 +73,8 @@ export type {
 	RoleMutability,
 	SessionSupervisorOptions,
 	SidecarAttestation,
+	SpawnBootstrap,
+	BootstrapAck,
 	SpawnRequest,
 	SupervisedSession,
 };
@@ -107,6 +112,7 @@ export {
 	SESSION_TRANSCRIPT_CARRYOVER,
 	SESSION_UNKNOWN_PHASE,
 	SESSION_UNKNOWN_ROLE,
+	SOVEREIGN_BOOTSTRAP_DELIVERY_FAILED,
 	SessionSupervisor,
 	sha256Canonical,
 	stubContextPackHash,

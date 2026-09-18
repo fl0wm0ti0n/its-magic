@@ -13,6 +13,8 @@
 	"dependencies": {
 		"@its-magic/auth-models": "*",
 		"@its-magic/kernel-bridge": "*",
-		"@its-magic/pi-kernel": "*"
+		"@its-magic/pi-kernel": "*",
+		"@its-magic/runtime-core": "*",
+		"@its-magic/role-runtime": "*"
 	}
 }

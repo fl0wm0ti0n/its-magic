@@ -16,6 +16,7 @@ import {
 	canonicalizeAgainstWorktree,
 	denySecretOrTraversal,
 	isCuratorIntentPath,
+	isParallelDevWorktreePath,
 	isProductionSourcePath,
 	isReleaseArtifactPath,
 } from "./paths.ts";
@@ -70,6 +71,9 @@ function pathMatrix(req: PolicyRequest): PolicyResult | null {
 			return { decision: "DENY", reason_code: canon.reason_code };
 		}
 		const abs = canon.abs;
+		if (req.role_id === "dev" && isParallelDevWorktreePath(abs, req.worktree_root)) {
+			continue;
+		}
 		if (req.role_id === "po" && isProductionSourcePath(abs, req.worktree_root)) {
 			return { decision: "DENY", reason_code: POLICY_PO_PRODUCTION_WRITE };
 		}

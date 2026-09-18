@@ -1652,6 +1652,13 @@ US0143_CONTRACT_PY=$?
 set -e
 assert_true "US-0143 kit contract tests pass" "[ \"$US0143_CONTRACT_PY\" -eq 0 ]"
 
+# 26AR) US-0147 — standalone install/adopt triple-installer parity
+set +e
+"$PY" -m pytest tests/us0147_contract_test.py -q >/dev/null 2>&1
+US0147_CONTRACT_PY=$?
+set -e
+assert_true "US-0147 kit contract tests pass" "[ \"$US0147_CONTRACT_PY\" -eq 0 ]"
+
 timestamp=$(date -u +"%Y-%m-%dT%H:%M:%SZ")
 {
   echo "# its-magic Test Report"

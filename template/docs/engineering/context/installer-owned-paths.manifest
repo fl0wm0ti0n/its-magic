@@ -146,6 +146,26 @@ scripts/opencode_model_catalog_apply.py
 [opencode_clean_paths]
 .opencode
 
+[deny_overwrite]
+.cursor/scratchpad.local.md
+.cursor/model-catalog.local.json
+.opencode/model-catalog.local.json
+.opencode/opencode.json
+.opencode/opencode.jsonc
+opencode.json
+opencode.jsonc
+.its-magic/runtime/**
+.its-magic/config.local.json
+docs/product/backlog.md
+handoffs/**
+decisions/**
+sprints/**
+
+[standalone_install_paths]
+.its-magic/standalone/**
+.its-magic/bin/itsm
+.its-magic/install-staging/**
+
 [model_config_preserve_paths]
 .cursor/model-catalog.local.json
 .cursor/scratchpad.local.md
