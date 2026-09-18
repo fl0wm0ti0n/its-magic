@@ -9,7 +9,7 @@ class ItsMagic < Formula
   url "https://github.com/fl0wm0ti0n/its-magic/archive/refs/tags/v0.1.4.tar.gz"
   version "0.1.4"
   # UPDATE sha256 when the tag tarball is published: curl -sL <url> | shasum -a 256
-  sha256 "PLACEHOLDER_UPDATE_AT_RELEASE"
+  sha256 "41296f16939c2cc3ca0ce64b96564d7e7e9e67a6cc38649612322fef9d9e3e59"
   license "MIT"
 
   def install
@@ -43,5 +43,6 @@ class ItsMagic < Formula
     system "#{bin}/its-magic", "--target", testpath, "--mode", "missing"
   end
 end
+
 
 
