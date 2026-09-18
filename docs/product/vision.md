@@ -2619,3 +2619,40 @@ AI coding assistants in Cursor lose context across sessions, produce fragmented 
 - **Design / UX refs**: masterplan §23 (parallel worktree arbitrage), §25 (release/deploy self-healing + separate closure), §32 Phase 7 (sovereign parity parallel + self-healing deploy), §38 (parity DoD); compose US-0108 parallel arbiter, US-0109 deploy smoke/repair, US-0140 phase graph release→closure→refresh.
 - **Research asks**: DQ1–DQ10 for **`/research`** → expected **`R-0145`** (highest delivered heading is **`R-0144`** US-0147). Do not author `## R-0145` this phase. Do not wipe **R-0144**. Do not author `# US-0145` or **DEC-0145**. Next: `/research` (tech-lead). CROSS_MODEL_REVIEW=0 — no sovereign-critic.
 
+## Intake Notes — BUG-0025
+
+- **Bug**: npm publish of `its-magic@0.1.3` omits `scripts/standalone_runtime_install_lib.py`, so global upgrade crashes with `FileNotFoundError` after `HOST_CONFIG_POSTINSTALL_OK`.
+- **Intake date**: 2026-09-18T15:48:00Z (UTC).
+- **Role / writer**: po / `po-cursor-20260918-BUG0025-intake`
+- **Pack**: `small-intake-pack` (`INTAKE_WORK_ITEM_KIND=bug` via argv `/intake bug`; `INTAKE_GUIDED_MODE=0`)
+- **Evidence**: `handoffs/intake_evidence/BUG-0025-intake-20260918T154800Z.json` (`[INTAKE_EVIDENCE_VALIDATION_OK]`); expected research **R-0149** (not authored this intake; EARLY_RESEARCH=0)
+- **Outcome**: Packaged `its-magic` includes standalone hook scripts; upgrade/missing completes bootstrap or fails closed with `STANDALONE_BOOTSTRAP_FAILED`. Do not reopen US-0147 ACs beyond shipping the missing file(s). Do not merge BUG-0022 / BUG-0024.
+- **Decomposition**: **single_bug** (accepted via `/intake bug`). Recommended: add to `package.json` `files` + harden loader + pack/guard contract + republish.
+
+## Discovery Notes — BUG-0025
+
+- **Operator value proposition**: After `npm install -g its-magic@…`, `its-magic --mode upgrade|missing` standalone bootstrap completes **or** fails closed with `STANDALONE_BOOTSTRAP_FAILED` — never a raw `FileNotFoundError` for `scripts/standalone_runtime_install_lib.py`.
+- **Defect framing (discovery-locked)**:
+  - Published `its-magic@0.1.3` npm tarball omits `scripts/standalone_runtime_install_lib.py` because root `package.json` `files` allowlist does not list it (repo-local file exists; US-0147 standalone hook loads it).
+  - Crash path: `installer.py` → `run_standalone_postinstall` → `bootstrap_standalone_runtime_installer_hook` → `_load_standalone_runtime_install_lib` → importlib/`exec_module` raises `FileNotFoundError`.
+  - Compose **US-0147 DONE** (install story shipped the hook) — this is **publish packaging omit**, not a feature reopen.
+  - Distinct from **BUG-0022 OPEN** / **BUG-0024 OPEN** (Cursor inherit / OpenCode TUI dispatch). Do not merge or drain.
+- **Product-facing constraints (discovery-locked D1–D10)**:
+
+| ID | Lock |
+|----|------|
+| **D1** | Root cause = npm `files` allowlist omit of `scripts/standalone_runtime_install_lib.py` (and any peer scripts the standalone hook needs). |
+| **D2** | Fix IN: add path(s) to root `package.json` `files` so publish/pack cannot omit them. |
+| **D3** | Harden `_load_standalone_runtime_install_lib` → emit `STANDALONE_BOOTSTRAP_FAILED` when lib missing (no raw `FileNotFoundError` as operator-visible outcome). |
+| **D4** | Contract test proves `npm pack` / tarball includes `scripts/standalone_runtime_install_lib.py`. |
+| **D5** | Optional `guard_installer_publish` check covering the same path(s). |
+| **D6** | Republish ships the packaging fix (operator global install no longer lacks the lib). |
+| **D7** | Compose US-0147 DONE — do **not** reopen US-0147 ACs beyond shipping missing packaged file(s) + fail-closed loader + pack/guard contract. |
+| **D8** | Distinct from BUG-0022 / BUG-0024 — do **not** merge or drain those bugs as this fix. |
+| **D9** | Semver quirk `0.1.3-11`→`0.1.3` is **OUT** of primary scope (optional note only). |
+| **D10** | OUT: OpenCode/Cursor host bugs; reopen US-0147 feature scope; companion DEC (none expected — architecture may use `# BUG-0025` only). Research stub **R-0149** (PO does not author `## R-0149`). Expected sprint **S0157**. |
+
+- **Discovery locks D1–D10**: see `docs/product/backlog.md` **`### BUG-0025`** `discovery_notes` and `handoffs/po_to_tl.md` discovery handoff.
+- **Design / UX refs**: compose US-0147 / R-0144 standalone install hook; `package.json` `files`; `installer.py` `_load_standalone_runtime_install_lib`; `scripts/standalone_runtime_install_lib.py`; optional `guard_installer_publish.py`; BUG-0001/0003 packaging completeness lineage.
+- **Research asks**: DQ1–DQ10 for **`/research`** → expected **`R-0149`**. Do not author `## R-0149` this phase. Do not wipe **R-0148**. Do not author `# BUG-0025` or a companion DEC this phase. Next: `/research` (tech-lead). CROSS_MODEL_REVIEW=0 — no sovereign-critic.
+

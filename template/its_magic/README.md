@@ -120,6 +120,8 @@ Pick one method:
 
 If **`its-magic --target <repo> --mode missing`** fails with **`[INSTALL_MANIFEST_ERROR] install_include_paths section is empty`** on Debian/Linux while the packaged manifest still lists paths, the global install likely has **CRLF** line endings in **`installer-owned-paths.manifest`** (visible as **`^M$`** with **`cat -A`**). **Fix in-tree** from **`0.1.2-41`**: **`installer.sh`** strips trailing carriage returns before section matching; **`.gitattributes`** keeps **`*.manifest`** LF; **`prepublishOnly`** runs **`guard_installer_publish`**. **Upgrade**: install a build **≥ `0.1.2-41`** (or reinstall from a fresh **`npm pack`** tarball after pull). Older tarballs such as **`its-magic@0.1.2-40`** may remain broken until republished — see **`docs/engineering/architecture.md`** **`# BUG-0008`**.
 
+If **`its-magic --mode upgrade|missing`** crashes after **`HOST_CONFIG_POSTINSTALL_OK`** with a raw **`FileNotFoundError`** for **`scripts/standalone_runtime_install_lib.py`**, the published **`its-magic@0.1.3`** tarball omitted that allowlisted script (**BUG-0025**). **Upgrade**: **`npm install -g its-magic@0.1.4`** (or **`@latest`** once published). From **`0.1.4`**, missing lib fails closed with **`[STANDALONE_BOOTSTRAP_FAILED]`** instead of a raw traceback. Optional note: local **`0.1.3-11`** → published **`0.1.3`** was a semver quirk, not the primary fix path.
+
 ### 2) Apply to a repo
 
 New repo:

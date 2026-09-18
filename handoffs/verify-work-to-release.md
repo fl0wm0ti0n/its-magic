@@ -1,4 +1,65 @@
-# Handoff: /verify-work → /release — US-0148 / S0156
+﻿# Handoff: /verify-work → /release — BUG-0025 / S0157
+
+- **Sprint**: S0157
+- **Story**: (none)
+- **Bug**: BUG-0025 (Status OPEN — do NOT mark DONE)
+- **Orchestrator Run**: auto-20260918-bug0025
+- **Parent Run**: cursor-20260918-BUG0025-intake
+- **Phase Transition**: /verify-work Complete → /release
+- **Timestamp**: 2026-09-18T17:32:00Z
+- **Fresh context marker**: qa-BUG0025-verify-20260918T173200Z-fresh
+- **Delivery mode**: ultra_lean
+- **Macro phase**: build+verify
+- **model_id**: omit (CROSS_MODEL_REVIEW=0)
+- **Consumed qa_to_verify**: sprints/S0157/qa-findings.md (qa PASS 172625Z; marker qa-BUG0025-qa-20260918T172625Z-fresh)
+
+## Verify-Work Verdict
+
+**PASS** — UAT 9/9 (8 ACs + convergence_smoke); 0 failed; pytest bug0025 **6/6** (2.12s this pass); probe_kind=contract_tests_primary; 6 live classes UAT_PROBE_FORBIDDEN including live Chrome; fake_browser_pass_claimed=false; live_chrome_probed=false; isolation execute+qa+verify-work PASS; backlog Status remains OPEN; AC-1..AC-8 unchecked; harness_fail_zero_claimed=false; npm_published=false; T-009 deferred to /release confirm; no live npm publish/git push.
+
+## Evidence Summary
+
+| Gate | Result |
+|------|--------|
+| UAT steps | 9 passed / 0 failed |
+| AC-1..AC-8 | 8/8 PASS (slice; backlog ACs unchecked) |
+| convergence_smoke | pass |
+| pytest bug0025 | 6/6 PASS (2.12s) |
+| Isolation compliance | PASS (execute + qa + verify-work) |
+| Strict-proof triad | VALID MATCH not-STALE (execute + qa) + ISSUED verify-work |
+| Live Chrome probed | false |
+| Fake live-Chrome PASS | none |
+| QA_PASS | confirmed (consumed) |
+| T-009 npm publish | DEFERRED (confirm) |
+
+## Runtime proofs (full rp-auto-…)
+
+- verify-work: `rp-auto-20260918-bug0025-verify-work-qa-20260918T173200Z-BUG-0025` / `5E2F0C655DEEE74EF60A3BB69553486D291466C1F9466D21A90E9BF91F95A75B` / ttl 2026-09-18T18:32:00Z
+- qa (consumed): `rp-auto-20260918-bug0025-qa-qa-20260918T172625Z-BUG-0025` / `E92C5B23F279866F63FB19BFFA9028578543BCABB7E359420DE93DD218F72D00`
+- execute: `rp-auto-20260918-bug0025-execute-dev-20260918T171834Z-BUG-0025` / `3E2A70F4BCD3A7E352D6E5E9D6E4A949D12E3D6E95CB39C2B3F99ECFB6B9CE4D`
+- plan-verify: `rp-auto-20260918-bug0025-plan-verify-qa-20260918T172625Z-BUG-0025` / `81FFCBA2FF68A9C861F8A883E5EE0CA3E7247068F37DCEC9DC2F39F23CC003B7` (ultra_lean merged; not spawned)
+
+## Artifact refs
+
+- `sprints/S0157/verify-work-findings.md`
+- `sprints/S0157/verify-work-verdict.json`
+- `sprints/S0157/uat.json` / `sprints/S0157/uat.md`
+- `docs/engineering/state.md` (verify-work checkpoint)
+
+## Next Phase
+
+- **Phase**: /release (orchestrator spawn)
+- **Spawn Role**: release (fresh subagent per BUG-0006)
+- **Do NOT**: mark BUG-0025 DONE; tick acceptance.md; tick backlog ACs; spawn /release from this qa subagent; claim fake live-Chrome PASS; silent npm publish without operator confirm; mutate BUG-0022/0024; reopen US-0147 ACs.
+
+## Stop Conditions
+
+- stop_reason: (not terminal — native_chain_continuing)
+- stop_phase: verify-work
+- intended_resume_phase: release
+- native_chain_continuing: true
+
+---# Handoff: /verify-work → /release — US-0148 / S0156
 
 - **Sprint**: S0156
 - **Story**: US-0148 (Status OPEN — do NOT mark DONE)

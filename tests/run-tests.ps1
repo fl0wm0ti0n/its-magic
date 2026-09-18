@@ -1744,6 +1744,10 @@ Assert-True "US-0143 kit contract tests pass" ($us0143Contract.ExitCode -eq 0)
 $us0147Contract = Start-Process python -ArgumentList @("-m", "pytest", "tests\us0147_contract_test.py", "-q") -PassThru -NoNewWindow -Wait -WorkingDirectory $root
 Assert-True "US-0147 kit contract tests pass" ($us0147Contract.ExitCode -eq 0)
 
+# 26AS) BUG-0025 — packaging allowlist + fail-closed standalone loader
+$bug0025Contract = Start-Process python -ArgumentList @("-m", "pytest", "tests\bug0025_packaging_contract_test.py", "-q") -PassThru -NoNewWindow -Wait -WorkingDirectory $root
+Assert-True "BUG-0025 packaging contract tests pass" ($bug0025Contract.ExitCode -eq 0)
+
 # Cleanup
 if (Test-Path (Join-Path $root "tests\.tmp-install")) {
   Remove-Item -Recurse -Force (Join-Path $root "tests\.tmp-install") -ErrorAction SilentlyContinue

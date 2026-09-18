@@ -1,3 +1,578 @@
+﻿# Resume Brief — BUG-0025 REFRESH_CONTEXT_PASS → segment complete (auto-20260918-bug0025)
+
+- **orchestrator_run_id**: auto-20260918-bug0025
+- **parent_run**: cursor-20260918-BUG0025-intake
+- **bug_id**: BUG-0025
+- **story_id**: (none)
+- **sprint_id**: S0157
+- **delivery_mode**: ultra_lean
+- **macro_phase**: ship
+- **last_completed_phase**: refresh-context
+- **intended_resume_phase**: none
+- **next_scheduled_phase**: none
+- **next_scheduled_role**: (none)
+- **segment_work_item_kind**: bug
+- **active_bug_id**: (none — segment closed)
+- **segment_closed**: true
+- **native_chain_active**: true
+- **native_chain_continuing**: false
+- **verdict**: REFRESH_CONTEXT_PASS
+- **decision_gate**: false
+- **blocking_count**: 0
+- **CROSS_MODEL_REVIEW**: 0
+- **SECURITY_REVIEW**: 0
+- **fresh_context_marker**: cur-BUG0025-refresh-20260918T181600Z-fresh
+- **kit_version**: 0.1.4
+- **release_version**: 0.1.4
+- **publish_status**: deferred-to-operator-confirm / PUBLISH_CONFIRMATION_REQUIRED
+- **npm_published**: false
+- **T-009_AC-6**: deferred-to-operator-confirm (honest residual; refresh PASS)
+- **BUG-0025_status**: DONE (not reopened)
+- **acceptance**: checked (AC-6 publish residual documented)
+- **bug_queue_position**: 1 of 1
+- **bug_queue_remaining**: 0
+- **backlog_drain_active**: false
+- **consumed_closure_proof**: rp-auto-20260918-bug0025-closure-curator-20260918T181500Z-BUG-0025 / 16317258B88972E2A2D51A1B64BC9873D655B7D0827DC64E23592B6D0333CCD0 (MATCH; not STALE @18:16:00Z)
+- **runtime_proof_id**: rp-auto-20260918-bug0025-refresh-context-curator-20260918T181600Z-BUG-0025
+- **proof_hash**: 80EC9A69CCF4E4577A4FFCCFB8567DE4A4D6914B4DC028532B16E8DFDA7083AF
+- **proof_issued_at**: 2026-09-18T18:16:00Z
+- **proof_ttl**: 2026-09-18T19:16:00Z
+- **proof_ttl_seconds**: 3600
+- **wall_clock**: 2026-09-18T18:16:00Z
+- **canonical_notes**: sprints/S0157/summary.md
+- **findings**: sprints/S0157/summary.md
+- **stop_phase**: refresh-context
+- **stop_reason**: completed
+- **stop_condition**: STOP after REFRESH_CONTEXT_PASS. Segment complete for auto-20260918-bug0025. Do NOT reopen BUG-0025. Do NOT drain BUG-0022/BUG-0024 from this run. Do NOT npm publish without operator confirm. Do NOT git push. CROSS_MODEL_REVIEW=0 — do NOT spawn sovereign-critic.
+
+---
+
+# Resume Brief — BUG-0025 CLOSURE_PASS → /refresh-context (auto-20260918-bug0025)
+
+- **orchestrator_run_id**: auto-20260918-bug0025
+- **parent_run**: cursor-20260918-BUG0025-intake
+- **bug_id**: BUG-0025
+- **story_id**: (none)
+- **sprint_id**: S0157
+- **delivery_mode**: ultra_lean
+- **macro_phase**: ship
+- **last_completed_phase**: closure
+- **intended_resume_phase**: /refresh-context
+- **next_scheduled_phase**: /refresh-context
+- **next_scheduled_role**: curator
+- **segment_work_item_kind**: bug
+- **active_bug_id**: BUG-0025
+- **native_chain_active**: true
+- **native_chain_continuing**: true
+- **verdict**: CLOSURE_PASS
+- **decision_gate**: false
+- **blocking_count**: 0
+- **CROSS_MODEL_REVIEW**: 0
+- **SECURITY_REVIEW**: 0
+- **closure_role**: curator (qe unavailable — US-0120 / AUTO_ROLE_CLOSURE)
+- **fresh_context_marker**: cur-BUG0025-closure-20260918T181500Z-fresh
+- **kit_version**: 0.1.4
+- **release_version**: 0.1.4
+- **publish_status**: deferred-to-operator-confirm / PUBLISH_CONFIRMATION_REQUIRED
+- **npm_published**: false
+- **T-009_AC-6**: deferred-to-operator-confirm (honest residual; closure PASS)
+- **BUG-0025_status**: DONE
+- **acceptance**: checked (AC-6 residual documented)
+- **consumed_release_proof**: rp-auto-20260918-bug0025-release-release-20260918T173800Z-BUG-0025 / E3FB2CA969A990EBDCE23BC05179FEADF99872C524390D2494219A503DFA4419 (MATCH; not STALE @18:15:00Z)
+- **runtime_proof_id**: rp-auto-20260918-bug0025-closure-curator-20260918T181500Z-BUG-0025
+- **proof_hash**: 16317258B88972E2A2D51A1B64BC9873D655B7D0827DC64E23592B6D0333CCD0
+- **proof_issued_at**: 2026-09-18T18:15:00Z
+- **proof_ttl**: 2026-09-18T19:15:00Z
+- **proof_ttl_seconds**: 3600
+- **wall_clock**: 2026-09-18T18:15:00Z
+- **canonical_notes**: sprints/S0157/closure-verification.md
+- **findings**: sprints/S0157/closure-verification.md
+- **stop_condition**: STOP after CLOSURE_PASS. Orchestrator MUST spawn /refresh-context in fresh curator subagent. Do NOT npm publish without operator confirm. Do NOT git push. Do NOT spawn /refresh-context from this closure subagent.
+
+---
+
+# Resume Brief — BUG-0025 start-from=closure materialize (auto-20260918-bug0025)
+
+- **orchestrator_run_id**: auto-20260918-bug0025
+- **bug_target_argv**: bug-target=BUG-0025
+- **requested_start_from**: closure
+- **resolved_start_phase**: closure
+- **resolution_source**: argument
+- **next_scheduled_phase**: /closure
+- **next_scheduled_role**: curator (qe unavailable — US-0120)
+- **delivery_mode**: ultra_lean
+- **macro_phase**: ship
+- **sprint_id**: S0157
+- **active_bug_id**: BUG-0025
+- **consumed_release_proof**: rp-auto-20260918-bug0025-release-release-20260918T173800Z-BUG-0025 / E3FB2CA969A990EBDCE23BC05179FEADF99872C524390D2494219A503DFA4419
+- **native_chain_active**: true
+- **native_chain_continuing**: true
+- **wall_clock**: 2026-09-18T18:00:00Z
+- **stop_condition**: Task-spawn /closure (curator) then /refresh-context
+
+---
+
+# Resume Brief — BUG-0025 RELEASE_PASS → /closure (auto-20260918-bug0025)
+
+- **orchestrator_run_id**: auto-20260918-bug0025
+- **parent_run**: cursor-20260918-BUG0025-intake
+- **bug_id**: BUG-0025
+- **story_id**: (none)
+- **sprint_id**: S0157
+- **delivery_mode**: ultra_lean
+- **resolved_phase_plan**: [spec, plan, build+verify, ship]
+- **reinstatement_mode**: none
+- **memory_layer**: pack
+- **macro_phase**: ship
+- **last_completed_phase**: release
+- **intended_resume_phase**: /closure
+- **next_scheduled_phase**: /closure
+- **next_scheduled_role**: closure
+- **skipped_phases**: [intake]
+- **plan_verify**: MERGED_AT_QA (PASS)
+- **segment_work_item_kind**: bug
+- **active_bug_id**: BUG-0025
+- **bug_queue_position**: 1 of 1
+- **bug_queue_remaining**: 0
+- **backlog_drain_active**: false
+- **bug_queue_active**: true
+- **native_chain_active**: true
+- **native_chain_continuing**: true
+- **verdict**: RELEASE_PASS
+- **decision_gate**: false
+- **blocking_count**: 0
+- **non_blocking_count**: 1
+- **fresh_context_marker**: release-BUG0025-20260918T173800Z-fresh
+- **kit_version**: 0.1.4
+- **release_version**: 0.1.4
+- **publish_status**: deferred-to-operator-confirm / PUBLISH_CONFIRMATION_REQUIRED
+- **npm_published**: false
+- **T-009_AC-6**: deferred-to-operator-confirm (not a release FAIL)
+- **CROSS_MODEL_REVIEW**: 0
+- **SECURITY_REVIEW**: 0
+- **runtime_proof_id**: rp-auto-20260918-bug0025-release-release-20260918T173800Z-BUG-0025
+- **proof_hash**: E3FB2CA969A990EBDCE23BC05179FEADF99872C524390D2494219A503DFA4419
+- **proof_ttl**: 2026-09-18T18:38:00Z
+- **proof_ttl_seconds**: 3600
+- **wall_clock**: 2026-09-18T17:38:00Z
+- **BUG-0025_status**: OPEN (do NOT mark DONE — /closure owns flip)
+- **acceptance**: unchecked
+- **queue**: S0157 = released
+- **canonical_notes**: handoffs/releases/S0157-release-notes.md
+- **findings**: sprints/S0157/release-findings.md
+- **version_doc**: handoffs/releases/0.1.4-release-notes.md
+- **stop_condition**: STOP after RELEASE_PASS. Orchestrator MUST spawn /closure in fresh subagent. Do NOT npm publish without operator confirm. Do NOT git push. Do NOT spawn /closure from release.
+
+---
+# Resume Brief — BUG-0025 VERIFY_WORK_PASS → /release (auto-20260918-bug0025)
+
+- **orchestrator_run_id**: auto-20260918-bug0025
+- **parent_run**: cursor-20260918-BUG0025-intake
+- **bug_id**: BUG-0025
+- **story_id**: (none)
+- **sprint_id**: S0157
+- **delivery_mode**: ultra_lean
+- **resolved_phase_plan**: [spec, plan, build+verify, ship]
+- **reinstatement_mode**: none
+- **memory_layer**: pack
+- **macro_phase**: build+verify
+- **last_completed_phase**: verify-work
+- **intended_resume_phase**: /release
+- **next_scheduled_phase**: /release
+- **next_scheduled_role**: release
+- **skipped_phases**: [intake]
+- **plan_verify**: MERGED_AT_QA (PASS)
+- **segment_work_item_kind**: bug
+- **active_bug_id**: BUG-0025
+- **bug_queue_position**: 1 of 1
+- **bug_queue_remaining**: 0
+- **backlog_drain_active**: false
+- **bug_queue_active**: true
+- **native_chain_active**: true
+- **native_chain_continuing**: true
+- **verdict**: VERIFY_WORK_PASS
+- **decision_gate**: false
+- **blocking_count**: 0
+- **non_blocking_count**: 1
+- **fresh_context_marker**: qa-BUG0025-verify-20260918T173200Z-fresh
+- **kit_version**: 0.1.4
+- **T-009_publish**: DEFERRED (confirm mode; npm_published=false; path=/release)
+- **CROSS_MODEL_REVIEW**: 0
+- **SECURITY_REVIEW**: 0
+- **runtime_proof_id**: rp-auto-20260918-bug0025-verify-work-qa-20260918T173200Z-BUG-0025
+- **proof_hash**: 5E2F0C655DEEE74EF60A3BB69553486D291466C1F9466D21A90E9BF91F95A75B
+- **proof_ttl**: 2026-09-18T18:32:00Z
+- **proof_ttl_seconds**: 3600
+- **wall_clock**: 2026-09-18T17:32:00Z
+- **producer_qa_proof**: rp-auto-20260918-bug0025-qa-qa-20260918T172625Z-BUG-0025 / E92C5B23F279866F63FB19BFFA9028578543BCABB7E359420DE93DD218F72D00 (MATCH; not STALE at consume)
+- **producer_execute_proof**: rp-auto-20260918-bug0025-execute-dev-20260918T171834Z-BUG-0025 / 3E2A70F4BCD3A7E352D6E5E9D6E4A949D12E3D6E95CB39C2B3F99ECFB6B9CE4D (MATCH; not STALE at consume)
+- **plan_verify_proof**: rp-auto-20260918-bug0025-plan-verify-qa-20260918T172625Z-BUG-0025 / 81FFCBA2FF68A9C861F8A883E5EE0CA3E7247068F37DCEC9DC2F39F23CC003B7
+- **BUG-0025_status**: OPEN (AC-1..AC-8 unchecked)
+- **uat**: 9/9 PASS; verified_ready=true; convergence_smoke=pass
+- **evidence_ref**: sprints/S0157/verify-work-findings.md; sprints/S0157/verify-work-verdict.json; sprints/S0157/uat.json; sprints/S0157/uat.md
+- **stop_condition**: STOP after VERIFY_WORK_PASS. Orchestrator MUST Task-spawn /release in fresh **release** subagent (BUG-0006). Do NOT spawn /release from this qa. CROSS_MODEL_REVIEW=0 — no sovereign-critic. Do NOT mark BUG-0025 DONE. Do NOT tick AC. Do NOT npm-publish without /release confirm. Do NOT git push.
+
+---
+# Resume Brief — BUG-0025 QA_PASS → /verify-work (auto-20260918-bug0025)
+
+- **orchestrator_run_id**: auto-20260918-bug0025
+- **parent_run**: cursor-20260918-BUG0025-intake
+- **bug_id**: BUG-0025
+- **story_id**: (none)
+- **sprint_id**: S0157
+- **delivery_mode**: ultra_lean
+- **resolved_phase_plan**: [spec, plan, build+verify, ship]
+- **reinstatement_mode**: none
+- **memory_layer**: pack
+- **macro_phase**: build+verify
+- **last_completed_phase**: qa
+- **intended_resume_phase**: /verify-work
+- **next_scheduled_phase**: /verify-work
+- **next_scheduled_role**: qa
+- **skipped_phases**: [intake]
+- **plan_verify**: MERGED_AT_QA (PASS)
+- **segment_work_item_kind**: bug
+- **active_bug_id**: BUG-0025
+- **bug_queue_position**: 1 of 1
+- **bug_queue_remaining**: 0
+- **backlog_drain_active**: false
+- **bug_queue_active**: true
+- **native_chain_active**: true
+- **native_chain_continuing**: true
+- **verdict**: QA_PASS
+- **decision_gate**: false
+- **blocking_count**: 0
+- **non_blocking_count**: 1
+- **fresh_context_marker**: qa-BUG0025-qa-20260918T172625Z-fresh
+- **kit_version**: 0.1.4
+- **T-009_publish**: DEFERRED (confirm mode; npm_published=false; path=/release)
+- **CROSS_MODEL_REVIEW**: 0
+- **SECURITY_REVIEW**: 0
+- **runtime_proof_id**: rp-auto-20260918-bug0025-qa-qa-20260918T172625Z-BUG-0025
+- **proof_hash**: E92C5B23F279866F63FB19BFFA9028578543BCABB7E359420DE93DD218F72D00
+- **proof_ttl**: 2026-09-18T18:26:25Z
+- **proof_ttl_seconds**: 3600
+- **wall_clock**: 2026-09-18T17:26:25Z
+- **producer_execute_proof**: rp-auto-20260918-bug0025-execute-dev-20260918T171834Z-BUG-0025 / 3E2A70F4BCD3A7E352D6E5E9D6E4A949D12E3D6E95CB39C2B3F99ECFB6B9CE4D (MATCH; not STALE at consume)
+- **plan_verify_proof**: rp-auto-20260918-bug0025-plan-verify-qa-20260918T172625Z-BUG-0025 / 81FFCBA2FF68A9C861F8A883E5EE0CA3E7247068F37DCEC9DC2F39F23CC003B7
+- **BUG-0025_status**: OPEN (AC-1..AC-8 unchecked)
+- **evidence_ref**: sprints/S0157/qa-findings.md; sprints/S0157/uat.json; sprints/S0157/plan-verify.json
+- **stop_condition**: STOP after QA_PASS. Orchestrator MUST Task-spawn /verify-work in fresh **qa** subagent (BUG-0006). Do NOT spawn /verify-work from this qa. CROSS_MODEL_REVIEW=0 — no sovereign-critic. Do NOT mark BUG-0025 DONE. Do NOT tick AC. Do NOT npm-publish without /release confirm. Do NOT git push.
+
+---
+
+# Resume Brief — BUG-0025 EXECUTE_PASS → /qa (auto-20260918-bug0025)
+
+- **orchestrator_run_id**: auto-20260918-bug0025
+- **parent_run**: cursor-20260918-BUG0025-intake
+- **bug_id**: BUG-0025
+- **story_id**: (none)
+- **sprint_id**: S0157
+- **delivery_mode**: ultra_lean
+- **resolved_phase_plan**: [spec, plan, build+verify, ship]
+- **reinstatement_mode**: none
+- **memory_layer**: pack
+- **macro_phase**: build+verify
+- **last_completed_phase**: execute
+- **intended_resume_phase**: /qa
+- **next_scheduled_phase**: /qa
+- **next_scheduled_role**: qa
+- **skipped_phases**: [intake, plan-verify]
+- **segment_work_item_kind**: bug
+- **active_bug_id**: BUG-0025
+- **bug_queue_position**: 1 of 1
+- **bug_queue_remaining**: 0
+- **backlog_drain_active**: false
+- **bug_queue_active**: true
+- **native_chain_active**: true
+- **native_chain_continuing**: true
+- **verdict**: EXECUTE_PASS
+- **decision_gate**: false
+- **fresh_context_marker**: dev-BUG0025-execute-20260918T171834Z-fresh
+- **kit_version**: 0.1.4
+- **T-009_publish**: DEFERRED (confirm mode; dry-run only; npm_published=false)
+- **CROSS_MODEL_REVIEW**: 0
+- **runtime_proof_id**: rp-auto-20260918-bug0025-execute-dev-20260918T171834Z-BUG-0025
+- **proof_hash**: 3E2A70F4BCD3A7E352D6E5E9D6E4A949D12E3D6E95CB39C2B3F99ECFB6B9CE4D
+- **proof_ttl**: 2026-09-18T18:18:34Z
+- **proof_ttl_seconds**: 3600
+- **wall_clock**: 2026-09-18T17:18:34Z
+- **consumed_sprint_plan_proof**: rp-auto-20260918-bug0025-sprint-plan-techlead-20260918T170500Z-BUG-0025 / FD61C0131290781C96BA46C0D44980CC445C89174047DCFC2B5F4F714CCB3A22 (MATCH; not STALE)
+- **BUG-0025_status**: OPEN (AC-1..AC-8 unchecked)
+- **evidence_ref**: handoffs/dev_to_qa.md; sprints/S0157/summary.md; sprints/S0157/progress.md
+- **stop_condition**: STOP after EXECUTE_PASS. Orchestrator MUST Task-spawn /qa in fresh **qa** subagent (BUG-0006). Do NOT spawn /qa from this dev. CROSS_MODEL_REVIEW=0 — no sovereign-critic. Do NOT mark BUG-0025 DONE. Do NOT tick AC. Do NOT npm-publish without /release confirm. Do NOT git push.
+
+---
+
+# Resume Brief — BUG-0025 SPRINT_PLAN_PASS → /execute (auto-20260918-bug0025)
+
+- **orchestrator_run_id**: auto-20260918-bug0025
+- **parent_run**: cursor-20260918-BUG0025-intake
+- **bug_id**: BUG-0025
+- **story_id**: (none)
+- **sprint_id**: S0157
+- **delivery_mode**: ultra_lean
+- **resolved_phase_plan**: [spec, plan, build+verify, ship]
+- **reinstatement_mode**: none
+- **memory_layer**: pack
+- **macro_phase**: build+verify (next — execute first phase of build+verify; plan macro terminal at sprint-plan)
+- **last_completed_phase**: sprint-plan
+- **intended_resume_phase**: /execute
+- **next_scheduled_phase**: /execute
+- **next_scheduled_role**: dev
+- **skipped_phases**: [intake, plan-verify]
+- **resolved_start_phase**: discovery
+- **resolution_source**: argument
+- **bug_target_argv**: bug-target=BUG-0025
+- **segment_work_item_kind**: bug
+- **active_bug_id**: BUG-0025
+- **bug_queue_position**: 1 of 1
+- **bug_queue_remaining**: 0
+- **backlog_drain_active**: false (bug-target argv selects bug scheduler)
+- **bug_queue_active**: true
+- **native_chain_active**: true
+- **native_chain_continuing**: true
+- **verdict**: SPRINT_PLAN_PASS
+- **decision_gate**: false
+- **fresh_context_marker**: tl-BUG0025-sprintplan-20260918T170500Z-fresh
+- **research_anchor**: R-0149 (DQ1–DQ10 LOCKED; A1)
+- **architecture_anchor**: docs/engineering/architecture.md # BUG-0025
+- **approach**: A1 (A*) — files allowlist + fail-closed loader + npm pack contract + optional guard + patch republish
+- **companion_dec**: (none — packaging bug; # BUG-0025 only; no decisions/DEC-*)
+- **task_count**: 11 (T-anch + T-001..T-010)
+- **plan_verify**: SKIPPED (ultra_lean_skipped)
+- **intake_held**: handoffs/intake_evidence/BUG-0025-intake-20260918T154800Z.json
+- **CROSS_MODEL_REVIEW**: 0
+- **runtime_proof_id**: rp-auto-20260918-bug0025-sprint-plan-techlead-20260918T170500Z-BUG-0025
+- **proof_hash**: FD61C0131290781C96BA46C0D44980CC445C89174047DCFC2B5F4F714CCB3A22
+- **proof_ttl**: 2026-09-18T18:05:00Z
+- **proof_ttl_seconds**: 3600
+- **wall_clock**: 2026-09-18T17:05:00Z
+- **consumed_architecture_proof**: rp-auto-20260918-bug0025-architecture-techlead-20260918T170000Z-BUG-0025 / DA89597E0B3BD3F37E33AE7A83BFAFF70B4CD04EEDB22BDAE0D7C283FF09B8BE (MATCH; not STALE)
+- **BUG-0025_status**: OPEN (AC-1..AC-8 unchecked)
+- **stop_condition**: STOP after SPRINT_PLAN_PASS. Orchestrator MUST Task-spawn /execute in fresh **dev** subagent (BUG-0006). Do NOT spawn /execute or /plan-verify from this tech-lead. CROSS_MODEL_REVIEW=0 — no sovereign-critic. plan-verify SKIPPED (ultra_lean_skipped). Do NOT mark BUG-0025 DONE. Do NOT tick AC. Do NOT npm-publish. Do NOT git push.
+
+---
+
+# Resume Brief — BUG-0025 ARCHITECTURE_PASS → /sprint-plan (auto-20260918-bug0025)
+
+- **orchestrator_run_id**: auto-20260918-bug0025
+- **parent_run**: cursor-20260918-BUG0025-intake
+- **bug_id**: BUG-0025
+- **story_id**: (none)
+- **sprint_id**: (none — expected S0157 at /sprint-plan)
+- **delivery_mode**: ultra_lean
+- **resolved_phase_plan**: [spec, plan, build+verify, ship]
+- **reinstatement_mode**: none
+- **memory_layer**: pack
+- **macro_phase**: plan
+- **last_completed_phase**: architecture
+- **intended_resume_phase**: /sprint-plan
+- **next_scheduled_phase**: /sprint-plan
+- **next_scheduled_role**: tech-lead
+- **skipped_phases**: [intake]
+- **resolved_start_phase**: discovery
+- **resolution_source**: argument
+- **bug_target_argv**: bug-target=BUG-0025
+- **segment_work_item_kind**: bug
+- **active_bug_id**: BUG-0025
+- **bug_queue_position**: 1 of 1
+- **bug_queue_remaining**: 0
+- **backlog_drain_active**: false (bug-target argv selects bug scheduler)
+- **bug_queue_active**: true
+- **native_chain_active**: true
+- **native_chain_continuing**: true
+- **verdict**: ARCHITECTURE_PASS
+- **decision_gate**: false
+- **research_anchor**: R-0149
+- **architecture_anchor**: docs/engineering/architecture.md # BUG-0025
+- **approach**: A1 (A*) — files allowlist + fail-closed loader + npm pack contract + optional guard + patch republish
+- **companion_dec**: (none — packaging bug; # BUG-0025 only; no decisions/DEC-*)
+- **expected_sprint**: S0157
+- **intake_held**: handoffs/intake_evidence/BUG-0025-intake-20260918T154800Z.json
+- **CROSS_MODEL_REVIEW**: 0
+- **runtime_proof_id**: rp-auto-20260918-bug0025-architecture-techlead-20260918T170000Z-BUG-0025
+- **proof_hash**: DA89597E0B3BD3F37E33AE7A83BFAFF70B4CD04EEDB22BDAE0D7C283FF09B8BE
+- **proof_ttl**: 2026-09-18T18:00:00Z
+- **proof_ttl_seconds**: 3600
+- **wall_clock**: 2026-09-18T17:00:00Z
+- **DQ1-DQ10**: LOCKED (see docs/engineering/research.md ## R-0149; pinned in # BUG-0025)
+- **consumed_research_proof**: rp-auto-20260918-bug0025-research-techlead-20260918T165500Z-BUG-0025 / 8E27420FCD21FE740C6015A45AB789057024E91BEA858636968488C1ACBFD249 (MATCH; not STALE)
+- **stop_condition**: STOP after ARCHITECTURE_PASS; orchestrator MUST spawn /sprint-plan in fresh tech-lead; do NOT spawn sovereign-critic (CROSS_MODEL_REVIEW=0). Do NOT create sprints/S0157/ from this chat. Do NOT mark BUG-0025 DONE. Do NOT tick AC. Do NOT npm-publish. Do NOT git push.
+
+---
+
+# Resume Brief — BUG-0025 RESEARCH_PASS → /architecture (auto-20260918-bug0025)
+
+- **orchestrator_run_id**: auto-20260918-bug0025
+- **parent_run**: cursor-20260918-BUG0025-intake
+- **bug_id**: BUG-0025
+- **story_id**: (none)
+- **sprint_id**: (none — expected S0157 at /sprint-plan)
+- **delivery_mode**: ultra_lean
+- **resolved_phase_plan**: [spec, plan, build+verify, ship]
+- **reinstatement_mode**: none
+- **memory_layer**: pack
+- **macro_phase**: plan
+- **last_completed_phase**: research
+- **intended_resume_phase**: /architecture
+- **next_scheduled_phase**: /architecture
+- **next_scheduled_role**: tech-lead
+- **skipped_phases**: [intake]
+- **resolved_start_phase**: discovery
+- **resolution_source**: argument
+- **bug_target_argv**: bug-target=BUG-0025
+- **segment_work_item_kind**: bug
+- **active_bug_id**: BUG-0025
+- **bug_queue_position**: 1 of 1
+- **bug_queue_remaining**: 0
+- **backlog_drain_active**: false (bug-target argv selects bug scheduler)
+- **bug_queue_active**: true
+- **native_chain_active**: true
+- **native_chain_continuing**: true
+- **verdict**: RESEARCH_PASS
+- **decision_gate**: false
+- **research_anchor**: R-0149
+- **approach**: A1 (A*) — files allowlist + fail-closed loader + npm pack contract + optional guard + patch republish
+- **companion_dec**: (none — packaging bug; architecture may use # BUG-0025 only)
+- **expected_sprint**: S0157
+- **intake_held**: handoffs/intake_evidence/BUG-0025-intake-20260918T154800Z.json
+- **CROSS_MODEL_REVIEW**: 0
+- **runtime_proof_id**: rp-auto-20260918-bug0025-research-techlead-20260918T165500Z-BUG-0025
+- **proof_hash**: 8E27420FCD21FE740C6015A45AB789057024E91BEA858636968488C1ACBFD249
+- **proof_ttl**: 2026-09-18T17:55:00Z
+- **proof_ttl_seconds**: 3600
+- **wall_clock**: 2026-09-18T16:55:00Z
+- **DQ1-DQ10**: LOCKED (see docs/engineering/research.md ## R-0149)
+- **consumed_discovery_proof**: rp-auto-20260918-bug0025-discovery-po-20260918T164420Z-BUG-0025 / AE4DA26DCBBC10BF8E03C091E8DA8FAA56B6FEB3608F2226F4CD09644ED64E4C (MATCH; not STALE)
+- **stop_condition**: STOP after RESEARCH_PASS; orchestrator MUST spawn /architecture in fresh tech-lead; do NOT spawn sovereign-critic (CROSS_MODEL_REVIEW=0). Do NOT author # BUG-0025 from this chat. Do NOT mark BUG-0025 DONE. Do NOT tick AC. Do NOT npm-publish. Do NOT git push.
+
+---
+
+# Resume Brief — BUG-0025 DISCOVERY_PASS → /research (auto-20260918-bug0025)
+
+- **orchestrator_run_id**: auto-20260918-bug0025
+- **parent_run**: cursor-20260918-BUG0025-intake
+- **bug_id**: BUG-0025
+- **story_id**: (none)
+- **sprint_id**: (none — expected S0157 at /sprint-plan)
+- **delivery_mode**: ultra_lean
+- **resolved_phase_plan**: [spec, plan, build+verify, ship]
+- **reinstatement_mode**: none
+- **memory_layer**: pack
+- **macro_phase**: spec
+- **last_completed_phase**: discovery
+- **intended_resume_phase**: /research
+- **next_scheduled_phase**: /research
+- **next_scheduled_role**: tech-lead
+- **skipped_phases**: [intake]
+- **resolved_start_phase**: discovery
+- **resolution_source**: argument
+- **bug_target_argv**: bug-target=BUG-0025
+- **segment_work_item_kind**: bug
+- **active_bug_id**: BUG-0025
+- **bug_queue_position**: 1 of 1
+- **bug_queue_remaining**: 0
+- **backlog_drain_active**: false (bug-target argv selects bug scheduler)
+- **bug_queue_active**: true
+- **native_chain_active**: true
+- **native_chain_continuing**: true
+- **verdict**: DISCOVERY_PASS
+- **decision_gate**: false
+- **research_stub**: R-0149
+- **companion_dec**: (none expected — packaging bug; architecture may use # BUG-0025 only)
+- **expected_sprint**: S0157
+- **intake_held**: handoffs/intake_evidence/BUG-0025-intake-20260918T154800Z.json
+- **CROSS_MODEL_REVIEW**: 0
+- **runtime_proof_id**: rp-auto-20260918-bug0025-discovery-po-20260918T164420Z-BUG-0025
+- **proof_hash**: AE4DA26DCBBC10BF8E03C091E8DA8FAA56B6FEB3608F2226F4CD09644ED64E4C
+- **proof_ttl**: 2026-09-18T17:44:20Z
+- **proof_ttl_seconds**: 3600
+- **wall_clock**: 2026-09-18T16:44:20Z
+- **D1-D10**: LOCKED (packaging allowlist + fail-closed loader + pack contract + republish)
+- **stop_condition**: STOP after DISCOVERY_PASS; orchestrator MUST spawn /research in fresh tech-lead; do NOT spawn sovereign-critic (CROSS_MODEL_REVIEW=0). Do NOT author R-0149 from this chat. Do NOT mark BUG-0025 DONE. Do NOT tick AC. Do NOT npm-publish. Do NOT git push.
+
+---
+
+# Resume Brief — BUG-0025 materialize → /discovery (auto-20260918-bug0025)
+
+- **orchestrator_run_id**: auto-20260918-bug0025
+- **parent_run**: cursor-20260918-BUG0025-intake
+- **bug_id**: BUG-0025
+- **story_id**: (none)
+- **sprint_id**: (none — expected S0157 at /sprint-plan)
+- **delivery_mode**: ultra_lean
+- **resolved_phase_plan**: [spec, plan, build+verify, ship]
+- **reinstatement_mode**: none
+- **memory_layer**: pack
+- **macro_phase**: spec
+- **intended_resume_phase**: /discovery
+- **next_scheduled_phase**: /discovery
+- **next_scheduled_role**: po
+- **skipped_phases**: [intake]
+- **resolved_start_phase**: discovery
+- **resolution_source**: argument
+- **bug_target_argv**: bug-target=BUG-0025
+- **segment_work_item_kind**: bug
+- **active_bug_id**: BUG-0025
+- **bug_queue_position**: 1 of 1
+- **bug_queue_remaining**: 0
+- **backlog_drain_active**: false (bug-target argv selects bug scheduler)
+- **bug_queue_active**: true
+- **native_chain_active**: true
+- **native_chain_continuing**: true
+- **research_stub**: R-0149
+- **companion_dec**: (none expected — packaging bug; architecture may use # BUG-0025 only)
+- **expected_sprint**: S0157
+- **intake_held**: handoffs/intake_evidence/BUG-0025-intake-20260918T154800Z.json
+- **CROSS_MODEL_REVIEW**: 0
+- **wall_clock**: 2026-09-18T16:40:00Z
+- **stop_condition**: Task-spawn /discovery (po). Do not re-intake.
+
+---
+
+# Resume Brief — BUG-0025 post-bug-intake (DEC-0069) → /discovery
+
+## Latest orchestration pointer — post-bug-intake (DEC-0069)
+
+- **Boundary**: successful **`/intake bug`** persistence (**`US-0045`**) — **`intake_boundary_utc=2026-09-18T15:48:00Z`**
+- **`bug_id`**: **`BUG-0025`** — must remain **`OPEN`** in **`docs/product/backlog.md`** (authority); this refresh is rejected if backlog shows **DONE**
+- **Intake evidence ref**: `handoffs/intake_evidence/BUG-0025-intake-20260918T154800Z.json`
+- **`orchestrator_run_id`**: `cursor-20260918-BUG0025-intake` (boundary metadata when known; optional at intake)
+- **Contract**: default **`/auto`** continuation targets **`discovery`** for this OPEN bug (not a stale pre-intake **`intake`** resume target)
+
+## Current status
+
+- **Active bug**: **`BUG-0025`** — **OPEN** per **`docs/product/backlog.md`** at refresh time
+
+## Intended resume phase
+
+`discovery`
+
+## Resume target
+
+- bug_id=BUG-0025
+- story_id=(none)
+- sprint_id=(none)
+- boundary=post-bug-intake (**DEC-0069**)
+
+## Latest auto breadcrumb seed
+
+- requested_start_from=(none)
+- resolved_start_phase=discovery
+- resolution_source=resume_brief
+- resolution_status=resolved
+- stop_reason=intake_complete
+- stop_phase=intake
+- next_scheduled_phase=discovery
+- bug_id=BUG-0025
+- story_id=(none)
+- sprint_id=(none)
+- orchestrator_run_id=cursor-20260918-BUG0025-intake
+- intake_boundary_utc=2026-09-18T15:48:00Z
+
+---
+
 # Resume Brief — US-0148 REFRESH_CONTEXT_PASS → orchestrator STOP (auto-20260917-us0148)
 
 - **orchestrator_run_id**: auto-20260917-us0148

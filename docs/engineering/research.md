@@ -15235,3 +15235,113 @@ Count **12** named tests. Kit `files` omit `standalone/` unless architecture pro
 - Do not author `# US-0148`, `decisions/DEC-0148.md`, or `sprints/S0156/` this phase. Do not mutate backlog Status/ACs. **Next**: `/architecture` (fresh tech-lead). CROSS_MODEL_REVIEW=0 — do not spawn sovereign-critic.
 
 - **Delivery closure (2026-09-17T23:35:00Z, curator, `orchestrator_run_id=auto-20260917-us0148`)**: **`US-0148`** **DONE**; sprint **`S0156`** **released**; A1 `@its-magic/protocol` + loopback JSON-RPC daemon + ordered event log + `DaemonTransport` + twelve **`test_us0148_*`** + `docs/engineering/operator/daemon-protocol.md` delivered per **R-0148** / **DEC-0148** / **`# US-0148`**; compose **US-0133..US-0147** DONE (US-0146 clients migrate); honest residual: live browser not probed; npm publish skipped. Portfolio **0 OPEN** stories; **2 OPEN** bugs (BUG-0022, BUG-0024 OUT — not scheduled); drain story **1 of 3** with budget **2** remaining — **`drain_terminated_reason=no_open_stories`**; orchestrator STOP (do **not** drain-advance).
+
+## R-0149 — BUG-0025 npm publish omits standalone_runtime_install_lib.py
+
+- **Date**: 2026-09-18. **Bug**: BUG-0025. **Status**: **closed** (delivered **S0157** / **`auto-20260918-bug0025`**; see **`docs/engineering/state.md`** refresh-context checkpoint). **Confidence**: high.
+- **Linked**: BUG-0025 (OPEN), R-0144 / DEC-0147 / US-0147 (DONE — standalone hook compose-only; do **not** reopen ACs beyond packaging + fail-closed loader + pack/guard), R-0148 (US-0148 — do **not** wipe), BUG-0001 / BUG-0003 packaging completeness lineage, US-0084 / `scripts/guard_installer_publish.py` / `prepublishOnly`, US-0133 kit `files` omit `standalone/`, BUG-0022 OPEN / BUG-0024 OPEN — do **not** merge or drain; FRAMEWORK_KIT_REPO=1
+- **Producer consumed**: discovery `rp-auto-20260918-bug0025-discovery-po-20260918T164420Z-BUG-0025` / `AE4DA26DCBBC10BF8E03C091E8DA8FAA56B6FEB3608F2226F4CD09644ED64E4C` — `compute_strict_proof_hash` MATCH at research issue `2026-09-18T16:55:00Z`; not STALE (ttl `2026-09-18T17:44:20Z`). CROSS_MODEL_REVIEW=0 — no sovereign-critic. `fresh_context_marker=tl-BUG0025-research-20260918T165500Z-fresh`
+- **ID policy**: highest existing research heading **R-0148** (US-0148). This entry is **R-0149**. Do **not** wipe or reuse R-0148. Do **not** reuse R-0148 body for BUG-0025.
+- **Recommendation**: **A1 (A\*)** — (1) add **`scripts/standalone_runtime_install_lib.py`** to root `package.json` `files` allowlist (sole importlib peer required by the standalone hook); (2) harden `installer.py` `_load_standalone_runtime_install_lib` to **isfile-before-`exec_module`** (mirror `_load_doc_profile_lib`) and emit **`STANDALONE_BOOTSTRAP_FAILED`** with no raw `FileNotFoundError` as the operator-visible outcome; (3) contract-test `npm pack` / tarball membership for that path; (4) optional extend `guard_installer_publish.py` to assert the allowlist entry (and/or packed path) without adding `standalone/` to kit `files`; (5) republish via patch bump so global `npm install -g its-magic@…` includes the lib. **No companion DEC** — architecture authors additive **`# BUG-0025`** only. Expected sprint **S0157**.
+- **Rejected**: reopen US-0147 ACs / rewrite hook semantics; vendor lib into `installer.py`; add entire `scripts/` or `standalone/` to npm `files` (US-0133 omit-`standalone/` held); merge/drain BUG-0022 or BUG-0024; treat `0.1.3-11`→`0.1.3` semver quirk as primary scope; OpenCode/Cursor host work
+- **Evidence**: root `package.json` `files` lists intake/materialize/remote_config/guard peers but **not** `scripts/standalone_runtime_install_lib.py`; repo file present; `installer.py` L901–908 `_load_standalone_runtime_install_lib` only guards `spec is None or spec.loader is None` then `exec_module` → raw `FileNotFoundError`; `_load_doc_profile_lib` already has isfile + reason-code pattern; lib is stdlib-only (no transitive script imports); workspace mirror via `template/.its-magic/standalone` (under shipped `template/`); kit-root `standalone/` remains unpublished (US-0133)
+- **Next**: `/architecture` authors `# BUG-0025` only (no companion DEC); sprint-plan materializes **S0157**. No status or acceptance mutation this phase.
+
+### DQ1 — Exact `package.json` `files` delta (LOCKED)
+
+- **Winner**: add **one** allowlist entry: **`scripts/standalone_runtime_install_lib.py`**.
+- **Peers**: no additional importlib peers for the standalone hook. Existing allowlisted scripts (`doc_profile_lib`, intake/*, materialize/*, remote_config, guard_installer) stay unchanged.
+- **Reject** wholesale `scripts/` directory allowlist; **reject** adding `standalone/` (US-0133 / `guard_installer_publish` omit check).
+
+### DQ2 — Installer standalone load inventory (LOCKED)
+
+- **Importlib (package-root)**: only `scripts/standalone_runtime_install_lib.py` via `_load_standalone_runtime_install_lib` → used by `bootstrap_standalone_runtime_installer_hook` / `run_standalone_postinstall` / `classify_project_adoption_profile` / `uninstall-standalone`.
+- **Runtime content**: standalone workspace copies from `template/.its-magic/standalone` (already under shipped `template/`) or kit-dev in-tree `standalone/` when `FRAMEWORK_KIT_REPO=1` — not via npm `files` for `standalone/`.
+- **Residual (architecture seed, not expand allowlist)**: `load_supported_range(script_dir)` reads `standalone/packages/kernel-bridge/supported-kernel-range.json` under package root — absent on published kit. Architecture must fail-closed that path into `STANDALONE_BOOTSTRAP_FAILED` / existing `KERNEL_*` (do **not** ship `standalone/` in `files`). OUT of primary AC-1 path list unless architecture proves a tiny allowlisted JSON peer is required (default: fail-closed without new `files` entry).
+
+### DQ3 — Fail-closed loader shape (LOCKED)
+
+- **Winner**: mirror `_load_doc_profile_lib`: `os.path.isfile(lib_path)` before `spec_from_file_location` / `exec_module`; on miss raise `RuntimeError("[STANDALONE_BOOTSTRAP_FAILED] …")` (or return-path that prints the same token). Wrap `bootstrap_standalone_runtime_installer_hook` / `run_standalone_postinstall` so upgrade/missing exits **1** with **`STANDALONE_BOOTSTRAP_FAILED`** printed — **no** raw `FileNotFoundError` traceback as operator-visible outcome (AC-3/AC-4).
+- **Emission site**: loader + bootstrap wrapper in `installer.py` (lib internal codes already use `STANDALONE_BOOTSTRAP_FAILED` for mirror/npm failures).
+- **Reject** catching-all Exception and swallowing without reason code; **reject** leaving `exec_module` unguarded.
+
+### DQ4 — `npm pack` / tarball contract approach (LOCKED)
+
+- **Winner**: pytest contract (compose BUG-0001/0003 / US-0084 publish-guard patterns): run **`npm pack --dry-run --json`** (or pack to temp `.tgz` + list members) and assert posix path **`scripts/standalone_runtime_install_lib.py`** (or `package/scripts/...` member) is present; also assert root `package.json` `files` contains the exact string.
+- **Reject** docs-only assertion; **reject** relying solely on operator manual pack.
+
+### DQ5 — Guard vs tests (LOCKED)
+
+- **Winner**: **both** — primary **`test_bug0025_*`** contract (DQ4 + loader fail-closed); **optional** extend `scripts/guard_installer_publish.py` to fail-closed when `scripts/standalone_runtime_install_lib.py` is missing from `package.json` `files` (and optionally from `npm pack --dry-run` inventory) — keep existing US-0133 omit-`standalone/` check intact.
+- **Reject** guard-only without named contract tests; **reject** new sibling guard script unless architecture proves reuse impossible.
+
+### DQ6 — Republish / release-queue (LOCKED)
+
+- **Winner**: **patch version bump** (e.g. `0.1.3` → `0.1.4`) then publish via existing `RELEASE_PUBLISH_MODE` / release-all path so operators `npm install -g its-magic@0.1.4` (or `@latest`) get the lib. Same-line republish of `0.1.3` is fragile on npm (immutability) — prefer bump.
+- **Semver quirk** `0.1.3-11`→`0.1.3`: **OUT** of primary scope (D9) — optional release-notes note only.
+- **Reject** documenting “reinstall same version” as the sole fix without a published tarball that includes the file.
+
+### DQ7 — Compose boundary with US-0147 / R-0144 (LOCKED)
+
+- **IN**: `package.json` `files` delta; `_load_standalone_runtime_install_lib` fail-closed; pack/guard contract; republish; minimal runbook troubleshooting pointer if needed.
+- **OUT / untouched**: US-0147 adoption classifier, template mirror layout, shim paths, kernel handshake semantics, browser gate, uninstall mode behavior, PS1/sh parity beyond calling existing Python hook, DEC-0147 body rewrite.
+- **Compose**: keep `bootstrap_standalone_runtime_installer_hook` call sites and reason-code family.
+
+### DQ8 — BUG-0001 / BUG-0003 regression lineage (LOCKED)
+
+- **Winner**: additive `test_bug0025_*` that strengthen packaging completeness for this path; do **not** weaken or retarget prior BUG-0001/0003 / US-0084 guard assertions; do **not** double-count as a reopen of those bugs.
+- Prior guards remain authoritative for installer.sh LF / manifest CR / OpenCode pack CR / omit-`standalone/`.
+
+### DQ9 — Active↔template / kit-slice parity (LOCKED)
+
+- **Winner**: **no** `template/scripts/standalone_runtime_install_lib.py` mirror required — SOT is package-root `scripts/` adjacent to `installer.py` (same as `doc_profile_lib`). Template ships standalone **workspace** under `template/.its-magic/standalone/`, not the Python loader.
+- **Reject** inventing a template scripts copy unless architecture finds an installer path that loads from `template/scripts/`.
+
+### DQ10 — Tests + architecture anchor (LOCKED)
+
+Primary: `tests/bug0025_packaging_contract_test.py` (name architecture-pins) with markers:
+
+1. `test_bug0025_package_json_files_lists_standalone_runtime_install_lib` — AC-2
+2. `test_bug0025_npm_pack_includes_standalone_runtime_install_lib` — AC-1 / AC-5
+3. `test_bug0025_load_missing_lib_emits_standalone_bootstrap_failed` — AC-3
+4. `test_bug0025_bootstrap_wrapper_no_raw_filenotfound_traceback` — AC-3 / AC-4
+5. `test_bug0025_guard_installer_publish_requires_allowlist_entry` — AC-5 (optional if guard extended; else skip with architecture note)
+6. `test_bug0025_us0147_compose_hook_call_sites_unchanged` — AC-7 smoke (string/presence of hook; no reopen)
+
+Count **5–6** named tests. **R-id**: **R-0149**. Expected sprint **S0157**. Architecture: additive **`# BUG-0025`** only — **no companion DEC**. Do not wipe **R-0148**.
+
+### Approach verdict
+
+| Approach | Summary | Verdict |
+|---|---|---|
+| **A1 (A\*)** | Allowlist one script + isfile fail-closed loader + npm pack contract + optional guard + patch republish | **WINNER** |
+| A2 | Allowlist only; leave raw FileNotFoundError | **Rejected** — AC-3 |
+| A3 | Inline/vendor lib into `installer.py` | **Rejected** — US-0147 compose |
+| A4 | Allowlist entire `scripts/` | **Rejected** — over-broad |
+| A5 | Ship `standalone/` in npm `files` | **Rejected** — US-0133 |
+| A6 | Reopen US-0147 / merge BUG-0022\|0024 | **Rejected** — D7/D8 |
+
+**decision_gate=false** — DQ1–DQ10 LOCKED; **no companion DEC** (packaging bug; `# BUG-0025` at `/architecture` only).
+
+### Risks and mitigations
+
+| Risk | Mitigation |
+|---|---|
+| Published kit still fails later on `supported-kernel-range.json` under package-root `standalone/` | Architecture fail-closed residual (DQ2); do not add `standalone/` to `files` |
+| Guard false-positive vs US-0133 omit check | Guard asserts **script allowlist presence**, never requires `standalone/` |
+| Operator stays on `0.1.3` after bump | AC-6 release notes + upgrade command; optional runbook pointer |
+| US-0147 test drift | Keep `test_us0147_*` green; bug0025 tests additive only |
+
+### Architecture seeds (preview)
+
+- `/architecture` authors **`# BUG-0025`** (additive; no companion DEC): pin `files` entry string, loader fail-closed shape, test file + marker IDs, optional guard check, patch republish version policy, supported-range residual handling.
+- `/sprint-plan` materializes **S0157** (≤12 tasks from architecture seeds).
+- Do not implement application code this phase.
+
+### Research attestation — architecture handoff (2026-09-18T16:55:00Z)
+
+- Consumed discovery: `rp-auto-20260918-bug0025-discovery-po-20260918T164420Z-BUG-0025` / `AE4DA26DCBBC10BF8E03C091E8DA8FAA56B6FEB3608F2226F4CD09644ED64E4C` — MATCH; not STALE.
+- **Discovery D1–D10** reflected in DQ1–DQ10 above. **AC map**: AC-1 DQ1+DQ2+DQ4; AC-2 DQ1; AC-3 DQ3; AC-4 DQ3; AC-5 DQ4+DQ5; AC-6 DQ6; AC-7 DQ7; AC-8 DQ8 + sibling boundary.
+- Do not author `# BUG-0025`, any `decisions/DEC-*`, or `sprints/S0157/` this phase. Do not mutate backlog Status/ACs. **Next**: `/architecture` (fresh tech-lead). CROSS_MODEL_REVIEW=0 — do not spawn sovereign-critic.
+
+- **Delivery closure (2026-09-18T18:16:00Z, curator, `orchestrator_run_id=auto-20260918-bug0025`)**: **`BUG-0025`** **DONE**; sprint **`S0157`** **released**; A1 allowlist + isfile fail-closed loader + npm pack contract + guard assert + patch **`0.1.4`** delivered per **R-0149** / **`# BUG-0025`** (no companion DEC); compose **US-0147** / **US-0133** held; **6/6** **`test_bug0025_*`**; honest residual: **`npm_published=false`** — **`PUBLISH_CONFIRMATION_REQUIRED`** (AC-6); BUG-0022/BUG-0024 **not** drained; orchestrator STOP — segment complete.

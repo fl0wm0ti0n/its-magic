@@ -1,161 +1,4 @@
 
-# BUG-0016 — OpenCode Layer-1 permissions vs kit duties (amend DEC-0122 §2)
-
-## Overview
-
-**`BUG-0016`** closes the **Layer-1 permission matrix vs kit phase-duty gap** on the OpenCode host. US-0122 / DEC-0122 §2 shipped a host-enforced matrix that matches agent frontmatter literally, but blocks required lifecycle validators and owned writes: `po`/`tech-lead`/`curator` `bash: deny`; PO missing intake_evidence / resume_brief / state.md edit allows; literal `sprints/Sxxxx/` globs that never match real sprint ids; release missing duty paths (`release-findings`, `verify-work-to-release`, state/resume_brief/runbook).
-
-**Research anchor**: **`R-0115`** (DQ1–DQ8 LOCKED). **Companion DEC**: **none** — amend **`DEC-0122` §2 in place** as sole matrix SOT (R-0115 DQ6; reject thin DEC-0130 as second matrix). **Out of scope**: reopening US-0122 as a feature story; US-0131/US-0132; amending DEC-0124/0125 unless execute proves Layer-1∩write-guard double-deny; live OpenCode CI probe; bash:`allow`; Cursor Task port.
-
-**Fresh context marker**: `tl-BUG0016-architecture-20260906T184500Z-fresh`
-**Orchestrator run id**: `auto-20260906-bug0016`
-**Timestamp**: 2026-09-06T18:45:00Z (UTC)
-**baseline_h2_count (pre-mutate)**: `0`
-**Verdict**: PASS
-**Next**: `/sprint-plan`
-
-## Approach locked (A* — from R-0115 DQ1–DQ8)
-
-**Approach A\*** (locked): **Amend DEC-0122 §2** matrix + ship matching **active + template** `.opencode/agents/*.md` frontmatter (byte-identical parity). Bash: `po`/`tech-lead`/`curator` → `"ask"` (reject `"allow"`; object-form bash YAGNI). PO edit adds `handoffs/intake_evidence/**`, `handoffs/resume_brief.md`, `docs/engineering/state.md`. Replace all permission-key `sprints/Sxxxx/…` with `sprints/S*/…`. Release adds `sprints/S*/release-findings.md`, `handoffs/verify-work-to-release.md`, `docs/engineering/state.md`, `handoffs/resume_brief.md`, `docs/engineering/runbook.md` (keep `verify_to_release.md`). Preserve **deny-last** + **success test (c)** (no production/code allow for non-dev). Amend `test_us0122_*` expectations + add **7** additive `test_bug0016_*`. `security`/`auto` unchanged. Layer-1 ∩ plugin write-guard remain conjunctive (DQ8).
-
-| Option | Summary | Verdict |
-|--------|---------|---------|
-| **A\*** | **Amend DEC-0122 §2 sole SOT + agent frontmatter parity; bash ask; real path globs; 7 static markers; success test (c) preserved** | **Preferred** — minimal duty unblock; R-0115 DQ1–DQ8 |
-| A2 (rejected) | `bash: allow` for po/tl/curator | **Rejected** — removes operator prompt; D1/DQ1 |
-| A3 (rejected) | Thin companion DEC-0130 as second matrix (or audit DEC that duplicates table) | **Rejected** — R-0115 DQ6 / critic subtractor YAGNI; amend-in-place only |
-| A4 (rejected) | `sprints/S[0-9]*/…` or leave `Sxxxx` in permission keys | **Rejected** — OpenCode has no char classes; `Sxxxx` never matches |
-| A5 (rejected) | Amend DEC-0124/DEC-0125 bodies preemptively | **Rejected** — DQ8; only if execute proves double-deny |
-| A6 (rejected) | New permission middleware / runtime harness in CI | **Rejected** — static harness only; no live probe |
-
-## Critic NB closures (research `b0016rs-*` architecture carry-forwards) — LOCKED here
-
-| ID | Carry-forward | Architecture lock |
-|----|---------------|-------------------|
-| CF1 / R1 | OpenCode docs catch-all-first vs kit deny-last | **Preserve deny-last.** Document divergence in DEC-0122 §2 + this section; do not flip global order. |
-| CF2 / DQ5 | release `runbook.md` allow vs US-0126 ownership | **ALLOW confirmed** — `.cursor/commands/release.md` lists `docs/engineering/runbook.md` as writable derived/ops surface. US-0126 still owns full runbook prose; Layer-1 allow does not transfer ownership. |
-| CF3 / DQ8 | Layer-1 ∩ write-guard double-deny | Seed **T-007** execute verify; no DEC-0124/0125 amend unless proven. |
-| CF4 / DQ6 | Optional thin DEC-0130 | **None** — amend DEC-0122 §2 only. |
-| CF5 | active↔template parity | Gate in T-006 (`test_bug0016_active_template_agent_parity` / opencode-adapter scope). |
-
-## Components
-
-### Amended Layer-1 matrix (normative table = DEC-0122 §2)
-
-Execute ships frontmatter to match the amended DEC table. Delta vs pre-BUG-0016:
-
-| Agent | bash | edit adds / changes |
-|-------|------|---------------------|
-| po | deny→**ask** | +`handoffs/intake_evidence/**`, +`handoffs/resume_brief.md`, +`docs/engineering/state.md` |
-| tech-lead | deny→**ask** | `sprints/Sxxxx/…`→`sprints/S*/…` |
-| curator | deny→**ask** | (edit set unchanged) |
-| dev | ask (unchanged) | `Sxxxx`→`S*` |
-| qa | ask (unchanged) | `Sxxxx`→`S*` |
-| release | ask (unchanged) | +`sprints/S*/release-findings.md`, +`verify-work-to-release.md`, +`state.md`, +`resume_brief.md`, +`runbook.md` |
-| security | ask + edit deny | unchanged |
-| auto | deny + task allowlist | unchanged |
-
-### Contract tests (DQ7 — 7 markers)
-
-Preferred: `tests/bug0016_contract_test.py` (+ template / parity). **Amend** `tests/us0122_contract_test.py` expectations to the new matrix (SOT alignment). Do **not** invent a live OpenCode probe.
-
-| # | Marker | Asserts |
-|---|--------|---------|
-| 1 | `test_bug0016_po_tl_curator_bash_ask` | po/tech-lead/curator `bash == ask` (not deny/allow) |
-| 2 | `test_bug0016_po_intake_resume_state_allows` | PO edit allows intake_evidence/**, resume_brief.md, state.md; `**` deny last; no scripts/** allow |
-| 3 | `test_bug0016_sprint_globs_are_s_star_not_sxxxx` | tech-lead/dev/qa/release sprint keys use `sprints/S*/`; `Sxxxx` absent from permission keys |
-| 4 | `test_bug0016_release_duty_paths` | release allows release-findings, verify-work-to-release, state.md, resume_brief.md, runbook.md |
-| 5 | `test_bug0016_success_test_c_non_dev_no_production_allow` | non-dev: no production/code allow; object-form edit keeps `**` deny last |
-| 6 | `test_bug0016_security_auto_unchanged` | security edit deny + bash ask; auto edit/bash deny + 7-role task allow + `*` deny last |
-| 7 | `test_bug0016_active_template_agent_parity` | eight agents byte-identical active↔template (or parity scope) |
-
-### Compose / defense-in-depth (DQ8)
-
-- Layer-1 (host frontmatter) ∧ Layer-2 (plugin `tool.hook("execute.before")` write-guard per DEC-0124) — both must allow.
-- BUG-0015 DONE = compose note only (spawn path may work); this bug remains permissions-only.
-
-## Touch surfaces (execute)
-
-| Surface | Change |
-|---------|--------|
-| `decisions/DEC-0122.md` §2 | **Amended in THIS architecture phase** (sole SOT) — execute must not regress |
-| `.opencode/agents/{po,tech-lead,dev,qa,release,curator}.md` + `template/.opencode/agents/` peers | Frontmatter parity to amended matrix (`security`/`auto` unchanged) |
-| `tests/us0122_contract_test.py` | Expectation realign to amended §2 |
-| `tests/bug0016_contract_test.py` (+ template mirror if required) | 7 markers |
-| Plugin write-guard (read-only verify) | Confirm no re-deny of duty globs; amend DEC-0124/0125 only if proven |
-
-## Non-goals
-
-- Companion DEC-0130 / second matrix SOT
-- Reopening US-0122 as a feature story / DONE acceptance rewrite
-- US-0131 / US-0132 config/model parity
-- `bash: allow` for any role
-- Live OpenCode runtime probe in CI
-- Preemptive DEC-0124/0125 body amend
-
-## Risks
-
-| Risk | Severity | Mitigation |
-|------|----------|------------|
-| R1 deny-last vs OpenCode docs order | MEDIUM → LOW | CF1: preserve deny-last; document divergence |
-| R2 `sprints/S*` breadth | LOW | Kit naming; marker 3 |
-| R3 Plugin write-guard double-deny | LOW | CF3 / T-007 |
-| R4 Companion DEC second SOT | LOW | CF4: no DEC-0130 |
-| R5 us0122_* expectation churn | LOW | Intentional SOT realign + additive bug0016_* |
-
-## AC coverage mapping (bug acceptance + R-0115)
-
-| Expected slice | Architecture anchor | Seeds |
-|----------------|---------------------|-------|
-| bash ask for po/tl/curator | Approach A*; matrix delta | T-001, T-002, T-006(m1) |
-| PO intake_evidence + resume_brief + state.md | DQ2; marker 2 | T-001, T-006 |
-| Sprint globs `S*` not `Sxxxx` | DQ3; marker 3 | T-002, T-003, T-006 |
-| Release duty paths complete | DQ5 / CF2; marker 4 | T-004, T-006 |
-| Success test (c) preserved | Ordering + marker 5 | T-anch, T-005, T-006 |
-| security/auto unchanged | marker 6 | T-anch, T-006 |
-| active↔template parity | CF5; marker 7 | T-001..T-004, T-006 |
-| DEC-0122 §2 sole SOT amend | Approach A*; CF4 | T-anch, T-005 |
-| Layer-1 ∩ write-guard | DQ8 / CF3 | T-007 |
-
-Acceptance checkbox: `docs/product/acceptance.md` BUG-0016 row remains unchecked until closure (US-0045).
-
-## Atomic task seeds (for `/sprint-plan`)
-
-| # | Seed | Surfaces |
-|---|------|----------|
-| T-anch | Verify `# BUG-0016` H1 + DEC-0122 §2 amended (sole SOT) + approach A* + R-0115 DQ1–DQ8 + CF1–CF5 closed + no DEC-0130 + success test (c) prose intact | architecture.md, `decisions/DEC-0122.md` (read-only verify) |
-| T-001 | Amend `po.md` active+template: `bash: ask`; add intake_evidence/**, resume_brief.md, state.md; `**` deny last | `.opencode/agents/po.md` + template |
-| T-002 | Amend `tech-lead.md` + `curator.md`: `bash: ask`; tech-lead `Sxxxx`→`S*` for sprint.md/tasks.md | active + template |
-| T-003 | Amend `dev.md` + `qa.md`: sprint keys `Sxxxx`→`S*` | active + template |
-| T-004 | Amend `release.md`: +release-findings, +verify-work-to-release, +state.md, +resume_brief.md, +runbook.md; keep verify_to_release | active + template |
-| T-005 | Amend `tests/us0122_contract_test.py` expectations to amended §2 matrix | us0122_contract_test.py (+ template if paired) |
-| T-006 | Add 7 `test_bug0016_*` markers + active↔template parity gate | `tests/bug0016_contract_test.py` (+ template) |
-| T-007 | DQ8: verify plugin write-guard does not re-deny duty globs for owning roles; document only; amend DEC-0124/0125 **only if** contradiction proven | orchestrator write-guard (read/verify) |
-
-**Task count**: 8 seeds (T-anch + T-001..T-007). `SPRINT_MAX_TASKS=12` — no auto-split. Not `/quick` (multi-file matrix + dual test surfaces).
-
-## Decision linkage
-
-- Decision: **DEC-0122** (Accepted — **§2 amended in THIS phase** by BUG-0016; sole matrix SOT)
-- Companion DEC: **none** (DEC-0130 rejected)
-- Compose (do not amend unless T-007 proves): **DEC-0124**, **DEC-0125**, **DEC-0069**, **US-0078** / **US-0079**, **US-0126** (runbook prose ownership)
-- Research: **R-0115** (composes **R-0109**)
-- Related: **US-0122**, **BUG-0015** (DONE compose-note only), **US-0131** / **US-0132** (out of scope)
-
-## Isolation evidence (US-0048 / DEC-0029)
-
-- `phase_id=architecture`, `role=tech-lead`, `bug_id=BUG-0016`, `sprint_id=none`, `orchestrator_run_id=auto-20260906-bug0016`
-- `delivery_mode=ultra_lean`, `macro_phase=plan`
-- `fresh_context_marker=tl-BUG0016-architecture-20260906T184500Z-fresh`, `timestamp=2026-09-06T18:45:00Z`
-- Narrow-read: R-0115; BUG-0016 backlog/acceptance; DEC-0122 §2; `# BUG-0015` template; critic `b0016rs-*`; architecture heading policy
-- No agent frontmatter mutation in this phase (execute owns); no DONE flip; acceptance unchecked
-
-## Strict runtime proof
-
-- `runtime_proof_id=rp-auto-20260906-bug0016-architecture-techlead-20260906T184500Z-BUG-0016`
-- Canonical payload: `{"delivery_mode":"ultra_lean","macro_phase":"plan","model_id":"composer-2.5","orchestrator_run_id":"auto-20260906-bug0016","phase_id":"architecture","proof_issued_at":"2026-09-06T18:45:00Z","proof_ttl_seconds":3600,"role":"tech-lead","runtime_proof_id":"rp-auto-20260906-bug0016-architecture-techlead-20260906T184500Z-BUG-0016","sprint_id":"none","story_id":"BUG-0016"}`
-- `proof_hash=7AC851CDF1953594365AFF11B015BFD850E737F75A327FA2A02B1CCB544D5A31`
-- `proof_ttl=2026-09-06T19:45:00Z`
-
 # BUG-0017 — OpenCode pack CRLF / LF normalization (Linux slash commands)
 
 ## Overview
@@ -2852,3 +2695,180 @@ AC coverage is surjective across T-001..T-011; sprint-plan owns **S0156** materi
 - `proof_ttl=2026-09-17T22:14:00Z`
 - `hash_recompute_confirmation=true` (compute_strict_proof_hash → AC546FD44FE347547D9DD92F79C906DC71B2212DD27969336F73F9475C48708D; independently MATCH; **64 hex** verified)
 - Consumed research proof: `rp-auto-20260917-us0148-research-techlead-20260917T211200Z-US-0148` / `5F986CEE216B57CFD2DB191C8C4CE1CD9539596DCA6A35AEB9E91CE4729B0A4C` — RUNTIME_PROOF_VALID MATCH before TTL `2026-09-17T22:12:00Z` (consumed_at `2026-09-17T21:14:00Z`; not STALE)
+
+# BUG-0025 — npm publish of its-magic omits scripts/standalone_runtime_install_lib.py
+
+## Overview
+
+**`BUG-0025`** closes the **published-kit packaging omit** that leaves global `its-magic@0.1.3` without `scripts/standalone_runtime_install_lib.py`. Operator upgrade/missing then crashes after `HOST_CONFIG_POSTINSTALL_OK` with a raw `FileNotFoundError` from `_load_standalone_runtime_install_lib` → `exec_module`. Repo-local lib exists; root `package.json` `files` does not list it.
+
+Distinct from **BUG-0022 OPEN** / **BUG-0024 OPEN** (do **not** merge or drain). Compose **US-0147 DONE** / **R-0144** / **DEC-0147** — packaging + fail-closed loader + pack/guard + patch republish only; do **not** reopen US-0147 ACs or rewrite hook/adoption/kernel semantics. Semver quirk `0.1.3-11`→`0.1.3` **OUT** of primary scope (optional release-notes note). Do **not** wipe **R-0148** or rewrite historical `# US-0147` / `# US-0148` bodies.
+
+**Research anchor**: **`R-0149`** (DQ1–DQ10 LOCKED; winner **A1**). **Companion DEC**: **none** — this H1 is the sole architecture lock surface. **EARLY_RESEARCH=0**. Optional modes: `CROSS_REPO_OBSERVABILITY=0` / `COMPONENT_SCOPE_MODE=0` / `SPEC_PACK_MODE=0` / `USER_GUIDE_MODE=0` — skipped.
+
+**Fresh context marker**: `tl-BUG0025-architecture-20260918T170000Z-fresh`
+**Orchestrator run id**: `auto-20260918-bug0025`
+**Parent**: `cursor-20260918-BUG0025-intake`
+**Timestamp**: 2026-09-18T17:00:00Z (UTC)
+**Verdict**: PASS (`decision_gate=false`)
+**Next**: `/sprint-plan` (expected **S0157** — do **not** create this phase)
+**baseline_h2_count (pre-mutate)**: `0`
+
+## Approach locked (A1 — from R-0149 DQ1–DQ10)
+
+**Approach A1 (A\*)** (locked):
+
+1. Add **one** root `package.json` `files` entry: **`scripts/standalone_runtime_install_lib.py`**.
+2. Harden `installer.py` `_load_standalone_runtime_install_lib`: **`os.path.isfile(lib_path)` before `spec_from_file_location` / `exec_module`** (mirror `_load_doc_profile_lib`); on miss raise/print **`[STANDALONE_BOOTSTRAP_FAILED]`** — **no** raw `FileNotFoundError` as operator-visible outcome. Wrap `bootstrap_standalone_runtime_installer_hook` / `run_standalone_postinstall` so upgrade/missing exits **1** with that token when the lib is absent.
+3. Contract tests in **`tests/bug0025_packaging_contract_test.py`** (DQ10 markers below).
+4. **Optional**: extend `scripts/guard_installer_publish.py` to assert the allowlist entry (and/or packed path) — keep US-0133 **omit-`standalone/`** intact; never require `standalone/` in `files`.
+5. **Patch version bump republish** (e.g. `0.1.3` → `0.1.4`) via existing `RELEASE_PUBLISH_MODE` / release-all path so `npm install -g its-magic@0.1.4` (or `@latest`) includes the lib. Same-line republish of `0.1.3` is fragile (npm immutability) — prefer bump.
+6. **Residual (DQ2)**: `load_supported_range(script_dir)` reads `standalone/packages/kernel-bridge/supported-kernel-range.json` under package root — absent on published kit. Fail-closed into **`STANDALONE_BOOTSTRAP_FAILED`** / existing **`KERNEL_*`**. Do **not** add `standalone/` to `files`. Do **not** add a tiny JSON peer to `files` unless execute proves otherwise (default: fail-closed without new entry).
+
+| Option | Summary | Verdict |
+|--------|---------|---------|
+| **A1** | One `files` entry + isfile fail-closed loader + npm pack contract + optional guard + patch republish | **Preferred / LOCKED** |
+| A2 | Allowlist only; leave raw FileNotFoundError | **Rejected** — AC-3 |
+| A3 | Inline/vendor lib into `installer.py` | **Rejected** — US-0147 compose |
+| A4 | Allowlist entire `scripts/` | **Rejected** — over-broad |
+| A5 | Ship `standalone/` in npm `files` | **Rejected** — US-0133 |
+| A6 | Reopen US-0147 / merge BUG-0022\|0024 | **Rejected** — DQ7/DQ8 |
+
+### Locked pins (architecture-owned)
+
+| Pin | Value |
+|-----|-------|
+| `files` entry string | `scripts/standalone_runtime_install_lib.py` (exactly one new entry) |
+| Loader shape | isfile-before-exec; emit `STANDALONE_BOOTSTRAP_FAILED`; no raw FileNotFoundError |
+| Test file | `tests/bug0025_packaging_contract_test.py` |
+| Guard | Optional allowlist assert in `guard_installer_publish.py`; omit-`standalone/` held |
+| Republish | Patch bump (current kit `0.1.3` → next patch, e.g. `0.1.4`) |
+| Template parity | No `template/scripts/standalone_runtime_install_lib.py` mirror |
+| Companion DEC | **none** |
+| Expected sprint | **S0157** (materialize at `/sprint-plan` only) |
+
+## Design challenge (assumptions / simpler / risks)
+
+- **Alternative to allowlist?** Vendor/inline lib into `installer.py`. Smaller packaging surface; breaks US-0147 compose and dual-maintains logic. **Rejected.**
+- **Alternative to fail-closed?** Document “reinstall same version” / leave FileNotFoundError. Fails AC-3/AC-4. **Rejected.**
+- **Can this be simpler?** Allowlist-only without loader harden fails AC-3 when path still missing. Guard-only without named `test_bug0025_*` fails DQ5. A1 (one file + mirror doc_profile pattern + 5–6 tests) is the simplest design that meets AC-1..AC-8.
+- **Governance fork?** Packaging completeness + fail-closed reason code — not a DEC-class product fork. **`decision_gate=false`**. No companion DEC.
+- **Supported-range residual:** fail-closed without shipping `standalone/` (US-0133). Operator on published kit must not see raw `FileNotFoundError` for that JSON either.
+
+## Components
+
+### package.json `files` (DQ1, AC-1/AC-2)
+
+Add exactly:
+
+```json
+"scripts/standalone_runtime_install_lib.py"
+```
+
+Do not add `scripts/`, do not add `standalone/`, do not remove existing intake/materialize/remote_config/guard/doc_profile peers.
+
+### Installer loader (DQ3, AC-3/AC-4)
+
+In `installer.py` `_load_standalone_runtime_install_lib`:
+
+1. Resolve `lib_path` adjacent to `installer.py` (same as today).
+2. If `not os.path.isfile(lib_path)` → raise `RuntimeError("[STANDALONE_BOOTSTRAP_FAILED] …")` (or return-path that prints the same token).
+3. Else `spec_from_file_location` + `exec_module` as today.
+4. Ensure `bootstrap_standalone_runtime_installer_hook` / `run_standalone_postinstall` catch and exit **1** with **`STANDALONE_BOOTSTRAP_FAILED`** printed — operator must not see an uncaught `FileNotFoundError` traceback as the primary outcome.
+
+Keep `bootstrap_standalone_runtime_installer_hook` call sites and US-0147 reason-code family. Do not rewrite adoption classifier, template mirror layout, shim paths, kernel handshake, browser gate, or uninstall mode behavior.
+
+### Pack / guard contract (DQ4, DQ5, AC-5)
+
+Primary: pytest contract via `npm pack --dry-run --json` (or temp `.tgz` member list) asserting posix path `scripts/standalone_runtime_install_lib.py` (or `package/scripts/...`) **and** root `package.json` `files` contains the exact string.
+
+Optional: `guard_installer_publish.py` fails closed when the allowlist entry is missing (and optionally when pack inventory omits it). Existing US-0133 omit-`standalone/` check stays authoritative.
+
+### Republish (DQ6, AC-6)
+
+Patch-bump version in kit `package.json` (and packaging twins as existing release path requires) then publish through release-all / `RELEASE_PUBLISH_MODE`. Release notes cite upgrade command for operators still on `0.1.3`. Semver quirk note optional only.
+
+### Supported-range residual (DQ2)
+
+When `supported-kernel-range.json` under package-root `standalone/` is absent, fail-closed into `STANDALONE_BOOTSTRAP_FAILED` / `KERNEL_*`. **Do not** add `standalone/` to `files`.
+
+## Test contract (DQ10)
+
+File: `tests/bug0025_packaging_contract_test.py` — **5–6** named tests:
+
+1. `test_bug0025_package_json_files_lists_standalone_runtime_install_lib` — AC-2
+2. `test_bug0025_npm_pack_includes_standalone_runtime_install_lib` — AC-1 / AC-5
+3. `test_bug0025_load_missing_lib_emits_standalone_bootstrap_failed` — AC-3
+4. `test_bug0025_bootstrap_wrapper_no_raw_filenotfound_traceback` — AC-3 / AC-4
+5. `test_bug0025_guard_installer_publish_requires_allowlist_entry` — AC-5 (optional if guard extended; else skip with note in sprint task)
+6. `test_bug0025_us0147_compose_hook_call_sites_unchanged` — AC-7 smoke (hook presence; no reopen)
+
+Keep prior `test_bug0001_*` / `test_bug0003_*` / US-0084 / US-0133 / `test_us0147_*` green — additive only (DQ8).
+
+## AC coverage
+
+| AC | Architecture owner | Tests / evidence |
+|----|-------------------|------------------|
+| AC-1 | DQ1+DQ2+DQ4 pack membership | `test_bug0025_npm_pack_includes_standalone_runtime_install_lib` |
+| AC-2 | DQ1 `files` string | `test_bug0025_package_json_files_lists_standalone_runtime_install_lib` |
+| AC-3 | DQ3 loader fail-closed | `test_bug0025_load_missing_lib_emits_standalone_bootstrap_failed`, `test_bug0025_bootstrap_wrapper_no_raw_filenotfound_traceback` |
+| AC-4 | DQ3 wrapper exit path | same + upgrade/missing bootstrap path |
+| AC-5 | DQ4+DQ5 contract (+ optional guard) | pack test + optional guard test |
+| AC-6 | DQ6 patch republish | release task / notes (execute+release) |
+| AC-7 | DQ7 US-0147 compose-only | `test_bug0025_us0147_compose_hook_call_sites_unchanged` |
+| AC-8 | Sibling BUG-0022/0024 boundary | sprint/backlog notes; no merge/drain |
+
+Acceptance checkbox: `docs/product/acceptance.md` BUG-0025 row remains unchecked until closure (US-0045). Status stays **OPEN**.
+
+## Risks (architecture-owned)
+
+| Risk | Mitigation |
+|------|------------|
+| Published kit fails later on package-root `supported-kernel-range.json` | Fail-closed residual (DQ2); do not add `standalone/` to `files` |
+| Guard false-positive vs US-0133 omit check | Guard asserts **script allowlist presence** only |
+| Operator stays on `0.1.3` after bump | AC-6 release notes + upgrade command |
+| US-0147 test drift | Keep `test_us0147_*` green; bug0025 tests additive only |
+| Same-line `0.1.3` republish rejected by npm | Prefer patch bump to `0.1.4` |
+
+## Atomic task seeds (for `/sprint-plan` → **S0157**)
+
+| # | Seed | Surfaces |
+|---|------|----------|
+| T-anch | Verify `# BUG-0025` H1 + R-0149 A1 DQ1–DQ10 + no companion DEC + US-0147 compose-only + BUG-0022/0024 not drained | architecture.md, R-0149 (read-only) |
+| T-001 | Add `scripts/standalone_runtime_install_lib.py` to root `package.json` `files` | `package.json` |
+| T-002 | Harden `_load_standalone_runtime_install_lib` isfile-before-exec → `STANDALONE_BOOTSTRAP_FAILED` | `installer.py` (loader) |
+| T-003 | Wrap bootstrap / `run_standalone_postinstall` so missing lib exits 1 with token (no raw FileNotFoundError) | `installer.py` (wrappers) |
+| T-004 | Fail-closed supported-range residual into `STANDALONE_BOOTSTRAP_FAILED` / `KERNEL_*` (no `standalone/` in `files`) | `installer.py` / lib call path |
+| T-005 | Author `tests/bug0025_packaging_contract_test.py` markers 1–4 + 6 (and 5 if guard extended) | `tests/bug0025_packaging_contract_test.py` |
+| T-006 | Optional: extend `guard_installer_publish.py` allowlist assert; keep omit-`standalone/` | `scripts/guard_installer_publish.py` |
+| T-007 | Patch version bump (e.g. 0.1.3→0.1.4) + packaging twin sync as release path requires | `package.json` + packaging twins |
+| T-008 | Release notes / runbook troubleshooting pointer for upgrade command + optional semver quirk note | release notes / runbook |
+| T-009 | Republish via existing release-all / `RELEASE_PUBLISH_MODE` (AC-6) | release path |
+| T-010 | Confirm `test_us0147_*` + BUG-0001/0003 / US-0084 / US-0133 guards still green | CI / scoped pytest |
+
+**Task count**: 11 seeds (T-anch + T-001..T-010) ≤ `SPRINT_MAX_TASKS=12`. Not `/quick`. Sprint-plan owns **S0157** materialization — **this phase does not create `sprints/S0157/`**.
+
+## Decision linkage
+
+- Decision: **none** (companion DEC not required — cite **R-0149** / this `# BUG-0025`)
+- Compose (do not amend bodies): **DEC-0147** / **US-0147** / **US-0133** / **US-0084** / BUG-0001 / BUG-0003 packaging lineage
+- Research: **R-0149** (do not wipe **R-0148**)
+- Related: **BUG-0022 OPEN** / **BUG-0024 OPEN** — not mutated; **US-0148** — not mutated
+
+## Isolation evidence (US-0048 / DEC-0029)
+
+- `phase_id=architecture`, `role=tech-lead`, `bug_id=BUG-0025`, `sprint_id=none` (S0157 expected at sprint-plan)
+- `delivery_mode=ultra_lean`, `macro_phase=plan`, `model_id=inherit` (CROSS_MODEL_REVIEW=0)
+- `fresh_context_marker=tl-BUG0025-architecture-20260918T170000Z-fresh`, `timestamp=2026-09-18T17:00:00Z` (UTC)
+- `evidence_ref=docs/engineering/research.md ## R-0149; docs/product/backlog.md ### BUG-0025; docs/engineering/architecture.md (this # BUG-0025); handoffs/resume_brief.md; handoffs/po_to_tl.md`
+- Fresh tech-lead subagent per BUG-0006; narrow-read only. No `.env`. No companion DEC. No `sprints/S0157/`. No Status/AC mutation. No `/sprint-plan` spawn. No npm-publish. No git push. No sovereign-critic (CROSS_MODEL_REVIEW=0).
+
+## Strict runtime proof (mirror)
+
+- `runtime_proof_id=rp-auto-20260918-bug0025-architecture-techlead-20260918T170000Z-BUG-0025`
+- Canonical hashed payload (DEC-0038, `compute_strict_proof_hash` positional): `{"orchestrator_run_id":"auto-20260918-bug0025","phase_id":"architecture","proof_issued_at":"2026-09-18T17:00:00Z","proof_ttl_seconds":3600,"role":"tech-lead","runtime_proof_id":"rp-auto-20260918-bug0025-architecture-techlead-20260918T170000Z-BUG-0025"}`
+- Isolation extras (not hashed): `delivery_mode=ultra_lean`, `macro_phase=plan`, `model_id=inherit`, `sprint_id=none`, `bug_id=BUG-0025`, `skipped_phases=[intake]`, `CROSS_MODEL_REVIEW=0`, `native_chain_active=true`, `native_chain_continuing=true`, `segment_work_item_kind=bug`
+- `proof_hash=DA89597E0B3BD3F37E33AE7A83BFAFF70B4CD04EEDB22BDAE0D7C283FF09B8BE`
+- `proof_ttl=2026-09-18T18:00:00Z`
+- `hash_recompute_confirmation=true` (compute_strict_proof_hash → DA89597E0B3BD3F37E33AE7A83BFAFF70B4CD04EEDB22BDAE0D7C283FF09B8BE; independently MATCH; **64 hex** verified)
+- Consumed research proof: `rp-auto-20260918-bug0025-research-techlead-20260918T165500Z-BUG-0025` / `8E27420FCD21FE740C6015A45AB789057024E91BEA858636968488C1ACBFD249` — RUNTIME_PROOF_VALID MATCH before TTL `2026-09-18T17:55:00Z` (consumed_at `2026-09-18T17:00:00Z`; not STALE)

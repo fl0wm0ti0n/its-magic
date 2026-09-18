@@ -203,5 +203,6 @@ Per **`DEC-0061`** §8 / **`US-0079`**: portfolio checkbox rows **`- [ ]` / `- [
 - [ ] BUG-0022: `/auto` Task-spawns inherit parent chat model instead of role_catalog
 - [x] BUG-0023: OpenCode CLI TUI listed `/auto` toasts OPENCODE_AUTO_TUI_DISPATCH_UNSUPPORTED (dispatch live-falsified)
 - [ ] BUG-0024: OpenCode CLI TUI listed `/auto` still toasts OPENCODE_AUTO_TUI_DISPATCH_UNSUPPORTED after BUG-0023 Axis A (live dispatch falsified)
+- [x] BUG-0025: npm publish of its-magic@0.1.3 omits scripts/standalone_runtime_install_lib.py (upgrade FileNotFoundError) — kit fix shipped at 0.1.4; registry republish deferred (`npm_published=false`; operator confirm)
 
 Validator (backlog bugs + optional drift vs this section): `python scripts/bug_issue_validate.py --backlog docs/product/backlog.md --check-acceptance`.

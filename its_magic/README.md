@@ -120,6 +120,8 @@ Pick one method:
 
 If **`its-magic --target <repo> --mode missing`** fails with **`[INSTALL_MANIFEST_ERROR] install_include_paths section is empty`** on Debian/Linux while the packaged manifest still lists paths, the global install likely has **CRLF** line endings in **`installer-owned-paths.manifest`** (visible as **`^M$`** with **`cat -A`**). **Fix in-tree** from **`0.1.2-41`**: **`installer.sh`** strips trailing carriage returns before section matching; **`.gitattributes`** keeps **`*.manifest`** LF; **`prepublishOnly`** runs **`guard_installer_publish`**. **Upgrade**: install a build **≥ `0.1.2-41`** (or reinstall from a fresh **`npm pack`** tarball after pull). Older tarballs such as **`its-magic@0.1.2-40`** may remain broken until republished — see **`docs/engineering/architecture.md`** **`# BUG-0008`**.
 
+If **`its-magic --mode upgrade|missing`** crashes after **`HOST_CONFIG_POSTINSTALL_OK`** with a raw **`FileNotFoundError`** for **`scripts/standalone_runtime_install_lib.py`**, the published **`its-magic@0.1.3`** tarball omitted that allowlisted script (**BUG-0025**). **Upgrade**: **`npm install -g its-magic@0.1.4`** (or **`@latest`** once published). From **`0.1.4`**, missing lib fails closed with **`[STANDALONE_BOOTSTRAP_FAILED]`** instead of a raw traceback. Optional note: local **`0.1.3-11`** → published **`0.1.3`** was a semver quirk, not the primary fix path.
+
 ### 2) Apply to a repo
 
 New repo:
@@ -383,8 +385,6 @@ Generated test scaffolding + auto-run behavior (US-0066):
 - `/pause`, `/resume`, `/refresh-context`.
 - `/auto`: orchestration mode that spawns a fresh subagent per phase.
 - **US-0124**: OpenCode orchestrator plugin spawn-only `/auto` (Task-spawns US-0069 roles, never executes phase work in-session).
-- **BUG-0019** — OpenCode TUI slash lists `/auto` via `its-magic-auto/tui.ts` keymap after plugin-only ownership (`BUG-0018`); does not restore `auto.md`.
-- **BUG-0020** — OpenCode desktop Command.Info cannot list execute-only `/auto`; CLI TUI `/auto` via project `.opencode/tui.json` + desktop fail-closed `OPENCODE_AUTO_DESKTOP_COMMAND_INFO_LISTING_UNSUPPORTED`; does not restore `auto.md`.
 
 ### OpenCode host operator runbook (US-0126)
 

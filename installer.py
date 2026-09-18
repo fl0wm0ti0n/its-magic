@@ -899,12 +899,36 @@ def run_kit_config_postinstall(target_root, source_root, mode, print_ok=True):
 
 
 def _load_standalone_runtime_install_lib():
-    lib_path = os.path.join(os.path.dirname(os.path.abspath(__file__)), "scripts", "standalone_runtime_install_lib.py")
+    """
+    Load standalone_runtime_install_lib from scripts/ adjacent to this installer.
+    Path is derived from __file__ only (no cwd / PYTHONPATH dependency).
+    Fail-closed with STANDALONE_BOOTSTRAP_FAILED before exec_module (BUG-0025).
+    """
+    here = os.path.dirname(os.path.abspath(__file__))
+    lib_path = os.path.join(here, "scripts", "standalone_runtime_install_lib.py")
+    if not os.path.isfile(lib_path):
+        raise RuntimeError(
+            "[STANDALONE_BOOTSTRAP_FAILED] Expected standalone_runtime_install_lib at "
+            f"{lib_path} (same directory as installer.py). "
+            "Global installs require this file in the published its-magic package; "
+            f"reinstall or upgrade its-magic ({REPO_URL})."
+        )
     spec = importlib.util.spec_from_file_location("standalone_runtime_install_lib", lib_path)
     if spec is None or spec.loader is None:
-        raise RuntimeError("[STANDALONE_BOOTSTRAP_FAILED] standalone_runtime_install_lib missing")
+        raise RuntimeError(
+            "[STANDALONE_BOOTSTRAP_FAILED] Could not create import spec for "
+            f"{lib_path}. Reinstall its-magic ({REPO_URL})."
+        )
     mod = importlib.util.module_from_spec(spec)
-    spec.loader.exec_module(mod)
+    sys.modules["standalone_runtime_install_lib"] = mod
+    try:
+        spec.loader.exec_module(mod)
+    except Exception as e:
+        sys.modules.pop("standalone_runtime_install_lib", None)
+        raise RuntimeError(
+            "[STANDALONE_BOOTSTRAP_FAILED] standalone_runtime_install_lib failed to load "
+            f"({e!r}). Reinstall its-magic ({REPO_URL})."
+        ) from e
     return mod
 
 
@@ -916,12 +940,24 @@ def classify_project_adoption_profile(target_root):
 def bootstrap_standalone_runtime_installer_hook(target_root, source_root, script_dir=None, print_ok=True):
     """Standalone runtime bootstrap (post host-config refresh, pre runbook bootstrap)."""
     script_dir = script_dir or normalize(os.path.dirname(os.path.abspath(__file__)))
-    lib = _load_standalone_runtime_install_lib()
-    ok, code = lib.bootstrap_standalone_runtime_installer_hook(
-        target_root,
-        source_root,
-        script_dir,
-    )
+    try:
+        lib = _load_standalone_runtime_install_lib()
+        ok, code = lib.bootstrap_standalone_runtime_installer_hook(
+            target_root,
+            source_root,
+            script_dir,
+        )
+    except RuntimeError as exc:
+        msg = str(exc)
+        if "STANDALONE_BOOTSTRAP_FAILED" not in msg:
+            print(f"[STANDALONE_BOOTSTRAP_FAILED] {msg}")
+        else:
+            print(msg)
+        return False
+    except (FileNotFoundError, OSError) as exc:
+        # Belt-and-suspenders: never surface raw FileNotFoundError as primary outcome.
+        print(f"[STANDALONE_BOOTSTRAP_FAILED] standalone_runtime_install_lib missing: {exc}")
+        return False
     if print_ok and ok:
         print("[STANDALONE_POSTINSTALL_OK] standalone runtime bootstrap complete.")
     if not ok and code:

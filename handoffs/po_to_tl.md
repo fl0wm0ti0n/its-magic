@@ -1,167 +1,3 @@
-## Research handoff — US-0144 Sovereign memory, reviews, and convergence
-
-- **Phase completed**: research. **Role**: tech-lead. **Story**: US-0144 only. **Sprint**: (S0152 exists OUT of research authorship; sprint-plan owns it). **Verdict**: PASS (`decision_gate=false`).
-- **Timestamp (UTC)**: 2026-09-15T18:43:00Z. **Fresh marker**: `tl-US0144-research-20260915T184300Z-fresh`.
-- **Orchestrator**: `orchestrator_run_id=auto-20260913-us0144`, parent=`auto-20260913-us0143`, `delivery_mode=ultra_lean`, resolved_phase_plan=`[spec, plan, build+verify, ship]`, macro=`plan` (research = first of research+architecture+sprint-plan), `model_id=cursor-grok-4.6-high` (CROSS_MODEL_REVIEW=1), AUTO_QUIET=1, FRAMEWORK_KIT_REPO=1, drain story 10 of 10.
-- **Sibling boundary**: **US-0143 DONE** — compose RouteScheduled / drain / critic-hook slot only; do not reopen. **US-0133..US-0142 DONE** — compose only; do not reopen. **US-0145..US-0148 OPEN** — OUT OF SCOPE. **BUG-0021 DONE / BUG-0022 OPEN / BUG-0023 DONE / BUG-0024 OPEN** — do not mutate; do not drain bugs. Do not restore `.opencode/commands/auto.md`. Do not ship kit `cli.json` or plugin-local `its-magic-auto/tui.json`. Do not author or mutate DEC-0144 / `# US-0144` / `sprints/S0152/` this phase.
-- **Research anchor**: `docs/engineering/research.md` **`## R-0142`** (DQ1–DQ10 LOCKED). Heading not duplicated. Attestation subsection appended only. Discovery D1–D10 not rewritten. Do not wipe **R-0141** (US-0143).
-- **Approach**: Nested sovereign-runtime in `@its-magic/runtime-core` + typed `KernelBridge.runSovereignOperation()` composing existing Python libs. Reject general script runner, TS schema ports, sibling package, Pi, prompt-only critic content, US-0145/US-0146, GateEngine/US-0143 drain rewrite.
-- **Companion DEC**: **DEC-0144** at `/architecture` only — do **not** author/mutate `decisions/DEC-0144.md` this phase. Do **not** author `# US-0144`.
-
-### Closed questions DQ1–DQ10
-
-| DQ | Topic | Resolution | LOCK |
-|----|-------|------------|------|
-| DQ1 | Package | Nested sovereign-runtime in `@its-magic/runtime-core` + typed KernelBridge; no sibling; no Pi | LOCKED |
-| DQ2 | Lift critic slot | `scheduleSupplementaryHooks` only; preserve CommandRouter drain, `runAuto`/`runQuick`, `RELEASE_GATE_ORDER` | LOCKED |
-| DQ3 | Ledger | Python 12-field ledger + append-only session sidecar; QA reads `plan_fidelity` + sidecar; no TS dual-write | LOCKED |
-| DQ4 | Memory | `build_injection_digest_block` after phase context before role; never full store; default-off zero-I/O | LOCKED |
-| DQ5 | Critic model | Bridge `critic_model` → `select_critic_model`; pinning; explicit degraded same-model | LOCKED |
-| DQ6 | Role reviews | `list_obligations_for_phase` + `dispatch_role_review` as supplementary sessions; never replace producer | LOCKED |
-| DQ7 | Deferrals | `deferral_append`/`deferral_list` + exclusive `gateDrainCandidate`; `SOVEREIGN_DRAIN_AUTO_ACCEPT=0` | LOCKED |
-| DQ8 | Convergence | Consume `evaluate_convergence`; blocking-only critic conjunct; smoke never fake browser PASS | LOCKED |
-| DQ9 | Operator-visible | Runtime results/artifacts (`goal_progress`, caps, partial-delivery); CLI/TUI is US-0146 | LOCKED |
-| DQ10 | Tests + kit + R-id | 12 `test_us0144_*`; kit `files` omit `standalone/`; **R-0142**; R-0141 held | LOCKED |
-
-### Architecture seeds
-
-- `/architecture` may attest existing `# US-0144` and **DEC-0144** (already on disk; research did not author them). `/sprint-plan` owns S0152.
-- Seeds remain architecture-owned (expect T-anch + T-001.. covering the 12 tests; ≤ SPRINT_MAX_TASKS=12).
-- Do not implement application code this phase. Do not restore `auto.md`. Do not reopen US-0143. Do not mutate US-0145+ / BUG-*.
-
-### Runtime proof (DEC-0038)
-
-- `runtime_proof_id=rp-auto-20260913-us0144-research-techlead-20260915T184300Z-US-0144`
-- `proof_hash=60382EB2AA2C27583B31E6BF2672660A6B52D2A0C78B40545CD1541239C0E71F`
-- `proof_ttl=2026-09-15T19:43:00Z`
-- Hash via `from scripts.token_cost_lib import compute_strict_proof_hash` (positional; compact sorted-key JSON).
-- Canonical hashed payload: `{"orchestrator_run_id":"auto-20260913-us0144","phase_id":"research","proof_issued_at":"2026-09-15T18:43:00Z","proof_ttl_seconds":3600,"role":"tech-lead","runtime_proof_id":"rp-auto-20260913-us0144-research-techlead-20260915T184300Z-US-0144"}`
-- Isolation extras (not hashed): `delivery_mode=ultra_lean`, `macro_phase=plan`, `model_id=cursor-grok-4.6-high`, `sprint_id=none`, `story_id=US-0144`, `skipped_phases=[intake]`, `native_chain_active=true`, `native_chain_continuing=true`
-- `hash_recompute_confirmation=true` (compute_strict_proof_hash → 60382eb2aa2c27583b31e6bf2672660a6b52d2a0c78b40545cd1541239c0e71f; independently MATCH; **64 hex** verified; stored uppercase)
-- Consumed discovery producer proof: `rp-auto-20260913-us0144-discovery-po-20260915T183419Z-US-0144` / `560B4D3028D921EA85B9893CC2D378D74B7F6FA3DA35A2F74A60A334448CBBBC` — RUNTIME_PROOF_VALID (MATCH before TTL `2026-09-15T19:34:19Z`; consumed_at `2026-09-15T18:43:00Z`; independent recompute MATCH)
-- Consumed discovery critic proof: `rp-auto-20260913-us0144-sovereign-critic-techlead-20260915T183700Z-US-0144` / `8FBC3E6CA685876B732A307F584BDB8DFFB9B32185E8E8CBAA73BF0A6677A9CE` — RUNTIME_PROOF_VALID (MATCH before TTL `2026-09-15T19:37:00Z`; consumed_at `2026-09-15T18:43:00Z`; independent recompute MATCH)
-
-### Isolation + stop
-
-- `phase_id=research`, `role=tech-lead`, `story_id=US-0144`, `model_id=cursor-grok-4.6-high`, `fresh_context_marker=tl-US0144-research-20260915T184300Z-fresh`
-- `evidence_ref=docs/engineering/research.md ## R-0142; docs/product/backlog.md ## US-0144; docs/product/vision.md ## Discovery Notes — US-0144; this handoff; docs/engineering/state.md research checkpoint; handoffs/resume_brief.md`
-- **Hot-surface note**: Appended (not prepended) so triad oldest-prefix rollover retains this newest section. Post-append `--rollover --json` `{"boundary":"triad-rollover|state","moved":2,"pack_ref":"docs/engineering/state-archive/state-pack-20260915-b.md","retained_checkpoints":10,"retained_lines":1135}` + `{"boundary":"triad-rollover|po_to_tl","moved":1,"pack_ref":"handoffs/archive/po-to-tl-pack-20260915.md","retained_lines":637,"retained_sections":13}`. `arch_linkage_guard.py` not run (architecture.md not touched). Architecture not rolled this phase.
-- **Status**: US-0144 remains **OPEN**. AC-1..AC-8 remain unchecked. **Next**: orchestrator sovereign-critic of research, then `/architecture` in fresh **tech-lead** subagent. Do not spawn critic or architecture from this research chat. STOP.
-
-## Discovery handoff — US-0146 CLI, TUI, and operational observability
-
-- **Phase completed**: discovery. **Role**: po. **Story**: US-0146 only. **Sprint**: (pending — expected S0153 at `/sprint-plan`). **Verdict**: PASS (`decision_gate=false`).
-- **Timestamp (UTC)**: 2026-09-17T18:36:26Z. **Fresh marker**: `po-US0146-discovery-20260917T183210Z-fresh`.
-- **Orchestrator**: `orchestrator_run_id=auto-20260917-us0146`, parent=`auto-20260913-us0144`, `delivery_mode=ultra_lean`, resolved_phase_plan=`[spec, plan, build+verify, ship]`, reinstatement_mode=`none`, memory_layer=`pack`, macro=`spec` (intake already DONE — not re-intaken; `handoffs/intake_evidence/US-0133-0148-intake-20260911.json` held, not mutated), `model_id=inherit` (MODEL_RESOLVE=alias_only; CROSS_MODEL_REVIEW=0), AUTO_QUIET=1, AUTO_FLOW_MODE=full_autonomy, AUTO_SOVEREIGN=0, FRAMEWORK_KIT_REPO=1, EARLY_RESEARCH=0, drain story 1 of 3 (`backlog_drain_stories_remaining_budget=2`; AUTO_BACKLOG_MAX_STORIES=3). Selection: AUTO_STORY_SELECTION=`priority_then_backlog_order` chose **US-0146** (OPEN P0). US-0147 next P0. US-0145/US-0148 P1 OUT of this segment.
-- **Sibling boundary**: **US-0140..US-0144 DONE** — compose only; do not reopen. **US-0145 / US-0147 / US-0148 OPEN** — OUT OF SCOPE (do not mutate bodies). **BUG-0021 DONE / BUG-0023 DONE** OpenCode TUI listing — do not reopen. **BUG-0022 OPEN** — do not drain. Do not restore `.opencode/commands/auto.md`. Do not ship kit `cli.json` or plugin-local `its-magic-auto/tui.json`.
-- **Gap confirmed (narrow-read)**: `@its-magic/cli` is a Phase-0 stub (`auth`/`models` only). No `standalone/apps/tui`. Kit `bin/its-magic.js` is installer CLI, not `itsm`. Cursor `/auto` is host scheduling-only. Runtime services (CommandRouter, AppRuntime, BrowserUAT, index, sovereign operator-visible results, US-0080 token-cost) exist to consume.
-
-### Discovery locks D1–D10
-
-| ID | Lock |
-|----|------|
-| **D1** | Sibling `@its-magic/cli` (`standalone/apps/cli`, complete the stub) + new `@its-magic/tui` (`standalone/apps/tui`) consume runtime services. **No Pi** on new command paths (US-0135 auth adapter compose only). **Do not** nest CLI/TUI in `@its-magic/runtime-core`. **Do not** rewrite WorkflowEngine / CommandRouter / GateEngine. Observability package vs compose-in-clients = architecture DQ (prefer compose US-0080 + runtime status APIs). |
-| **D2** | Command set vs AC-1: `itsm` interactive + direct `auto`, `intake`, `ask`, `status`, `resume`, `models`, `auth`, `index`, `app`, `browser` plus US-0140 `PROGRAMMATIC_COMMANDS` slash equivalents and US-0143 `/auto`/`/quick`. Compose US-0135 `dispatchItsmCommand` for `auth`/`models`. Kit installer bin stays US-0147. |
-| **D3** | Status (AC-2) presents project, work item, sprint, phase, role, model, backend, app health, index, browser, token, and cost. Compose US-0141 / US-0142 / US-0139 / US-0080 / US-0144 read-only. |
-| **D4** | Chronological run timeline (AC-3) shows phase/rework transitions, PASS/FAIL/stop reasons, session isolation, and evidence links. Client of runtime/repo evidence — does not own workflow. |
-| **D5** | TUI is **client-only** and replaceable (AC-4): conversation, phase, timeline, tool, changed-file, app/log, browser-evidence, model/cost panels. No workflow logic. No graphical IDE/web/mobile in v1. |
-| **D6** | Metrics (AC-5) compose US-0080 token/cache/cost — no conflicting accounting — plus phase duration, tool calls, index latency, files, tests, browser probes, retries, context-pack size. |
-| **D7** | Approval and failure prompts are actionable, accessible, and usable in interactive and non-interactive terminals on **Windows and Linux** (AC-6). |
-| **D8** | Large logs/event streams stay responsive via bounded summaries + evidence refs (AC-7). AC-8 reconnect is local client re-attach to a running runtime, **not** the US-0148 daemon protocol. |
-| **D9** | Tests `test_us0146_*` cover command parity, cancellation, local reconnect, status accuracy, and narrow-terminal behavior. Kit `files` omit `standalone/` unless architecture later proves otherwise. |
-| **D10** | OUT: US-0145 parallel/deploy; US-0147 install/migration; US-0148 daemon/protocol; graphical clients; restore `.opencode/commands/auto.md`; kit `cli.json`; plugin-local `its-magic-auto/tui.json`; npm-publish; git push; `.env`. Research stub **R-0143** (PO does not author `## R-0143`; **R-0142**=US-0144 — do not wipe). Companion **DEC-0146** + `# US-0146` at `/architecture` only. Expected sprint **S0153**. |
-
-### Research questions DQ1–DQ10 (for `/research` → expect **R-0143**; stub only here)
-
-1. **DQ1**: Package layout — complete `@its-magic/cli` + add `@its-magic/tui` as sibling apps vs nested clients in runtime-core. D-lock prefers sibling apps consuming services; no Pi on new paths; architecture confirms whether CLI keeps the US-0135 `pi-kernel` AuthRuntimeAdapter import.
-2. **DQ2**: Command routing — how CLI/TUI invoke US-0140 `PROGRAMMATIC_COMMANDS` and US-0143 `/auto`/`/quick` without rewriting CommandRouter / WorkflowEngine. Slash-equivalent mapping vs AC-1 names (`status`, `resume`, `index`, `app`, `browser`).
-3. **DQ3**: Status aggregation — compose US-0141 AppRuntime health, US-0142 browser, US-0139 index, US-0080 tokens/cost, US-0144 caps/progress into one AC-2 surface without dual-write accounting.
-4. **DQ4**: Timeline source of truth — runtime SQLite ops store vs repository evidence vs both; evidence-link format; rework numbering.
-5. **DQ5**: TUI stack — Pi TUI primitives vs owned replaceable client; panel contract; no workflow ownership; narrow-terminal behavior.
-6. **DQ6**: Metrics — consume US-0080 `token_cost` evidence vs new counters; conflict-avoidance; which fields live in CLI vs existing `handoffs/token_cost_runs/`.
-7. **DQ7**: Approval/failure UX — interactive vs non-interactive; Windows vs Linux terminals; accessibility; mapping to existing stop-matrix / decision-gate prompts.
-8. **DQ8**: Bounded log/stream summaries — reuse US-0141 log-ring summarization vs CLI-owned caps; evidence-ref pointers.
-9. **DQ9**: Local reconnect / cancellation — in-process attach vs US-0148 daemon; cancel maps to existing stop-matrix; test doubles for AC-8 reconnect without shipping protocol.
-10. **DQ10**: Tests — `test_us0146_*` covering AC-1..AC-8. Kit `files` omit `standalone/` unless architecture proves otherwise. **R-id live-inventory**: allocate **R-0143**; do not wipe R-0142 (US-0144).
-
-### Design refs
-
-- `docs/product/standalone-its-magic-pi-masterplan.md` §§28, 29.1–29.2, 32 Phase 8, 37 (DoD 10/12)
-- Compose: US-0140 / DEC-0140 command names; US-0143 / DEC-0143 `/auto`/`/quick`; US-0141 / DEC-0141 app health; US-0142 / DEC-0142 browser evidence; US-0144 / DEC-0144 operator-visible caps (CLI/TUI was DQ9 OUT); US-0135 auth/models; US-0139 index; US-0080 / DEC-0062 token-cost; BUG-0006 / DEC-0051 spawn-only; BUG-0021/BUG-0023 DONE OpenCode TUI (do not reopen)
-- Market: local operator CLIs (Claude Code / Aider / OpenCode TUI) as **inspiration only** — this story owns a standalone `itsm` client, not host restore
-- Intake (read-only): `handoffs/intake_evidence/US-0133-0148-intake-20260911.json` (`cli-tui-observability` → US-0146)
-
-### Research stub (PO does not author `docs/engineering/research.md`)
-
-- **Expected next R-id**: **R-0143** (`ID_NAMESPACE_BOOTSTRAP=0`; highest existing heading is **R-0142** US-0144).
-- Do **not** author `## R-0143` this phase. Do **not** wipe R-0142 (US-0144). Do **not** reuse R-0142.
-- Companion **DEC-0146** + `# US-0146` at `/architecture` only — PO does not author them.
-- Expected sprint **S0153** at `/sprint-plan` only (S0152 = US-0144 released — do not reuse).
-
-### Runtime proof (DEC-0038)
-
-- `runtime_proof_id=rp-auto-20260917-us0146-discovery-po-20260917T183626Z-US-0146`
-- `proof_hash=EF26D4E4E08FB368A8E9B879D01901DBD5DC180D9D0EC2A9F5EAA44EEF04F859`
-- `proof_ttl=2026-09-17T19:36:26Z`
-- Hash via `from scripts.token_cost_lib import compute_strict_proof_hash` (positional; compact sorted-key JSON).
-- Canonical hashed payload: `{"orchestrator_run_id":"auto-20260917-us0146","phase_id":"discovery","proof_issued_at":"2026-09-17T18:36:26Z","proof_ttl_seconds":3600,"role":"po","runtime_proof_id":"rp-auto-20260917-us0146-discovery-po-20260917T183626Z-US-0146"}`
-- Isolation extras (not hashed): `delivery_mode=ultra_lean`, `macro_phase=spec`, `model_id=inherit`, `sprint_id=none`, `story_id=US-0146`, `skipped_phases=[intake]`, `CROSS_MODEL_REVIEW=0`, `native_chain_active=true`, `native_chain_continuing=true`
-- `hash_recompute_confirmation=true` (compute_strict_proof_hash → ef26d4e4e08fb368a8e9b879d01901dbd5dc180d9d0ec2a9f5eaa44eef04f859; independently MATCH; **64 hex** verified; stored uppercase)
-
-### Isolation + stop
-
-- `phase_id=discovery`, `role=po`, `story_id=US-0146`, `model_id=inherit`, `fresh_context_marker=po-US0146-discovery-20260917T183210Z-fresh`
-- `evidence_ref=docs/product/backlog.md ## US-0146 discovery_notes; docs/product/vision.md ## Discovery Notes — US-0146; this handoff; docs/engineering/state.md discovery checkpoint; handoffs/resume_brief.md; handoffs/intake_evidence/US-0133-0148-intake-20260911.json (read-only)`
-- **Hot-surface note**: Appended (not prepended) so triad oldest-prefix rollover retains this newest section. Post-append `--check` STATE_ARCHIVE_REQUIRED `po_to_tl` 704/650 → `--rollover --json` `{"boundary":"triad-rollover|po_to_tl","moved":2,"pack_ref":"handoffs/archive/po-to-tl-pack-20260917.md","retained_lines":610,"retained_sections":12}` (archived `## Architecture handoff — BUG-0023` through `## Research handoff — US-0141`; archived_body_lines=94). State.md not rolled (1152/1200). `arch_linkage_guard.py` not run (architecture.md not touched). Architecture not rolled this phase. final `--check` PASS. Discovery handoff retained at true end of `po_to_tl.md`. **Status**: US-0146 remains **OPEN**. AC-1..AC-8 remain unchecked. Acceptance.md US-0146 row unchecked. **Next**: `/research` in fresh **tech-lead** subagent. CROSS_MODEL_REVIEW=0 — do not spawn sovereign-critic. Do not spawn research from this discovery chat. STOP.
-
-## Research handoff — US-0146 CLI, TUI, and operational observability
-
-- **Phase completed**: research. **Role**: tech-lead. **Story**: US-0146 only. **Sprint**: (pending — expected S0153 at `/sprint-plan`). **Verdict**: PASS (`decision_gate=false`).
-- **Timestamp (UTC)**: 2026-09-17T18:42:00Z. **Fresh marker**: `tl-US0146-research-20260917T184200Z-fresh`.
-- **Orchestrator**: `orchestrator_run_id=auto-20260917-us0146`, parent=`auto-20260913-us0144`, `delivery_mode=ultra_lean`, resolved_phase_plan=`[spec, plan, build+verify, ship]`, macro=`plan` (research = first of research+architecture+sprint-plan), `model_id=inherit` (MODEL_RESOLVE=alias_only; CROSS_MODEL_REVIEW=0), AUTO_QUIET=1, AUTO_FLOW_MODE=full_autonomy, AUTO_SOVEREIGN=0, FRAMEWORK_KIT_REPO=1, EARLY_RESEARCH=0, drain story 1 of 3 (`backlog_drain_stories_remaining_budget=2`).
-- **Sibling boundary**: **US-0140..US-0144 DONE** — compose only. **US-0145 / US-0147 / US-0148 OPEN** — OUT OF SCOPE. **BUG-0021 / BUG-0023 DONE** — do not reopen. Do not restore `.opencode/commands/auto.md`. Do not ship kit `cli.json` or plugin-local `its-magic-auto/tui.json`.
-- **Research anchor**: `docs/engineering/research.md` **`## R-0143`**. Do not wipe **R-0142** (US-0144). Discovery D1–D10 unchanged on backlog.
-- **Approach**: **A1 (A\*)** — sibling `@its-magic/cli` + new `@its-magic/tui` as thin clients; nested `runtime-core/src/operator/` facades (`OperatorCommandFacade`, `OperatorObservabilityService`); auth-only Pi via US-0135 `dispatchItsmCommand`; no WorkflowEngine/CommandRouter/GateEngine rewrite; v1 local in-process reconnect only (not US-0148).
-- **Companion DEC**: **DEC-0146** at `/architecture` only — do **not** author/mutate `decisions/DEC-0146.md` this phase. Do **not** author `# US-0146`.
-
-### Closed questions DQ1–DQ10
-
-| DQ | Topic | Resolution | LOCK |
-|----|-------|------------|------|
-| DQ1 | Package layout | Sibling cli+tui apps; runtime-core `operator/` facades; Pi only on auth/models | LOCKED |
-| DQ2 | Command routing | AC-1 vocabulary via facade → PROGRAMMATIC_COMMANDS + `/auto`/`/quick`; auth/models delegate | LOCKED |
-| DQ3 | Status AC-2 | Read-only snapshot compose US-0141/0142/0139/0080/0144 + runs/repo pointers | LOCKED |
-| DQ4 | Timeline AC-3 | RunsStore audit + repo evidence links; honest divergence | LOCKED |
-| DQ5 | TUI AC-4 | Replaceable terminal client; typed panel DTOs; no workflow ownership | LOCKED |
-| DQ6 | Metrics AC-5 | US-0080 authoritative; derived counters; no dual-write ledger | LOCKED |
-| DQ7 | Approvals AC-6 | Shared OperatorPrompts; Win+Linux; non-interactive fail-closed | LOCKED |
-| DQ8 | Logs AC-7 | Bounded summaries + evidence refs; backpressure on streams | LOCKED |
-| DQ9 | Reconnect/cancel | In-process OperatorSession; existing stop-matrix cancel; not US-0148 | LOCKED |
-| DQ10 | Tests + kit | 9 `test_us0146_*`; kit omit `standalone/`; **R-0143**; S0153 at sprint-plan | LOCKED |
-
-### Architecture seeds (preview)
-
-- `/architecture` authors `# US-0146` + **DEC-0146** Accepted; pins operator module paths, prompt flags, log caps, TUI stack choice.
-- `/sprint-plan` materializes **S0153** (≤12 tasks from architecture seeds).
-- Do not implement application code this phase.
-
-### Runtime proof (DEC-0038)
-
-- `runtime_proof_id=rp-auto-20260917-us0146-research-techlead-20260917T184200Z-US-0146`
-- `proof_hash=75561131E844072FCD975F9A74C3831DF311E87074406C21B014EA42A69ACEDA`
-- `proof_ttl=2026-09-17T19:42:00Z`
-- Hash via `from scripts.token_cost_lib import compute_strict_proof_hash` (positional; compact sorted-key JSON).
-- Canonical hashed payload: `{"orchestrator_run_id":"auto-20260917-us0146","phase_id":"research","proof_issued_at":"2026-09-17T18:42:00Z","proof_ttl_seconds":3600,"role":"tech-lead","runtime_proof_id":"rp-auto-20260917-us0146-research-techlead-20260917T184200Z-US-0146"}`
-- Isolation extras (not hashed): `delivery_mode=ultra_lean`, `macro_phase=plan`, `model_id=inherit`, `sprint_id=none`, `story_id=US-0146`, `skipped_phases=[intake]`, `CROSS_MODEL_REVIEW=0`, `native_chain_active=true`, `native_chain_continuing=true`
-- `hash_recompute_confirmation=true` (compute_strict_proof_hash → 75561131e844072fcd975f9a74c3831df311e87074406c21b014ea42a69aceda; independently MATCH; **64 hex** verified; stored uppercase)
-- Consumed discovery producer proof: `rp-auto-20260917-us0146-discovery-po-20260917T183626Z-US-0146` / `EF26D4E4E08FB368A8E9B879D01901DBD5DC180D9D0EC2A9F5EAA44EEF04F859` — MATCH; not STALE at `2026-09-17T18:42:00Z`
-
-### Isolation + stop
-
-- `phase_id=research`, `role=tech-lead`, `story_id=US-0146`, `model_id=inherit`, `fresh_context_marker=tl-US0146-research-20260917T184200Z-fresh`
-- `evidence_ref=docs/engineering/research.md ## R-0143; docs/product/backlog.md ## US-0146 discovery_notes; this handoff; docs/engineering/state.md research checkpoint; handoffs/resume_brief.md`
-- **Status**: US-0146 remains **OPEN**. AC-1..AC-8 remain unchecked. **Next**: `/architecture` in fresh **tech-lead** subagent. CROSS_MODEL_REVIEW=0 — do not spawn sovereign-critic. Do not spawn architecture from this research chat. STOP.
-
 ## Architecture handoff — US-0146 CLI, TUI, and operational observability
 
 - **Phase completed**: architecture. **Role**: tech-lead. **Story**: US-0146 only. **Sprint**: (pending — expected S0153 at `/sprint-plan`). **Verdict**: PASS (`decision_gate=false`).
@@ -613,3 +449,169 @@ T-anch + T-001..T-011 per `# US-0148` in `docs/engineering/architecture.md` (≤
 - `phase_id=architecture`, `role=tech-lead`, `story_id=US-0148`, `model_id=inherit`, `fresh_context_marker=tl-US0148-architecture-20260917T211400Z-fresh`
 - `evidence_ref=docs/engineering/architecture.md # US-0148; decisions/DEC-0148.md; docs/engineering/research.md ## R-0148; docs/engineering/state.md architecture checkpoint; handoffs/resume_brief.md`
 - **Status**: US-0148 remains **OPEN**. AC-1..AC-8 remain unchecked. **Next**: `/sprint-plan` in fresh **tech-lead** subagent. CROSS_MODEL_REVIEW=0 — do not spawn sovereign-critic. Do not spawn sprint-plan from this architecture chat. STOP.
+
+## Intake handoff — BUG-0025 npm publish omits standalone_runtime_install_lib.py
+
+- **Phase completed**: intake (`/intake bug`). **Role**: po. **Bug**: BUG-0025. **Sprint**: (pending). **Verdict**: PASS (`decision_gate=false`).
+- **Timestamp**: 2026-09-18T15:48:00Z. **Fresh marker**: `po-BUG0025-intake-20260918T154800Z-fresh`.
+- **Writer**: `writer_id=po-cursor-20260918-BUG0025-intake`, `intake_run_id=cursor-20260918-BUG0025-intake`.
+- **Routing**: argv `/intake bug` wins over scratchpad `INTAKE_WORK_ITEM_KIND=story`. `selected_pack=small-intake-pack`. `INTAKE_GUIDED_MODE=0`. `WORK_KIND_ROUTING=0`. `EARLY_RESEARCH=0`. Next id confirmed `python scripts/bug_issue_validate.py --print-next-id` → **BUG-0025** before write.
+- **Evidence**:
+  - `handoffs/intake_evidence/BUG-0025-intake-20260918T154800Z.json` — `[INTAKE_EVIDENCE_VALIDATION_OK]` (pre-write)
+  - `python scripts/bug_issue_validate.py --backlog docs/product/backlog.md --check-acceptance` — `[BUG_VALIDATION_OK]`
+  - DEC-0069 resume brief: canonical pointer **prepended** (in-place `upsert_latest_orchestration_pointer` skipped — would clobber ~40 historical `## Latest orchestration pointer` headings). `python scripts/intake_bug_resume_brief_refresh.py --bug-id BUG-0025 --validate-file` → `[INTAKE_RESUME_BRIEF_VALIDATE_OK]`; `intended_resume_phase=discovery`; `resolved_start_phase=discovery`; `resolution_source=resume_brief`; `bug_id=BUG-0025`.
+- **Research**: expected **R-0149** at `/research` (not authored this intake; EARLY_RESEARCH=0). Compose **R-0144** (US-0147). Do not wipe R-0140..R-0148.
+- **Defect**: After `npm install -g its-magic@0.1.3`, `its-magic --target . --mode upgrade --host both` (from v0.1.3-11 → 0.1.3) passes `HOST_CONFIG_POSTINSTALL_OK` then crashes with `FileNotFoundError` for `scripts/standalone_runtime_install_lib.py`. Root cause: root `package.json` `files` omits that script (repo-local file exists; US-0147 hook loads it).
+- **Duplicate check**: Persist **NEW BUG-0025**. Distinct from **BUG-0022 OPEN** / **BUG-0024 OPEN** (do not merge/drain). Compose **US-0147 DONE** — do not reopen ACs beyond shipping missing packaged file(s) + fail-closed loader + pack/guard contract. Optional note only: 0.1.3-11→0.1.3 semver quirk.
+- **Decomposition**: **single_bug** — `/intake bug` accepted. Recommended: add lib to `files` + harden `_load_standalone_runtime_install_lib` → `STANDALONE_BOOTSTRAP_FAILED` + pack contract + republish.
+- **Scope for `/discovery`**: lock packaging allowlist + loader fail-closed + contract test inventory; do not reopen US-0147 feature scope; do not merge BUG-0022/0024.
+- **Isolation**: `phase_id=intake`; `role=po`; `bug_id=BUG-0025`; `fresh_context_marker=po-BUG0025-intake-20260918T154800Z-fresh`; `timestamp=2026-09-18T15:48:00Z`; `model_id=inherit`; `evidence_ref=docs/product/backlog.md ### BUG-0025, docs/product/acceptance.md BUG-0025 row, handoffs/intake_evidence/BUG-0025-intake-20260918T154800Z.json, docs/product/vision.md ## Intake Notes — BUG-0025, this handoff`.
+- **Hot-surface note**: Appended (not prepended) so triad oldest-prefix rollover retains this newest section. Post-append `--check` → `STATE_ARCHIVE_REQUIRED` `state` 1220/1200 → `--rollover --json` `{"boundary":"triad-rollover|state","moved":2,"pack_ref":"docs/engineering/state-archive/state-pack-20260918.md","retained_checkpoints":11,"retained_lines":1140}`; final `--check` PASS. `po_to_tl` under cap (no pack). Architecture not touched. Intake did not append `docs/engineering/state.md`.
+- **Status**: OPEN per US-0045. **Next**: `/discovery` (fresh **po**) for **BUG-0025**, or `/auto bug-target=BUG-0025`. Do not run discovery/research/execute from this intake chat. STOP.
+
+## Discovery handoff — BUG-0025 npm publish omits standalone_runtime_install_lib.py
+
+- **Phase completed**: discovery. **Role**: po. **Bug**: BUG-0025 only. **Sprint**: (pending — expected **S0157** at `/sprint-plan`). **Verdict**: PASS (`decision_gate=false`).
+- **Timestamp (UTC)**: 2026-09-18T16:44:20Z. **Fresh marker**: `po-BUG0025-discovery-20260918T164420Z-fresh`.
+- **Orchestrator**: `orchestrator_run_id=auto-20260918-bug0025`, parent=`cursor-20260918-BUG0025-intake`, `delivery_mode=ultra_lean`, resolved_phase_plan=`[spec, plan, build+verify, ship]`, reinstatement_mode=`none`, memory_layer=`pack`, macro=`spec` (intake already DONE — not re-intaken; `handoffs/intake_evidence/BUG-0025-intake-20260918T154800Z.json` held read-only), `model_id=inherit` (MODEL_RESOLVE=alias_only; CROSS_MODEL_REVIEW=0), AUTO_QUIET=1, AUTO_FLOW_MODE=full_autonomy, AUTO_SOVEREIGN=0, FRAMEWORK_KIT_REPO=1, EARLY_RESEARCH=0, segment_work_item_kind=`bug`, active_bug_id=`BUG-0025`, bug_queue_position=`1 of 1`.
+- **Sibling boundary**: **US-0147 DONE** — compose only (standalone hook); do **not** reopen ACs beyond shipping missing packaged file(s) + fail-closed loader + pack/guard contract. **BUG-0022 OPEN** / **BUG-0024 OPEN** — do not merge; do not drain. Do not treat `0.1.3-11`→`0.1.3` semver quirk as primary scope. No OpenCode/Cursor host bugs. No npm-publish, git push, or `.env` reads this phase.
+- **Gap confirmed (narrow-read)**: repo-local `scripts/standalone_runtime_install_lib.py` exists; root `package.json` `files` omits it; published `its-magic@0.1.3` upgrade crashes with `FileNotFoundError` after `HOST_CONFIG_POSTINSTALL_OK` via `_load_standalone_runtime_install_lib`.
+
+### Discovery locks D1–D10
+
+| ID | Lock |
+|----|------|
+| **D1** | Root cause = npm `files` allowlist omit of `scripts/standalone_runtime_install_lib.py` (+ peers the standalone hook needs). |
+| **D2** | Add path(s) to root `package.json` `files` so publish/pack cannot omit them. |
+| **D3** | Harden `_load_standalone_runtime_install_lib` → `STANDALONE_BOOTSTRAP_FAILED` when lib missing (no raw `FileNotFoundError` as operator-visible outcome). |
+| **D4** | Contract test proves `npm pack` / tarball includes `scripts/standalone_runtime_install_lib.py`. |
+| **D5** | Optional `guard_installer_publish` check covering the same path(s). |
+| **D6** | Republish ships the packaging fix (operator global install includes the lib). |
+| **D7** | Compose US-0147 DONE — do not reopen ACs beyond shipping missing packaged file(s) + fail-closed loader + pack/guard contract. |
+| **D8** | Distinct from BUG-0022 / BUG-0024 — do not merge or drain. |
+| **D9** | Semver quirk `0.1.3-11`→`0.1.3` OUT of primary scope (optional note only). |
+| **D10** | OUT: OpenCode/Cursor host bugs; companion DEC (none expected — architecture may use `# BUG-0025` only). Research stub **R-0149** (PO does not author `## R-0149`; **R-0148**=US-0148 — do not wipe). Expected sprint **S0157**. |
+
+### Research questions DQ1–DQ10 (for `/research` → expect **R-0149**; stub only here)
+
+1. **DQ1**: Exact `package.json` `files` delta — `scripts/standalone_runtime_install_lib.py` alone vs transitive peer scripts the standalone hook imports.
+2. **DQ2**: Inventory of all paths `installer.py` standalone postinstall loads via importlib/`get_data` that must be packaged.
+3. **DQ3**: Fail-closed shape for `_load_standalone_runtime_install_lib` — where to catch missing path; reason-code `STANDALONE_BOOTSTRAP_FAILED` emission site and operator messaging.
+4. **DQ4**: `npm pack` / tarball contract-test approach (Python unpack, `npm pack --dry-run`, or existing publish-guard patterns from BUG-0001/US-0084).
+5. **DQ5**: Whether to extend `guard_installer_publish.py` (or sibling) vs new `test_bug0025_*` only.
+6. **DQ6**: Republish / release-queue coupling — version bump vs same-line republish; interaction with `RELEASE_PUBLISH_MODE`.
+7. **DQ7**: Compose boundary with US-0147 / R-0144 — what must stay untouched vs packaging-only deltas.
+8. **DQ8**: Regression vs BUG-0001/0003 completeness lineage — avoid double-counting or weakening prior guards.
+9. **DQ9**: Active↔template / kit-slice parity if any packaged script also mirrored under `template/scripts/`.
+10. **DQ10**: Test matrix + architecture anchor — `test_bug0025_*` inventory; additive `# BUG-0025` only (no companion DEC); **R-id live-inventory**: allocate **R-0149**; do not wipe **R-0148**.
+
+### Design refs
+
+- Root `package.json` `files`; `scripts/standalone_runtime_install_lib.py`; `installer.py` `_load_standalone_runtime_install_lib` / `bootstrap_standalone_runtime_installer_hook` / `run_standalone_postinstall`
+- Compose: US-0147 DONE / R-0144; BUG-0001 / BUG-0003 packaging completeness; optional `scripts/guard_installer_publish.py`
+- Intake (read-only): `handoffs/intake_evidence/BUG-0025-intake-20260918T154800Z.json`
+
+### Research stub (PO does not author `docs/engineering/research.md`)
+
+- **Expected next R-id**: **R-0149** (`ID_NAMESPACE_BOOTSTRAP=0`; highest delivered heading is **R-0148** US-0148).
+- Do **not** author `## R-0149` this phase. Do **not** wipe **R-0148**. Do **not** reuse R-0148 for BUG-0025 body.
+- Companion DEC: **none expected** — `# BUG-0025` at `/architecture` only — PO does not author them.
+- Expected sprint **S0157** at `/sprint-plan` only (do not create this phase).
+
+### Runtime proof (DEC-0038)
+
+- `runtime_proof_id=rp-auto-20260918-bug0025-discovery-po-20260918T164420Z-BUG-0025`
+- `proof_hash=AE4DA26DCBBC10BF8E03C091E8DA8FAA56B6FEB3608F2226F4CD09644ED64E4C`
+- `proof_ttl=2026-09-18T17:44:20Z`
+- Hash via `from scripts.token_cost_lib import compute_strict_proof_hash` (positional; compact sorted-key JSON).
+- Canonical hashed payload: `{"orchestrator_run_id":"auto-20260918-bug0025","phase_id":"discovery","proof_issued_at":"2026-09-18T16:44:20Z","proof_ttl_seconds":3600,"role":"po","runtime_proof_id":"rp-auto-20260918-bug0025-discovery-po-20260918T164420Z-BUG-0025"}`
+- Isolation extras (not hashed): `delivery_mode=ultra_lean`, `macro_phase=spec`, `model_id=inherit`, `sprint_id=none`, `bug_id=BUG-0025`, `skipped_phases=[intake]`, `CROSS_MODEL_REVIEW=0`, `native_chain_active=true`, `native_chain_continuing=true`, `segment_work_item_kind=bug`
+- `hash_recompute_confirmation=true` (compute_strict_proof_hash → AE4DA26DCBBC10BF8E03C091E8DA8FAA56B6FEB3608F2226F4CD09644ED64E4C MATCH; **64 hex** verified; stored uppercase)
+
+### Isolation + stop
+
+- `phase_id=discovery`, `role=po`, `bug_id=BUG-0025`, `model_id=inherit`, `fresh_context_marker=po-BUG0025-discovery-20260918T164420Z-fresh`
+- `evidence_ref=docs/product/backlog.md ### BUG-0025 discovery_notes; docs/product/vision.md ## Discovery Notes — BUG-0025; this handoff; docs/engineering/state.md discovery checkpoint; handoffs/resume_brief.md; handoffs/intake_evidence/BUG-0025-intake-20260918T154800Z.json (read-only)`
+- **Hot-surface note**: Appended (not prepended) so triad oldest-prefix rollover retains this newest section. Post-append `--rollover --json` → `{"boundary":"triad-rollover|state","moved":1,"pack_ref":"docs/engineering/state-archive/state-pack-20260918-a.md","retained_checkpoints":11,"retained_lines":1158}` + `{"boundary":"triad-rollover|po_to_tl","moved":1,"pack_ref":"handoffs/archive/po-to-tl-pack-20260918.md","retained_lines":650,"retained_sections":14}`; final `--check` PASS.
+- **Status**: BUG-0025 remains **OPEN**. AC-1..AC-8 remain unchecked. Acceptance.md BUG-0025 row unchecked. **Next**: `/research` in fresh **tech-lead** subagent. CROSS_MODEL_REVIEW=0 — do not spawn sovereign-critic. Do not spawn research from this discovery chat. STOP.
+
+## Research handoff — BUG-0025 npm publish omits standalone_runtime_install_lib.py
+
+- **Phase completed**: research. **Role**: tech-lead. **Bug**: BUG-0025 only. **Sprint**: (pending — expected **S0157** at `/sprint-plan`). **Verdict**: PASS (`decision_gate=false`).
+- **Timestamp (UTC)**: 2026-09-18T16:55:00Z. **Fresh marker**: `tl-BUG0025-research-20260918T165500Z-fresh`.
+- **Orchestrator**: `orchestrator_run_id=auto-20260918-bug0025`, parent=`cursor-20260918-BUG0025-intake`, `delivery_mode=ultra_lean`, resolved_phase_plan=`[spec, plan, build+verify, ship]`, macro=`plan` (research = first of research+architecture+sprint-plan), `model_id=inherit` (MODEL_RESOLVE=alias_only; CROSS_MODEL_REVIEW=0), AUTO_QUIET=1, AUTO_FLOW_MODE=full_autonomy, AUTO_SOVEREIGN=0, FRAMEWORK_KIT_REPO=1, EARLY_RESEARCH=0, segment_work_item_kind=`bug`, active_bug_id=`BUG-0025`, bug_queue_position=`1 of 1`.
+- **Sibling boundary**: **US-0147 DONE** — compose only; do **not** reopen ACs beyond shipping missing packaged file(s) + fail-closed loader + pack/guard contract. **BUG-0022 OPEN** / **BUG-0024 OPEN** — do not merge; do not drain. Semver quirk `0.1.3-11`→`0.1.3` OUT of primary scope. No OpenCode/Cursor host bugs. No npm-publish, git push, or `.env` reads this phase.
+- **Research anchor**: `docs/engineering/research.md` **`## R-0149`**. Do not wipe **R-0148** (US-0148). Discovery D1–D10 unchanged on backlog.
+- **Approach**: **A1 (A\*)** — add `scripts/standalone_runtime_install_lib.py` to root `package.json` `files`; harden `_load_standalone_runtime_install_lib` isfile-before-exec → `STANDALONE_BOOTSTRAP_FAILED`; `npm pack` contract + optional `guard_installer_publish` allowlist assert; patch republish. No companion DEC.
+- **Companion DEC**: **none** — `# BUG-0025` at `/architecture` only — do **not** author `decisions/DEC-*` or `# BUG-0025` this phase.
+
+### Closed questions DQ1–DQ10
+
+| DQ | Topic | Resolution | LOCK |
+|----|-------|------------|------|
+| DQ1 | `files` delta | One entry: `scripts/standalone_runtime_install_lib.py` | LOCKED |
+| DQ2 | Load inventory | Sole importlib peer; residual supported-range fail-closed (no `standalone/` in files) | LOCKED |
+| DQ3 | Fail-closed loader | isfile-before-exec; `STANDALONE_BOOTSTRAP_FAILED`; no raw FileNotFoundError | LOCKED |
+| DQ4 | Pack contract | `npm pack --dry-run` / tarball member + `files` string assert | LOCKED |
+| DQ5 | Guard vs tests | `test_bug0025_*` primary; optional guard allowlist check | LOCKED |
+| DQ6 | Republish | Patch bump (e.g. 0.1.4); same-line 0.1.3 fragile | LOCKED |
+| DQ7 | US-0147 compose | Packaging + loader + pack/guard only; hook semantics untouched | LOCKED |
+| DQ8 | BUG-0001/0003 | Additive tests; do not weaken prior guards | LOCKED |
+| DQ9 | Template parity | No `template/scripts/` mirror of loader | LOCKED |
+| DQ10 | Tests + R-id | 5–6 `test_bug0025_*`; **R-0149**; **S0157**; no companion DEC | LOCKED |
+
+### Architecture seeds (preview)
+
+- `/architecture` authors `# BUG-0025` only (no companion DEC); pins allowlist string, loader shape, test IDs, optional guard, patch republish, supported-range residual.
+- `/sprint-plan` materializes **S0157** (≤12 tasks from architecture seeds).
+- Do not implement application code this phase.
+
+### Runtime proof (DEC-0038)
+
+- `runtime_proof_id=rp-auto-20260918-bug0025-research-techlead-20260918T165500Z-BUG-0025`
+- `proof_hash=8E27420FCD21FE740C6015A45AB789057024E91BEA858636968488C1ACBFD249`
+- `proof_ttl=2026-09-18T17:55:00Z`
+- Hash via `from scripts.token_cost_lib import compute_strict_proof_hash` (positional; compact sorted-key JSON).
+- Canonical hashed payload: `{"orchestrator_run_id":"auto-20260918-bug0025","phase_id":"research","proof_issued_at":"2026-09-18T16:55:00Z","proof_ttl_seconds":3600,"role":"tech-lead","runtime_proof_id":"rp-auto-20260918-bug0025-research-techlead-20260918T165500Z-BUG-0025"}`
+- Isolation extras (not hashed): `delivery_mode=ultra_lean`, `macro_phase=plan`, `model_id=inherit`, `sprint_id=none`, `bug_id=BUG-0025`, `skipped_phases=[intake]`, `CROSS_MODEL_REVIEW=0`, `native_chain_active=true`, `native_chain_continuing=true`, `segment_work_item_kind=bug`
+- `hash_recompute_confirmation=true` (compute_strict_proof_hash → 8E27420FCD21FE740C6015A45AB789057024E91BEA858636968488C1ACBFD249 MATCH; **64 hex** verified; stored uppercase)
+- Consumed discovery producer proof: `rp-auto-20260918-bug0025-discovery-po-20260918T164420Z-BUG-0025` / `AE4DA26DCBBC10BF8E03C091E8DA8FAA56B6FEB3608F2226F4CD09644ED64E4C` — MATCH; not STALE at `2026-09-18T16:55:00Z`
+
+### Isolation + stop
+
+- `phase_id=research`, `role=tech-lead`, `bug_id=BUG-0025`, `model_id=inherit`, `fresh_context_marker=tl-BUG0025-research-20260918T165500Z-fresh`
+- `evidence_ref=docs/engineering/research.md ## R-0149; docs/product/backlog.md ### BUG-0025 discovery_notes; this handoff; docs/engineering/state.md research checkpoint; handoffs/resume_brief.md`
+- **Hot-surface note**: Appended (not prepended) so triad oldest-prefix rollover retains this newest section. Post-append `--rollover --json` → `{"boundary":"triad-rollover|state","moved":1,"pack_ref":"docs/engineering/state-archive/state-pack-20260918-b.md","retained_checkpoints":11,"retained_lines":1159}` + `{"boundary":"triad-rollover|po_to_tl","moved":1,"pack_ref":"handoffs/archive/po-to-tl-pack-20260918-a.md","retained_lines":632,"retained_sections":14}`; final `--check` PASS.
+- **Status**: BUG-0025 remains **OPEN**. AC-1..AC-8 remain unchecked. **Next**: `/architecture` in fresh **tech-lead** subagent. CROSS_MODEL_REVIEW=0 — do not spawn sovereign-critic. Do not spawn architecture from this research chat. STOP.
+
+## Architecture handoff — BUG-0025 npm publish omits standalone_runtime_install_lib.py
+
+- **Phase completed**: architecture. **Role**: tech-lead. **Bug**: BUG-0025 only. **Sprint**: (pending — expected **S0157** at `/sprint-plan`). **Verdict**: PASS (`decision_gate=false`).
+- **Timestamp (UTC)**: 2026-09-18T17:00:00Z. **Fresh marker**: `tl-BUG0025-architecture-20260918T170000Z-fresh`.
+- **Orchestrator**: `orchestrator_run_id=auto-20260918-bug0025`, parent=`cursor-20260918-BUG0025-intake`, `delivery_mode=ultra_lean`, resolved_phase_plan=`[spec, plan, build+verify, ship]`, macro=`plan` (architecture = middle of research+architecture+sprint-plan), `model_id=inherit` (MODEL_RESOLVE=alias_only; CROSS_MODEL_REVIEW=0), AUTO_QUIET=1, AUTO_FLOW_MODE=full_autonomy, AUTO_SOVEREIGN=0, FRAMEWORK_KIT_REPO=1, EARLY_RESEARCH=0, segment_work_item_kind=`bug`, active_bug_id=`BUG-0025`, bug_queue_position=`1 of 1`.
+- **Sibling boundary**: **US-0147 DONE** — compose only; do **not** reopen ACs beyond packaging + fail-closed loader + pack/guard + patch republish. **BUG-0022 OPEN** / **BUG-0024 OPEN** — do not merge; do not drain. Semver quirk `0.1.3-11`→`0.1.3` OUT of primary scope. No OpenCode/Cursor host bugs. No npm-publish, git push, or `.env` reads this phase.
+- **Research consumed**: `docs/engineering/research.md` **`## R-0149`** (A1; DQ1–DQ10 LOCKED). Producer proof `rp-auto-20260918-bug0025-research-techlead-20260918T165500Z-BUG-0025` / `8E27420FCD21FE740C6015A45AB789057024E91BEA858636968488C1ACBFD249` — MATCH; not STALE at consume.
+- **Approach**: **A1 (A\*)** locked in additive H1 **`# BUG-0025`** only — one `files` entry `scripts/standalone_runtime_install_lib.py`; isfile-before-exec → `STANDALONE_BOOTSTRAP_FAILED`; `tests/bug0025_packaging_contract_test.py` (5–6 markers); optional `guard_installer_publish` allowlist assert (omit-`standalone/` held); patch republish (e.g. 0.1.4); supported-range residual fail-closed (no `standalone/` in `files`).
+- **Companion DEC**: **none** — do **not** author `decisions/DEC-*`. `docs/engineering/decisions.md` left unchanged.
+- **Tests (architecture-owned)**: DQ10 markers in `# BUG-0025` Test contract.
+- **Sprint seeds**: T-anch + T-001..T-010 (11 ≤ 12) for **S0157** — do **not** create `sprints/S0157/` this phase.
+- **Next**: `/sprint-plan` materializes **S0157** (fresh tech-lead). Do **not** spawn sprint-plan from this architecture chat. CROSS_MODEL_REVIEW=0 — no sovereign-critic.
+
+### Runtime proof (DEC-0038)
+
+- `runtime_proof_id=rp-auto-20260918-bug0025-architecture-techlead-20260918T170000Z-BUG-0025`
+- `proof_hash=DA89597E0B3BD3F37E33AE7A83BFAFF70B4CD04EEDB22BDAE0D7C283FF09B8BE`
+- `proof_ttl=2026-09-18T18:00:00Z`
+- Hash via `from scripts.token_cost_lib import compute_strict_proof_hash` (positional; compact sorted-key JSON).
+- Canonical hashed payload: `{"orchestrator_run_id":"auto-20260918-bug0025","phase_id":"architecture","proof_issued_at":"2026-09-18T17:00:00Z","proof_ttl_seconds":3600,"role":"tech-lead","runtime_proof_id":"rp-auto-20260918-bug0025-architecture-techlead-20260918T170000Z-BUG-0025"}`
+- Isolation extras (not hashed): `delivery_mode=ultra_lean`, `macro_phase=plan`, `model_id=inherit`, `sprint_id=none`, `bug_id=BUG-0025`, `skipped_phases=[intake]`, `CROSS_MODEL_REVIEW=0`, `native_chain_active=true`, `native_chain_continuing=true`, `segment_work_item_kind=bug`
+- `hash_recompute_confirmation=true` (compute_strict_proof_hash → DA89597E0B3BD3F37E33AE7A83BFAFF70B4CD04EEDB22BDAE0D7C283FF09B8BE MATCH; **64 hex** verified; stored uppercase)
+- Consumed research producer proof: `rp-auto-20260918-bug0025-research-techlead-20260918T165500Z-BUG-0025` / `8E27420FCD21FE740C6015A45AB789057024E91BEA858636968488C1ACBFD249` — MATCH; not STALE at `2026-09-18T17:00:00Z`
+
+### Isolation + stop
+
+- `phase_id=architecture`, `role=tech-lead`, `bug_id=BUG-0025`, `model_id=inherit`, `fresh_context_marker=tl-BUG0025-architecture-20260918T170000Z-fresh`
+- `evidence_ref=docs/engineering/architecture.md # BUG-0025; docs/engineering/research.md ## R-0149; this handoff; docs/engineering/state.md architecture checkpoint; handoffs/resume_brief.md`
+- **Hot-surface note**: Appended (not prepended) so triad oldest-prefix rollover retains this newest section. Post-append `--rollover --json` → `{"boundary":"triad-rollover|state","moved":1,"pack_ref":"docs/engineering/state-archive/state-pack-20260918-c.md","retained_checkpoints":11,"retained_lines":1085}` + `{"boundary":"triad-rollover|po_to_tl","moved":1,"pack_ref":"handoffs/archive/po-to-tl-pack-20260918-b.md","retained_lines":617,"retained_sections":14}` + `{"boundary":"triad-rollover|architecture","moved":1,"pack_ref":"docs/engineering/architecture-archive/architecture-pack-20260918.md","retained_lines":2874,"retained_story_sections":24}`; `--check-arch-heading-policy --baseline-h2-count 0` PASS; `materialize_codebase_map.py --trigger architecture` → `[CODEBASE_MAP_OK] preserved_existing`; final `--check` PASS. `# BUG-0025` retained at hot end.
+- **Status**: BUG-0025 remains **OPEN**. AC-1..AC-8 remain unchecked. **Next**: `/sprint-plan` in fresh **tech-lead** subagent. CROSS_MODEL_REVIEW=0 — do not spawn sovereign-critic. Do not spawn sprint-plan from this architecture chat. STOP.
+

@@ -137,6 +137,39 @@ def main() -> int:
     standalone = _reject_standalone_in_kit_publish()
     if standalone != 0:
         return standalone
+    allowlist = _require_standalone_runtime_install_lib_allowlist()
+    if allowlist != 0:
+        return allowlist
+    return 0
+
+
+STANDALONE_RUNTIME_INSTALL_LIB_ALLOWLIST = "scripts/standalone_runtime_install_lib.py"
+
+
+def _require_standalone_runtime_install_lib_allowlist() -> int:
+    """BUG-0025: kit package.json files must list standalone_runtime_install_lib.py."""
+    pkg_path = ROOT / "package.json"
+    if not pkg_path.is_file():
+        return 0
+    try:
+        pkg = json.loads(pkg_path.read_text(encoding="utf-8"))
+    except json.JSONDecodeError as exc:
+        print(f"guard_installer_publish: package.json is not valid JSON: {exc}", file=sys.stderr)
+        return 1
+    if pkg.get("name") != "its-magic":
+        return 0
+    files = pkg.get("files", [])
+    if not isinstance(files, list):
+        print("guard_installer_publish: package.json files must be an array", file=sys.stderr)
+        return 1
+    normalized = {str(entry).replace("\\", "/").strip() for entry in files}
+    if STANDALONE_RUNTIME_INSTALL_LIB_ALLOWLIST not in normalized:
+        print(
+            "guard_installer_publish: kit package.json files must include "
+            f"{STANDALONE_RUNTIME_INSTALL_LIB_ALLOWLIST} (BUG-0025).",
+            file=sys.stderr,
+        )
+        return 1
     return 0
 
 

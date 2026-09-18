@@ -1,3 +1,33 @@
+# QA → Verify-Work Handoff — S0157 / BUG-0025 (QA_PASS, next /verify-work fresh qa)
+
+- sprint_id: S0157
+- bug_id: BUG-0025 (Status OPEN — authority docs/product/backlog.md)
+- story_id: (none)
+- orchestrator_run_id: auto-20260918-bug0025
+- parent_orchestrator_run_id: cursor-20260918-BUG0025-intake
+- delivery_mode: ultra_lean
+- macro_phase: build+verify
+- fresh_context_marker: qa-BUG0025-qa-20260918T172625Z-fresh
+- timestamp: 2026-09-18T17:26:25Z (UTC)
+- model_id: omit (CROSS_MODEL_REVIEW=0)
+- qa_verdict: QA_PASS
+- plan_verify_verdict: PASS (merged at /qa)
+- blocking_count: 0
+- non_blocking_count: 1 (TEST_COMMAND Fail:28 OOS)
+- decision_gate: false
+- kit_version: 0.1.4
+- T-009_publish: DEFERRED (confirm; npm_published=false)
+- runtime_proof_id: rp-auto-20260918-bug0025-qa-qa-20260918T172625Z-BUG-0025
+- proof_hash: E92C5B23F279866F63FB19BFFA9028578543BCABB7E359420DE93DD218F72D00
+- proof_ttl: 2026-09-18T18:26:25Z
+- evidence: sprints/S0157/qa-findings.md; sprints/S0157/uat.json; sprints/S0157/uat.md; sprints/S0157/plan-verify.json
+- compose_guards: US-0147 DONE compose-only; US-0133 omit-standalone/; BUG-0022/0024 untouched; no DONE flip; no AC tick; no silent publish; no git push; intake evidence not mutated
+- next_scheduled_phase: /verify-work
+- next_scheduled_role: qa
+- stop_condition: STOP after QA. Orchestrator MUST spawn /verify-work in fresh qa (BUG-0006). Do NOT mark BUG-0025 DONE. Do NOT tick acceptance. Do NOT npm-publish without /release confirm.
+
+---
+
 # QA → Verify-Work Handoff
 
 ## Remote evidence tuple (US-0086 / AC-5)

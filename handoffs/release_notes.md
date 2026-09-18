@@ -13,6 +13,28 @@ Canonical queue state now lives under:
 
 ---
 
+## Release finalized note (S0157)
+
+- Sprint: `S0157`
+- Bug: `BUG-0025` (npm pack omit of `scripts/standalone_runtime_install_lib.py` + fail-closed loader; kit **0.1.4**)
+- Release: **finalized** (`2026-09-18T17:38:00Z`, `orchestrator_run_id=auto-20260918-bug0025`, `fresh_context_marker=release-BUG0025-20260918T173800Z-fresh`, `runtime_proof_id=rp-auto-20260918-bug0025-release-release-20260918T173800Z-BUG-0025`, `proof_hash=E3FB2CA969A990EBDCE23BC05179FEADF99872C524390D2494219A503DFA4419`, `model_id=omit`)
+- Queue: **`handoffs/release_queue.md`** row **`S0157`** = **`released`** (`release_version=0.1.4`; backlog reconciliation deferred to `/closure`)
+- **Verdict**: **PASS** — mandatory release gates green; scoped pytest bug0025 6/6 (`harness_fail_zero_claimed=false`).
+- **Run / verify:** `python -m pytest tests/bug0025_packaging_contract_test.py -v` → 6/6; metadata + guard exit 0. See **`handoffs/releases/S0157-release-notes.md`** **## Run** / **## Verify**.
+- **Operator summary**: start=`python -m pytest tests/bug0025_packaging_contract_test.py -v`; endpoint=n/a (packaging slice); verify pointer=`handoffs/releases/S0157-release-notes.md` ## Verify; upgrade after confirm=`npm install -g its-magic@0.1.4`.
+- **Gate snapshot**: check_in_tests=PASS; qa=PASS (0 blockers); verify_work=PASS (8/8 ACs; 9/9 UAT); uat=PASS (`contract_tests_primary`; live_chrome_probed=false); isolation=PASS; strict_runtime_proof=PASS; finalization=PASS.
+- **Backlog status**: BUG-0025 remains **OPEN** — closure deferred
+- **Acceptance**: BUG-0025 row remains **unchecked**
+- Publish: **`RELEASE_PUBLISH_MODE=confirm`** — deferred (`PUBLISH_CONFIRMATION_REQUIRED`; T-009/AC-6 deferred-to-operator-confirm; `npm_published=false`)
+- Canonical notes: `handoffs/releases/S0157-release-notes.md`
+- Findings: `sprints/S0157/release-findings.md`
+
+### Unreleased queue visibility
+
+- (none — S0157 released with publish deferred under confirm mode)
+
+---
+
 ## Release finalized note (S0156)
 
 - Sprint: `S0156`

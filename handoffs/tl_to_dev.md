@@ -1,3 +1,45 @@
+## Sprint-plan handoff — BUG-0025 / S0157 — /execute (fresh dev, ultra_lean)
+
+- sprint_id: S0157
+- story_id: (none — bug work item)
+- bug_id: BUG-0025 (Status OPEN — authority docs/product/backlog.md)
+- companion_dec: none (packaging bug; docs/engineering/architecture.md # BUG-0025 only)
+- research_anchor: R-0149 (DQ1–DQ10 LOCKED)
+- architecture_anchor: docs/engineering/architecture.md # BUG-0025
+- approach: A1 (A*) — one package.json files entry scripts/standalone_runtime_install_lib.py + isfile-before-exec → STANDALONE_BOOTSTRAP_FAILED + tests/bug0025_packaging_contract_test.py + optional guard allowlist assert + patch republish (e.g. 0.1.4); compose US-0147 DONE (do not reopen ACs); US-0133 omit-standalone/ held; BUG-0022/0024 OPEN not drained
+- orchestrator_run_id: auto-20260918-bug0025
+- parent_orchestrator_run_id: cursor-20260918-BUG0025-intake
+- fresh_context_marker: tl-BUG0025-sprintplan-20260918T170500Z-fresh
+- timestamp: 2026-09-18T17:05:00Z (UTC)
+- model_id: inherit (CROSS_MODEL_REVIEW=0)
+- segment_work_item_kind: bug
+- active_bug_id: BUG-0025
+- bug_queue_position: 1 of 1
+- bug_queue_remaining: 0
+- backlog_drain_active: false
+- bug_queue_active: true
+- sprint_plan_verdict: PASS (SPRINT_PLAN_PASS)
+- decision_gate: false
+- sprint_status: PLANNED (backlog OPEN per US-0045 — not mutated, AC-1..AC-8 unchecked)
+- task_count: 11 (T-anch + T-001..T-010, ≤ SPRINT_MAX_TASKS=12, no split, 1:1 architecture seeds)
+- ac_surjective_map: AC-1→T-001,T-005; AC-2→T-001; AC-3→T-002,T-003; AC-4→T-002,T-003,T-004; AC-5→T-005,T-006; AC-6→T-007,T-008,T-009; AC-7→T-010,T-anch; AC-8→T-anch; DC→T-anch
+- task_order: T-anch → T-001 → T-002 → T-003 → T-004 → T-005 → T-006 → T-007 → T-008 → T-009 → T-010
+- plan-verify: ultra_lean — NOT in resolved_phase_plan; skipped; no plan-verify QA spawn (ultra_lean_skipped; not a QA phase)
+- compose_guards (non-negotiable): DO NOT reopen US-0147 ACs beyond packaging + fail-closed loader + pack/guard + patch republish; DO NOT add standalone/ to files; DO NOT allowlist entire scripts/; DO NOT inline/vendor lib into installer.py; DO NOT merge/drain BUG-0022 or BUG-0024; DO NOT wipe R-0148 / mutate # US-0148; DO NOT read .env; DO NOT mark BUG-0025 DONE; DO NOT tick AC; DO NOT npm-publish from execute without RELEASE_PUBLISH_MODE path; DO NOT git push; DEC-0038 tuple unamended
+- first_execute_task: T-anch (NO-OP / verification)
+- key_locked_artifacts: package.json files entry; installer.py loader+wrappers; tests/bug0025_packaging_contract_test.py; optional scripts/guard_installer_publish.py; packaging twins; release notes
+- sprint_id_lock: S0157 (S0156=US-0148 released). Do not invent a new id.
+- runtime_proof_id: rp-auto-20260918-bug0025-sprint-plan-techlead-20260918T170500Z-BUG-0025
+- proof_hash: FD61C0131290781C96BA46C0D44980CC445C89174047DCFC2B5F4F714CCB3A22
+- proof_ttl: 2026-09-18T18:05:00Z
+- consumed_architecture_proof: rp-auto-20260918-bug0025-architecture-techlead-20260918T170000Z-BUG-0025 / DA89597E0B3BD3F37E33AE7A83BFAFF70B4CD04EEDB22BDAE0D7C283FF09B8BE — RUNTIME_PROOF_VALID (MATCH before TTL 2026-09-18T18:00:00Z)
+- next_scheduled_phase: /execute (role=dev)
+- next_scheduled_role: dev
+- next_sprint_macro: build+verify
+- stop_condition: STOP after sprint-plan. Orchestrator MUST spawn /execute in fresh dev (BUG-0006). CROSS_MODEL_REVIEW=0 — do NOT spawn sovereign-critic or plan-verify from this tech-lead. Do NOT mark BUG-0025 DONE. Do NOT tick acceptance. Do NOT implement packages in sprint-plan phase.
+
+---
+
 ## Sprint-plan handoff — US-0148 / S0156 — /execute (fresh dev, ultra_lean)
 
 - sprint_id: S0156

@@ -1,3 +1,44 @@
+## Execute PASS handoff — BUG-0025 / S0157 — next `/qa` (fresh qa; no critic)
+
+- sprint_id: S0157
+- story_id: (none — bug work item)
+- bug_id: BUG-0025 (Status OPEN — authority docs/product/backlog.md)
+- companion_dec: none (packaging bug; docs/engineering/architecture.md # BUG-0025 only)
+- research_anchor: R-0149 (DQ1–DQ10 LOCKED)
+- architecture_anchor: docs/engineering/architecture.md # BUG-0025
+- approach: A1 — package.json files entry `scripts/standalone_runtime_install_lib.py` + isfile-before-exec → STANDALONE_BOOTSTRAP_FAILED + tests/bug0025_packaging_contract_test.py (6 markers) + guard allowlist assert + patch `0.1.4` (publish deferred)
+- orchestrator_run_id: auto-20260918-bug0025
+- parent_orchestrator_run_id: cursor-20260918-BUG0025-intake
+- fresh_context_marker: dev-BUG0025-execute-20260918T171834Z-fresh
+- timestamp: 2026-09-18T17:18:34Z (UTC)
+- model_id: omit (CROSS_MODEL_REVIEW=0)
+- execute_verdict: EXECUTE_PASS
+- decision_gate: false
+- sprint_status: EXECUTE_PASS (backlog OPEN per US-0045 — not mutated; AC-1..AC-8 unchecked)
+- task_count: 11 (T-anch + T-001..T-010; all DONE)
+- kit_version: 0.1.4
+- tests: bug0025 **6/6**; us0147 **10/10**; us0133 PASS; bug0003 **6/6**; bug0001/us0084/bug0017 scoped PASS
+- gates: check-user-visible-metadata PASS; enforce-triad-hot-surface --check PASS (after rollover → state-pack-20260918-d.md); guard_installer_publish PASS; template guard parity PASS
+- T-009_publish_disposition: DEFERRED — RELEASE_PUBLISH_MODE=confirm / RELEASE_PUBLISH_AUTO_CONFIRM=0; dry-run `npm run release:all:dry` only; npm_published=false; confirm path=/release
+- consumed_sprint_plan_proof: rp-auto-20260918-bug0025-sprint-plan-techlead-20260918T170500Z-BUG-0025 / FD61C0131290781C96BA46C0D44980CC445C89174047DCFC2B5F4F714CCB3A22 — MATCH; not STALE (ttl 2026-09-18T18:05:00Z)
+- runtime_proof_id: rp-auto-20260918-bug0025-execute-dev-20260918T171834Z-BUG-0025
+- proof_hash: 3E2A70F4BCD3A7E352D6E5E9D6E4A949D12E3D6E95CB39C2B3F99ECFB6B9CE4D
+- proof_ttl: 2026-09-18T18:18:34Z
+- compose_guards: US-0147 DONE compose-only; US-0133 omit-standalone/ held; BUG-0022/0024 untouched; no BUG-0025 DONE; no AC tick; no silent npm publish; no git push
+- key_deliverables:
+  - package.json files entry + version 0.1.4
+  - installer.py loader+wrappers fail-closed
+  - scripts/standalone_runtime_install_lib.py supported-range fail-closed + npm which()
+  - scripts/guard_installer_publish.py (+ template twin)
+  - tests/bug0025_packaging_contract_test.py
+  - packaging twins + runbook/README troubleshooting
+  - sprints/S0157/release-notes.md; summary.md; progress.md
+- next_scheduled_phase: /qa
+- next_scheduled_role: qa
+- stop_condition: STOP after execute. Orchestrator MUST spawn /qa in fresh qa (BUG-0006). CROSS_MODEL_REVIEW=0 — do NOT spawn sovereign-critic. Do NOT spawn /qa from this execute subagent. Do NOT mark BUG-0025 DONE. Do NOT tick acceptance. Do NOT npm-publish without /release confirm. Do NOT git push.
+
+---
+
 ## Execute PASS handoff — US-0148 / S0156 — next `/qa` (fresh qa; no critic)
 
 - sprint_id: S0156

@@ -218,10 +218,16 @@ def version_in_supported_range(version: str, range_doc: dict[str, Any]) -> bool:
     return True
 
 
-def load_supported_range(script_dir: str) -> dict[str, Any]:
+def load_supported_range(script_dir: str) -> dict[str, Any] | None:
+    """Load package-root supported-kernel-range.json. None when absent (BUG-0025 fail-closed)."""
     path = os.path.join(script_dir, SUPPORTED_RANGE_REL)
-    with open(path, encoding="utf-8") as fh:
-        return json.load(fh)
+    if not os.path.isfile(path):
+        return None
+    try:
+        with open(path, encoding="utf-8") as fh:
+            return json.load(fh)
+    except (OSError, json.JSONDecodeError):
+        return None
 
 
 def run_kernel_preflight(target_root: str, script_dir: str) -> tuple[dict[str, Any], str | None]:
@@ -248,6 +254,9 @@ def run_kernel_preflight(target_root: str, script_dir: str) -> tuple[dict[str, A
     if contract.get("kernel_version") != version:
         return {}, "KERNEL_CONTRACT_MISMATCH"
     range_doc = load_supported_range(script_dir)
+    # Published kit omits package-root standalone/ (US-0133); fail-closed — do not raise FileNotFoundError.
+    if range_doc is None:
+        return {}, "KERNEL_CONTRACT_MISMATCH"
     if not version_in_supported_range(version, range_doc):
         return {}, "KERNEL_VERSION_UNSUPPORTED"
     validators = contract.get("validators") or []
@@ -309,14 +318,18 @@ def write_itsm_shim(target_root: str, *, root_opt_in: bool = False) -> None:
 def run_npm_ci(standalone_dir: str, *, dry_run: bool = False) -> tuple[bool, str]:
     if dry_run or os.environ.get("ITSM_SKIP_NPM_CI") == "1":
         return True, "skipped"
-    if not shutil.which("npm"):
+    npm_bin = shutil.which("npm")
+    if not npm_bin:
         return False, "npm not on PATH"
-    proc = subprocess.run(
-        ["npm", "ci", "--ignore-scripts"],
-        cwd=standalone_dir,
-        capture_output=True,
-        text=True,
-    )
+    try:
+        proc = subprocess.run(
+            [npm_bin, "ci", "--ignore-scripts"],
+            cwd=standalone_dir,
+            capture_output=True,
+            text=True,
+        )
+    except OSError as exc:
+        return False, f"npm spawn failed: {exc}"
     if proc.returncode != 0:
         err = (proc.stderr or proc.stdout or "").strip()
         return False, err[:2000]
