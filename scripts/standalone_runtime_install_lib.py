@@ -24,6 +24,15 @@ STAGING_ROOT_REL = ".its-magic/install-staging"
 RUNTIME_METADATA_REL = ".its-magic/standalone/runtime-metadata.json"
 ITSM_SHIM_REL = ".its-magic/bin/itsm"
 ROOT_ITSM_SHIM_REL = "bin/itsm"
+STANDALONE_REQUIRED_PATHS = (
+    "package.json",
+    "package-lock.json",
+    "apps/cli/src/index.ts",
+    "packages/auth-models/src/index.ts",
+    "packages/pi-kernel/src/index.ts",
+    "packages/role-runtime/src/index.ts",
+    "packages/runtime-core/src/index.ts",
+)
 
 SUPPORTED_RANGE_REL = os.path.join(
     "standalone",
@@ -158,6 +167,10 @@ def resolve_standalone_source(source_root: str, script_dir: str) -> str:
     if framework_kit_repo_enabled() and os.path.isfile(os.path.join(in_tree, "package.json")):
         return in_tree
     return template_mirror
+
+
+def missing_standalone_payload_paths(source: str) -> list[str]:
+    return [rel for rel in STANDALONE_REQUIRED_PATHS if not os.path.isfile(os.path.join(source, rel))]
 
 
 def _copy_tree(src: str, dst: str, *, skip_npm: bool = False) -> None:
@@ -363,6 +376,11 @@ def bootstrap_standalone_runtime_installer_hook(
 
     src = resolve_standalone_source(source_root, script_dir)
     dst = os.path.join(target_root, STANDALONE_REL)
+    missing_payload = missing_standalone_payload_paths(src)
+    if missing_payload:
+        missing_text = ", ".join(posix_relpath(rel) for rel in missing_payload)
+        print(f"[STANDALONE_BOOTSTRAP_FAILED] runtime payload incomplete: {missing_text}")
+        return False, "STANDALONE_BOOTSTRAP_FAILED"
     try:
         _copy_tree(src, dst, skip_npm=True)
     except OSError as exc:

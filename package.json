@@ -1,10 +1,11 @@
 {
   "name": "its-magic",
-  "version": "0.1.5",
+  "version": "0.1.6",
   "description": "its-magic - AI dev team workflow for Cursor.",
   "license": "MIT",
   "bin": {
-    "its-magic": "bin/its-magic.js"
+    "its-magic": "bin/its-magic.js",
+    "itsm": "bin/itsm.js"
   },
   "files": [
     "template/",
@@ -21,14 +22,16 @@
     "scripts/materialize_codebase_map.py",
     "scripts/remote_config_summary.py",
     "scripts/guard_installer_publish.py",
+    "scripts/sync_standalone_template.py",
     "scripts/standalone_runtime_install_lib.py",
     "scripts/standalone-supported-kernel-range.json",
     "bin/its-magic.js",
+    "bin/itsm.js",
     "bin/postinstall.js"
   ],
   "scripts": {
     "guard:installer": "python scripts/guard_installer_publish.py",
-    "prepublishOnly": "npm run guard:installer",
+    "prepublishOnly": "python scripts/sync_standalone_template.py --check && npm run guard:installer",
     "postinstall": "node bin/postinstall.js",
     "release:patch": "npm version patch && npm publish",
     "release:minor": "npm version minor && npm publish",

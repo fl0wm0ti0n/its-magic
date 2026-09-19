@@ -125,6 +125,8 @@ def test_bug0026_published_layout_materializes_itsm_shim(
     assert ok
     assert reason is None
     assert (consumer / ".its-magic/bin/itsm").is_file()
+    assert (consumer / ".its-magic/standalone/apps/cli/src/index.ts").is_file()
+    assert (consumer / ".its-magic/standalone/packages/runtime-core/src/index.ts").is_file()
     assert (consumer / ".its-magic/standalone/runtime-metadata.json").is_file()
 
 
@@ -185,6 +187,34 @@ def test_bug0026_packed_tarball_upgrade_materializes_itsm_shim(
     assert proc.returncode == 0, proc.stdout + proc.stderr
     assert "KERNEL_CONTRACT_MISMATCH" not in proc.stdout + proc.stderr
     assert (consumer / ".its-magic/bin/itsm").is_file()
+    assert (consumer / ".its-magic/standalone/apps/cli/src/index.ts").is_file()
+
+
+def test_bug0026_incomplete_runtime_payload_fails_closed(
+    tmp_path: Path, monkeypatch: pytest.MonkeyPatch
+) -> None:
+    package_root = tmp_path / "published-package"
+    source_root = package_root / "template"
+    runtime_root = source_root / ".its-magic/standalone"
+    consumer = tmp_path / "consumer"
+    _write(runtime_root / "package.json", "{}\n")
+    _write(runtime_root / "package-lock.json", "{}\n")
+    _write(
+        package_root / PACKAGED_RANGE,
+        (REPO_ROOT / PACKAGED_RANGE).read_text(encoding="utf-8"),
+    )
+    consumer.mkdir()
+    _seed_kernel(consumer)
+    monkeypatch.delenv("FRAMEWORK_KIT_REPO", raising=False)
+    monkeypatch.setenv("ITSM_SKIP_NPM_CI", "1")
+
+    ok, reason = srl.bootstrap_standalone_runtime_installer_hook(
+        str(consumer), str(source_root), str(package_root)
+    )
+
+    assert not ok
+    assert reason == "STANDALONE_BOOTSTRAP_FAILED"
+    assert not (consumer / ".its-magic/bin/itsm").exists()
 
 
 def test_bug0026_missing_range_is_not_false_kernel_contract_mismatch(tmp_path: Path) -> None:

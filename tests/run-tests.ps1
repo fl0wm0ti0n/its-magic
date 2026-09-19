@@ -1752,6 +1752,10 @@ Assert-True "BUG-0025 packaging contract tests pass" ($bug0025Contract.ExitCode 
 $bug0026Contract = Start-Process python -ArgumentList @("-m", "pytest", "tests\bug0026_packaged_range_contract_test.py", "-q") -PassThru -NoNewWindow -Wait -WorkingDirectory $root
 Assert-True "BUG-0026 packaged range contract tests pass" ($bug0026Contract.ExitCode -eq 0)
 
+# 26AU) US-0149 — global itsm npm-bin launcher + project-root resolution
+$us0149Contract = Start-Process python -ArgumentList @("-m", "pytest", "tests\us0149_global_itsm_launcher_test.py", "-q") -PassThru -NoNewWindow -Wait -WorkingDirectory $root
+Assert-True "US-0149 global itsm launcher contract tests pass" ($us0149Contract.ExitCode -eq 0)
+
 # Cleanup
 if (Test-Path (Join-Path $root "tests\.tmp-install")) {
   Remove-Item -Recurse -Force (Join-Path $root "tests\.tmp-install") -ErrorAction SilentlyContinue

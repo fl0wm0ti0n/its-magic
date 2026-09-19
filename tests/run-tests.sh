@@ -1673,6 +1673,13 @@ BUG0026_CONTRACT_PY=$?
 set -e
 assert_true "BUG-0026 packaged range contract tests pass" "[ \"$BUG0026_CONTRACT_PY\" -eq 0 ]"
 
+# 26AU) US-0149 — global itsm npm-bin launcher + project-root resolution
+set +e
+"$PY" -m pytest tests/us0149_global_itsm_launcher_test.py -q >/dev/null 2>&1
+US0149_CONTRACT_PY=$?
+set -e
+assert_true "US-0149 global itsm launcher contract tests pass" "[ \"$US0149_CONTRACT_PY\" -eq 0 ]"
+
 timestamp=$(date -u +"%Y-%m-%dT%H:%M:%SZ")
 {
   echo "# its-magic Test Report"
