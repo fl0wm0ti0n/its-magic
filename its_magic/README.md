@@ -116,6 +116,26 @@ Pick one method:
 | Chocolatey | `choco install its-magic` (Admin shell) |
 | Homebrew | `brew tap USER/tap && brew install its-magic` |
 
+The npm package installs both global commands: `its-magic` manages repositories,
+and `itsm` runs the standalone operator CLI. To use a user-chosen npm location,
+install with `--prefix` and add its executable directory to `PATH`:
+
+```powershell
+npm install -g --prefix "$env:LOCALAPPDATA\its-magic" its-magic
+$env:Path = "$env:LOCALAPPDATA\its-magic;$env:Path"
+```
+
+```bash
+npm install -g --prefix "$HOME/.local" its-magic
+export PATH="$HOME/.local/bin:$PATH"
+```
+
+Run `itsm` inside an installed repository; it discovers the repository while
+walking upward. From another directory, select one explicitly with
+`ITSM_PROJECT_ROOT=/path/to/repo itsm status` (PowerShell:
+`$env:ITSM_PROJECT_ROOT = "C:\path\to\repo"`). Remove both global commands with
+`npm uninstall -g --prefix <same-prefix> its-magic`.
+
 ### Global Linux install: empty `install_include_paths` (CRLF manifest)
 
 If **`its-magic --target <repo> --mode missing`** fails with **`[INSTALL_MANIFEST_ERROR] install_include_paths section is empty`** on Debian/Linux while the packaged manifest still lists paths, the global install likely has **CRLF** line endings in **`installer-owned-paths.manifest`** (visible as **`^M$`** with **`cat -A`**). **Fix in-tree** from **`0.1.2-41`**: **`installer.sh`** strips trailing carriage returns before section matching; **`.gitattributes`** keeps **`*.manifest`** LF; **`prepublishOnly`** runs **`guard_installer_publish`**. **Upgrade**: install a build **≥ `0.1.2-41`** (or reinstall from a fresh **`npm pack`** tarball after pull). Older tarballs such as **`its-magic@0.1.2-40`** may remain broken until republished — see **`docs/engineering/architecture.md`** **`# BUG-0008`**.
@@ -387,6 +407,8 @@ Generated test scaffolding + auto-run behavior (US-0066):
 - `/pause`, `/resume`, `/refresh-context`.
 - `/auto`: orchestration mode that spawns a fresh subagent per phase.
 - **US-0124**: OpenCode orchestrator plugin spawn-only `/auto` (Task-spawns US-0069 roles, never executes phase work in-session).
+- **BUG-0019** — OpenCode TUI slash lists `/auto` via `its-magic-auto/tui.ts` keymap after plugin-only ownership (`BUG-0018`); does not restore `auto.md`.
+- **BUG-0020** — OpenCode desktop Command.Info cannot list execute-only `/auto`; CLI TUI `/auto` via project `.opencode/tui.json` + desktop fail-closed `OPENCODE_AUTO_DESKTOP_COMMAND_INFO_LISTING_UNSUPPORTED`; does not restore `auto.md`.
 
 ### OpenCode host operator runbook (US-0126)
 

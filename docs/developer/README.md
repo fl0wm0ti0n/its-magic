@@ -27,6 +27,28 @@ setup stays in the root `README.md` (user channel).
   runbook `### OpenCode `/auto` slash listing after plugin-only ownership (BUG-0019 / R-0124)`, architecture `# BUG-0019`.
 - **BUG-0020** — OpenCode desktop Command.Info cannot list execute-only `/auto`; CLI TUI via `tui.json`; traceability:
   runbook `### OpenCode desktop Command.Info `/auto` listing (BUG-0020 / R-0126)`, architecture `# BUG-0020`.
+- **BUG-0021** — Standalone auth and model routing with Codex OAuth, API-key providers, 6-step precedence; traceability:
+  runbook `### OpenCode host operator runbook (US-0126)`, architecture `# BUG-0021`.
+- **BUG-0023** — Fresh role sessions and runtime attestation with SessionSupervisor, RoleCatalog, spawn/start/end attestations; traceability:
+  runbook `## OpenCode host operator runbook (US-0126)`, architecture `# BUG-0023`.
+- **BUG-0025** — Owned tool broker, policy engine, and security boundary with ALLOW/ASK/DENY decisions; traceability:
+  runbook `### Engineering decision gates (BUG-0025 / R-0128)`, architecture `# BUG-0025`.
+- **US-0135** — Standalone authentication and model routing with Codex OAuth, API-key providers, 6-step precedence; traceability:
+  runbook `### OpenCode host operator runbook (US-0126)`, architecture `# US-0135`.
+- **US-0136** — Fresh role sessions and runtime attestation with SessionSupervisor, RoleCatalog, spawn/start/end attestations; traceability:
+  runbook `## OpenCode host operator runbook (US-0126)`, architecture `# US-0136`.
+- **US-0137** — Owned tool broker, policy engine, and security boundary with ALLOW/ASK/DENY decisions, path ownership; traceability:
+  runbook `### Engineering decision gates (BUG-0025 / R-0128)`, architecture `# US-0137`.
+- **US-0139** — Persistent code intelligence with semantic/lexical/symbol/graph retrieval and bounded per-phase context packs; traceability:
+  runbook `### Code intelligence provider + AFT adapter (US-0139 / R-0132)`, architecture `# US-0139`.
+- **US-0140** — Canonical lifecycle workflow engine with CommandRouter, GateEngine, release/closure separation; traceability:
+  runbook `## Workflow standard (US-0140 / R-0135)`, architecture `# US-0140`.
+- **US-0141** — Application runtime and pluggable execution backends with local/Docker core v1 + WSL/SSH adapters; traceability:
+  runbook `### AppRuntime and execution backends (US-0141 / R-0138)`, architecture `# US-0141`.
+- **US-0142** — Owned browser UAT with Playwright isolated/headless and authorized CDP modes; traceability:
+  runbook `### Browser UAT runtime (US-0142 / R-0139)`, architecture `# US-0142`.
+- **US-0143** — Delivery routing and full-autonomy scheduler with compressed routes and bounded loop execution; traceability:
+  runbook `### Auto drain and delivery routing (US-0143 / R-0140)`, architecture `# US-0143`.
 
 ## Quality gates
 
@@ -73,6 +95,24 @@ setup stays in the root `README.md` (user channel).
   architecture `# US-0125`, `decisions/DEC-0125.md`.
 - **US-0133** — Unpublished standalone Pi kernel workspace (kit `files` omit `standalone/`; owned `AgentKernel`); traceability:
   runbook `### Unpublished standalone Pi kernel workspace (US-0133 / R-0121)`, architecture `# US-0133`, `decisions/DEC-0133.md`.
+- **US-0135** — Standalone authentication and model routing with Codex OAuth, API-key providers; traceability:
+  runbook `### OpenCode host operator runbook (US-0126)`, architecture `# US-0135`.
+- **US-0136** — Fresh role sessions and runtime attestation with SessionSupervisor, RoleCatalog; traceability:
+  runbook `## OpenCode host operator runbook (US-0126)`, architecture `# US-0136`.
+- **US-0137** — Owned tool broker, policy engine, and security boundary with ALLOW/ASK/DENY decisions; traceability:
+  runbook `### Engineering decision gates (BUG-0025 / R-0128)`, architecture `# US-0137`.
+- **US-0138** — Typed runtime configuration with Zod validation, 5-layer precedence, LegacyScratchpadAdapter; traceability:
+  runbook `### Cross-host runtime configuration (US-0131)`, architecture `# US-0138`.
+- **US-0144** — Sovereign critic sessions with independent critic model, anti-slop detection, degraded multi-lens operation; traceability:
+  runbook `## Architecture notes (US-0144 / R-0142)`, architecture `# US-0144`.
+- **US-0145** — Parallel development with release/deploy pipelines, self-healing loops, closure verification; traceability:
+  runbook `## Architecture notes (US-0145 / R-0143)`, architecture `# US-0145`.
+- **US-0146** — CLI/TUI polish with operational observability, status, logs, run tracking; traceability:
+  runbook `## Architecture notes (US-0146 / R-0144)`, architecture `# US-0146`.
+- **US-0147** — Installation, update, and existing-project adoption with fresh/upgrade/overwrite/clean-repo modes; traceability:
+  runbook `## Architecture notes (US-0147 / R-0145)`, architecture `# US-0147`.
+- **US-0148** — Recoverable daemon with boot UUID, process tracking, session recovery, graceful shutdown; traceability:
+  runbook `## Architecture notes (US-0148 / R-0146)`, architecture `# US-0148`.
 - High-level contracts live in `docs/engineering/architecture.md` (search for story ids).
 - Installer ownership is driven by `docs/engineering/context/installer-owned-paths.manifest`.
 - Template parity: changes in repo root often require the same edit under `template/`.

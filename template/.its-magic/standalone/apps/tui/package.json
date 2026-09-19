@@ -1,0 +1,16 @@
+{
+	"name": "@its-magic/tui",
+	"version": "0.0.0",
+	"private": true,
+	"type": "module",
+	"description": "Terminal UI client for operator facades (readline + ANSI).",
+	"engines": {
+		"node": ">=22.19.0"
+	},
+	"bin": {
+		"itsm-tui": "./src/index.ts"
+	},
+	"dependencies": {
+		"@its-magic/runtime-core": "*"
+	}
+}

@@ -174,6 +174,7 @@
 - [x] US-0146: CLI, TUI, and operational observability — operator commands, status/timeline, panels, metrics, responsive logs, and cross-platform integration tests (8 ACs)
 - [x] US-0147: Installation, update, and existing-project adoption — fresh setup, non-destructive migration, host coexistence, docs, preservation, and lifecycle tests (8 ACs)
 - [x] US-0148: Stable control protocol and recoverable daemon — versioned commands/events, reconnect, local security, reconciliation, protocol tests, and future-client boundary (8 ACs)
+- [ ] US-0149: Global `itsm` PATH registration with user-chosen install location (cross-platform) — materialize itsm on published-kit bootstrap residual, opt-in PATH, Win/Linux, docs, PATH remove, `test_us0149_*` (6 ACs)
 
 ## Bug acceptance (canonical)
 
@@ -204,5 +205,6 @@ Per **`DEC-0061`** §8 / **`US-0079`**: portfolio checkbox rows **`- [ ]` / `- [
 - [x] BUG-0023: OpenCode CLI TUI listed `/auto` toasts OPENCODE_AUTO_TUI_DISPATCH_UNSUPPORTED (dispatch live-falsified)
 - [ ] BUG-0024: OpenCode CLI TUI listed `/auto` still toasts OPENCODE_AUTO_TUI_DISPATCH_UNSUPPORTED after BUG-0023 Axis A (live dispatch falsified)
 - [x] BUG-0025: npm publish of its-magic@0.1.3 omits scripts/standalone_runtime_install_lib.py (upgrade FileNotFoundError) — kit fix shipped at 0.1.4; registry republish deferred (`npm_published=false`; operator confirm)
+- [ ] BUG-0026: Published its-magic@0.1.4 upgrade fail-closes KERNEL_CONTRACT_MISMATCH (omitted package-root standalone/) on Windows and Linux
 
 Validator (backlog bugs + optional drift vs this section): `python scripts/bug_issue_validate.py --backlog docs/product/backlog.md --check-acceptance`.

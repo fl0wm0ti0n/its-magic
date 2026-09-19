@@ -1,0 +1,33 @@
+{
+  "compilerOptions": {
+    "target": "ES2022",
+    "lib": ["ES2022"],
+    "module": "NodeNext",
+    "moduleResolution": "NodeNext",
+    "strict": true,
+    "noEmit": true,
+    "skipLibCheck": true,
+    "verbatimModuleSyntax": true,
+    "allowImportingTsExtensions": true,
+    "types": ["node"],
+    "noUnusedLocals": true,
+    "noUnusedParameters": true
+  },
+  "include": [
+    "apps/cli/src/**/*.ts",
+    "packages/pi-kernel/src/**/*.ts",
+    "packages/kernel-bridge/src/**/*.ts",
+    "packages/auth-models/src/**/*.ts",
+    "packages/role-runtime/src/**/*.ts",
+    "packages/policy-engine/src/**/*.ts",
+    "packages/tool-broker/src/**/*.ts",
+    "packages/config/src/**/*.ts",
+    "packages/code-intelligence/src/**/*.ts",
+    "packages/context-engine/src/**/*.ts",
+    "packages/runtime-core/src/**/*.ts",
+    "packages/app-runtime/src/**/*.ts",
+    "packages/browser-uat/src/**/*.ts",
+    "tests/**/*.ts"
+  ],
+  "exclude": ["tests/fixtures"]
+}

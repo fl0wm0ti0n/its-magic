@@ -1,0 +1,18 @@
+{
+	"name": "@its-magic/browser-uat",
+	"version": "0.0.0",
+	"private": true,
+	"type": "module",
+	"description": "Owned BrowserUAT + isolated Playwright driver + typed CDP adapter. No Pi SDK imports.",
+	"engines": {
+		"node": ">=22.19.0"
+	},
+	"exports": {
+		".": "./src/index.ts"
+	},
+	"dependencies": {
+		"@its-magic/app-runtime": "0.0.0",
+		"@its-magic/auth-models": "0.0.0",
+		"@its-magic/policy-engine": "0.0.0"
+	}
+}

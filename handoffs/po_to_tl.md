@@ -1,3 +1,31 @@
+## Intake handoff — BUG-0026 Published-kit KERNEL_CONTRACT_MISMATCH (omit standalone/) Win+Linux
+
+- **Phase completed**: intake. **Role**: po. **Bug**: BUG-0026. **Verdict**: PASS (`decision_gate=false`).
+- **Timestamp (UTC)**: 2026-09-19T10:02:04Z. **writer_id**: `po-f4770d9e1870`. **intake_run_id**: `ir-20260919T100204Z-9c322a`.
+- **Mode**: `INTAKE_GUIDED_MODE=0` (low-touch), `INTAKE_WORK_ITEM_KIND=bug` (explicit argv `/intake bug` **wins** over scratchpad story — DEC-0061 / US-0079), `WORK_KIND_ROUTING=0`, `EARLY_RESEARCH=0`, `FRAMEWORK_KIT_REPO=1`.
+- **Pack**: `small-intake-pack`. Evidence: `handoffs/intake_evidence/BUG-0026-intake-20260919T100204Z.json` — validated **PASS** before backlog/acceptance mutation.
+- **Duplicate/overlap**: **NEW BUG-0026**. Distinct from **BUG-0025 DONE** (packaging lib + fail-closed loader — do **not** reopen ACs). Distinct from **US-0149 OPEN** (global PATH + user-chosen location — compose/link; US-0149 AC-1/Boundaries updated to compose this bug). Distinct from **BUG-0022** / **BUG-0024 OPEN** — do **not** merge/drain. No OPEN KERNEL_* bugs.
+- **Symptom**: global `its-magic@0.1.4` `its-magic --target . --mode upgrade --host both` on **Windows and Linux** → `HOST_CONFIG_POSTINSTALL_OK` then `KERNEL_CONTRACT_MISMATCH` / `STANDALONE_BOOTSTRAP_FAILED`; `.its-magic/bin/itsm` never materializes. Residual: published kit omits package-root `standalone/` → `load_supported_range` → `None` (DEC-0120 / US-0133 / S0157 T-004).
+- **AC summary**: AC-1 pack includes `standalone/` (or equivalent range source); AC-2 upgrade materializes `itsm` without false KERNEL_CONTRACT_MISMATCH; AC-3 Win+Linux parity; AC-4 npm pack contract; AC-5 no BUG-0025 reopen; AC-6 distinct from US-0149; AC-7 distinct from BUG-0022/0024; AC-8 honest fail-closed for true mismatches.
+- **Resume brief**: `intake_bug_resume_brief_refresh.py` → `[INTAKE_BUG_RESUME_BRIEF_REFRESH_OK]`; `--validate-file` → `[INTAKE_RESUME_BRIEF_VALIDATE_OK]` (`intended_resume_phase`/`resolved_start_phase`=`discovery`, `resolution_source=resume_brief`, `bug_id=BUG-0026`).
+- **Bug validate**: `bug_issue_validate.py --check-acceptance` → `[BUG_VALIDATION_OK]`.
+- **Next**: `/discovery` in a **fresh PO** subagent/chat. **STOP** — intake does not run discovery.
+
+
+## Intake handoff — US-0149 Global `itsm` PATH + user-chosen location (cross-platform)
+
+- **Phase completed**: intake. **Role**: po. **Story**: US-0149. **Verdict**: PASS (`decision_gate=false`).
+- **Timestamp (UTC)**: 2026-09-19T09:51:21Z. **writer_id**: `po-intake-0f3aff2d`. **intake_run_id**: `ir-20260919T095121Z-92985b`.
+- **Mode**: `INTAKE_GUIDED_MODE=0` (low-touch), `INTAKE_WORK_ITEM_KIND=story` (argv `/intake`, not `/intake bug`), `WORK_KIND_ROUTING=0`, `EARLY_RESEARCH=0`, `FRAMEWORK_KIT_REPO=1`.
+- **Pack**: `small-intake-pack`. Evidence: `handoffs/intake_evidence/US-0149-intake-20260919T095121Z.json` — validated **PASS** before backlog/acceptance mutation.
+- **Bug routing**: `intake_bug_routing_guard.py --kind story` → `[INTAKE_BUG_ROUTING_OK]` exit 0. Operator intent is product capability (PATH + configurable location + cross-platform + published-kit residual); prior KERNEL_CONTRACT_MISMATCH diagnosis is compose context only — **do not** reopen BUG-0025 ACs.
+- **Duplicate/overlap**: Distinct from **US-0147 DONE** (repo-local shim / optional root `bin/itsm`), **US-0146 DONE** (CLI/TUI), **BUG-0025 DONE** (packaging lib + fail-closed loader). Do not drain **BUG-0022** / **BUG-0024**.
+- **Decomposition**: **single_story**. Split (PATH vs published-kit residual) considered and **rejected** — PATH without materialize-`itsm` on published kits is not independently valuable for the stated outcome.
+- **AC summary**: AC-1 materialize `itsm` on published-kit bootstrap residual; AC-2 opt-in user-chosen PATH location; AC-3 Win/Linux (+ macOS if in-scope); AC-4 PATH remove; AC-5 docs; AC-6 `test_us0149_*`.
+- **Sibling boundary**: Compose US-0146/0147/DEC-0120/DEC-0147; do not reopen DONE ACs. Not US-0148.
+- **Next**: `/discovery` in a **fresh PO** subagent/chat. **STOP** — intake does not run discovery.
+
+
 ## Architecture handoff — US-0146 CLI, TUI, and operational observability
 
 - **Phase completed**: architecture. **Role**: tech-lead. **Story**: US-0146 only. **Sprint**: (pending — expected S0153 at `/sprint-plan`). **Verdict**: PASS (`decision_gate=false`).

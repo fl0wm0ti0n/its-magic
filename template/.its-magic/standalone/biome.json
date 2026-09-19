@@ -1,0 +1,47 @@
+{
+	"$schema": "https://biomejs.dev/schemas/2.2.4/schema.json",
+	"files": {
+		"includes": ["apps/**", "packages/**", "tests/**", "!**/node_modules", "!**/*.tsbuildinfo"]
+	},
+	"formatter": {
+		"enabled": true,
+		"indentStyle": "tab",
+		"lineWidth": 100,
+		"lineEnding": "lf"
+	},
+	"linter": {
+		"enabled": true,
+		"rules": {
+			"recommended": true,
+			"style": {
+				"noRestrictedImports": {
+					"level": "error",
+					"options": {
+						"paths": {
+							"@earendil-works/pi-coding-agent": "Pi SDK may only be imported from packages/pi-kernel (US-0133 / DEC-0133).",
+							"@earendil-works/pi-ai": "Pi SDK may only be imported from packages/pi-kernel (US-0133 / DEC-0133)."
+						},
+						"patterns": [
+							{
+								"group": ["@earendil-works/pi-*"],
+								"message": "Pi SDK may only be imported from packages/pi-kernel (US-0133 / DEC-0133)."
+							}
+						]
+					}
+				}
+			}
+		}
+	},
+	"overrides": [
+		{
+			"includes": ["packages/pi-kernel/**"],
+			"linter": {
+				"rules": {
+					"style": {
+						"noRestrictedImports": "off"
+					}
+				}
+			}
+		}
+	]
+}

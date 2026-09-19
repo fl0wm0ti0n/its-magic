@@ -2656,3 +2656,23 @@ AI coding assistants in Cursor lose context across sessions, produce fragmented 
 - **Design / UX refs**: compose US-0147 / R-0144 standalone install hook; `package.json` `files`; `installer.py` `_load_standalone_runtime_install_lib`; `scripts/standalone_runtime_install_lib.py`; optional `guard_installer_publish.py`; BUG-0001/0003 packaging completeness lineage.
 - **Research asks**: DQ1–DQ10 for **`/research`** → expected **`R-0149`**. Do not author `## R-0149` this phase. Do not wipe **R-0148**. Do not author `# BUG-0025` or a companion DEC this phase. Next: `/research` (tech-lead). CROSS_MODEL_REVIEW=0 — no sovereign-critic.
 
+## Intake Notes — US-0149
+
+- **Story**: Global `itsm` PATH registration with user-chosen install location (cross-platform).
+- **Intake date**: 2026-09-19T09:51:21Z (UTC).
+- **Role / writer**: po / `po-intake-0f3aff2d` / `ir-20260919T095121Z-92985b`
+- **Pack**: `small-intake-pack` (`INTAKE_WORK_ITEM_KIND=story` via `/intake`; `INTAKE_GUIDED_MODE=0`)
+- **Evidence**: `handoffs/intake_evidence/US-0149-intake-20260919T095121Z.json` (`[INTAKE_EVIDENCE_VALIDATION_OK]`)
+- **Outcome**: After install/upgrade, operators can opt in to put `itsm` on PATH at a path they choose on Windows and Linux; published-kit bootstrap materializes `itsm` enough for that registration to be real. Do not reopen BUG-0025 or US-0147 ACs.
+- **Decomposition**: **single_story** (PATH + published-kit residual as one vertical). Next: `/discovery`.
+
+## Intake Notes — BUG-0026
+
+- **Bug**: Published its-magic@0.1.4 upgrade fail-closes `KERNEL_CONTRACT_MISMATCH` (omitted package-root `standalone/`) on Windows and Linux.
+- **Intake date**: 2026-09-19T10:02:04Z (UTC).
+- **Role / writer**: po / `po-f4770d9e1870` / `ir-20260919T100204Z-9c322a`
+- **Pack**: `small-intake-pack` (`INTAKE_WORK_ITEM_KIND=bug` via `/intake bug`; argv wins — DEC-0061 / US-0079; `INTAKE_GUIDED_MODE=0`)
+- **Evidence**: `handoffs/intake_evidence/BUG-0026-intake-20260919T100204Z.json` (`[INTAKE_EVIDENCE_VALIDATION_OK]`)
+- **Outcome**: Published-kit upgrade materializes `.its-magic/bin/itsm` without false `KERNEL_CONTRACT_MISMATCH` from omitted `standalone/`; Win+Linux parity. Do not reopen BUG-0025 ACs. Distinct from US-0149 PATH/product (compose/link; `blocks_us`).
+- **Decomposition**: **single_bug** (NEW residual). Next: `/discovery`.
+

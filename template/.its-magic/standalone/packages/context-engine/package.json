@@ -1,0 +1,16 @@
+{
+	"name": "@its-magic/context-engine",
+	"version": "0.0.0",
+	"private": true,
+	"type": "module",
+	"description": "Bounded code_context ranker, per-phase assembler, and pack envelope. No Pi SDK imports.",
+	"engines": {
+		"node": ">=22.19.0"
+	},
+	"exports": {
+		".": "./src/index.ts"
+	},
+	"dependencies": {
+		"@its-magic/code-intelligence": "0.0.0"
+	}
+}

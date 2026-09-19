@@ -1,0 +1,16 @@
+{
+	"name": "@its-magic/app-runtime",
+	"version": "0.0.0",
+	"private": true,
+	"type": "module",
+	"description": "Owned AppRuntime + ProcessManager + pluggable ExecutionBackends. No Pi SDK imports.",
+	"engines": {
+		"node": ">=22.19.0"
+	},
+	"exports": {
+		".": "./src/index.ts"
+	},
+	"dependencies": {
+		"@its-magic/runtime-core": "0.0.0"
+	}
+}

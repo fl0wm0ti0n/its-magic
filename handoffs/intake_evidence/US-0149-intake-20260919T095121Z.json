@@ -1,0 +1,72 @@
+{
+  "selected_pack": "small-intake-pack",
+  "intake_run_id": "ir-20260919T095121Z-92985b",
+  "writer_id": "po-intake-0f3aff2d",
+  "INTAKE_GUIDED_MODE": 0,
+  "INTAKE_WORK_ITEM_KIND": "story",
+  "requested_mode": "story",
+  "intake_boundary_utc": "2026-09-19T09:51:21Z",
+  "ID_NAMESPACE_BOOTSTRAP": 0,
+  "story_id": "US-0149",
+  "asked_topics": [
+    "outcome_success_criteria",
+    "impacted_components",
+    "constraints_compatibility_risks",
+    "required_tests_acceptance_checks",
+    "done_definition"
+  ],
+  "missing_topics": [],
+  "assumptions_confirmed": "(none)",
+  "topic_coverage": [
+    {
+      "topic_key": "outcome_success_criteria",
+      "satisfied_by": "answer_ref",
+      "ref": "ie:ir-20260919T095121Z-92985b:0:fde4312a18b490d2",
+      "quoted_user_text": "After install or upgrade I must be able to invoke itsm from the global PATH without hunting for a repo-local shim, and I must be able to choose or configure the install location.",
+      "intake_run_id": "ir-20260919T095121Z-92985b",
+      "turn_index": 0
+    },
+    {
+      "topic_key": "impacted_components",
+      "satisfied_by": "answer_ref",
+      "ref": "ie:ir-20260919T095121Z-92985b:1:56980cd39f73161b",
+      "quoted_user_text": "Touch installer PATH registration and the published-kit bootstrap residual so .its-magic/bin/itsm actually materializes; keep Win and Linux parity (macOS in-scope if kit already claims Unix parity).",
+      "intake_run_id": "ir-20260919T095121Z-92985b",
+      "turn_index": 1
+    },
+    {
+      "topic_key": "constraints_compatibility_risks",
+      "satisfied_by": "answer_ref",
+      "ref": "ie:ir-20260919T095121Z-92985b:2:fd0e8f133409124c",
+      "quoted_user_text": "Do not reopen BUG-0025 ACs or US-0146/US-0147 DONE bodies; compose DEC-0120 omit-standalone and US-0147 repo-local itsm shim; PATH emptiness today is a consequence of bootstrap fail-closed, not a separate mystery.",
+      "intake_run_id": "ir-20260919T095121Z-92985b",
+      "turn_index": 2
+    },
+    {
+      "topic_key": "required_tests_acceptance_checks",
+      "satisfied_by": "answer_ref",
+      "ref": "ie:ir-20260919T095121Z-92985b:3:0cbf276f7b924bae",
+      "quoted_user_text": "Acceptance must prove opt-in global PATH registration with a user-chosen path, cross-platform Win/Linux coverage, and that published-kit install/upgrade materializes itsm enough for PATH to be meaningful.",
+      "intake_run_id": "ir-20260919T095121Z-92985b",
+      "turn_index": 3
+    },
+    {
+      "topic_key": "done_definition",
+      "satisfied_by": "answer_ref",
+      "ref": "ie:ir-20260919T095121Z-92985b:4:d010ab9f17bb52ea",
+      "quoted_user_text": "Done when an operator can opt in to put itsm on PATH at a path they choose, it works on Linux and Windows, and published-kit bootstrap no longer leaves them without an itsm binary to register.",
+      "intake_run_id": "ir-20260919T095121Z-92985b",
+      "turn_index": 4
+    }
+  ],
+  "duplicate_check_pass": true,
+  "duplicate_check_notes": "NEW story. Distinct from US-0147 DONE (repo-local .its-magic/bin/itsm + optional root bin/itsm opt-in — no global PATH). Distinct from US-0146 DONE (CLI/TUI). Distinct from BUG-0025 DONE (packaging lib + fail-closed loader — do not reopen ACs). Follow-on product work: global PATH + user-chosen path + cross-platform + published-kit residual so itsm materializes.",
+  "decomposition_verdict": "single_story",
+  "decomposition_rationale": "Low-touch single-story default. Prefer one vertical: published-kit bootstrap residual that materializes itsm plus opt-in global PATH with user-chosen location on Win/Linux. Splitting PATH vs published-kit residual would leave PATH work unusable on npm installs. Operator accepted wanting it as one outcome.",
+  "split_recommendation": "single_vertical",
+  "sibling_not_persisted": "Do not reopen BUG-0025 ACs; do not reopen US-0146/0147; do not drain BUG-0022/0024; do not run discovery in this intake chat",
+  "WORK_KIND_ROUTING": 0,
+  "EARLY_RESEARCH": 0,
+  "FRAMEWORK_KIT_REPO": 1,
+  "bug_routing_guard": "[INTAKE_BUG_ROUTING_OK] kind=story exit=0"
+}

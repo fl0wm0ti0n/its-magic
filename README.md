@@ -95,6 +95,20 @@ unavailable). Guided and decision-gated modes remain the default.
 - `MIGRATION` scratchpad flag — Smart Upgrade Mode (`US-0018`).
 - `/auto` — OpenCode pack LF so Linux slash commands parse (`BUG-0017`).
 - `US-0016` scratchpad flag — Homebrew Version Sync (`US-0016`).
+- `/acceptance` — Standalone authentication and model routing with Codex OAuth, API-key providers, 6-step precedence, thinking levels, critic pinning, and health diagnostics (`BUG-0021`, `US-0135`).
+- `/auto` — Fresh role sessions and runtime attestation with SessionSupervisor, RoleCatalog, spawn/start/end attestations, and fail-closed isolation (`BUG-0023`, `US-0136`).
+- `/engineering` — Owned tool broker, policy engine, and security boundary with ALLOW/ASK/DENY decisions, path ownership, shell classification, secret redaction, and audit records (`BUG-0025`, `US-0137`).
+- `.its-magic/config{,.local,.example}.json` — Typed runtime configuration with Zod validation, 5-layer precedence, LegacyScratchpadAdapter, and provenance diagnostics (`US-0138`).
+- `code_context(task)` — Persistent code intelligence with semantic/lexical/symbol/graph retrieval, bounded per-phase context packs, and reproducible content hashes (`US-0139`).
+- `/intake` through `/refresh-context` — Canonical lifecycle workflow engine with CommandRouter 7-step phase graph, GateEngine, bounded execute↔QA rework, release/closure separation, crash resume, and E2E fixtures (`US-0140`).
+- `itsm start/stop/restart/health` — Application runtime and pluggable execution backends (local/Docker core v1 + WSL/SSH adapters) with stack-aware profiles, bounded self-debug, and process cleanup (`US-0141`).
+- `itsm_browser` — Owned browser UAT with Playwright isolated/headless and authorized CDP modes, typed actions, evidence recording, and fail-closed probes (`US-0142`).
+- `/auto` drain — Delivery routing and full-autonomy scheduler with compressed routes, phase skipping, and bounded loop execution (`US-0143`).
+- Sovereign critic sessions — Memory, reviews, and convergence with independent critic model, anti-slop detection, and degraded multi-lens operation (`US-0144`).
+- Parallel development — Release/deploy pipelines, self-healing loops, and closure verification with evidence reconciliation (`US-0145`).
+- CLI/TUI polish — Operational observability with status, logs, run tracking, and TUI mode for interactive sessions (`US-0146`).
+- `its-magic --target` — Installation, update, and existing-project adoption with fresh/upgrade/overwrite/clean-repo modes and lifecycle QA matrix (`US-0147`).
+- Recoverable daemon — Stable control protocol with boot UUID, process tracking, session recovery, and graceful shutdown (`US-0148`).
 
 ## Setup
 

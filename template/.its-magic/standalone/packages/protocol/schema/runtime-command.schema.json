@@ -1,0 +1,20 @@
+{
+	"$schema": "https://json-schema.org/draft/2020-12/schema",
+	"$id": "https://its-magic.local/schema/runtime-command.json",
+	"title": "RuntimeCommand",
+	"type": "object",
+	"required": ["kind", "protocol_version"],
+	"properties": {
+		"kind": {
+			"type": "string",
+			"enum": ["command.submit", "approval.respond", "run.cancel", "run.start", "run.attach"]
+		},
+		"protocol_version": { "type": "integer", "minimum": 1 },
+		"run_id": { "type": "string" },
+		"argv": { "type": "array", "items": { "type": "string" } },
+		"role": { "type": "string", "enum": ["controller", "observer"] },
+		"approval_id": { "type": "string" },
+		"choice": { "type": "string" }
+	},
+	"additionalProperties": true
+}

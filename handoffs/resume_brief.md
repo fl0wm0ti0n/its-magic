@@ -535,12 +535,70 @@
 
 ## Latest orchestration pointer — post-bug-intake (DEC-0069)
 
-- **Boundary**: successful **`/intake bug`** persistence (**`US-0045`**) — **`intake_boundary_utc=2026-09-18T15:48:00Z`**
-- **`bug_id`**: **`BUG-0025`** — must remain **`OPEN`** in **`docs/product/backlog.md`** (authority); this refresh is rejected if backlog shows **DONE**
-- **Intake evidence ref**: `handoffs/intake_evidence/BUG-0025-intake-20260918T154800Z.json`
-- **`orchestrator_run_id`**: `cursor-20260918-BUG0025-intake` (boundary metadata when known; optional at intake)
+- **Boundary**: successful **`/intake bug`** persistence (**`US-0045`**) — **`intake_boundary_utc=2026-09-19T10:02:04Z`**
+- **`bug_id`**: **`BUG-0026`** — must remain **`OPEN`** in **`docs/product/backlog.md`** (authority); this refresh is rejected if backlog shows **DONE**
+- **Intake evidence ref**: `handoffs/intake_evidence/BUG-0026-intake-20260919T100204Z.json`
+- **`orchestrator_run_id`**: `ir-20260919T100204Z-9c322a` (boundary metadata when known; optional at intake)
 - **Contract**: default **`/auto`** continuation targets **`discovery`** for this OPEN bug (not a stale pre-intake **`intake`** resume target)
 
+## Current status
+
+- **Active bug**: **`BUG-0026`** — **OPEN** per **`docs/product/backlog.md`** at refresh time
+
+## Intended resume phase
+
+`discovery`
+
+## Resume target
+
+- bug_id=BUG-0026
+- story_id=(none)
+- sprint_id=(none)
+- boundary=post-bug-intake (**DEC-0069**)
+
+## Latest auto breadcrumb seed
+
+- requested_start_from=(none)
+- resolved_start_phase=discovery
+- resolution_source=resume_brief
+- resolution_status=resolved
+- stop_reason=intake_complete
+- stop_phase=intake
+- next_scheduled_phase=discovery
+- bug_id=BUG-0026
+- story_id=(none)
+- sprint_id=(none)
+- orchestrator_run_id=ir-20260919T100204Z-9c322a
+- intake_boundary_utc=2026-09-19T10:02:04Z
+## Current status
+
+- **Active bug**: **`BUG-0026`** — **OPEN** per **`docs/product/backlog.md`** at refresh time
+
+## Intended resume phase
+
+`discovery`
+
+## Resume target
+
+- bug_id=BUG-0026
+- story_id=(none)
+- sprint_id=(none)
+- boundary=post-bug-intake (**DEC-0069**)
+
+## Latest auto breadcrumb seed
+
+- requested_start_from=(none)
+- resolved_start_phase=discovery
+- resolution_source=resume_brief
+- resolution_status=resolved
+- stop_reason=intake_complete
+- stop_phase=intake
+- next_scheduled_phase=discovery
+- bug_id=BUG-0026
+- story_id=(none)
+- sprint_id=(none)
+- orchestrator_run_id=(unknown)
+- intake_boundary_utc=2026-09-19T10:02:04Z
 ## Current status
 
 - **Active bug**: **`BUG-0025`** — **OPEN** per **`docs/product/backlog.md`** at refresh time
@@ -2669,12 +2727,70 @@
 
 ## Latest orchestration pointer — post-bug-intake (DEC-0069)
 
-- **Boundary**: successful **`/intake bug`** persistence (**`US-0045`**) — **`intake_boundary_utc=2026-09-14T04:00:00Z`**
-- **`bug_id`**: **`BUG-0024`** — must remain **`OPEN`** in **`docs/product/backlog.md`** (authority); this refresh is rejected if backlog shows **DONE**
-- **Intake evidence ref**: `handoffs/intake_evidence/BUG-0024-intake-20260914T035000Z.json`
-- **`orchestrator_run_id`**: `cursor-20260913-BUG0024-intake` (boundary metadata when known; optional at intake)
+- **Boundary**: successful **`/intake bug`** persistence (**`US-0045`**) — **`intake_boundary_utc=2026-09-19T10:02:04Z`**
+- **`bug_id`**: **`BUG-0026`** — must remain **`OPEN`** in **`docs/product/backlog.md`** (authority); this refresh is rejected if backlog shows **DONE**
+- **Intake evidence ref**: `handoffs/intake_evidence/BUG-0026-intake-20260919T100204Z.json`
+- **`orchestrator_run_id`**: `ir-20260919T100204Z-9c322a` (boundary metadata when known; optional at intake)
 - **Contract**: default **`/auto`** continuation targets **`discovery`** for this OPEN bug (not a stale pre-intake **`intake`** resume target)
 
+## Current status
+
+- **Active bug**: **`BUG-0026`** — **OPEN** per **`docs/product/backlog.md`** at refresh time
+
+## Intended resume phase
+
+`discovery`
+
+## Resume target
+
+- bug_id=BUG-0026
+- story_id=(none)
+- sprint_id=(none)
+- boundary=post-bug-intake (**DEC-0069**)
+
+## Latest auto breadcrumb seed
+
+- requested_start_from=(none)
+- resolved_start_phase=discovery
+- resolution_source=resume_brief
+- resolution_status=resolved
+- stop_reason=intake_complete
+- stop_phase=intake
+- next_scheduled_phase=discovery
+- bug_id=BUG-0026
+- story_id=(none)
+- sprint_id=(none)
+- orchestrator_run_id=ir-20260919T100204Z-9c322a
+- intake_boundary_utc=2026-09-19T10:02:04Z
+## Current status
+
+- **Active bug**: **`BUG-0026`** — **OPEN** per **`docs/product/backlog.md`** at refresh time
+
+## Intended resume phase
+
+`discovery`
+
+## Resume target
+
+- bug_id=BUG-0026
+- story_id=(none)
+- sprint_id=(none)
+- boundary=post-bug-intake (**DEC-0069**)
+
+## Latest auto breadcrumb seed
+
+- requested_start_from=(none)
+- resolved_start_phase=discovery
+- resolution_source=resume_brief
+- resolution_status=resolved
+- stop_reason=intake_complete
+- stop_phase=intake
+- next_scheduled_phase=discovery
+- bug_id=BUG-0026
+- story_id=(none)
+- sprint_id=(none)
+- orchestrator_run_id=(unknown)
+- intake_boundary_utc=2026-09-19T10:02:04Z
 ## Current status
 
 - **Active bug**: **`BUG-0024`** — **OPEN** per **`docs/product/backlog.md`** at refresh time
@@ -2760,12 +2876,70 @@
 
 ## Latest orchestration pointer — post-bug-intake (DEC-0069)
 
-- **Boundary**: successful **`/intake bug`** persistence (**`US-0045`**) — **`intake_boundary_utc=2026-09-14T04:00:00Z`**
-- **`bug_id`**: **`BUG-0024`** — must remain **`OPEN`** in **`docs/product/backlog.md`** (authority); this refresh is rejected if backlog shows **DONE**
-- **Intake evidence ref**: `handoffs/intake_evidence/BUG-0024-intake-20260914T035000Z.json`
-- **`orchestrator_run_id`**: `cursor-20260913-BUG0024-intake` (boundary metadata when known; optional at intake)
+- **Boundary**: successful **`/intake bug`** persistence (**`US-0045`**) — **`intake_boundary_utc=2026-09-19T10:02:04Z`**
+- **`bug_id`**: **`BUG-0026`** — must remain **`OPEN`** in **`docs/product/backlog.md`** (authority); this refresh is rejected if backlog shows **DONE**
+- **Intake evidence ref**: `handoffs/intake_evidence/BUG-0026-intake-20260919T100204Z.json`
+- **`orchestrator_run_id`**: `ir-20260919T100204Z-9c322a` (boundary metadata when known; optional at intake)
 - **Contract**: default **`/auto`** continuation targets **`discovery`** for this OPEN bug (not a stale pre-intake **`intake`** resume target)
 
+## Current status
+
+- **Active bug**: **`BUG-0026`** — **OPEN** per **`docs/product/backlog.md`** at refresh time
+
+## Intended resume phase
+
+`discovery`
+
+## Resume target
+
+- bug_id=BUG-0026
+- story_id=(none)
+- sprint_id=(none)
+- boundary=post-bug-intake (**DEC-0069**)
+
+## Latest auto breadcrumb seed
+
+- requested_start_from=(none)
+- resolved_start_phase=discovery
+- resolution_source=resume_brief
+- resolution_status=resolved
+- stop_reason=intake_complete
+- stop_phase=intake
+- next_scheduled_phase=discovery
+- bug_id=BUG-0026
+- story_id=(none)
+- sprint_id=(none)
+- orchestrator_run_id=ir-20260919T100204Z-9c322a
+- intake_boundary_utc=2026-09-19T10:02:04Z
+## Current status
+
+- **Active bug**: **`BUG-0026`** — **OPEN** per **`docs/product/backlog.md`** at refresh time
+
+## Intended resume phase
+
+`discovery`
+
+## Resume target
+
+- bug_id=BUG-0026
+- story_id=(none)
+- sprint_id=(none)
+- boundary=post-bug-intake (**DEC-0069**)
+
+## Latest auto breadcrumb seed
+
+- requested_start_from=(none)
+- resolved_start_phase=discovery
+- resolution_source=resume_brief
+- resolution_status=resolved
+- stop_reason=intake_complete
+- stop_phase=intake
+- next_scheduled_phase=discovery
+- bug_id=BUG-0026
+- story_id=(none)
+- sprint_id=(none)
+- orchestrator_run_id=(unknown)
+- intake_boundary_utc=2026-09-19T10:02:04Z
 ## Current status
 
 - **Active bug**: **`BUG-0024`** — **OPEN** per **`docs/product/backlog.md`** at refresh time
@@ -2797,12 +2971,70 @@
 - intake_boundary_utc=2026-09-14T04:00:00Z
 ## Latest orchestration pointer — post-bug-intake (DEC-0069)
 
-- **Boundary**: successful **`/intake bug`** persistence (**`US-0045`**) — **`intake_boundary_utc=2026-09-14T04:00:00Z`**
-- **`bug_id`**: **`BUG-0024`** — must remain **`OPEN`** in **`docs/product/backlog.md`** (authority); this refresh is rejected if backlog shows **DONE**
-- **Intake evidence ref**: `handoffs/intake_evidence/BUG-0024-intake-20260914T035000Z.json`
-- **`orchestrator_run_id`**: `cursor-20260913-BUG0024-intake` (boundary metadata when known; optional at intake)
+- **Boundary**: successful **`/intake bug`** persistence (**`US-0045`**) — **`intake_boundary_utc=2026-09-19T10:02:04Z`**
+- **`bug_id`**: **`BUG-0026`** — must remain **`OPEN`** in **`docs/product/backlog.md`** (authority); this refresh is rejected if backlog shows **DONE**
+- **Intake evidence ref**: `handoffs/intake_evidence/BUG-0026-intake-20260919T100204Z.json`
+- **`orchestrator_run_id`**: `ir-20260919T100204Z-9c322a` (boundary metadata when known; optional at intake)
 - **Contract**: default **`/auto`** continuation targets **`discovery`** for this OPEN bug (not a stale pre-intake **`intake`** resume target)
 
+## Current status
+
+- **Active bug**: **`BUG-0026`** — **OPEN** per **`docs/product/backlog.md`** at refresh time
+
+## Intended resume phase
+
+`discovery`
+
+## Resume target
+
+- bug_id=BUG-0026
+- story_id=(none)
+- sprint_id=(none)
+- boundary=post-bug-intake (**DEC-0069**)
+
+## Latest auto breadcrumb seed
+
+- requested_start_from=(none)
+- resolved_start_phase=discovery
+- resolution_source=resume_brief
+- resolution_status=resolved
+- stop_reason=intake_complete
+- stop_phase=intake
+- next_scheduled_phase=discovery
+- bug_id=BUG-0026
+- story_id=(none)
+- sprint_id=(none)
+- orchestrator_run_id=ir-20260919T100204Z-9c322a
+- intake_boundary_utc=2026-09-19T10:02:04Z
+## Current status
+
+- **Active bug**: **`BUG-0026`** — **OPEN** per **`docs/product/backlog.md`** at refresh time
+
+## Intended resume phase
+
+`discovery`
+
+## Resume target
+
+- bug_id=BUG-0026
+- story_id=(none)
+- sprint_id=(none)
+- boundary=post-bug-intake (**DEC-0069**)
+
+## Latest auto breadcrumb seed
+
+- requested_start_from=(none)
+- resolved_start_phase=discovery
+- resolution_source=resume_brief
+- resolution_status=resolved
+- stop_reason=intake_complete
+- stop_phase=intake
+- next_scheduled_phase=discovery
+- bug_id=BUG-0026
+- story_id=(none)
+- sprint_id=(none)
+- orchestrator_run_id=(unknown)
+- intake_boundary_utc=2026-09-19T10:02:04Z
 ## Current status
 
 - **Active bug**: **`BUG-0024`** — **OPEN** per **`docs/product/backlog.md`** at refresh time
@@ -2834,12 +3066,70 @@
 - intake_boundary_utc=2026-09-14T04:00:00Z
 ## Latest orchestration pointer — post-bug-intake (DEC-0069)
 
-- **Boundary**: successful **`/intake bug`** persistence (**`US-0045`**) — **`intake_boundary_utc=2026-09-14T04:00:00Z`**
-- **`bug_id`**: **`BUG-0024`** — must remain **`OPEN`** in **`docs/product/backlog.md`** (authority); this refresh is rejected if backlog shows **DONE**
-- **Intake evidence ref**: `handoffs/intake_evidence/BUG-0024-intake-20260914T035000Z.json`
-- **`orchestrator_run_id`**: `cursor-20260913-BUG0024-intake` (boundary metadata when known; optional at intake)
+- **Boundary**: successful **`/intake bug`** persistence (**`US-0045`**) — **`intake_boundary_utc=2026-09-19T10:02:04Z`**
+- **`bug_id`**: **`BUG-0026`** — must remain **`OPEN`** in **`docs/product/backlog.md`** (authority); this refresh is rejected if backlog shows **DONE**
+- **Intake evidence ref**: `handoffs/intake_evidence/BUG-0026-intake-20260919T100204Z.json`
+- **`orchestrator_run_id`**: `ir-20260919T100204Z-9c322a` (boundary metadata when known; optional at intake)
 - **Contract**: default **`/auto`** continuation targets **`discovery`** for this OPEN bug (not a stale pre-intake **`intake`** resume target)
 
+## Current status
+
+- **Active bug**: **`BUG-0026`** — **OPEN** per **`docs/product/backlog.md`** at refresh time
+
+## Intended resume phase
+
+`discovery`
+
+## Resume target
+
+- bug_id=BUG-0026
+- story_id=(none)
+- sprint_id=(none)
+- boundary=post-bug-intake (**DEC-0069**)
+
+## Latest auto breadcrumb seed
+
+- requested_start_from=(none)
+- resolved_start_phase=discovery
+- resolution_source=resume_brief
+- resolution_status=resolved
+- stop_reason=intake_complete
+- stop_phase=intake
+- next_scheduled_phase=discovery
+- bug_id=BUG-0026
+- story_id=(none)
+- sprint_id=(none)
+- orchestrator_run_id=ir-20260919T100204Z-9c322a
+- intake_boundary_utc=2026-09-19T10:02:04Z
+## Current status
+
+- **Active bug**: **`BUG-0026`** — **OPEN** per **`docs/product/backlog.md`** at refresh time
+
+## Intended resume phase
+
+`discovery`
+
+## Resume target
+
+- bug_id=BUG-0026
+- story_id=(none)
+- sprint_id=(none)
+- boundary=post-bug-intake (**DEC-0069**)
+
+## Latest auto breadcrumb seed
+
+- requested_start_from=(none)
+- resolved_start_phase=discovery
+- resolution_source=resume_brief
+- resolution_status=resolved
+- stop_reason=intake_complete
+- stop_phase=intake
+- next_scheduled_phase=discovery
+- bug_id=BUG-0026
+- story_id=(none)
+- sprint_id=(none)
+- orchestrator_run_id=(unknown)
+- intake_boundary_utc=2026-09-19T10:02:04Z
 ## Current status
 
 - **Active bug**: **`BUG-0024`** — **OPEN** per **`docs/product/backlog.md`** at refresh time
@@ -2871,12 +3161,70 @@
 - intake_boundary_utc=2026-09-14T04:00:00Z
 ## Latest orchestration pointer — post-bug-intake (DEC-0069)
 
-- **Boundary**: successful **`/intake bug`** persistence (**`US-0045`**) — **`intake_boundary_utc=2026-09-14T04:00:00Z`**
-- **`bug_id`**: **`BUG-0024`** — must remain **`OPEN`** in **`docs/product/backlog.md`** (authority); this refresh is rejected if backlog shows **DONE**
-- **Intake evidence ref**: `handoffs/intake_evidence/BUG-0024-intake-20260914T035000Z.json`
-- **`orchestrator_run_id`**: `cursor-20260913-BUG0024-intake` (boundary metadata when known; optional at intake)
+- **Boundary**: successful **`/intake bug`** persistence (**`US-0045`**) — **`intake_boundary_utc=2026-09-19T10:02:04Z`**
+- **`bug_id`**: **`BUG-0026`** — must remain **`OPEN`** in **`docs/product/backlog.md`** (authority); this refresh is rejected if backlog shows **DONE**
+- **Intake evidence ref**: `handoffs/intake_evidence/BUG-0026-intake-20260919T100204Z.json`
+- **`orchestrator_run_id`**: `ir-20260919T100204Z-9c322a` (boundary metadata when known; optional at intake)
 - **Contract**: default **`/auto`** continuation targets **`discovery`** for this OPEN bug (not a stale pre-intake **`intake`** resume target)
 
+## Current status
+
+- **Active bug**: **`BUG-0026`** — **OPEN** per **`docs/product/backlog.md`** at refresh time
+
+## Intended resume phase
+
+`discovery`
+
+## Resume target
+
+- bug_id=BUG-0026
+- story_id=(none)
+- sprint_id=(none)
+- boundary=post-bug-intake (**DEC-0069**)
+
+## Latest auto breadcrumb seed
+
+- requested_start_from=(none)
+- resolved_start_phase=discovery
+- resolution_source=resume_brief
+- resolution_status=resolved
+- stop_reason=intake_complete
+- stop_phase=intake
+- next_scheduled_phase=discovery
+- bug_id=BUG-0026
+- story_id=(none)
+- sprint_id=(none)
+- orchestrator_run_id=ir-20260919T100204Z-9c322a
+- intake_boundary_utc=2026-09-19T10:02:04Z
+## Current status
+
+- **Active bug**: **`BUG-0026`** — **OPEN** per **`docs/product/backlog.md`** at refresh time
+
+## Intended resume phase
+
+`discovery`
+
+## Resume target
+
+- bug_id=BUG-0026
+- story_id=(none)
+- sprint_id=(none)
+- boundary=post-bug-intake (**DEC-0069**)
+
+## Latest auto breadcrumb seed
+
+- requested_start_from=(none)
+- resolved_start_phase=discovery
+- resolution_source=resume_brief
+- resolution_status=resolved
+- stop_reason=intake_complete
+- stop_phase=intake
+- next_scheduled_phase=discovery
+- bug_id=BUG-0026
+- story_id=(none)
+- sprint_id=(none)
+- orchestrator_run_id=(unknown)
+- intake_boundary_utc=2026-09-19T10:02:04Z
 ## Current status
 
 - **Active bug**: **`BUG-0024`** — **OPEN** per **`docs/product/backlog.md`** at refresh time
@@ -2908,12 +3256,70 @@
 - intake_boundary_utc=2026-09-14T04:00:00Z
 ## Latest orchestration pointer — post-bug-intake (DEC-0069)
 
-- **Boundary**: successful **`/intake bug`** persistence (**`US-0045`**) — **`intake_boundary_utc=2026-09-14T04:00:00Z`**
-- **`bug_id`**: **`BUG-0024`** — must remain **`OPEN`** in **`docs/product/backlog.md`** (authority); this refresh is rejected if backlog shows **DONE**
-- **Intake evidence ref**: `handoffs/intake_evidence/BUG-0024-intake-20260914T035000Z.json`
-- **`orchestrator_run_id`**: `cursor-20260913-BUG0024-intake` (boundary metadata when known; optional at intake)
+- **Boundary**: successful **`/intake bug`** persistence (**`US-0045`**) — **`intake_boundary_utc=2026-09-19T10:02:04Z`**
+- **`bug_id`**: **`BUG-0026`** — must remain **`OPEN`** in **`docs/product/backlog.md`** (authority); this refresh is rejected if backlog shows **DONE**
+- **Intake evidence ref**: `handoffs/intake_evidence/BUG-0026-intake-20260919T100204Z.json`
+- **`orchestrator_run_id`**: `ir-20260919T100204Z-9c322a` (boundary metadata when known; optional at intake)
 - **Contract**: default **`/auto`** continuation targets **`discovery`** for this OPEN bug (not a stale pre-intake **`intake`** resume target)
 
+## Current status
+
+- **Active bug**: **`BUG-0026`** — **OPEN** per **`docs/product/backlog.md`** at refresh time
+
+## Intended resume phase
+
+`discovery`
+
+## Resume target
+
+- bug_id=BUG-0026
+- story_id=(none)
+- sprint_id=(none)
+- boundary=post-bug-intake (**DEC-0069**)
+
+## Latest auto breadcrumb seed
+
+- requested_start_from=(none)
+- resolved_start_phase=discovery
+- resolution_source=resume_brief
+- resolution_status=resolved
+- stop_reason=intake_complete
+- stop_phase=intake
+- next_scheduled_phase=discovery
+- bug_id=BUG-0026
+- story_id=(none)
+- sprint_id=(none)
+- orchestrator_run_id=ir-20260919T100204Z-9c322a
+- intake_boundary_utc=2026-09-19T10:02:04Z
+## Current status
+
+- **Active bug**: **`BUG-0026`** — **OPEN** per **`docs/product/backlog.md`** at refresh time
+
+## Intended resume phase
+
+`discovery`
+
+## Resume target
+
+- bug_id=BUG-0026
+- story_id=(none)
+- sprint_id=(none)
+- boundary=post-bug-intake (**DEC-0069**)
+
+## Latest auto breadcrumb seed
+
+- requested_start_from=(none)
+- resolved_start_phase=discovery
+- resolution_source=resume_brief
+- resolution_status=resolved
+- stop_reason=intake_complete
+- stop_phase=intake
+- next_scheduled_phase=discovery
+- bug_id=BUG-0026
+- story_id=(none)
+- sprint_id=(none)
+- orchestrator_run_id=(unknown)
+- intake_boundary_utc=2026-09-19T10:02:04Z
 ## Current status
 
 - **Active bug**: **`BUG-0024`** — **OPEN** per **`docs/product/backlog.md`** at refresh time
@@ -2945,12 +3351,70 @@
 - intake_boundary_utc=2026-09-14T04:00:00Z
 ## Latest orchestration pointer — post-bug-intake (DEC-0069)
 
-- **Boundary**: successful **`/intake bug`** persistence (**`US-0045`**) — **`intake_boundary_utc=2026-09-14T04:00:00Z`**
-- **`bug_id`**: **`BUG-0024`** — must remain **`OPEN`** in **`docs/product/backlog.md`** (authority); this refresh is rejected if backlog shows **DONE**
-- **Intake evidence ref**: `handoffs/intake_evidence/BUG-0024-intake-20260914T035000Z.json`
-- **`orchestrator_run_id`**: `cursor-20260913-BUG0024-intake` (boundary metadata when known; optional at intake)
+- **Boundary**: successful **`/intake bug`** persistence (**`US-0045`**) — **`intake_boundary_utc=2026-09-19T10:02:04Z`**
+- **`bug_id`**: **`BUG-0026`** — must remain **`OPEN`** in **`docs/product/backlog.md`** (authority); this refresh is rejected if backlog shows **DONE**
+- **Intake evidence ref**: `handoffs/intake_evidence/BUG-0026-intake-20260919T100204Z.json`
+- **`orchestrator_run_id`**: `ir-20260919T100204Z-9c322a` (boundary metadata when known; optional at intake)
 - **Contract**: default **`/auto`** continuation targets **`discovery`** for this OPEN bug (not a stale pre-intake **`intake`** resume target)
 
+## Current status
+
+- **Active bug**: **`BUG-0026`** — **OPEN** per **`docs/product/backlog.md`** at refresh time
+
+## Intended resume phase
+
+`discovery`
+
+## Resume target
+
+- bug_id=BUG-0026
+- story_id=(none)
+- sprint_id=(none)
+- boundary=post-bug-intake (**DEC-0069**)
+
+## Latest auto breadcrumb seed
+
+- requested_start_from=(none)
+- resolved_start_phase=discovery
+- resolution_source=resume_brief
+- resolution_status=resolved
+- stop_reason=intake_complete
+- stop_phase=intake
+- next_scheduled_phase=discovery
+- bug_id=BUG-0026
+- story_id=(none)
+- sprint_id=(none)
+- orchestrator_run_id=ir-20260919T100204Z-9c322a
+- intake_boundary_utc=2026-09-19T10:02:04Z
+## Current status
+
+- **Active bug**: **`BUG-0026`** — **OPEN** per **`docs/product/backlog.md`** at refresh time
+
+## Intended resume phase
+
+`discovery`
+
+## Resume target
+
+- bug_id=BUG-0026
+- story_id=(none)
+- sprint_id=(none)
+- boundary=post-bug-intake (**DEC-0069**)
+
+## Latest auto breadcrumb seed
+
+- requested_start_from=(none)
+- resolved_start_phase=discovery
+- resolution_source=resume_brief
+- resolution_status=resolved
+- stop_reason=intake_complete
+- stop_phase=intake
+- next_scheduled_phase=discovery
+- bug_id=BUG-0026
+- story_id=(none)
+- sprint_id=(none)
+- orchestrator_run_id=(unknown)
+- intake_boundary_utc=2026-09-19T10:02:04Z
 ## Current status
 
 - **Active bug**: **`BUG-0024`** — **OPEN** per **`docs/product/backlog.md`** at refresh time
@@ -2982,12 +3446,70 @@
 - intake_boundary_utc=2026-09-14T04:00:00Z
 ## Latest orchestration pointer — post-bug-intake (DEC-0069)
 
-- **Boundary**: successful **`/intake bug`** persistence (**`US-0045`**) — **`intake_boundary_utc=2026-09-14T04:00:00Z`**
-- **`bug_id`**: **`BUG-0024`** — must remain **`OPEN`** in **`docs/product/backlog.md`** (authority); this refresh is rejected if backlog shows **DONE**
-- **Intake evidence ref**: `handoffs/intake_evidence/BUG-0024-intake-20260914T035000Z.json`
-- **`orchestrator_run_id`**: `cursor-20260913-BUG0024-intake` (boundary metadata when known; optional at intake)
+- **Boundary**: successful **`/intake bug`** persistence (**`US-0045`**) — **`intake_boundary_utc=2026-09-19T10:02:04Z`**
+- **`bug_id`**: **`BUG-0026`** — must remain **`OPEN`** in **`docs/product/backlog.md`** (authority); this refresh is rejected if backlog shows **DONE**
+- **Intake evidence ref**: `handoffs/intake_evidence/BUG-0026-intake-20260919T100204Z.json`
+- **`orchestrator_run_id`**: `ir-20260919T100204Z-9c322a` (boundary metadata when known; optional at intake)
 - **Contract**: default **`/auto`** continuation targets **`discovery`** for this OPEN bug (not a stale pre-intake **`intake`** resume target)
 
+## Current status
+
+- **Active bug**: **`BUG-0026`** — **OPEN** per **`docs/product/backlog.md`** at refresh time
+
+## Intended resume phase
+
+`discovery`
+
+## Resume target
+
+- bug_id=BUG-0026
+- story_id=(none)
+- sprint_id=(none)
+- boundary=post-bug-intake (**DEC-0069**)
+
+## Latest auto breadcrumb seed
+
+- requested_start_from=(none)
+- resolved_start_phase=discovery
+- resolution_source=resume_brief
+- resolution_status=resolved
+- stop_reason=intake_complete
+- stop_phase=intake
+- next_scheduled_phase=discovery
+- bug_id=BUG-0026
+- story_id=(none)
+- sprint_id=(none)
+- orchestrator_run_id=ir-20260919T100204Z-9c322a
+- intake_boundary_utc=2026-09-19T10:02:04Z
+## Current status
+
+- **Active bug**: **`BUG-0026`** — **OPEN** per **`docs/product/backlog.md`** at refresh time
+
+## Intended resume phase
+
+`discovery`
+
+## Resume target
+
+- bug_id=BUG-0026
+- story_id=(none)
+- sprint_id=(none)
+- boundary=post-bug-intake (**DEC-0069**)
+
+## Latest auto breadcrumb seed
+
+- requested_start_from=(none)
+- resolved_start_phase=discovery
+- resolution_source=resume_brief
+- resolution_status=resolved
+- stop_reason=intake_complete
+- stop_phase=intake
+- next_scheduled_phase=discovery
+- bug_id=BUG-0026
+- story_id=(none)
+- sprint_id=(none)
+- orchestrator_run_id=(unknown)
+- intake_boundary_utc=2026-09-19T10:02:04Z
 ## Current status
 
 - **Active bug**: **`BUG-0024`** — **OPEN** per **`docs/product/backlog.md`** at refresh time
@@ -3177,12 +3699,70 @@
 
 ## Latest orchestration pointer — post-bug-intake (DEC-0069)
 
-- **Boundary**: successful **`/intake bug`** persistence (**`US-0045`**) — **`intake_boundary_utc=2026-09-14T04:00:00Z`**
-- **`bug_id`**: **`BUG-0024`** — must remain **`OPEN`** in **`docs/product/backlog.md`** (authority); this refresh is rejected if backlog shows **DONE**
-- **Intake evidence ref**: `handoffs/intake_evidence/BUG-0024-intake-20260914T035000Z.json`
-- **`orchestrator_run_id`**: `cursor-20260913-BUG0024-intake` (boundary metadata when known; optional at intake)
+- **Boundary**: successful **`/intake bug`** persistence (**`US-0045`**) — **`intake_boundary_utc=2026-09-19T10:02:04Z`**
+- **`bug_id`**: **`BUG-0026`** — must remain **`OPEN`** in **`docs/product/backlog.md`** (authority); this refresh is rejected if backlog shows **DONE**
+- **Intake evidence ref**: `handoffs/intake_evidence/BUG-0026-intake-20260919T100204Z.json`
+- **`orchestrator_run_id`**: `ir-20260919T100204Z-9c322a` (boundary metadata when known; optional at intake)
 - **Contract**: default **`/auto`** continuation targets **`discovery`** for this OPEN bug (not a stale pre-intake **`intake`** resume target)
 
+## Current status
+
+- **Active bug**: **`BUG-0026`** — **OPEN** per **`docs/product/backlog.md`** at refresh time
+
+## Intended resume phase
+
+`discovery`
+
+## Resume target
+
+- bug_id=BUG-0026
+- story_id=(none)
+- sprint_id=(none)
+- boundary=post-bug-intake (**DEC-0069**)
+
+## Latest auto breadcrumb seed
+
+- requested_start_from=(none)
+- resolved_start_phase=discovery
+- resolution_source=resume_brief
+- resolution_status=resolved
+- stop_reason=intake_complete
+- stop_phase=intake
+- next_scheduled_phase=discovery
+- bug_id=BUG-0026
+- story_id=(none)
+- sprint_id=(none)
+- orchestrator_run_id=ir-20260919T100204Z-9c322a
+- intake_boundary_utc=2026-09-19T10:02:04Z
+## Current status
+
+- **Active bug**: **`BUG-0026`** — **OPEN** per **`docs/product/backlog.md`** at refresh time
+
+## Intended resume phase
+
+`discovery`
+
+## Resume target
+
+- bug_id=BUG-0026
+- story_id=(none)
+- sprint_id=(none)
+- boundary=post-bug-intake (**DEC-0069**)
+
+## Latest auto breadcrumb seed
+
+- requested_start_from=(none)
+- resolved_start_phase=discovery
+- resolution_source=resume_brief
+- resolution_status=resolved
+- stop_reason=intake_complete
+- stop_phase=intake
+- next_scheduled_phase=discovery
+- bug_id=BUG-0026
+- story_id=(none)
+- sprint_id=(none)
+- orchestrator_run_id=(unknown)
+- intake_boundary_utc=2026-09-19T10:02:04Z
 ## Current status
 
 - **Active bug**: **`BUG-0024`** — **OPEN** per **`docs/product/backlog.md`** at refresh time
@@ -3214,12 +3794,70 @@
 - intake_boundary_utc=2026-09-14T04:00:00Z
 ## Latest orchestration pointer — post-bug-intake (DEC-0069)
 
-- **Boundary**: successful **`/intake bug`** persistence (**`US-0045`**) — **`intake_boundary_utc=2026-09-14T04:00:00Z`**
-- **`bug_id`**: **`BUG-0024`** — must remain **`OPEN`** in **`docs/product/backlog.md`** (authority); this refresh is rejected if backlog shows **DONE**
-- **Intake evidence ref**: `handoffs/intake_evidence/BUG-0024-intake-20260914T035000Z.json`
-- **`orchestrator_run_id`**: `cursor-20260913-BUG0024-intake` (boundary metadata when known; optional at intake)
+- **Boundary**: successful **`/intake bug`** persistence (**`US-0045`**) — **`intake_boundary_utc=2026-09-19T10:02:04Z`**
+- **`bug_id`**: **`BUG-0026`** — must remain **`OPEN`** in **`docs/product/backlog.md`** (authority); this refresh is rejected if backlog shows **DONE**
+- **Intake evidence ref**: `handoffs/intake_evidence/BUG-0026-intake-20260919T100204Z.json`
+- **`orchestrator_run_id`**: `ir-20260919T100204Z-9c322a` (boundary metadata when known; optional at intake)
 - **Contract**: default **`/auto`** continuation targets **`discovery`** for this OPEN bug (not a stale pre-intake **`intake`** resume target)
 
+## Current status
+
+- **Active bug**: **`BUG-0026`** — **OPEN** per **`docs/product/backlog.md`** at refresh time
+
+## Intended resume phase
+
+`discovery`
+
+## Resume target
+
+- bug_id=BUG-0026
+- story_id=(none)
+- sprint_id=(none)
+- boundary=post-bug-intake (**DEC-0069**)
+
+## Latest auto breadcrumb seed
+
+- requested_start_from=(none)
+- resolved_start_phase=discovery
+- resolution_source=resume_brief
+- resolution_status=resolved
+- stop_reason=intake_complete
+- stop_phase=intake
+- next_scheduled_phase=discovery
+- bug_id=BUG-0026
+- story_id=(none)
+- sprint_id=(none)
+- orchestrator_run_id=ir-20260919T100204Z-9c322a
+- intake_boundary_utc=2026-09-19T10:02:04Z
+## Current status
+
+- **Active bug**: **`BUG-0026`** — **OPEN** per **`docs/product/backlog.md`** at refresh time
+
+## Intended resume phase
+
+`discovery`
+
+## Resume target
+
+- bug_id=BUG-0026
+- story_id=(none)
+- sprint_id=(none)
+- boundary=post-bug-intake (**DEC-0069**)
+
+## Latest auto breadcrumb seed
+
+- requested_start_from=(none)
+- resolved_start_phase=discovery
+- resolution_source=resume_brief
+- resolution_status=resolved
+- stop_reason=intake_complete
+- stop_phase=intake
+- next_scheduled_phase=discovery
+- bug_id=BUG-0026
+- story_id=(none)
+- sprint_id=(none)
+- orchestrator_run_id=(unknown)
+- intake_boundary_utc=2026-09-19T10:02:04Z
 ## Current status
 
 - **Active bug**: **`BUG-0024`** — **OPEN** per **`docs/product/backlog.md`** at refresh time
@@ -3251,12 +3889,70 @@
 - intake_boundary_utc=2026-09-14T04:00:00Z
 ## Latest orchestration pointer — post-bug-intake (DEC-0069)
 
-- **Boundary**: successful **`/intake bug`** persistence (**`US-0045`**) — **`intake_boundary_utc=2026-09-14T04:00:00Z`**
-- **`bug_id`**: **`BUG-0024`** — must remain **`OPEN`** in **`docs/product/backlog.md`** (authority); this refresh is rejected if backlog shows **DONE**
-- **Intake evidence ref**: `handoffs/intake_evidence/BUG-0024-intake-20260914T035000Z.json`
-- **`orchestrator_run_id`**: `cursor-20260913-BUG0024-intake` (boundary metadata when known; optional at intake)
+- **Boundary**: successful **`/intake bug`** persistence (**`US-0045`**) — **`intake_boundary_utc=2026-09-19T10:02:04Z`**
+- **`bug_id`**: **`BUG-0026`** — must remain **`OPEN`** in **`docs/product/backlog.md`** (authority); this refresh is rejected if backlog shows **DONE**
+- **Intake evidence ref**: `handoffs/intake_evidence/BUG-0026-intake-20260919T100204Z.json`
+- **`orchestrator_run_id`**: `ir-20260919T100204Z-9c322a` (boundary metadata when known; optional at intake)
 - **Contract**: default **`/auto`** continuation targets **`discovery`** for this OPEN bug (not a stale pre-intake **`intake`** resume target)
 
+## Current status
+
+- **Active bug**: **`BUG-0026`** — **OPEN** per **`docs/product/backlog.md`** at refresh time
+
+## Intended resume phase
+
+`discovery`
+
+## Resume target
+
+- bug_id=BUG-0026
+- story_id=(none)
+- sprint_id=(none)
+- boundary=post-bug-intake (**DEC-0069**)
+
+## Latest auto breadcrumb seed
+
+- requested_start_from=(none)
+- resolved_start_phase=discovery
+- resolution_source=resume_brief
+- resolution_status=resolved
+- stop_reason=intake_complete
+- stop_phase=intake
+- next_scheduled_phase=discovery
+- bug_id=BUG-0026
+- story_id=(none)
+- sprint_id=(none)
+- orchestrator_run_id=ir-20260919T100204Z-9c322a
+- intake_boundary_utc=2026-09-19T10:02:04Z
+## Current status
+
+- **Active bug**: **`BUG-0026`** — **OPEN** per **`docs/product/backlog.md`** at refresh time
+
+## Intended resume phase
+
+`discovery`
+
+## Resume target
+
+- bug_id=BUG-0026
+- story_id=(none)
+- sprint_id=(none)
+- boundary=post-bug-intake (**DEC-0069**)
+
+## Latest auto breadcrumb seed
+
+- requested_start_from=(none)
+- resolved_start_phase=discovery
+- resolution_source=resume_brief
+- resolution_status=resolved
+- stop_reason=intake_complete
+- stop_phase=intake
+- next_scheduled_phase=discovery
+- bug_id=BUG-0026
+- story_id=(none)
+- sprint_id=(none)
+- orchestrator_run_id=(unknown)
+- intake_boundary_utc=2026-09-19T10:02:04Z
 ## Current status
 
 - **Active bug**: **`BUG-0024`** — **OPEN** per **`docs/product/backlog.md`** at refresh time
@@ -3288,12 +3984,70 @@
 - intake_boundary_utc=2026-09-14T04:00:00Z
 ## Latest orchestration pointer — post-bug-intake (DEC-0069)
 
-- **Boundary**: successful **`/intake bug`** persistence (**`US-0045`**) — **`intake_boundary_utc=2026-09-14T04:00:00Z`**
-- **`bug_id`**: **`BUG-0024`** — must remain **`OPEN`** in **`docs/product/backlog.md`** (authority); this refresh is rejected if backlog shows **DONE**
-- **Intake evidence ref**: `handoffs/intake_evidence/BUG-0024-intake-20260914T035000Z.json`
-- **`orchestrator_run_id`**: `cursor-20260913-BUG0024-intake` (boundary metadata when known; optional at intake)
+- **Boundary**: successful **`/intake bug`** persistence (**`US-0045`**) — **`intake_boundary_utc=2026-09-19T10:02:04Z`**
+- **`bug_id`**: **`BUG-0026`** — must remain **`OPEN`** in **`docs/product/backlog.md`** (authority); this refresh is rejected if backlog shows **DONE**
+- **Intake evidence ref**: `handoffs/intake_evidence/BUG-0026-intake-20260919T100204Z.json`
+- **`orchestrator_run_id`**: `ir-20260919T100204Z-9c322a` (boundary metadata when known; optional at intake)
 - **Contract**: default **`/auto`** continuation targets **`discovery`** for this OPEN bug (not a stale pre-intake **`intake`** resume target)
 
+## Current status
+
+- **Active bug**: **`BUG-0026`** — **OPEN** per **`docs/product/backlog.md`** at refresh time
+
+## Intended resume phase
+
+`discovery`
+
+## Resume target
+
+- bug_id=BUG-0026
+- story_id=(none)
+- sprint_id=(none)
+- boundary=post-bug-intake (**DEC-0069**)
+
+## Latest auto breadcrumb seed
+
+- requested_start_from=(none)
+- resolved_start_phase=discovery
+- resolution_source=resume_brief
+- resolution_status=resolved
+- stop_reason=intake_complete
+- stop_phase=intake
+- next_scheduled_phase=discovery
+- bug_id=BUG-0026
+- story_id=(none)
+- sprint_id=(none)
+- orchestrator_run_id=ir-20260919T100204Z-9c322a
+- intake_boundary_utc=2026-09-19T10:02:04Z
+## Current status
+
+- **Active bug**: **`BUG-0026`** — **OPEN** per **`docs/product/backlog.md`** at refresh time
+
+## Intended resume phase
+
+`discovery`
+
+## Resume target
+
+- bug_id=BUG-0026
+- story_id=(none)
+- sprint_id=(none)
+- boundary=post-bug-intake (**DEC-0069**)
+
+## Latest auto breadcrumb seed
+
+- requested_start_from=(none)
+- resolved_start_phase=discovery
+- resolution_source=resume_brief
+- resolution_status=resolved
+- stop_reason=intake_complete
+- stop_phase=intake
+- next_scheduled_phase=discovery
+- bug_id=BUG-0026
+- story_id=(none)
+- sprint_id=(none)
+- orchestrator_run_id=(unknown)
+- intake_boundary_utc=2026-09-19T10:02:04Z
 ## Current status
 
 - **Active bug**: **`BUG-0024`** — **OPEN** per **`docs/product/backlog.md`** at refresh time
@@ -3325,12 +4079,70 @@
 - intake_boundary_utc=2026-09-14T04:00:00Z
 ## Latest orchestration pointer — post-bug-intake (DEC-0069)
 
-- **Boundary**: successful **`/intake bug`** persistence (**`US-0045`**) — **`intake_boundary_utc=2026-09-14T04:00:00Z`**
-- **`bug_id`**: **`BUG-0024`** — must remain **`OPEN`** in **`docs/product/backlog.md`** (authority); this refresh is rejected if backlog shows **DONE**
-- **Intake evidence ref**: `handoffs/intake_evidence/BUG-0024-intake-20260914T035000Z.json`
-- **`orchestrator_run_id`**: `cursor-20260913-BUG0024-intake` (boundary metadata when known; optional at intake)
+- **Boundary**: successful **`/intake bug`** persistence (**`US-0045`**) — **`intake_boundary_utc=2026-09-19T10:02:04Z`**
+- **`bug_id`**: **`BUG-0026`** — must remain **`OPEN`** in **`docs/product/backlog.md`** (authority); this refresh is rejected if backlog shows **DONE**
+- **Intake evidence ref**: `handoffs/intake_evidence/BUG-0026-intake-20260919T100204Z.json`
+- **`orchestrator_run_id`**: `ir-20260919T100204Z-9c322a` (boundary metadata when known; optional at intake)
 - **Contract**: default **`/auto`** continuation targets **`discovery`** for this OPEN bug (not a stale pre-intake **`intake`** resume target)
 
+## Current status
+
+- **Active bug**: **`BUG-0026`** — **OPEN** per **`docs/product/backlog.md`** at refresh time
+
+## Intended resume phase
+
+`discovery`
+
+## Resume target
+
+- bug_id=BUG-0026
+- story_id=(none)
+- sprint_id=(none)
+- boundary=post-bug-intake (**DEC-0069**)
+
+## Latest auto breadcrumb seed
+
+- requested_start_from=(none)
+- resolved_start_phase=discovery
+- resolution_source=resume_brief
+- resolution_status=resolved
+- stop_reason=intake_complete
+- stop_phase=intake
+- next_scheduled_phase=discovery
+- bug_id=BUG-0026
+- story_id=(none)
+- sprint_id=(none)
+- orchestrator_run_id=ir-20260919T100204Z-9c322a
+- intake_boundary_utc=2026-09-19T10:02:04Z
+## Current status
+
+- **Active bug**: **`BUG-0026`** — **OPEN** per **`docs/product/backlog.md`** at refresh time
+
+## Intended resume phase
+
+`discovery`
+
+## Resume target
+
+- bug_id=BUG-0026
+- story_id=(none)
+- sprint_id=(none)
+- boundary=post-bug-intake (**DEC-0069**)
+
+## Latest auto breadcrumb seed
+
+- requested_start_from=(none)
+- resolved_start_phase=discovery
+- resolution_source=resume_brief
+- resolution_status=resolved
+- stop_reason=intake_complete
+- stop_phase=intake
+- next_scheduled_phase=discovery
+- bug_id=BUG-0026
+- story_id=(none)
+- sprint_id=(none)
+- orchestrator_run_id=(unknown)
+- intake_boundary_utc=2026-09-19T10:02:04Z
 ## Current status
 
 - **Active bug**: **`BUG-0024`** — **OPEN** per **`docs/product/backlog.md`** at refresh time
@@ -3362,12 +4174,70 @@
 - intake_boundary_utc=2026-09-14T04:00:00Z
 ## Latest orchestration pointer — post-bug-intake (DEC-0069)
 
-- **Boundary**: successful **`/intake bug`** persistence (**`US-0045`**) — **`intake_boundary_utc=2026-09-14T04:00:00Z`**
-- **`bug_id`**: **`BUG-0024`** — must remain **`OPEN`** in **`docs/product/backlog.md`** (authority); this refresh is rejected if backlog shows **DONE**
-- **Intake evidence ref**: `handoffs/intake_evidence/BUG-0024-intake-20260914T035000Z.json`
-- **`orchestrator_run_id`**: `cursor-20260913-BUG0024-intake` (boundary metadata when known; optional at intake)
+- **Boundary**: successful **`/intake bug`** persistence (**`US-0045`**) — **`intake_boundary_utc=2026-09-19T10:02:04Z`**
+- **`bug_id`**: **`BUG-0026`** — must remain **`OPEN`** in **`docs/product/backlog.md`** (authority); this refresh is rejected if backlog shows **DONE**
+- **Intake evidence ref**: `handoffs/intake_evidence/BUG-0026-intake-20260919T100204Z.json`
+- **`orchestrator_run_id`**: `ir-20260919T100204Z-9c322a` (boundary metadata when known; optional at intake)
 - **Contract**: default **`/auto`** continuation targets **`discovery`** for this OPEN bug (not a stale pre-intake **`intake`** resume target)
 
+## Current status
+
+- **Active bug**: **`BUG-0026`** — **OPEN** per **`docs/product/backlog.md`** at refresh time
+
+## Intended resume phase
+
+`discovery`
+
+## Resume target
+
+- bug_id=BUG-0026
+- story_id=(none)
+- sprint_id=(none)
+- boundary=post-bug-intake (**DEC-0069**)
+
+## Latest auto breadcrumb seed
+
+- requested_start_from=(none)
+- resolved_start_phase=discovery
+- resolution_source=resume_brief
+- resolution_status=resolved
+- stop_reason=intake_complete
+- stop_phase=intake
+- next_scheduled_phase=discovery
+- bug_id=BUG-0026
+- story_id=(none)
+- sprint_id=(none)
+- orchestrator_run_id=ir-20260919T100204Z-9c322a
+- intake_boundary_utc=2026-09-19T10:02:04Z
+## Current status
+
+- **Active bug**: **`BUG-0026`** — **OPEN** per **`docs/product/backlog.md`** at refresh time
+
+## Intended resume phase
+
+`discovery`
+
+## Resume target
+
+- bug_id=BUG-0026
+- story_id=(none)
+- sprint_id=(none)
+- boundary=post-bug-intake (**DEC-0069**)
+
+## Latest auto breadcrumb seed
+
+- requested_start_from=(none)
+- resolved_start_phase=discovery
+- resolution_source=resume_brief
+- resolution_status=resolved
+- stop_reason=intake_complete
+- stop_phase=intake
+- next_scheduled_phase=discovery
+- bug_id=BUG-0026
+- story_id=(none)
+- sprint_id=(none)
+- orchestrator_run_id=(unknown)
+- intake_boundary_utc=2026-09-19T10:02:04Z
 ## Current status
 
 - **Active bug**: **`BUG-0024`** — **OPEN** per **`docs/product/backlog.md`** at refresh time
@@ -3399,12 +4269,70 @@
 - intake_boundary_utc=2026-09-14T04:00:00Z
 ## Latest orchestration pointer — post-bug-intake (DEC-0069)
 
-- **Boundary**: successful **`/intake bug`** persistence (**`US-0045`**) — **`intake_boundary_utc=2026-09-14T04:00:00Z`**
-- **`bug_id`**: **`BUG-0024`** — must remain **`OPEN`** in **`docs/product/backlog.md`** (authority); this refresh is rejected if backlog shows **DONE**
-- **Intake evidence ref**: `handoffs/intake_evidence/BUG-0024-intake-20260914T035000Z.json`
-- **`orchestrator_run_id`**: `cursor-20260913-BUG0024-intake` (boundary metadata when known; optional at intake)
+- **Boundary**: successful **`/intake bug`** persistence (**`US-0045`**) — **`intake_boundary_utc=2026-09-19T10:02:04Z`**
+- **`bug_id`**: **`BUG-0026`** — must remain **`OPEN`** in **`docs/product/backlog.md`** (authority); this refresh is rejected if backlog shows **DONE**
+- **Intake evidence ref**: `handoffs/intake_evidence/BUG-0026-intake-20260919T100204Z.json`
+- **`orchestrator_run_id`**: `ir-20260919T100204Z-9c322a` (boundary metadata when known; optional at intake)
 - **Contract**: default **`/auto`** continuation targets **`discovery`** for this OPEN bug (not a stale pre-intake **`intake`** resume target)
 
+## Current status
+
+- **Active bug**: **`BUG-0026`** — **OPEN** per **`docs/product/backlog.md`** at refresh time
+
+## Intended resume phase
+
+`discovery`
+
+## Resume target
+
+- bug_id=BUG-0026
+- story_id=(none)
+- sprint_id=(none)
+- boundary=post-bug-intake (**DEC-0069**)
+
+## Latest auto breadcrumb seed
+
+- requested_start_from=(none)
+- resolved_start_phase=discovery
+- resolution_source=resume_brief
+- resolution_status=resolved
+- stop_reason=intake_complete
+- stop_phase=intake
+- next_scheduled_phase=discovery
+- bug_id=BUG-0026
+- story_id=(none)
+- sprint_id=(none)
+- orchestrator_run_id=ir-20260919T100204Z-9c322a
+- intake_boundary_utc=2026-09-19T10:02:04Z
+## Current status
+
+- **Active bug**: **`BUG-0026`** — **OPEN** per **`docs/product/backlog.md`** at refresh time
+
+## Intended resume phase
+
+`discovery`
+
+## Resume target
+
+- bug_id=BUG-0026
+- story_id=(none)
+- sprint_id=(none)
+- boundary=post-bug-intake (**DEC-0069**)
+
+## Latest auto breadcrumb seed
+
+- requested_start_from=(none)
+- resolved_start_phase=discovery
+- resolution_source=resume_brief
+- resolution_status=resolved
+- stop_reason=intake_complete
+- stop_phase=intake
+- next_scheduled_phase=discovery
+- bug_id=BUG-0026
+- story_id=(none)
+- sprint_id=(none)
+- orchestrator_run_id=(unknown)
+- intake_boundary_utc=2026-09-19T10:02:04Z
 ## Current status
 
 - **Active bug**: **`BUG-0024`** — **OPEN** per **`docs/product/backlog.md`** at refresh time
@@ -3436,12 +4364,70 @@
 - intake_boundary_utc=2026-09-14T04:00:00Z
 ## Latest orchestration pointer — post-bug-intake (DEC-0069)
 
-- **Boundary**: successful **`/intake bug`** persistence (**`US-0045`**) — **`intake_boundary_utc=2026-09-14T04:00:00Z`**
-- **`bug_id`**: **`BUG-0024`** — must remain **`OPEN`** in **`docs/product/backlog.md`** (authority); this refresh is rejected if backlog shows **DONE**
-- **Intake evidence ref**: `handoffs/intake_evidence/BUG-0024-intake-20260914T035000Z.json`
-- **`orchestrator_run_id`**: `cursor-20260913-BUG0024-intake` (boundary metadata when known; optional at intake)
+- **Boundary**: successful **`/intake bug`** persistence (**`US-0045`**) — **`intake_boundary_utc=2026-09-19T10:02:04Z`**
+- **`bug_id`**: **`BUG-0026`** — must remain **`OPEN`** in **`docs/product/backlog.md`** (authority); this refresh is rejected if backlog shows **DONE**
+- **Intake evidence ref**: `handoffs/intake_evidence/BUG-0026-intake-20260919T100204Z.json`
+- **`orchestrator_run_id`**: `ir-20260919T100204Z-9c322a` (boundary metadata when known; optional at intake)
 - **Contract**: default **`/auto`** continuation targets **`discovery`** for this OPEN bug (not a stale pre-intake **`intake`** resume target)
 
+## Current status
+
+- **Active bug**: **`BUG-0026`** — **OPEN** per **`docs/product/backlog.md`** at refresh time
+
+## Intended resume phase
+
+`discovery`
+
+## Resume target
+
+- bug_id=BUG-0026
+- story_id=(none)
+- sprint_id=(none)
+- boundary=post-bug-intake (**DEC-0069**)
+
+## Latest auto breadcrumb seed
+
+- requested_start_from=(none)
+- resolved_start_phase=discovery
+- resolution_source=resume_brief
+- resolution_status=resolved
+- stop_reason=intake_complete
+- stop_phase=intake
+- next_scheduled_phase=discovery
+- bug_id=BUG-0026
+- story_id=(none)
+- sprint_id=(none)
+- orchestrator_run_id=ir-20260919T100204Z-9c322a
+- intake_boundary_utc=2026-09-19T10:02:04Z
+## Current status
+
+- **Active bug**: **`BUG-0026`** — **OPEN** per **`docs/product/backlog.md`** at refresh time
+
+## Intended resume phase
+
+`discovery`
+
+## Resume target
+
+- bug_id=BUG-0026
+- story_id=(none)
+- sprint_id=(none)
+- boundary=post-bug-intake (**DEC-0069**)
+
+## Latest auto breadcrumb seed
+
+- requested_start_from=(none)
+- resolved_start_phase=discovery
+- resolution_source=resume_brief
+- resolution_status=resolved
+- stop_reason=intake_complete
+- stop_phase=intake
+- next_scheduled_phase=discovery
+- bug_id=BUG-0026
+- story_id=(none)
+- sprint_id=(none)
+- orchestrator_run_id=(unknown)
+- intake_boundary_utc=2026-09-19T10:02:04Z
 ## Current status
 
 - **Active bug**: **`BUG-0024`** — **OPEN** per **`docs/product/backlog.md`** at refresh time
@@ -3473,12 +4459,70 @@
 - intake_boundary_utc=2026-09-14T04:00:00Z
 ## Latest orchestration pointer — post-bug-intake (DEC-0069)
 
-- **Boundary**: successful **`/intake bug`** persistence (**`US-0045`**) — **`intake_boundary_utc=2026-09-14T04:00:00Z`**
-- **`bug_id`**: **`BUG-0024`** — must remain **`OPEN`** in **`docs/product/backlog.md`** (authority); this refresh is rejected if backlog shows **DONE**
-- **Intake evidence ref**: `handoffs/intake_evidence/BUG-0024-intake-20260914T035000Z.json`
-- **`orchestrator_run_id`**: `cursor-20260913-BUG0024-intake` (boundary metadata when known; optional at intake)
+- **Boundary**: successful **`/intake bug`** persistence (**`US-0045`**) — **`intake_boundary_utc=2026-09-19T10:02:04Z`**
+- **`bug_id`**: **`BUG-0026`** — must remain **`OPEN`** in **`docs/product/backlog.md`** (authority); this refresh is rejected if backlog shows **DONE**
+- **Intake evidence ref**: `handoffs/intake_evidence/BUG-0026-intake-20260919T100204Z.json`
+- **`orchestrator_run_id`**: `ir-20260919T100204Z-9c322a` (boundary metadata when known; optional at intake)
 - **Contract**: default **`/auto`** continuation targets **`discovery`** for this OPEN bug (not a stale pre-intake **`intake`** resume target)
 
+## Current status
+
+- **Active bug**: **`BUG-0026`** — **OPEN** per **`docs/product/backlog.md`** at refresh time
+
+## Intended resume phase
+
+`discovery`
+
+## Resume target
+
+- bug_id=BUG-0026
+- story_id=(none)
+- sprint_id=(none)
+- boundary=post-bug-intake (**DEC-0069**)
+
+## Latest auto breadcrumb seed
+
+- requested_start_from=(none)
+- resolved_start_phase=discovery
+- resolution_source=resume_brief
+- resolution_status=resolved
+- stop_reason=intake_complete
+- stop_phase=intake
+- next_scheduled_phase=discovery
+- bug_id=BUG-0026
+- story_id=(none)
+- sprint_id=(none)
+- orchestrator_run_id=ir-20260919T100204Z-9c322a
+- intake_boundary_utc=2026-09-19T10:02:04Z
+## Current status
+
+- **Active bug**: **`BUG-0026`** — **OPEN** per **`docs/product/backlog.md`** at refresh time
+
+## Intended resume phase
+
+`discovery`
+
+## Resume target
+
+- bug_id=BUG-0026
+- story_id=(none)
+- sprint_id=(none)
+- boundary=post-bug-intake (**DEC-0069**)
+
+## Latest auto breadcrumb seed
+
+- requested_start_from=(none)
+- resolved_start_phase=discovery
+- resolution_source=resume_brief
+- resolution_status=resolved
+- stop_reason=intake_complete
+- stop_phase=intake
+- next_scheduled_phase=discovery
+- bug_id=BUG-0026
+- story_id=(none)
+- sprint_id=(none)
+- orchestrator_run_id=(unknown)
+- intake_boundary_utc=2026-09-19T10:02:04Z
 ## Current status
 
 - **Active bug**: **`BUG-0024`** — **OPEN** per **`docs/product/backlog.md`** at refresh time
@@ -3510,12 +4554,70 @@
 - intake_boundary_utc=2026-09-14T04:00:00Z
 ## Latest orchestration pointer — post-bug-intake (DEC-0069)
 
-- **Boundary**: successful **`/intake bug`** persistence (**`US-0045`**) — **`intake_boundary_utc=2026-09-14T04:00:00Z`**
-- **`bug_id`**: **`BUG-0024`** — must remain **`OPEN`** in **`docs/product/backlog.md`** (authority); this refresh is rejected if backlog shows **DONE**
-- **Intake evidence ref**: `handoffs/intake_evidence/BUG-0024-intake-20260914T035000Z.json`
-- **`orchestrator_run_id`**: `cursor-20260913-BUG0024-intake` (boundary metadata when known; optional at intake)
+- **Boundary**: successful **`/intake bug`** persistence (**`US-0045`**) — **`intake_boundary_utc=2026-09-19T10:02:04Z`**
+- **`bug_id`**: **`BUG-0026`** — must remain **`OPEN`** in **`docs/product/backlog.md`** (authority); this refresh is rejected if backlog shows **DONE**
+- **Intake evidence ref**: `handoffs/intake_evidence/BUG-0026-intake-20260919T100204Z.json`
+- **`orchestrator_run_id`**: `ir-20260919T100204Z-9c322a` (boundary metadata when known; optional at intake)
 - **Contract**: default **`/auto`** continuation targets **`discovery`** for this OPEN bug (not a stale pre-intake **`intake`** resume target)
 
+## Current status
+
+- **Active bug**: **`BUG-0026`** — **OPEN** per **`docs/product/backlog.md`** at refresh time
+
+## Intended resume phase
+
+`discovery`
+
+## Resume target
+
+- bug_id=BUG-0026
+- story_id=(none)
+- sprint_id=(none)
+- boundary=post-bug-intake (**DEC-0069**)
+
+## Latest auto breadcrumb seed
+
+- requested_start_from=(none)
+- resolved_start_phase=discovery
+- resolution_source=resume_brief
+- resolution_status=resolved
+- stop_reason=intake_complete
+- stop_phase=intake
+- next_scheduled_phase=discovery
+- bug_id=BUG-0026
+- story_id=(none)
+- sprint_id=(none)
+- orchestrator_run_id=ir-20260919T100204Z-9c322a
+- intake_boundary_utc=2026-09-19T10:02:04Z
+## Current status
+
+- **Active bug**: **`BUG-0026`** — **OPEN** per **`docs/product/backlog.md`** at refresh time
+
+## Intended resume phase
+
+`discovery`
+
+## Resume target
+
+- bug_id=BUG-0026
+- story_id=(none)
+- sprint_id=(none)
+- boundary=post-bug-intake (**DEC-0069**)
+
+## Latest auto breadcrumb seed
+
+- requested_start_from=(none)
+- resolved_start_phase=discovery
+- resolution_source=resume_brief
+- resolution_status=resolved
+- stop_reason=intake_complete
+- stop_phase=intake
+- next_scheduled_phase=discovery
+- bug_id=BUG-0026
+- story_id=(none)
+- sprint_id=(none)
+- orchestrator_run_id=(unknown)
+- intake_boundary_utc=2026-09-19T10:02:04Z
 ## Current status
 
 - **Active bug**: **`BUG-0024`** — **OPEN** per **`docs/product/backlog.md`** at refresh time
@@ -3547,12 +4649,70 @@
 - intake_boundary_utc=2026-09-14T04:00:00Z
 ## Latest orchestration pointer — post-bug-intake (DEC-0069)
 
-- **Boundary**: successful **`/intake bug`** persistence (**`US-0045`**) — **`intake_boundary_utc=2026-09-14T04:00:00Z`**
-- **`bug_id`**: **`BUG-0024`** — must remain **`OPEN`** in **`docs/product/backlog.md`** (authority); this refresh is rejected if backlog shows **DONE**
-- **Intake evidence ref**: `handoffs/intake_evidence/BUG-0024-intake-20260914T035000Z.json`
-- **`orchestrator_run_id`**: `cursor-20260913-BUG0024-intake` (boundary metadata when known; optional at intake)
+- **Boundary**: successful **`/intake bug`** persistence (**`US-0045`**) — **`intake_boundary_utc=2026-09-19T10:02:04Z`**
+- **`bug_id`**: **`BUG-0026`** — must remain **`OPEN`** in **`docs/product/backlog.md`** (authority); this refresh is rejected if backlog shows **DONE**
+- **Intake evidence ref**: `handoffs/intake_evidence/BUG-0026-intake-20260919T100204Z.json`
+- **`orchestrator_run_id`**: `ir-20260919T100204Z-9c322a` (boundary metadata when known; optional at intake)
 - **Contract**: default **`/auto`** continuation targets **`discovery`** for this OPEN bug (not a stale pre-intake **`intake`** resume target)
 
+## Current status
+
+- **Active bug**: **`BUG-0026`** — **OPEN** per **`docs/product/backlog.md`** at refresh time
+
+## Intended resume phase
+
+`discovery`
+
+## Resume target
+
+- bug_id=BUG-0026
+- story_id=(none)
+- sprint_id=(none)
+- boundary=post-bug-intake (**DEC-0069**)
+
+## Latest auto breadcrumb seed
+
+- requested_start_from=(none)
+- resolved_start_phase=discovery
+- resolution_source=resume_brief
+- resolution_status=resolved
+- stop_reason=intake_complete
+- stop_phase=intake
+- next_scheduled_phase=discovery
+- bug_id=BUG-0026
+- story_id=(none)
+- sprint_id=(none)
+- orchestrator_run_id=ir-20260919T100204Z-9c322a
+- intake_boundary_utc=2026-09-19T10:02:04Z
+## Current status
+
+- **Active bug**: **`BUG-0026`** — **OPEN** per **`docs/product/backlog.md`** at refresh time
+
+## Intended resume phase
+
+`discovery`
+
+## Resume target
+
+- bug_id=BUG-0026
+- story_id=(none)
+- sprint_id=(none)
+- boundary=post-bug-intake (**DEC-0069**)
+
+## Latest auto breadcrumb seed
+
+- requested_start_from=(none)
+- resolved_start_phase=discovery
+- resolution_source=resume_brief
+- resolution_status=resolved
+- stop_reason=intake_complete
+- stop_phase=intake
+- next_scheduled_phase=discovery
+- bug_id=BUG-0026
+- story_id=(none)
+- sprint_id=(none)
+- orchestrator_run_id=(unknown)
+- intake_boundary_utc=2026-09-19T10:02:04Z
 ## Current status
 
 - **Active bug**: **`BUG-0024`** — **OPEN** per **`docs/product/backlog.md`** at refresh time
@@ -3584,12 +4744,70 @@
 - intake_boundary_utc=2026-09-14T04:00:00Z
 ## Latest orchestration pointer — post-bug-intake (DEC-0069)
 
-- **Boundary**: successful **`/intake bug`** persistence (**`US-0045`**) — **`intake_boundary_utc=2026-09-14T04:00:00Z`**
-- **`bug_id`**: **`BUG-0024`** — must remain **`OPEN`** in **`docs/product/backlog.md`** (authority); this refresh is rejected if backlog shows **DONE**
-- **Intake evidence ref**: `handoffs/intake_evidence/BUG-0024-intake-20260914T035000Z.json`
-- **`orchestrator_run_id`**: `cursor-20260913-BUG0024-intake` (boundary metadata when known; optional at intake)
+- **Boundary**: successful **`/intake bug`** persistence (**`US-0045`**) — **`intake_boundary_utc=2026-09-19T10:02:04Z`**
+- **`bug_id`**: **`BUG-0026`** — must remain **`OPEN`** in **`docs/product/backlog.md`** (authority); this refresh is rejected if backlog shows **DONE**
+- **Intake evidence ref**: `handoffs/intake_evidence/BUG-0026-intake-20260919T100204Z.json`
+- **`orchestrator_run_id`**: `ir-20260919T100204Z-9c322a` (boundary metadata when known; optional at intake)
 - **Contract**: default **`/auto`** continuation targets **`discovery`** for this OPEN bug (not a stale pre-intake **`intake`** resume target)
 
+## Current status
+
+- **Active bug**: **`BUG-0026`** — **OPEN** per **`docs/product/backlog.md`** at refresh time
+
+## Intended resume phase
+
+`discovery`
+
+## Resume target
+
+- bug_id=BUG-0026
+- story_id=(none)
+- sprint_id=(none)
+- boundary=post-bug-intake (**DEC-0069**)
+
+## Latest auto breadcrumb seed
+
+- requested_start_from=(none)
+- resolved_start_phase=discovery
+- resolution_source=resume_brief
+- resolution_status=resolved
+- stop_reason=intake_complete
+- stop_phase=intake
+- next_scheduled_phase=discovery
+- bug_id=BUG-0026
+- story_id=(none)
+- sprint_id=(none)
+- orchestrator_run_id=ir-20260919T100204Z-9c322a
+- intake_boundary_utc=2026-09-19T10:02:04Z
+## Current status
+
+- **Active bug**: **`BUG-0026`** — **OPEN** per **`docs/product/backlog.md`** at refresh time
+
+## Intended resume phase
+
+`discovery`
+
+## Resume target
+
+- bug_id=BUG-0026
+- story_id=(none)
+- sprint_id=(none)
+- boundary=post-bug-intake (**DEC-0069**)
+
+## Latest auto breadcrumb seed
+
+- requested_start_from=(none)
+- resolved_start_phase=discovery
+- resolution_source=resume_brief
+- resolution_status=resolved
+- stop_reason=intake_complete
+- stop_phase=intake
+- next_scheduled_phase=discovery
+- bug_id=BUG-0026
+- story_id=(none)
+- sprint_id=(none)
+- orchestrator_run_id=(unknown)
+- intake_boundary_utc=2026-09-19T10:02:04Z
 ## Current status
 
 - **Active bug**: **`BUG-0024`** — **OPEN** per **`docs/product/backlog.md`** at refresh time
@@ -3621,12 +4839,70 @@
 - intake_boundary_utc=2026-09-14T04:00:00Z
 ## Latest orchestration pointer — post-bug-intake (DEC-0069)
 
-- **Boundary**: successful **`/intake bug`** persistence (**`US-0045`**) — **`intake_boundary_utc=2026-09-14T04:00:00Z`**
-- **`bug_id`**: **`BUG-0024`** — must remain **`OPEN`** in **`docs/product/backlog.md`** (authority); this refresh is rejected if backlog shows **DONE**
-- **Intake evidence ref**: `handoffs/intake_evidence/BUG-0024-intake-20260914T035000Z.json`
-- **`orchestrator_run_id`**: `cursor-20260913-BUG0024-intake` (boundary metadata when known; optional at intake)
+- **Boundary**: successful **`/intake bug`** persistence (**`US-0045`**) — **`intake_boundary_utc=2026-09-19T10:02:04Z`**
+- **`bug_id`**: **`BUG-0026`** — must remain **`OPEN`** in **`docs/product/backlog.md`** (authority); this refresh is rejected if backlog shows **DONE**
+- **Intake evidence ref**: `handoffs/intake_evidence/BUG-0026-intake-20260919T100204Z.json`
+- **`orchestrator_run_id`**: `ir-20260919T100204Z-9c322a` (boundary metadata when known; optional at intake)
 - **Contract**: default **`/auto`** continuation targets **`discovery`** for this OPEN bug (not a stale pre-intake **`intake`** resume target)
 
+## Current status
+
+- **Active bug**: **`BUG-0026`** — **OPEN** per **`docs/product/backlog.md`** at refresh time
+
+## Intended resume phase
+
+`discovery`
+
+## Resume target
+
+- bug_id=BUG-0026
+- story_id=(none)
+- sprint_id=(none)
+- boundary=post-bug-intake (**DEC-0069**)
+
+## Latest auto breadcrumb seed
+
+- requested_start_from=(none)
+- resolved_start_phase=discovery
+- resolution_source=resume_brief
+- resolution_status=resolved
+- stop_reason=intake_complete
+- stop_phase=intake
+- next_scheduled_phase=discovery
+- bug_id=BUG-0026
+- story_id=(none)
+- sprint_id=(none)
+- orchestrator_run_id=ir-20260919T100204Z-9c322a
+- intake_boundary_utc=2026-09-19T10:02:04Z
+## Current status
+
+- **Active bug**: **`BUG-0026`** — **OPEN** per **`docs/product/backlog.md`** at refresh time
+
+## Intended resume phase
+
+`discovery`
+
+## Resume target
+
+- bug_id=BUG-0026
+- story_id=(none)
+- sprint_id=(none)
+- boundary=post-bug-intake (**DEC-0069**)
+
+## Latest auto breadcrumb seed
+
+- requested_start_from=(none)
+- resolved_start_phase=discovery
+- resolution_source=resume_brief
+- resolution_status=resolved
+- stop_reason=intake_complete
+- stop_phase=intake
+- next_scheduled_phase=discovery
+- bug_id=BUG-0026
+- story_id=(none)
+- sprint_id=(none)
+- orchestrator_run_id=(unknown)
+- intake_boundary_utc=2026-09-19T10:02:04Z
 ## Current status
 
 - **Active bug**: **`BUG-0024`** — **OPEN** per **`docs/product/backlog.md`** at refresh time
@@ -3801,12 +5077,70 @@
 
 ## Latest orchestration pointer — post-bug-intake (DEC-0069)
 
-- **Boundary**: successful **`/intake bug`** persistence (**`US-0045`**) — **`intake_boundary_utc=2026-09-14T04:00:00Z`**
-- **`bug_id`**: **`BUG-0024`** — must remain **`OPEN`** in **`docs/product/backlog.md`** (authority); this refresh is rejected if backlog shows **DONE**
-- **Intake evidence ref**: `handoffs/intake_evidence/BUG-0024-intake-20260914T035000Z.json`
-- **`orchestrator_run_id`**: `cursor-20260913-BUG0024-intake` (boundary metadata when known; optional at intake)
+- **Boundary**: successful **`/intake bug`** persistence (**`US-0045`**) — **`intake_boundary_utc=2026-09-19T10:02:04Z`**
+- **`bug_id`**: **`BUG-0026`** — must remain **`OPEN`** in **`docs/product/backlog.md`** (authority); this refresh is rejected if backlog shows **DONE**
+- **Intake evidence ref**: `handoffs/intake_evidence/BUG-0026-intake-20260919T100204Z.json`
+- **`orchestrator_run_id`**: `ir-20260919T100204Z-9c322a` (boundary metadata when known; optional at intake)
 - **Contract**: default **`/auto`** continuation targets **`discovery`** for this OPEN bug (not a stale pre-intake **`intake`** resume target)
 
+## Current status
+
+- **Active bug**: **`BUG-0026`** — **OPEN** per **`docs/product/backlog.md`** at refresh time
+
+## Intended resume phase
+
+`discovery`
+
+## Resume target
+
+- bug_id=BUG-0026
+- story_id=(none)
+- sprint_id=(none)
+- boundary=post-bug-intake (**DEC-0069**)
+
+## Latest auto breadcrumb seed
+
+- requested_start_from=(none)
+- resolved_start_phase=discovery
+- resolution_source=resume_brief
+- resolution_status=resolved
+- stop_reason=intake_complete
+- stop_phase=intake
+- next_scheduled_phase=discovery
+- bug_id=BUG-0026
+- story_id=(none)
+- sprint_id=(none)
+- orchestrator_run_id=ir-20260919T100204Z-9c322a
+- intake_boundary_utc=2026-09-19T10:02:04Z
+## Current status
+
+- **Active bug**: **`BUG-0026`** — **OPEN** per **`docs/product/backlog.md`** at refresh time
+
+## Intended resume phase
+
+`discovery`
+
+## Resume target
+
+- bug_id=BUG-0026
+- story_id=(none)
+- sprint_id=(none)
+- boundary=post-bug-intake (**DEC-0069**)
+
+## Latest auto breadcrumb seed
+
+- requested_start_from=(none)
+- resolved_start_phase=discovery
+- resolution_source=resume_brief
+- resolution_status=resolved
+- stop_reason=intake_complete
+- stop_phase=intake
+- next_scheduled_phase=discovery
+- bug_id=BUG-0026
+- story_id=(none)
+- sprint_id=(none)
+- orchestrator_run_id=(unknown)
+- intake_boundary_utc=2026-09-19T10:02:04Z
 ## Current status
 
 - **Active bug**: **`BUG-0024`** — **OPEN** per **`docs/product/backlog.md`** at refresh time
@@ -3838,12 +5172,70 @@
 - intake_boundary_utc=2026-09-14T04:00:00Z
 ## Latest orchestration pointer — post-bug-intake (DEC-0069)
 
-- **Boundary**: successful **`/intake bug`** persistence (**`US-0045`**) — **`intake_boundary_utc=2026-09-14T04:00:00Z`**
-- **`bug_id`**: **`BUG-0024`** — must remain **`OPEN`** in **`docs/product/backlog.md`** (authority); this refresh is rejected if backlog shows **DONE**
-- **Intake evidence ref**: `handoffs/intake_evidence/BUG-0024-intake-20260914T035000Z.json`
-- **`orchestrator_run_id`**: `cursor-20260913-BUG0024-intake` (boundary metadata when known; optional at intake)
+- **Boundary**: successful **`/intake bug`** persistence (**`US-0045`**) — **`intake_boundary_utc=2026-09-19T10:02:04Z`**
+- **`bug_id`**: **`BUG-0026`** — must remain **`OPEN`** in **`docs/product/backlog.md`** (authority); this refresh is rejected if backlog shows **DONE**
+- **Intake evidence ref**: `handoffs/intake_evidence/BUG-0026-intake-20260919T100204Z.json`
+- **`orchestrator_run_id`**: `ir-20260919T100204Z-9c322a` (boundary metadata when known; optional at intake)
 - **Contract**: default **`/auto`** continuation targets **`discovery`** for this OPEN bug (not a stale pre-intake **`intake`** resume target)
 
+## Current status
+
+- **Active bug**: **`BUG-0026`** — **OPEN** per **`docs/product/backlog.md`** at refresh time
+
+## Intended resume phase
+
+`discovery`
+
+## Resume target
+
+- bug_id=BUG-0026
+- story_id=(none)
+- sprint_id=(none)
+- boundary=post-bug-intake (**DEC-0069**)
+
+## Latest auto breadcrumb seed
+
+- requested_start_from=(none)
+- resolved_start_phase=discovery
+- resolution_source=resume_brief
+- resolution_status=resolved
+- stop_reason=intake_complete
+- stop_phase=intake
+- next_scheduled_phase=discovery
+- bug_id=BUG-0026
+- story_id=(none)
+- sprint_id=(none)
+- orchestrator_run_id=ir-20260919T100204Z-9c322a
+- intake_boundary_utc=2026-09-19T10:02:04Z
+## Current status
+
+- **Active bug**: **`BUG-0026`** — **OPEN** per **`docs/product/backlog.md`** at refresh time
+
+## Intended resume phase
+
+`discovery`
+
+## Resume target
+
+- bug_id=BUG-0026
+- story_id=(none)
+- sprint_id=(none)
+- boundary=post-bug-intake (**DEC-0069**)
+
+## Latest auto breadcrumb seed
+
+- requested_start_from=(none)
+- resolved_start_phase=discovery
+- resolution_source=resume_brief
+- resolution_status=resolved
+- stop_reason=intake_complete
+- stop_phase=intake
+- next_scheduled_phase=discovery
+- bug_id=BUG-0026
+- story_id=(none)
+- sprint_id=(none)
+- orchestrator_run_id=(unknown)
+- intake_boundary_utc=2026-09-19T10:02:04Z
 ## Current status
 
 - **Active bug**: **`BUG-0024`** — **OPEN** per **`docs/product/backlog.md`** at refresh time
@@ -3913,12 +5305,70 @@
 
 ## Latest orchestration pointer — post-bug-intake (DEC-0069)
 
-- **Boundary**: successful **`/intake bug`** persistence (**`US-0045`**) — **`intake_boundary_utc=2026-09-14T04:00:00Z`**
-- **`bug_id`**: **`BUG-0024`** — must remain **`OPEN`** in **`docs/product/backlog.md`** (authority); this refresh is rejected if backlog shows **DONE**
-- **Intake evidence ref**: `handoffs/intake_evidence/BUG-0024-intake-20260914T035000Z.json`
-- **`orchestrator_run_id`**: `cursor-20260913-BUG0024-intake` (boundary metadata when known; optional at intake)
+- **Boundary**: successful **`/intake bug`** persistence (**`US-0045`**) — **`intake_boundary_utc=2026-09-19T10:02:04Z`**
+- **`bug_id`**: **`BUG-0026`** — must remain **`OPEN`** in **`docs/product/backlog.md`** (authority); this refresh is rejected if backlog shows **DONE**
+- **Intake evidence ref**: `handoffs/intake_evidence/BUG-0026-intake-20260919T100204Z.json`
+- **`orchestrator_run_id`**: `ir-20260919T100204Z-9c322a` (boundary metadata when known; optional at intake)
 - **Contract**: default **`/auto`** continuation targets **`discovery`** for this OPEN bug (not a stale pre-intake **`intake`** resume target)
 
+## Current status
+
+- **Active bug**: **`BUG-0026`** — **OPEN** per **`docs/product/backlog.md`** at refresh time
+
+## Intended resume phase
+
+`discovery`
+
+## Resume target
+
+- bug_id=BUG-0026
+- story_id=(none)
+- sprint_id=(none)
+- boundary=post-bug-intake (**DEC-0069**)
+
+## Latest auto breadcrumb seed
+
+- requested_start_from=(none)
+- resolved_start_phase=discovery
+- resolution_source=resume_brief
+- resolution_status=resolved
+- stop_reason=intake_complete
+- stop_phase=intake
+- next_scheduled_phase=discovery
+- bug_id=BUG-0026
+- story_id=(none)
+- sprint_id=(none)
+- orchestrator_run_id=ir-20260919T100204Z-9c322a
+- intake_boundary_utc=2026-09-19T10:02:04Z
+## Current status
+
+- **Active bug**: **`BUG-0026`** — **OPEN** per **`docs/product/backlog.md`** at refresh time
+
+## Intended resume phase
+
+`discovery`
+
+## Resume target
+
+- bug_id=BUG-0026
+- story_id=(none)
+- sprint_id=(none)
+- boundary=post-bug-intake (**DEC-0069**)
+
+## Latest auto breadcrumb seed
+
+- requested_start_from=(none)
+- resolved_start_phase=discovery
+- resolution_source=resume_brief
+- resolution_status=resolved
+- stop_reason=intake_complete
+- stop_phase=intake
+- next_scheduled_phase=discovery
+- bug_id=BUG-0026
+- story_id=(none)
+- sprint_id=(none)
+- orchestrator_run_id=(unknown)
+- intake_boundary_utc=2026-09-19T10:02:04Z
 ## Current status
 
 - **Active bug**: **`BUG-0024`** — **OPEN** per **`docs/product/backlog.md`** at refresh time
@@ -3950,12 +5400,70 @@
 - intake_boundary_utc=2026-09-14T04:00:00Z
 ## Latest orchestration pointer — post-bug-intake (DEC-0069)
 
-- **Boundary**: successful **`/intake bug`** persistence (**`US-0045`**) — **`intake_boundary_utc=2026-09-14T04:00:00Z`**
-- **`bug_id`**: **`BUG-0024`** — must remain **`OPEN`** in **`docs/product/backlog.md`** (authority); this refresh is rejected if backlog shows **DONE**
-- **Intake evidence ref**: `handoffs/intake_evidence/BUG-0024-intake-20260914T035000Z.json`
-- **`orchestrator_run_id`**: `cursor-20260913-BUG0024-intake` (boundary metadata when known; optional at intake)
+- **Boundary**: successful **`/intake bug`** persistence (**`US-0045`**) — **`intake_boundary_utc=2026-09-19T10:02:04Z`**
+- **`bug_id`**: **`BUG-0026`** — must remain **`OPEN`** in **`docs/product/backlog.md`** (authority); this refresh is rejected if backlog shows **DONE**
+- **Intake evidence ref**: `handoffs/intake_evidence/BUG-0026-intake-20260919T100204Z.json`
+- **`orchestrator_run_id`**: `ir-20260919T100204Z-9c322a` (boundary metadata when known; optional at intake)
 - **Contract**: default **`/auto`** continuation targets **`discovery`** for this OPEN bug (not a stale pre-intake **`intake`** resume target)
 
+## Current status
+
+- **Active bug**: **`BUG-0026`** — **OPEN** per **`docs/product/backlog.md`** at refresh time
+
+## Intended resume phase
+
+`discovery`
+
+## Resume target
+
+- bug_id=BUG-0026
+- story_id=(none)
+- sprint_id=(none)
+- boundary=post-bug-intake (**DEC-0069**)
+
+## Latest auto breadcrumb seed
+
+- requested_start_from=(none)
+- resolved_start_phase=discovery
+- resolution_source=resume_brief
+- resolution_status=resolved
+- stop_reason=intake_complete
+- stop_phase=intake
+- next_scheduled_phase=discovery
+- bug_id=BUG-0026
+- story_id=(none)
+- sprint_id=(none)
+- orchestrator_run_id=ir-20260919T100204Z-9c322a
+- intake_boundary_utc=2026-09-19T10:02:04Z
+## Current status
+
+- **Active bug**: **`BUG-0026`** — **OPEN** per **`docs/product/backlog.md`** at refresh time
+
+## Intended resume phase
+
+`discovery`
+
+## Resume target
+
+- bug_id=BUG-0026
+- story_id=(none)
+- sprint_id=(none)
+- boundary=post-bug-intake (**DEC-0069**)
+
+## Latest auto breadcrumb seed
+
+- requested_start_from=(none)
+- resolved_start_phase=discovery
+- resolution_source=resume_brief
+- resolution_status=resolved
+- stop_reason=intake_complete
+- stop_phase=intake
+- next_scheduled_phase=discovery
+- bug_id=BUG-0026
+- story_id=(none)
+- sprint_id=(none)
+- orchestrator_run_id=(unknown)
+- intake_boundary_utc=2026-09-19T10:02:04Z
 ## Current status
 
 - **Active bug**: **`BUG-0024`** — **OPEN** per **`docs/product/backlog.md`** at refresh time
@@ -3987,12 +5495,70 @@
 - intake_boundary_utc=2026-09-14T04:00:00Z
 ## Latest orchestration pointer — post-bug-intake (DEC-0069)
 
-- **Boundary**: successful **`/intake bug`** persistence (**`US-0045`**) — **`intake_boundary_utc=2026-09-14T04:00:00Z`**
-- **`bug_id`**: **`BUG-0024`** — must remain **`OPEN`** in **`docs/product/backlog.md`** (authority); this refresh is rejected if backlog shows **DONE**
-- **Intake evidence ref**: `handoffs/intake_evidence/BUG-0024-intake-20260914T035000Z.json`
-- **`orchestrator_run_id`**: `cursor-20260913-BUG0024-intake` (boundary metadata when known; optional at intake)
+- **Boundary**: successful **`/intake bug`** persistence (**`US-0045`**) — **`intake_boundary_utc=2026-09-19T10:02:04Z`**
+- **`bug_id`**: **`BUG-0026`** — must remain **`OPEN`** in **`docs/product/backlog.md`** (authority); this refresh is rejected if backlog shows **DONE**
+- **Intake evidence ref**: `handoffs/intake_evidence/BUG-0026-intake-20260919T100204Z.json`
+- **`orchestrator_run_id`**: `ir-20260919T100204Z-9c322a` (boundary metadata when known; optional at intake)
 - **Contract**: default **`/auto`** continuation targets **`discovery`** for this OPEN bug (not a stale pre-intake **`intake`** resume target)
 
+## Current status
+
+- **Active bug**: **`BUG-0026`** — **OPEN** per **`docs/product/backlog.md`** at refresh time
+
+## Intended resume phase
+
+`discovery`
+
+## Resume target
+
+- bug_id=BUG-0026
+- story_id=(none)
+- sprint_id=(none)
+- boundary=post-bug-intake (**DEC-0069**)
+
+## Latest auto breadcrumb seed
+
+- requested_start_from=(none)
+- resolved_start_phase=discovery
+- resolution_source=resume_brief
+- resolution_status=resolved
+- stop_reason=intake_complete
+- stop_phase=intake
+- next_scheduled_phase=discovery
+- bug_id=BUG-0026
+- story_id=(none)
+- sprint_id=(none)
+- orchestrator_run_id=ir-20260919T100204Z-9c322a
+- intake_boundary_utc=2026-09-19T10:02:04Z
+## Current status
+
+- **Active bug**: **`BUG-0026`** — **OPEN** per **`docs/product/backlog.md`** at refresh time
+
+## Intended resume phase
+
+`discovery`
+
+## Resume target
+
+- bug_id=BUG-0026
+- story_id=(none)
+- sprint_id=(none)
+- boundary=post-bug-intake (**DEC-0069**)
+
+## Latest auto breadcrumb seed
+
+- requested_start_from=(none)
+- resolved_start_phase=discovery
+- resolution_source=resume_brief
+- resolution_status=resolved
+- stop_reason=intake_complete
+- stop_phase=intake
+- next_scheduled_phase=discovery
+- bug_id=BUG-0026
+- story_id=(none)
+- sprint_id=(none)
+- orchestrator_run_id=(unknown)
+- intake_boundary_utc=2026-09-19T10:02:04Z
 ## Current status
 
 - **Active bug**: **`BUG-0024`** — **OPEN** per **`docs/product/backlog.md`** at refresh time
@@ -4024,12 +5590,70 @@
 - intake_boundary_utc=2026-09-14T04:00:00Z
 ## Latest orchestration pointer — post-bug-intake (DEC-0069)
 
-- **Boundary**: successful **`/intake bug`** persistence (**`US-0045`**) — **`intake_boundary_utc=2026-09-14T04:00:00Z`**
-- **`bug_id`**: **`BUG-0024`** — must remain **`OPEN`** in **`docs/product/backlog.md`** (authority); this refresh is rejected if backlog shows **DONE**
-- **Intake evidence ref**: `handoffs/intake_evidence/BUG-0024-intake-20260914T035000Z.json`
-- **`orchestrator_run_id`**: `cursor-20260913-BUG0024-intake` (boundary metadata when known; optional at intake)
+- **Boundary**: successful **`/intake bug`** persistence (**`US-0045`**) — **`intake_boundary_utc=2026-09-19T10:02:04Z`**
+- **`bug_id`**: **`BUG-0026`** — must remain **`OPEN`** in **`docs/product/backlog.md`** (authority); this refresh is rejected if backlog shows **DONE**
+- **Intake evidence ref**: `handoffs/intake_evidence/BUG-0026-intake-20260919T100204Z.json`
+- **`orchestrator_run_id`**: `ir-20260919T100204Z-9c322a` (boundary metadata when known; optional at intake)
 - **Contract**: default **`/auto`** continuation targets **`discovery`** for this OPEN bug (not a stale pre-intake **`intake`** resume target)
 
+## Current status
+
+- **Active bug**: **`BUG-0026`** — **OPEN** per **`docs/product/backlog.md`** at refresh time
+
+## Intended resume phase
+
+`discovery`
+
+## Resume target
+
+- bug_id=BUG-0026
+- story_id=(none)
+- sprint_id=(none)
+- boundary=post-bug-intake (**DEC-0069**)
+
+## Latest auto breadcrumb seed
+
+- requested_start_from=(none)
+- resolved_start_phase=discovery
+- resolution_source=resume_brief
+- resolution_status=resolved
+- stop_reason=intake_complete
+- stop_phase=intake
+- next_scheduled_phase=discovery
+- bug_id=BUG-0026
+- story_id=(none)
+- sprint_id=(none)
+- orchestrator_run_id=ir-20260919T100204Z-9c322a
+- intake_boundary_utc=2026-09-19T10:02:04Z
+## Current status
+
+- **Active bug**: **`BUG-0026`** — **OPEN** per **`docs/product/backlog.md`** at refresh time
+
+## Intended resume phase
+
+`discovery`
+
+## Resume target
+
+- bug_id=BUG-0026
+- story_id=(none)
+- sprint_id=(none)
+- boundary=post-bug-intake (**DEC-0069**)
+
+## Latest auto breadcrumb seed
+
+- requested_start_from=(none)
+- resolved_start_phase=discovery
+- resolution_source=resume_brief
+- resolution_status=resolved
+- stop_reason=intake_complete
+- stop_phase=intake
+- next_scheduled_phase=discovery
+- bug_id=BUG-0026
+- story_id=(none)
+- sprint_id=(none)
+- orchestrator_run_id=(unknown)
+- intake_boundary_utc=2026-09-19T10:02:04Z
 ## Current status
 
 - **Active bug**: **`BUG-0024`** — **OPEN** per **`docs/product/backlog.md`** at refresh time
@@ -4061,12 +5685,70 @@
 - intake_boundary_utc=2026-09-14T04:00:00Z
 ## Latest orchestration pointer — post-bug-intake (DEC-0069)
 
-- **Boundary**: successful **`/intake bug`** persistence (**`US-0045`**) — **`intake_boundary_utc=2026-09-14T04:00:00Z`**
-- **`bug_id`**: **`BUG-0024`** — must remain **`OPEN`** in **`docs/product/backlog.md`** (authority); this refresh is rejected if backlog shows **DONE**
-- **Intake evidence ref**: `handoffs/intake_evidence/BUG-0024-intake-20260914T035000Z.json`
-- **`orchestrator_run_id`**: `cursor-20260913-BUG0024-intake` (boundary metadata when known; optional at intake)
+- **Boundary**: successful **`/intake bug`** persistence (**`US-0045`**) — **`intake_boundary_utc=2026-09-19T10:02:04Z`**
+- **`bug_id`**: **`BUG-0026`** — must remain **`OPEN`** in **`docs/product/backlog.md`** (authority); this refresh is rejected if backlog shows **DONE**
+- **Intake evidence ref**: `handoffs/intake_evidence/BUG-0026-intake-20260919T100204Z.json`
+- **`orchestrator_run_id`**: `ir-20260919T100204Z-9c322a` (boundary metadata when known; optional at intake)
 - **Contract**: default **`/auto`** continuation targets **`discovery`** for this OPEN bug (not a stale pre-intake **`intake`** resume target)
 
+## Current status
+
+- **Active bug**: **`BUG-0026`** — **OPEN** per **`docs/product/backlog.md`** at refresh time
+
+## Intended resume phase
+
+`discovery`
+
+## Resume target
+
+- bug_id=BUG-0026
+- story_id=(none)
+- sprint_id=(none)
+- boundary=post-bug-intake (**DEC-0069**)
+
+## Latest auto breadcrumb seed
+
+- requested_start_from=(none)
+- resolved_start_phase=discovery
+- resolution_source=resume_brief
+- resolution_status=resolved
+- stop_reason=intake_complete
+- stop_phase=intake
+- next_scheduled_phase=discovery
+- bug_id=BUG-0026
+- story_id=(none)
+- sprint_id=(none)
+- orchestrator_run_id=ir-20260919T100204Z-9c322a
+- intake_boundary_utc=2026-09-19T10:02:04Z
+## Current status
+
+- **Active bug**: **`BUG-0026`** — **OPEN** per **`docs/product/backlog.md`** at refresh time
+
+## Intended resume phase
+
+`discovery`
+
+## Resume target
+
+- bug_id=BUG-0026
+- story_id=(none)
+- sprint_id=(none)
+- boundary=post-bug-intake (**DEC-0069**)
+
+## Latest auto breadcrumb seed
+
+- requested_start_from=(none)
+- resolved_start_phase=discovery
+- resolution_source=resume_brief
+- resolution_status=resolved
+- stop_reason=intake_complete
+- stop_phase=intake
+- next_scheduled_phase=discovery
+- bug_id=BUG-0026
+- story_id=(none)
+- sprint_id=(none)
+- orchestrator_run_id=(unknown)
+- intake_boundary_utc=2026-09-19T10:02:04Z
 ## Current status
 
 - **Active bug**: **`BUG-0024`** — **OPEN** per **`docs/product/backlog.md`** at refresh time
@@ -4098,12 +5780,70 @@
 - intake_boundary_utc=2026-09-14T04:00:00Z
 ## Latest orchestration pointer — post-bug-intake (DEC-0069)
 
-- **Boundary**: successful **`/intake bug`** persistence (**`US-0045`**) — **`intake_boundary_utc=2026-09-14T04:00:00Z`**
-- **`bug_id`**: **`BUG-0024`** — must remain **`OPEN`** in **`docs/product/backlog.md`** (authority); this refresh is rejected if backlog shows **DONE**
-- **Intake evidence ref**: `handoffs/intake_evidence/BUG-0024-intake-20260914T035000Z.json`
-- **`orchestrator_run_id`**: `cursor-20260913-BUG0024-intake` (boundary metadata when known; optional at intake)
+- **Boundary**: successful **`/intake bug`** persistence (**`US-0045`**) — **`intake_boundary_utc=2026-09-19T10:02:04Z`**
+- **`bug_id`**: **`BUG-0026`** — must remain **`OPEN`** in **`docs/product/backlog.md`** (authority); this refresh is rejected if backlog shows **DONE**
+- **Intake evidence ref**: `handoffs/intake_evidence/BUG-0026-intake-20260919T100204Z.json`
+- **`orchestrator_run_id`**: `ir-20260919T100204Z-9c322a` (boundary metadata when known; optional at intake)
 - **Contract**: default **`/auto`** continuation targets **`discovery`** for this OPEN bug (not a stale pre-intake **`intake`** resume target)
 
+## Current status
+
+- **Active bug**: **`BUG-0026`** — **OPEN** per **`docs/product/backlog.md`** at refresh time
+
+## Intended resume phase
+
+`discovery`
+
+## Resume target
+
+- bug_id=BUG-0026
+- story_id=(none)
+- sprint_id=(none)
+- boundary=post-bug-intake (**DEC-0069**)
+
+## Latest auto breadcrumb seed
+
+- requested_start_from=(none)
+- resolved_start_phase=discovery
+- resolution_source=resume_brief
+- resolution_status=resolved
+- stop_reason=intake_complete
+- stop_phase=intake
+- next_scheduled_phase=discovery
+- bug_id=BUG-0026
+- story_id=(none)
+- sprint_id=(none)
+- orchestrator_run_id=ir-20260919T100204Z-9c322a
+- intake_boundary_utc=2026-09-19T10:02:04Z
+## Current status
+
+- **Active bug**: **`BUG-0026`** — **OPEN** per **`docs/product/backlog.md`** at refresh time
+
+## Intended resume phase
+
+`discovery`
+
+## Resume target
+
+- bug_id=BUG-0026
+- story_id=(none)
+- sprint_id=(none)
+- boundary=post-bug-intake (**DEC-0069**)
+
+## Latest auto breadcrumb seed
+
+- requested_start_from=(none)
+- resolved_start_phase=discovery
+- resolution_source=resume_brief
+- resolution_status=resolved
+- stop_reason=intake_complete
+- stop_phase=intake
+- next_scheduled_phase=discovery
+- bug_id=BUG-0026
+- story_id=(none)
+- sprint_id=(none)
+- orchestrator_run_id=(unknown)
+- intake_boundary_utc=2026-09-19T10:02:04Z
 ## Current status
 
 - **Active bug**: **`BUG-0024`** — **OPEN** per **`docs/product/backlog.md`** at refresh time
@@ -4135,12 +5875,70 @@
 - intake_boundary_utc=2026-09-14T04:00:00Z
 ## Latest orchestration pointer — post-bug-intake (DEC-0069)
 
-- **Boundary**: successful **`/intake bug`** persistence (**`US-0045`**) — **`intake_boundary_utc=2026-09-14T04:00:00Z`**
-- **`bug_id`**: **`BUG-0024`** — must remain **`OPEN`** in **`docs/product/backlog.md`** (authority); this refresh is rejected if backlog shows **DONE**
-- **Intake evidence ref**: `handoffs/intake_evidence/BUG-0024-intake-20260914T035000Z.json`
-- **`orchestrator_run_id`**: `cursor-20260913-BUG0024-intake` (boundary metadata when known; optional at intake)
+- **Boundary**: successful **`/intake bug`** persistence (**`US-0045`**) — **`intake_boundary_utc=2026-09-19T10:02:04Z`**
+- **`bug_id`**: **`BUG-0026`** — must remain **`OPEN`** in **`docs/product/backlog.md`** (authority); this refresh is rejected if backlog shows **DONE**
+- **Intake evidence ref**: `handoffs/intake_evidence/BUG-0026-intake-20260919T100204Z.json`
+- **`orchestrator_run_id`**: `ir-20260919T100204Z-9c322a` (boundary metadata when known; optional at intake)
 - **Contract**: default **`/auto`** continuation targets **`discovery`** for this OPEN bug (not a stale pre-intake **`intake`** resume target)
 
+## Current status
+
+- **Active bug**: **`BUG-0026`** — **OPEN** per **`docs/product/backlog.md`** at refresh time
+
+## Intended resume phase
+
+`discovery`
+
+## Resume target
+
+- bug_id=BUG-0026
+- story_id=(none)
+- sprint_id=(none)
+- boundary=post-bug-intake (**DEC-0069**)
+
+## Latest auto breadcrumb seed
+
+- requested_start_from=(none)
+- resolved_start_phase=discovery
+- resolution_source=resume_brief
+- resolution_status=resolved
+- stop_reason=intake_complete
+- stop_phase=intake
+- next_scheduled_phase=discovery
+- bug_id=BUG-0026
+- story_id=(none)
+- sprint_id=(none)
+- orchestrator_run_id=ir-20260919T100204Z-9c322a
+- intake_boundary_utc=2026-09-19T10:02:04Z
+## Current status
+
+- **Active bug**: **`BUG-0026`** — **OPEN** per **`docs/product/backlog.md`** at refresh time
+
+## Intended resume phase
+
+`discovery`
+
+## Resume target
+
+- bug_id=BUG-0026
+- story_id=(none)
+- sprint_id=(none)
+- boundary=post-bug-intake (**DEC-0069**)
+
+## Latest auto breadcrumb seed
+
+- requested_start_from=(none)
+- resolved_start_phase=discovery
+- resolution_source=resume_brief
+- resolution_status=resolved
+- stop_reason=intake_complete
+- stop_phase=intake
+- next_scheduled_phase=discovery
+- bug_id=BUG-0026
+- story_id=(none)
+- sprint_id=(none)
+- orchestrator_run_id=(unknown)
+- intake_boundary_utc=2026-09-19T10:02:04Z
 ## Current status
 
 - **Active bug**: **`BUG-0024`** — **OPEN** per **`docs/product/backlog.md`** at refresh time
@@ -4172,12 +5970,70 @@
 - intake_boundary_utc=2026-09-14T04:00:00Z
 ## Latest orchestration pointer — post-bug-intake (DEC-0069)
 
-- **Boundary**: successful **`/intake bug`** persistence (**`US-0045`**) — **`intake_boundary_utc=2026-09-14T04:00:00Z`**
-- **`bug_id`**: **`BUG-0024`** — must remain **`OPEN`** in **`docs/product/backlog.md`** (authority); this refresh is rejected if backlog shows **DONE**
-- **Intake evidence ref**: `handoffs/intake_evidence/BUG-0024-intake-20260914T035000Z.json`
-- **`orchestrator_run_id`**: `cursor-20260913-BUG0024-intake` (boundary metadata when known; optional at intake)
+- **Boundary**: successful **`/intake bug`** persistence (**`US-0045`**) — **`intake_boundary_utc=2026-09-19T10:02:04Z`**
+- **`bug_id`**: **`BUG-0026`** — must remain **`OPEN`** in **`docs/product/backlog.md`** (authority); this refresh is rejected if backlog shows **DONE**
+- **Intake evidence ref**: `handoffs/intake_evidence/BUG-0026-intake-20260919T100204Z.json`
+- **`orchestrator_run_id`**: `ir-20260919T100204Z-9c322a` (boundary metadata when known; optional at intake)
 - **Contract**: default **`/auto`** continuation targets **`discovery`** for this OPEN bug (not a stale pre-intake **`intake`** resume target)
 
+## Current status
+
+- **Active bug**: **`BUG-0026`** — **OPEN** per **`docs/product/backlog.md`** at refresh time
+
+## Intended resume phase
+
+`discovery`
+
+## Resume target
+
+- bug_id=BUG-0026
+- story_id=(none)
+- sprint_id=(none)
+- boundary=post-bug-intake (**DEC-0069**)
+
+## Latest auto breadcrumb seed
+
+- requested_start_from=(none)
+- resolved_start_phase=discovery
+- resolution_source=resume_brief
+- resolution_status=resolved
+- stop_reason=intake_complete
+- stop_phase=intake
+- next_scheduled_phase=discovery
+- bug_id=BUG-0026
+- story_id=(none)
+- sprint_id=(none)
+- orchestrator_run_id=ir-20260919T100204Z-9c322a
+- intake_boundary_utc=2026-09-19T10:02:04Z
+## Current status
+
+- **Active bug**: **`BUG-0026`** — **OPEN** per **`docs/product/backlog.md`** at refresh time
+
+## Intended resume phase
+
+`discovery`
+
+## Resume target
+
+- bug_id=BUG-0026
+- story_id=(none)
+- sprint_id=(none)
+- boundary=post-bug-intake (**DEC-0069**)
+
+## Latest auto breadcrumb seed
+
+- requested_start_from=(none)
+- resolved_start_phase=discovery
+- resolution_source=resume_brief
+- resolution_status=resolved
+- stop_reason=intake_complete
+- stop_phase=intake
+- next_scheduled_phase=discovery
+- bug_id=BUG-0026
+- story_id=(none)
+- sprint_id=(none)
+- orchestrator_run_id=(unknown)
+- intake_boundary_utc=2026-09-19T10:02:04Z
 ## Current status
 
 - **Active bug**: **`BUG-0024`** — **OPEN** per **`docs/product/backlog.md`** at refresh time
@@ -4209,12 +6065,70 @@
 - intake_boundary_utc=2026-09-14T04:00:00Z
 ## Latest orchestration pointer — post-bug-intake (DEC-0069)
 
-- **Boundary**: successful **`/intake bug`** persistence (**`US-0045`**) — **`intake_boundary_utc=2026-09-14T04:00:00Z`**
-- **`bug_id`**: **`BUG-0024`** — must remain **`OPEN`** in **`docs/product/backlog.md`** (authority); this refresh is rejected if backlog shows **DONE**
-- **Intake evidence ref**: `handoffs/intake_evidence/BUG-0024-intake-20260914T035000Z.json`
-- **`orchestrator_run_id`**: `cursor-20260913-BUG0024-intake` (boundary metadata when known; optional at intake)
+- **Boundary**: successful **`/intake bug`** persistence (**`US-0045`**) — **`intake_boundary_utc=2026-09-19T10:02:04Z`**
+- **`bug_id`**: **`BUG-0026`** — must remain **`OPEN`** in **`docs/product/backlog.md`** (authority); this refresh is rejected if backlog shows **DONE**
+- **Intake evidence ref**: `handoffs/intake_evidence/BUG-0026-intake-20260919T100204Z.json`
+- **`orchestrator_run_id`**: `ir-20260919T100204Z-9c322a` (boundary metadata when known; optional at intake)
 - **Contract**: default **`/auto`** continuation targets **`discovery`** for this OPEN bug (not a stale pre-intake **`intake`** resume target)
 
+## Current status
+
+- **Active bug**: **`BUG-0026`** — **OPEN** per **`docs/product/backlog.md`** at refresh time
+
+## Intended resume phase
+
+`discovery`
+
+## Resume target
+
+- bug_id=BUG-0026
+- story_id=(none)
+- sprint_id=(none)
+- boundary=post-bug-intake (**DEC-0069**)
+
+## Latest auto breadcrumb seed
+
+- requested_start_from=(none)
+- resolved_start_phase=discovery
+- resolution_source=resume_brief
+- resolution_status=resolved
+- stop_reason=intake_complete
+- stop_phase=intake
+- next_scheduled_phase=discovery
+- bug_id=BUG-0026
+- story_id=(none)
+- sprint_id=(none)
+- orchestrator_run_id=ir-20260919T100204Z-9c322a
+- intake_boundary_utc=2026-09-19T10:02:04Z
+## Current status
+
+- **Active bug**: **`BUG-0026`** — **OPEN** per **`docs/product/backlog.md`** at refresh time
+
+## Intended resume phase
+
+`discovery`
+
+## Resume target
+
+- bug_id=BUG-0026
+- story_id=(none)
+- sprint_id=(none)
+- boundary=post-bug-intake (**DEC-0069**)
+
+## Latest auto breadcrumb seed
+
+- requested_start_from=(none)
+- resolved_start_phase=discovery
+- resolution_source=resume_brief
+- resolution_status=resolved
+- stop_reason=intake_complete
+- stop_phase=intake
+- next_scheduled_phase=discovery
+- bug_id=BUG-0026
+- story_id=(none)
+- sprint_id=(none)
+- orchestrator_run_id=(unknown)
+- intake_boundary_utc=2026-09-19T10:02:04Z
 ## Current status
 
 - **Active bug**: **`BUG-0024`** — **OPEN** per **`docs/product/backlog.md`** at refresh time
@@ -4246,12 +6160,70 @@
 - intake_boundary_utc=2026-09-14T04:00:00Z
 ## Latest orchestration pointer — post-bug-intake (DEC-0069)
 
-- **Boundary**: successful **`/intake bug`** persistence (**`US-0045`**) — **`intake_boundary_utc=2026-09-14T04:00:00Z`**
-- **`bug_id`**: **`BUG-0024`** — must remain **`OPEN`** in **`docs/product/backlog.md`** (authority); this refresh is rejected if backlog shows **DONE**
-- **Intake evidence ref**: `handoffs/intake_evidence/BUG-0024-intake-20260914T035000Z.json`
-- **`orchestrator_run_id`**: `cursor-20260913-BUG0024-intake` (boundary metadata when known; optional at intake)
+- **Boundary**: successful **`/intake bug`** persistence (**`US-0045`**) — **`intake_boundary_utc=2026-09-19T10:02:04Z`**
+- **`bug_id`**: **`BUG-0026`** — must remain **`OPEN`** in **`docs/product/backlog.md`** (authority); this refresh is rejected if backlog shows **DONE**
+- **Intake evidence ref**: `handoffs/intake_evidence/BUG-0026-intake-20260919T100204Z.json`
+- **`orchestrator_run_id`**: `ir-20260919T100204Z-9c322a` (boundary metadata when known; optional at intake)
 - **Contract**: default **`/auto`** continuation targets **`discovery`** for this OPEN bug (not a stale pre-intake **`intake`** resume target)
 
+## Current status
+
+- **Active bug**: **`BUG-0026`** — **OPEN** per **`docs/product/backlog.md`** at refresh time
+
+## Intended resume phase
+
+`discovery`
+
+## Resume target
+
+- bug_id=BUG-0026
+- story_id=(none)
+- sprint_id=(none)
+- boundary=post-bug-intake (**DEC-0069**)
+
+## Latest auto breadcrumb seed
+
+- requested_start_from=(none)
+- resolved_start_phase=discovery
+- resolution_source=resume_brief
+- resolution_status=resolved
+- stop_reason=intake_complete
+- stop_phase=intake
+- next_scheduled_phase=discovery
+- bug_id=BUG-0026
+- story_id=(none)
+- sprint_id=(none)
+- orchestrator_run_id=ir-20260919T100204Z-9c322a
+- intake_boundary_utc=2026-09-19T10:02:04Z
+## Current status
+
+- **Active bug**: **`BUG-0026`** — **OPEN** per **`docs/product/backlog.md`** at refresh time
+
+## Intended resume phase
+
+`discovery`
+
+## Resume target
+
+- bug_id=BUG-0026
+- story_id=(none)
+- sprint_id=(none)
+- boundary=post-bug-intake (**DEC-0069**)
+
+## Latest auto breadcrumb seed
+
+- requested_start_from=(none)
+- resolved_start_phase=discovery
+- resolution_source=resume_brief
+- resolution_status=resolved
+- stop_reason=intake_complete
+- stop_phase=intake
+- next_scheduled_phase=discovery
+- bug_id=BUG-0026
+- story_id=(none)
+- sprint_id=(none)
+- orchestrator_run_id=(unknown)
+- intake_boundary_utc=2026-09-19T10:02:04Z
 ## Current status
 
 - **Active bug**: **`BUG-0024`** — **OPEN** per **`docs/product/backlog.md`** at refresh time
@@ -4283,12 +6255,70 @@
 - intake_boundary_utc=2026-09-14T04:00:00Z
 ## Latest orchestration pointer — post-bug-intake (DEC-0069)
 
-- **Boundary**: successful **`/intake bug`** persistence (**`US-0045`**) — **`intake_boundary_utc=2026-09-14T04:00:00Z`**
-- **`bug_id`**: **`BUG-0024`** — must remain **`OPEN`** in **`docs/product/backlog.md`** (authority); this refresh is rejected if backlog shows **DONE**
-- **Intake evidence ref**: `handoffs/intake_evidence/BUG-0024-intake-20260914T035000Z.json`
-- **`orchestrator_run_id`**: `cursor-20260913-BUG0024-intake` (boundary metadata when known; optional at intake)
+- **Boundary**: successful **`/intake bug`** persistence (**`US-0045`**) — **`intake_boundary_utc=2026-09-19T10:02:04Z`**
+- **`bug_id`**: **`BUG-0026`** — must remain **`OPEN`** in **`docs/product/backlog.md`** (authority); this refresh is rejected if backlog shows **DONE**
+- **Intake evidence ref**: `handoffs/intake_evidence/BUG-0026-intake-20260919T100204Z.json`
+- **`orchestrator_run_id`**: `ir-20260919T100204Z-9c322a` (boundary metadata when known; optional at intake)
 - **Contract**: default **`/auto`** continuation targets **`discovery`** for this OPEN bug (not a stale pre-intake **`intake`** resume target)
 
+## Current status
+
+- **Active bug**: **`BUG-0026`** — **OPEN** per **`docs/product/backlog.md`** at refresh time
+
+## Intended resume phase
+
+`discovery`
+
+## Resume target
+
+- bug_id=BUG-0026
+- story_id=(none)
+- sprint_id=(none)
+- boundary=post-bug-intake (**DEC-0069**)
+
+## Latest auto breadcrumb seed
+
+- requested_start_from=(none)
+- resolved_start_phase=discovery
+- resolution_source=resume_brief
+- resolution_status=resolved
+- stop_reason=intake_complete
+- stop_phase=intake
+- next_scheduled_phase=discovery
+- bug_id=BUG-0026
+- story_id=(none)
+- sprint_id=(none)
+- orchestrator_run_id=ir-20260919T100204Z-9c322a
+- intake_boundary_utc=2026-09-19T10:02:04Z
+## Current status
+
+- **Active bug**: **`BUG-0026`** — **OPEN** per **`docs/product/backlog.md`** at refresh time
+
+## Intended resume phase
+
+`discovery`
+
+## Resume target
+
+- bug_id=BUG-0026
+- story_id=(none)
+- sprint_id=(none)
+- boundary=post-bug-intake (**DEC-0069**)
+
+## Latest auto breadcrumb seed
+
+- requested_start_from=(none)
+- resolved_start_phase=discovery
+- resolution_source=resume_brief
+- resolution_status=resolved
+- stop_reason=intake_complete
+- stop_phase=intake
+- next_scheduled_phase=discovery
+- bug_id=BUG-0026
+- story_id=(none)
+- sprint_id=(none)
+- orchestrator_run_id=(unknown)
+- intake_boundary_utc=2026-09-19T10:02:04Z
 ## Current status
 
 - **Active bug**: **`BUG-0024`** — **OPEN** per **`docs/product/backlog.md`** at refresh time
@@ -5260,12 +7290,70 @@ sovereign-critic (sprint-plan) then /execute
 
 ## Latest orchestration pointer — post-bug-intake (DEC-0069)
 
-- **Boundary**: successful **`/intake bug`** persistence (**`US-0045`**) — **`intake_boundary_utc=2026-09-14T04:00:00Z`**
-- **`bug_id`**: **`BUG-0024`** — must remain **`OPEN`** in **`docs/product/backlog.md`** (authority); this refresh is rejected if backlog shows **DONE**
-- **Intake evidence ref**: `handoffs/intake_evidence/BUG-0024-intake-20260914T035000Z.json`
-- **`orchestrator_run_id`**: `cursor-20260913-BUG0024-intake` (boundary metadata when known; optional at intake)
+- **Boundary**: successful **`/intake bug`** persistence (**`US-0045`**) — **`intake_boundary_utc=2026-09-19T10:02:04Z`**
+- **`bug_id`**: **`BUG-0026`** — must remain **`OPEN`** in **`docs/product/backlog.md`** (authority); this refresh is rejected if backlog shows **DONE**
+- **Intake evidence ref**: `handoffs/intake_evidence/BUG-0026-intake-20260919T100204Z.json`
+- **`orchestrator_run_id`**: `ir-20260919T100204Z-9c322a` (boundary metadata when known; optional at intake)
 - **Contract**: default **`/auto`** continuation targets **`discovery`** for this OPEN bug (not a stale pre-intake **`intake`** resume target)
 
+## Current status
+
+- **Active bug**: **`BUG-0026`** — **OPEN** per **`docs/product/backlog.md`** at refresh time
+
+## Intended resume phase
+
+`discovery`
+
+## Resume target
+
+- bug_id=BUG-0026
+- story_id=(none)
+- sprint_id=(none)
+- boundary=post-bug-intake (**DEC-0069**)
+
+## Latest auto breadcrumb seed
+
+- requested_start_from=(none)
+- resolved_start_phase=discovery
+- resolution_source=resume_brief
+- resolution_status=resolved
+- stop_reason=intake_complete
+- stop_phase=intake
+- next_scheduled_phase=discovery
+- bug_id=BUG-0026
+- story_id=(none)
+- sprint_id=(none)
+- orchestrator_run_id=ir-20260919T100204Z-9c322a
+- intake_boundary_utc=2026-09-19T10:02:04Z
+## Current status
+
+- **Active bug**: **`BUG-0026`** — **OPEN** per **`docs/product/backlog.md`** at refresh time
+
+## Intended resume phase
+
+`discovery`
+
+## Resume target
+
+- bug_id=BUG-0026
+- story_id=(none)
+- sprint_id=(none)
+- boundary=post-bug-intake (**DEC-0069**)
+
+## Latest auto breadcrumb seed
+
+- requested_start_from=(none)
+- resolved_start_phase=discovery
+- resolution_source=resume_brief
+- resolution_status=resolved
+- stop_reason=intake_complete
+- stop_phase=intake
+- next_scheduled_phase=discovery
+- bug_id=BUG-0026
+- story_id=(none)
+- sprint_id=(none)
+- orchestrator_run_id=(unknown)
+- intake_boundary_utc=2026-09-19T10:02:04Z
 ## Current status
 
 - **Active bug**: **`BUG-0024`** — **OPEN** per **`docs/product/backlog.md`** at refresh time
@@ -5314,12 +7402,70 @@ sovereign-critic (sprint-plan) then /execute
 
 ## Latest orchestration pointer — post-bug-intake (DEC-0069)
 
-- **Boundary**: successful **`/intake bug`** persistence (**`US-0045`**) — **`intake_boundary_utc=2026-09-14T04:00:00Z`**
-- **`bug_id`**: **`BUG-0024`** — must remain **`OPEN`** in **`docs/product/backlog.md`** (authority); this refresh is rejected if backlog shows **DONE**
-- **Intake evidence ref**: `handoffs/intake_evidence/BUG-0024-intake-20260914T035000Z.json`
-- **`orchestrator_run_id`**: `cursor-20260913-BUG0024-intake` (boundary metadata when known; optional at intake)
+- **Boundary**: successful **`/intake bug`** persistence (**`US-0045`**) — **`intake_boundary_utc=2026-09-19T10:02:04Z`**
+- **`bug_id`**: **`BUG-0026`** — must remain **`OPEN`** in **`docs/product/backlog.md`** (authority); this refresh is rejected if backlog shows **DONE**
+- **Intake evidence ref**: `handoffs/intake_evidence/BUG-0026-intake-20260919T100204Z.json`
+- **`orchestrator_run_id`**: `ir-20260919T100204Z-9c322a` (boundary metadata when known; optional at intake)
 - **Contract**: default **`/auto`** continuation targets **`discovery`** for this OPEN bug (not a stale pre-intake **`intake`** resume target)
 
+## Current status
+
+- **Active bug**: **`BUG-0026`** — **OPEN** per **`docs/product/backlog.md`** at refresh time
+
+## Intended resume phase
+
+`discovery`
+
+## Resume target
+
+- bug_id=BUG-0026
+- story_id=(none)
+- sprint_id=(none)
+- boundary=post-bug-intake (**DEC-0069**)
+
+## Latest auto breadcrumb seed
+
+- requested_start_from=(none)
+- resolved_start_phase=discovery
+- resolution_source=resume_brief
+- resolution_status=resolved
+- stop_reason=intake_complete
+- stop_phase=intake
+- next_scheduled_phase=discovery
+- bug_id=BUG-0026
+- story_id=(none)
+- sprint_id=(none)
+- orchestrator_run_id=ir-20260919T100204Z-9c322a
+- intake_boundary_utc=2026-09-19T10:02:04Z
+## Current status
+
+- **Active bug**: **`BUG-0026`** — **OPEN** per **`docs/product/backlog.md`** at refresh time
+
+## Intended resume phase
+
+`discovery`
+
+## Resume target
+
+- bug_id=BUG-0026
+- story_id=(none)
+- sprint_id=(none)
+- boundary=post-bug-intake (**DEC-0069**)
+
+## Latest auto breadcrumb seed
+
+- requested_start_from=(none)
+- resolved_start_phase=discovery
+- resolution_source=resume_brief
+- resolution_status=resolved
+- stop_reason=intake_complete
+- stop_phase=intake
+- next_scheduled_phase=discovery
+- bug_id=BUG-0026
+- story_id=(none)
+- sprint_id=(none)
+- orchestrator_run_id=(unknown)
+- intake_boundary_utc=2026-09-19T10:02:04Z
 ## Current status
 
 - **Active bug**: **`BUG-0024`** — **OPEN** per **`docs/product/backlog.md`** at refresh time
@@ -5360,12 +7506,70 @@ sovereign-critic (sprint-plan) then /execute
 
 ## Latest orchestration pointer — post-bug-intake (DEC-0069)
 
-- **Boundary**: successful **`/intake bug`** persistence (**`US-0045`**) — **`intake_boundary_utc=2026-09-14T04:00:00Z`**
-- **`bug_id`**: **`BUG-0024`** — must remain **`OPEN`** in **`docs/product/backlog.md`** (authority); this refresh is rejected if backlog shows **DONE**
-- **Intake evidence ref**: `handoffs/intake_evidence/BUG-0024-intake-20260914T035000Z.json`
-- **`orchestrator_run_id`**: `cursor-20260913-BUG0024-intake` (boundary metadata when known; optional at intake)
+- **Boundary**: successful **`/intake bug`** persistence (**`US-0045`**) — **`intake_boundary_utc=2026-09-19T10:02:04Z`**
+- **`bug_id`**: **`BUG-0026`** — must remain **`OPEN`** in **`docs/product/backlog.md`** (authority); this refresh is rejected if backlog shows **DONE**
+- **Intake evidence ref**: `handoffs/intake_evidence/BUG-0026-intake-20260919T100204Z.json`
+- **`orchestrator_run_id`**: `ir-20260919T100204Z-9c322a` (boundary metadata when known; optional at intake)
 - **Contract**: default **`/auto`** continuation targets **`discovery`** for this OPEN bug (not a stale pre-intake **`intake`** resume target)
 
+## Current status
+
+- **Active bug**: **`BUG-0026`** — **OPEN** per **`docs/product/backlog.md`** at refresh time
+
+## Intended resume phase
+
+`discovery`
+
+## Resume target
+
+- bug_id=BUG-0026
+- story_id=(none)
+- sprint_id=(none)
+- boundary=post-bug-intake (**DEC-0069**)
+
+## Latest auto breadcrumb seed
+
+- requested_start_from=(none)
+- resolved_start_phase=discovery
+- resolution_source=resume_brief
+- resolution_status=resolved
+- stop_reason=intake_complete
+- stop_phase=intake
+- next_scheduled_phase=discovery
+- bug_id=BUG-0026
+- story_id=(none)
+- sprint_id=(none)
+- orchestrator_run_id=ir-20260919T100204Z-9c322a
+- intake_boundary_utc=2026-09-19T10:02:04Z
+## Current status
+
+- **Active bug**: **`BUG-0026`** — **OPEN** per **`docs/product/backlog.md`** at refresh time
+
+## Intended resume phase
+
+`discovery`
+
+## Resume target
+
+- bug_id=BUG-0026
+- story_id=(none)
+- sprint_id=(none)
+- boundary=post-bug-intake (**DEC-0069**)
+
+## Latest auto breadcrumb seed
+
+- requested_start_from=(none)
+- resolved_start_phase=discovery
+- resolution_source=resume_brief
+- resolution_status=resolved
+- stop_reason=intake_complete
+- stop_phase=intake
+- next_scheduled_phase=discovery
+- bug_id=BUG-0026
+- story_id=(none)
+- sprint_id=(none)
+- orchestrator_run_id=(unknown)
+- intake_boundary_utc=2026-09-19T10:02:04Z
 ## Current status
 
 - **Active bug**: **`BUG-0024`** — **OPEN** per **`docs/product/backlog.md`** at refresh time
@@ -5406,12 +7610,70 @@ sovereign-critic (sprint-plan) then /execute
 
 ## Latest orchestration pointer — post-bug-intake (DEC-0069)
 
-- **Boundary**: successful **`/intake bug`** persistence (**`US-0045`**) — **`intake_boundary_utc=2026-09-14T04:00:00Z`**
-- **`bug_id`**: **`BUG-0024`** — must remain **`OPEN`** in **`docs/product/backlog.md`** (authority); this refresh is rejected if backlog shows **DONE**
-- **Intake evidence ref**: `handoffs/intake_evidence/BUG-0024-intake-20260914T035000Z.json`
-- **`orchestrator_run_id`**: `cursor-20260913-BUG0024-intake` (boundary metadata when known; optional at intake)
+- **Boundary**: successful **`/intake bug`** persistence (**`US-0045`**) — **`intake_boundary_utc=2026-09-19T10:02:04Z`**
+- **`bug_id`**: **`BUG-0026`** — must remain **`OPEN`** in **`docs/product/backlog.md`** (authority); this refresh is rejected if backlog shows **DONE**
+- **Intake evidence ref**: `handoffs/intake_evidence/BUG-0026-intake-20260919T100204Z.json`
+- **`orchestrator_run_id`**: `ir-20260919T100204Z-9c322a` (boundary metadata when known; optional at intake)
 - **Contract**: default **`/auto`** continuation targets **`discovery`** for this OPEN bug (not a stale pre-intake **`intake`** resume target)
 
+## Current status
+
+- **Active bug**: **`BUG-0026`** — **OPEN** per **`docs/product/backlog.md`** at refresh time
+
+## Intended resume phase
+
+`discovery`
+
+## Resume target
+
+- bug_id=BUG-0026
+- story_id=(none)
+- sprint_id=(none)
+- boundary=post-bug-intake (**DEC-0069**)
+
+## Latest auto breadcrumb seed
+
+- requested_start_from=(none)
+- resolved_start_phase=discovery
+- resolution_source=resume_brief
+- resolution_status=resolved
+- stop_reason=intake_complete
+- stop_phase=intake
+- next_scheduled_phase=discovery
+- bug_id=BUG-0026
+- story_id=(none)
+- sprint_id=(none)
+- orchestrator_run_id=ir-20260919T100204Z-9c322a
+- intake_boundary_utc=2026-09-19T10:02:04Z
+## Current status
+
+- **Active bug**: **`BUG-0026`** — **OPEN** per **`docs/product/backlog.md`** at refresh time
+
+## Intended resume phase
+
+`discovery`
+
+## Resume target
+
+- bug_id=BUG-0026
+- story_id=(none)
+- sprint_id=(none)
+- boundary=post-bug-intake (**DEC-0069**)
+
+## Latest auto breadcrumb seed
+
+- requested_start_from=(none)
+- resolved_start_phase=discovery
+- resolution_source=resume_brief
+- resolution_status=resolved
+- stop_reason=intake_complete
+- stop_phase=intake
+- next_scheduled_phase=discovery
+- bug_id=BUG-0026
+- story_id=(none)
+- sprint_id=(none)
+- orchestrator_run_id=(unknown)
+- intake_boundary_utc=2026-09-19T10:02:04Z
 ## Current status
 
 - **Active bug**: **`BUG-0024`** — **OPEN** per **`docs/product/backlog.md`** at refresh time
@@ -5443,12 +7705,70 @@ sovereign-critic (sprint-plan) then /execute
 - intake_boundary_utc=2026-09-14T04:00:00Z
 ## Latest orchestration pointer — post-bug-intake (DEC-0069)
 
-- **Boundary**: successful **`/intake bug`** persistence (**`US-0045`**) — **`intake_boundary_utc=2026-09-14T04:00:00Z`**
-- **`bug_id`**: **`BUG-0024`** — must remain **`OPEN`** in **`docs/product/backlog.md`** (authority); this refresh is rejected if backlog shows **DONE**
-- **Intake evidence ref**: `handoffs/intake_evidence/BUG-0024-intake-20260914T035000Z.json`
-- **`orchestrator_run_id`**: `cursor-20260913-BUG0024-intake` (boundary metadata when known; optional at intake)
+- **Boundary**: successful **`/intake bug`** persistence (**`US-0045`**) — **`intake_boundary_utc=2026-09-19T10:02:04Z`**
+- **`bug_id`**: **`BUG-0026`** — must remain **`OPEN`** in **`docs/product/backlog.md`** (authority); this refresh is rejected if backlog shows **DONE**
+- **Intake evidence ref**: `handoffs/intake_evidence/BUG-0026-intake-20260919T100204Z.json`
+- **`orchestrator_run_id`**: `ir-20260919T100204Z-9c322a` (boundary metadata when known; optional at intake)
 - **Contract**: default **`/auto`** continuation targets **`discovery`** for this OPEN bug (not a stale pre-intake **`intake`** resume target)
 
+## Current status
+
+- **Active bug**: **`BUG-0026`** — **OPEN** per **`docs/product/backlog.md`** at refresh time
+
+## Intended resume phase
+
+`discovery`
+
+## Resume target
+
+- bug_id=BUG-0026
+- story_id=(none)
+- sprint_id=(none)
+- boundary=post-bug-intake (**DEC-0069**)
+
+## Latest auto breadcrumb seed
+
+- requested_start_from=(none)
+- resolved_start_phase=discovery
+- resolution_source=resume_brief
+- resolution_status=resolved
+- stop_reason=intake_complete
+- stop_phase=intake
+- next_scheduled_phase=discovery
+- bug_id=BUG-0026
+- story_id=(none)
+- sprint_id=(none)
+- orchestrator_run_id=ir-20260919T100204Z-9c322a
+- intake_boundary_utc=2026-09-19T10:02:04Z
+## Current status
+
+- **Active bug**: **`BUG-0026`** — **OPEN** per **`docs/product/backlog.md`** at refresh time
+
+## Intended resume phase
+
+`discovery`
+
+## Resume target
+
+- bug_id=BUG-0026
+- story_id=(none)
+- sprint_id=(none)
+- boundary=post-bug-intake (**DEC-0069**)
+
+## Latest auto breadcrumb seed
+
+- requested_start_from=(none)
+- resolved_start_phase=discovery
+- resolution_source=resume_brief
+- resolution_status=resolved
+- stop_reason=intake_complete
+- stop_phase=intake
+- next_scheduled_phase=discovery
+- bug_id=BUG-0026
+- story_id=(none)
+- sprint_id=(none)
+- orchestrator_run_id=(unknown)
+- intake_boundary_utc=2026-09-19T10:02:04Z
 ## Current status
 
 - **Active bug**: **`BUG-0024`** — **OPEN** per **`docs/product/backlog.md`** at refresh time

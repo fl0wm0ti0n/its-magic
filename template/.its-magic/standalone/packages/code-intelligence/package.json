@@ -1,0 +1,13 @@
+{
+	"name": "@its-magic/code-intelligence",
+	"version": "0.0.0",
+	"private": true,
+	"type": "module",
+	"description": "Backend-neutral CodeIntelligenceProvider + nested AFT read adapter. No Pi SDK imports.",
+	"engines": {
+		"node": ">=22.19.0"
+	},
+	"exports": {
+		".": "./src/index.ts"
+	}
+}
