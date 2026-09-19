@@ -241,12 +241,10 @@ if (-not $SkipBrew) {
                 $formula = $formula -replace 'vVERSION', $tagName
             }
 
-            # Update explicit version line for beta formula
-            if ($isPrerelease) {
-                $verPattern = 'version ' + $DQ + '[^' + $DQ + ']*' + $DQ
-                $verReplace = 'version ' + $DQ + $newVersion + $DQ
-                $formula = $formula -replace $verPattern, $verReplace
-            }
+            # Keep the explicit formula version aligned for stable and prerelease releases.
+            $verPattern = 'version ' + $DQ + '[^' + $DQ + ']*' + $DQ
+            $verReplace = 'version ' + $DQ + $newVersion + $DQ
+            $formula = $formula -replace $verPattern, $verReplace
 
             # Compute tar.gz sha256 if possible
             if ($tarUrl) {

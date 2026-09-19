@@ -207,11 +207,9 @@ if ! $SKIP_BREW; then
         rm -f "${FORMULA}.bak"
       fi
 
-      # Update explicit version line for beta formula
-      if $IS_PRERELEASE; then
-        sed -i.bak "s|version \"[^\"]*\"|version \"$NEW_VERSION\"|" "$FORMULA"
-        rm -f "${FORMULA}.bak"
-      fi
+      # Keep the explicit formula version aligned for stable and prerelease releases.
+      sed -i.bak "s|version \"[^\"]*\"|version \"$NEW_VERSION\"|" "$FORMULA"
+      rm -f "${FORMULA}.bak"
 
       # Compute sha256
       if [[ -n "$TAR_URL" ]]; then
