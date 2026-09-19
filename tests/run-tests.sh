@@ -1666,6 +1666,13 @@ BUG0025_CONTRACT_PY=$?
 set -e
 assert_true "BUG-0025 packaging contract tests pass" "[ \"$BUG0025_CONTRACT_PY\" -eq 0 ]"
 
+# 26AT) BUG-0026 — published-kit supported-range fallback + cross-platform paths
+set +e
+"$PY" -m pytest tests/bug0026_packaged_range_contract_test.py -q >/dev/null 2>&1
+BUG0026_CONTRACT_PY=$?
+set -e
+assert_true "BUG-0026 packaged range contract tests pass" "[ \"$BUG0026_CONTRACT_PY\" -eq 0 ]"
+
 timestamp=$(date -u +"%Y-%m-%dT%H:%M:%SZ")
 {
   echo "# its-magic Test Report"

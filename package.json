@@ -1,6 +1,6 @@
 {
   "name": "its-magic",
-  "version": "0.1.4",
+  "version": "0.1.5",
   "description": "its-magic - AI dev team workflow for Cursor.",
   "license": "MIT",
   "bin": {
@@ -12,6 +12,8 @@
     "installer.sh",
     "installer.py",
     "scripts/doc_profile_lib.py",
+    "scripts/dev_environment_lib.py",
+    "scripts/host_runtime_config_lib.py",
     "scripts/intake_evidence_validate.py",
     "scripts/intake_evidence_lib.py",
     "scripts/intake_bug_routing_guard.py",
@@ -20,6 +22,7 @@
     "scripts/remote_config_summary.py",
     "scripts/guard_installer_publish.py",
     "scripts/standalone_runtime_install_lib.py",
+    "scripts/standalone-supported-kernel-range.json",
     "bin/its-magic.js",
     "bin/postinstall.js"
   ],

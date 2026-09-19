@@ -7,6 +7,11 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [0.1.5] - 2026-09-19
+
+### Fixed
+- **BUG-0026**: Ship an npm-safe standalone supported-kernel range fallback and required installer peers so `upgrade --host both` materializes `.its-magic/bin/itsm` instead of reporting a false `KERNEL_CONTRACT_MISMATCH` when the private root `standalone/` workspace is omitted.
+
 ## [0.1.4] - 2026-09-18
 
 ### Fixed

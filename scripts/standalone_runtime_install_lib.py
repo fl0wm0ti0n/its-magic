@@ -31,6 +31,10 @@ SUPPORTED_RANGE_REL = os.path.join(
     "kernel-bridge",
     "supported-kernel-range.json",
 )
+PACKAGED_SUPPORTED_RANGE_REL = os.path.join(
+    "scripts",
+    "standalone-supported-kernel-range.json",
+)
 
 
 def posix_relpath(rel: str) -> str:
@@ -219,15 +223,17 @@ def version_in_supported_range(version: str, range_doc: dict[str, Any]) -> bool:
 
 
 def load_supported_range(script_dir: str) -> dict[str, Any] | None:
-    """Load package-root supported-kernel-range.json. None when absent (BUG-0025 fail-closed)."""
-    path = os.path.join(script_dir, SUPPORTED_RANGE_REL)
-    if not os.path.isfile(path):
-        return None
-    try:
-        with open(path, encoding="utf-8") as fh:
-            return json.load(fh)
-    except (OSError, json.JSONDecodeError):
-        return None
+    """Load the in-tree range or its small published-kit equivalent."""
+    for rel in (SUPPORTED_RANGE_REL, PACKAGED_SUPPORTED_RANGE_REL):
+        path = os.path.join(script_dir, rel)
+        if not os.path.isfile(path):
+            continue
+        try:
+            with open(path, encoding="utf-8") as fh:
+                return json.load(fh)
+        except (OSError, json.JSONDecodeError):
+            return None
+    return None
 
 
 def run_kernel_preflight(target_root: str, script_dir: str) -> tuple[dict[str, Any], str | None]:
@@ -254,9 +260,9 @@ def run_kernel_preflight(target_root: str, script_dir: str) -> tuple[dict[str, A
     if contract.get("kernel_version") != version:
         return {}, "KERNEL_CONTRACT_MISMATCH"
     range_doc = load_supported_range(script_dir)
-    # Published kit omits package-root standalone/ (US-0133); fail-closed — do not raise FileNotFoundError.
+    # Published kits use the packaged fallback because the private standalone workspace stays omitted.
     if range_doc is None:
-        return {}, "KERNEL_CONTRACT_MISMATCH"
+        return {}, "STANDALONE_SUPPORTED_RANGE_MISSING"
     if not version_in_supported_range(version, range_doc):
         return {}, "KERNEL_VERSION_UNSUPPORTED"
     validators = contract.get("validators") or []

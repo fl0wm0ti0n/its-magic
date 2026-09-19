@@ -1748,6 +1748,10 @@ Assert-True "US-0147 kit contract tests pass" ($us0147Contract.ExitCode -eq 0)
 $bug0025Contract = Start-Process python -ArgumentList @("-m", "pytest", "tests\bug0025_packaging_contract_test.py", "-q") -PassThru -NoNewWindow -Wait -WorkingDirectory $root
 Assert-True "BUG-0025 packaging contract tests pass" ($bug0025Contract.ExitCode -eq 0)
 
+# 26AT) BUG-0026 — published-kit supported-range fallback + cross-platform paths
+$bug0026Contract = Start-Process python -ArgumentList @("-m", "pytest", "tests\bug0026_packaged_range_contract_test.py", "-q") -PassThru -NoNewWindow -Wait -WorkingDirectory $root
+Assert-True "BUG-0026 packaged range contract tests pass" ($bug0026Contract.ExitCode -eq 0)
+
 # Cleanup
 if (Test-Path (Join-Path $root "tests\.tmp-install")) {
   Remove-Item -Recurse -Force (Join-Path $root "tests\.tmp-install") -ErrorAction SilentlyContinue

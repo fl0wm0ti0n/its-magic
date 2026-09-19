@@ -63,9 +63,16 @@ if ($DryRun) {
     Log "(dry-run) would run: npm version $Bump --no-git-tag-version"
     $newVersion = "0.0.0-dryrun"
 } else {
-    npm version $Bump --no-git-tag-version | Out-Null
     $pkg = Get-Content package.json -Raw | ConvertFrom-Json
-    $newVersion = $pkg.version
+    if ($Bump -eq $pkg.version) {
+        $newVersion = $pkg.version
+        Log "Version already set to $newVersion; skipping npm version"
+    } else {
+        npm version $Bump --no-git-tag-version | Out-Null
+        if ($LASTEXITCODE -ne 0) { Err "npm version failed" }
+        $pkg = Get-Content package.json -Raw | ConvertFrom-Json
+        $newVersion = $pkg.version
+    }
 }
 Log "New version: $newVersion"
 
@@ -107,7 +114,12 @@ if ($ghAvailable) {
         $zipUrl = "https://github.com/USER/its-magic/archive/refs/tags/$tagName.zip"
         $tarUrl = "https://github.com/USER/its-magic/archive/refs/tags/$tagName.tar.gz"
     } else {
-        $ghArgs = @("release", "create", $tagName, "--generate-notes", "--title", $tagName)
+        $versionNotes = Join-Path $repoRoot "handoffs\releases\$newVersion-release-notes.md"
+        if (Test-Path $versionNotes) {
+            $ghArgs = @("release", "create", $tagName, "-F", $versionNotes, "--title", $tagName)
+        } else {
+            $ghArgs = @("release", "create", $tagName, "--generate-notes", "--title", $tagName)
+        }
         if ($isPrerelease) { $ghArgs += "--prerelease" }
         & gh @ghArgs
         if ($LASTEXITCODE -ne 0) { Warn "gh release create failed - continuing anyway" }

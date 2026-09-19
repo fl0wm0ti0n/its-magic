@@ -137,17 +137,20 @@ def main() -> int:
     standalone = _reject_standalone_in_kit_publish()
     if standalone != 0:
         return standalone
-    allowlist = _require_standalone_runtime_install_lib_allowlist()
+    allowlist = _require_standalone_runtime_payload_allowlist()
     if allowlist != 0:
         return allowlist
     return 0
 
 
 STANDALONE_RUNTIME_INSTALL_LIB_ALLOWLIST = "scripts/standalone_runtime_install_lib.py"
+STANDALONE_SUPPORTED_RANGE_ALLOWLIST = "scripts/standalone-supported-kernel-range.json"
+DEV_ENVIRONMENT_LIB_ALLOWLIST = "scripts/dev_environment_lib.py"
+HOST_RUNTIME_CONFIG_LIB_ALLOWLIST = "scripts/host_runtime_config_lib.py"
 
 
-def _require_standalone_runtime_install_lib_allowlist() -> int:
-    """BUG-0025: kit package.json files must list standalone_runtime_install_lib.py."""
+def _require_standalone_runtime_payload_allowlist() -> int:
+    """BUG-0025/0026: kit allowlist must include the bootstrap payload."""
     pkg_path = ROOT / "package.json"
     if not pkg_path.is_file():
         return 0
@@ -163,14 +166,28 @@ def _require_standalone_runtime_install_lib_allowlist() -> int:
         print("guard_installer_publish: package.json files must be an array", file=sys.stderr)
         return 1
     normalized = {str(entry).replace("\\", "/").strip() for entry in files}
-    if STANDALONE_RUNTIME_INSTALL_LIB_ALLOWLIST not in normalized:
+    missing = sorted(
+        {
+            DEV_ENVIRONMENT_LIB_ALLOWLIST,
+            HOST_RUNTIME_CONFIG_LIB_ALLOWLIST,
+            STANDALONE_RUNTIME_INSTALL_LIB_ALLOWLIST,
+            STANDALONE_SUPPORTED_RANGE_ALLOWLIST,
+        }
+        - normalized
+    )
+    if missing:
         print(
-            "guard_installer_publish: kit package.json files must include "
-            f"{STANDALONE_RUNTIME_INSTALL_LIB_ALLOWLIST} (BUG-0025).",
+            "guard_installer_publish: kit package.json files must include standalone "
+            f"bootstrap payload entries {missing} (BUG-0025/BUG-0026).",
             file=sys.stderr,
         )
         return 1
     return 0
+
+
+# Kept as a callable compatibility surface for the BUG-0025 contract.
+def _require_standalone_runtime_install_lib_allowlist() -> int:
+    return _require_standalone_runtime_payload_allowlist()
 
 
 def _path_mentions_standalone(entry: object) -> bool:

@@ -4806,7 +4806,8 @@ Deliver the standalone operator product (`itsm`, US-0146 CLI/TUI) into consumer 
 | Code | Meaning |
 |------|---------|
 | `STANDALONE_BOOTSTRAP_FAILED` | Mirror copy or `npm ci` failed; **or** published kit missing `scripts/standalone_runtime_install_lib.py` (BUG-0025 — upgrade to **`its-magic@0.1.4`+**) |
-| `KERNEL_*` | US-0134 handshake (preflight before shim); also when package-root `supported-kernel-range.json` is absent on published kit (fail-closed; US-0133 omit-`standalone/`) |
+| `STANDALONE_SUPPORTED_RANGE_MISSING` | Neither the private in-tree range nor packaged `scripts/standalone-supported-kernel-range.json` is available; reinstall a fixed package |
+| `KERNEL_*` | US-0134 handshake (preflight before shim); true contract/version failures remain fail-closed |
 | `INSTALL_BROWSER_OFFLINE` | Airgap browser setup |
 | `INSTALL_BROWSER_EXPLICIT_GATE` | Set `ITS_MAGIC_INSTALL_BROWSER=1` or run `itsm setup browser` |
 | `SCRATCHPAD_LEGACY_KEYS_PRESENT` | Advisory only; no forced migration |
@@ -4815,9 +4816,11 @@ Repair: `python installer.py --standalone-bootstrap --target <repo>` or `its-mag
 
 **BUG-0025 (packaging omit)**: If upgrade/missing crashes after `HOST_CONFIG_POSTINSTALL_OK` with raw `FileNotFoundError` for `scripts/standalone_runtime_install_lib.py`, the global install is **`its-magic@0.1.3`** (or older) without the allowlisted script. **Fix**: `npm install -g its-magic@0.1.4` (or `@latest` once published). Optional note only: operators who moved from local `0.1.3-11` → published `0.1.3` hit the omit; prefer patch **`0.1.4`** over same-line republish.
 
+**BUG-0026 (published range omit)**: Published **`its-magic@0.1.4`** can fail after `HOST_CONFIG_POSTINSTALL_OK` with false `KERNEL_CONTRACT_MISMATCH` because npm intentionally omits the private root `standalone/` workspace. **Fix**: `npm install -g its-magic@0.1.5` (or `@latest`). Fixed packages include the equivalent `scripts/standalone-supported-kernel-range.json`; the installer prefers the in-tree canonical file and falls back to this packaged copy. If both are absent, it emits `STANDALONE_SUPPORTED_RANGE_MISSING`, not a false kernel-contract mismatch.
+
 ### Tests
 
-`python -m pytest tests/us0147_contract_test.py -v` (exactly 10 `test_us0147_*` markers; Windows + Linux).
+`python -m pytest tests/us0147_contract_test.py tests/bug0026_packaged_range_contract_test.py -v` (standalone lifecycle plus packed-tarball fallback; Windows + Linux).
 
 **Release status (S0154 / US-0147)**: **`released`** (`2026-09-17T21:30:00Z`); backlog **OPEN** (closure deferred). Operator verify: **`handoffs/releases/S0154-release-notes.md`** **## Verify**; publish skipped while **`RELEASE_PUBLISH_MODE=confirm`** (no operator confirm this turn). Gate-1 evidence: scoped `python -m pytest tests/us0147_contract_test.py -q` 10/10 + US-0071 metadata exit 0 (`harness_fail_zero_claimed=false`).
 

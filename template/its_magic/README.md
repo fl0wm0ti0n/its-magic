@@ -122,6 +122,8 @@ If **`its-magic --target <repo> --mode missing`** fails with **`[INSTALL_MANIFES
 
 If **`its-magic --mode upgrade|missing`** crashes after **`HOST_CONFIG_POSTINSTALL_OK`** with a raw **`FileNotFoundError`** for **`scripts/standalone_runtime_install_lib.py`**, the published **`its-magic@0.1.3`** tarball omitted that allowlisted script (**BUG-0025**). **Upgrade**: **`npm install -g its-magic@0.1.4`** (or **`@latest`** once published). From **`0.1.4`**, missing lib fails closed with **`[STANDALONE_BOOTSTRAP_FAILED]`** instead of a raw traceback. Optional note: local **`0.1.3-11`** → published **`0.1.3`** was a semver quirk, not the primary fix path.
 
+If published **`its-magic@0.1.4`** instead emits **`KERNEL_CONTRACT_MISMATCH`** immediately after that checkpoint, its tarball lacks the standalone supported-range source (**BUG-0026**). Fixed packages ship a small equivalent range artifact without publishing the private `standalone/` workspace; upgrade to the next fixed version or **`@latest`**.
+
 ### 2) Apply to a repo
 
 New repo:
