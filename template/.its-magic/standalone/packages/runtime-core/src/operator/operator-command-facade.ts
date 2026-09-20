@@ -72,7 +72,9 @@ export class OperatorCommandFacade {
 				routeInput,
 			};
 		}
-		if ((DEDICATED_COMMANDS as readonly string[]).includes(normalized as OperatorDedicatedCommand)) {
+		if (
+			(DEDICATED_COMMANDS as readonly string[]).includes(normalized as OperatorDedicatedCommand)
+		) {
 			return {
 				kind: "dedicated",
 				command: normalized as OperatorDedicatedCommand,
@@ -94,7 +96,9 @@ export class OperatorCommandFacade {
 		];
 	}
 
-	async routeParsed(parsed: OperatorParsedToken): Promise<OperatorRouteOutcome | { kind: "dedicated"; command: OperatorDedicatedCommand }> {
+	async routeParsed(
+		parsed: OperatorParsedToken,
+	): Promise<OperatorRouteOutcome | { kind: "dedicated"; command: OperatorDedicatedCommand }> {
 		if (parsed.kind === "auth" || parsed.kind === "unknown") {
 			throw new Error(parsed.kind === "unknown" ? `unknown command: ${parsed.token}` : "auth path");
 		}
@@ -105,7 +109,10 @@ export class OperatorCommandFacade {
 		return this.router.route(parsed.kind === "scheduler" ? parsed.command : parsed.command, input);
 	}
 
-	async routeArgv(argv: string[], baseInput?: Partial<RouteInput>): Promise<OperatorRouteOutcome | { kind: "dedicated"; command: OperatorDedicatedCommand }> {
+	async routeArgv(
+		argv: string[],
+		baseInput?: Partial<RouteInput>,
+	): Promise<OperatorRouteOutcome | { kind: "dedicated"; command: OperatorDedicatedCommand }> {
 		const parsed = OperatorCommandFacade.parseArgv(argv, baseInput);
 		return this.routeParsed(parsed);
 	}
@@ -119,6 +126,8 @@ export class OperatorCommandFacade {
 	}
 }
 
-export function createOperatorCommandFacade(deps: OperatorCommandFacadeDeps): OperatorCommandFacade {
+export function createOperatorCommandFacade(
+	deps: OperatorCommandFacadeDeps,
+): OperatorCommandFacade {
 	return new OperatorCommandFacade(deps);
 }

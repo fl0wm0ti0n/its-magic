@@ -8,6 +8,7 @@ import { computePolicyHash, DEFAULT_POLICY_SNAPSHOT } from "@its-magic/policy-en
 import {
 	assertOrchestratorSchedulingOnly,
 	createDefaultRoleCatalog,
+	type OwnedToolDefinition,
 	resolvePhaseRole,
 	type SessionSupervisor,
 	SOVEREIGN_BOOTSTRAP_DELIVERY_FAILED,
@@ -126,8 +127,15 @@ export function isRouteOk(result: RouteResult): result is RouteOk {
 	return result.ok === true && "steps" in result;
 }
 
-export function isRouteScheduled(result: RouteResult): result is RouteScheduled {
-	return result.ok === true && "implemented" in result && result.implemented === true;
+export function isRouteScheduled(result: unknown): result is RouteScheduled {
+	return (
+		typeof result === "object" &&
+		result !== null &&
+		"ok" in result &&
+		"implemented" in result &&
+		result.ok === true &&
+		result.implemented === true
+	);
 }
 
 export interface CommandRouterDeps {
@@ -137,6 +145,11 @@ export interface CommandRouterDeps {
 		Partial<Pick<KernelBridge, "runSovereignOperation">>;
 	env?: NodeJS.ProcessEnv;
 	kernelRoot?: string;
+	toolProvision?: (input: { role_id: string; phase_id: string; orchestrator_run_id: string }) => {
+		tools: string[];
+		ownedTools: OwnedToolDefinition[];
+		policy_hash: string;
+	};
 }
 
 export class CommandRouter {
@@ -146,6 +159,7 @@ export class CommandRouter {
 		Partial<Pick<KernelBridge, "runSovereignOperation">>;
 	private readonly env?: NodeJS.ProcessEnv;
 	private readonly kernelRoot?: string;
+	private readonly toolProvision?: CommandRouterDeps["toolProvision"];
 
 	constructor(deps: CommandRouterDeps) {
 		this.supervisor = deps.supervisor;
@@ -153,6 +167,7 @@ export class CommandRouter {
 		this.kernelBridge = deps.kernelBridge;
 		this.env = deps.env;
 		this.kernelRoot = deps.kernelRoot;
+		this.toolProvision = deps.toolProvision;
 	}
 
 	async assemblePreSpawnContext(input: {
@@ -302,10 +317,16 @@ export class CommandRouter {
 			env: this.env,
 			catalog: createDefaultRoleCatalog(),
 		});
-		const tools = input.tools ?? [];
+		const provisioned = this.toolProvision?.({
+			role_id: resolved.role_id,
+			phase_id: spawnPhase,
+			orchestrator_run_id: input.orchestrator_run_id,
+		});
+		const tools = input.tools ?? provisioned?.tools ?? [];
 		assertOrchestratorSchedulingOnly([]);
 		const policy_hash =
 			input.policy_hash ??
+			provisioned?.policy_hash ??
 			computePolicyHash({
 				policy_snapshot: DEFAULT_POLICY_SNAPSHOT,
 				tool_allowlist: tools,
@@ -331,6 +352,7 @@ export class CommandRouter {
 			orchestrator_run_id: input.orchestrator_run_id,
 			model_id: input.model_id,
 			tools,
+			ownedTools: provisioned?.ownedTools,
 			policy_hash,
 			parent_phase_session_id: input.parent_phase_session_id ?? null,
 			bootstrap,

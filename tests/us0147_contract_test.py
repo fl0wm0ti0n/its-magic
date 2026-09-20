@@ -83,6 +83,15 @@ def test_us0147_upgrade_preserves_user_layers(tmp_path: Path) -> None:
     assert local.read_text(encoding="utf-8") == "operator-secret-layer\n"
 
 
+def test_us0147_local_itsm_shim_checks_node_version_before_strip_types(tmp_path: Path) -> None:
+    srl.write_itsm_shim(str(tmp_path))
+    shim = tmp_path / ".its-magic" / "bin" / "itsm"
+    assert shim.is_file()
+    content = shim.read_text(encoding="utf-8")
+    assert "[ITSM_NODE_VERSION_UNSUPPORTED]" in content
+    assert content.index("ITSM_NODE_VERSION_UNSUPPORTED") < content.index("--experimental-strip-types")
+
+
 def test_us0147_adopt_cursor_only_repo(tmp_path: Path) -> None:
     repo = tmp_path / "cursor-only"
     repo.mkdir()

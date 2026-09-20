@@ -398,7 +398,9 @@ test("test_us0144_kernel_bridge_admission", async () => {
 		files?: string[];
 	};
 	assert.equal(
-		(kitFiles.files ?? []).some((f) => String(f).includes("standalone")),
+		(kitFiles.files ?? []).some(
+			(f) => String(f) === "standalone" || String(f).startsWith("standalone/"),
+		),
 		false,
 	);
 	assert.equal(KERNEL_HANDSHAKE_CODES.length, 4);

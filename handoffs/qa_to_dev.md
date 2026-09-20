@@ -1,4 +1,16 @@
-# QA -> Dev handoff — US-0131 / S0133 (CLOSED — QA_PASS; no remediations)
+# QA -> Dev handoff — US-0150 / S0158 (QA_PASS)
+
+- **sprint_id**: S0158
+- **story_id**: US-0150 (OPEN - not marked DONE)
+- **phase_id**: qa
+- **verdict**: PASS - blocking_count=0
+- **evidence**: `sprints/S0158/qa-findings.md`
+- **green gates**: standalone lint, typecheck, 172 Node tests, 30 Python contracts, template mirror check
+- **next**: fresh `/verify-work`; do not mark US-0150 DONE.
+
+---
+
+# Historical QA -> Dev handoff — US-0131 / S0133
 
 - **sprint_id**: S0133
 - **story_id**: US-0131 (OPEN — not marked DONE per US-0045)

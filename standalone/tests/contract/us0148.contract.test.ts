@@ -3,20 +3,23 @@ import { mkdirSync, mkdtempSync, readFileSync, rmSync, writeFileSync } from "nod
 import { tmpdir } from "node:os";
 import { join } from "node:path";
 import { test } from "node:test";
+import { startDaemonServer } from "../../apps/daemon/src/server.ts";
 import {
 	APPROVAL_NO_CONTROLLER,
 	DAEMON_CONTROLLER_BUSY,
 	DAEMON_EVENT_LAG_MAX,
 	DAEMON_UNREACHABLE,
-	EVENT_SEQ_GAP,
 	jsonRpcCall,
 	PROTOCOL_VERSION,
 	PROTOCOL_VERSION_MISMATCH,
 	redactEventPayload,
 } from "../../packages/protocol/src/index.ts";
-import { startDaemonServer } from "../../apps/daemon/src/server.ts";
 import { createSessionSupervisor } from "../../packages/role-runtime/src/index.ts";
-import type { AgentKernel, KernelEvent, KernelSession } from "../../packages/role-runtime/src/kernel-port.ts";
+import type {
+	AgentKernel,
+	KernelEvent,
+	KernelSession,
+} from "../../packages/role-runtime/src/kernel-port.ts";
 import {
 	createDaemonTransport,
 	createInProcessTransport,
@@ -165,7 +168,12 @@ test("test_us0148_reconnect_replay_after_seq", async () => {
 		});
 		const replay = await jsonRpcCall(baseUrl, token, "status.snapshot", {});
 		assert.ok(replay);
-		const transport = createDaemonTransport({ projectRoot: root, baseUrl, token, client_kind: "test" });
+		const transport = createDaemonTransport({
+			projectRoot: root,
+			baseUrl,
+			token,
+			client_kind: "test",
+		});
 		const seen: number[] = [];
 		const sub = await transport.subscribeEvents({
 			run_id: start.run_id,
@@ -331,7 +339,10 @@ test("test_us0148_crash_restart_reconcile_fresh_sessions", async () => {
 		port: 0,
 		skipStartupReconcile: false,
 	});
-	const ledger = reconcileOperationalLedger({ projectRoot: root, store: createRunsStore(join(root, ".its-magic", "daemon", "ops.sqlite")) });
+	const ledger = reconcileOperationalLedger({
+		projectRoot: root,
+		store: createRunsStore(join(root, ".its-magic", "daemon", "ops.sqlite")),
+	});
 	assert.equal(ledger.ok, true);
 	await second.close();
 	try {

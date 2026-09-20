@@ -239,7 +239,7 @@ test("test_us0140_command_coverage", async () => {
 		files?: string[];
 	};
 	assert.equal(
-		(kitFiles.files ?? []).some((f) => f.includes("standalone")),
+		(kitFiles.files ?? []).some((f) => f === "standalone" || f.startsWith("standalone/")),
 		false,
 	);
 	const { sv } = supervisor();

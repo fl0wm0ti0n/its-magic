@@ -1,6 +1,6 @@
 {
 	"schema_version": 1,
-	"kernel_version": "0.1.4",
+	"kernel_version": "0.1.6",
 	"validators": [
 		"intake_evidence_validate",
 		"bug_issue_validate",

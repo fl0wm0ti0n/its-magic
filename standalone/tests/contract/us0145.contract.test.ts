@@ -1,41 +1,48 @@
 import assert from "node:assert/strict";
-import { mkdtempSync, mkdirSync, readFileSync, rmSync, writeFileSync } from "node:fs";
+import { mkdirSync, mkdtempSync, readFileSync, rmSync, writeFileSync } from "node:fs";
 import { tmpdir } from "node:os";
 import { dirname, join } from "node:path";
 import { test } from "node:test";
 import { fileURLToPath } from "node:url";
 import {
+	createKernelBridge,
+	DELIVERY_OPERATIONS,
+	type DeliveryOperationName,
+} from "../../packages/kernel-bridge/src/index.ts";
+import {
 	createPolicyEngine,
 	isParallelDevWorktreePath,
 } from "../../packages/policy-engine/src/index.ts";
 import {
-	DELIVERY_OPERATIONS,
-	createKernelBridge,
-	type DeliveryOperationName,
-} from "../../packages/kernel-bridge/src/index.ts";
-import { createSessionSupervisor, type SessionSupervisor } from "../../packages/role-runtime/src/index.ts";
-import type { AgentKernel, KernelEvent, KernelSession } from "../../packages/role-runtime/src/kernel-port.ts";
+	createSessionSupervisor,
+	type SessionSupervisor,
+} from "../../packages/role-runtime/src/index.ts";
+import type {
+	AgentKernel,
+	KernelEvent,
+	KernelSession,
+} from "../../packages/role-runtime/src/kernel-port.ts";
 import {
 	applyClosure,
 	assertReleaseCannotMarkDone,
 	CLOSURE_RELEASE_EVIDENCE_MISSING,
+	type ConfigView,
 	createDeliveryResourceGuard,
 	createGateEngine,
 	createParallelDevCoordinator,
 	createReleaseDeployPipeline,
 	createWorkflowEngine,
 	DEPLOY_DEFERRED,
+	type DeliveryBridge,
 	getReleaseTargetAdapter,
 	isWorkflowError,
 	listReleaseTargetKinds,
 	lookupParallelDev,
 	PARALLEL_DEV_RESOURCE_CAP_EXHAUSTED,
 	PARALLEL_DEV_SELECTION_NO_PASS,
-	releaseCannotMarkDone,
 	RELEASE_GATE_ORDER,
 	RELEASE_PREMATURE,
-	type ConfigView,
-	type DeliveryBridge,
+	releaseCannotMarkDone,
 } from "../../packages/runtime-core/src/index.ts";
 
 const HERE = dirname(fileURLToPath(import.meta.url));
@@ -115,14 +122,20 @@ function fakeBridge(state: {
 			if (input.operation === "deploy_smoke_probe") {
 				return {
 					ok: true,
-					result: { overall: state.smokePass === false ? "fail" : "pass", reason_code: "DEPLOY_SMOKE_PROBE_OK" },
+					result: {
+						overall: state.smokePass === false ? "fail" : "pass",
+						reason_code: "DEPLOY_SMOKE_PROBE_OK",
+					},
 				};
 			}
 			if (input.operation === "deploy_healing_retry") {
 				if (state.healingDeferred) {
 					return { ok: false, reason_code: DEPLOY_DEFERRED };
 				}
-				return { ok: true, result: { overall: "pass", attempts: 2, reason_code: "DEPLOY_SMOKE_PROBE_OK" } };
+				return {
+					ok: true,
+					result: { overall: "pass", attempts: 2, reason_code: "DEPLOY_SMOKE_PROBE_OK" },
+				};
 			}
 			return { ok: true, result: {} };
 		},
@@ -270,7 +283,10 @@ test("test_us0145_release_target_matrix_dry_run", async () => {
 	);
 	assert.equal(results.length, 5);
 	assert.ok(results.every((r) => r.ok));
-	const ledger = readFileSync(join(root, "handoffs", "deploy_results", "deploy_results.jsonl"), "utf8");
+	const ledger = readFileSync(
+		join(root, "handoffs", "deploy_results", "deploy_results.jsonl"),
+		"utf8",
+	);
 	assert.ok(ledger.trim().split("\n").length >= 5);
 	rmSync(root, { recursive: true, force: true });
 });
@@ -405,7 +421,7 @@ test("test_us0145_closure_requires_valid_release_envelope", async () => {
 });
 
 test("test_us0145_kernel_bridge_delivery_admission", async () => {
-	const bridge = await createKernelBridge({ kernelRoot: KIT_ROOT });
+	const bridge = createKernelBridge();
 	const manifest = await bridge.readContractManifest(KIT_ROOT);
 	for (const op of DELIVERY_OPERATIONS) {
 		assert.ok(manifest.delivery_operations?.includes(op), op);

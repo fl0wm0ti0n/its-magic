@@ -1,0 +1,58 @@
+export { AppRuntime, createAppRuntime } from "./app-runtime.ts";
+export {
+	CliDockerClient,
+	createDefaultBackends,
+	DockerBackend,
+	LocalBackend,
+	RemoteDockerBackend,
+	resolveBackendId,
+	SshBackend,
+	UnsupportedBackend,
+	WslBackend,
+} from "./backends.ts";
+export {
+	APP_RUNTIME_CLEANUP_FAILED,
+	APP_RUNTIME_HEALTH_FAILED,
+	APP_RUNTIME_PROFILE_UNKNOWN,
+	APP_RUNTIME_RESTART_CAP_EXHAUSTED,
+	APP_RUNTIME_START_FAILED,
+	APP_RUNTIME_UNSUPPORTED_STACK,
+	AppRuntimeError,
+	BACKEND_CONNECTIVITY_FAILED,
+	BACKEND_DOCKER_UNAVAILABLE,
+	BACKEND_SSH_UNAVAILABLE,
+	BACKEND_TIMEOUT,
+	BACKEND_UNAVAILABLE,
+	BACKEND_UNKNOWN,
+	BACKEND_UNSUPPORTED,
+	BACKEND_WSL_UNAVAILABLE,
+	DEFAULT_LOG_BUDGET_BYTES,
+	DEFAULT_LOG_RING,
+	DEFAULT_RESTART_MAX,
+	FAILURE_CLASSES,
+	isAppRuntimeError,
+	LAYER_B_PROFILES,
+	PROCESS_CRASHED,
+	PROCESS_ORPHAN_REAPED,
+} from "./codes.ts";
+export { redactLogLine, summarizeLogs } from "./logs.ts";
+export { ProcessManager } from "./process-manager.ts";
+export { detectStackProfile, discoverStack } from "./stack-profile.ts";
+export type {
+	AppRuntimeOptions,
+	BackendName,
+	CleanupResult,
+	ConnectHandoff,
+	DockerClient,
+	EvidenceRecord,
+	ExecuteRequest,
+	ExecuteResult,
+	ExecutionBackend,
+	HealthCheckResult,
+	ManagedHandle,
+	SelfDebugResult,
+	SessionSpawnSlot,
+	StackDiscovery,
+	StackProfile,
+	StartRequest,
+} from "./types.ts";

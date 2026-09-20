@@ -2,12 +2,7 @@ import type { OperatorStatusSnapshot, OperatorTimelineEntry } from "@its-magic/r
 
 export type TuiPanelId = "phase" | "status" | "timeline" | "tools";
 
-export const TUI_COLLAPSE_ORDER: readonly TuiPanelId[] = [
-	"phase",
-	"status",
-	"timeline",
-	"tools",
-];
+export const TUI_COLLAPSE_ORDER: readonly TuiPanelId[] = ["phase", "status", "timeline", "tools"];
 
 export interface TuiPanelModel {
 	phase: { phase_id: string | null; role_id: string | null };
@@ -29,7 +24,9 @@ export function renderPanelLayout(model: TuiPanelModel, cols: number): string {
 	for (const id of visible) {
 		switch (id) {
 			case "phase":
-				lines.push(`\x1b[1mPhase\x1b[0m ${model.phase.phase_id ?? "—"} / ${model.phase.role_id ?? "—"}`);
+				lines.push(
+					`\x1b[1mPhase\x1b[0m ${model.phase.phase_id ?? "—"} / ${model.phase.role_id ?? "—"}`,
+				);
 				break;
 			case "status":
 				lines.push(
@@ -37,9 +34,7 @@ export function renderPanelLayout(model: TuiPanelModel, cols: number): string {
 				);
 				break;
 			case "timeline":
-				lines.push(
-					`\x1b[1mTimeline\x1b[0m ${model.timeline.length} events`,
-				);
+				lines.push(`\x1b[1mTimeline\x1b[0m ${model.timeline.length} events`);
 				break;
 			case "tools":
 				lines.push(`\x1b[1mTools\x1b[0m ${model.tools.names.join(", ") || "—"}`);

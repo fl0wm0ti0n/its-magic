@@ -1,9 +1,9 @@
 import { existsSync, readdirSync, readFileSync } from "node:fs";
 import { join } from "node:path";
+import { type parseResumeBrief, readRepoResume } from "../recovery/crash-resume.ts";
 import type { RunsStore } from "../runs/store.ts";
-import { parseResumeBrief, readRepoResume } from "../recovery/crash-resume.ts";
-import { lookupSovereignRuntime } from "../workflow/config-view.ts";
 import type { ConfigView } from "../workflow/config-view.ts";
+import { lookupSovereignRuntime } from "../workflow/config-view.ts";
 import { buildBoundedLogView } from "./bounded-log.ts";
 import type {
 	BoundedLogView,
@@ -53,7 +53,10 @@ function latestTokenCostEvidence(projectRoot: string): {
 	};
 }
 
-function parseStorySprint(projectRoot: string): { story_id: string | null; sprint_id: string | null } {
+function parseStorySprint(projectRoot: string): {
+	story_id: string | null;
+	sprint_id: string | null;
+} {
 	const briefPath = join(projectRoot, "handoffs", "resume_brief.md");
 	if (!existsSync(briefPath)) {
 		return { story_id: null, sprint_id: null };
@@ -93,7 +96,7 @@ export class OperatorObservabilityService {
 	buildStatusSnapshot(orchestrator_run_id?: string | null): OperatorStatusSnapshot {
 		const { story_id, sprint_id } = parseStorySprint(this.projectRoot);
 		const token = latestTokenCostEvidence(this.projectRoot);
-		const sovereignEnabled = lookupSovereignRuntime(this.config) === "1";
+		const sovereignEnabled = lookupSovereignRuntime(this.config);
 		let resumePhase: string | null = null;
 		try {
 			const { brief } = readRepoResume(this.projectRoot);
@@ -101,11 +104,16 @@ export class OperatorObservabilityService {
 		} catch {
 			resumePhase = null;
 		}
-		const app = this.ports.readAppHealth?.() ?? { ok: false, reason_code: "APP_HEALTH_UNAVAILABLE" };
-		const index =
-			this.ports.readIndexHealth?.() ?? { ok: false, stale: true, reason_code: "INDEX_UNAVAILABLE" };
-		const browser =
-			this.ports.readBrowserSummary?.() ?? { probe_count: 0, evidence_refs: [] };
+		const app = this.ports.readAppHealth?.() ?? {
+			ok: false,
+			reason_code: "APP_HEALTH_UNAVAILABLE",
+		};
+		const index = this.ports.readIndexHealth?.() ?? {
+			ok: false,
+			stale: true,
+			reason_code: "INDEX_UNAVAILABLE",
+		};
+		const browser = this.ports.readBrowserSummary?.() ?? { probe_count: 0, evidence_refs: [] };
 		return {
 			schema_version: 1,
 			orchestrator_run_id: orchestrator_run_id ?? null,
@@ -153,8 +161,7 @@ export class OperatorObservabilityService {
 				evidence_refs: Array.isArray(payload.evidence_refs)
 					? payload.evidence_refs.map(String)
 					: ["handoffs/resume_brief.md"],
-				divergence_label:
-					payload.repo_divergent === true ? "audit_repo_divergent" : undefined,
+				divergence_label: payload.repo_divergent === true ? "audit_repo_divergent" : undefined,
 			});
 		}
 		return entries;

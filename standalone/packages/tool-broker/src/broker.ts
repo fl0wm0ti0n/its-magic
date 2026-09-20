@@ -1,3 +1,5 @@
+import { readFile } from "node:fs/promises";
+import { isAbsolute, relative, resolve } from "node:path";
 import type { CodeIntelligenceProvider, IntelResult } from "@its-magic/code-intelligence";
 import {
 	computePolicyHash,
@@ -146,6 +148,27 @@ function executeIntel(
 	}
 }
 
+async function readWorktreeFile(ctx: BrokerContext, params: unknown) {
+	const path = paramPath(params);
+	if (!path) {
+		return deniedResult("TOOL_PATH_REQUIRED");
+	}
+	const target = resolve(ctx.worktree_root, path);
+	const escaped = relative(ctx.worktree_root, target);
+	if (escaped.startsWith("..") || isAbsolute(escaped)) {
+		return deniedResult("POLICY_PATH_OUTSIDE_WORKTREE");
+	}
+	try {
+		const text = await readFile(target, "utf8");
+		return {
+			content: [{ type: "text", text }],
+			details: { tool: "itsm_read", policy: "ALLOW", path },
+		};
+	} catch {
+		return deniedResult("TOOL_READ_FAILED");
+	}
+}
+
 function wrapExecute(
 	engine: PolicyEngine,
 	audit: AuditLog,
@@ -183,13 +206,13 @@ function wrapExecute(
 		if (isLiveIntelTool(tool)) {
 			return intelPayload(executeIntel(intel, tool, params));
 		}
+		if (tool === "itsm_read") {
+			return readWorktreeFile(ctx, params);
+		}
 		if (!live || isStubTool(tool)) {
 			return deniedResult(POLICY_STUB_TOOL_DENIED);
 		}
-		return {
-			content: [{ type: "text", text: `ok:${tool}` }],
-			details: { tool, policy: "ALLOW" },
-		};
+		return deniedResult("TOOL_EXECUTION_UNAVAILABLE");
 	};
 }
 

@@ -6,9 +6,9 @@ export {
 } from "./operator-command-facade.ts";
 export {
 	createOperatorObservabilityService,
-	OperatorObservabilityService,
 	type OperatorObservabilityDeps,
 	type OperatorObservabilityPorts,
+	OperatorObservabilityService,
 } from "./operator-observability-service.ts";
 export {
 	createOperatorPrompts,
@@ -23,11 +23,11 @@ export {
 	type OperatorSessionDeps,
 } from "./operator-session.ts";
 export {
+	type BoundedLogView,
 	OPERATOR_INPUT_REQUIRED,
 	OPERATOR_LOG_MAX_BYTES,
 	OPERATOR_LOG_MAX_LINES,
 	OPERATOR_MIN_TERMINAL_COLS,
-	type BoundedLogView,
 	type OperatorAuthCommand,
 	type OperatorDedicatedCommand,
 	type OperatorMetricsSnapshot,

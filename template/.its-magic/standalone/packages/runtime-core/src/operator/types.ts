@@ -6,13 +6,7 @@ export const OPERATOR_LOG_MAX_BYTES = 32 * 1024;
 export const OPERATOR_MIN_TERMINAL_COLS = 40;
 export const OPERATOR_INPUT_REQUIRED = "OPERATOR_INPUT_REQUIRED";
 
-export type OperatorDedicatedCommand =
-	| "ask"
-	| "status"
-	| "resume"
-	| "index"
-	| "app"
-	| "browser";
+export type OperatorDedicatedCommand = "ask" | "status" | "resume" | "index" | "app" | "browser";
 
 export type OperatorAuthCommand = "auth" | "models";
 

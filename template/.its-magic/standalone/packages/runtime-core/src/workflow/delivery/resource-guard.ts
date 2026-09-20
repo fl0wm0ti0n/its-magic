@@ -19,9 +19,7 @@ export interface DeliveryResourceLimits {
 	max_token_spend: number;
 }
 
-export type DeliveryResourceVerdict =
-	| { ok: true }
-	| { ok: false; reason_code: string };
+export type DeliveryResourceVerdict = { ok: true } | { ok: false; reason_code: string };
 
 export class DeliveryResourceGuard {
 	private readonly limits: DeliveryResourceLimits;
@@ -48,12 +46,7 @@ export class DeliveryResourceGuard {
 }
 
 function flagOf(config: ConfigView, key: string, fallback: string): string {
-	return (
-		config.autonomy?.flags?.[key] ??
-		config.shared?.[key] ??
-		config.compat?.[key] ??
-		fallback
-	);
+	return config.autonomy?.flags?.[key] ?? config.shared?.[key] ?? config.compat?.[key] ?? fallback;
 }
 
 function parseIntFlag(raw: string, fallback: number): number {
@@ -65,7 +58,8 @@ export function defaultLimits(config: ConfigView): DeliveryResourceLimits {
 	return {
 		max_worktrees: parseIntFlag(flagOf(config, "AUTO_SOVEREIGN_PARALLEL_MAX_TOTAL", "6"), 6),
 		max_concurrent_tests: parseIntFlag(flagOf(config, "AUTO_SOVEREIGN_PARALLEL_N", "3"), 3),
-		max_wall_clock_ms: parseIntFlag(flagOf(config, "AUTO_SOVEREIGN_PARALLEL_MERGE_TIMEOUT_SEC", "60"), 60) * 1000,
+		max_wall_clock_ms:
+			parseIntFlag(flagOf(config, "AUTO_SOVEREIGN_PARALLEL_MERGE_TIMEOUT_SEC", "60"), 60) * 1000,
 		max_token_spend: parseIntFlag(flagOf(config, "AUTO_TOKEN_BUDGET_MAX", "1000000"), 1_000_000),
 	};
 }

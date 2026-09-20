@@ -223,7 +223,9 @@ test("test_us0143_auto_route_implemented", async () => {
 		files?: string[];
 	};
 	assert.equal(
-		(kitFiles.files ?? []).some((f) => String(f).includes("standalone")),
+		(kitFiles.files ?? []).some(
+			(f) => String(f) === "standalone" || String(f).startsWith("standalone/"),
+		),
 		false,
 	);
 	assert.deepEqual([...SCHEDULER_COMMANDS], ["/auto", "/quick"]);

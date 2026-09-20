@@ -1,36 +1,39 @@
-import { createServer, type IncomingMessage, type ServerResponse } from "node:http";
-import { chmodSync, mkdirSync, writeFileSync } from "node:fs";
-import { join } from "node:path";
 import { randomBytes } from "node:crypto";
-import { WebSocketServer } from "ws";
+import { chmodSync, mkdirSync, writeFileSync } from "node:fs";
+import { createServer, type IncomingMessage } from "node:http";
+import { join } from "node:path";
 import {
 	APPROVAL_NO_CONTROLLER,
 	DAEMON_CONTROLLER_BUSY,
 	EVENT_SEQ_GAP,
+	type JsonRpcResponse,
 	PROTOCOL_COMMAND_UNSUPPORTED,
 	PROTOCOL_VERSION,
 	PROTOCOL_VERSION_MISMATCH,
 	redactEventPayload,
 	SUPPORTED_PROTOCOL_MAX,
 	SUPPORTED_PROTOCOL_MIN,
-	type JsonRpcResponse,
 } from "@its-magic/protocol";
+import type { SessionSupervisor } from "@its-magic/role-runtime";
 import {
+	crashResume,
 	createCommandRouter,
 	createOperatorCommandFacade,
 	createOperatorObservabilityService,
 	createOperatorSession,
 	createRunsStore,
-	crashResume,
 	readRepoResume,
 	reconcileOperationalLedger,
 } from "@its-magic/runtime-core";
-import type { SessionSupervisor } from "@its-magic/role-runtime";
+import type { RuntimeHost } from "@its-magic/runtime-host";
+import { WebSocketServer } from "ws";
 import { DaemonEventStore } from "./event-store.ts";
 
 export interface DaemonServerDeps {
 	projectRoot: string;
-	supervisor: SessionSupervisor;
+	runtime?: RuntimeHost;
+	/** Test-only dependency seam. Production callers inject RuntimeHost. */
+	supervisor?: SessionSupervisor;
 	port?: number;
 	host?: string;
 	skipStartupReconcile?: boolean;
@@ -88,20 +91,27 @@ function jsonRpcError(
 }
 
 export async function startDaemonServer(deps: DaemonServerDeps): Promise<StartedDaemon> {
+	if (!deps.runtime && !deps.supervisor) {
+		throw new Error("RUNTIME_HOST_REQUIRED");
+	}
+	const supervisor = deps.runtime?.supervisor ?? deps.supervisor;
+	if (!supervisor) {
+		throw new Error("RUNTIME_HOST_REQUIRED");
+	}
 	const host = deps.host ?? "127.0.0.1";
 	if (host === "0.0.0.0" && process.env.ITS_MAGIC_DAEMON_REMOTE !== "1") {
 		throw new Error("remote_bind_denied");
 	}
 	const token = randomBytes(24).toString("hex");
-	const store = createRunsStore(join(deps.projectRoot, ".its-magic", "daemon", "ops.sqlite"));
+	const store =
+		deps.runtime?.store ??
+		createRunsStore(join(deps.projectRoot, ".its-magic", "daemon", "ops.sqlite"));
 	const eventStore = new DaemonEventStore(
 		join(deps.projectRoot, ".its-magic", "daemon", "events.sqlite"),
 	);
-	const router = createCommandRouter({
-		supervisor: deps.supervisor,
-		config: {},
-		kernelRoot: deps.projectRoot,
-	});
+	const router =
+		deps.runtime?.router ??
+		createCommandRouter({ supervisor, config: {}, kernelRoot: deps.projectRoot });
 	const facade = createOperatorCommandFacade({ router });
 	const observability = createOperatorObservabilityService({
 		projectRoot: deps.projectRoot,
@@ -118,7 +128,7 @@ export async function startDaemonServer(deps: DaemonServerDeps): Promise<Started
 		try {
 			const { brief, state_md } = readRepoResume(deps.projectRoot);
 			await crashResume({
-				supervisor: deps.supervisor,
+				supervisor,
 				store,
 				config: {},
 				repo: { backlog_status: "OPEN", acceptance_done: false, sprint_done: false },
@@ -136,7 +146,6 @@ export async function startDaemonServer(deps: DaemonServerDeps): Promise<Started
 	let activeRunId = `run-${crypto.randomUUID()}`;
 	let controllerClient: { client_id: string; client_kind: string } | null = null;
 	const observers = new Set<string>();
-	let pendingApproval: { approval_id: string } | null = null;
 
 	const wss = new WebSocketServer({ noServer: true });
 
@@ -175,9 +184,7 @@ export async function startDaemonServer(deps: DaemonServerDeps): Promise<Started
 					!forceCompat &&
 					(clientVersion < SUPPORTED_PROTOCOL_MIN || clientVersion > SUPPORTED_PROTOCOL_MAX)
 				) {
-					respond(
-						jsonRpcError(id, -32000, PROTOCOL_VERSION_MISMATCH, PROTOCOL_VERSION_MISMATCH),
-					);
+					respond(jsonRpcError(id, -32000, PROTOCOL_VERSION_MISMATCH, PROTOCOL_VERSION_MISMATCH));
 					return;
 				}
 				respond({
@@ -224,9 +231,7 @@ export async function startDaemonServer(deps: DaemonServerDeps): Promise<Started
 				const client_kind = String(params.client_kind ?? "test");
 				if (role === "controller") {
 					if (controllerClient) {
-						respond(
-							jsonRpcError(id, -32000, DAEMON_CONTROLLER_BUSY, DAEMON_CONTROLLER_BUSY),
-						);
+						respond(jsonRpcError(id, -32000, DAEMON_CONTROLLER_BUSY, DAEMON_CONTROLLER_BUSY));
 						return;
 					}
 					controllerClient = { client_id, client_kind };
@@ -259,7 +264,6 @@ export async function startDaemonServer(deps: DaemonServerDeps): Promise<Started
 					return;
 				}
 				const approval_id = String(params.approval_id ?? "");
-				pendingApproval = null;
 				eventStore.append(String(params.run_id ?? activeRunId), "approval.responded", {
 					approval_id,
 					choice: params.choice,
@@ -353,7 +357,11 @@ export async function startDaemonServer(deps: DaemonServerDeps): Promise<Started
 				client.close();
 			}
 			eventStore.close();
-			store.close();
+			if (deps.runtime) {
+				deps.runtime.dispose();
+			} else {
+				store.close();
+			}
 			await new Promise<void>((resolve) => wss.close(() => resolve()));
 			await new Promise<void>((resolve) => httpServer.close(() => resolve()));
 		},

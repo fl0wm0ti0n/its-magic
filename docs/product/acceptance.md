@@ -175,6 +175,11 @@
 - [x] US-0147: Installation, update, and existing-project adoption — fresh setup, non-destructive migration, host coexistence, docs, preservation, and lifecycle tests (8 ACs)
 - [x] US-0148: Stable control protocol and recoverable daemon — versioned commands/events, reconnect, local security, reconciliation, protocol tests, and future-client boundary (8 ACs)
 - [ ] US-0149: Global `itsm` PATH registration with user-chosen install location (cross-platform) — materialize itsm on published-kit bootstrap residual, opt-in PATH, Win/Linux, docs, PATH remove, `test_us0149_*` (6 ACs)
+- [ ] US-0150: Production standalone runtime composition — real Pi kernel, bridge, config, policy/tools, context, persistent state, and entrypoint injection (6 ACs)
+- [ ] US-0151: Executable lifecycle and operator transport — CLI/daemon/TUI use one runtime, execute work, persist/replay state, and reject no-op routes (6 ACs)
+- [ ] US-0152: Production application and browser UAT integration — real app/browser services, fail-closed evidence, workflow gates, and E2E fixtures (6 ACs)
+- [ ] US-0153: Real parallel delivery and release execution — QA arbitration, configured target adapters, deploy verification, bounded repair, and closure evidence (5 ACs)
+- [ ] US-0154: Standalone operator-path quality gate — installed-entrypoint E2E tests and authoritative standalone CI (6 ACs)
 
 ## Bug acceptance (canonical)
 

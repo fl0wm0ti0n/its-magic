@@ -2676,3 +2676,20 @@ AI coding assistants in Cursor lose context across sessions, produce fragmented 
 - **Outcome**: Published-kit upgrade materializes `.its-magic/bin/itsm` without false `KERNEL_CONTRACT_MISMATCH` from omitted `standalone/`; Win+Linux parity. Do not reopen BUG-0025 ACs. Distinct from US-0149 PATH/product (compose/link; `blocks_us`).
 - **Decomposition**: **single_bug** (NEW residual). Next: `/discovery`.
 
+## Intake Notes — US-0150 to US-0154
+
+- **Stories**: Production standalone runtime composition; executable lifecycle and operator transport; production application and browser UAT integration; real parallel delivery and release execution; standalone operator-path quality gate.
+- **Intake date**: 2026-09-19T10:30:00Z (UTC).
+- **Pack / evidence**: `small-intake-pack`; `handoffs/intake_evidence/US-0150-0154-standalone-integration-intake-20260919.json` (`[INTAKE_EVIDENCE_VALIDATION_OK]`).
+- **Outcome**: Complete the production integration omitted by the completed library/contract slices `US-0133` through `US-0148`. The public `itsm`, daemon, and TUI paths must execute the real admitted runtime, not throwing kernels, isolated in-memory state, fake UAT output, or synthetic deploy success.
+- **Boundaries**: `US-0149` remains global PATH work and `BUG-0026` remains published-kit bootstrap work. Masterplan phase-9 own indexer, stronger sandbox, IDE, web/mobile/watch, distributed workers, and remote always-on Debian remain explicit deferrals.
+- **Decomposition**: Five dependent vertical stories: `US-0150` foundation, then `US-0151` through `US-0154` in dependency order. Next: `/discovery` for `US-0150`.
+
+## Discovery Notes — US-0150
+
+- **Product outcome**: A standalone operator starts one project-scoped runtime and receives an actual run identifier, resolved config/model summary, admitted fresh session, auditable tool results, and a durable resume point. A successful command must never be a schedule, a no-op broker response, or a thrown placeholder kernel hidden behind a facade.
+- **Locked scope**: Create one shared composition root for config, kernel bridge, Pi kernel/resource policy, role sessions, brokered tools, intelligence/context, and operational persistence. CLI and daemon inject it; TUI transport behavior is `US-0151`.
+- **Failure posture**: Missing bridge, provider, policy, index, or runtime dependency returns a specific fail-closed result before work. Repository artifacts and validators remain canonical; SQLite is operational metadata only.
+- **Out of scope**: Lifecycle transport/execution (`US-0151`), app/browser services (`US-0152`), parallel/deploy (`US-0153`), CI operator-path gate (`US-0154`), PATH/bootstrap (`US-0149`/`BUG-0026`), and masterplan phase-9 deferrals.
+- **Research asks**: Allocate `R-0150` to compare composition lifetime and cleanup, typed dependency injection, admitted Pi test-session construction, deterministic unavailable-service reasons, and production-composition test fixtures.
+

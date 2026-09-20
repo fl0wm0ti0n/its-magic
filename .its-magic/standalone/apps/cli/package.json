@@ -1,0 +1,20 @@
+{
+	"name": "@its-magic/cli",
+	"version": "0.0.0",
+	"private": true,
+	"type": "module",
+	"description": "CLI stub (code-name bin itsm). No workflow. No ToolBroker.",
+	"engines": {
+		"node": ">=22.19.0"
+	},
+	"bin": {
+		"itsm": "./src/index.ts"
+	},
+	"dependencies": {
+		"@its-magic/auth-models": "*",
+		"@its-magic/kernel-bridge": "*",
+		"@its-magic/pi-kernel": "*",
+		"@its-magic/runtime-core": "*",
+		"@its-magic/role-runtime": "*"
+	}
+}

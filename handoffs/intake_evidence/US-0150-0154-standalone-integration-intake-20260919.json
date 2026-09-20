@@ -1,0 +1,85 @@
+{
+  "selected_pack": "small-intake-pack",
+  "intake_run_id": "ir-20260919T103000Z-standalone-integration",
+  "writer_id": "po-standalone-integration-audit",
+  "INTAKE_GUIDED_MODE": 0,
+  "INTAKE_WORK_ITEM_KIND": "story",
+  "requested_mode": "story",
+  "intake_boundary_utc": "2026-09-19T10:30:00Z",
+  "ID_NAMESPACE_BOOTSTRAP": 0,
+  "story_ids": ["US-0150", "US-0151", "US-0152", "US-0153", "US-0154"],
+  "asked_topics": [
+    "outcome_success_criteria",
+    "impacted_components",
+    "constraints_compatibility_risks",
+    "required_tests_acceptance_checks",
+    "done_definition"
+  ],
+  "missing_topics": [],
+  "assumptions_confirmed": "(none)",
+  "topic_coverage": [
+    {
+      "topic_key": "outcome_success_criteria",
+      "satisfied_by": "delegation_ref",
+      "ref": "ie:ir-20260919T103000Z-standalone-integration:0:dfcea16189791a7c",
+      "quoted_user_text": "Bestehende Stories korrigieren (Recommended)",
+      "intake_run_id": "ir-20260919T103000Z-standalone-integration",
+      "turn_index": 0,
+      "delegation_scope": "Use the standalone masterplan and the code audit to derive production-integration follow-up stories for completed library-level capability slices.",
+      "delegation_rationale": "The operator selected correction of the existing stories after the audit found their executable product paths incomplete.",
+      "delegation_confidence": "high"
+    },
+    {
+      "topic_key": "impacted_components",
+      "satisfied_by": "delegation_ref",
+      "ref": "ie:ir-20260919T103000Z-standalone-integration:1:beab86f30c7e0df5",
+      "quoted_user_text": "Bestehende Stories korrigieren (Recommended)",
+      "intake_run_id": "ir-20260919T103000Z-standalone-integration",
+      "turn_index": 1,
+      "delegation_scope": "Audit the CLI, daemon, TUI, runtime composition, ToolBroker, config, code intelligence, application runtime, browser UAT, release runtime, and standalone CI paths.",
+      "delegation_rationale": "These paths contain the observed gap between completed package contracts and an operator-usable standalone product.",
+      "delegation_confidence": "high"
+    },
+    {
+      "topic_key": "constraints_compatibility_risks",
+      "satisfied_by": "delegation_ref",
+      "ref": "ie:ir-20260919T103000Z-standalone-integration:2:027b341b602cef7e",
+      "quoted_user_text": "Bestehende Stories korrigieren (Recommended)",
+      "intake_run_id": "ir-20260919T103000Z-standalone-integration",
+      "turn_index": 2,
+      "delegation_scope": "Preserve US-0133 through US-0148 library and contract work, do not add phase-9 deferred clients, and do not duplicate US-0149 or BUG-0026.",
+      "delegation_rationale": "The masterplan marks phase 9 optional and the open PATH/bootstrap work has independent ownership.",
+      "delegation_confidence": "high"
+    },
+    {
+      "topic_key": "required_tests_acceptance_checks",
+      "satisfied_by": "delegation_ref",
+      "ref": "ie:ir-20260919T103000Z-standalone-integration:3:e9c33320dc0ac090",
+      "quoted_user_text": "Bestehende Stories korrigieren (Recommended)",
+      "intake_run_id": "ir-20260919T103000Z-standalone-integration",
+      "turn_index": 3,
+      "delegation_scope": "Require installed-itsm, daemon, CLI, and TUI end-to-end tests with real admitted services; fake adapters remain unit-test seams and cannot prove operator success.",
+      "delegation_rationale": "The audit found contract tests that directly construct facades or fake services while executable paths remain inert.",
+      "delegation_confidence": "high"
+    },
+    {
+      "topic_key": "done_definition",
+      "satisfied_by": "delegation_ref",
+      "ref": "ie:ir-20260919T103000Z-standalone-integration:4:04b91e64bdf4cb9e",
+      "quoted_user_text": "Bestehende Stories korrigieren (Recommended)",
+      "intake_run_id": "ir-20260919T103000Z-standalone-integration",
+      "turn_index": 4,
+      "delegation_scope": "Use masterplan section 37 Definition of Done as the operator-level completion boundary for the resulting story sequence.",
+      "delegation_rationale": "It defines real authentication, fresh Pi sessions, enforced tools, lifecycle, app/browser UAT, restart, and audit evidence without Cursor or OpenCode.",
+      "delegation_confidence": "high"
+    }
+  ],
+  "duplicate_check_pass": true,
+  "duplicate_check_notes": "NEW follow-up story sequence. US-0133..US-0148 remain completed library/contract slices; US-0150..US-0154 own their missing executable composition and operator-path proof. US-0149 remains global PATH work; BUG-0026 remains published-kit bootstrap work. Phase-9 own indexer, stronger sandbox, IDE, web/mobile/watch, distributed workers, and remote always-on Debian are explicitly deferred by the masterplan.",
+  "decomposition_verdict": "five_dependent_vertical_stories",
+  "decomposition_rationale": "One story would mix boot composition, lifecycle transport, app/browser integration, deploy behavior, and quality gates. Five dependent slices preserve independently testable operator outcomes without reopening the completed package contracts.",
+  "split_recommendation": "US-0150 foundation, then US-0151 through US-0154 in dependency order",
+  "WORK_KIND_ROUTING": 0,
+  "EARLY_RESEARCH": 0,
+  "FRAMEWORK_KIT_REPO": 1
+}

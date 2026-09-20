@@ -312,6 +312,7 @@ def write_itsm_shim(target_root: str, *, root_opt_in: bool = False) -> None:
         body = (
             "@echo off\r\n"
             f'set "ITSM_STANDALONE_ROOT={standalone_root}"\r\n'
+            'node -e "const v=process.versions.node.split(\'.\').map(Number);process.exit(v[0]>22||(v[0]===22&&(v[1]>19||(v[1]===19&&v[2]>=0)))?0:1)" || (echo [ITSM_NODE_VERSION_UNSUPPORTED] itsm requires Node.js ^>=22.19.0. Found unsupported Node.js. Install Node.js 22.19.0 or newer, then retry. 1>&2 & exit /b 1)\r\n'
             f'node --experimental-strip-types "{cli_entry}" %*\r\n'
         )
         with open(shim_path + ".cmd", "w", encoding="utf-8", newline="\r\n") as fh:
@@ -320,12 +321,20 @@ def write_itsm_shim(target_root: str, *, root_opt_in: bool = False) -> None:
             fh.write(
                 "#!/usr/bin/env sh\n"
                 f'export ITSM_STANDALONE_ROOT="{standalone_root.replace(chr(92), "/")}"\n'
+                "if ! node -e 'const v=process.versions.node.split(\".\").map(Number);process.exit(v[0]>22||(v[0]===22&&(v[1]>19||(v[1]===19&&v[2]>=0)))?0:1)'; then\n"
+                "  echo '[ITSM_NODE_VERSION_UNSUPPORTED] itsm requires Node.js >=22.19.0. Install Node.js 22.19.0 or newer, then retry.' >&2\n"
+                "  exit 1\n"
+                "fi\n"
                 f'exec node --experimental-strip-types "{cli_entry.replace(chr(92), "/")}" "$@"\n'
             )
     else:
         with open(shim_path, "w", encoding="utf-8", newline="\n") as fh:
             fh.write("#!/usr/bin/env sh\n")
             fh.write(f'export ITSM_STANDALONE_ROOT="{standalone_root}"\n')
+            fh.write("if ! node -e 'const v=process.versions.node.split(\".\").map(Number);process.exit(v[0]>22||(v[0]===22&&(v[1]>19||(v[1]===19&&v[2]>=0)))?0:1)'; then\n")
+            fh.write("  echo '[ITSM_NODE_VERSION_UNSUPPORTED] itsm requires Node.js >=22.19.0. Install Node.js 22.19.0 or newer, then retry.' >&2\n")
+            fh.write("  exit 1\n")
+            fh.write("fi\n")
             fh.write(f'exec node --experimental-strip-types "{cli_entry}" "$@"\n')
         os.chmod(shim_path, 0o755)
     if root_opt_in:

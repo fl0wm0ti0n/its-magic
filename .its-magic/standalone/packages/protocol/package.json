@@ -1,0 +1,13 @@
+{
+	"name": "@its-magic/protocol",
+	"version": "0.0.0",
+	"private": true,
+	"type": "module",
+	"description": "Versioned RuntimeCommand/RuntimeEvent wire protocol for US-0148 daemon.",
+	"engines": {
+		"node": ">=22.19.0"
+	},
+	"exports": {
+		".": "./src/index.ts"
+	}
+}

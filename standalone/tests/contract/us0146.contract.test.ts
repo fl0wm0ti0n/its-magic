@@ -3,6 +3,7 @@ import {
 	existsSync,
 	mkdirSync,
 	mkdtempSync,
+	readFileSync as readCli,
 	readdirSync,
 	readFileSync,
 	rmSync,
@@ -12,7 +13,16 @@ import { tmpdir } from "node:os";
 import { dirname, join } from "node:path";
 import { test } from "node:test";
 import { fileURLToPath } from "node:url";
-import { readFileSync as readCli } from "node:fs";
+import { renderPanelLayout, selectVisiblePanels } from "../../apps/tui/src/panels.ts";
+import {
+	createSessionSupervisor,
+	type SessionSupervisor,
+} from "../../packages/role-runtime/src/index.ts";
+import type {
+	AgentKernel,
+	KernelEvent,
+	KernelSession,
+} from "../../packages/role-runtime/src/kernel-port.ts";
 import {
 	createCommandRouter,
 	createOperatorCommandFacade,
@@ -23,15 +33,11 @@ import {
 	createWorkflowEngine,
 	isRouteScheduled,
 	OPERATOR_INPUT_REQUIRED,
-	OPERATOR_LOG_MAX_BYTES,
 	OPERATOR_LOG_MAX_LINES,
 	OperatorCommandFacade,
 	PROGRAMMATIC_COMMANDS,
 	SCHEDULER_COMMANDS,
 } from "../../packages/runtime-core/src/index.ts";
-import { createSessionSupervisor, type SessionSupervisor } from "../../packages/role-runtime/src/index.ts";
-import type { AgentKernel, KernelEvent, KernelSession } from "../../packages/role-runtime/src/kernel-port.ts";
-import { renderPanelLayout, selectVisiblePanels } from "../../apps/tui/src/panels.ts";
 
 const HERE = dirname(fileURLToPath(import.meta.url));
 const STANDALONE_ROOT = join(HERE, "..", "..");
@@ -187,17 +193,27 @@ test("test_us0146_status_snapshot_compose_read_only", () => {
 test("test_us0146_run_timeline_evidence_links", () => {
 	const store = createRunsStore(":memory:");
 	const now = new Date().toISOString();
-	store.audit("run-1", "phase_transition", JSON.stringify({
-		phase_id: "execute",
-		role_id: "dev",
-		evidence_refs: ["handoffs/dev_to_qa.md"],
-	}), now);
-	store.audit("run-1", "phase_transition", JSON.stringify({
-		phase_id: "execute",
-		role_id: "dev",
-		stop_reason: "FIX_FAILED",
-		evidence_refs: ["sprints/S0153/progress.md"],
-	}), now);
+	store.audit(
+		"run-1",
+		"phase_transition",
+		JSON.stringify({
+			phase_id: "execute",
+			role_id: "dev",
+			evidence_refs: ["handoffs/dev_to_qa.md"],
+		}),
+		now,
+	);
+	store.audit(
+		"run-1",
+		"phase_transition",
+		JSON.stringify({
+			phase_id: "execute",
+			role_id: "dev",
+			stop_reason: "FIX_FAILED",
+			evidence_refs: ["sprints/S0153/progress.md"],
+		}),
+		now,
+	);
 	const root = tempRepo();
 	const svc = createOperatorObservabilityService({ projectRoot: root, store });
 	const timeline = svc.buildRunTimeline("run-1");
@@ -212,7 +228,11 @@ test("test_us0146_tui_panels_client_only_boundaries", () => {
 	const forbidden: string[] = [];
 	for (const path of walkFiles(join(TUI_ROOT, "src"))) {
 		const text = readFileSync(path, "utf8");
-		if (text.includes("CommandRouter") || text.includes("GateEngine") || text.includes("createWorkflowEngine")) {
+		if (
+			text.includes("CommandRouter") ||
+			text.includes("GateEngine") ||
+			text.includes("createWorkflowEngine")
+		) {
 			forbidden.push(path);
 		}
 	}
@@ -264,7 +284,10 @@ test("test_us0146_approval_prompt_interactive_noninteractive", async () => {
 		() =>
 			prompts.choose({
 				message: "Approve release?",
-				choices: [{ id: "yes", label: "Yes", default: true }, { id: "no", label: "No" }],
+				choices: [
+					{ id: "yes", label: "Yes", default: true },
+					{ id: "no", label: "No" },
+				],
 			}),
 		(err: Error) => err.message === OPERATOR_INPUT_REQUIRED,
 	);
@@ -275,7 +298,10 @@ test("test_us0146_approval_prompt_interactive_noninteractive", async () => {
 	});
 	const choice = await approved.choose({
 		message: "Approve?",
-		choices: [{ id: "yes", label: "Yes", default: true }, { id: "no", label: "No" }],
+		choices: [
+			{ id: "yes", label: "Yes", default: true },
+			{ id: "no", label: "No" },
+		],
 	});
 	assert.equal(choice, "yes");
 	assert.ok(prompts.wrapLine("x".repeat(100)).includes("\n"));
@@ -325,7 +351,9 @@ test("us0146 marker inventory", () => {
 		files?: string[];
 	};
 	assert.equal(
-		(kitFiles.files ?? []).some((f) => String(f).includes("standalone")),
+		(kitFiles.files ?? []).some(
+			(f) => String(f) === "standalone" || String(f).startsWith("standalone/"),
+		),
 		false,
 	);
 });

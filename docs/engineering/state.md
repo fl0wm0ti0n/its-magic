@@ -1139,3 +1139,11 @@
 - post_rollover: enforce-triad-hot-surface.py --check PASS (1131/1200)
 - pack_ref=docs/engineering/state-archive/state-pack-20260918-g.md (archived_body_lines=161; retained_body_lines=1131)
 - final_check=PASS
+
+## Architecture checkpoint — US-0150 (2026-09-19)
+
+- phase=architecture; role=tech-lead; story_id=US-0150; decision_gate=false
+- research_anchor=R-0150; decision=DEC-0150 Accepted; approach=A1 project-scoped `@its-magic/runtime-host`
+- lock=one shared CLI/daemon composition graph; no throwing kernel, empty config, process-global singleton, placeholder tool success, or production fake service
+- ownership=artifacts/validators canonical; SQLite operational only; TUI US-0151; app/browser US-0152; deploy US-0153; CI US-0154
+- next_scheduled_phase=sprint-plan; next_scheduled_role=tech-lead; stop=do not implement in architecture

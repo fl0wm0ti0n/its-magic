@@ -15345,3 +15345,77 @@ Count **5–6** named tests. **R-id**: **R-0149**. Expected sprint **S0157**. Ar
 - Do not author `# BUG-0025`, any `decisions/DEC-*`, or `sprints/S0157/` this phase. Do not mutate backlog Status/ACs. **Next**: `/architecture` (fresh tech-lead). CROSS_MODEL_REVIEW=0 — do not spawn sovereign-critic.
 
 - **Delivery closure (2026-09-18T18:16:00Z, curator, `orchestrator_run_id=auto-20260918-bug0025`)**: **`BUG-0025`** **DONE**; sprint **`S0157`** **released**; A1 allowlist + isfile fail-closed loader + npm pack contract + guard assert + patch **`0.1.4`** delivered per **R-0149** / **`# BUG-0025`** (no companion DEC); compose **US-0147** / **US-0133** held; **6/6** **`test_bug0025_*`**; honest residual: **`npm_published=false`** — **`PUBLISH_CONFIRMATION_REQUIRED`** (AC-6); BUG-0022/BUG-0024 **not** drained; orchestrator STOP — segment complete.
+
+## R-0150 — US-0150 production standalone runtime composition
+
+- **Date**: 2026-09-19. **Story**: US-0150. **Status**: current. **Confidence**: high.
+- **Query**: How can the standalone CLI and daemon construct one project-scoped, Pi-backed runtime from the delivered package slices without duplicating workflow semantics, using placeholder services, or turning operational storage into project authority?
+- **Sources**:
+  - `standalone/apps/cli/src/run.ts` and `standalone/apps/daemon/src/{index,server}.ts`: public paths construct throwing kernels or empty configuration.
+  - `standalone/packages/pi-kernel/src/kernel.ts`, `kernel-bridge`, `role-runtime`, `tool-broker`, `config`, `code-intelligence`, `context-engine`, and `runtime-core`: delivered leaf services and their constructors.
+  - `standalone/packages/runtime-core/src/{workflow,daemon-client}`: existing lifecycle, persistence, and transport boundaries.
+  - `docs/product/standalone-its-magic-pi-masterplan.md` sections 5-18, 27, 29, 32, and 37; `docs/product/backlog.md` US-0133 through US-0140 and US-0150.
+- **Recommendation**: **A1 (A*)** — add a project-scoped `@its-magic/runtime-host` composition root. `createRuntimeHost(input)` owns dependency construction, admission, and disposal; it resolves `RuntimeConfig` once, creates the Pi kernel/bridge/session supervisor/tool broker/intelligence-context services/operational store, and passes the admitted dependencies to `runtime-core`. CLI and daemon become consumers of this host; they must not construct competing kernels, config, stores, or workflow engines.
+
+### DQ1 — Composition location and dependency direction (LOCKED)
+
+- Place the host in `standalone/packages/runtime-host`; it may depend on delivered leaf packages and `runtime-core`, while leaf packages must not depend back on it.
+- CLI and daemon depend on `runtime-host`; TUI remains a transport client and is owned by US-0151.
+- Reject separate CLI and daemon wiring: it recreates the current divergence. Reject a `runtime-core`-internal host: it would couple neutral workflow semantics to Pi and installation policy.
+
+### DQ2 — Lifetime and persistence (LOCKED)
+
+- A host is scoped to one canonical project root. A daemon owns it for its process lifetime and disposes all sessions, index watchers, process handles, and database resources at shutdown.
+- A direct CLI invocation creates a host only for that invocation and disposes it deterministically. Persistent cross-invocation behavior belongs to the daemon store, never a process-global singleton.
+- Repository artifacts and Python validator outcomes remain authoritative; the operational store is limited to run/session/audit/index metadata.
+
+### DQ3 — Admission sequence (LOCKED)
+
+- Resolve project root and typed configuration before any session or tool is created; retain non-secret config provenance for audit.
+- Validate kernel bridge compatibility and create the custom-tool-only Pi kernel with deny-by-default project resources before routing work.
+- Create role sessions only through `SessionSupervisor` with resolved role/model/provider and policy hash. A failed admission returns a deterministic runtime reason before the workflow schedules work.
+
+### DQ4 — Tool and intelligence composition (LOCKED)
+
+- Supply the broker with real, policy-admitted tool implementations and the active intelligence provider. An allowed action records an audit result; an unavailable or forbidden action returns a deterministic error.
+- `ok:<tool>` placeholders, fake intelligence defaults, and synthetic capability success are test-only seams and must never be selected by production composition.
+- Browser and application services remain absent from this host slice until US-0152 supplies their real implementations; their routes must fail closed rather than instantiate fakes.
+
+### DQ5 — Test seam (LOCKED)
+
+- `RuntimeHostOptions` accepts explicit factories for filesystem, shell, git, kernel bridge, Pi model runtime, intelligence, and clock/store only for tests. Production code uses the non-test factory set.
+- The production-composition suite creates an actual Pi SDK session with custom tools and a deterministic local test model seam; it must not require paid provider credentials or network access.
+- Separate tests prove bridge/config/provider/index unavailability, tool policy denial, fresh-session attestation, validator blocking, and disposal. Directly constructed fake facades do not satisfy the US-0150 acceptance suite.
+
+### DQ6 — Public entrypoints (LOCKED)
+
+- CLI and daemon call `createRuntimeHost` and pass its dependencies to their existing facades/servers. They no longer define kernels that throw or pass literal empty config objects.
+- A host returns a typed, redacted diagnostic for unavailable prerequisites. Architecture must lock exact reason-code names; research proposes `RUNTIME_CONFIG_UNAVAILABLE`, `RUNTIME_KERNEL_ADMISSION_FAILED`, `RUNTIME_BRIDGE_UNAVAILABLE`, and `RUNTIME_SERVICE_UNAVAILABLE` as a consistent family.
+
+### DQ7 — Security and credentials (LOCKED)
+
+- Credentials remain behind the delivered auth/model runtime. The host passes handles and resolved provider selection, never raw secrets, to session or audit output.
+- Preserve custom-tool-only sessions, resource-loader default deny, policy-engine path/shell checks, and no model access to project secrets. Do not weaken these constraints to ease composition.
+
+### DQ8 — Compatibility boundaries (LOCKED)
+
+- Compose US-0133 through US-0140; do not rewrite their completed library contracts or mark their original ACs incomplete in this story.
+- US-0151 owns transport execution and TUI state; US-0152 owns AppRuntime/BrowserUAT integration; US-0153 owns deploy/arbitration; US-0154 owns CI operator-path enforcement.
+- US-0149, BUG-0026, and masterplan phase-9 deferred work are out of scope.
+
+### Approach verdict
+
+| Approach | Verdict | Reason |
+|---|---|---|
+| **A1 (A*) `runtime-host` composition root** | **Winner** | One dependency graph, explicit lifecycle, production/test separation, and shared CLI/daemon behavior. |
+| A2 Wire packages independently in each app | Rejected | Duplicates policy/config/session wiring and allows drift. |
+| A3 Add a process-global singleton | Rejected | Cross-project state leakage and nondeterministic tests. |
+| A4 Keep no-op defaults outside tests | Rejected | Violates fail-closed operator behavior. |
+
+### Risks and architecture seeds
+
+- Circular package dependencies: keep `runtime-host` as the outer layer; enforce leaf-to-host import prohibition with typecheck/lint coverage.
+- Host cleanup gaps: architecture locks `dispose()` ordering and repeated-dispose behavior before implementation.
+- Test seam escaping to production: production constructors reject test-only factories unless an explicit test environment guard is active.
+- `/architecture` should author `# US-0150` and a companion `DEC-0150`; lock host interface, lifecycle, dependency graph, reason-code family, and AC-to-test map. No implementation, sprint, backlog-status, or acceptance mutation in research.
+- **Next**: `/architecture` in a fresh tech-lead context. **decision_gate=false**.

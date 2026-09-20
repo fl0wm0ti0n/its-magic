@@ -36,7 +36,6 @@ import {
 	lookupPauseRequest,
 	lookupQuiet,
 	lookupSovereignRuntime,
-	lookupParallelDev,
 } from "./config-view.ts";
 import {
 	createParallelDevCoordinator,

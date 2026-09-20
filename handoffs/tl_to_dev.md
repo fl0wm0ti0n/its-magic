@@ -1,3 +1,15 @@
+## Sprint-plan handoff — US-0150 / S0158 — `/execute` next (fresh dev, ultra_lean)
+
+- **Phase completed**: sprint-plan. **Role**: tech-lead. **Story**: US-0150. **Sprint**: S0158. **Verdict**: PASS (`decision_gate=false`).
+- **Anchors**: `R-0150`; `# US-0150`; `DEC-0150`; `sprints/S0158/{sprint,tasks}.md`.
+- **Plan**: eight tasks, T-anch + T-001..T-007, all six ACs surjectively covered. Plan-verify is skipped for ultra-lean execution; next phase is `/execute` in a fresh dev context.
+- **Approach**: A1 `@its-magic/runtime-host`, one project-scoped CLI/daemon composition graph with explicit direct-CLI/daemon lifetimes and test-only factories.
+- **Guards**: no throwing kernel, empty config, placeholder success, process-global singleton, production fake service, or source of truth outside project artifacts/validators. Do not implement US-0151..US-0154, mutate US-0149/BUG-0026, or tick acceptance.
+- **Execute order**: T-anch → T-001 → T-002 → T-003 → T-004 → T-005 → T-006 → T-007. Run standalone typecheck, lint, and all six `test_us0150_*` before handoff to QA.
+- **Next**: `/execute` fresh dev. STOP before implementation.
+
+---
+
 ## Sprint-plan handoff — BUG-0025 / S0157 — /execute (fresh dev, ultra_lean)
 
 - sprint_id: S0157

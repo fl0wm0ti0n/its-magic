@@ -1,0 +1,22 @@
+{
+	"name": "@its-magic/runtime-core",
+	"version": "0.0.0",
+	"private": true,
+	"type": "module",
+	"description": "Owned lifecycle CommandRouter + WorkflowEngine + nested GateEngine. No Pi SDK imports.",
+	"engines": {
+		"node": ">=22.19.0"
+	},
+	"exports": {
+		".": "./src/index.ts"
+	},
+	"dependencies": {
+		"@its-magic/protocol": "0.0.0",
+		"@its-magic/config": "0.0.0",
+		"@its-magic/context-engine": "0.0.0",
+		"@its-magic/kernel-bridge": "0.0.0",
+		"@its-magic/policy-engine": "0.0.0",
+		"@its-magic/role-runtime": "0.0.0",
+		"ws": "^8.18.0"
+	}
+}

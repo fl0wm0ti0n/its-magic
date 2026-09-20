@@ -4,6 +4,7 @@ export {
 	DAEMON_EVENT_LAG_MAX,
 	DAEMON_RPC_METHODS,
 	DAEMON_UNREACHABLE,
+	type DaemonRpcMethod,
 	EVENT_SEQ_GAP,
 	PROTOCOL_COMMAND_UNSUPPORTED,
 	PROTOCOL_VERSION,
@@ -11,14 +12,13 @@ export {
 	RECONCILE_INCOMPLETE,
 	SUPPORTED_PROTOCOL_MAX,
 	SUPPORTED_PROTOCOL_MIN,
-	type DaemonRpcMethod,
 } from "./codes.ts";
 export {
 	buildJsonRpcRequest,
-	jsonRpcCall,
 	type JsonRpcError,
 	type JsonRpcRequest,
 	type JsonRpcResponse,
+	jsonRpcCall,
 } from "./protocol-client.ts";
 export { redactEventPayload } from "./redact.ts";
 export type {

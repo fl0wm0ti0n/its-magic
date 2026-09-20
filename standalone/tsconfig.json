@@ -25,6 +25,7 @@
     "packages/code-intelligence/src/**/*.ts",
     "packages/context-engine/src/**/*.ts",
     "packages/runtime-core/src/**/*.ts",
+	    "packages/runtime-host/src/**/*.ts",
     "packages/app-runtime/src/**/*.ts",
     "packages/browser-uat/src/**/*.ts",
     "tests/**/*.ts"

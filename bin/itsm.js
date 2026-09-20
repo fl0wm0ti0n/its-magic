@@ -5,6 +5,29 @@ const { spawnSync } = require("child_process");
 
 const STANDALONE_REL = path.join(".its-magic", "standalone");
 const CLI_REL = path.join(STANDALONE_REL, "apps", "cli", "src", "index.ts");
+const MIN_NODE_VERSION = [22, 19, 0];
+
+function supportsStandaloneRuntime(version) {
+  const parts = String(version)
+    .split(".")
+    .slice(0, 3)
+    .map((part) => Number.parseInt(part, 10));
+  if (parts.length !== 3 || !parts.every(Number.isInteger)) return false;
+  for (let index = 0; index < MIN_NODE_VERSION.length; index += 1) {
+    if (parts[index] > MIN_NODE_VERSION[index]) return true;
+    if (parts[index] < MIN_NODE_VERSION[index]) return false;
+  }
+  return true;
+}
+
+function requireSupportedNode() {
+  if (supportsStandaloneRuntime(process.versions.node)) return;
+  console.error(
+    `[ITSM_NODE_VERSION_UNSUPPORTED] itsm requires Node.js >=${MIN_NODE_VERSION.join(".")}; ` +
+      `found v${process.versions.node}. Install Node.js 22.19.0 or newer, then retry.`
+  );
+  process.exit(1);
+}
 
 function hasRuntime(root) {
   return fs.existsSync(path.join(root, CLI_REL));
@@ -37,6 +60,7 @@ if (!projectRoot || !hasRuntime(projectRoot)) {
 
 const standaloneRoot = path.join(projectRoot, STANDALONE_REL);
 const cliEntry = path.join(projectRoot, CLI_REL);
+requireSupportedNode();
 const result = spawnSync(
   process.execPath,
   ["--experimental-strip-types", cliEntry, ...process.argv.slice(2)],

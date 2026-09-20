@@ -181,7 +181,7 @@ test("test_us0139_provider_interface", () => {
 		files?: string[];
 	};
 	assert.equal(
-		(kitFiles.files ?? []).some((f) => f.includes("standalone")),
+		(kitFiles.files ?? []).some((f) => f === "standalone" || f.startsWith("standalone/")),
 		false,
 	);
 	assert.equal(existsSync(join(KIT_ROOT, "crates", "its-indexd")), false);

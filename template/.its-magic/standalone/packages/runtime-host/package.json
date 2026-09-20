@@ -1,0 +1,20 @@
+{
+	"name": "@its-magic/runtime-host",
+	"version": "0.0.0",
+	"private": true,
+	"type": "module",
+	"description": "Production composition root for standalone operator processes.",
+	"exports": {
+		".": "./src/index.ts"
+	},
+	"dependencies": {
+		"@its-magic/code-intelligence": "*",
+		"@its-magic/config": "*",
+		"@its-magic/context-engine": "*",
+		"@its-magic/kernel-bridge": "*",
+		"@its-magic/pi-kernel": "*",
+		"@its-magic/role-runtime": "*",
+		"@its-magic/runtime-core": "*",
+		"@its-magic/tool-broker": "*"
+	}
+}

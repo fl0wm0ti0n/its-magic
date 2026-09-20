@@ -1,6 +1,12 @@
 # Local metadata
 .specstory/
 
+# Language and package-manager caches
+**/node_modules/
+**/__pycache__/
+*.py[cod]
+.pytest_cache/
+
 # Temp build artifacts
 temp/
 backups/

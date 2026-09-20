@@ -4,8 +4,8 @@ import { DatabaseSync } from "node:sqlite";
 import {
 	DAEMON_EVENT_LAG_MAX,
 	PROTOCOL_VERSION,
-	redactEventPayload,
 	type RuntimeEvent,
+	redactEventPayload,
 } from "@its-magic/protocol";
 
 const DEFAULT_RETENTION = 10_000;
@@ -41,9 +41,7 @@ export class DaemonEventStore {
 			payload: redactEventPayload(payload),
 		};
 		this.db
-			.prepare(
-				"INSERT INTO run_events (run_id, seq, kind, payload_json) VALUES (?, ?, ?, ?)",
-			)
+			.prepare("INSERT INTO run_events (run_id, seq, kind, payload_json) VALUES (?, ?, ?, ?)")
 			.run(run_id, seq, kind, JSON.stringify(event.payload ?? {}));
 		const count = this.db
 			.prepare("SELECT COUNT(*) AS c FROM run_events WHERE run_id = ?")
@@ -77,10 +75,7 @@ export class DaemonEventStore {
 		this.db.close();
 	}
 
-	summaryIfLagged(
-		run_id: string,
-		clientLag: number,
-	): RuntimeEvent | undefined {
+	summaryIfLagged(run_id: string, clientLag: number): RuntimeEvent | undefined {
 		if (clientLag <= EVENT_LAG_THRESHOLD) {
 			return undefined;
 		}

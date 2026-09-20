@@ -5564,4 +5564,98 @@ Per **`DEC-0061`** / **`US-0079`**: defect work items use **`BUG-####`** ids (**
 - related_us: US-0149, US-0147, US-0133, BUG-0025, BUG-0022, BUG-0024
 - blocks_us: US-0149
 
+## US-0150 — Production standalone runtime composition
+- user_visible: true
+- Title: Start a real Pi-backed runtime from every standalone entrypoint
+- Summary: As an operator, I want `itsm` and the daemon to compose the already-delivered Pi kernel, kernel bridge, typed configuration, role runtime, policy/tool broker, code intelligence, and persistent run store into one admitted runtime so a command never succeeds against a throwing placeholder kernel or an empty configuration.
+- Priority: P0
+- Status: OPEN
+- plan_area_ids: pi-kernel-adapter, kernel-consume-contract, session-isolation-attestation, role-runtime, tool-policy-engine, typed-config-legacy-adapter, code-intelligence-aft, context-engine
+- intake_evidence_ref: `handoffs/intake_evidence/US-0150-0154-standalone-integration-intake-20260919.json`
+- Acceptance:
+  - [ ] AC-1: One production composition root resolves project/runtime configuration, constructs `createAgentKernel`, `KernelBridge`, `SessionSupervisor`, `ToolBroker`, code-intelligence/context services, and a persistent operational store with explicit dependency ownership.
+  - [ ] AC-2: CLI and daemon replace their throwing kernels and literal empty config with that composition; unavailable prerequisites fail closed with specific reason codes rather than synthetic command success.
+  - [ ] AC-3: Sessions created through the composition use the resolved role/model/provider, fresh-session attestation, owned custom tools, deny-by-default project resources, and the active policy profile.
+  - [ ] AC-4: File, edit, shell, git, and intelligence tools either perform the policy-admitted operation with audit evidence or return a deterministic denial; `ok:<tool>` placeholder success is forbidden.
+  - [ ] AC-5: Kernel validators, artifact state, configuration provenance, context-pack hashes, and operational run/session metadata are available to the same runtime without making SQLite authoritative over repository artifacts.
+  - [ ] AC-6: Tests construct the production composition and prove a real Pi SDK session, fresh role sessions, tool admission/denial, validator failure blocking, persisted run state, and deterministic unavailable-service behavior.
+- Boundaries: Preserve the completed US-0133 through US-0140 package contracts. Do not implement PATH registration (US-0149), published-kit bootstrap repair (BUG-0026), or phase-9 deferred clients.
+- related_us: US-0133, US-0134, US-0135, US-0136, US-0137, US-0138, US-0139, US-0140
+- discovery_notes (2026-09-19, PO): **`/discovery` PASS**. The operator journey is one standalone command opening a project and receiving a real run identifier, resolved config/model summary, admitted session, auditable tool outcomes, and a durable resume point. The first vertical is a shared production composition root, not a second workflow engine: it resolves config once; admits kernel bridge and Pi resources before a run; constructs fresh role sessions, brokered tools, context services, and operational persistence; and injects that same instance into CLI and daemon. **D1**: no CLI/daemon throwing kernel or literal `{}` config. **D2**: configuration, provider/model routing, role policy, and project root are resolved once with provenance and supplied to every session. **D3**: Pi uses custom tools only and deny-by-default project resources. **D4**: bridge/validator incompatibility fails before work with a deterministic reason. **D5**: ToolBroker must execute an allowed real operation or deny it; placeholder `ok:<tool>` responses are prohibited. **D6**: SQLite remains operational only; artifacts and validator outcomes remain authoritative. **D7**: code intelligence/context is an admitted dependency with deterministic unavailable behavior, not a fake default. **D8**: CLI and daemon share composition lifetime/cleanup rules; TUI transport ownership is US-0151. **D9**: contract tests retain fake seams, but acceptance requires production-composition tests using a real Pi SDK session and persistent store. **D10**: lifecycle execution/transport, app/browser UAT, release/deploy, and CI operator-path gates remain US-0151 through US-0154. Research should allocate `R-0150` and compare composition-lifetime, dependency-injection, and test-kernel options without widening scope.
+
+## US-0151 — Executable lifecycle and operator transport
+- user_visible: true
+- Title: Execute lifecycle work through CLI, daemon, and TUI instead of reporting schedules
+- Summary: As an operator, I want CLI, daemon, and TUI commands to submit work to the same persistent runtime and receive real run events so `itsm intake`, `auto`, `resume`, `ask`, and lifecycle commands execute admitted work rather than merely render plans or return `{ok:true}`.
+- Priority: P0
+- Status: OPEN
+- depends_on: US-0150
+- plan_area_ids: workflow-standard, auto-autonomy, delivery-routing, cli-tui-observability, daemon-control-api
+- intake_evidence_ref: `handoffs/intake_evidence/US-0150-0154-standalone-integration-intake-20260919.json`
+- Acceptance:
+  - [ ] AC-1: CLI, TUI, and daemon use the resolved operator transport; no entrypoint discards it for an isolated in-memory facade or store.
+  - [ ] AC-2: Standard lifecycle commands invoke admitted runtime work, persist run and event state, stream progress, and return actual success, gate block, or execution failure rather than a scheduling-only result.
+  - [ ] AC-3: `auto`, lean/quick routing, resume, and crash recovery use the existing workflow and stop-policy implementations with fresh role sessions and persisted state across process boundaries.
+  - [ ] AC-4: `ask`, `index`, `app`, and `browser` routes either invoke their admitted runtime service or fail closed with an explicit unavailable reason; unconditional `{ok:true}` responses are forbidden.
+  - [ ] AC-5: Daemon attach/reconnect and TUI status/timeline views display the daemon-owned run state and replayed events, not a second in-memory state model.
+  - [ ] AC-6: End-to-end tests exercise the executable CLI and daemon binaries through standard execution, a gate failure, restart/resume, event replay, and CLI/TUI attach.
+- Boundaries: Compose US-0146 and US-0148; do not redesign their protocol or UI visual language. Browser and application service implementation is US-0152.
+- related_us: US-0140, US-0143, US-0146, US-0148
+
+## US-0152 — Production application and browser UAT integration
+- user_visible: true
+- Title: Run application health and browser UAT from the standalone workflow
+- Summary: As an operator, I want execute, QA, and UAT flows to launch supported applications and collect real browser evidence so standalone release gates use actual health, screenshot, console, network, and trace results instead of unreferenced services or fake browser output.
+- Priority: P1
+- Status: OPEN
+- depends_on: US-0150, US-0151
+- plan_area_ids: dev-environment-runtime, remote-execution, browser-uat
+- intake_evidence_ref: `handoffs/intake_evidence/US-0150-0154-standalone-integration-intake-20260919.json`
+- Acceptance:
+  - [ ] AC-1: Runtime composition creates and owns `AppRuntime` and `BrowserUAT`; workflow and operator routes use them for start, health, logs, cleanup, browser actions, and evidence.
+  - [ ] AC-2: Production browser mode uses an isolated Playwright implementation or fails closed with `BROWSER_UNAVAILABLE`; `FakeBrowserDriver` and text screenshot placeholders are test-only.
+  - [ ] AC-3: App start/health, browser UAT probes, and bounded debug retry participate in execute, QA, UAT, and release gate transitions with compatible repository evidence.
+  - [ ] AC-4: Real screenshots, traces, console/network findings, final URL, and app-runtime references are persisted with redaction; missing or incomplete evidence blocks UAT.
+  - [ ] AC-5: `itsm app` and `itsm browser` execute the same admitted services and expose deterministic unavailable, authorization, and cleanup outcomes.
+  - [ ] AC-6: E2E fixtures prove local app launch through browser evidence and release-gate success, plus app/browser crash, failed assertion, authorization refusal, and evidence-gap failures.
+- Boundaries: Pixel-baseline infrastructure and stronger micro-VM isolation remain deferred masterplan work. Do not claim fake browser output as UAT evidence.
+- related_us: US-0141, US-0142
+
+## US-0153 — Real parallel delivery and release execution
+- user_visible: true
+- Title: Execute parallel arbitration and configured release targets without synthetic success
+- Summary: As an operator, I want parallel DEV candidates, release targets, deployment verification, and bounded repair to run only when real configured services admit them so release cannot pass because arbitration was skipped or a stub target adapter returned success.
+- Priority: P1
+- Status: OPEN
+- depends_on: US-0150, US-0151
+- plan_area_ids: parallel-dev-worktrees, release-deploy-closure
+- intake_evidence_ref: `handoffs/intake_evidence/US-0150-0154-standalone-integration-intake-20260919.json`
+- Acceptance:
+  - [ ] AC-1: The workflow invokes candidate QA/arbitration after parallel DEV worktrees are created and persists the selected or rejected candidate evidence.
+  - [ ] AC-2: Release flow composes the existing release/deploy pipeline and configured target adapters; unconfigured targets fail closed rather than use synthetic success adapters.
+  - [ ] AC-3: Deploy smoke, verify, rollback/repair caps, ownership, and closure prerequisites consume real run, UAT, and artifact evidence.
+  - [ ] AC-4: Resource/concurrency limits and policy restrictions apply before worktree, deploy, or repair actions and are audited.
+  - [ ] AC-5: Tests prove a configured fixture target success and deterministic failures for unavailable target, rejected candidate, failed deploy verification, exhausted repair, and premature closure.
+- Boundaries: Do not introduce distributed workers or remote always-on Debian execution; those are phase-9 deferred work.
+- related_us: US-0145
+
+## US-0154 — Standalone operator-path quality gate
+- user_visible: true
+- Title: Make executable standalone acceptance and CI authoritative
+- Summary: As a maintainer, I want the installed `itsm` product paths, not only hermetic package contracts, to be required in CI so completion claims cannot regress to throwing kernels, ignored transports, fake browser evidence, or unexecuted lifecycle plans.
+- Priority: P1
+- Status: OPEN
+- depends_on: US-0150, US-0151, US-0152, US-0153
+- plan_area_ids: cli-tui-observability, daemon-control-api
+- intake_evidence_ref: `handoffs/intake_evidence/US-0150-0154-standalone-integration-intake-20260919.json`
+- Acceptance:
+  - [ ] AC-1: CI runs standalone workspace typecheck, lint, and tests in addition to root-kit checks, with pinned install/bootstrap prerequisites documented and reproducible.
+  - [ ] AC-2: A packaged or installed `itsm` fixture invokes the public entrypoint and proves it reaches the production composition rather than a test-created facade.
+  - [ ] AC-3: Operator-path E2E coverage includes fresh Pi session admission, policy-enforced tool behavior, validator gate failure, persistent run/restart-resume, daemon attach/replay, and CLI/TUI parity.
+  - [ ] AC-4: Browser and release fixtures prove that fake drivers, placeholder screenshots, synthetic target success, and no-op command responses cannot satisfy production acceptance.
+  - [ ] AC-5: Test reports distinguish unit seams from operator-path evidence and fail when a claimed production entrypoint uses a throwing kernel, empty configuration, ephemeral store, or discarded transport.
+  - [ ] AC-6: Acceptance documentation records US-0133 through US-0148 as completed library/contract slices and US-0150 through US-0154 as their required production-integration follow-up, without marking phase-9 deferrals as missing v1 work.
+- Boundaries: This story validates the integration sequence; it does not expand product scope or replace deterministic fake seams used by unit tests.
+- related_us: US-0133, US-0134, US-0135, US-0136, US-0137, US-0138, US-0139, US-0140, US-0141, US-0142, US-0143, US-0144, US-0145, US-0146, US-0147, US-0148
+
 

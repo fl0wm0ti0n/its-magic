@@ -1,5 +1,5 @@
-import type { OperatorSession } from "../operator/operator-session.ts";
 import type { OperatorCommandFacade } from "../operator/operator-command-facade.ts";
+import type { OperatorSession } from "../operator/operator-session.ts";
 import type {
 	AttachRunInput,
 	CancelRunInput,
@@ -16,13 +16,6 @@ export interface InProcessTransportDeps {
 }
 
 export function createInProcessTransport(deps: InProcessTransportDeps): OperatorTransport {
-	const seqByRun = new Map<string, number>();
-	const nextSeq = (run_id: string) => {
-		const n = (seqByRun.get(run_id) ?? 0) + 1;
-		seqByRun.set(run_id, n);
-		return n;
-	};
-
 	return {
 		kind: "in_process",
 		async attachRun(input: AttachRunInput) {

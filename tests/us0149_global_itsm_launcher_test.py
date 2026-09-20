@@ -60,6 +60,42 @@ def test_us0149_launcher_runs_runtime_from_project_root(tmp_path: Path) -> None:
     assert Path(payload["cwd"]).resolve() == tmp_path.resolve()
 
 
+def test_us0149_launcher_forwards_empty_arguments_and_runtime_defines_help(tmp_path: Path) -> None:
+    _seed_runtime(tmp_path)
+    result = _run_launcher(tmp_path, tmp_path / "unused.json")
+    assert result.returncode == 0, result.stderr
+    payload = json.loads((tmp_path / "unused.json").read_text(encoding="utf-8"))
+    assert payload["argv"] == []
+    runtime = (ROOT / "standalone/apps/cli/src/run.ts").read_text(encoding="utf-8")
+    assert "itsm - its-magic operator CLI" in runtime
+    assert 'if (!token || token === "help" || token === "--help" || token === "-h")' in runtime
+
+
+def test_us0149_launcher_checks_node_version_before_strip_types() -> None:
+    source = LAUNCHER.read_text(encoding="utf-8")
+    assert "MIN_NODE_VERSION = [22, 19, 0]" in source
+    assert "[ITSM_NODE_VERSION_UNSUPPORTED]" in source
+    assert source.index("requireSupportedNode();") < source.index("--experimental-strip-types")
+
+
+def test_us0149_launcher_reports_unsupported_node_without_raw_flag_error(tmp_path: Path) -> None:
+    _seed_runtime(tmp_path)
+    script = (
+        "Object.defineProperty(process.versions, 'node', { value: '20.0.0' });"
+        f"require({json.dumps(str(LAUNCHER))});"
+    )
+    result = subprocess.run(
+        ["node", "-e", script],
+        cwd=tmp_path,
+        capture_output=True,
+        text=True,
+        check=False,
+    )
+    assert result.returncode == 1
+    assert "[ITSM_NODE_VERSION_UNSUPPORTED]" in result.stderr
+    assert "bad option" not in result.stderr
+
+
 def test_us0149_launcher_discovers_runtime_from_nested_directory(tmp_path: Path) -> None:
     _seed_runtime(tmp_path)
     nested = tmp_path / "src" / "nested"

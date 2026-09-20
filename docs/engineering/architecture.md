@@ -2872,3 +2872,84 @@ Acceptance checkbox: `docs/product/acceptance.md` BUG-0025 row remains unchecked
 - `proof_ttl=2026-09-18T18:00:00Z`
 - `hash_recompute_confirmation=true` (compute_strict_proof_hash → DA89597E0B3BD3F37E33AE7A83BFAFF70B4CD04EEDB22BDAE0D7C283FF09B8BE; independently MATCH; **64 hex** verified)
 - Consumed research proof: `rp-auto-20260918-bug0025-research-techlead-20260918T165500Z-BUG-0025` / `8E27420FCD21FE740C6015A45AB789057024E91BEA858636968488C1ACBFD249` — RUNTIME_PROOF_VALID MATCH before TTL `2026-09-18T17:55:00Z` (consumed_at `2026-09-18T17:00:00Z`; not STALE)
+
+# US-0150 — Production standalone runtime composition
+
+## Decision
+
+Accept **A1** from `R-0150`: add `standalone/packages/runtime-host` as `@its-magic/runtime-host`, the sole production composition root for a project. It resolves configuration once and constructs/adopts the existing Pi kernel, kernel bridge, session supervisor, ToolBroker, code-intelligence/context services, operational store, and `CommandRouter`. CLI and daemon receive this host; they must not create throwing kernels, literal empty config, separate stores, or placeholder-capable brokers.
+
+`runtime-host` is an outer layer. It may import delivered leaf packages and `runtime-core`; none of those packages may import it. TUI remains an `OperatorTransport` client under US-0151. This story does not execute lifecycle work, add AppRuntime/BrowserUAT, implement deployment, or alter CI ownership.
+
+## Host Contract
+
+```ts
+type RuntimeHost = {
+  projectRoot: string;
+  config: ResolvedRuntimeConfig;
+  commandRouter: CommandRouter;
+  sessionSupervisor: SessionSupervisor;
+  dispose(): Promise<void>;
+};
+
+type RuntimeHostOptions = {
+  projectRoot: string;
+  lifetime: "direct-cli" | "daemon";
+  factories?: RuntimeHostTestFactories;
+};
+
+async function createRuntimeHost(options: RuntimeHostOptions): Promise<RuntimeHost>;
+```
+
+- `factories` is an explicit test seam. Production entrypoints do not pass it, and test-only factories cannot silently select fake tools, fake intelligence, or a throwing kernel.
+- A daemon owns one host per project for its process lifetime. A direct CLI invocation creates one host for the command and always calls `dispose()` in `finally`.
+- `dispose()` stops admitted sessions and watchers and closes operational resources in reverse construction order. It must be idempotent; repository artifacts are never deleted or reconciled as part of disposal.
+
+## Boot And Failure Contract
+
+1. Canonicalize the project root and resolve typed runtime configuration with non-secret provenance.
+2. Open the operational store, locate and handshake the kernel bridge, and fail before scheduling when either admission fails.
+3. Create the Pi kernel with custom tools only and deny-by-default project resources.
+4. Create real policy-admitted tool implementations, active code intelligence/context services, and the `SessionSupervisor`.
+5. Construct the existing `CommandRouter` from those admitted services and expose it through the host.
+
+Host failures use the architecture-owned `RUNTIME_*` family: `RUNTIME_CONFIG_UNAVAILABLE`, `RUNTIME_BRIDGE_UNAVAILABLE`, `RUNTIME_KERNEL_ADMISSION_FAILED`, and `RUNTIME_SERVICE_UNAVAILABLE`. Exact payload schema is implementation-owned, but each result is typed, redacted, and fail-closed. `ok:<tool>`, fake browser/intelligence defaults, or synthetic success are forbidden outside explicit test factories.
+
+## Security And State Ownership
+
+- The host passes provider credentials only through the existing auth/model runtime; raw secrets are neither returned nor logged.
+- Role/model/provider selection, policy hash, custom-tool-only enforcement, resource-loader default deny, and ToolBroker path/shell checks remain mandatory for every fresh session.
+- Repository artifacts and kernel validators remain authoritative. SQLite stores only operational run/session/audit/index metadata.
+
+## Test Contract
+
+| AC | Primary architecture test |
+|----|---------------------------|
+| AC-1 | `test_us0150_runtime_host_resolves_one_config_and_builds_graph` |
+| AC-2 | `test_us0150_cli_and_daemon_use_runtime_host_not_throwing_kernel` |
+| AC-3 | `test_us0150_host_creates_fresh_attested_custom_tool_session` |
+| AC-4 | `test_us0150_admitted_tool_executes_or_denies_without_placeholder_success` |
+| AC-5 | `test_us0150_bridge_validator_and_operational_store_preserve_artifact_authority` |
+| AC-6 | `test_us0150_production_composition_unavailable_services_and_disposal` |
+
+The suite creates an actual Pi SDK session with a deterministic local test-model seam; it does not require paid credentials or external network access. Existing fake-package contracts stay as unit coverage but cannot satisfy these six operator-composition tests.
+
+## Atomic Task Seeds
+
+| # | Seed |
+|---|------|
+| T-anch | Verify `R-0150`, `DEC-0150`, package dependency direction, and story boundaries. |
+| T-001 | Add the `runtime-host` package and typed public host/factory interfaces. |
+| T-002 | Resolve config/project root/store/bridge admission with redacted `RUNTIME_*` failures. |
+| T-003 | Compose Pi kernel, real ToolBroker implementations, intelligence/context, and `SessionSupervisor`. |
+| T-004 | Construct the existing `CommandRouter`; add host lifetime and idempotent disposal. |
+| T-005 | Replace CLI and daemon throwing-kernel/empty-config construction with the host. |
+| T-006 | Add production-composition tests for Pi session, policy tool behavior, bridge/validator, failures, and disposal. |
+| T-007 | Add package dependency and production-vs-test-factory regression checks. |
+
+## Boundaries And Consequences
+
+- Compose US-0133 through US-0140 without rewriting their public contracts. Do not reopen their status or acceptance rows in this implementation slice.
+- US-0151 owns lifecycle execution, operator transport, and TUI state; US-0152 owns AppRuntime/BrowserUAT; US-0153 owns parallel/release execution; US-0154 owns installed-path CI proof.
+- Out: US-0149, BUG-0026, phase-9 clients, root-kit publish work, `.env` reads, and git push.
+- `/sprint-plan` owns sprint materialization. This architecture phase creates no application code and no sprint directory.

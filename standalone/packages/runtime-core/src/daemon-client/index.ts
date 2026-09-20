@@ -1,7 +1,7 @@
 export {
 	createDaemonTransport,
-	isDaemonReachable,
 	type DaemonTransportOptions,
+	isDaemonReachable,
 } from "./daemon-transport.ts";
 export {
 	createInProcessTransport,
@@ -16,8 +16,8 @@ export type {
 	SubscribeEventsInput,
 } from "./operator-transport.ts";
 export {
-	reconcileOperationalLedger,
 	type ReconcileOperationalLedgerInput,
 	type ReconcileOperationalLedgerOk,
+	reconcileOperationalLedger,
 } from "./reconcile-operational-ledger.ts";
-export { resolveOperatorTransport, type ResolveTransportInput } from "./resolve-transport.ts";
+export { type ResolveTransportInput, resolveOperatorTransport } from "./resolve-transport.ts";

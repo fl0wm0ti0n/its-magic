@@ -2,10 +2,7 @@ import type { KernelBridge } from "@its-magic/kernel-bridge";
 import type { SessionSupervisor, SupervisedSession } from "@its-magic/role-runtime";
 import { type ConfigView, lookupParallelDev } from "../config-view.ts";
 import { WorkflowError } from "../types.ts";
-import {
-	createDeliveryResourceGuard,
-	PARALLEL_DEV_RESOURCE_CAP_EXHAUSTED,
-} from "./resource-guard.ts";
+import { createDeliveryResourceGuard } from "./resource-guard.ts";
 
 export const PARALLEL_DEV_WORKTREE_CREATE_FAILED = "PARALLEL_DEV_WORKTREE_CREATE_FAILED";
 export const PARALLEL_DEV_SELECTION_NO_PASS = "PARALLEL_DEV_SELECTION_NO_PASS";
@@ -31,10 +28,7 @@ export interface DeliveryBridge {
 			payload: Record<string, unknown>;
 		};
 		kernelRoot?: string;
-	}): Promise<
-		| { ok: true; result: Record<string, unknown> }
-		| { ok: false; reason_code: string }
-	>;
+	}): Promise<{ ok: true; result: Record<string, unknown> } | { ok: false; reason_code: string }>;
 }
 
 export interface CandidateEvidence {
@@ -108,7 +102,11 @@ export class ParallelDevCoordinator {
 			throw new WorkflowError(cap.reason_code, "parallel dev resource guard");
 		}
 		if (!this.bridge) {
-			return { skipped: false, byte_identical: false, reason_code: PARALLEL_DEV_WORKTREE_CREATE_FAILED };
+			return {
+				skipped: false,
+				byte_identical: false,
+				reason_code: PARALLEL_DEV_WORKTREE_CREATE_FAILED,
+			};
 		}
 		const request_id = `pd-${input.orchestrator_run_id}`;
 		const create = await this.bridge.runDeliveryOperation({
@@ -217,7 +215,9 @@ export class ParallelDevCoordinator {
 	}
 }
 
-export function createParallelDevCoordinator(deps: ParallelDevCoordinatorDeps): ParallelDevCoordinator {
+export function createParallelDevCoordinator(
+	deps: ParallelDevCoordinatorDeps,
+): ParallelDevCoordinator {
 	return new ParallelDevCoordinator(deps);
 }
 

@@ -1,0 +1,17 @@
+{
+	"name": "@its-magic/pi-kernel",
+	"version": "0.0.0",
+	"private": true,
+	"type": "module",
+	"description": "Owned AgentKernel adapter. Only package allowed to import Pi SDK.",
+	"engines": {
+		"node": ">=22.19.0"
+	},
+	"exports": {
+		".": "./src/index.ts"
+	},
+	"dependencies": {
+		"@earendil-works/pi-ai": "0.85.1",
+		"@earendil-works/pi-coding-agent": "0.85.1"
+	}
+}

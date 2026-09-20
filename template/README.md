@@ -134,7 +134,8 @@ Run `itsm` inside an installed repository; it discovers the repository while
 walking upward. From another directory, select one explicitly with
 `ITSM_PROJECT_ROOT=/path/to/repo itsm status` (PowerShell:
 `$env:ITSM_PROJECT_ROOT = "C:\path\to\repo"`). Remove both global commands with
-`npm uninstall -g --prefix <same-prefix> its-magic`.
+`npm uninstall -g --prefix <same-prefix> its-magic`. `itsm` requires Node.js
+`>=22.19.0`; older Node versions exit with `ITSM_NODE_VERSION_UNSUPPORTED`.
 
 ### Global Linux install: empty `install_include_paths` (CRLF manifest)
 

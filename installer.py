@@ -273,7 +273,7 @@ FRAMEWORK_EXACT = {
     ".cursor/model-catalog.local.example.role-based-balanced.json",
     ".cursor/model-catalog.local.example.role-based-highend.json",
     ".cursor/model-catalog.local.example.role-based-balanced_cursor_only.json",
-    ".its-magic-version", "its_magic/.its-magic-version", "its_magic/README.md",
+    ".its-magic-version", "its_magic/.its-magic-version", "its_magic/kernel-contract.json", "its_magic/README.md",
 }
 USER_DATA_PREFIXES = (
     "docs/product/", "docs/engineering/", "docs/user-guides/",
@@ -1061,6 +1061,17 @@ def write_installed_version(target_root, ver):
     ensure_parent(vf)
     with open(vf, "w", encoding="utf-8") as f:
         f.write(ver)
+    contract_path = os.path.join(target_root, "its_magic", "kernel-contract.json")
+    try:
+        with open(contract_path, "r", encoding="utf-8") as f:
+            contract = json.load(f)
+        if contract.get("schema_version") == 1:
+            contract["kernel_version"] = ver
+            with open(contract_path, "w", encoding="utf-8") as f:
+                json.dump(contract, f, indent=2)
+                f.write("\n")
+    except (OSError, json.JSONDecodeError):
+        pass
     legacy = os.path.join(target_root, ".its-magic-version")
     if os.path.isfile(legacy):
         os.remove(legacy)
@@ -1651,7 +1662,7 @@ def main():
 
     if mode == "upgrade":
         old_ver = read_installed_version(target_root)
-        print(f"\n\033[1;36mUpgrading from v{old_ver} to v{version}\033[0m\n")
+        print(f"\nUpgrading from v{old_ver} to v{version}\n")
 
         if backup_enabled:
             bc = [r for r in files if classify_file(r) == "framework" and os.path.isfile(os.path.join(target_root, r))]
@@ -1714,6 +1725,10 @@ def main():
         copy_or_merge_opencode_tui_json(target_root, source_root, host)
         prune_retired_opencode_auto_md(target_root, source_root, host)
 
+        # Kernel preflight runs during standalone postinstall, so its contract must
+        # match the upgraded version before that hook is entered.
+        write_installed_version(target_root, version)
+
         if not run_kit_config_postinstall(target_root, source_root, "upgrade", print_ok=True):
             return 1
         if not run_standalone_postinstall(target_root, source_root, script_dir, print_ok=True):
@@ -1749,18 +1764,13 @@ def main():
             return 1
 
         show_banner()
-        g = "\033[1;32m"
-        y = "\033[1;33m"
-        p = "\033[1;35m"
-        d = "\033[0;90m"
-        r = "\033[0m"
-        print(f"{g}Upgrade complete: v{old_ver} -> v{version}{r}\n")
+        print(f"Upgrade complete: v{old_ver} -> v{version}\n")
         if added:
-            print(f"  {g}Added (new):         {len(added)} files{r}")
+            print(f"  Added (new):         {len(added)} files")
             for f in added:
                 print(f"    {f}")
         if updated:
-            print(f"  {y}Updated (framework): {len(updated)} files{r}")
+            print(f"  Updated (framework): {len(updated)} files")
             for f in updated:
                 print(f"    {f}")
         print(f"  Unchanged:           {unchanged} files")
@@ -1775,10 +1785,10 @@ def main():
         if os.path.isfile(os.path.join(target_root, ".cursor", "scratchpad.local.md")):
             print("  User local file:     preserved (.cursor/scratchpad.local.md)")
         if review:
-            print(f"\n  {p}Review recommended:  {len(review)} files{r}")
+            print(f"\n  Review recommended:  {len(review)} files")
             for f in review:
                 print(f"    {f}")
-            print(f"    {d}Check .cursor/scratchpad.local.example.md for new flags.{r}")
+            print("    Check .cursor/scratchpad.local.example.md for new flags.")
         print(f"\nRepository: {REPO_URL}\n")
         return 0
 

@@ -1,17 +1,3 @@
-## Intake handoff — BUG-0026 Published-kit KERNEL_CONTRACT_MISMATCH (omit standalone/) Win+Linux
-
-- **Phase completed**: intake. **Role**: po. **Bug**: BUG-0026. **Verdict**: PASS (`decision_gate=false`).
-- **Timestamp (UTC)**: 2026-09-19T10:02:04Z. **writer_id**: `po-f4770d9e1870`. **intake_run_id**: `ir-20260919T100204Z-9c322a`.
-- **Mode**: `INTAKE_GUIDED_MODE=0` (low-touch), `INTAKE_WORK_ITEM_KIND=bug` (explicit argv `/intake bug` **wins** over scratchpad story — DEC-0061 / US-0079), `WORK_KIND_ROUTING=0`, `EARLY_RESEARCH=0`, `FRAMEWORK_KIT_REPO=1`.
-- **Pack**: `small-intake-pack`. Evidence: `handoffs/intake_evidence/BUG-0026-intake-20260919T100204Z.json` — validated **PASS** before backlog/acceptance mutation.
-- **Duplicate/overlap**: **NEW BUG-0026**. Distinct from **BUG-0025 DONE** (packaging lib + fail-closed loader — do **not** reopen ACs). Distinct from **US-0149 OPEN** (global PATH + user-chosen location — compose/link; US-0149 AC-1/Boundaries updated to compose this bug). Distinct from **BUG-0022** / **BUG-0024 OPEN** — do **not** merge/drain. No OPEN KERNEL_* bugs.
-- **Symptom**: global `its-magic@0.1.4` `its-magic --target . --mode upgrade --host both` on **Windows and Linux** → `HOST_CONFIG_POSTINSTALL_OK` then `KERNEL_CONTRACT_MISMATCH` / `STANDALONE_BOOTSTRAP_FAILED`; `.its-magic/bin/itsm` never materializes. Residual: published kit omits package-root `standalone/` → `load_supported_range` → `None` (DEC-0120 / US-0133 / S0157 T-004).
-- **AC summary**: AC-1 pack includes `standalone/` (or equivalent range source); AC-2 upgrade materializes `itsm` without false KERNEL_CONTRACT_MISMATCH; AC-3 Win+Linux parity; AC-4 npm pack contract; AC-5 no BUG-0025 reopen; AC-6 distinct from US-0149; AC-7 distinct from BUG-0022/0024; AC-8 honest fail-closed for true mismatches.
-- **Resume brief**: `intake_bug_resume_brief_refresh.py` → `[INTAKE_BUG_RESUME_BRIEF_REFRESH_OK]`; `--validate-file` → `[INTAKE_RESUME_BRIEF_VALIDATE_OK]` (`intended_resume_phase`/`resolved_start_phase`=`discovery`, `resolution_source=resume_brief`, `bug_id=BUG-0026`).
-- **Bug validate**: `bug_issue_validate.py --check-acceptance` → `[BUG_VALIDATION_OK]`.
-- **Next**: `/discovery` in a **fresh PO** subagent/chat. **STOP** — intake does not run discovery.
-
-
 ## Intake handoff — US-0149 Global `itsm` PATH + user-chosen location (cross-platform)
 
 - **Phase completed**: intake. **Role**: po. **Story**: US-0149. **Verdict**: PASS (`decision_gate=false`).
@@ -643,3 +629,11 @@ T-anch + T-001..T-011 per `# US-0148` in `docs/engineering/architecture.md` (≤
 - **Hot-surface note**: Appended (not prepended) so triad oldest-prefix rollover retains this newest section. Post-append `--rollover --json` → `{"boundary":"triad-rollover|state","moved":1,"pack_ref":"docs/engineering/state-archive/state-pack-20260918-c.md","retained_checkpoints":11,"retained_lines":1085}` + `{"boundary":"triad-rollover|po_to_tl","moved":1,"pack_ref":"handoffs/archive/po-to-tl-pack-20260918-b.md","retained_lines":617,"retained_sections":14}` + `{"boundary":"triad-rollover|architecture","moved":1,"pack_ref":"docs/engineering/architecture-archive/architecture-pack-20260918.md","retained_lines":2874,"retained_story_sections":24}`; `--check-arch-heading-policy --baseline-h2-count 0` PASS; `materialize_codebase_map.py --trigger architecture` → `[CODEBASE_MAP_OK] preserved_existing`; final `--check` PASS. `# BUG-0025` retained at hot end.
 - **Status**: BUG-0025 remains **OPEN**. AC-1..AC-8 remain unchecked. **Next**: `/sprint-plan` in fresh **tech-lead** subagent. CROSS_MODEL_REVIEW=0 — do not spawn sovereign-critic. Do not spawn sprint-plan from this architecture chat. STOP.
 
+## Discovery handoff — US-0150 Production standalone runtime composition
+
+- **Phase completed**: discovery. **Role**: po. **Story**: US-0150. **Verdict**: PASS (`decision_gate=false`).
+- **Evidence**: `handoffs/intake_evidence/US-0150-0154-standalone-integration-intake-20260919.json` validated PASS. Static audit found CLI/daemon throwing kernels, discarded transports, empty config, placeholder tool success, and fake/default service paths.
+- **Locked scope**: One project-scoped production composition root resolves config once and admits `createAgentKernel`, `KernelBridge`, `SessionSupervisor`, `ToolBroker`, code intelligence/context, and persistent operational storage. CLI and daemon inject it; no separate workflow engine.
+- **Required behavior**: Custom tools only; deny-by-default project resources; fresh role/model/provider sessions; bridge failure before work; real policy-admitted tool execution or deterministic denial; artifacts/validators authoritative over SQLite.
+- **Sibling boundary**: US-0151 owns executable lifecycle and transport; US-0152 app/browser UAT; US-0153 parallel/release; US-0154 CI operator-path proof. Do not reopen US-0133..US-0140 package contracts, mutate US-0149/BUG-0026, or plan phase-9 deferrals.
+- **Research**: Allocate `R-0150`; decide composition lifetime/cleanup, typed dependency graph, real Pi SDK test-session fixture, and unavailable-service reason-code matrix. **Next**: `/research` in a fresh tech-lead context. STOP.

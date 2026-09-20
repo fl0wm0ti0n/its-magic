@@ -1,5 +1,5 @@
-import readline from "node:readline";
 import { stdin as input, stdout as output } from "node:process";
+import readline from "node:readline";
 import { OPERATOR_INPUT_REQUIRED, OPERATOR_MIN_TERMINAL_COLS } from "./types.ts";
 
 export interface PromptChoice {
@@ -68,9 +68,7 @@ export class OperatorPrompts {
 		const defaultChoice = request.choices.find((c) => c.default) ?? request.choices[0];
 		const lines = [
 			this.wrapLine(request.message),
-			...request.choices.map(
-				(c, i) => `  [${i + 1}] ${c.label}${c.default ? " (default)" : ""}`,
-			),
+			...request.choices.map((c, i) => `  [${i + 1}] ${c.label}${c.default ? " (default)" : ""}`),
 		];
 		if (request.help) {
 			lines.push(this.wrapLine(`? ${request.help}`));
