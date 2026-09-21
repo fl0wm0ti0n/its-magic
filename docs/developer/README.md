@@ -27,6 +27,14 @@ setup stays in the root `README.md` (user channel).
   runbook `### OpenCode `/auto` slash listing after plugin-only ownership (BUG-0019 / R-0124)`, architecture `# BUG-0019`.
 - **BUG-0020** — OpenCode desktop Command.Info cannot list execute-only `/auto`; CLI TUI via `tui.json`; traceability:
   runbook `### OpenCode desktop Command.Info `/auto` listing (BUG-0020 / R-0126)`, architecture `# BUG-0020`.
+- **BUG-0021** — Standalone provider authentication, model routing, and health diagnostics; traceability: architecture `# BUG-0021`.
+- **BUG-0023** — Fresh role sessions and runtime attestation; traceability: architecture `# BUG-0023`.
+- **BUG-0025** — Owned tool broker, policy decisions, and security audit records; traceability: architecture `# BUG-0025`.
+- **US-0139** — Persistent code intelligence and reproducible context packs; traceability: architecture `# US-0139`, `decisions/DEC-0139.md`.
+- **US-0140** — Canonical lifecycle routing, gates, rework, resume, and E2E fixtures; traceability: architecture `# US-0140`, `decisions/DEC-0140.md`.
+- **US-0141** — Application runtime execution and bounded cleanup; traceability: architecture `# US-0141`, `decisions/DEC-0141.md`.
+- **US-0142** — Owned browser UAT actions and evidence recording; traceability: architecture `# US-0142`, `decisions/DEC-0142.md`.
+- **US-0143** — Delivery routing and bounded full-autonomy execution; traceability: architecture `# US-0143`, `decisions/DEC-0143.md`.
 
 ## Quality gates
 
@@ -73,6 +81,15 @@ setup stays in the root `README.md` (user channel).
   architecture `# US-0125`, `decisions/DEC-0125.md`.
 - **US-0133** — Unpublished standalone Pi kernel workspace (kit `files` omit `standalone/`; owned `AgentKernel`); traceability:
   runbook `### Unpublished standalone Pi kernel workspace (US-0133 / R-0121)`, architecture `# US-0133`, `decisions/DEC-0133.md`.
+- **US-0135** — Standalone authentication, provider/model routing, and health diagnostics; traceability: architecture `# US-0135`, `decisions/DEC-0135.md`.
+- **US-0136** — Fresh role session isolation and runtime attestation; traceability: architecture `# US-0136`, `decisions/DEC-0136.md`.
+- **US-0137** — Owned tool broker, policy engine, and security boundary; traceability: architecture `# US-0137`, `decisions/DEC-0137.md`.
+- **US-0138** — Typed runtime configuration and provenance diagnostics; traceability: architecture `# US-0138`, `decisions/DEC-0138.md`.
+- **US-0144** — Sovereign critic sessions, reviews, and convergence; traceability: architecture `# US-0144`, `decisions/DEC-0144.md`.
+- **US-0145** — Parallel delivery, release/deploy, and closure verification; traceability: architecture `# US-0145`, `decisions/DEC-0145.md`.
+- **US-0146** — CLI/TUI operational observability; traceability: architecture `# US-0146`, `decisions/DEC-0146.md`.
+- **US-0147** — Installation, update, and existing-project adoption; traceability: architecture `# US-0147`, `decisions/DEC-0147.md`.
+- **US-0148** — Recoverable daemon control protocol and lifecycle; traceability: architecture `# US-0148`, `decisions/DEC-0148.md`.
 - High-level contracts live in `docs/engineering/architecture.md` (search for story ids).
 - Installer ownership is driven by `docs/engineering/context/installer-owned-paths.manifest`.
 - Template parity: changes in repo root often require the same edit under `template/`.

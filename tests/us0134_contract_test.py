@@ -137,7 +137,11 @@ def test_us0134_kit_files_omit_standalone_and_no_pi_in_kernel_bridge():
     assert "createKernelBridge" not in kernel_src
     cli = (root / "standalone" / "apps" / "cli" / "src" / "index.ts").read_text(encoding="utf-8")
     assert "child_process" not in cli
-    assert "@its-magic/kernel-bridge" in cli
+    assert "@its-magic/runtime-host" in cli
+    runtime_host = (root / "standalone" / "packages" / "runtime-host" / "src" / "index.ts").read_text(
+        encoding="utf-8"
+    )
+    assert "@its-magic/kernel-bridge" in runtime_host
     codes = ["KERNEL_NOT_FOUND", "KERNEL_VERSION_UNSUPPORTED", "KERNEL_VALIDATOR_MISSING", "KERNEL_CONTRACT_MISMATCH"]
     types = (bridge / "src" / "types.ts").read_text(encoding="utf-8")
     for code in codes:

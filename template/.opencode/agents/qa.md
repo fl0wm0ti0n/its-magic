@@ -8,6 +8,7 @@ permission:
     "sprints/S*/verify-work-findings.md": allow
     "sprints/S*/uat.md": allow
     "sprints/S*/uat.json": allow
+    "docs/engineering/state.md": allow
     "handoffs/qa_to_dev.md": allow
     "handoffs/qa_to_verify.md": allow
     "handoffs/qa_to_verify_work.md": allow

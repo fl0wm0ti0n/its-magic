@@ -1,3 +1,87 @@
+## Sprint-plan handoff — BUG-0027 / S0160 — /execute (fresh dev, ultra_lean)
+
+- sprint_id: S0160
+- story_id: (none — bug work item)
+- bug_id: BUG-0027 (Status OPEN — authority docs/product/backlog.md)
+- companion_dec: none (cite R-0151 / docs/engineering/architecture.md # BUG-0027 only)
+- research_anchor: R-0151 (DQ1–DQ10 LOCKED)
+- architecture_anchor: docs/engineering/architecture.md # BUG-0027
+- approach: A1 (A*) Hybrid manual-phase persist — IsolationEvidence identity fields (storyId/sprintId/orchestratorRunId/bugId); persistManualPhaseIsolation (not runAutoLifecycle); parent sessionID from command.executed/RPC; reject tui-auto; targeted glob widen (dev: state.md + summary.md; qa: state.md) plus fail-closed-before-work; tokens WRITE_DENIED / PERSIST_DENIED / PERSIST_NOT_INVOKED / PLACEHOLDER_PARENT_REJECTED / CONTEXT_MISSING; rewrite packs to --file/--stdin/--self-test; drop intake validator from execute/discovery; ten test_bug0027_*; BUG0027_PAIRS + upgrade overwrite; US-0125 named-CLI compose-amend (ACs stay DONE)
+- orchestrator_run_id: auto-20260921-bug0027
+- parent_orchestrator_run_id: ir-20260921T190544Z-bug0027
+- fresh_context_marker: tl-BUG0027-sprintplan-20260921T212600Z-fresh
+- timestamp: 2026-09-21T21:26:00Z (UTC)
+- model_id: inherit (CROSS_MODEL_REVIEW=0)
+- segment_work_item_kind: bug
+- active_bug_id: BUG-0027
+- bug_queue_position: 1 of 1
+- bug_queue_remaining: 0
+- backlog_drain_active: false
+- bug_queue_active: true
+- sprint_plan_verdict: PASS (SPRINT_PLAN_PASS)
+- decision_gate: false
+- sprint_status: PLANNED (backlog OPEN per US-0045 — not mutated, AC-1..AC-6 unchecked)
+- task_count: 8 (T-anch + T-001..T-007, ≤ SPRINT_MAX_TASKS=12, no split, 1:1 architecture seeds)
+- ac_surjective_map: AC-1→T-002,T-004(+T-006 m1,m10); AC-2→T-001,T-002(+T-006 m2); AC-3→T-001,T-003(+T-006 m1,m3,m4); AC-4→T-anch,T-003(+T-006 m5,m6); AC-5→T-005(+T-006 m7,m8); AC-6→T-006,T-007; DC→T-anch
+- task_order: T-anch → T-001 → T-002 → T-003 → T-004 → T-005 → T-006 → T-007
+- plan-verify: ultra_lean — NOT in resolved_phase_plan; skipped; reason=`ultra_lean_not_in_resolved_phase_plan`; no plan-verify QA spawn
+- compose_guards (non-negotiable): DO NOT reopen BUG-0024 ACs / S0159; DO NOT claim toast repair; DO NOT restore auto.md; DO NOT add JSON commands.auto template; DO NOT route manual phases through runAutoLifecycle; DO NOT add --repo --enforce to intake_evidence_validate.py; DO NOT merge/drain BUG-0022/0026; DO NOT mutate US-0150 as this bug's implementation; DO NOT wipe R-0150/R-0140; DO NOT rewrite .cursor/commands/; DO NOT reopen BUG-0016 / US-0125 ACs; DO NOT author companion DEC; DO NOT read .env; DO NOT mark BUG-0027 DONE; DO NOT tick AC; DO NOT npm-publish; DO NOT git push; DEC-0038 tuple unamended; live OpenCode CLI TUI probe remains UAT_PROBE_FORBIDDEN in default CI
+- first_execute_task: T-anch (NO-OP / verification)
+- key_locked_artifacts: .opencode/plugins/orchestrator.ts; scripts/opencode_auto_bridge.py; .opencode/agents/{dev,qa}.md; .opencode/commands/{intake,execute,discovery,qa,verify-work}.md (+ templates); tests/bug0027_*; tests/us0125 fixture CLI compose-amend; check_intake_template_parity.py BUG0027_PAIRS; installer.py/sh/ps1; runbook validator stub
+- sprint_id_lock: S0160 (S0159=BUG-0024 occupied). Do not invent a new id.
+- runtime_proof_id: rp-auto-20260921-bug0027-sprint-plan-techlead-20260921T212600Z-BUG-0027
+- proof_hash: 4513051C77052F22FA52F4C8EC431A9931B8104475E6EA8373C756739574F8C9
+- proof_ttl: 2026-09-21T22:26:00Z
+- consumed_architecture_proof: rp-auto-20260921-bug0027-architecture-techlead-20260921T212200Z-BUG-0027 / 766B032B5B6FEBFCC6524E30F4A94DEED4EFBCE14AB73F56D2DCBF893FEFE489 — RUNTIME_PROOF_VALID (MATCH before TTL 2026-09-21T22:22:00Z)
+- next_scheduled_phase: /execute (role=dev)
+- next_scheduled_role: dev
+- next_sprint_macro: build+verify
+- stop_condition: STOP after sprint-plan. Orchestrator MUST spawn /execute in fresh dev (BUG-0006). CROSS_MODEL_REVIEW=0 — do NOT spawn sovereign-critic or plan-verify from this tech-lead. Do NOT mark BUG-0027 DONE. Do NOT tick acceptance. Do NOT implement packages in sprint-plan phase.
+
+---
+
+## Sprint-plan handoff — BUG-0024 / S0159 — /execute (fresh dev, ultra_lean)
+
+- sprint_id: S0159
+- story_id: (none — bug work item)
+- bug_id: BUG-0024 (Status OPEN — authority docs/product/backlog.md)
+- companion_dec: none (cite R-0140 / docs/engineering/architecture.md # BUG-0024 only)
+- research_anchor: R-0140 (DQ1–DQ10 LOCKED)
+- architecture_anchor: docs/engineering/architecture.md # BUG-0024
+- approach: A1 (A*) Hybrid residual live-dispatch — peer-branded `@opencode/plugin/rpc` for TUI success; local identity-define load-safe only; stage tokens MISSING_CLIENT / RPC_ABSENT / DEFINED_UNBRANDED / REGISTER_SKIPPED / MAKE_UNREACHABLE; DISPATCH umbrella last; keep `{ id, tui }` + `editor.add`; eight `test_bug0024_*`; upgrade overwrite + prune; active↔template parity; never restore auto.md; never silent localhost
+- orchestrator_run_id: auto-20260921-bug0024
+- parent_orchestrator_run_id: cursor-20260913-BUG0024-intake
+- fresh_context_marker: tl-BUG0024-sprintplan-20260921T194900Z-fresh
+- timestamp: 2026-09-21T19:49:00Z (UTC)
+- model_id: inherit (CROSS_MODEL_REVIEW=0)
+- segment_work_item_kind: bug
+- active_bug_id: BUG-0024
+- bug_queue_position: 1 of 1
+- bug_queue_remaining: 0
+- backlog_drain_active: false
+- bug_queue_active: true
+- sprint_plan_verdict: PASS (SPRINT_PLAN_PASS)
+- decision_gate: false
+- sprint_status: PLANNED (backlog OPEN per US-0045 — not mutated, AC-1..AC-8 unchecked)
+- task_count: 8 (T-anch + T-001..T-007, ≤ SPRINT_MAX_TASKS=12, no split, 1:1 architecture seeds)
+- ac_surjective_map: AC-1→T-001,T-002,T-003,T-004(+T-005 m1–m5); AC-2→T-004,T-005; AC-3→T-anch,T-005; AC-4→T-005; AC-5→T-002,T-005; AC-6→T-005; AC-7→T-006,T-005; AC-8→T-007,T-005; DC→T-anch
+- task_order: T-anch → T-001 → T-002 → T-003 → T-004 → T-005 → T-006 → T-007
+- plan-verify: ultra_lean — NOT in resolved_phase_plan; skipped; reason=`ultra_lean_not_in_resolved_phase_plan`; no plan-verify QA spawn
+- compose_guards (non-negotiable): DO NOT reopen BUG-0023/0021/0020/0019/0018 ACs / S0148; DO NOT restore auto.md; DO NOT add JSON commands.auto template; DO NOT merge/drain BUG-0022; DO NOT drain BUG-0027; DO NOT wipe R-0140; DO NOT author companion DEC; DO NOT read .env; DO NOT mark BUG-0024 DONE; DO NOT tick AC; DO NOT npm-publish; DO NOT git push; DEC-0038 tuple unamended; live OpenCode CLI TUI probe remains UAT_PROBE_FORBIDDEN in default CI
+- first_execute_task: T-anch (NO-OP / verification)
+- key_locked_artifacts: .opencode/plugins/its-magic-auto/{rpc.ts,tui.ts}; .opencode/plugins/orchestrator.ts (+ templates); tests/bug0024_*; installer.py/sh/ps1; check_intake_template_parity.py BUG0024_PAIRS; runbook stage-code table
+- sprint_id_lock: S0159 (S0158=US-0150 occupied). Do not invent a new id.
+- runtime_proof_id: rp-auto-20260921-bug0024-sprint-plan-techlead-20260921T194900Z-BUG-0024
+- proof_hash: 4DBB29FE1B5F6E671A28156768AFCE8A1976F8494BBCC2B997C9DCA265AB163C
+- proof_ttl: 2026-09-21T20:49:00Z
+- consumed_architecture_proof: rp-auto-20260921-bug0024-architecture-techlead-20260921T194300Z-BUG-0024 / 5EEEC943224DB73B7A19D222A2178522BFCFF3F00FAC3A1316973A3F464A8915 — RUNTIME_PROOF_VALID (MATCH before TTL 2026-09-21T20:43:00Z)
+- next_scheduled_phase: /execute (role=dev)
+- next_scheduled_role: dev
+- next_sprint_macro: build+verify
+- stop_condition: STOP after sprint-plan. Orchestrator MUST spawn /execute in fresh dev (BUG-0006). CROSS_MODEL_REVIEW=0 — do NOT spawn sovereign-critic or plan-verify from this tech-lead. Do NOT mark BUG-0024 DONE. Do NOT tick acceptance. Do NOT implement packages in sprint-plan phase.
+
+---
+
 ## Sprint-plan handoff — US-0150 / S0158 — `/execute` next (fresh dev, ultra_lean)
 
 - **Phase completed**: sprint-plan. **Role**: tech-lead. **Story**: US-0150. **Sprint**: S0158. **Verdict**: PASS (`decision_gate=false`).

@@ -730,6 +730,81 @@ BUG0023_PAIRS: tuple[tuple[str, str], ...] = (
     ),
 )
 
+# BUG-0024 additive: live-dispatch residual peer-brand + stage codes (keep BUG0023_PAIRS).
+BUG0024_PAIRS: tuple[tuple[str, str], ...] = (
+    (
+        ".opencode/plugins/its-magic-auto/rpc.ts",
+        "template/.opencode/plugins/its-magic-auto/rpc.ts",
+    ),
+    (
+        ".opencode/plugins/its-magic-auto/tui.ts",
+        "template/.opencode/plugins/its-magic-auto/tui.ts",
+    ),
+    (
+        ".opencode/plugins/orchestrator.ts",
+        "template/.opencode/plugins/orchestrator.ts",
+    ),
+    (
+        "tests/bug0024_opencode_cli_tui_live_dispatch_residual_test.py",
+        "template/tests/bug0024_opencode_cli_tui_live_dispatch_residual_test.py",
+    ),
+    (
+        "tests/bug0024_dispatch_harness.mjs",
+        "template/tests/bug0024_dispatch_harness.mjs",
+    ),
+    (
+        "docs/engineering/runbook.md",
+        "template/docs/engineering/runbook.md",
+    ),
+    (
+        "docs/engineering/context/installer-owned-paths.manifest",
+        "template/docs/engineering/context/installer-owned-paths.manifest",
+    ),
+)
+
+# BUG-0027 additive: OpenCode manual-phase persist surfaces (keep BUG0024_PAIRS).
+BUG0027_PAIRS: tuple[tuple[str, str], ...] = (
+    (
+        ".opencode/plugins/orchestrator.ts",
+        "template/.opencode/plugins/orchestrator.ts",
+    ),
+    (
+        "scripts/opencode_auto_bridge.py",
+        "template/scripts/opencode_auto_bridge.py",
+    ),
+    (".opencode/agents/dev.md", "template/.opencode/agents/dev.md"),
+    (".opencode/agents/qa.md", "template/.opencode/agents/qa.md"),
+    (
+        ".opencode/commands/intake.md",
+        "template/.opencode/commands/intake.md",
+    ),
+    (
+        ".opencode/commands/execute.md",
+        "template/.opencode/commands/execute.md",
+    ),
+    (
+        ".opencode/commands/discovery.md",
+        "template/.opencode/commands/discovery.md",
+    ),
+    (".opencode/commands/qa.md", "template/.opencode/commands/qa.md"),
+    (
+        ".opencode/commands/verify-work.md",
+        "template/.opencode/commands/verify-work.md",
+    ),
+    (
+        "tests/bug0027_opencode_manual_phase_persist_test.py",
+        "template/tests/bug0027_opencode_manual_phase_persist_test.py",
+    ),
+    (
+        "tests/bug0027_persist_harness.mjs",
+        "template/tests/bug0027_persist_harness.mjs",
+    ),
+    (
+        "docs/engineering/runbook.md",
+        "template/docs/engineering/runbook.md",
+    ),
+)
+
 # US-0129 additive: linkage guard + refresh-context wiring + contract test.
 ARCH_LINKAGE_PAIRS: tuple[tuple[str, str], ...] = (
     (
@@ -842,6 +917,8 @@ SCOPES: dict[str, tuple[tuple[str, str], ...]] = {
     "bug-0020": BUG0020_PAIRS,
     "bug-0021": BUG0021_PAIRS,
     "bug-0023": BUG0023_PAIRS,
+    "bug-0024": BUG0024_PAIRS,
+    "bug-0027": BUG0027_PAIRS,
     "us-0131": US0131_PAIRS,
     "us-0132": US0132_PAIRS,
     "all": (
@@ -875,6 +952,8 @@ SCOPES: dict[str, tuple[tuple[str, str], ...]] = {
         + BUG0020_PAIRS
         + BUG0021_PAIRS
         + BUG0023_PAIRS
+        + BUG0024_PAIRS
+        + BUG0027_PAIRS
         + US0131_PAIRS
         + US0132_PAIRS
     ),

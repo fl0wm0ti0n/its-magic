@@ -1740,6 +1740,48 @@ If routing is not used (mode off/local default), still record:
 - **Do not prune** `.opencode/agents/auto.md` or `.cursor/commands/auto.md`.
 - **Normative**: `docs/engineering/architecture.md` `# BUG-0023`; research
   **`R-0137`**. Contract tests: `python -m pytest tests/bug0023_opencode_cli_tui_dispatch_rpc_test.py -v`.
+- **Superseded for live operator outcome by BUG-0024** (below) — Axis A compose
+  remains; live residual diagnostics + peer-brand requirement are `# BUG-0024`.
+
+### OpenCode CLI TUI `/auto` live-dispatch residual (BUG-0024 / R-0140)
+
+- **Symptom**: After BUG-0023 Axis A files shipped, operator OpenCode **CLI TUI**
+  (`opencode`, not `--pure`) still **sees and invokes listed `/auto`**, then toasts
+  title `its-magic /auto` / body **`OPENCODE_AUTO_TUI_DISPATCH_UNSUPPORTED`**.
+  Lifecycle still does **not** start. Axis A files present is **not** success.
+- **Root cause (live residual)**: TUI happy path needs **peer-branded**
+  `@opencode/plugin/rpc` `Rpc.define`; local identity-`define` is load-safe for
+  orchestrator/`editor.add` only. Silent register-skip and catch-all→DISPATCH
+  hid missing-client / unbranded / no-baseUrl / swallowed-rpc stages.
+- **Ship-time controls** (A1 Hybrid residual):
+  - Keep `{ id, tui }` listing + `editor.add` execute.
+  - `rpc.ts` exports `ITS_MAGIC_AUTO_RPC_PEER_BRANDED`; TUI success requires brand true.
+  - Stage-distinct codes before umbrella DISPATCH (closed set):
+    | Code | When |
+    |------|------|
+    | `OPENCODE_AUTO_TUI_MISSING_CLIENT` | no usable `api.client` / `context.client` |
+    | `OPENCODE_AUTO_TUI_RPC_ABSENT` | client present but `typeof client.rpc !== "function"` |
+    | `OPENCODE_AUTO_TUI_DEFINED_UNBRANDED` | local identity-define only — not TUI happy path |
+    | `OPENCODE_AUTO_TUI_REGISTER_SKIPPED` | orchestrator `ctx.rpc.register` absent |
+    | `OPENCODE_AUTO_TUI_MAKE_UNREACHABLE` | make limb needed but no resolvable `baseUrl` / client unusable; **never** invent localhost |
+    | `OPENCODE_AUTO_TUI_DISPATCH_UNSUPPORTED` | **umbrella only** when all limbs exhausted |
+  - Do **not** reuse listing/load/desktop/markdown-collision tokens for dispatch miss.
+  - Do **not** restore `auto.md`. `--pure` is **out of scope**. Cursor IDE `/auto`
+    remains the working path until fix — **not** the done definition.
+- **Consumer upgrade recipe** (live-dispatch residual):
+  1. Upgrade its-magic to a release that includes **BUG-0024**.
+  2. `its-magic --mode upgrade --host opencode` or
+     `its-magic --mode upgrade --host both` (**overwrites** live dispatch path
+     `rpc.ts` / `tui.ts` / orchestrator register-skip honesty **and still prunes**
+     leftover `.opencode/commands/auto.md`).
+  3. Restart OpenCode CLI TUI (`opencode`, **not** `--pure`).
+  4. Listed `/auto` **starts** `runAutoLifecycle` — or honest stage/umbrella code
+     only when the host truly cannot dispatch.
+- **Do not prune** `.opencode/agents/auto.md` or `.cursor/commands/auto.md`.
+- **Normative**: `docs/engineering/architecture.md` `# BUG-0024`; research
+  **`R-0140`**. Contract tests:
+  `python -m pytest tests/bug0024_opencode_cli_tui_live_dispatch_residual_test.py -v`.
+  No live OpenCode CLI TUI probe in default CI (`UAT_PROBE_FORBIDDEN`).
 
 
 - **What shipped**: in-tree unpublished `standalone/` npm workspaces with owned
@@ -4488,7 +4530,7 @@ Cross-link: US-0126 owns the full reason-code table text and remediation guidanc
 
 Stub reason-code reference — US-0126 owns the full cross-host consolidated table; this section ships the one-liner stub only.
 
-- `intake_evidence_validate.py --repo . --enforce` — gates `handoffs/intake_evidence/*.json` writes; raw Python reason codes: `INTAKE_PERSISTENCE_BLOCKED`, `INTAKE_REQUIRED_TOPIC_MISSING`, ...
+- `intake_evidence_validate.py --file <bundle.json>` (or `--stdin` / `--self-test`) — gates `handoffs/intake_evidence/*.json` writes; raw Python reason codes: `INTAKE_PERSISTENCE_BLOCKED`, `INTAKE_REQUIRED_TOPIC_MISSING`, ...
 - `bug_issue_validate.py --repo . --check-acceptance` — gates `docs/product/backlog.md` bug rows + `docs/product/acceptance.md` bug rows; raw Python reason code: `BUG_ISSUE_VALIDATION_FAILED`, ...
 - `OPENCODE_DRIVER_INVOKE_FAILED` — subprocess invocation failure (missing Python, missing script, timeout) per DEC-0124 DQ6; distinct from validator non-zero exit.
 
@@ -4519,6 +4561,29 @@ Stub reason-code table — US-0126 owns the full cross-host consolidated table; 
 Stub reason-code table — US-0126 owns the full cross-host consolidated table; this section ships the one-liner stub only for listed `/auto` dispatch miss vs `Rpc.define`.
 
 - `OPENCODE_AUTO_TUI_DISPATCH_UNSUPPORTED` — listed CLI TUI `/auto` `run()` cannot dispatch to `runAutoLifecycle` because client/RPC truly cannot dispatch. DISPATCH-is-defect when the host has a usable client. Do **not** reuse `OPENCODE_AUTO_SLASH_LISTING_UNSUPPORTED`, `OPENCODE_AUTO_CLI_TUI_PLUGIN_LOAD_UNSUPPORTED`, `OPENCODE_AUTO_DESKTOP_COMMAND_INFO_LISTING_UNSUPPORTED`, or `OPENCODE_AUTO_MARKDOWN_COLLISION` for this miss. `--pure` is out of scope.
+
+### OpenCode CLI TUI `/auto` live-dispatch residual reason codes (BUG-0024)
+
+Stub reason-code table — US-0126 owns the full cross-host consolidated table; this section ships the one-liner stub only for live residual after Axis A.
+
+- `OPENCODE_AUTO_TUI_MISSING_CLIENT` — `run()`/`dispatch` with no usable `api.client` / `context.client`.
+- `OPENCODE_AUTO_TUI_RPC_ABSENT` — client present but `typeof client.rpc !== "function"` (before/alongside make limb).
+- `OPENCODE_AUTO_TUI_DEFINED_UNBRANDED` — `ITS_MAGIC_AUTO_RPC` via local identity-`define` only — not peer-branded; **not** TUI happy path.
+- `OPENCODE_AUTO_TUI_REGISTER_SKIPPED` — orchestrator `ctx.rpc.register` absent — observable; not silent success.
+- `OPENCODE_AUTO_TUI_MAKE_UNREACHABLE` — make limb needed but no resolvable `baseUrl` and/or `@opencode/client` unusable; **never** invent localhost.
+- `OPENCODE_AUTO_TUI_DISPATCH_UNSUPPORTED` — **umbrella only** when all limbs exhausted / host truly cannot dispatch. Do **not** treat as happy-path success. Do **not** reuse listing/load/desktop/markdown tokens. `--pure` out of scope.
+
+### OpenCode manual phase persist reason codes (BUG-0027)
+
+Stub reason-code table — US-0126 owns the full cross-host consolidated table; this section ships the one-liner stub only for direct slash-command persist.
+
+- `OPENCODE_MANUAL_PHASE_WRITE_DENIED` — required glob still denied; fail **before work**.
+- `OPENCODE_MANUAL_PHASE_PERSIST_DENIED` — persist helper non-ok after work; do not claim success.
+- `OPENCODE_MANUAL_PHASE_PERSIST_NOT_INVOKED` — persist never ran by STOP (missing `command.executed`).
+- `OPENCODE_PLACEHOLDER_PARENT_REJECTED` — `tui-auto` as `parentID` or `orchestratorRunId`; do not write evidence.
+- `OPENCODE_MANUAL_PHASE_CONTEXT_MISSING` — real session and/or story/sprint/run ids missing; do not invent proof tuples.
+
+Recipe: (1) upgrade to the BUG-0027 release; (2) `its-magic --mode upgrade --host opencode|both`; (3) restart OpenCode; (4) direct `/execute` (or `/intake`) persists isolation with real IDs — or honest locked code. `/auto` toast remains BUG-0024.
 
 ### OpenCode desktop Command.Info listing reason codes (BUG-0020)
 
@@ -4771,6 +4836,12 @@ markers; static/fixture only; no live OpenCode probe).
 
 **Release status (S0134 / US-0132)**: **`released`** (`2026-09-09T20:18:00Z`); backlog **DONE** (`/closure` `2026-09-09T20:33:00Z`; acceptance L160 [x]). Operator verify: **`handoffs/releases/S0134-release-notes.md`** **## Verify**; publish skipped while **`RELEASE_PUBLISH_MODE=confirm`**. Gate-1 evidence: `tests/report.md` @ `2026-09-09T20:17:05Z` Pass:856 / Fail:0.
 
+**Release status (S0150 / US-0142)**: **`released`** (`2026-09-14T05:30:00Z`); backlog **OPEN** (closure deferred). Operator verify: **`handoffs/releases/S0150-release-notes.md`** **## Verify**; publish skipped while **`RELEASE_PUBLISH_MODE=confirm`**. Gate-1 evidence: scoped `python -m pytest tests/us0142_contract_test.py -q` 12/12 + US-0071 metadata exit 0 (`harness_fail_zero_claimed=false`).
+
+**Release status (S0152 / US-0144)**: **`released`** (`2026-09-15T21:14:00Z`); backlog **OPEN** (closure deferred). Operator verify: **`handoffs/releases/S0152-release-notes.md`** **## Verify**; publish skipped while **`RELEASE_PUBLISH_MODE=confirm`** (no operator confirm this turn). Gate-1 evidence: scoped `cd standalone && node --experimental-strip-types --test tests/contract/us0144.contract.test.ts` 12/12 + US-0071 metadata exit 0 (`harness_fail_zero_claimed=false`).
+
+**Release status (S0151 / US-0143)**: **`released`** (`2026-09-14T08:50:00Z`); backlog **OPEN** (closure deferred). Operator verify: **`handoffs/releases/S0151-release-notes.md`** **## Verify**; publish skipped while **`RELEASE_PUBLISH_MODE=confirm`** (no operator confirm this turn). Gate-1 evidence: scoped `python -m pytest tests/us0143_contract_test.py -q` 12/12 + US-0071 metadata exit 0 (`harness_fail_zero_claimed=false`).
+
 ## Standalone install, update, and adoption (US-0147)
 
 Deliver the standalone operator product (`itsm`, US-0146 CLI/TUI) into consumer repos via **triple-installer parity** (`installer.py` / `installer.ps1` / `installer.sh`) and `bootstrap_standalone_runtime_installer_hook` (after host-config refresh, before runbook bootstrap). Workspace materializes under **`.its-magic/standalone/`** from `template/.its-magic/standalone/` (kit publish omits repo-root `standalone/`). **`FRAMEWORK_KIT_REPO=1`** kit-dev may pin in-tree `standalone/` during bootstrap.
@@ -4816,4 +4887,7 @@ Repair: `python installer.py --standalone-bootstrap --target <repo>` or `its-mag
 
 `python -m pytest tests/us0147_contract_test.py tests/bug0026_packaged_range_contract_test.py -v` (standalone lifecycle plus packed-tarball fallback; Windows + Linux).
 
+**Release status (S0154 / US-0147)**: **`released`** (`2026-09-17T21:30:00Z`); backlog **OPEN** (closure deferred). Operator verify: **`handoffs/releases/S0154-release-notes.md`** **## Verify**; publish skipped while **`RELEASE_PUBLISH_MODE=confirm`** (no operator confirm this turn). Gate-1 evidence: scoped `python -m pytest tests/us0147_contract_test.py -q` 10/10 + US-0071 metadata exit 0 (`harness_fail_zero_claimed=false`).
+
+**Release status (S0155 / US-0145)**: **`released`** (`2026-09-17T21:00:00Z`); backlog **OPEN** (closure deferred). Operator verify: **`handoffs/releases/S0155-release-notes.md`** **## Verify**; publish skipped while **`RELEASE_PUBLISH_MODE=confirm`** (no operator confirm this turn). Gate-1 evidence: scoped `cd standalone && node --experimental-strip-types --test tests/contract/us0145.contract.test.ts` 13/13 + US-0071 metadata exit 0 (`harness_fail_zero_claimed=false`).
 

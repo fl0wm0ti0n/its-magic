@@ -21,7 +21,7 @@ MAGIC_CONTEXT_STRICT=1
 LOOP_UNTIL_GREEN=1
 RUN_TESTS_ON_EDIT=1
 AUTO_IMPLEMENTATION_LOOP=1
-AUTO_LOOP_MAX_CYCLES=50
+AUTO_LOOP_MAX_CYCLES=40
 AUTO_PAUSE_REQUEST=0
 AUTO_PAUSE_POLICY=after_phase
 DONE=0
@@ -70,7 +70,7 @@ PERMISSION_MODE=auto
 AUTO_INSTALL_DEPS=1
 AUTO_RELEASE_NOTES=1
 AUTO_BACKLOG_DRAIN=1
-AUTO_BACKLOG_MAX_STORIES=10
+AUTO_BACKLOG_MAX_STORIES=3
 AUTO_BACKLOG_ON_BLOCK=skip
 AUTO_STORY_SELECTION=priority_then_backlog_order
 AUTO_EXECUTE_BULK=0
@@ -205,8 +205,8 @@ AUTO_DELIVERY_ROUTING=scratchpad_only
 WORK_KIND_ROUTING=0
 WORK_KIND_TIE_BREAK=highest_tier_wins
 
-EARLY_RESEARCH=1
-INTAKE_GUIDED_MODE=1
+EARLY_RESEARCH=0
+INTAKE_GUIDED_MODE=0
 INTAKE_SUBAGENT_FALLBACK=deny
 INTAKE_WORK_ITEM_KIND=story
 ID_NAMESPACE_BOOTSTRAP=0
@@ -381,7 +381,7 @@ CAVEMAN_FILE_SCOPE=
 # Copy one to .cursor/model-catalog.local.json and set MODEL_RESOLVE=local_catalog or role_catalog to activate.
 MODEL_TIER_DEFAULT=balanced
 MODEL_CATALOG=.cursor/model-catalog.local.example.role-based-balanced_cursor_only.json
-MODEL_RESOLVE=role_catalog
+MODEL_RESOLVE=alias_only
 MODEL_FALLBACK=inherit
 MODEL_PROVIDER_MODE=cursor
 #
@@ -416,7 +416,7 @@ MODEL_PROVIDER_MODE=cursor
 #   strict   = any unapproved drop/reorder/scope-add â†’ PLAN_FIDELITY_VIOLATION hard stop
 #   relaxed  = drop/reorder allowed (ledger entry); scope-add still hard stop
 #   extended = scope-add allowed (extension report); drop/reorder allowed
-AI_DECISION_LEDGER=1
+AI_DECISION_LEDGER=0
 AUTO_PLAN_FIDELITY=relaxed
 #
 # Goal-Based Convergence (US-0110 / DEC-0110)
@@ -428,7 +428,7 @@ AUTO_PLAN_FIDELITY=relaxed
 # - SOVEREIGN_GOAL_TOP_N: int >= 1 vision paragraph count for auto-derive (default 3)
 # - SOVEREIGN_GOAL_MAX_CHARS: int >= 64 truncation cap (default 512)
 # - SOVEREIGN_GOAL_TIMEOUT_MAX: int >= 0 iteration-count cap (0 = disabled; not wall-clock)
-SOVEREIGN_GOAL_MODE=goal_convergence
+SOVEREIGN_GOAL_MODE=phase_driven
 SOVEREIGN_GOAL=
 SOVEREIGN_GOAL_TOP_N=3
 SOVEREIGN_GOAL_MAX_CHARS=512
@@ -443,7 +443,7 @@ SOVEREIGN_GOAL_TIMEOUT_MAX=0
 # - CROSS_MODEL_REWORK_MAX: int >= 0 producer re-spawns per (run, phase) (default 2)
 # US-0130 critic precedence: MODEL_SOVEREIGN-CRITIC > roles.critic (when MODEL_RESOLVE=role_catalog) > opposition/dev.
 # Same-slug keeps CROSS_MODEL_DEGRADED_MODE (not a hard stop). One global critic for all producer phases.
-CROSS_MODEL_REVIEW=1
+CROSS_MODEL_REVIEW=0
 CROSS_MODEL_ANTISLOP_THRESHOLD=6
 CROSS_MODEL_REWORK_MAX=2
 #
@@ -456,7 +456,7 @@ CROSS_MODEL_REWORK_MAX=2
 # - SOVEREIGN_MEMORY_TOP_K: int >= 0 (default 3) â€” high-impact pool (patterns + mistakes only)
 # - SOVEREIGN_MEMORY_MAX_CHARS: int >= 0 (default 2048) â€” hard cap on assembled digest_text
 # - SOVEREIGN_MEMORY_JSONL_MAX_LINES: int >= 1 (default 500) â€” active JSONL line cap before archive rollover
-SOVEREIGN_MEMORY=1
+SOVEREIGN_MEMORY=0
 SOVEREIGN_MEMORY_TOP_N=5
 SOVEREIGN_MEMORY_TOP_K=3
 SOVEREIGN_MEMORY_MAX_CHARS=2048
@@ -476,7 +476,7 @@ SOVEREIGN_MEMORY_JSONL_MAX_LINES=500
 # - SOVEREIGN_NOTIFY_NTFY_BASE: URL (default empty â€” local-only ntfy base override)
 # - SOVEREIGN_NOTIFY_HOOK_URL: URL (default empty â€” local-only webhook)
 # - SOVEREIGN_NOTIFY_EMAIL_TO: email (default empty â€” email v1 deferred)
-AUTO_SOVEREIGN=1
+AUTO_SOVEREIGN=0
 AUTO_SOVEREIGN_DEFERRAL_MAX=50
 AUTO_SOVEREIGN_DRAIN_GENERATE_MAX=3
 AUTO_SOVEREIGN_DEFERRAL_POLICY=resolve_first
@@ -636,8 +636,8 @@ RELEASE_TRIGGER_FALLBACK_TO_LOCAL=0
 #
 # AUTONOMY_REPAIR_CAP_OVERRIDE: int >= 1 or empty (default=empty)
 # Operator override for per-run repair cap (empty = use matrix default cap=3 per DEC-0119 Â§5).
-AUTONOMY_PRESET=full
-AUTONOMY_STOP_POLICY=auto_repair_then_block
+AUTONOMY_PRESET=none
+AUTONOMY_STOP_POLICY=block
 INTAKE_AUTONOMY_MODE=0
 INTAKE_MINIMAL_PACK=0
 INTAKE_ASSUME_STACK_CONTEXT=0

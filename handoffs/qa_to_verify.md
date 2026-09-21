@@ -1,3 +1,151 @@
+# QA → Verify handoff — BUG-0027 / S0160 / qa PASS
+
+- sprint_id: S0160
+- story_id: (none — bug segment)
+- bug_id: BUG-0027 (Status OPEN — authority docs/product/backlog.md; do NOT mark DONE)
+- phase_id: qa
+- role: qa
+- orchestrator_run_id: auto-20260921-bug0027
+- parent_orchestrator_run_id: ir-20260921T190544Z-bug0027
+- delivery_mode: ultra_lean
+- macro_phase: build+verify
+- fresh_context_marker: qa-BUG0027-qa-20260921T215200Z-fresh
+- timestamp: 2026-09-21T21:52:00Z (UTC)
+- model_id: inherit (CROSS_MODEL_REVIEW=0)
+- qa_verdict: PASS
+- plan_verify_verdict: PASS (ultra_lean deferred SKIPPED placeholder treated PASS — sprints/S0160/plan-verify.json overwritten; AC surjective 6/6 + primary acceptance row)
+- blocking_findings: 0
+- non_blocking_findings: 1 (LIVE_OPENCODE_MANUAL_PHASE_RESIDUAL — informational)
+- acceptance_row_unchecked: true (docs/product/acceptance.md BUG-0027)
+- backlog_acs_ticked: false (verify-work/closure ownership per US-0045)
+- intake_json: NOT mutated
+- live_opencode_cli_tui_pass_claimed: false
+- toast_repair_claimed: false
+- harness_fail_zero_claimed: false
+
+## Evidence summary
+
+| Gate | Result |
+|---|---|
+| plan-verify.json AC surjective | PASS 6/6 (SKIPPED placeholder treated PASS / overwritten this spawn) |
+| pytest bug0027 | 10/10 PASS (0.87s) |
+| compose us0125+bug0016+bug0024+bug0015+us0124+us0122+bug0018+bug0019 | 66/66 PASS (11+7+8+7+12+8+6+7, 3.44s) |
+| parity --scope bug-0027 | INTAKE_TEMPLATE_PARITY_OK |
+| metadata | exit 0 |
+| bug_issue_validate --check-acceptance | BUG_VALIDATION_OK |
+| auto.md absent | held (active + template); 14 peer md |
+| IsolationEvidence + persistManualPhaseIsolation | IDs forwarded; tui-auto rejected; deny-last held |
+| UAT probe class | contract_tests_primary (no fake browser PASS) |
+| convergence_smoke | pass (contract_test_failed=0) |
+| six live-runtime classes | UAT_PROBE_FORBIDDEN |
+| harness_fail_zero_claimed | false |
+
+## Runtime proofs
+
+- qa runtime_proof_id: rp-auto-20260921-bug0027-qa-qa-20260921T215200Z-BUG-0027
+- qa proof_hash: 4C93C4878501C9E8BF6966FE926733DB2B4DA7F67363E630FD2EEDE52482B6D5
+- qa proof_ttl: 2026-09-21T22:52:00Z
+- consumed_execute_proof: rp-auto-20260921-bug0027-execute-dev-20260921T214400Z-BUG-0027 / 0A6D1399F910A2166D137FFCFA632C9D673FB381EA68E4D8A2056D7337590B33 — MATCH (not STALE)
+- plan_verify_proof: rp-auto-20260921-bug0027-plan-verify-qa-20260921T215200Z-BUG-0027 / 6E70023DA9FFB5E66AE08F2F0D9C6A42FB06470AFA5D7408155B8D4F8E73847A
+
+## Next
+
+- Orchestrator MUST spawn **/verify-work** in fresh **qa** (BUG-0006).
+- Do NOT mark BUG-0027 DONE. Do NOT tick acceptance. Do NOT restore auto.md. Do NOT reopen BUG-0024. Do NOT claim toast repair. Do NOT merge/drain BUG-0022/0026. Do NOT git push. Do NOT claim live OpenCode CLI TUI PASS.
+
+---
+# QA → Verify handoff — BUG-0024 / S0159 / qa PASS
+
+- sprint_id: S0159
+- story_id: (none — bug segment)
+- bug_id: BUG-0024 (Status OPEN — authority docs/product/backlog.md; do NOT mark DONE)
+- phase_id: qa
+- role: qa
+- orchestrator_run_id: auto-20260921-bug0024
+- parent_orchestrator_run_id: cursor-20260913-BUG0024-intake
+- delivery_mode: ultra_lean
+- macro_phase: build+verify
+- fresh_context_marker: qa-BUG0024-qa-20260921T200200Z-fresh
+- timestamp: 2026-09-21T20:02:00Z (UTC)
+- model_id: inherit (CROSS_MODEL_REVIEW=0)
+- qa_verdict: PASS
+- plan_verify_verdict: PASS (ultra_lean deferred SKIPPED placeholder treated PASS — sprints/S0159/plan-verify.json overwritten; AC surjective 8/8 + primary acceptance row)
+- blocking_findings: 0
+- non_blocking_findings: 1 (LIVE_OPENCODE_CLI_TUI_RESIDUAL — informational)
+- acceptance_row_unchecked: true (docs/product/acceptance.md BUG-0024)
+- backlog_acs_ticked: false (verify-work/closure ownership per US-0045)
+- intake_json: NOT mutated
+- live_opencode_cli_tui_pass_claimed: false
+- harness_fail_zero_claimed: false
+
+## Evidence summary
+
+| Gate | Result |
+|---|---|
+| plan-verify.json AC surjective | PASS 8/8 (SKIPPED placeholder treated PASS / overwritten this spawn) |
+| pytest bug0024 | 8/8 PASS (0.55s) |
+| compose bug0023+0021+0020+0019+0018 | 37/37 PASS (0.76s) |
+| parity --scope bug-0024 | INTAKE_TEMPLATE_PARITY_OK |
+| metadata | exit 0 |
+| auto.md absent | held (active + template); 14 peer md |
+| peer brand + stage limbs | ITS_MAGIC_AUTO_RPC_PEER_BRANDED; DISPATCH umbrella; emitAutoTuiRegisterSkipped |
+| UAT probe class | contract_tests_primary (no fake browser PASS) |
+| convergence_smoke | pass (contract_test_failed=0) |
+| six live-runtime classes | UAT_PROBE_FORBIDDEN |
+| harness_fail_zero_claimed | false |
+
+## Runtime proofs
+
+- qa runtime_proof_id: rp-auto-20260921-bug0024-qa-qa-20260921T200200Z-BUG-0024
+- qa proof_hash: 9582B1942C734F2FDAEE4582DC2F54B0CA80066C074170ABFDC3A4DC7D1E657E
+- qa proof_ttl: 2026-09-21T21:02:00Z
+- consumed_execute_proof: rp-auto-20260921-bug0024-execute-dev-20260921T195500Z-BUG-0024 / E653C7B8616F101FB996D413493BABE5A8D979ADE3548FB8F2A26A47265DA356 — MATCH (not STALE)
+- plan_verify_proof: rp-auto-20260921-bug0024-plan-verify-qa-20260921T200200Z-BUG-0024 / 2308F89EFBF95B0D32E94E77BD631CA1AFD29FFC6843599238A58170070A0155
+
+## Next
+
+- Orchestrator MUST spawn **/verify-work** in fresh **qa** (BUG-0006).
+- Do NOT mark BUG-0024 DONE. Do NOT tick acceptance. Do NOT restore auto.md. Do NOT reopen BUG-0023/0021. Do NOT merge/drain BUG-0022/0027. Do NOT git push. Do NOT claim live OpenCode CLI TUI PASS.
+
+---
+# QA → Verify handoff - US-0150 / S0158 / verify-work PASS
+
+- sprint_id: S0158
+- story_id: US-0150 (Status OPEN; do NOT mark DONE)
+- phase_id: verify-work
+- role: qa
+- timestamp: 2026-09-20T18:49:37+02:00
+- model_id: openai/gpt-5.6-terra
+- verify_work_verdict: PASS
+- blocking_count: 0
+- plan_verify: skipped (`ultra_lean_skipped`)
+- acceptance_row_unchecked: true
+- backlog_acs_ticked: false
+- artifacts: `sprints/S0158/uat.json`; `sprints/S0158/uat.md`; `sprints/S0158/verify-work-findings.md`
+
+## Independent gate results
+
+| Gate | Result |
+|---|---|
+| `npm run lint` (standalone) | PASS — 180 files |
+| `npm run typecheck` (standalone) | PASS |
+| `npm test` (standalone) | PASS - 173/173 |
+| Python packaging contracts | PASS - 36/36 |
+| `sync_standalone_template.py --check` | PASS — 161 files |
+
+## Verified remediation
+
+1. A no-factory RuntimeHost path creates an actual Pi session with deterministic local-model behavior and custom owned tools.
+2. RuntimeHost exposes the required lifetime API and typed, redacted `RUNTIME_KERNEL_ADMISSION_FAILED` and `RUNTIME_SERVICE_UNAVAILABLE` behavior.
+3. Production composition covers kernel/service failures and idempotent disposal; daemon shutdown closes transports before stores.
+
+## Next
+
+- Route to `/closure` when release prerequisites are satisfied.
+- Do not mark US-0150 DONE or modify acceptance/backlog status. No live browser, remote API, manual operator, npm publish, or git-push pass is claimed.
+
+---
+
 # QA → Verify handoff — BUG-0023 / S0148 / qa PASS
 
 - sprint_id: S0148

@@ -1,3 +1,101 @@
+## Execute PASS handoff — BUG-0027 / S0160 — next /qa (fresh qa; no critic)
+
+- sprint_id: S0160
+- story_id: (none — bug work item)
+- bug_id: BUG-0027 (Status OPEN — authority docs/product/backlog.md)
+- companion_dec: none (cite R-0151 / docs/engineering/architecture.md # BUG-0027 only)
+- research_anchor: R-0151 (DQ1–DQ10 LOCKED)
+- architecture_anchor: docs/engineering/architecture.md # BUG-0027
+- approach: A1 — Hybrid manual-phase persist (IsolationEvidence identity fields; persistManualPhaseIsolation not runAutoLifecycle; reject tui-auto; glob widen; validator packs; ten test_bug0027_*)
+- orchestrator_run_id: auto-20260921-bug0027
+- parent_orchestrator_run_id: ir-20260921T190544Z-bug0027
+- fresh_context_marker: dev-BUG0027-execute-20260921T214400Z-fresh
+- timestamp: 2026-09-21T21:44:00Z (UTC)
+- model_id: inherit (CROSS_MODEL_REVIEW=0)
+- execute_verdict: EXECUTE_PASS
+- decision_gate: false
+- sprint_status: EXECUTE_PASS (backlog OPEN per US-0045 — not mutated; AC-1..AC-6 unchecked)
+- task_count: 8 (T-anch + T-001..T-007; all DONE)
+- tests: bug0027 **10/10**; compose us0125/bug0016/bug0024/bug0015/us0124/us0122/bug0018/bug0019 PASS; parity bug-0027 OK
+- consumed_sprint_plan_proof: rp-auto-20260921-bug0027-sprint-plan-techlead-20260921T212600Z-BUG-0027 / 4513051C77052F22FA52F4C8EC431A9931B8104475E6EA8373C756739574F8C9 — MATCH; not STALE (ttl 2026-09-21T22:26:00Z)
+- runtime_proof_id: rp-auto-20260921-bug0027-execute-dev-20260921T214400Z-BUG-0027
+- proof_hash: 0A6D1399F910A2166D137FFCFA632C9D673FB381EA68E4D8A2056D7337590B33
+- proof_ttl: 2026-09-21T22:44:00Z
+- compose_guards: BUG-0024 DONE compose-only (do not reopen; do not claim toast repair); BUG-0022/0026 OPEN untouched; no BUG-0027 DONE; no AC tick; no auto.md restore; no JSON commands.auto; no live OpenCode probe; no git push
+- key_deliverables:
+  - .opencode/plugins/orchestrator.ts (+ template) — IsolationEvidence IDs; persistManualPhaseIsolation; RPC forward; reject tui-auto
+  - scripts/opencode_auto_bridge.py (+ template) — --story-id/--sprint-id/--orchestrator-run-id/--bug-id
+  - .opencode/agents/{dev,qa}.md (+ template) — glob widen; deny-last held
+  - .opencode/commands/{intake,execute,discovery,qa,verify-work}.md (+ template) — validator rewrite/drop
+  - tests/bug0027_opencode_manual_phase_persist_test.py + bug0027_persist_harness.mjs (+ template)
+  - BUG0027_PAIRS; installer.py/sh/ps1 overwrite paths; runbook validator stub + persist recipe
+  - sprints/S0160/progress.md; summary.md; tasks.md; t-anch-verification.md
+- next_scheduled_phase: /qa
+- next_scheduled_role: qa
+- stop_condition: STOP after execute. Orchestrator MUST spawn /qa in fresh qa (BUG-0006). CROSS_MODEL_REVIEW=0 — do NOT spawn sovereign-critic. Do NOT spawn /qa from this execute subagent. Do NOT mark BUG-0027 DONE. Do NOT tick acceptance. Do NOT restore auto.md. Do NOT reopen BUG-0024. Do NOT claim toast repair. Do NOT merge/drain BUG-0022/0026. Do NOT git push.
+
+---
+
+## Execute PASS handoff — BUG-0024 / S0159 — next /qa (fresh qa; no critic)
+
+- sprint_id: S0159
+- story_id: (none — bug work item)
+- bug_id: BUG-0024 (Status OPEN — authority docs/product/backlog.md)
+- companion_dec: none (cite R-0140 / docs/engineering/architecture.md # BUG-0024 only)
+- research_anchor: R-0140 (DQ1–DQ10 LOCKED)
+- architecture_anchor: docs/engineering/architecture.md # BUG-0024
+- approach: A1 — Hybrid residual live-dispatch (peer-branded Defined + stage-distinct OPENCODE_* + Axis A client/make; keep editor.add; never restore auto.md)
+- orchestrator_run_id: auto-20260921-bug0024
+- parent_orchestrator_run_id: cursor-20260913-BUG0024-intake
+- fresh_context_marker: dev-BUG0024-execute-20260921T195500Z-fresh
+- timestamp: 2026-09-21T19:55:00Z (UTC)
+- model_id: inherit (CROSS_MODEL_REVIEW=0)
+- execute_verdict: EXECUTE_PASS
+- decision_gate: false
+- sprint_status: EXECUTE_PASS (backlog OPEN per US-0045 — not mutated; AC-1..AC-8 unchecked)
+- task_count: 8 (T-anch + T-001..T-007; all DONE)
+- tests: bug0024 **8/8**; bug0023 **8/8**; compose bug0021/0020/0019/0018 **29/29**
+- consumed_sprint_plan_proof: rp-auto-20260921-bug0024-sprint-plan-techlead-20260921T194900Z-BUG-0024 / 4DBB29FE1B5F6E671A28156768AFCE8A1976F8494BBCC2B997C9DCA265AB163C — MATCH; not STALE (ttl 2026-09-21T20:49:00Z)
+- runtime_proof_id: rp-auto-20260921-bug0024-execute-dev-20260921T195500Z-BUG-0024
+- proof_hash: E653C7B8616F101FB996D413493BABE5A8D979ADE3548FB8F2A26A47265DA356
+- proof_ttl: 2026-09-21T20:55:00Z
+- compose_guards: BUG-0023/0021/0020/0019/0018 DONE compose-only; BUG-0022/0027 OPEN untouched; no BUG-0024 DONE; no AC tick; no auto.md restore; no JSON commands.auto; no live OpenCode probe; no git push
+- key_deliverables:
+  - .opencode/plugins/its-magic-auto/rpc.ts (+ template) — ITS_MAGIC_AUTO_RPC_PEER_BRANDED
+  - .opencode/plugins/its-magic-auto/tui.ts (+ template) — stage-distinct dispatch limb order
+  - .opencode/plugins/orchestrator.ts (+ template) — emitAutoTuiRegisterSkipped
+  - tests/bug0024_opencode_cli_tui_live_dispatch_residual_test.py + bug0024_dispatch_harness.mjs (+ template)
+  - installer.py/sh/ps1 BUG-0024 overwrite comments; BUG0024_PAIRS; runbook live-dispatch residual
+  - sprints/S0159/progress.md; summary.md; tasks.md; t-anch-verification.md
+- next_scheduled_phase: /qa
+- next_scheduled_role: qa
+- stop_condition: STOP after execute. Orchestrator MUST spawn /qa in fresh qa (BUG-0006). CROSS_MODEL_REVIEW=0 — do NOT spawn sovereign-critic. Do NOT spawn /qa from this execute subagent. Do NOT mark BUG-0024 DONE. Do NOT tick acceptance. Do NOT restore auto.md. Do NOT reopen BUG-0023/0021. Do NOT merge/drain BUG-0022/0027. Do NOT git push.
+
+---
+
+## Execute BLOCKED handoff - US-0150 / S0158
+
+- sprint_id: S0158
+- story_id: US-0150 (Status OPEN; do not mark DONE)
+- phase_id: execute
+- role: dev
+- timestamp: 2026-09-21T16:43:06+02:00
+- execute_verdict: EXECUTE_BLOCKED
+
+## Evidence
+
+- Standalone lint, typecheck, `npm test` (173/173), and the six US-0150 contract tests pass.
+- Validator bridge passes: `python scripts/bug_issue_validate.py --repo . --check-acceptance` -> `[BUG_VALIDATION_OK]`.
+- The configured root harness is green: `tests/report.md` records Pass 873 / Fail 0 at 2026-09-21T14:42:34Z.
+
+## Blockers
+
+- `PHASE_CONTEXT_ISOLATION_MISSING` and `RUNTIME_PROOF_MISSING`: no genuine S0158 execute/QA/verify-work proof chain is available for release.
+
+Do not schedule QA, release, or closure from this blocked execute handoff. Generate the genuine orchestrator-issued phase evidence first; do not synthesize proof identifiers.
+
+---
+
 ## Execute PASS handoff — BUG-0025 / S0157 — next `/qa` (fresh qa; no critic)
 
 - sprint_id: S0157

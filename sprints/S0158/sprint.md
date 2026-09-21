@@ -8,8 +8,8 @@
 | story_title | Production standalone runtime composition |
 | sprint_id | **S0158** |
 | delivery_mode | ultra_lean |
-| current_phase | qa |
-| next_phase | `/verify-work` (fresh verifier) |
+| current_phase | release blocked |
+| next_phase | `/execute` (generate missing release evidence) |
 | plan-verify | skipped (`ultra_lean_skipped`) |
 | approach | A1 (A*) — project-scoped `@its-magic/runtime-host` |
 | research_anchor | `R-0150` |
@@ -54,4 +54,4 @@ Execution order: T-anch → T-001 → T-002 → T-003 → T-004 → T-005 → T-
 
 ## Next Phase
 
-`/execute` must run in a fresh dev context. The sprint plan does not mark US-0150 DONE or tick acceptance criteria.
+Fresh `/verify-work` passed, but release is blocked by stale/failing check-in evidence and missing strict runtime-proof prerequisites. Resolve those in `/execute`, then rerun `/release` before retrying `/closure`; this sprint does not mark US-0150 DONE or tick acceptance criteria.

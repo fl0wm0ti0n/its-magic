@@ -17,6 +17,7 @@ import { createToolBroker, type ToolBroker } from "@its-magic/tool-broker";
 
 export interface RuntimeHost {
 	projectRoot: string;
+	lifetime: "direct-cli" | "daemon";
 	config: RuntimeConfig;
 	bridge: KernelBridge;
 	kernel: AgentKernel;
@@ -26,14 +27,14 @@ export interface RuntimeHost {
 	store: RunsStore;
 	router: CommandRouter;
 	readonly disposed: boolean;
-	dispose(): void;
+	dispose(): Promise<void>;
 }
 
 export type RuntimeHostErrorCode =
 	| "RUNTIME_CONFIG_UNAVAILABLE"
 	| "RUNTIME_BRIDGE_UNAVAILABLE"
-	| "RUNTIME_KERNEL_UNAVAILABLE"
-	| "RUNTIME_STORE_UNAVAILABLE";
+	| "RUNTIME_KERNEL_ADMISSION_FAILED"
+	| "RUNTIME_SERVICE_UNAVAILABLE";
 
 export class RuntimeHostError extends Error {
 	readonly code: RuntimeHostErrorCode;
@@ -53,18 +54,24 @@ export interface RuntimeHostFactories {
 	store?: (path: string) => RunsStore;
 }
 
-export interface CreateRuntimeHostOptions {
+export interface RuntimeHostOptions {
 	projectRoot: string;
+	lifetime: "direct-cli" | "daemon";
 	env?: NodeJS.ProcessEnv;
 	factories?: RuntimeHostFactories;
 }
 
-export async function createRuntimeHost(options: CreateRuntimeHostOptions): Promise<RuntimeHost> {
-	const resolved = resolveRuntimeConfig(options.projectRoot, {
-		configRoot: options.projectRoot,
-		env: options.env,
-		materializeMissingShared: false,
-	});
+export async function createRuntimeHost(options: RuntimeHostOptions): Promise<RuntimeHost> {
+	let resolved: ReturnType<typeof resolveRuntimeConfig>;
+	try {
+		resolved = resolveRuntimeConfig(options.projectRoot, {
+			configRoot: options.projectRoot,
+			env: options.env,
+			materializeMissingShared: false,
+		});
+	} catch {
+		throw new RuntimeHostError("RUNTIME_CONFIG_UNAVAILABLE");
+	}
 	if (!resolved.ok) {
 		throw new RuntimeHostError("RUNTIME_CONFIG_UNAVAILABLE");
 	}
@@ -88,57 +95,71 @@ export async function createRuntimeHost(options: CreateRuntimeHostOptions): Prom
 	try {
 		kernel = options.factories?.kernel?.() ?? createAgentKernel();
 	} catch {
-		throw new RuntimeHostError("RUNTIME_KERNEL_UNAVAILABLE");
+		throw new RuntimeHostError("RUNTIME_KERNEL_ADMISSION_FAILED");
 	}
-	const supervisor = createSessionSupervisor({ kernel });
-	const intel =
-		options.factories?.intel?.(options.projectRoot) ??
-		createCodeIntelligenceProvider({ repoRoot: options.projectRoot, adapter: "aft" });
-	const toolBroker = createToolBroker(intel);
-	const storePath = join(options.projectRoot, ".its-magic", "runtime", "ops.sqlite");
-	let store: RunsStore;
+	let store: RunsStore | undefined;
+	let supervisor: SessionSupervisor;
+	let intel: CodeIntelligenceProvider;
+	let toolBroker: ToolBroker;
+	let router: CommandRouter;
 	try {
+		supervisor = createSessionSupervisor({ kernel });
+		intel =
+			options.factories?.intel?.(options.projectRoot) ??
+			createCodeIntelligenceProvider({ repoRoot: options.projectRoot, adapter: "aft" });
+		toolBroker = createToolBroker(intel);
+		const storePath = join(options.projectRoot, ".its-magic", "runtime", "ops.sqlite");
 		store = options.factories?.store?.(storePath) ?? createRunsStore(storePath);
+		router = createCommandRouter({
+			supervisor,
+			config: resolved.config,
+			kernelBridge: bridge,
+			kernelRoot,
+			env: options.env,
+			toolProvision: ({ role_id, phase_id, orchestrator_run_id }) => {
+				const context = {
+					role_id,
+					phase_id,
+					worktree_root: options.projectRoot,
+					cwd: options.projectRoot,
+					run_id: orchestrator_run_id,
+					// Pi assigns the session ID after owned tools have been provisioned.
+					kernel_session_id: `pending:${orchestrator_run_id}`,
+					permission_mode: resolved.config.security.permission_mode,
+					security_class: resolved.config.security.security_class,
+					isolation_profile: resolved.config.security.isolation_profile,
+				};
+				return {
+					tools: toolBroker.toolNamesForRole(role_id),
+					ownedTools: toolBroker.ownedToolsFor(context),
+					policy_hash: toolBroker.policyHash(role_id),
+				};
+			},
+		});
 	} catch {
-		throw new RuntimeHostError("RUNTIME_STORE_UNAVAILABLE");
+		store?.close();
+		throw new RuntimeHostError("RUNTIME_SERVICE_UNAVAILABLE");
 	}
-	const router = createCommandRouter({
-		supervisor,
-		config: resolved.config,
-		kernelBridge: bridge,
-		kernelRoot,
-		env: options.env,
-		toolProvision: ({ role_id, phase_id, orchestrator_run_id }) => {
-			const context = {
-				role_id,
-				phase_id,
-				worktree_root: options.projectRoot,
-				cwd: options.projectRoot,
-				run_id: orchestrator_run_id,
-				// Pi assigns the session ID after owned tools have been provisioned.
-				kernel_session_id: `pending:${orchestrator_run_id}`,
-				permission_mode: resolved.config.security.permission_mode,
-				security_class: resolved.config.security.security_class,
-				isolation_profile: resolved.config.security.isolation_profile,
-			};
-			return {
-				tools: toolBroker.toolNamesForRole(role_id),
-				ownedTools: toolBroker.ownedToolsFor(context),
-				policy_hash: toolBroker.policyHash(role_id),
-			};
-		},
-	});
+	if (!store) {
+		throw new RuntimeHostError("RUNTIME_SERVICE_UNAVAILABLE");
+	}
 
 	let disposed = false;
+	let disposePromise: Promise<void> | undefined;
 	const dispose = () => {
-		if (disposed) {
-			return;
+		if (disposePromise) {
+			return disposePromise;
 		}
 		disposed = true;
-		store.close();
+		disposePromise = (async () => {
+			await supervisor.discardOrphans();
+			store.close();
+		})();
+		return disposePromise;
 	};
 	return {
 		projectRoot: options.projectRoot,
+		lifetime: options.lifetime,
 		config: resolved.config,
 		bridge,
 		kernel,

@@ -2522,6 +2522,45 @@ AI coding assistants in Cursor lose context across sessions, produce fragmented 
 - **Outcome**: Listed OpenCode CLI TUI `/auto` starts `runAutoLifecycle` (lifecycle advances). Not fail-closed DISPATCH toast as the happy path. Axis A files present is not sufficient. Not LLM “Auto mode enabled”. Not OpenCode `--auto`. Not Cursor-only as the product outcome (Cursor IDE `/auto` is the working path until fix). Do not restore STOP-only `auto.md`. Do not reopen BUG-0023 / BUG-0021 ACs. Do not merge BUG-0022.
 - **Decomposition**: **single_bug** (accepted via `/intake bug`). Recommended alternative: new bug live-falsifying BUG-0023 Axis A live limb; reject reopen-0023, reopen-0021, merge-0022, restore-`auto.md`, files-present-as-success, and Cursor-only-as-done.
 
+## Discovery Notes — BUG-0024
+
+- **Operator value proposition**: On OpenCode CLI TUI (`opencode`, not `--pure`), listed `/auto` **starts** its-magic `runAutoLifecycle` so the phase→role chain begins — or fail-closes with an honest `OPENCODE_*` **only** when the host truly cannot dispatch. `OPENCODE_AUTO_TUI_DISPATCH_UNSUPPORTED` must not be the happy path after Axis A files shipped.
+- **Defect framing (discovery-locked)**:
+  - BUG-0023 Axis A files **are present** (`rpc.ts` Rpc.define, `tui.ts` `{ id, tui }` + `dispatchRunAutoLifecycle`, orchestrator `ctx.rpc.register` + `editor.add`, `tui.json` listing, `auto.md` absent) — yet live listed `/auto` still toasts DISPATCH and never reaches `runAutoLifecycle`.
+  - Listing limb (BUG-0021 DONE) still true (toast title `its-magic /auto` proves listed invoke). Live dispatch limb is **falsified**.
+  - Working path until fix: Cursor IDE `/auto` — **not** the product done definition.
+- **Product-facing constraints (discovery-locked D1–D10)**:
+
+| ID | Lock |
+|----|------|
+| **D1** | Live listed `/auto` must start lifecycle (not DISPATCH toast as happy path). |
+| **D2** | Root miss = live dispatch after Axis A files — not listing; not “files present” alone. |
+| **D3** | Keep `{ id, tui }` listing + `editor.add` execute; do **not** restore STOP-only `.opencode/commands/auto.md`. |
+| **D4** | Do **not** JSON-template `/auto` (`commands.auto` + `template`). |
+| **D5** | Do **not** reopen BUG-0023 ACs / S0148 / DONE; do **not** reopen BUG-0021. |
+| **D6** | Do **not** merge/drain BUG-0022 OPEN; distinct from BUG-0027 (manual phase persistence). |
+| **D7** | Cursor IDE `/auto` = working path until fix — **not** done; not OpenCode `--auto`; not LLM Auto mode. |
+| **D8** | Additive `test_bug0024_*` must catch this live miss (not mock-only if that closed BUG-0023); CI `UAT_PROBE_FORBIDDEN` default unless architecture invents better non-live contract. |
+| **D9** | Consumer upgrade overwrites live dispatch path + still prunes leftover `auto.md`; active↔template parity. |
+| **D10** | OUT: mutate US-0133..US-0150 as new scope; companion DEC (none expected — `# BUG-0024` only). Research stub **R-0140** (do not wipe). Expected sprint **S0159**. |
+
+- **Discovery locks D1–D10**: see `docs/product/backlog.md` **`### BUG-0024`** `discovery_notes` and `handoffs/po_to_tl.md` discovery handoff.
+- **Design / UX refs**: `.opencode/plugins/its-magic-auto/{rpc.ts,tui.ts}`; `.opencode/plugins/orchestrator.ts` `ctx.rpc.register` + `editor.add`; `.opencode/tui.json`; compose R-0137 / R-0136 / R-0134 / R-0124; OpenCode v2 RPC docs; do not restore `auto.md`.
+- **Research asks**: DQ1–DQ10 for **`/research`** → lock **R-0140** in place (intake stub already present; do not wipe/renumber; do not author a new R-heading unless live inventory forces). Do not author `# BUG-0024` or a companion DEC this phase. Next: `/research` (tech-lead). CROSS_MODEL_REVIEW=0 — no sovereign-critic.
+
+## Discovery Notes — BUG-0027
+
+- **Operator value proposition**: When OpenCode `/auto` is unavailable, a direct phase command (`/intake`, `/execute`, `/qa`, `/verify-work`) is a **truthful fallback**: required artifacts and isolation linked to the current story/bug and sprint persist, **or** the command fails closed with a precise operator-visible reason before claiming a completed phase.
+- **Product-facing constraints (discovery-locked)**:
+  - Manual phases carry real parent session and run context (`storyId`, `sprintId`, `orchestratorRunId`). Placeholder identifiers such as `tui-auto` cannot satisfy release evidence.
+  - Success must not be reported when persistence was denied. Do not invent strict-proof tuples when the orchestrator is unavailable.
+  - `/auto` CLI/TUI dispatch remains **BUG-0024 DONE** — this bug does **not** repair that toast and must not reopen BUG-0024 ACs / S0159.
+  - Intake-evidence validation uses the supported `--file` / `--stdin` / `--self-test` interface; `--repo . --enforce` is invalid and must leave active and template command packs.
+  - Distinct from **BUG-0022 OPEN** and **BUG-0026 OPEN** — do not merge or drain. **US-0150** compose/link only — do not mutate as this bug's implementation.
+- **Discovery locks D1–D10**: see `docs/product/backlog.md` **`### BUG-0027`** `discovery_notes` and `handoffs/po_to_tl.md` discovery handoff.
+- **Design / UX refs**: `.opencode/plugins/orchestrator.ts` `runAutoLifecycleRpc` / `persistIsolationViaPython` / `command.executed`; `.opencode/commands/{intake,execute,discovery}.md` + template mirrors; `.opencode/agents/{po,dev,qa}.md` permission matrix (compose BUG-0016); `scripts/intake_evidence_validate.py`.
+- **Research asks**: DQ1–DQ10 for **`/research`** → seed **R-0151** (do not author this phase; do not wipe/reuse **R-0150**). Do not author `# BUG-0027` or a companion DEC this phase. Next: `/research` (tech-lead). CROSS_MODEL_REVIEW=0 — no sovereign-critic.
+
 ## Discovery Notes — US-0143
 
 - **Operator value proposition**: One `/auto` (and `/quick`) command completes eligible work through deterministic delivery modes, work-kind routing, phase selection, autonomy presets, and optional backlog drain — without allowing models to bypass hard stops or skip mandatory tests/acceptance.

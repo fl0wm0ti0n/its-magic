@@ -3,10 +3,34 @@
 from __future__ import annotations
 
 import json
+import re
 import subprocess
 import sys
 import unittest
 from pathlib import Path
+
+
+def architecture_section(root: Path, heading: str) -> str:
+    """Read an active architecture section, following its explicit archive pointer."""
+    architecture = (root / "docs" / "engineering" / "architecture.md").read_text(encoding="utf-8")
+    pattern = re.compile(rf"^{re.escape(heading)}(?=[:\s]|$)", re.MULTILINE)
+    match = pattern.search(architecture)
+    if not match:
+        return ""
+    start = match.start()
+    end = architecture.find("\n# ", start + len(heading))
+    section = architecture[start:] if end == -1 else architecture[start:end]
+    pointer = re.search(r"Archived body in pack_ref:\s*(\S+)", section)
+    if not pointer:
+        return section
+    archive = root / pointer.group(1)
+    archived = archive.read_text(encoding="utf-8")
+    archived_match = pattern.search(archived)
+    if not archived_match:
+        return section
+    archived_start = archived_match.start()
+    archived_end = archived.find("\n# ", archived_start + len(heading))
+    return archived[archived_start:] if archived_end == -1 else archived[archived_start:archived_end]
 
 
 class AutoCommandContractTest(unittest.TestCase):
@@ -639,7 +663,8 @@ class AutoCommandContractTest(unittest.TestCase):
                 if item.name not in self._CAVEMAN_DEFAULT_OFF_BODY_SHA256:
                     continue
                 segment = ast.get_source_segment(src, item)
-                self.assertIsNotNone(segment, msg=f"missing source for {item.name}")
+                if segment is None:
+                    self.fail(f"missing source for {item.name}")
                 digest = hashlib.sha256(segment.encode()).hexdigest().upper()
                 with self.subTest(test=item.name):
                     self.assertEqual(
@@ -662,10 +687,10 @@ class AutoCommandContractTest(unittest.TestCase):
     def test_caveman_architecture_section_bottom_appended_and_linked(self) -> None:
         """T-007 / AC-7: `# US-0089` section exists in architecture.md, is bottom-appended, and is linked.
 
-        Assertion-only (no rewrite): the section heading must be present, must
-        appear **after every other `# US-xxxx:` or `## US-xxxx`** heading in the
-        file (bottom-appended rule per DEC-0072), and must be referenced from
-        at least one peer artifact (the decisions index or the backlog entry).
+        Assertion-only (no rewrite): the section heading must be present and
+        immediately precede the US-0090 tail (bottom-append rule per DEC-0072),
+        and must be referenced from at least one peer artifact (the decisions
+        index or the backlog entry).
         """
         root = Path(__file__).resolve().parents[1]
         arch = (root / "docs" / "engineering" / "architecture.md").read_text(
@@ -692,25 +717,18 @@ class AutoCommandContractTest(unittest.TestCase):
             msg=f"expected exactly one `# US-0089` heading; got {len(us0089)}",
         )
         us0089_idx = us0089[0][0]
-        # DEC-0072 bottom-appended semantics: no US-xxxx section may appear
-        # after the tail. US-0089 was the tail at the time of DEC-0072;
-        # US-0090 (DEC-0073) is the subsequent tail. Accept US-0090 as the
-        # only permissible heading after US-0089.
-        later = [
-            head
-            for idx, head in section_indices
-            if idx > us0089_idx and not head.startswith("# US-0089")
-        ]
-        allowed_after_us0089 = {"# US-0090"}
-        forbidden_later = [
-            h for h in later if not any(h.startswith(a) for a in allowed_after_us0089)
-        ]
-        self.assertEqual(
-            forbidden_later,
-            [],
+        # US-0089 was the historical tail; US-0090 is its only permitted
+        # direct successor. Newer architecture sections may follow US-0090.
+        next_heading = next(
+            (head for idx, head in section_indices if idx > us0089_idx), None
+        )
+        if next_heading is None:
+            self.fail("`# US-0089` must be followed by `# US-0090`")
+        self.assertTrue(
+            next_heading.startswith("# US-0090"),
             msg=(
-                "`# US-0089` must be bottom-appended (only `# US-0090` may follow "
-                f"per DEC-0073 §11); unexpected later headings: {forbidden_later!r}"
+                "`# US-0090` must directly follow `# US-0089` per DEC-0073 §11; "
+                f"found {next_heading!r}"
             ),
         )
         backlog = (root / "docs" / "product" / "backlog.md").read_text(
@@ -1214,9 +1232,8 @@ class AutoCommandContractTest(unittest.TestCase):
         dec_text = dec_path.read_text(encoding="utf-8")
         self.assertIn("Accepted", dec_text, "DEC-0075 must be Accepted")
 
-        arch = (root / "docs" / "engineering" / "architecture.md").read_text(encoding="utf-8")
-        self.assertIn("# BUG-0009", arch)
-        bug_section = arch[arch.find("# BUG-0009") :]
+        bug_section = architecture_section(root, "# BUG-0009")
+        self.assertTrue(bug_section, "architecture must have # BUG-0009")
         required = (
             "DEC-0075",
             "US-0008",
@@ -1335,9 +1352,8 @@ class AutoCommandContractTest(unittest.TestCase):
         dec_text = dec_path.read_text(encoding="utf-8")
         self.assertIn("Accepted", dec_text, "DEC-0076 must be Accepted")
 
-        arch = (root / "docs" / "engineering" / "architecture.md").read_text(encoding="utf-8")
-        self.assertIn("# BUG-0010", arch)
-        bug_section = arch[arch.find("# BUG-0010") :]
+        bug_section = architecture_section(root, "# BUG-0010")
+        self.assertTrue(bug_section, "architecture must have # BUG-0010")
         required = (
             "DEC-0076",
             "DEC-0054",
@@ -1812,11 +1828,8 @@ class AutoCommandContractTest(unittest.TestCase):
         dec_text = dec_path.read_text(encoding="utf-8")
         self.assertIn("Accepted", dec_text)
         self.assertIn("DEC-0080", dec_text)
-        arch = (root / "docs" / "engineering" / "architecture.md").read_text(
-            encoding="utf-8"
-        )
-        self.assertIn("# BUG-0012", arch)
-        bug_section = arch[arch.find("# BUG-0012") :]
+        bug_section = architecture_section(root, "# BUG-0012")
+        self.assertTrue(bug_section, "architecture must have # BUG-0012")
         for token in (
             "DEC-0081",
             "DEC-0080",
@@ -1994,11 +2007,8 @@ class AutoCommandContractTest(unittest.TestCase):
         self.assertTrue(dec_path.is_file())
         dec_text = dec_path.read_text(encoding="utf-8")
         self.assertIn("Accepted", dec_text)
-        arch = (root / "docs" / "engineering" / "architecture.md").read_text(
-            encoding="utf-8"
-        )
-        self.assertIn("# US-0093", arch)
-        section = arch[arch.find("# US-0093") :]
+        section = architecture_section(root, "# US-0093")
+        self.assertTrue(section, "architecture must have # US-0093")
         for token in (
             "DEC-0079",
             "US-0092",
@@ -2019,11 +2029,8 @@ class AutoCommandContractTest(unittest.TestCase):
         dec_text = dec_path.read_text(encoding="utf-8")
         self.assertIn("Accepted", dec_text, "DEC-0077 must be Accepted")
 
-        arch = (root / "docs" / "engineering" / "architecture.md").read_text(
-            encoding="utf-8"
-        )
-        self.assertIn("# BUG-0011", arch)
-        bug_section = arch[arch.find("# BUG-0011") :]
+        bug_section = architecture_section(root, "# BUG-0011")
+        self.assertTrue(bug_section, "architecture must have # BUG-0011")
         required_bug = (
             "DEC-0077",
             "DEC-0072",
@@ -2037,9 +2044,8 @@ class AutoCommandContractTest(unittest.TestCase):
             with self.subTest(token=token, section="BUG-0011"):
                 self.assertIn(token, bug_section, f"# BUG-0011 must reference {token!r}")
 
-        us0089_idx = arch.find("# US-0089")
-        self.assertNotEqual(us0089_idx, -1, "architecture.md must have # US-0089")
-        us0089_section = arch[us0089_idx : arch.find("\n# ", us0089_idx + 1)]
+        us0089_section = architecture_section(root, "# US-0089")
+        self.assertTrue(us0089_section, "architecture must have # US-0089")
         for token in ("BUG-0011", "DEC-0077"):
             with self.subTest(token=token, section="US-0089"):
                 self.assertIn(
@@ -2549,7 +2555,7 @@ class Us0100ReleaseChangelogContractTests(unittest.TestCase):
         return Path(__file__).resolve().parents[1]
 
     def test_us0100_changelog_artifact_paths_literals(self) -> None:
-        """AC-1, AC-2: canonical artifact path literals in DEC + architecture."""
+        """AC-1, AC-2: canonical artifact path literals in DEC + archived architecture."""
         root = self._root()
         for rel in (
             "CHANGELOG.md",
@@ -2559,9 +2565,8 @@ class Us0100ReleaseChangelogContractTests(unittest.TestCase):
             with self.subTest(path=rel):
                 self.assertTrue((root / rel).is_file(), rel)
         dec = (root / "decisions" / "DEC-0085.md").read_text(encoding="utf-8")
-        arch = (root / "docs" / "engineering" / "architecture.md").read_text(
-            encoding="utf-8"
-        )
+        arch = architecture_section(root, "# US-0091")
+        self.assertTrue(arch, "architecture must retain a resolvable # US-0091 section")
         for blob, label in ((dec, "DEC-0085"), (arch, "architecture")):
             with self.subTest(doc=label):
                 self.assertIn("{semver}-release-notes.md", blob)

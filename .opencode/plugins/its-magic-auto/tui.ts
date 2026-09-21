@@ -16,13 +16,19 @@
 // dispatchRunAutoLifecycle (not top-level). Happy path is api.client.rpc(Defined)
 // → runAutoLifecycle(payload), else OpenCode.make({ baseUrl }).rpc(Defined).
 // Invented POST /rpc/… { input } is not the happy path. Do not silent-default
-// http://localhost:4096. DISPATCH toast only when client/RPC truly absent.
-// Cite R-0137 / architecture # BUG-0023.
+// http://localhost:4096. Cite R-0137 / architecture # BUG-0023.
+//
+// BUG-0024 — live residual: TUI happy path requires peer-branded Defined;
+// stage-distinct OPENCODE_* before umbrella DISPATCH. Cite R-0140 / # BUG-0024.
 // Compose-only vs test_bug0021: "api.client.rpc" in src is not dispatch proof.
 
 const LISTING_UNSUPPORTED = "OPENCODE_AUTO_SLASH_LISTING_UNSUPPORTED";
 const DISPATCH_UNSUPPORTED = "OPENCODE_AUTO_TUI_DISPATCH_UNSUPPORTED";
 const LOAD_UNSUPPORTED = "OPENCODE_AUTO_CLI_TUI_PLUGIN_LOAD_UNSUPPORTED";
+const MISSING_CLIENT = "OPENCODE_AUTO_TUI_MISSING_CLIENT";
+const RPC_ABSENT = "OPENCODE_AUTO_TUI_RPC_ABSENT";
+const DEFINED_UNBRANDED = "OPENCODE_AUTO_TUI_DEFINED_UNBRANDED";
+const MAKE_UNREACHABLE = "OPENCODE_AUTO_TUI_MAKE_UNREACHABLE";
 const AUTO_DESCRIPTION =
   "its-magic auto: orchestrator dispatch entry (spawn-only).";
 
@@ -63,13 +69,24 @@ function resolveClientBaseUrl(client: any): string | undefined {
   return undefined;
 }
 
+function failStage(
+  context: any,
+  reasonCode: string,
+): { ok: false; reasonCode: string } {
+  toast(context, reasonCode);
+  return { ok: false, reasonCode };
+}
+
 /**
  * Invoke server `runAutoLifecycle` without Command.Info template expansion.
- * Prefer api.client.rpc(ITS_MAGIC_AUTO_RPC) → runAutoLifecycle(payload).
- * Else OpenCode.make({ baseUrl }).rpc(Defined). Never invented POST { input }.
- * Never the SessionPrompt command API or session-command template expansion.
- *
- * LOAD_UNSUPPORTED cannot toast from this module if tui() never runs (#36505).
+ * Limb order (BUG-0024 / R-0140):
+ * 1. Resolve client (api.client / context.client) → MISSING_CLIENT
+ * 2. Dynamic-import Defined; peer-unbranded → DEFINED_UNBRANDED
+ * 3. client.rpc(Defined).runAutoLifecycle(payload) when .rpc present
+ * 4. Else emit RPC_ABSENT (observable) before make limb
+ * 5. OpenCode.make({ baseUrl }) only when baseUrl resolvable → else MAKE_UNREACHABLE
+ * 6. DISPATCH umbrella only when limbs exhausted
+ * Never SessionPrompt / Command.Info template / invented POST / silent localhost.
  */
 export async function dispatchRunAutoLifecycle(
   context: any,
@@ -77,8 +94,7 @@ export async function dispatchRunAutoLifecycle(
 ): Promise<{ ok: boolean; reasonCode?: string }> {
   const client = context?.client ?? context?.api?.client;
   if (!client) {
-    toast(context, DISPATCH_UNSUPPORTED);
-    return { ok: false, reasonCode: DISPATCH_UNSUPPORTED };
+    return failStage(context, MISSING_CLIENT);
   }
 
   const payload = {
@@ -90,16 +106,21 @@ export async function dispatchRunAutoLifecycle(
   };
 
   let Defined: unknown;
+  let peerBranded = false;
   try {
     const rpcMod = await import("./rpc.ts");
     Defined = rpcMod.ITS_MAGIC_AUTO_RPC;
+    peerBranded = rpcMod.ITS_MAGIC_AUTO_RPC_PEER_BRANDED === true;
   } catch {
-    toast(context, DISPATCH_UNSUPPORTED);
-    return { ok: false, reasonCode: DISPATCH_UNSUPPORTED };
+    return failStage(context, DISPATCH_UNSUPPORTED);
   }
   if (!Defined) {
-    toast(context, DISPATCH_UNSUPPORTED);
-    return { ok: false, reasonCode: DISPATCH_UNSUPPORTED };
+    return failStage(context, DISPATCH_UNSUPPORTED);
+  }
+  // TUI success requires peer `@opencode/plugin/rpc` brand (local define is
+  // load-safe for orchestrator only — not TUI happy path).
+  if (!peerBranded) {
+    return failStage(context, DEFINED_UNBRANDED);
   }
 
   // Prefer api.client.rpc(Defined) → runAutoLifecycle(payload) — not { input }.
@@ -113,40 +134,46 @@ export async function dispatchRunAutoLifecycle(
         else if (result?.ok) toast(context, "runAutoLifecycle started", "success");
         return result ?? { ok: true };
       }
+      // rpc present but no runAutoLifecycle — fall through to make (not umbrella alone)
     } catch {
-      // fall through to OpenCode.make HTTP client.rpc(Defined)
+      // Swallowed rpc error: fall through to make limb (stage before umbrella).
     }
+  } else {
+    // Client present but .rpc absent — observable stage before make.
+    toast(context, RPC_ABSENT);
   }
 
   const baseUrl = resolveClientBaseUrl(client);
-  if (baseUrl) {
-    try {
-      // @ts-ignore — optional peer; HTTP client LOCKED @opencode/client
-      const clientMod: { OpenCode?: { make: (opts: { baseUrl: string }) => any } } =
-        await import("@opencode/client");
-      const OpenCode = clientMod?.OpenCode;
-      if (OpenCode && typeof OpenCode.make === "function") {
-        const httpClient = OpenCode.make({ baseUrl });
-        if (httpClient && typeof httpClient.rpc === "function") {
-          const rpc = httpClient.rpc(Defined);
-          if (rpc && typeof rpc.runAutoLifecycle === "function") {
-            const result = await rpc.runAutoLifecycle(payload);
-            const reason = result?.reasonCode;
-            if (reason)
-              toast(context, String(reason), result?.ok ? "success" : "error");
-            else if (result?.ok)
-              toast(context, "runAutoLifecycle started", "success");
-            return result ?? { ok: true };
-          }
-        }
-      }
-    } catch {
-      // fail closed below — DISPATCH is the defect if this is the happy path
-    }
+  if (!baseUrl) {
+    // Never invent http://localhost:4096.
+    return failStage(context, MAKE_UNREACHABLE);
   }
 
-  toast(context, DISPATCH_UNSUPPORTED);
-  return { ok: false, reasonCode: DISPATCH_UNSUPPORTED };
+  try {
+    // @ts-ignore — optional peer; HTTP client LOCKED @opencode/client
+    const clientMod: { OpenCode?: { make: (opts: { baseUrl: string }) => any } } =
+      await import("@opencode/client");
+    const OpenCode = clientMod?.OpenCode;
+    if (OpenCode && typeof OpenCode.make === "function") {
+      const httpClient = OpenCode.make({ baseUrl });
+      if (httpClient && typeof httpClient.rpc === "function") {
+        const rpc = httpClient.rpc(Defined);
+        if (rpc && typeof rpc.runAutoLifecycle === "function") {
+          const result = await rpc.runAutoLifecycle(payload);
+          const reason = result?.reasonCode;
+          if (reason)
+            toast(context, String(reason), result?.ok ? "success" : "error");
+          else if (result?.ok)
+            toast(context, "runAutoLifecycle started", "success");
+          return result ?? { ok: true };
+        }
+      }
+    }
+  } catch {
+    // fail closed below — umbrella only when make limb exhausted
+  }
+
+  return failStage(context, DISPATCH_UNSUPPORTED);
 }
 
 function registerSlashListing(api: any): boolean {
@@ -199,4 +226,13 @@ export default {
     }
   },
 } satisfies { id: string; tui: TuiPlugin };
-export { LISTING_UNSUPPORTED, DISPATCH_UNSUPPORTED, LOAD_UNSUPPORTED, AUTO_DESCRIPTION };
+export {
+  LISTING_UNSUPPORTED,
+  DISPATCH_UNSUPPORTED,
+  LOAD_UNSUPPORTED,
+  MISSING_CLIENT,
+  RPC_ABSENT,
+  DEFINED_UNBRANDED,
+  MAKE_UNREACHABLE,
+  AUTO_DESCRIPTION,
+};

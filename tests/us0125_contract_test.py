@@ -207,7 +207,7 @@ def test_us0125_validator_subprocess_fail_closed():
     non-zero → command/plugin does not proceed to persistence."""
     data = json.loads(FIXTURE_PATH.read_text(encoding="utf-8"))
     named_clis = {
-        "scripts/intake_evidence_validate.py --repo . --enforce",
+        "scripts/intake_evidence_validate.py --file <bundle.json>",
         "scripts/bug_issue_validate.py --repo . --check-acceptance",
     }
     found = {row["validator_cli"] for row in data["rows"] if row["bridge"] == "named"}

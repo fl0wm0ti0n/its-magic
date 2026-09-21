@@ -1,11 +1,135 @@
-﻿# Handoff: /verify-work → /release — BUG-0025 / S0157
+# Handoff: /verify-work -> /release -- BUG-0027 / S0160
+
+- **Sprint**: S0160
+- **Story**: (none)
+- **Bug**: BUG-0027 (Status OPEN -- do NOT mark DONE)
+- **Orchestrator Run**: auto-20260921-bug0027
+- **Parent Run**: ir-20260921T190544Z-bug0027
+- **Phase Transition**: /verify-work Complete -> /release
+- **Timestamp**: 2026-09-21T22:07:00Z
+- **Fresh context marker**: qa-BUG0027-verify-20260921T220700Z-fresh
+- **Delivery mode**: ultra_lean
+- **Macro phase**: build+verify -> ship
+- **model_id**: inherit (CROSS_MODEL_REVIEW=0)
+- **Consumed qa_to_verify**: sprints/S0160/qa-findings.md (qa PASS 215200Z; marker qa-BUG0027-qa-20260921T215200Z-fresh)
+
+## Verify-Work Verdict
+
+**PASS** -- UAT 7/7 (6 ACs + convergence_smoke); 0 failed; pytest bug0027 **10/10** (0.79s this pass); compose **66/66** (3.37s); parity bug-0027 OK; probe_kind=contract_tests_primary; 6 live classes UAT_PROBE_FORBIDDEN including live OpenCode CLI TUI; fake_browser_pass_claimed=false; live_opencode_cli_tui_pass_claimed=false; toast_repair_claimed=false; isolation execute+qa+verify-work PASS; backlog Status remains OPEN; AC-1..AC-6 unchecked; harness_fail_zero_claimed=false; no live npm publish/git push; NB1 live residual informational.
+
+## Evidence Summary
+
+| Gate | Result |
+|------|--------|
+| UAT steps | 7 passed / 0 failed |
+| AC-1..AC-6 | 6/6 PASS (slice; backlog ACs unchecked) |
+| convergence_smoke | pass |
+| pytest bug0027 | 10/10 PASS (0.79s) |
+| compose us0125..bug0019 | 66/66 PASS (3.37s) |
+| Isolation compliance | PASS (execute + qa + verify-work) |
+| Strict-proof triad | VALID MATCH not-STALE (execute + qa) + ISSUED verify-work |
+| Live OpenCode CLI TUI PASS | false (UAT_PROBE_FORBIDDEN) |
+| Toast repair claimed | false |
+| Fake live-Chrome PASS | none |
+| QA_PASS | confirmed (consumed MATCH) |
+
+## Runtime proofs (full rp-auto-...)
+
+- verify-work: `rp-auto-20260921-bug0027-verify-work-qa-20260921T220700Z-BUG-0027` / `98DE3A16D39BF5B73CC5A4929A3DB2D7094C8D4020255B10D36720CB22A79F73` / ttl 2026-09-21T23:07:00Z
+- qa (consumed): `rp-auto-20260921-bug0027-qa-qa-20260921T215200Z-BUG-0027` / `4C93C4878501C9E8BF6966FE926733DB2B4DA7F67363E630FD2EEDE52482B6D5`
+- execute: `rp-auto-20260921-bug0027-execute-dev-20260921T214400Z-BUG-0027` / `0A6D1399F910A2166D137FFCFA632C9D673FB381EA68E4D8A2056D7337590B33`
+- plan-verify: `rp-auto-20260921-bug0027-plan-verify-qa-20260921T215200Z-BUG-0027` / `6E70023DA9FFB5E66AE08F2F0D9C6A42FB06470AFA5D7408155B8D4F8E73847A` (ultra_lean merged; not spawned)
+
+## Artifact refs
+
+- `sprints/S0160/verify-work-findings.md`
+- `sprints/S0160/verify-work-verdict.json`
+- `sprints/S0160/uat.json` / `sprints/S0160/uat.md`
+- `docs/engineering/state.md` (verify-work checkpoint)
+
+## Next Phase
+
+- **Phase**: /release (orchestrator spawn)
+- **Spawn Role**: release (fresh subagent per BUG-0006)
+- **Do NOT**: mark BUG-0027 DONE; tick acceptance.md; tick backlog ACs; spawn /release from this qa subagent; claim live OpenCode PASS; claim toast repair; restore auto.md; mutate BUG-0022/0026; reopen BUG-0024.
+
+## Stop Conditions
+
+- stop_reason: (not terminal -- native_chain_continuing)
+- stop_phase: verify-work
+- intended_resume_phase: release
+- native_chain_continuing: true
+
+---
+# Handoff: /verify-work ? /release — BUG-0024 / S0159
+
+- **Sprint**: S0159
+- **Story**: (none)
+- **Bug**: BUG-0024 (Status OPEN — do NOT mark DONE)
+- **Orchestrator Run**: auto-20260921-bug0024
+- **Parent Run**: cursor-20260913-BUG0024-intake
+- **Phase Transition**: /verify-work Complete ? /release
+- **Timestamp**: 2026-09-21T20:07:00Z
+- **Fresh context marker**: qa-BUG0024-verify-20260921T200700Z-fresh
+- **Delivery mode**: ultra_lean
+- **Macro phase**: build+verify ? ship
+- **model_id**: inherit (CROSS_MODEL_REVIEW=0)
+- **Consumed qa_to_verify**: sprints/S0159/qa-findings.md (qa PASS 200200Z; marker qa-BUG0024-qa-20260921T200200Z-fresh)
+
+## Verify-Work Verdict
+
+**PASS** — UAT 9/9 (8 ACs + convergence_smoke); 0 failed; pytest bug0024 **8/8** (0.52s this pass); compose **37/37** (0.71s); parity bug-0024 OK; probe_kind=contract_tests_primary; 6 live classes UAT_PROBE_FORBIDDEN including live OpenCode CLI TUI; fake_browser_pass_claimed=false; live_opencode_cli_tui_pass_claimed=false; isolation execute+qa+verify-work PASS; backlog Status remains OPEN; AC-1..AC-8 unchecked; harness_fail_zero_claimed=false; no live npm publish/git push; NB1 live residual informational.
+
+## Evidence Summary
+
+| Gate | Result |
+|------|--------|
+| UAT steps | 9 passed / 0 failed |
+| AC-1..AC-8 | 8/8 PASS (slice; backlog ACs unchecked) |
+| convergence_smoke | pass |
+| pytest bug0024 | 8/8 PASS (0.52s) |
+| compose bug0023..0018 | 37/37 PASS (0.71s) |
+| Isolation compliance | PASS (execute + qa + verify-work) |
+| Strict-proof triad | VALID MATCH not-STALE (execute + qa) + ISSUED verify-work |
+| Live OpenCode CLI TUI PASS | false (UAT_PROBE_FORBIDDEN) |
+| Fake live-Chrome PASS | none |
+| QA_PASS | confirmed (consumed) |
+
+## Runtime proofs (full rp-auto-…)
+
+- verify-work: `rp-auto-20260921-bug0024-verify-work-qa-20260921T200700Z-BUG-0024` / `A38D5C2058233468E31687E0CE5352855D8D709904D764A33D9AFBF3E9178125` / ttl 2026-09-21T21:07:00Z
+- qa (consumed): `rp-auto-20260921-bug0024-qa-qa-20260921T200200Z-BUG-0024` / `9582B1942C734F2FDAEE4582DC2F54B0CA80066C074170ABFDC3A4DC7D1E657E`
+- execute: `rp-auto-20260921-bug0024-execute-dev-20260921T195500Z-BUG-0024` / `E653C7B8616F101FB996D413493BABE5A8D979ADE3548FB8F2A26A47265DA356`
+- plan-verify: `rp-auto-20260921-bug0024-plan-verify-qa-20260921T200200Z-BUG-0024` / `2308F89EFBF95B0D32E94E77BD631CA1AFD29FFC6843599238A58170070A0155` (ultra_lean merged; not spawned)
+
+## Artifact refs
+
+- `sprints/S0159/verify-work-findings.md`
+- `sprints/S0159/verify-work-verdict.json`
+- `sprints/S0159/uat.json` / `sprints/S0159/uat.md`
+- `docs/engineering/state.md` (verify-work checkpoint)
+
+## Next Phase
+
+- **Phase**: /release (orchestrator spawn)
+- **Spawn Role**: release (fresh subagent per BUG-0006)
+- **Do NOT**: mark BUG-0024 DONE; tick acceptance.md; tick backlog ACs; spawn /release from this qa subagent; claim live OpenCode CLI TUI PASS; restore auto.md; mutate BUG-0022/0027; reopen BUG-0023/0021.
+
+## Stop Conditions
+
+- stop_reason: (not terminal — native_chain_continuing)
+- stop_phase: verify-work
+- intended_resume_phase: release
+- native_chain_continuing: true
+
+---# Handoff: /verify-work ? /release — BUG-0025 / S0157
 
 - **Sprint**: S0157
 - **Story**: (none)
 - **Bug**: BUG-0025 (Status OPEN — do NOT mark DONE)
 - **Orchestrator Run**: auto-20260918-bug0025
 - **Parent Run**: cursor-20260918-BUG0025-intake
-- **Phase Transition**: /verify-work Complete → /release
+- **Phase Transition**: /verify-work Complete ? /release
 - **Timestamp**: 2026-09-18T17:32:00Z
 - **Fresh context marker**: qa-BUG0025-verify-20260918T173200Z-fresh
 - **Delivery mode**: ultra_lean
@@ -59,14 +183,14 @@
 - intended_resume_phase: release
 - native_chain_continuing: true
 
----# Handoff: /verify-work → /release — US-0148 / S0156
+---# Handoff: /verify-work ? /release — US-0148 / S0156
 
 - **Sprint**: S0156
 - **Story**: US-0148 (Status OPEN — do NOT mark DONE)
 - **Bug**: (none)
 - **Orchestrator Run**: auto-20260917-us0148
 - **Parent Run**: auto-20260917-us0146
-- **Phase Transition**: /verify-work Complete → /release
+- **Phase Transition**: /verify-work Complete ? /release
 - **Timestamp**: 2026-09-17T22:30:00Z
 - **Fresh context marker**: qa-US0148-verify-20260917T223000Z-fresh
 - **Delivery mode**: ultra_lean
@@ -113,14 +237,14 @@
 - native_chain_continuing: true
 
 ---
-# Handoff: /verify-work → /release — US-0147 / S0154
+# Handoff: /verify-work ? /release — US-0147 / S0154
 
 - **Sprint**: S0154
 - **Story**: US-0147 (Status OPEN — do NOT mark DONE)
 - **Bug**: (none)
 - **Orchestrator Run**: auto-20260917-us0146
 - **Parent Run**: auto-20260913-us0144
-- **Phase Transition**: /verify-work Complete → /release
+- **Phase Transition**: /verify-work Complete ? /release
 - **Timestamp**: 2026-09-17T21:20:00Z
 - **Fresh context marker**: qa-US0147-verify-20260917T212000Z-fresh
 - **Delivery mode**: ultra_lean
@@ -167,14 +291,14 @@
 - native_chain_continuing: true
 
 ---
-# Handoff: /verify-work → /release — US-0143 / S0151
+# Handoff: /verify-work ? /release — US-0143 / S0151
 
 - **Sprint**: S0151
 - **Story**: US-0143 (Status OPEN — do NOT mark DONE)
 - **Bug**: (none)
 - **Orchestrator Run**: auto-20260913-us0143
 - **Parent Run**: auto-20260913-us0142
-- **Phase Transition**: /verify-work Complete → sovereign-critic (verify-work) then /release
+- **Phase Transition**: /verify-work Complete ? sovereign-critic (verify-work) then /release
 - **Timestamp**: 2026-09-14T08:30:00Z
 - **Fresh context marker**: qa-US0143-verify-20260914T083000Z-fresh
 - **Delivery mode**: ultra_lean
@@ -221,14 +345,14 @@
 
 ---
 
-# Handoff: /verify-work → /release — US-0142 / S0150
+# Handoff: /verify-work ? /release — US-0142 / S0150
 
 - **Sprint**: S0150
 - **Story**: US-0142 (Status OPEN — do NOT mark DONE)
 - **Bug**: (none)
 - **Orchestrator Run**: auto-20260913-us0142
 - **Parent Run**: auto-20260913-us0141
-- **Phase Transition**: /verify-work Complete → sovereign-critic (verify-work) then /release
+- **Phase Transition**: /verify-work Complete ? sovereign-critic (verify-work) then /release
 - **Timestamp**: 2026-09-14T05:10:00Z
 - **Fresh context marker**: qa-US0142-verify-20260914T051000Z-fresh
 - **Delivery mode**: ultra_lean
@@ -275,14 +399,14 @@
 - native_chain_continuing: true
 
 ---
-# Handoff: /verify-work → /release — US-0141 / S0149
+# Handoff: /verify-work ? /release — US-0141 / S0149
 
 - **Sprint**: S0149
 - **Story**: US-0141 (Status OPEN — do NOT mark DONE)
 - **Bug**: (none)
 - **Orchestrator Run**: auto-20260913-us0141
 - **Parent Run**: auto-20260913-us0140
-- **Phase Transition**: /verify-work Complete → sovereign-critic (verify-work) then /release
+- **Phase Transition**: /verify-work Complete ? sovereign-critic (verify-work) then /release
 - **Timestamp**: 2026-09-14T01:50:00Z
 - **Fresh context marker**: qa-US0141-verify-20260914T015000Z-fresh
 - **Delivery mode**: ultra_lean
@@ -328,19 +452,19 @@
 - native_chain_continuing: true
 
 ---
-# Handoff: /verify-work → /release — BUG-0023 / S0148
+# Handoff: /verify-work ? /release — BUG-0023 / S0148
 
 - **Sprint**: S0148
 - **Story**: (none — bug segment)
 - **Bug**: BUG-0023 (Status OPEN — do NOT mark DONE)
 - **Orchestrator Run**: auto-20260913-bug0023
 - **Parent Run**: cursor-20260913-BUG0023-intake
-- **Phase Transition**: /verify-work Complete → orchestrator spawn /release (MAY insert sovereign-critic of verify-work first)
+- **Phase Transition**: /verify-work Complete ? orchestrator spawn /release (MAY insert sovereign-critic of verify-work first)
 - **Timestamp**: 2026-09-14T00:55:00Z
 - **Fresh context marker**: qa-BUG0023-verify-work-20260914T005500Z-fresh
 - **Delivery mode**: ultra_lean
 - **Macro phase**: build+verify
-- **model_id**: cursor-grok-4.6-high (CROSS_MODEL_REVIEW=1; MODEL_RESOLVE_FALLBACK catalog gpt-5.6-sol-high → Task slug cursor-grok-4.6-high)
+- **model_id**: cursor-grok-4.6-high (CROSS_MODEL_REVIEW=1; MODEL_RESOLVE_FALLBACK catalog gpt-5.6-sol-high ? Task slug cursor-grok-4.6-high)
 - **Consumed qa_to_verify**: handoffs/qa_to_verify.md (qa PASS 004500Z; critic of qa CRITIC_PASS 005000Z)
 
 ## Verify-Work Verdict
@@ -383,14 +507,14 @@
 - native_chain_continuing: true
 
 ---
-# Handoff: /verify-work → /release — US-0140 / S0147
+# Handoff: /verify-work ? /release — US-0140 / S0147
 
 - **Sprint**: S0147
 - **Story**: US-0140 (Status OPEN — do NOT mark DONE)
 - **Bug**: (none)
 - **Orchestrator Run**: auto-20260913-us0140
 - **Parent Run**: auto-20260913-us0139
-- **Phase Transition**: /verify-work Complete → sovereign-critic (verify-work) then /release
+- **Phase Transition**: /verify-work Complete ? sovereign-critic (verify-work) then /release
 - **Timestamp**: 2026-09-13T22:15:00Z
 - **Fresh context marker**: qa-US0140-verify-20260913T221500Z-fresh
 - **Delivery mode**: ultra_lean
@@ -435,14 +559,14 @@
 
 ---
 
-# Handoff: /verify-work → /release — BUG-0021 / S0146
+# Handoff: /verify-work ? /release — BUG-0021 / S0146
 
 - **Sprint**: S0146
 - **Story**: (none — bug segment)
 - **Bug**: BUG-0021 (Status OPEN — do NOT mark DONE)
 - **Orchestrator Run**: auto-20260913-bug0021
 - **Parent Run**: cursor-20260913-BUG0021-intake
-- **Phase Transition**: /verify-work Complete → sovereign-critic (verify-work) then /release
+- **Phase Transition**: /verify-work Complete ? sovereign-critic (verify-work) then /release
 - **Timestamp**: 2026-09-13T13:45:00Z
 - **Fresh context marker**: qa-BUG0021-verify-20260913T134500Z-fresh
 - **Delivery mode**: ultra_lean
@@ -488,14 +612,14 @@
 
 ---
 
-# Handoff: /verify-work → /release — US-0139 / S0145
+# Handoff: /verify-work ? /release — US-0139 / S0145
 
 - **Sprint**: S0145
 - **Story**: US-0139 (Status OPEN — do NOT mark DONE)
 - **Bug**: (none)
 - **Orchestrator Run**: auto-20260913-us0139
 - **Parent Run**: auto-20260913-us0138
-- **Phase Transition**: /verify-work Complete → sovereign-critic (verify-work) then /release
+- **Phase Transition**: /verify-work Complete ? sovereign-critic (verify-work) then /release
 - **Timestamp**: 2026-09-13T18:55:00Z
 - **Fresh context marker**: qa-US0139-verify-20260913T185500Z-fresh
 - **Delivery mode**: ultra_lean
@@ -539,14 +663,14 @@
 - native_chain_continuing: true
 
 ---
-# Handoff: /verify-work → /release — US-0138 / S0144
+# Handoff: /verify-work ? /release — US-0138 / S0144
 
 - **Sprint**: S0144
 - **Story**: US-0138 (Status OPEN — do NOT mark DONE)
 - **Bug**: (none)
 - **Orchestrator Run**: auto-20260913-us0138
 - **Parent Run**: auto-20260913-us0137
-- **Phase Transition**: /verify-work Complete → sovereign-critic (verify-work) then /release
+- **Phase Transition**: /verify-work Complete ? sovereign-critic (verify-work) then /release
 - **Timestamp**: 2026-09-13T15:35:00Z
 - **Fresh context marker**: qa-US0138-verify-20260913T153500Z-fresh
 - **Delivery mode**: ultra_lean
@@ -591,14 +715,14 @@
 - native_chain_continuing: true
 
 ---
-# Handoff: /verify-work → /release — US-0137 / S0143
+# Handoff: /verify-work ? /release — US-0137 / S0143
 
 - **Sprint**: S0143
 - **Story**: US-0137 (Status OPEN — do NOT mark DONE)
 - **Bug**: (none)
 - **Orchestrator Run**: auto-20260913-us0137
 - **Parent Run**: auto-20260913-us0136
-- **Phase Transition**: /verify-work Complete → /release
+- **Phase Transition**: /verify-work Complete ? /release
 - **Timestamp**: 2026-09-13T12:15:00Z
 - **Fresh context marker**: qa-US0137-verify-20260913T121500Z-fresh
 - **Delivery mode**: ultra_lean
@@ -643,14 +767,14 @@
 - native_chain_continuing: true
 
 ---
-# Handoff: /verify-work → /release — US-0136 / S0142
+# Handoff: /verify-work ? /release — US-0136 / S0142
 
 - **Sprint**: S0142
 - **Story**: US-0136 (Status OPEN — do NOT mark DONE)
 - **Bug**: (none)
 - **Orchestrator Run**: auto-20260913-us0136
 - **Parent Run**: auto-20260913-us0135
-- **Phase Transition**: /verify-work Complete → /release
+- **Phase Transition**: /verify-work Complete ? /release
 - **Timestamp**: 2026-09-13T08:55:00Z
 - **Fresh context marker**: qa-US0136-verify-20260913T085500Z-fresh
 - **Delivery mode**: ultra_lean
@@ -694,14 +818,14 @@
 - intended_resume_phase: release
 
 ---
-# Handoff: /verify-work → /release — US-0135 / S0141
+# Handoff: /verify-work ? /release — US-0135 / S0141
 
 - **Sprint**: S0141
 - **Story**: US-0135 (Status OPEN — do NOT mark DONE)
 - **Bug**: (none)
 - **Orchestrator Run**: auto-20260913-us0135
 - **Parent Run**: auto-20260913-bug0020
-- **Phase Transition**: /verify-work Complete → /release
+- **Phase Transition**: /verify-work Complete ? /release
 - **Timestamp**: 2026-09-13T05:35:00Z
 - **Fresh context marker**: qa-US0135-verify-20260913T053500Z-fresh
 - **Delivery mode**: ultra_lean
@@ -745,13 +869,13 @@
 - intended_resume_phase: release
 
 ---
-# Handoff: /verify-work → /release — BUG-0020 / S0140
+# Handoff: /verify-work ? /release — BUG-0020 / S0140
 
 - **Sprint**: S0140
 - **Bug**: BUG-0020 (Status OPEN — do NOT mark DONE)
 - **Story**: BUG-0020
 - **Orchestrator Run**: auto-20260913-bug0020
-- **Phase Transition**: /verify-work Complete → /release
+- **Phase Transition**: /verify-work Complete ? /release
 - **Timestamp**: 2026-09-13T02:15:00Z
 - **Fresh context marker**: qa-BUG0020-verify-20260913T021500Z-fresh
 - **Delivery mode**: ultra_lean
@@ -794,13 +918,13 @@
 - intended_resume_phase: release
 
 ---
-# Handoff: /verify-work → /release — BUG-0020 / S0140 (spawn 005000Z)
+# Handoff: /verify-work ? /release — BUG-0020 / S0140 (spawn 005000Z)
 
 - **Sprint**: S0140
 - **Bug**: BUG-0020 (Status OPEN — do NOT mark DONE)
 - **Story**: BUG-0020
 - **Orchestrator Run**: auto-20260913-bug0020
-- **Phase Transition**: /verify-work Complete → /release
+- **Phase Transition**: /verify-work Complete ? /release
 - **Timestamp**: 2026-09-13T00:50:00Z
 - **Fresh context marker**: qa-BUG0020-verifywork-20260913T005000Z-fresh
 - **Delivery mode**: ultra_lean
@@ -839,7 +963,7 @@
 - sprints/S0140/progress.md
 - sprints/S0140/summary.md
 - handoffs/verify-work-to-release.md (this file)
-- handoffs/resume_brief.md (→ release)
+- handoffs/resume_brief.md (? release)
 - docs/engineering/state.md (verify-work isolation + strict runtime proof)
 
 ## Runtime proofs (full rp-auto-… — not truncated p-auto)
@@ -863,13 +987,13 @@
 - intended_resume_phase: release
 
 ---
-# Handoff: /verify-work → /release — BUG-0020 / S0140
+# Handoff: /verify-work ? /release — BUG-0020 / S0140
 
 - **Sprint**: S0140
 - **Bug**: BUG-0020 (Status OPEN — do NOT mark DONE)
 - **Story**: BUG-0020
 - **Orchestrator Run**: auto-20260913-bug0020
-- **Phase Transition**: /verify-work Complete → /release
+- **Phase Transition**: /verify-work Complete ? /release
 - **Timestamp**: 2026-09-13T02:15:00Z
 - **Fresh context marker**: qa-BUG0020-verify-20260913T021500Z-fresh
 - **Delivery mode**: ultra_lean
@@ -906,7 +1030,7 @@
 - sprints/S0140/progress.md
 - sprints/S0140/summary.md
 - handoffs/verify-work-to-release.md (this file)
-- handoffs/resume_brief.md (→ release)
+- handoffs/resume_brief.md (? release)
 - docs/engineering/state.md (verify-work isolation + strict runtime proof)
 
 ## Runtime proofs (full rp-auto-… — not truncated p-auto)
@@ -929,13 +1053,13 @@
 - intended_resume_phase: release
 
 ---
-# Handoff: /verify-work → /release — BUG-0019 / S0139
+# Handoff: /verify-work ? /release — BUG-0019 / S0139
 
 - **Sprint**: S0139
 - **Bug**: BUG-0019 (Status OPEN — do NOT mark DONE)
 - **Story**: BUG-0019
 - **Orchestrator Run**: auto-20260912-bug0019
-- **Phase Transition**: /verify-work Complete → /release
+- **Phase Transition**: /verify-work Complete ? /release
 - **Timestamp**: 2026-09-12T19:25:00Z
 - **Fresh context marker**: qa-BUG0019-verifywork-20260912T192000Z-fresh
 - **Delivery mode**: ultra_lean
@@ -970,7 +1094,7 @@
 - sprints/S0139/verify-work-verdict.json
 - sprints/S0139/progress.md
 - handoffs/verify-work-to-release.md (this file)
-- handoffs/resume_brief.md (→ release)
+- handoffs/resume_brief.md (? release)
 - docs/engineering/state.md (verify-work isolation + strict runtime proof)
 
 ## Runtime proofs (full rp-auto-… — not truncated p-auto)
@@ -993,13 +1117,13 @@
 - intended_resume_phase: release
 
 ---
-# Handoff: /verify-work → /release — US-0134 / S0138
+# Handoff: /verify-work ? /release — US-0134 / S0138
 
 - **Sprint**: S0138
 - **Story**: US-0134 (Status OPEN — do NOT mark DONE)
 - **Bug**: (none)
 - **Orchestrator Run**: auto-20260912-us0134
-- **Phase Transition**: /verify-work Complete → /release
+- **Phase Transition**: /verify-work Complete ? /release
 - **Timestamp**: 2026-09-12T13:35:00Z
 - **Fresh context marker**: qa-US0134-verifywork-20260912T133500Z-fresh
 - **Delivery mode**: ultra_lean
@@ -1034,7 +1158,7 @@
 - sprints/S0138/verify-work-verdict.json
 - sprints/S0138/progress.md
 - handoffs/verify-work-to-release.md (this file)
-- handoffs/resume_brief.md (→ release)
+- handoffs/resume_brief.md (? release)
 - docs/engineering/state.md (verify-work isolation + strict runtime proof)
 
 ## Runtime proofs (full rp-auto-… — not truncated p-auto)
@@ -1057,13 +1181,13 @@
 - intended_resume_phase: release
 
 ---
-# Handoff: /verify-work → /release — US-0133 / S0137
+# Handoff: /verify-work ? /release — US-0133 / S0137
 
 - **Sprint**: S0137
 - **Story**: US-0133 (Status OPEN — do NOT mark DONE)
 - **Bug**: (none)
 - **Orchestrator Run**: auto-20260912-us0133
-- **Phase Transition**: /verify-work Complete → /release
+- **Phase Transition**: /verify-work Complete ? /release
 - **Timestamp**: 2026-09-12T12:20:00Z
 - **Fresh context marker**: qa-US0133-verifywork-20260912T122000Z-fresh
 - **Delivery mode**: ultra_lean
@@ -1097,7 +1221,7 @@
 - sprints/S0137/verify-work-verdict.json
 - sprints/S0137/progress.md
 - handoffs/verify-work-to-release.md (this file)
-- handoffs/resume_brief.md (→ release)
+- handoffs/resume_brief.md (? release)
 - docs/engineering/state.md (verify-work isolation + strict runtime proof)
 
 ## Runtime proofs (full rp-auto-… — not truncated p-auto)
@@ -1120,13 +1244,13 @@
 - intended_resume_phase: release
 
 ---
-# Handoff: /verify-work → /release — BUG-0018 / S0136
+# Handoff: /verify-work ? /release — BUG-0018 / S0136
 
 - **Sprint**: S0136
 - **Bug**: BUG-0018 (Status OPEN — do NOT mark DONE)
 - **Story**: BUG-0018
 - **Orchestrator Run**: auto-20260912-bug0018
-- **Phase Transition**: /verify-work Complete → /release
+- **Phase Transition**: /verify-work Complete ? /release
 - **Timestamp**: 2026-09-12T10:45:00Z
 - **Fresh context marker**: qa-BUG0018-verifywork-20260912T104500Z-fresh
 - **Delivery mode**: ultra_lean
@@ -1160,7 +1284,7 @@
 - sprints/S0136/verify-work-verdict.json
 - sprints/S0136/progress.md
 - handoffs/verify-work-to-release.md (this file)
-- handoffs/resume_brief.md (→ release)
+- handoffs/resume_brief.md (? release)
 - docs/engineering/state.md (verify-work isolation + strict runtime proof)
 
 ## Runtime proofs (full rp-auto-… — not truncated p-auto)
@@ -1183,13 +1307,13 @@
 - intended_resume_phase: release
 
 ---
-# Handoff: /verify-work → /release — BUG-0017 / S0135
+# Handoff: /verify-work ? /release — BUG-0017 / S0135
 
 - **Sprint**: S0135
 - **Bug**: BUG-0017 (Status OPEN — do NOT mark DONE)
 - **Story**: BUG-0017
 - **Orchestrator Run**: auto-20260911-bug0017
-- **Phase Transition**: /verify-work Complete → /release
+- **Phase Transition**: /verify-work Complete ? /release
 - **Timestamp**: 2026-09-11T19:52:00Z
 - **Fresh context marker**: qa-BUG0017-verify-work-20260911T195200Z-fresh
 - **Delivery mode**: ultra_lean
@@ -1222,7 +1346,7 @@
 - sprints/S0135/verify-work-verdict.json
 - sprints/S0135/progress.md
 - handoffs/verify-work-to-release.md (this file)
-- handoffs/resume_brief.md (→ release)
+- handoffs/resume_brief.md (? release)
 - docs/engineering/state.md (verify-work isolation + strict runtime proof)
 
 ## Runtime proofs (full rp-auto-… — not truncated p-auto)
@@ -1245,13 +1369,13 @@
 - intended_resume_phase: release
 
 ---
-# Handoff: /verify-work → /release — BUG-0016 / S0132
+# Handoff: /verify-work ? /release — BUG-0016 / S0132
 
 - **Sprint**: S0132
 - **Bug**: BUG-0016 (Status OPEN — do NOT mark DONE)
 - **Story**: BUG-0016
 - **Orchestrator Run**: auto-20260906-bug0016
-- **Phase Transition**: /verify-work Complete → /release
+- **Phase Transition**: /verify-work Complete ? /release
 - **Timestamp**: 2026-09-06T19:25:00Z
 - **Fresh context marker**: qa-BUG0016-verify-work-20260906T192500Z-fresh
 - **Delivery mode**: ultra_lean
@@ -1282,7 +1406,7 @@
 - sprints/S0132/verify-work-findings.md
 - sprints/S0132/verify-work-verdict.json
 - handoffs/verify-work-to-release.md (this file)
-- handoffs/resume_brief.md (→ release)
+- handoffs/resume_brief.md (? release)
 - docs/engineering/state.md (verify-work isolation + strict runtime proof + Traceability PASS)
 
 ## Runtime proofs

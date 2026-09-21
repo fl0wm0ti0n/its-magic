@@ -113,9 +113,10 @@ def _heading_literals_from_asserts(src: str) -> Set[str]:
 def discover_required_arch_headings(repo: Path) -> frozenset[str]:
     """Scan contract tests for live architecture.md heading asserts (DQ2).
 
-    Include a token only when the *same function* reads live
-    ``docs/engineering/architecture.md`` and asserts membership / ``find`` /
-    ``startswith`` of a literal ``# US-dddd`` or ``# BUG-dddd``.
+    Include a token only when a function reads live
+    ``docs/engineering/architecture.md`` (directly or through a local reader
+    helper) and asserts membership / ``find`` / ``startswith`` of a literal
+    ``# US-dddd`` or ``# BUG-dddd``.
     Excludes ``tests/.tmp*``. No hand-maintained YAML/manifest.
     """
     tests_root = _tests_root(repo)
@@ -133,13 +134,33 @@ def discover_required_arch_headings(repo: Path) -> frozenset[str]:
             tree = ast.parse(text)
         except SyntaxError:
             continue
-        for node in ast.walk(tree):
-            if not isinstance(node, (ast.FunctionDef, ast.AsyncFunctionDef)):
-                continue
+        functions = [
+            node
+            for node in ast.walk(tree)
+            if isinstance(node, (ast.FunctionDef, ast.AsyncFunctionDef))
+        ]
+        reader_helpers = {
+            node.name
+            for node in functions
+            if _function_reads_live_architecture(ast.get_source_segment(text, node) or "")
+        }
+        for node in functions:
             src = ast.get_source_segment(text, node) or ""
-            if not _function_reads_live_architecture(src):
+            reads_live_architecture = _function_reads_live_architecture(src) or any(
+                re.search(rf"\b{re.escape(helper)}\s*\(", src)
+                for helper in reader_helpers
+                if helper != node.name
+            )
+            if not reads_live_architecture:
                 continue
             tokens.update(_heading_literals_from_asserts(src))
+            for helper in reader_helpers:
+                tokens.update(
+                    re.findall(
+                        rf"\b{re.escape(helper)}\s*\(\s*[^,]+,\s*['\"](# (?:US|BUG)-\d{{4}})['\"]",
+                        src,
+                    )
+                )
     return frozenset(tokens)
 
 

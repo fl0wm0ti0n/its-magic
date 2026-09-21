@@ -1680,6 +1680,18 @@ US0149_CONTRACT_PY=$?
 set -e
 assert_true "US-0149 global itsm launcher contract tests pass" "[ \"$US0149_CONTRACT_PY\" -eq 0 ]"
 
+# 26AV) BUG-0027 — OpenCode manual phase persist (IsolationEvidence + validator packs)
+set +e
+"$PY" scripts/check_intake_template_parity.py --scope=bug-0027 >/dev/null 2>&1
+BUG0027_PARITY=$?
+set -e
+assert_true "check_intake_template_parity --scope=bug-0027 passes (BUG-0027)" "[ \"$BUG0027_PARITY\" -eq 0 ]"
+set +e
+"$PY" -m pytest tests/bug0027_opencode_manual_phase_persist_test.py -q >/dev/null 2>&1
+BUG0027_CONTRACT_PY=$?
+set -e
+assert_true "BUG-0027 OpenCode manual phase persist contract tests pass" "[ \"$BUG0027_CONTRACT_PY\" -eq 0 ]"
+
 timestamp=$(date -u +"%Y-%m-%dT%H:%M:%SZ")
 {
   echo "# its-magic Test Report"

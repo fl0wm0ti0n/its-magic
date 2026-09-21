@@ -6,6 +6,7 @@ Validate canonical bug issues in backlog.md and optional acceptance reconciliati
 from __future__ import annotations
 
 import argparse
+from pathlib import Path
 import re
 import sys
 
@@ -131,17 +132,20 @@ def self_test() -> int:
 
 def main() -> int:
     ap = argparse.ArgumentParser(description="Validate BUG-xxxx canonical backlog section (DEC-0061).")
-    ap.add_argument("--backlog", default="docs/product/backlog.md", help="Path to backlog.md")
-    ap.add_argument("--acceptance", default="docs/product/acceptance.md", help="Path to acceptance.md")
+    ap.add_argument("--repo", type=Path, default=Path("."), help="Repository root for default paths")
+    ap.add_argument("--backlog", help="Path to backlog.md")
+    ap.add_argument("--acceptance", help="Path to acceptance.md")
     ap.add_argument("--check-acceptance", action="store_true", help="Reconcile bug rows vs backlog")
     ap.add_argument("--print-next-id", action="store_true", help="Print next BUG-#### id and exit 0")
     ap.add_argument("--self-test", action="store_true", help="Internal sanity checks")
     args = ap.parse_args()
     if args.self_test:
         return self_test()
+    backlog_path = args.backlog or args.repo / "docs/product/backlog.md"
+    acceptance_path = args.acceptance or args.repo / "docs/product/acceptance.md"
 
     try:
-        backlog_text = open(args.backlog, encoding="utf-8").read()
+        backlog_text = Path(backlog_path).read_text(encoding="utf-8")
     except OSError as e:
         return _fail("BUG_VALIDATION_IO_ERROR", str(e))
 
@@ -157,7 +161,7 @@ def main() -> int:
 
     if args.check_acceptance:
         try:
-            acc_text = open(args.acceptance, encoding="utf-8").read()
+            acc_text = Path(acceptance_path).read_text(encoding="utf-8")
         except OSError as e:
             return _fail("BUG_VALIDATION_IO_ERROR", str(e))
         rerr = reconcile_acceptance(backlog_text, acc_text)

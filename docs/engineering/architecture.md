@@ -1,592 +1,4 @@
 
-# BUG-0017 — OpenCode pack CRLF / LF normalization (Linux slash commands)
-
-## Overview
-
-**`BUG-0017`** restores Linux OpenCode recognition of its-magic slash commands (`/auto`, `/intake`, peers) by ensuring kit OpenCode pack text ships **LF-only**. Root cause: CRLF in `.opencode/commands/*.md` YAML frontmatter breaks OpenCode `parseOption` (empty → silent skip). Same failure class as **BUG-0008** (manifest CRLF), different surface (OpenCode pack markdown/TS/JSON).
-
-**Research anchor**: **`R-0118`** (DQ1–DQ6 LOCKED). **Companion DEC**: **none** — compose **BUG-0008** / **US-0084** / **DEC-0120**; cite **R-0118**. **Out of scope**: OpenCode host parser CR-strip; repo-wide `*.md eol=lf`; installer EOL rewrite; BUG-0015/BUG-0016 reopen; command semantics.
-
-**Fresh context marker**: `tl-BUG0017-architecture-20260911T191500Z-fresh`
-**Orchestrator run id**: `auto-20260911-bug0017`
-**Timestamp**: 2026-09-11T19:20:00Z (UTC)
-**Verdict**: PASS
-**Next**: `/sprint-plan`
-
-## Approach locked (A* — from R-0118 A1 / DQ1–DQ6)
-
-**Approach A\*** (locked): Scoped `.gitattributes` LF for `.opencode/**` + `template/.opencode/**` `*.{md,ts,json}` + one-time `git add --renormalize` on those trees + extend `scripts/guard_installer_publish.py` to fail-closed on `\r` in OpenCode pack inventory + six additive `test_bug0017_*` + runbook consumer upgrade recipe (DQ6). Reuse `npm run guard:installer` / `prepublishOnly`. No install-time EOL rewrite. No new DEC.
-
-| Option | Summary | Verdict |
-|--------|---------|---------|
-| **A\*** | DQ1 attrs + D4 renormalize + extend guard + 6 tests + DQ6 runbook; compose BUG-0008/US-0084/DEC-0120 | **Preferred** — minimal ship-fix fix; matches R-0118 A1 |
-| A2 (rejected) | Install-time EOL rewrite on OpenCode copy paths | **Rejected** — masks attr/guard failures; triples installer surface (DQ3) |
-| A3 (rejected) | Repo-wide `*.md text eol=lf` | **Rejected** — D3/D8; surprises unrelated docs |
-| A4 (rejected) | OpenCode host parser CR-strip | **Rejected** — kit cannot patch host (D8) |
-| A5 (rejected) | New sibling `guard_opencode_eol.py` | **Rejected** — duplicates CI wiring (DQ2) |
-
-## Critic NB closures (research sovereign-critic — LOCKED here)
-
-| ID | Carry-forward | Architecture lock |
-|----|---------------|-------------------|
-| NB1 | Choco GitHub-zip lacks npm `prepublishOnly` | **Release/CI must run `guard:installer` (extended) before any tag** chocolatey downloads. No choco-specific EOL post-process (DQ4). Seed **T-007**. |
-| NB2 | Dirty-tree renormalize | Execute **T-002**: scoped `git add --renormalize -- .opencode template/.opencode` only; if dirty unrelated files block commit, isolate/stash or commit attribute+normalize slice alone. Do not renormalize whole repo. |
-| NB3 | DQ6 consumer upgrade recipe | Runbook documents `its-magic --mode upgrade --host opencode\|both` after kit fix; kit-only does **not** heal already-copied CRLF trees (DQ6). Seed **T-006**. |
-
-## Components
-
-### `.gitattributes` (DQ1 — D3)
-
-Append (compose existing `*.sh` / `*.manifest`; **never** add repo-wide `*.md`):
-
-```
-.opencode/**/*.md text eol=lf
-.opencode/**/*.ts text eol=lf
-.opencode/**/*.json text eol=lf
-template/.opencode/**/*.md text eol=lf
-template/.opencode/**/*.ts text eol=lf
-template/.opencode/**/*.json text eol=lf
-```
-
-### One-time renormalize (D4 / NB2)
-
-After attributes land: `git add --renormalize -- .opencode template/.opencode` so index stores LF. Dirty-tree policy per NB2 table above.
-
-### Publish guard extension (DQ2 / DQ5)
-
-Extend `scripts/guard_installer_publish.py` (+ `template/scripts/` mirror) to reject `\r` in:
-
-- `.opencode/commands/**/*.md`, `.opencode/agents/**/*.md`, `.opencode/plugins/**/*.{md,ts}`, `.opencode/README.md`
-- `template/.opencode/` same + `template/.opencode/model-catalog.local.example.json`
-
-Keep US-0084 / BUG-0008 checks unchanged. Hook: existing `npm run guard:installer` / `prepublishOnly`. Message names relative path + BUG-0017.
-
-### Installer / packaging (DQ3 / DQ4)
-
-- **No** install-time CR-strip (`shutil.copy2` stays byte-preserving).
-- **Diagnostic install `\r` warning**: default **no** (R-0118 deferred; keep installers thin).
-- npm: template inventory is hard gate via `prepublishOnly`.
-- chocolatey: inherits git LF from tagged zip — **T-007** ensures guard ran before tag.
-
-### Consumer upgrade (DQ6 / NB3)
-
-Document in runbook: upgrade its-magic → `its-magic --mode upgrade --host opencode` or `--host both` (DEC-0120). Conflicted locals: resolve then re-upgrade; `dos2unix` last resort only.
-
-### Contract tests (D7 — six markers)
-
-Preferred: `tests/bug0017_opencode_eol_test.py` (or `tests/installer_opencode_eol_bug0017_test.py`). Do **not** weaken BUG-0008 / US-0084 tests.
-
-| # | Marker | Asserts |
-|---|--------|---------|
-| 1 | `test_bug0017_gitattributes_scoped_opencode_eol_lf` | DQ1 rows present; no repo-wide `*.md text eol=lf` |
-| 2 | `test_bug0017_no_cr_in_active_opencode_pack_text` | no `\r` in active inventory |
-| 3 | `test_bug0017_no_cr_in_template_opencode_pack_text` | no `\r` in template inventory (+ example JSON) |
-| 4 | `test_bug0017_guard_installer_publish_rejects_opencode_cr` | planted CR → guard exit ≠ 0 |
-| 5 | `test_bug0017_guard_still_enforces_installer_sh_and_manifests` | US-0084 / BUG-0008 regression |
-| 6 | `test_bug0017_active_template_opencode_tracked_text_parity` | tracked in-scope pairs parity after LF |
-
-## Touch surfaces (execute)
-
-| Surface | Change |
-|---------|--------|
-| `.gitattributes` | DQ1 six rows |
-| `.opencode/**` + `template/.opencode/**` in-scope text | One-time LF normalize |
-| `scripts/guard_installer_publish.py` + template mirror | OpenCode `\r` inventory scan |
-| `tests/bug0017_*` (+ template if paired) | 6 markers |
-| `docs/engineering/runbook.md` (+ template) | DQ6 upgrade recipe + release/tag guard note |
-| CI / release checklist | Ensure `guard:installer` before GitHub tag (choco path) |
-
-## Non-goals
-
-- OpenCode host parser patch / CR-strip
-- Repo-wide `*.md eol=lf`
-- Installer EOL rewrite-on-copy
-- New sibling EOL guard script
-- Scanning operator-local `model-catalog.local.json`
-- Reopening BUG-0015 / BUG-0016
-- Changing slash-command semantics
-
-## Risks
-
-| Risk | Severity | Mitigation |
-|------|----------|------------|
-| R1 Windows editors reintroduce CRLF | MEDIUM | Attributes + guard (A*) |
-| R2 npm ships template only — active drift | MEDIUM | D6 parity tests (marker 6) |
-| R3 Consumers skip upgrade | MEDIUM | DQ6 runbook recipe (T-006) |
-| R4 Choco tag without guard | MEDIUM | T-007 release/CI before-tag gate (NB1) |
-| R5 Dirty-tree renormalize churn | LOW–MEDIUM | Scoped renormalize only (NB2 / T-002) |
-| R6 Over-scope node_modules / locals | LOW | Inventory excludes; gitignored locals unscanned |
-
-## AC coverage mapping (bug acceptance + R-0118)
-
-| Expected slice | Architecture anchor | Seeds |
-|----------------|---------------------|-------|
-| Linux OpenCode recognizes `/auto`/`/intake`/peers | Approach A*; D1/D9 | T-001..T-003, T-005 |
-| Shipped pack has no CRLF | Guard + normalize + tests | T-002, T-003, T-005 |
-| Scoped attrs (not repo-wide `*.md`) | DQ1; marker 1 | T-001, T-005 |
-| Publish/CI fail-closed on `\r` | DQ2/DQ5; markers 4–5 | T-003, T-005, T-007 |
-| Active↔template parity | D6; marker 6 | T-004, T-005 |
-| Consumer upgrade path | DQ6; NB3 | T-006 |
-| Compose BUG-0008/US-0084 unchanged | Decision linkage; marker 5 | T-anch, T-005 |
-
-Acceptance checkbox: `docs/product/acceptance.md` BUG-0017 row remains unchecked until closure (US-0045).
-
-## Atomic task seeds (for `/sprint-plan`)
-
-| # | Seed | Surfaces |
-|---|------|----------|
-| T-anch | Verify `# BUG-0017` H1 + approach A* + R-0118 DQ1–DQ6 + NB1–NB3 closed + no companion DEC | architecture.md, R-0118 (read-only) |
-| T-001 | Add DQ1 `.gitattributes` rows for `.opencode/**` + `template/.opencode/**` `*.{md,ts,json}`; reject repo-wide `*.md` | `.gitattributes` |
-| T-002 | One-time LF renormalize scoped trees; dirty-tree = scoped `git add --renormalize` only (NB2) | `.opencode/**`, `template/.opencode/**` |
-| T-003 | Extend `guard_installer_publish.py` OpenCode inventory (DQ2/DQ5); keep BUG-0008/US-0084 checks | `scripts/guard_installer_publish.py` |
-| T-004 | Template mirror of guard + active↔template OpenCode tracked-text parity gate | `template/scripts/guard_installer_publish.py` + parity |
-| T-005 | Add 6 `test_bug0017_*` markers; do not weaken BUG-0008/US-0084 | `tests/bug0017_*.py` (+ template if paired) |
-| T-006 | Runbook DQ6 upgrade recipe (`upgrade --host opencode\|both`) + cross-link BUG-0017 | `docs/engineering/runbook.md` + template |
-| T-007 | Release/CI: `guard:installer` required before GitHub tag (choco zip path; NB1) | release notes / CI / runbook checklist |
-
-**Task count**: 8 seeds (T-anch + T-001..T-007). `SPRINT_MAX_TASKS=12` — no auto-split. Not `/quick` (attrs + normalize + guard + tests + docs + release gate).
-
-## Decision linkage
-
-- Decision: **none** (companion DEC not required — cite **R-0118**)
-- Compose (do not amend): **BUG-0008**, **US-0084**, **DEC-0120**, **DEC-0039** (local never-overwrite), **DEC-0132** (example JSON vs operator local)
-- Research: **R-0118** (composes **R-0069** class; do not wipe)
-- Related: **US-0121**, **US-0125**, **BUG-0015** / **BUG-0016** (DONE — out of scope)
-
-## Isolation evidence (US-0048 / DEC-0029)
-
-- `phase_id=architecture`, `role=tech-lead`, `bug_id=BUG-0017`, `sprint_id=none`, `orchestrator_run_id=auto-20260911-bug0017`
-- `delivery_mode=ultra_lean`, `macro_phase=plan`, `model_id=composer-2.5` (CROSS_MODEL_REVIEW=1)
-- `fresh_context_marker=tl-BUG0017-architecture-20260911T191500Z-fresh`, `timestamp=2026-09-11T19:20:00Z`
-- Narrow-read: R-0118; BUG-0017 backlog research_notes; acceptance row; `.gitattributes`; `guard_installer_publish.py`; critic NBs; architecture heading policy
-- No attribute/guard/normalize mutation in this phase (execute owns); no DONE flip; acceptance unchecked; no companion DEC authored
-
-## Strict runtime proof
-
-- `runtime_proof_id=rp-auto-20260911-bug0017-architecture-techlead-20260911T192000Z-BUG-0017`
-- Canonical payload: `{"delivery_mode":"ultra_lean","macro_phase":"plan","model_id":"composer-2.5","orchestrator_run_id":"auto-20260911-bug0017","phase_id":"architecture","proof_issued_at":"2026-09-11T19:20:00Z","proof_ttl_seconds":3600,"role":"tech-lead","runtime_proof_id":"rp-auto-20260911-bug0017-architecture-techlead-20260911T192000Z-BUG-0017","sprint_id":"none","story_id":"BUG-0017"}`
-- `proof_hash=541A4773D0E994EE9FC1A0DD09E70DBE1D0B262170FB6D63540407CEBBD76B68`
-- `proof_ttl=2026-09-11T20:20:00Z`
-- Consumed research proof: `rp-auto-20260911-bug0017-research-techlead-20260911T191200Z-BUG-0017` / `DF94BA041DDCB51ADD0675C7B41DEAD6F14CADB1D1095489E3B5F0E8342B777A` — RUNTIME_PROOF_VALID
-
-# BUG-0018 — OpenCode markdown `/auto` wins over plugin execute
-
-## Overview
-
-**`BUG-0018`** closes the **same-name markdown vs plugin-execute collision** on OpenCode: `.opencode/commands/auto.md` (LF STOP-only) still owns `/auto` while plugin `editor.add({ name: "auto", execute })` → `runAutoLifecycle` is registered but never invoked. Live host submits the markdown STOP body with **no `OPENCODE_*`**. Distinct from **BUG-0015 DONE** (missing attach) and **BUG-0017 DONE** (CRLF so commands were not offered).
-
-**This section supersedes `# BUG-0015` CF1** (“Transform owns execute; thin `auto.md` is discoverability-only”). CF1 is **live-falsified**. Do **not** rewrite the historical CF1 cell, **DEC-0124**, or **DEC-0125** bodies (D8). Do **not** reopen BUG-0015 ACs.
-
-**Research anchor**: **`R-0120`** (DQ1–DQ8 LOCKED; compose **R-0119** / **R-0114**). **Companion DEC**: **none**. **Out of scope**: Symptom B Cursor Task-unavailable; BUG-0015/0016/0017 reopen; Axis B/C/D; general “delete files not in template” sweeper; live OpenCode CI probe; Cursor `.cursor/commands/auto.md`; `.opencode/agents/auto.md`.
-
-**Fresh context marker**: `tl-BUG0018-architecture-20260912T100000Z-fresh`
-**Orchestrator run id**: `auto-20260912-bug0018`
-**Timestamp**: 2026-09-12T10:00:00Z (UTC)
-**Verdict**: PASS
-**Next**: `/sprint-plan`
-
-## Approach locked (A* — from R-0120 Axis A / DQ1–DQ8)
-
-**Approach A\*** (locked): **Plugin-only `/auto`**. Remove colliding `.opencode/commands/auto.md` (active **and** template). Keep plugin `command.transform` → `editor.add({ name: "auto", description, execute })` → `runAutoLifecycle` as the **sole** `/auto` owner (listing via plugin `description`, matching current markdown description string). Upgrade `--host opencode|both` **must prune** leftover consumer `auto.md` (copy-only upgrade is not enough). Additive `OPENCODE_AUTO_MARKDOWN_COLLISION` if leftover file remains. Six `test_bug0018_*`. Compose-only if-present relax of two named existence asserts; inventory counts that assumed 15 markdown commands including `auto.md` drop to 14. No companion DEC.
-
-| Option | Summary | Verdict |
-|--------|---------|---------|
-| **A\*** | Remove colliding `auto.md` (kit + consumer prune); plugin `editor.add` remains sole `/auto`; `OPENCODE_AUTO_MARKDOWN_COLLISION`; 6 tests; cite R-0120 | **Preferred** — simplest fix matching host markdown-wins + add-only CommandDraft |
-| A2 / Axis B (rejected) | Rename markdown to a non-colliding slash name | **Rejected** — extra slash; still must prune leftover `auto.md`; YAGNI vs A |
-| A3 / Axis C (rejected) | Later `editor.add` / `command.reload()` | **Rejected** — add-only; live host already adds and markdown still wins |
-| A4 / Axis D (rejected) | Documented host override | **Rejected** — none for markdown vs plugin command execute |
-| A5 (rejected) | Empty/no-STOP `auto.md` body | **Rejected** — markdown still owns `/auto`; silent-or-empty is not a fix (D4 / DQ2) |
-| A6 (rejected) | Primary = `command.executed` | **Rejected** — shipped secondary subscribe did not start lifecycle (DQ3) |
-| A7 (rejected) | Companion DEC / rewrite DEC-0124/0125 | **Rejected** — DQ7 additive `# BUG-0018`; D8 bodies UNCHANGED |
-
-## `# BUG-0015` CF1 supersede (LOCKED)
-
-| Prior lock | New lock (this section) |
-|------------|-------------------------|
-| CF1: “Transform owns execute. Thin `auto.md` remains STOP-only discoverability.” | **SUPERSEDED.** When `.opencode/commands/auto.md` exists, **markdown owns `/auto`**. Plugin `execute` does **not** override. After collision removal, plugin `editor.add({ name: "auto", execute })` is the sole `/auto` registration. |
-| CF6: primary = transform `execute`; `command.executed` = defense | **Unchanged compose.** Secondary subscribe stays mutex-gated **after** markdown collision is gone. Do not depend on it to unstick `/auto`. |
-
-Historical `# BUG-0015` CF1 cell remains as shipped evidence. Readers must follow **this** section for `/auto` ownership.
-
-## Critic NB closures (research sovereign-critic — LOCKED here)
-
-| ID | Carry-forward | Architecture lock |
-|----|---------------|-------------------|
-| NB1 | R1 markdown-only listing; R2 leftover `auto.md` after naïve upgrade | Plugin `add` + D9 description; **DQ8 prune** (T-003) + marker 4. Residual listing risk MEDIUM — fail-closed attach-missing; no live probe. |
-| NB2 | Exact reason-code token + runtime vs installer detect | Token **`OPENCODE_AUTO_MARKDOWN_COLLISION`** (no bikeshed). **Installer prune is primary.** Plugin `REASON_CODES` stub + `runAutoLifecycle` leftover-file fail-closed (defense when execute is reached). Slash leftover cannot be intercepted — prune or operator delete. |
-| NB3 | Do not spawn sprint-plan from architecture; no companion DEC; no DONE; no Symptom B | Held. Axes B/C/D rejected. Status OPEN. |
-
-## Components
-
-### Remove colliding `auto.md` (DQ1, DQ5, D9, D10)
-
-Delete:
-
-- `.opencode/commands/auto.md`
-- `template/.opencode/commands/auto.md`
-
-Keep all other `.opencode/commands/*.md` (`intake.md`, peers, `/quick`, `/ask`). Keep `.opencode/agents/auto.md` (independent agent surface). Keep `.cursor/commands/auto.md` (Cursor host — out of scope).
-
-Plugin listing: `editor.add` `name: "auto"` + `description: "its-magic auto: orchestrator dispatch entry (spawn-only)."` (match current markdown description). Residual risk: a host that lists **only** markdown files would hide `/auto` — mitigate with plugin `add` + attach-missing `OPENCODE_PLUGIN_DISPATCH_ATTACH_UNSUPPORTED`; no live CI probe.
-
-### Plugin attach unchanged (compose BUG-0015)
-
-Keep `ctx.command.transform` → `editor.add({ name: "auto", execute })` → `runAutoLifecycle`. Do not treat `setup()` return `{ spawnPhase }` as attach. Secondary `command.executed` subscribe remains defense-only (mutex-gated).
-
-At start of `runAutoLifecycle`, if leftover `.opencode/commands/auto.md` exists (best-effort `cwd` / `ctx.directory`): return fail-closed **`OPENCODE_AUTO_MARKDOWN_COLLISION`** (does not unstick slash markdown-wins; covers headless/secondary when execute is reached). Plugin must **not** delete the file (installer owns prune).
-
-### Reason codes (DQ6)
-
-| Code | When |
-|------|------|
-| `OPENCODE_PLUGIN_DISPATCH_ATTACH_UNSUPPORTED` | Missing `command.transform` / `editor.add` (unchanged BUG-0015) |
-| `OPENCODE_PLUGIN_SPAWN_UNSUPPORTED` / `OPENCODE_SUBTASK_IGNORED` / `OPENCODE_AUTO_ALREADY_RUNNING` | Unchanged compose |
-| **`OPENCODE_AUTO_MARKDOWN_COLLISION`** | Leftover `.opencode/commands/auto.md` so markdown would own `/auto` — **must not** silent STOP. Installer prints this if prune unlink fails. Plugin vocabulary + lifecycle leftover check. US-0126 owns full table; this bug ships **stub only**. |
-
-### Installer prune (DQ8)
-
-`installer.py` upgrade iterates template file list: add missing + update differing framework bytes; **does not delete** target files the template no longer ships. Removing kit `auto.md` without prune **leaves consumer collision**.
-
-**Ship**: targeted prune of consumer `.opencode/commands/auto.md` when the kit template no longer ships that path, invoked from upgrade `--host opencode|both` (and the same path in `installer.sh` / `installer.ps1`). **Always delete this one relative path** (retired colliding framework file — not operator data; not a DEC-0132 preserve path). Do **not** invent a general “delete all files not in template” sweeper. Do **not** prune `.opencode/agents/auto.md` or `.cursor/commands/auto.md`.
-
-If unlink fails: print **`[OPENCODE_AUTO_MARKDOWN_COLLISION]`**, continue other upgrade work, runbook tells operator to delete the file then re-upgrade.
-
-### Contract tests (DQ7 — six markers + compose-only)
-
-Preferred: `tests/bug0018_opencode_auto_ownership_test.py`. **No live OpenCode probe.**
-
-| # | Marker | Asserts |
-|---|--------|---------|
-| 1 | `test_bug0018_no_colliding_opencode_auto_md` | active + template `.opencode/commands/auto.md` **absent** |
-| 2 | `test_bug0018_plugin_editor_add_auto_execute` | `command.transform` + `editor.add({ name: "auto" })` + `execute` / `runAutoLifecycle` (active + template) |
-| 3 | `test_bug0018_active_template_opencode_auto_ownership_parity` | absence of `auto.md` + plugin attach byte-parity |
-| 4 | `test_bug0018_upgrade_prunes_consumer_auto_md` | upgrade `--host opencode` (or targeted helper) removes leftover consumer `auto.md` |
-| 5 | `test_bug0018_compose_bug0015_attach_api_unchanged` | `runAutoLifecycle` / attach reason codes still present (read-only compose) |
-| 6 | `test_bug0018_markdown_collision_reason_code_stub` | `OPENCODE_AUTO_MARKDOWN_COLLISION` in plugin vocabulary / runbook stub |
-
-**Compose-only (required once `auto.md` is gone; do not reopen US-0125/BUG-0015 ACs; DEC-0124/0125 bodies UNCHANGED):**
-
-- `test_bug0015_auto_md_dispatch_only_static`: **if** `auto.md` exists → ≤20 / STOP / no spawn; **absence is OK**
-- `test_us0125_auto_command_dispatch_only`: same if-present; no hard `auto.md missing` fail
-- Drop `.opencode/commands/auto.md` pair from `BUG0015_PAIRS` (plugin pair stays)
-- US-0125 `EXPECTED_COMMANDS`: drop `"auto"` → **14** markdown commands (12 lifecycle + `quick` + `ask`). Marker 7 remaining-after-delete `quick.md`: **13**. Remove dead `if name == "auto"` frontmatter branch.
-- `test_bug0017_guard_installer_publish_rejects_opencode_cr` plant path: swap to another remaining command file (e.g. `intake.md`) — plant-path only; CR-reject AC unchanged
-- Do **not** otherwise amend remaining `test_us0124_*` / `test_bug0015_*` / `test_us0125_*` / `test_bug0017_*`
-
-### Consumer upgrade (DQ8 / NB1)
-
-Runbook recipe: (1) upgrade its-magic to the BUG-0018 release; (2) `its-magic --mode upgrade --host opencode|both` (**must prune** `auto.md`); (3) if unlink blocked, operator deletes `.opencode/commands/auto.md` then re-upgrade.
-
-## Touch surfaces (execute)
-
-| Surface | Change |
-|---------|--------|
-| `.opencode/commands/auto.md` + `template/.opencode/commands/auto.md` | **Delete** |
-| `.opencode/plugins/orchestrator.ts` + template | Keep attach; add `OPENCODE_AUTO_MARKDOWN_COLLISION`; leftover-file fail-closed in `runAutoLifecycle` |
-| `installer.py` + `installer.sh` + `installer.ps1` | Targeted prune on upgrade `--host opencode\|both` |
-| `scripts/check_intake_template_parity.py` `BUG0015_PAIRS` | Drop `auto.md` pair |
-| `tests/us0125_contract_test.py` inventory | Drop `"auto"`; counts 15→14 / remaining 14→13; if-present dispatch-only |
-| `tests/bug0015_contract_test.py` marker 6 | If-present |
-| `tests/bug0017_opencode_eol_test.py` marker 4 | Plant path → `intake.md` (or peer) |
-| `tests/bug0018_*` | 6 markers |
-| `docs/engineering/runbook.md` (+ template) | Prune recipe + reason-code stub |
-
-## Non-goals
-
-- Rewrite DEC-0124 / DEC-0125 bodies
-- Companion DEC
-- Reopen BUG-0015 / BUG-0016 / BUG-0017
-- Symptom B / `NATIVE_CHAIN_UNAVAILABLE` / Cursor Task port
-- General template-absent file sweeper
-- Empty/no-STOP leftover `auto.md`
-- Live OpenCode CI probe
-- Touch `.cursor/commands/auto.md` or `.opencode/agents/auto.md`
-- Plugin deleting files
-
-## Risks
-
-| Risk | Severity | Mitigation |
-|------|----------|------------|
-| R1 Host lists only markdown files → `/auto` hidden | MEDIUM | Plugin `add` + D9; attach-missing fail-closed; no live probe |
-| R2 Consumer leftover `auto.md` after kit-only fix | MEDIUM | DQ8 prune + marker 4 + runbook |
-| R3 us0125/bug0015/bug0017 tests fail on absence | LOW | Compose-only if-present + inventory/plant-path (T-004/T-005) |
-| R4 Symptom B mistaken for this bug | LOW | Out of scope (D8) |
-| R5 Reason-code stub drift vs US-0126 | LOW | Stub + cross-link only |
-| R6 Prune unlink fails (permissions) | LOW | Print `OPENCODE_AUTO_MARKDOWN_COLLISION`; operator delete |
-
-## AC coverage mapping (bug acceptance + R-0120)
-
-| Expected slice | Architecture anchor | Seeds |
-|----------------|---------------------|-------|
-| `/auto` invokes plugin execute → `runAutoLifecycle` (or documented `OPENCODE_*`) | A*; DQ1/DQ5 | T-001, T-002, T-005 |
-| Markdown not sole runtime owner when plugin execute registered | Remove `auto.md`; CF1 supersede | T-001, T-005 (m1) |
-| Slash listing preserved | Plugin `name`+`description` | T-002, T-005 (m2) |
-| Consumer upgrade does not leave colliding `auto.md` | DQ8 prune | T-003, T-005 (m4), T-006 |
-| No silent STOP | `OPENCODE_AUTO_MARKDOWN_COLLISION` | T-002, T-003, T-005 (m6), T-006 |
-| Active↔template parity | D10 | T-001, T-002, T-005 (m3), T-007 |
-| Compose BUG-0015 attach unchanged | Marker 5 | T-002, T-005 (m5) |
-
-Acceptance checkbox: `docs/product/acceptance.md` BUG-0018 row remains unchecked until closure (US-0045).
-
-## Atomic task seeds (for `/sprint-plan`)
-
-| # | Seed | Surfaces |
-|---|------|----------|
-| T-anch | Verify `# BUG-0018` H1 + approach A* + R-0120 DQ1–DQ8 + CF1 superseded + no companion DEC | architecture.md, R-0120 (read-only) |
-| T-001 | Delete colliding `.opencode/commands/auto.md` (active + template); keep other commands, agent `auto.md`, Cursor `auto.md` | `.opencode/commands/auto.md`, `template/.opencode/commands/auto.md` |
-| T-002 | Keep plugin `editor.add({ name: "auto", execute })` → `runAutoLifecycle`; add `OPENCODE_AUTO_MARKDOWN_COLLISION`; leftover-file fail-closed | `orchestrator.ts` (active + template) |
-| T-003 | Targeted prune of consumer `.opencode/commands/auto.md` on `upgrade --host opencode\|both`; print collision code if unlink fails | `installer.py`, `installer.sh`, `installer.ps1` |
-| T-004 | Compose inventory/parity/plant-path: drop `auto` from US-0125 expected set; drop `BUG0015_PAIRS` auto.md pair; bug0017 plant → `intake.md`; if-present named tests | us0125 / bug0015 / bug0017 tests + parity script |
-| T-005 | Add 6 `test_bug0018_*` markers; no live OpenCode probe | `tests/bug0018_*.py` |
-| T-006 | Runbook: upgrade prune recipe + `OPENCODE_AUTO_MARKDOWN_COLLISION` stub (US-0126 cross-link) | `docs/engineering/runbook.md` + template |
-| T-007 | Active↔template parity for plugin / runbook stub / installer prune helper paths touched | parity + template mirrors |
-
-**Task count**: 8 seeds (T-anch + T-001..T-007). `SPRINT_MAX_TASKS=12` — no auto-split. Not `/quick` (delete + plugin + three installers + compose tests + runbook).
-
-## Decision linkage
-
-- Decision: **none** (companion DEC not required — cite **R-0120**)
-- Compose (do not amend bodies): **DEC-0124**, **DEC-0125**, **DEC-0120**, **DEC-0132** (preserve paths — `auto.md` is not one)
-- Research: **R-0120** (composes **R-0119** / **R-0114**; do not wipe)
-- Related: **US-0124**, **US-0125**, **US-0069**, **US-0126** (stub only); **BUG-0015** / **BUG-0016** / **BUG-0017** DONE — out of scope
-
-## Isolation evidence (US-0048 / DEC-0029)
-
-- `phase_id=architecture`, `role=tech-lead`, `bug_id=BUG-0018`, `sprint_id=none`, `orchestrator_run_id=auto-20260912-bug0018`
-- `delivery_mode=ultra_lean`, `macro_phase=plan`, `model_id=cursor-grok-4.6` (CROSS_MODEL_REVIEW=1)
-- `fresh_context_marker=tl-BUG0018-architecture-20260912T100000Z-fresh`, `timestamp=2026-09-12T10:00:00Z`
-- Narrow-read: R-0120; `# BUG-0015` CF1; BUG-0018 backlog; acceptance row; resume_brief; auto.md + plugin attach; installer upgrade copy-only; critic NBs
-- No execute-surface mutation in this phase; no DONE flip; acceptance unchecked; no companion DEC; no DEC-0124/0125 body rewrite; CF1 historical cell not rewritten
-
-## Strict runtime proof
-
-- `runtime_proof_id=rp-auto-20260912-bug0018-architecture-techlead-20260912T100000Z-BUG-0018`
-- Canonical payload: `{"delivery_mode":"ultra_lean","macro_phase":"plan","model_id":"cursor-grok-4.6","orchestrator_run_id":"auto-20260912-bug0018","phase_id":"architecture","proof_issued_at":"2026-09-12T10:00:00Z","proof_ttl_seconds":3600,"role":"tech-lead","runtime_proof_id":"rp-auto-20260912-bug0018-architecture-techlead-20260912T100000Z-BUG-0018","sprint_id":"none","story_id":"BUG-0018"}`
-- `proof_hash=076F4C6E4744AB44B4751AF821572EB7082C8103EBD0091C9BC6EAB88351AA0B`
-- `proof_ttl=2026-09-12T11:00:00Z`
-- Consumed research proof: `rp-auto-20260912-bug0018-research-techlead-20260912T095000Z-BUG-0018` / `6E62DB20F5F4B898E086B6DD8385E3874A5A6DC43C896314F81F6C8D65E3AA0A` — RUNTIME_PROOF_VALID
-
-# BUG-0019 — OpenCode slash palette has no `/auto` after plugin-only ownership
-
-## Overview
-
-**`BUG-0019`** closes the **listing residual** left after BUG-0018 A*: colliding `.opencode/commands/auto.md` is gone and plugin `editor.add({ name: "auto", execute })` → `runAutoLifecycle` is still registered, but the OpenCode TUI slash palette does **not** list `/auto` (operator screenshot 2026-09-12; peers with markdown files still listed). Distinct from **BUG-0015 DONE** (missing attach), **BUG-0017 DONE** (CRLF hid all commands), and **BUG-0018 DONE** (markdown-wins STOP — collision/STOP fix remains correct; do **not** reopen).
-
-**This section supersedes `R-0120` DQ5** (“plugin `name`+`description` lists `/auto`”) **and `# BUG-0018` NB1** (markdown-only listing residual). Those listing claims are **live-falsified**. Do **not** rewrite the historical `# BUG-0018` body, **R-0120** body, **DEC-0124**, or **DEC-0125** (D8). Do **not** reopen BUG-0018 ACs.
-
-**Research anchor**: **`R-0124`** (DQ1–DQ8 LOCKED; compose **R-0123** / **R-0120**; do not wipe). **Companion DEC**: **none** (do **not** allocate `DEC-0135`). **Out of scope**: Cursor `/auto`; US-0135+; reopen 0015/16/17/18; Axis A/B/C/D; restore STOP-only `auto.md`; JSON `commands.auto` template; live OpenCode CI probe (default out of CI, same as 0018); convert flat `orchestrator.ts` into a package.
-
-**EARLY_RESEARCH confirm** (architecture 2026-09-12; no new `R-xxxx`): public OpenCode v2 CLI plugin docs still match R-0124 E* — project `.opencode/plugins/<name>/index.ts` + `tui.ts` auto-discovery; `cli.json` **not** required for discovered project plugins; TUI `context.keymap.layer` + `slash: { name }` + `run()`; `context.client` reaches the connected server. Internal `tui-plugins.md` (`tui.json`, no directory auto-discovery) is a MEDIUM residual (R2) — do **not** ship `tui.json` unless execute proves discovery fails; then fail-closed listing token, not a silent miss.
-
-**Fresh context marker**: `tl-BUG0019-architecture-20260912T181000Z-fresh`
-**Orchestrator run id**: `auto-20260912-bug0019`
-**Timestamp**: 2026-09-12T18:15:00Z (UTC)
-**Verdict**: PASS
-**Next**: `/sprint-plan`
-
-## Approach locked (E1 / E* — from R-0124 Axis E* / DQ1–DQ8)
-
-**Approach E1** (locked; named **E\***): **TUI keymap slash listing + retained plugin execute**. Listing = project-local TUI/CLI plugin keymap layer `slash.name` / `slashName` = `"auto"` whose `run()` is a function (not a Command.Info prompt template). Execute owner remains server plugin `command.transform` → `editor.add({ name: "auto", execute })` → `runAutoLifecycle` (BUG-0018 A* retained). Additive sibling package `.opencode/plugins/its-magic-auto/{index.ts,tui.ts}` (keep flat `orchestrator.ts`). Fail-closed **`OPENCODE_AUTO_SLASH_LISTING_UNSUPPORTED`** if keymap/slash API missing. Seven `test_bug0019_*`. Upgrade `--host opencode|both` **copies** new TUI listing files and still **prunes** leftover `auto.md`. No companion DEC.
-
-| Option | Summary | Verdict |
-|--------|---------|---------|
-| **E1 / E\*** | TUI keymap `slash`/`slashName` `"auto"` lists `/auto`; `run()` → client invoke → `runAutoLifecycle`; keep `editor.add`; additive sibling `its-magic-auto/`; token `OPENCODE_AUTO_SLASH_LISTING_UNSUPPORTED`; 7 tests; cite R-0124 | **Preferred** — documented list-without-template; two registries; does not recreate 0018 |
-| E2 / Axis A (rejected) | JSON `commands.auto` + `template` | **Rejected** — `template` required; same registry as markdown; JSON-win = 0018 class |
-| E3 / Axis B (rejected) | Restore markdown listing (`auto.md` empty/STOP/no-STOP) | **Rejected** — body always owns execute (D4). **Do not restore STOP-only `auto.md`.** |
-| E4 / Axis C (rejected) | `editor.add` / `command.list()` → TUI slash row | **Rejected** — `list()` / `GET /api/command` is Command.Info; live-falsified |
-| E5 / Axis D (rejected) | Markdown/JSON listing-only file | **Rejected** — no listing-without-template field in that registry |
-| E6 (rejected) | Convert `orchestrator.ts` into `.opencode/plugins/orchestrator/{index.ts,tui.ts}` | **Rejected** — YAGNI vs additive sibling (R2); keep working BUG-0015 attach path |
-| E7 (rejected) | Companion DEC-0135 / rewrite DEC-0124/0125 / rewrite `# BUG-0018` | **Rejected** — DQ6 additive `# BUG-0019`; D8 bodies UNCHANGED |
-
-### Deferred locks (R-0124 → this section)
-
-| Deferred item | Architecture lock |
-|---------------|-------------------|
-| Plugin directory layout | **Additive sibling** `.opencode/plugins/its-magic-auto/index.ts` + `tui.ts` (active + template). **Keep** flat `.opencode/plugins/orchestrator.ts`. Do **not** convert orchestrator into a package. `index.ts` is a thin server entry so discovery loads the package — **must not** `editor.add({ name: "auto" })` (execute stays on orchestrator). |
-| `cli.json` required? | **No.** Public CLI docs: discovered project plugins do not need `cli.json`. Do **not** ship kit `cli.json` / `tui.json` unless execute proves auto-discovery fails (then listing token, not silent miss). |
-| TUI `run()` → server | **Client invoke, not Command.Info.** `run()` uses `context.client` / `api.client` to reach `runAutoLifecycle` on `orchestrator.ts`. Prefer (1) documented invoke of plugin `CommandDefinition.execute` if it is **not** SessionPrompt/Command.Info template expansion; else (2) additive plugin RPC on `orchestrator.ts` wrapping `runAutoLifecycle`. **Forbidden**: `SessionPrompt.command()`, JSON/md `template`, STOP body. If client/RPC unreachable → `OPENCODE_AUTO_TUI_DISPATCH_UNSUPPORTED`. If keymap/slash API missing at TUI load → `OPENCODE_AUTO_SLASH_LISTING_UNSUPPORTED`. |
-| Reason-code token | Keep **`OPENCODE_AUTO_SLASH_LISTING_UNSUPPORTED`** (no bikeshed). Dispatch sibling **`OPENCODE_AUTO_TUI_DISPATCH_UNSUPPORTED`** (R1). Do **not** reuse `OPENCODE_AUTO_MARKDOWN_COLLISION` for listing-miss. |
-| Parity / installer-owned-paths | Active ↔ template byte-parity for `its-magic-auto/` + orchestrator retain + runbook stub. Add named installer-owned-paths rows for the new template plugin files if the specific-file list is required; `.opencode/plugins` directory include already covers recursive copy. |
-
-## CF supersede — R-0120 DQ5 and BUG-0018 NB1 (LOCKED)
-
-| Prior lock | New lock (this section) |
-|------------|-------------------------|
-| R-0120 DQ5: plugin `name`+`description` lists `/auto` | **SUPERSEDED.** Plugin `editor.add` is **not** a TUI slash list source. TUI markdown/JSON rows are Command.Info (`template` required). Listing for `/auto` is TUI keymap `slash`/`slashName` `"auto"`. |
-| `# BUG-0018` NB1: residual host that lists only markdown would hide `/auto` (MEDIUM; no live probe) | **SUPERSEDED as the live defect.** Operator screenshot is the live probe. Fix is Axis E* listing surface, **not** restoring `auto.md`. Historical `# BUG-0018` NB1 cell remains as shipped evidence. |
-| BUG-0018 A*: plugin-only execute; `auto.md` absent; prune leftover; `OPENCODE_AUTO_MARKDOWN_COLLISION` | **Unchanged compose.** Execute owner + prune + collision token stay. This bug adds listing coexistence, not a collision reopen. |
-
-Historical `# BUG-0018` body remains as shipped evidence. Readers must follow **this** section for `/auto` **listing**. Execute ownership remains `# BUG-0018` A* + this section’s retain lock.
-
-## Critic NB closures (research sovereign-critic — LOCKED here)
-
-| ID | Carry-forward | Architecture lock |
-|----|---------------|-------------------|
-| NB1 | TUI `run()` → server invoke + `tui.ts` layout (R-0124 R1/R2) | Sibling `its-magic-auto/{index.ts,tui.ts}`; `run()` → `context.client` / RPC → `runAutoLifecycle`; keep flat `orchestrator.ts`; no `cli.json` |
-| NB2 | E1 ratification + exact client invoke + 7 tests + listing token | E1 locked; tokens `OPENCODE_AUTO_SLASH_LISTING_UNSUPPORTED` + dispatch sibling; 7 `test_bug0019_*` |
-| NB3 | No `/architecture` spawn from critic; no companion DEC; no DONE; no 0018 reopen; no `auto.md` restore; axes A/B/C rejected | Held. E2–E7 rejected. Status OPEN. This phase does **not** spawn `/sprint-plan`. |
-
-## Components
-
-### TUI listing surface (DQ1, DQ4, DQ8, D1, D10)
-
-Ship additive package (active **and** template):
-
-- `.opencode/plugins/its-magic-auto/index.ts` — thin `Plugin.define` server entry for discovery. **No** second `editor.add({ name: "auto" })`.
-- `.opencode/plugins/its-magic-auto/tui.ts` — import `@opencode-ai/plugin/tui` (or `@opencode/plugin/tui` as the host resolves). Register keymap layer with `slash: { name: "auto" }` **or** `slashName: "auto"` (whichever the loaded TUI API exposes). `namespace`/`palette` as required so the command appears in the slash palette the operator uses. Description should match current plugin `editor.add` description: `its-magic auto: orchestrator dispatch entry (spawn-only).`
-
-If **neither** `context.keymap.layer` nor `api.keymap.registerLayer` (or equivalent slash-capable keymap API) exists at TUI load: operator-visible **`OPENCODE_AUTO_SLASH_LISTING_UNSUPPORTED`** (toast and/or printed token). Must **not** silent missing-command.
-
-Keep all `.opencode/commands/*.md` peers. Keep `.opencode/agents/auto.md`. Keep `.cursor/commands/auto.md`. **Do not** restore `.opencode/commands/auto.md`.
-
-### Plugin execute retained (compose BUG-0018 A* / BUG-0015)
-
-Keep `.opencode/plugins/orchestrator.ts` `ctx.command.transform` → `editor.add({ name: "auto", execute })` → `runAutoLifecycle`. Leftover-`auto.md` fail-closed `OPENCODE_AUTO_MARKDOWN_COLLISION` unchanged. Secondary `command.executed` stays defense-only.
-
-Do **not** add OpenCode JSON/JSONC `commands.auto` / `command.auto` with `template`.
-
-### TUI `run()` → server `runAutoLifecycle` (R1)
-
-`tui.ts` `run()` lives in the CLI process. `runAutoLifecycle` lives in the server plugin.
-
-**Locked invoke order:**
-
-1. Obtain `context.client` or `api.client` (`OpencodeClient`).
-2. Invoke server `runAutoLifecycle` **without** Command.Info template expansion. Prefer a documented plugin-command execute path if it targets `CommandDefinition.execute`; otherwise additive plugin RPC on `orchestrator.ts` (thin wrapper around existing `runAutoLifecycle`).
-3. Surface lifecycle result / `OPENCODE_*` to the operator (toast or equivalent). Do not swallow.
-
-If client or RPC/execute path is missing: operator-visible **`OPENCODE_AUTO_TUI_DISPATCH_UNSUPPORTED`**. Do **not** paper over with markdown/JSON template.
-
-### Reason codes (DQ5)
-
-| Code | When |
-|------|------|
-| `OPENCODE_PLUGIN_DISPATCH_ATTACH_UNSUPPORTED` | Missing `command.transform` / `editor.add` (unchanged BUG-0015) |
-| `OPENCODE_AUTO_MARKDOWN_COLLISION` | Leftover `.opencode/commands/auto.md` (unchanged BUG-0018). **Not** for listing-miss. |
-| **`OPENCODE_AUTO_SLASH_LISTING_UNSUPPORTED`** | Plugin execute is registered **but** TUI keymap/slash listing cannot be registered (missing keymap API / slash field). **Must not** silent missing `/auto`. |
-| **`OPENCODE_AUTO_TUI_DISPATCH_UNSUPPORTED`** | `/auto` is listed (or would be) but `run()` cannot reach `runAutoLifecycle`. |
-| Other `OPENCODE_*` / mutex codes | Unchanged compose |
-
-US-0126 owns the full table; this bug ships **stub only** (plugin `REASON_CODES` + runbook).
-
-### Contract tests (DQ6 — seven markers)
-
-Preferred: `tests/bug0019_opencode_auto_slash_listing_test.py`. **No live OpenCode TUI probe** (default out of CI, same as 0018). Do **not** weaken `test_bug0018_*` (`auto.md` remains absent).
-
-| # | Marker | Asserts |
-|---|--------|---------|
-| 1 | `test_bug0019_no_restored_opencode_auto_md` | active + template `.opencode/commands/auto.md` **absent** (compose 0018; Cursor `.cursor/commands/auto.md` + `.opencode/agents/auto.md` remain) |
-| 2 | `test_bug0019_plugin_editor_add_auto_execute_retained` | `command.transform` + `editor.add({ name: "auto" })` + `execute` / `runAutoLifecycle` (active + template) |
-| 3 | `test_bug0019_no_json_commands_auto_template` | no OpenCode JSON/JSONC `commands.auto` / `command.auto` with `template` |
-| 4 | `test_bug0019_tui_slash_auto_listing_surface` | TUI keymap `slash` / `slashName` `"auto"` in discovered TUI entry `its-magic-auto/tui.ts` (active + template) |
-| 5 | `test_bug0019_tui_run_dispatches_lifecycle_not_template` | TUI `run` wires to `runAutoLifecycle` / client invoke of plugin execute; **not** a Command.Info prompt template / STOP body |
-| 6 | `test_bug0019_active_template_listing_parity` | listing surface + no-`auto.md` + no JSON template byte-parity (D10) |
-| 7 | `test_bug0019_upgrade_copies_listing_surface` | upgrade `--host opencode\|both` **copies** new TUI listing files onto already-pruned consumer trees; still **prunes** leftover `auto.md`; no general sweeper |
-
-### Consumer upgrade (DQ7)
-
-BUG-0018 already pruned consumer `auto.md`. Those trees **lack** a listing surface. Upgrade is **copy-only for files the template still ships** plus the targeted `auto.md` prune.
-
-**Ship** `template/.opencode/plugins/its-magic-auto/{index.ts,tui.ts}`. `its-magic --mode upgrade --host opencode|both` **adds missing framework files** → already-pruned consumers receive the listing surface without restoring `auto.md`. Still run `prune_retired_opencode_auto_md`.
-
-**Installer-owned-paths**: add named rows for the new template plugin files if the specific-file list is the copy SOT; keep `.opencode/plugins` directory include. Extend `check_intake_template_parity.py` with an additive pair for `its-magic-auto/` (do not drop `BUG0015_PAIRS` orchestrator pair).
-
-Runbook recipe: (1) upgrade to the BUG-0019 release; (2) `its-magic --mode upgrade --host opencode|both` (copy listing files + prune leftover `auto.md`); (3) restart OpenCode (not `--pure`); (4) slash palette lists `/auto` and invocation starts lifecycle or `OPENCODE_*`.
-
-## Touch surfaces (execute)
-
-| Surface | Change |
-|---------|--------|
-| `.opencode/plugins/its-magic-auto/index.ts` + `tui.ts` + template twins | **Add** listing package |
-| `.opencode/plugins/orchestrator.ts` + template | Keep attach; add listing/dispatch `REASON_CODES`; optional RPC wrapper for TUI `run()` |
-| `.opencode/commands/auto.md` + template | **Stay absent** |
-| OpenCode JSON `commands.auto` | **Do not add** |
-| `installer.py` + `installer.sh` + `installer.ps1` | Copy new plugin files; **keep** targeted `auto.md` prune |
-| `docs/engineering/context/installer-owned-paths.manifest` | Named rows for new plugin files if required |
-| `scripts/check_intake_template_parity.py` | Additive `its-magic-auto/` pair |
-| `tests/bug0019_*` | 7 markers |
-| `tests/bug0018_*` | Unchanged compose (auto.md absent) |
-| `docs/engineering/runbook.md` (+ template) | Upgrade copy+prune recipe + listing/dispatch reason-code stubs |
-
-## Non-goals
-
-- Allocate `DEC-0135` / rewrite DEC-0124 / DEC-0125 bodies
-- Rewrite historical `# BUG-0018` body / R-0120 body
-- Reopen BUG-0015 / BUG-0016 / BUG-0017 / BUG-0018
-- Restore STOP-only / empty `auto.md`
-- JSON `commands.auto` template
-- Convert flat `orchestrator.ts` to package layout
-- Ship kit `cli.json` / `tui.json` by default
-- Live OpenCode CI probe
-- Touch `.cursor/commands/auto.md` or `.opencode/agents/auto.md`
-- Drain US-0135+ / mutate US-0133..US-0148
-- Cursor `/auto` port
-
-## Risks
-
-| Risk | Severity | Mitigation |
-|------|----------|------------|
-| R1 TUI `run()` cannot reach server `runAutoLifecycle` | MEDIUM | Locked client/RPC invoke; `OPENCODE_AUTO_TUI_DISPATCH_UNSUPPORTED`; never markdown/JSON template |
-| R2 Host TUI discovery wants package layout / `tui.json` | MEDIUM | Additive sibling `index.ts`+`tui.ts` (public CLI docs); no `cli.json`; listing token if keymap never registers; do not convert orchestrator.ts |
-| R3 Keymap `slash.name=auto` collides with future Command.Info `/auto` | LOW | Keep `auto.md` absent; forbid JSON `commands.auto`; 0018 prune remains |
-| R4 Already-pruned consumers miss new TUI files | LOW | DQ7 copy-on-upgrade + marker 7 |
-| R5 Cursor `/auto` mistaken for this bug | LOW | Out of scope (D8); do not prune `.cursor/commands/auto.md` |
-| R6 Reason-code stub drift vs US-0126 | LOW | Stub + cross-link only |
-
-## AC coverage mapping (bug acceptance + R-0124)
-
-| Expected slice | Architecture anchor | Seeds |
-|----------------|---------------------|-------|
-| Operator can select `/auto` in OpenCode list | E1 TUI keymap slash | T-001, T-005 (m4) |
-| Invocation starts `runAutoLifecycle` or documented `OPENCODE_*` | `run()` client invoke; tokens | T-003, T-004, T-005 (m5) |
-| Must not restore STOP-only `auto.md` | D4 / E3 rejected | T-002, T-005 (m1) |
-| Must not JSON-template `/auto` | E2 rejected | T-002, T-005 (m3) |
-| Plugin `editor.add` execute retained | Compose 0018 A* | T-002, T-005 (m2) |
-| Fail-closed listing token (not silent miss) | `OPENCODE_AUTO_SLASH_LISTING_UNSUPPORTED` | T-001, T-004, T-005 (m4) |
-| Consumer upgrade copies listing + still prunes `auto.md` | DQ7 | T-006, T-005 (m7) |
-| Active↔template parity | D10 | T-007, T-005 (m6) |
-| Peers remain listed | Do not delete other `.md` commands | T-anch, T-002 |
-
-Acceptance checkbox: `docs/product/acceptance.md` BUG-0019 row remains unchecked until closure (US-0045).
-
-## Atomic task seeds (for `/sprint-plan`)
-
-| # | Seed | Surfaces |
-|---|------|----------|
-| T-anch | Verify `# BUG-0019` H1 + approach E1/E* + R-0124 DQ1–DQ8 + DQ5/NB1 superseded + no companion DEC | architecture.md, R-0124 (read-only) |
-| T-001 | Add sibling `.opencode/plugins/its-magic-auto/{index.ts,tui.ts}` (active+template); keymap `slash`/`slashName` `"auto"`; fail-closed listing token if keymap API missing | `its-magic-auto/` active + template |
-| T-002 | Retain `orchestrator.ts` `editor.add({ name: "auto", execute })` → `runAutoLifecycle`; do **not** restore `auto.md`; do **not** add JSON `commands.auto` template | `orchestrator.ts`; confirm `auto.md` absent |
-| T-003 | Wire TUI `run()` → `context.client` / plugin RPC → `runAutoLifecycle` (not Command.Info template); dispatch fail-closed `OPENCODE_AUTO_TUI_DISPATCH_UNSUPPORTED` | `tui.ts` + orchestrator RPC/wrapper |
-| T-004 | Add `OPENCODE_AUTO_SLASH_LISTING_UNSUPPORTED` (+ dispatch sibling) to plugin `REASON_CODES` + runbook stub (US-0126 cross-link) | `orchestrator.ts` vocab + runbook |
-| T-005 | Add 7 `test_bug0019_*` markers; no live OpenCode probe; do not weaken `test_bug0018_*` | `tests/bug0019_*.py` |
-| T-006 | Upgrade `--host opencode\|both` **copies** new TUI files and still **prunes** leftover `auto.md`; installer-owned-paths named rows if required | installer.py/sh/ps1 + manifest |
-| T-007 | Runbook upgrade recipe + active↔template parity for listing package / runbook stub / installer paths / parity-script pair | runbook + template + `check_intake_template_parity.py` |
-
-**Task count**: 8 seeds (T-anch + T-001..T-007). `SPRINT_MAX_TASKS=12` — no auto-split. Not `/quick` (new TUI package + invoke wiring + installers + 7 tests + runbook).
-
-## Decision linkage
-
-- Decision: **none** (companion DEC not required — cite **R-0124**; do **not** allocate **DEC-0135**)
-- Compose (do not amend bodies): **DEC-0124**, **DEC-0125**, **DEC-0120**, **DEC-0132** (preserve paths — new plugin files are framework, not operator locals)
-- Research: **R-0124** (composes **R-0123** / **R-0120**; do not wipe)
-- Related: **US-0124**, **US-0125**, **US-0069**, **US-0126** (stub only); **BUG-0018** / **BUG-0015** / **BUG-0017** / **BUG-0016** DONE — out of scope
-
-## Isolation evidence (US-0048 / DEC-0029)
-
-- `phase_id=architecture`, `role=tech-lead`, `bug_id=BUG-0019`, `sprint_id=none`, `orchestrator_run_id=auto-20260912-bug0019`
-- `delivery_mode=ultra_lean`, `macro_phase=plan`, `model_id=cursor-grok-4.6` (CROSS_MODEL_REVIEW=1)
-- `fresh_context_marker=tl-BUG0019-architecture-20260912T181000Z-fresh`, `timestamp=2026-09-12T18:15:00Z`
-- Narrow-read: R-0124; `# BUG-0018` NB1; BUG-0019 backlog; acceptance row; resume_brief; absent auto.md + plugin attach; installer copy+prune; critic NBs
-- No execute-surface mutation in this phase; no DONE flip; acceptance unchecked; no companion DEC; no DEC-0124/0125 body rewrite; `# BUG-0018` historical body not rewritten; no `/sprint-plan` spawn
-
-## Strict runtime proof
-
-- `runtime_proof_id=rp-auto-20260912-bug0019-architecture-techlead-20260912T181500Z-BUG-0019`
-- Canonical payload: `{"delivery_mode":"ultra_lean","macro_phase":"plan","model_id":"cursor-grok-4.6","orchestrator_run_id":"auto-20260912-bug0019","phase_id":"architecture","proof_issued_at":"2026-09-12T18:15:00Z","proof_ttl_seconds":3600,"role":"tech-lead","runtime_proof_id":"rp-auto-20260912-bug0019-architecture-techlead-20260912T181500Z-BUG-0019","sprint_id":"none","story_id":"BUG-0019"}`
-- `proof_hash=467370D2B9622A20D2659B59116522D4E7D8F42B65253A936F40A0A72C729970`
-- `proof_ttl=2026-09-12T19:15:00Z`
-- Consumed research proof: `rp-auto-20260912-bug0019-research-techlead-20260912T175800Z-BUG-0019` / `D67B1BF49AF607EC472297AD62B949798D51ED92B5CE85B0068CAABB009F3854` — RUNTIME_PROOF_VALID MATCH before TTL `2026-09-12T18:58:00Z`
-
 # BUG-0020 — OpenCode still has no invokable auto mode after BUG-0019 TUI keymap
 
 ## Overview
@@ -853,6 +265,12 @@ Archived body in pack_ref: docs/engineering/architecture-archive/architecture-pa
 
 # BUG-0012 — Native-chain orchestrator compliance regression (post-US-0095)
 Archived body in pack_ref: docs/engineering/architecture-archive/architecture-pack-20260628-d.md
+
+# US-0042 — Post-QA release findings workflow
+Archived body in pack_ref: docs/engineering/architecture-archive/architecture-pack-20260612-a.md
+
+# US-0089: Cursor Caveman mode (scratchpad-configurable terse responses)
+Archived body in pack_ref: docs/engineering/architecture-archive/architecture-pack-20260913-i.md
 
 # US-0090: Caveman input compression
 
@@ -2953,3 +2371,490 @@ The suite creates an actual Pi SDK session with a deterministic local test-model
 - US-0151 owns lifecycle execution, operator transport, and TUI state; US-0152 owns AppRuntime/BrowserUAT; US-0153 owns parallel/release execution; US-0154 owns installed-path CI proof.
 - Out: US-0149, BUG-0026, phase-9 clients, root-kit publish work, `.env` reads, and git push.
 - `/sprint-plan` owns sprint materialization. This architecture phase creates no application code and no sprint directory.
+
+# BUG-0024 — OpenCode CLI TUI listed `/auto` still toasts OPENCODE_AUTO_TUI_DISPATCH_UNSUPPORTED after BUG-0023 Axis A (live dispatch)
+
+## Overview
+
+**`BUG-0024`** closes the **live CLI TUI dispatch residual** left after BUG-0023 Axis A shipped files: operator OpenCode CLI TUI (`opencode`, not `--pure`) **sees and invokes listed `/auto`**, then still toasts title `its-magic /auto` / body **`OPENCODE_AUTO_TUI_DISPATCH_UNSUPPORTED`**. Lifecycle does **not** start (`runAutoLifecycle` not reached). Axis A files present (`rpc.ts` Rpc.define + optional peer, `tui.ts` `{ id, tui }` + `dispatchRunAutoLifecycle`, orchestrator `await ctx.rpc.register` when present + `editor.add`, `tui.json` listing, `auto.md` absent) is **not** success.
+
+Distinct from **BUG-0023 DONE** (Axis A mock+inspection — do **not** reopen ACs / S0148), **BUG-0021 DONE** (listing limb still true — toast title proves listed invoke; do **not** reopen), **BUG-0020 DONE** (desktop Command.Info), **BUG-0019 DONE** (tokens), **BUG-0018 DONE** (do **not** restore STOP-only `auto.md`), **BUG-0022 OPEN** (Cursor inherit — do **not** merge / drain), **BUG-0027 OPEN** (manual phase persistence — compose only; do **not** drain).
+
+**This section supersedes `# BUG-0023` “DISPATCH only when client/RPC truly absent” as the live-operator happy-path claim.** Axis A compose (shared Defined + `client.rpc(Defined)` / `OpenCode.make` + await register + `{ id, tui }` + `editor.add`) remains `# BUG-0023`. Live residual diagnostics + peer-brand requirement for TUI success are **this** section. Do **not** rewrite historical `# BUG-0023` / `# BUG-0021` / `# BUG-0019` / `# BUG-0018` bodies.
+
+**Research anchor**: **`R-0140`** (DQ1–DQ10 LOCKED; compose **R-0137** / **R-0136** / **R-0134** / **R-0124** — do not wipe). **Companion DEC**: **none** (same class as BUG-0019 / BUG-0020 / BUG-0021 / BUG-0023 / BUG-0025). **EARLY_RESEARCH=0** — no new `R-xxxx`. **Out of scope**: Cursor `/auto` as done definition (working path until fix only); `--pure`; BUG-0022; BUG-0027 mutate; reopen 0015–0023 ACs; JSON `commands.auto`+`template`; STOP-only `auto.md`; live OpenCode CLI TUI probe in default CI (`UAT_PROBE_FORBIDDEN` held).
+
+**Fresh context marker**: `tl-BUG0024-architecture-20260921T194300Z-fresh`
+**Orchestrator run id**: `auto-20260921-bug0024`
+**Parent**: `cursor-20260913-BUG0024-intake`
+**Timestamp**: 2026-09-21T19:43:00Z (UTC)
+**Verdict**: PASS (`decision_gate=false`)
+**Next**: `/sprint-plan` (expected **S0159** — do **not** create this phase)
+**baseline_h2_count (pre-mutate)**: `0`
+
+## Approach locked (A1 Hybrid residual live-dispatch — from R-0140 DQ1–DQ10)
+
+**Approach A1 (A\*)** (locked): keep `{ id, tui }` listing + `editor.add` execute + Axis A `client.rpc(Defined).runAutoLifecycle` / `OpenCode.make({ baseUrl }).rpc(Defined)` happy path; require **peer-branded** `@opencode/plugin/rpc` `Rpc.define` for TUI dispatch success (local identity-`define` stays load-safe for orchestrator/`editor.add` but is **not** sufficient for live `client.rpc`); stop silent register-skip and catch-all→DISPATCH — emit **stage-distinct** `OPENCODE_*`; DISPATCH remains **umbrella** only when all limbs exhausted; never silent `localhost:4096`; never restore `auto.md`.
+
+1. Keep default export `{ id, tui }` + `registerLayer` `slashName: "auto"` / `ctrl+shift+a` (BUG-0021 compose — **do not reshape listing**).
+2. Keep `editor.add({ name: "auto", execute })` as execute owner (BUG-0018 A* compose).
+3. Shared `./its-magic-auto/rpc.ts` continues to export `ITS_MAGIC_AUTO_RPC`. Specifier **LOCKED**: `@opencode/plugin/rpc`. Local identity-`define` remains allowed so orchestrator loads without the peer.
+4. **TUI success gate (DQ3)**: `dispatchRunAutoLifecycle` treats Defined as TUI-happy **only** when peer `@opencode/plugin/rpc` branded the object (detect peer-resolve / branded mark architecture pins in execute). Identity-define Defined → **`OPENCODE_AUTO_TUI_DEFINED_UNBRANDED`**, not silent DISPATCH and not pretend success.
+5. **Limb order (LOCKED)**:
+   1. Resolve `client = context.client ?? context.api?.client` (host-true `api.client` per DQ1). Missing → **`OPENCODE_AUTO_TUI_MISSING_CLIENT`**.
+   2. Dynamic-import `ITS_MAGIC_AUTO_RPC`. Peer-unbranded → Defined-unbranded code (step 4).
+   3. If `typeof client.rpc === "function"` → `client.rpc(Defined).runAutoLifecycle(payload)` with payload `{ sessionID?, prompt?, delivery? }` — **not** `{ input }`. Rpc throw / no `runAutoLifecycle` → stage code (not catch-all DISPATCH alone) then fall through.
+   4. Else / after rpc miss: if `.rpc` absent → may emit **`OPENCODE_AUTO_TUI_RPC_ABSENT`** before make limb (observable; may still try make).
+   5. `OpenCode.make({ baseUrl }).rpc(Defined).runAutoLifecycle(payload)` only when `baseUrl = client.baseUrl ?? client.config?.baseUrl ?? client.defaults?.baseUrl` resolvable. Missing baseUrl / `@opencode/client` → **`OPENCODE_AUTO_TUI_MAKE_UNREACHABLE`**. **Never** silent `http://localhost:4096`.
+   6. Orchestrator: keep `await ctx.rpc.register(ITS_MAGIC_AUTO_RPC, { runAutoLifecycle })` when `ctx.rpc.register` exists. When **absent**: emit honest **`OPENCODE_AUTO_TUI_REGISTER_SKIPPED`** (session-visible / test-observable — not silent skip-as-success). TUI may still try client/make limbs.
+   7. **`OPENCODE_AUTO_TUI_DISPATCH_UNSUPPORTED`** only as **umbrella** when all limbs exhausted or host truly cannot dispatch (AC-1/AC-2).
+6. Invented `POST /rpc/...` `{ input }` stays **not** a path (BUG-0023 compose).
+7. Eight additive `test_bug0024_*` (below). Keep `test_bug0023_*` / `0021` / `0020` / `0019` / `0018` compose.
+8. Upgrade `--host opencode|both` **overwrites** live dispatch path (`tui.ts` / `rpc.ts` / orchestrator register limb) on already-Axis-A trees; still **prunes** leftover `auto.md`.
+
+| Option | Summary | Verdict |
+|--------|---------|---------|
+| **A1 Hybrid residual** | Peer-branded Defined for TUI success + stage codes + register-skip honesty + Axis A client/make path; `{ id, tui }` + `editor.add` held | **Preferred / LOCKED** |
+| A2 Client pass-through only | Only expand `api?.client` wiring | **Rejected** — insufficient vs H2/H5/H3 |
+| A3 Register timing only | Only force/await register | **Rejected** — residual may be branding/client |
+| A4 Defined branding only | Only peer Rpc.define | **Rejected** — register-skip + diagnostics still required |
+| A5 HTTP fallback only | Only OpenCode.make | **Rejected** — no silent localhost; primary remains client.rpc |
+| A6 Restore auto.md / Plugin.define TUI / JSON template | — | **Rejected** — D3/D4 / BUG-0018 / BUG-0021 |
+
+### Locked tokens (architecture-owned — DQ6)
+
+| Code | When |
+|------|------|
+| `OPENCODE_AUTO_TUI_MISSING_CLIENT` | `run()`/`dispatch` with no usable `api.client` / `context.client` |
+| `OPENCODE_AUTO_TUI_RPC_ABSENT` | Client present but `typeof client.rpc !== "function"` (before/alongside make limb) |
+| `OPENCODE_AUTO_TUI_DEFINED_UNBRANDED` | `ITS_MAGIC_AUTO_RPC` resolved via local identity-`define` only — not peer-branded; **not** TUI happy path |
+| `OPENCODE_AUTO_TUI_REGISTER_SKIPPED` | Orchestrator `ctx.rpc.register` absent — observable; not silent success |
+| `OPENCODE_AUTO_TUI_MAKE_UNREACHABLE` | Make limb needed but no resolvable `baseUrl` and/or `@opencode/client` unusable; **never** invent localhost |
+| `OPENCODE_AUTO_TUI_DISPATCH_UNSUPPORTED` | **Umbrella only** when all limbs exhausted / host truly cannot dispatch |
+| `OPENCODE_AUTO_SLASH_LISTING_UNSUPPORTED` | Unchanged BUG-0021 — compose |
+| `OPENCODE_AUTO_CLI_TUI_PLUGIN_LOAD_UNSUPPORTED` | Unchanged BUG-0021 — compose |
+| `OPENCODE_AUTO_MARKDOWN_COLLISION` | Unchanged BUG-0018 — **not** for dispatch-miss |
+| `OPENCODE_AUTO_DESKTOP_COMMAND_INFO_LISTING_UNSUPPORTED` | Unchanged BUG-0020 — **do not reuse** for CLI TUI dispatch |
+
+Closed set: five stage codes + one umbrella. Do not proliferate further tokens without a new research lock.
+
+### Supersede note — `# BUG-0023` live happy-path claim (LOCKED)
+
+| Prior lock | New lock (this section) |
+|------------|-------------------------|
+| `# BUG-0023`: DISPATCH only when client/RPC truly absent; Axis A files + mock-invoke = dispatch proof | **SUPERSEDED for live CLI TUI operator outcome.** Axis A compose remains. Live residual requires peer brand + stage codes + register-skip honesty. |
+| `# BUG-0023` local identity-define as load-safe fallback | **Compose for orchestrator load.** **Not** sufficient for TUI `client.rpc(Defined)` success. |
+| Silent skip when `ctx.rpc.register` absent | **Rejected** — emit `OPENCODE_AUTO_TUI_REGISTER_SKIPPED` |
+| Catch-all→DISPATCH as only diagnostic | **Rejected** — stage codes first; DISPATCH umbrella last |
+
+Historical `# BUG-0023` / `# BUG-0021` bodies remain shipped evidence. Readers must follow **this** section for **live CLI TUI `/auto` dispatch after Axis A**.
+
+## Design challenge (assumptions / simpler / risks)
+
+- **Alternative to peer brand?** Keep identity-define as TUI happy path. Live-falsified (H2/H5). **Rejected.**
+- **Alternative diagnostics?** Keep catch-all DISPATCH only. Fails AC-2 / AC-6 (mock gap). **Rejected.**
+- **Alternative listing reshape?** Switch TUI to `Plugin.define` so docs `context.client.rpc` matches. Re-breaks BUG-0021 listing. **Rejected.**
+- **Can this be simpler?** Restoring `auto.md` looks smaller and recreates BUG-0018. Client-pass-through-only (A2) misses branding/register. A1 is the simplest design that meets D1/D8/D9 and R-0140 A*.
+- **Governance fork?** Live residual of already-accepted Axis A contract — not a DEC-class product fork. **`decision_gate=false`**. No companion DEC.
+
+## Components
+
+### Peer-branded Defined (DQ3)
+
+`rpc.ts` (active + template):
+
+- Prefer `import` / dynamic resolve of `@opencode/plugin/rpc` `Rpc.define`.
+- Keep local identity-`define` so orchestrator/`editor.add` still loads when peer missing.
+- Export a **detectable brand signal** (architecture pin for execute): e.g. module-level `ITS_MAGIC_AUTO_RPC_PEER_BRANDED: boolean` or branded Symbol/property on Defined — tests assert TUI happy path requires brand true.
+
+### TUI dispatch (DQ1, DQ2, DQ5, DQ6)
+
+Keep `{ id, tui }` + `run()` → `dispatchRunAutoLifecycle({ api, client: api?.client }, input)`.
+
+Rewrite fail-closed branches to emit locked stage tokens per limb order above. Remove catch-all→DISPATCH as the sole body for missing client / unbranded / no baseUrl / rpc throw.
+
+Never SessionPrompt. Never Command.Info `template`. Never LLM chat. Never invented POST `{ input }`. Never silent localhost.
+
+### Orchestrator register honesty (DQ4)
+
+Keep `await ctx.rpc.register(ITS_MAGIC_AUTO_RPC, { runAutoLifecycle })` when register exists; keep `editor.add`.
+
+When `ctx.rpc.register` absent: emit **`OPENCODE_AUTO_TUI_REGISTER_SKIPPED`** (session-visible notice compatible with BUG-0020/0021 emit style — not TUI-toast-only required; must be test-observable). Do **not** treat skip as success.
+
+### Consumer upgrade / parity (DQ9)
+
+`its-magic --mode upgrade --host opencode|both`:
+
+- **Overwrite** framework-owned `tui.ts`, `rpc.ts`, and orchestrator register/skip-honesty limb via existing copy helpers.
+- `tui.json`: keep BUG-0020 copy-if-absent / JSONC merge; **do not** wholesale overwrite operator theme/keybinds.
+- Still run `prune_retired_opencode_auto_md`. Do **not** restore `auto.md`. Do **not** prune `.cursor/commands/auto.md` or `.opencode/agents/auto.md`.
+
+Extend `check_intake_template_parity.py` with additive `BUG0024_PAIRS` for touched dispatch surfaces (keep `BUG0023_PAIRS` / `BUG0021_PAIRS` / …).
+
+Runbook recipe: (1) upgrade to the BUG-0024 release; (2) `its-magic --mode upgrade --host opencode|both`; (3) restart OpenCode CLI TUI (`opencode`, **not** `--pure`); (4) listed `/auto` **starts** `runAutoLifecycle` — or honest stage/umbrella code only when host truly cannot dispatch. Cursor IDE `/auto` remains working path until fix — **not** done. `--pure` out of scope.
+
+## Test contract (DQ8 — eight markers)
+
+Preferred file: `tests/bug0024_opencode_cli_tui_live_dispatch_residual_test.py` (+ small node harness/fixture that **invokes** `dispatchRunAutoLifecycle` / `run()` / register-skip path against fakes). **No live OpenCode CLI TUI probe** in default CI (`UAT_PROBE_FORBIDDEN`). Markers must **fail current tree** / BUG-0023 mock-only gap.
+
+| # | Marker | Asserts |
+|---|--------|---------|
+| 1 | `test_bug0024_run_missing_api_client_distinct_code` | `{ api }` without `api.client` → `OPENCODE_AUTO_TUI_MISSING_CLIENT` (not silent umbrella-only) |
+| 2 | `test_bug0024_local_unbranded_defined_not_happy_path` | Identity-define Defined does **not** count as TUI success; emits `OPENCODE_AUTO_TUI_DEFINED_UNBRANDED` |
+| 3 | `test_bug0024_register_skipped_observable` | Absent `ctx.rpc.register` surfaces `OPENCODE_AUTO_TUI_REGISTER_SKIPPED` (not silent) |
+| 4 | `test_bug0024_make_unreachable_without_baseurl` | Client without `.rpc` and without `baseUrl` → `OPENCODE_AUTO_TUI_MAKE_UNREACHABLE`; never invent localhost |
+| 5 | `test_bug0024_swallowed_rpc_error_not_only_dispatch` | `client.rpc` throw maps to stage code before umbrella DISPATCH |
+| 6 | `test_bug0024_keep_editor_add_no_auto_md` | Compose D3/D4: `editor.add` present; no OpenCode `auto.md`; no JSON `commands.auto`+`template` |
+| 7 | `test_bug0024_active_template_parity` | AC-8 dispatch-path byte-parity |
+| 8 | `test_bug0024_upgrade_copies_dispatch_still_prunes_auto_md` | AC-7 overwrite + prune |
+
+Keep `test_bug0023_*` / `test_bug0021_*` / `test_bug0020_*` / `test_bug0019_*` / `test_bug0018_*` green — additive only.
+
+## Touch surfaces (execute)
+
+| Surface | Change |
+|---------|--------|
+| `.opencode/plugins/its-magic-auto/rpc.ts` + template | Peer-brand signal; keep local define for load-safe orchestrator |
+| `.opencode/plugins/its-magic-auto/tui.ts` + template | Stage-distinct codes; limb order; keep `{ id, tui }` |
+| `.opencode/plugins/orchestrator.ts` + template | Register-skipped honesty; keep `editor.add` + await register when present |
+| `.opencode/plugins/its-magic-auto/index.ts` | **Keep** server `Plugin.define`; no `tui` export |
+| `.opencode/commands/auto.md` + template | **Stay absent** |
+| OpenCode JSON `commands.auto` | **Do not add** |
+| `installer.py` + `installer.sh` + `installer.ps1` | Overwrite dispatch path; keep targeted `auto.md` prune |
+| `scripts/check_intake_template_parity.py` | Additive `BUG0024_PAIRS` |
+| `tests/bug0024_*` | 8 markers |
+| `tests/bug0023_*` / `0021` / `0020` / `0019` / `0018` | Unchanged compose |
+| `docs/engineering/runbook.md` (+ template) | Live-dispatch residual recipe + stage-code table + `--pure` out |
+
+## Non-goals
+
+- Allocate a companion DEC / rewrite `# BUG-0023` / `# BUG-0021` / `# BUG-0019` / `# BUG-0018` bodies
+- Reopen BUG-0023 / BUG-0021 / BUG-0020 / BUG-0019 / BUG-0018 ACs / S0148
+- Restore STOP-only / empty `auto.md`
+- JSON `commands.auto` template
+- Merge/drain BUG-0022; drain BUG-0027
+- Mutate US-0133..US-0150 as new scope
+- Cursor `/auto` as the product done definition
+- Claim `/auto` under `--pure`
+- Live OpenCode CLI TUI probe in default CI
+- Touch `.cursor/commands/auto.md` or `.opencode/agents/auto.md`
+- Treat DISPATCH toast as success
+- Silent `localhost:4096`
+- Top-level `import "@opencode/plugin/rpc"` from the TUI default-export module (listing regression risk — keep dynamic import inside dispatch)
+
+## Risks
+
+| Risk | Severity | Mitigation |
+|------|----------|------------|
+| R1 Stage-code proliferation vs AC-2 DISPATCH semantics | MEDIUM | Closed set of five stage + one umbrella; DISPATCH last |
+| R2 Peer `@opencode/plugin/rpc` absent on consumer hosts | MEDIUM | Distinct Defined-unbranded; orchestrator still loads via local define; Cursor working path until fix |
+| R3 Register-skipped confuses operators | LOW | Document as honest residual; runbook |
+| R4 Tests overfit mock and miss live again | MEDIUM | Markers target BUG-0023 gap (missing client / unbranded / register-skip / no baseUrl / swallowed rpc); UAT_PROBE_FORBIDDEN held |
+| R5 Upgrade leaves pre-BUG-0024 `tui.ts` (copy-if-absent) | MEDIUM | Marker 8 asserts **overwrite** |
+| R6 Accidental reopen of BUG-0023/0021 | LOW | Sibling boundary + non-goals; compose-only tests |
+
+## AC coverage mapping (bug acceptance + R-0140)
+
+| AC | Architecture owner | Seeds / tests |
+|----|-------------------|----------------|
+| AC-1 | A1 limb order + peer brand + lifecycle start | T-001..T-004; markers 1–5 |
+| AC-2 | DISPATCH umbrella-only | T-004; marker 5 |
+| AC-3 | No `auto.md` restore | T-anch, T-005 m6 |
+| AC-4 | No JSON template | T-005 m6 |
+| AC-5 | `editor.add` retained | T-002, T-005 m6 |
+| AC-6 | Eight `test_bug0024_*` catch live miss | T-005 |
+| AC-7 | Upgrade overwrite + prune | T-006, T-005 m8 |
+| AC-8 | Active↔template parity | T-007, T-005 m7 |
+
+Acceptance checkbox: `docs/product/acceptance.md` BUG-0024 row remains unchecked until closure (US-0045). Status stays **OPEN**.
+
+## Atomic task seeds (for `/sprint-plan` → **S0159**)
+
+| # | Seed | Surfaces |
+|---|------|----------|
+| T-anch | Verify `# BUG-0024` H1 + A1 + R-0140 DQ1–DQ10 + `# BUG-0023` live claim superseded + no companion DEC + do not rewrite `# BUG-0023`/`# BUG-0021` + do not reopen 0023/0021 + do not merge 0022 + do not drain 0027 | architecture.md, R-0140 (read-only) |
+| T-001 | Peer-brand signal on `ITS_MAGIC_AUTO_RPC`; keep local identity-define for orchestrator load; TUI happy path requires brand | `rpc.ts` (active + template) |
+| T-002 | Orchestrator: keep await register + `editor.add`; emit `OPENCODE_AUTO_TUI_REGISTER_SKIPPED` when register absent | `orchestrator.ts` (active + template) |
+| T-003 | `dispatchRunAutoLifecycle` limb order + stage tokens (missing-client / rpc-absent / Defined-unbranded / make-unreachable / swallowed-rpc); keep `{ id, tui }` | `tui.ts` (active + template) |
+| T-004 | DISPATCH umbrella only when limbs exhausted; never silent localhost; do not reuse listing/load/desktop/markdown tokens | `tui.ts` + runbook |
+| T-005 | Add 8 `test_bug0024_*` markers; no live OpenCode probe in default CI; do not weaken 0023/0021/0020/0019/0018 except compose-only | `tests/bug0024_*.py` (+ harness) |
+| T-006 | Upgrade `--host opencode\|both` **overwrites** live dispatch path on Axis-A trees; still **prunes** leftover `auto.md` | installer.py/sh/ps1 + owned-paths |
+| T-007 | Runbook live-dispatch residual recipe + stage-code table + `--pure` out + active↔template parity + `BUG0024_PAIRS` | runbook + template + `check_intake_template_parity.py` |
+
+**Task count**: 8 seeds (T-anch + T-001..T-007). `SPRINT_MAX_TASKS=12` — no auto-split. Not `/quick`. Sprint-plan owns **S0159** materialization — **this phase does not create `sprints/S0159/`**. Eight `test_bug0024_*` named above.
+
+## Decision linkage
+
+- Decision: **none** (companion DEC not required — cite **R-0140** / this `# BUG-0024`)
+- Compose (do not amend bodies): **DEC-0124**, **DEC-0125**, **DEC-0120**, **DEC-0132** (preserve paths — `tui.ts`/`rpc.ts` framework-owned overwrite; `tui.json` merge-safe)
+- Research: **R-0140** (composes **R-0137** / **R-0136** / **R-0134** / **R-0124**; do not wipe; **no new R-id**)
+- Related: **US-0124**, **US-0125**, **US-0069**; **BUG-0023** / **BUG-0021** / **BUG-0020** / **BUG-0019** / **BUG-0018** DONE — out of reopen scope; **BUG-0022 OPEN** / **BUG-0027 OPEN** — not mutated
+
+## Isolation evidence (US-0048 / DEC-0029)
+
+- `phase_id=architecture`, `role=tech-lead`, `bug_id=BUG-0024`, `sprint_id=none` (S0159 expected at sprint-plan)
+- `delivery_mode=ultra_lean`, `macro_phase=plan`, `model_id=inherit` (CROSS_MODEL_REVIEW=0)
+- `fresh_context_marker=tl-BUG0024-architecture-20260921T194300Z-fresh`, `timestamp=2026-09-21T19:43:00Z` (UTC)
+- `orchestrator_run_id=auto-20260921-bug0024`, `parent_orchestrator_run_id=cursor-20260913-BUG0024-intake`
+- `evidence_ref=docs/engineering/research.md ## R-0140; docs/product/backlog.md ### BUG-0024; docs/engineering/architecture.md (this # BUG-0024); handoffs/resume_brief.md; handoffs/po_to_tl.md`
+- Fresh tech-lead subagent per BUG-0006; narrow-read only. No `.env`. No companion DEC. No `sprints/S0159/`. No Status/AC mutation. No `/sprint-plan` spawn. No npm-publish. No git push. No sovereign-critic (CROSS_MODEL_REVIEW=0). No auto.md restore. No BUG-0023/0021 reopen. No BUG-0022/0027 drain.
+
+## Strict runtime proof
+
+- `runtime_proof_id=rp-auto-20260921-bug0024-architecture-techlead-20260921T194300Z-BUG-0024`
+- Hash via `scripts.token_cost_lib.compute_strict_proof_hash` (positional; compact sorted-key JSON).
+- Canonical hashed payload: `{"orchestrator_run_id":"auto-20260921-bug0024","phase_id":"architecture","proof_issued_at":"2026-09-21T19:43:00Z","proof_ttl_seconds":3600,"role":"tech-lead","runtime_proof_id":"rp-auto-20260921-bug0024-architecture-techlead-20260921T194300Z-BUG-0024"}`
+- Isolation extras (not hashed): `delivery_mode=ultra_lean`, `macro_phase=plan`, `model_id=inherit`, `sprint_id=none`, `bug_id=BUG-0024`, `skipped_phases=[intake]`, `CROSS_MODEL_REVIEW=0`, `native_chain_active=true`, `native_chain_continuing=true`, `segment_work_item_kind=bug`
+- `proof_hash=5EEEC943224DB73B7A19D222A2178522BFCFF3F00FAC3A1316973A3F464A8915`
+- `proof_ttl=2026-09-21T20:43:00Z`
+- `hash_recompute_confirmation=true` (compute_strict_proof_hash → 5EEEC943224DB73B7A19D222A2178522BFCFF3F00FAC3A1316973A3F464A8915; independently MATCH; **64 hex** verified)
+- Consumed research proof: `rp-auto-20260921-bug0024-research-techlead-20260921T193700Z-BUG-0024` / `57F066B720A65F5BEE9E380EFB68F7CF1ADBACC9CDDEEEE6395B808D5F91A826` — RUNTIME_PROOF_VALID MATCH before TTL `2026-09-21T20:37:00Z` (consumed_at `2026-09-21T19:43:00Z`; not STALE)
+
+# BUG-0027 — OpenCode manual phase commands cannot persist canonical workflow evidence
+
+## Overview
+
+**`BUG-0027`** closes the **manual OpenCode phase persist residual**: direct slash commands (`/intake`, `/execute`, `/qa`, `/verify-work`) can run a role but cannot persist canonical sprint/handoff artifacts plus IsolationEvidence linked to the current story/bug and sprint. `runAutoLifecycleRpc` drops `storyId`/`sprintId`/`orchestratorRunId` and defaults `orchestratorSessionId` to `tui-auto`; `command.executed` only handles `name === "auto"`; the deny-last permission matrix (compose **BUG-0016 DONE**) omits execute `state.md`/`summary.md` and QA `state.md`; command packs invoke `intake_evidence_validate.py --repo . --enforce` (exit 2; live CLI is `--file`/`--stdin`/`--self-test`).
+
+Distinct from **BUG-0024 DONE** / **R-0140** / **S0159** (CLI/TUI `/auto` live dispatch — compose only; do **not** reopen ACs; do **not** claim toast repair), **BUG-0016 DONE** (permission matrix — additive globs only), **BUG-0022 OPEN** / **BUG-0026 OPEN** (do not merge/drain), **US-0150 OPEN** (compose/link only). **R-0150** / **R-0140** held — do not wipe.
+
+**This section does not supersede `# BUG-0024`.** Toast path / `OPENCODE_AUTO_TUI_DISPATCH_UNSUPPORTED` remains that section. This section owns **manual** phase persist + identity fields on IsolationEvidence (including `/auto` RPC forwarding IDs as AC-3 context-propagation, not toast repair).
+
+**Research anchor**: **`R-0151`** (DQ1–DQ10 LOCKED). **Companion DEC**: **none** (same class as BUG-0019/0020/0021/0023/0024/0025). **EARLY_RESEARCH=0** — no new `R-xxxx`. **Out of scope**: reopen BUG-0024 / S0159; restore `auto.md`; route manual phases through `runAutoLifecycle`; add `--repo --enforce` to the Python intake CLI; second persist store; fabricate proofs; merge/drain BUG-0022/0026; mutate US-0150 as this bug's implementation; rewrite `.cursor/commands/`.
+
+**Fresh context marker**: `tl-BUG0027-architecture-20260921T212200Z-fresh`
+**Orchestrator run id**: `auto-20260921-bug0027`
+**Parent**: `ir-20260921T190544Z-bug0027`
+**Timestamp**: 2026-09-21T21:22:00Z (UTC)
+**Verdict**: PASS (`decision_gate=false`)
+**Next**: `/sprint-plan` (expected **S0160** — do **not** create this phase)
+**baseline_h2_count (pre-mutate)**: `0`
+
+## Approach locked (A1 Hybrid manual-phase persist — from R-0151 DQ1–DQ10)
+
+**Approach A1 (A\*)** (locked): extend shared IsolationEvidence + `persistIsolationViaPython` with real story/sprint/run/bug IDs (one Python SOT `docs/engineering/state.md`); invoke that helper from a thin **`persistManualPhaseIsolation`** (not `runAutoLifecycle` drain); carry parent `sessionID` from `command.executed` / RPC (never default `tui-auto` for release evidence); targeted permission-matrix widen plus fail-closed-before-work; rewrite OpenCode command packs to supported validator CLI; no fabricated proofs.
+
+1. **Identity fields (DQ2)**: extend `IsolationEvidence` with optional `storyId`, `sprintId`, `orchestratorRunId`, `bugId`. `spawnPhase` must **copy** those fields (today it drops them). `persistIsolationViaPython` + `scripts/opencode_auto_bridge.py --append-isolation` accept `--story-id` / `--sprint-id` / `--orchestrator-run-id` / `--bug-id`. Reject a second persist store (`ctx.storage`, sidecar JSON).
+2. **Manual invoker (DQ1)**: `persistManualPhaseIsolation(ctx, event|args)` builds IsolationEvidence and calls the same Python helper. `/auto` keeps `runAutoLifecycle` → persist. Shared helper, distinct invokers. Do **not** route `/intake` `/execute` `/qa` `/verify-work` through `runAutoLifecycle`.
+3. **Command names (LOCKED)**: persist limb fires when `command.executed` `name` is in `MANUAL_PHASE_COMMAND_NAMES` = `intake`, `discovery`, `research`, `architecture`, `sprint-plan`, `plan-verify`, `execute`, `qa`, `verify-work`, `release`, `refresh-context`, `closure`. `auto` stays on the lifecycle drain. AC-1 required set is `intake`/`execute`/`qa`/`verify-work`; the closed set above is the execute pin so discovery/research/etc. do not stay persist-blind.
+4. **Context chain (DQ1)**: parent `sessionID` from `command.executed` / RPC / tool context. `storyId`/`sprintId`/`orchestratorRunId` from (1) event/RPC arguments when present, else (2) Python bridge reading `handoffs/resume_brief.md` / `docs/engineering/state.md` (same parser as `selectFirstPhaseViaPython` / `_parse_resume_brief`). Never default `orchestratorSessionId` to `tui-auto`.
+5. **RPC forward (AC-3, not toast)**: `runAutoLifecycleRpc` forwards `storyId`/`sprintId`/`orchestratorRunId`; missing `sessionID` → `OPENCODE_MANUAL_PHASE_CONTEXT_MISSING` (do not substitute `tui-auto`). TUI dispatch toast path **unamended**.
+6. **Reject placeholders (DQ6)**: `tui-auto` as **either** `parentID` **or** `orchestratorRunId` fail-closes with `OPENCODE_PLACEHOLDER_PARENT_REJECTED` and is **not** written to `state.md`. Missing real session/run context → `OPENCODE_MANUAL_PHASE_CONTEXT_MISSING`; do not invent IDs or proof tuples.
+7. **Permissions (DQ3 hybrid)**: targeted glob widen, deny-last held (compose BUG-0016 — do not reopen; do not `edit: allow` all):
+   - **dev**: add `docs/engineering/state.md` and `sprints/S*/summary.md`
+   - **qa**: add `docs/engineering/state.md`
+   - PO already allows `state.md`
+8. **Fail-closed (DQ3)**: if a required write is still denied, STOP **before work** with `OPENCODE_MANUAL_PHASE_WRITE_DENIED`. After work, persist non-ok → `OPENCODE_MANUAL_PHASE_PERSIST_DENIED` and **no success claim**. If persist never ran by STOP (R-0119) → `OPENCODE_MANUAL_PHASE_PERSIST_NOT_INVOKED`. Plugin does **not** copy the permission array (DEC-0124 compose).
+9. **Secondary trigger (optional defense)**: `tool.execute.after` / `session.idle` may invoke the **same** `persistManualPhaseIsolation` if `command.executed` did not fire; mutex so dual-fire does not double-append. Not a second persist store.
+10. **Validator packs (DQ4/DQ5)**: rewrite OpenCode `intake.md` (active + template) to `--file`/`--stdin`/`--self-test`. Drop intake validator from `execute.md` and `discovery.md`. Keep `qa.md` / `verify-work.md` `bug_issue_validate.py --repo . --check-acceptance` (valid). Do **not** add `--repo --enforce` to `intake_evidence_validate.py`. Cursor `.cursor/commands/` **OUT**. Compose-amend US-0125 fixture named-CLI (ACs stay DONE).
+11. Ten additive `test_bug0027_*` (below). Keep `test_bug0024_*` / `test_us0124_*` / `test_us0125_*` compose.
+12. Upgrade `--host opencode|both` **overwrites** touched OpenCode pack/plugin/bridge paths.
+
+| Option | Summary | Verdict |
+|--------|---------|---------|
+| **A1 Hybrid manual-phase persist** | Context-propagation + shared IsolationEvidence helper + targeted glob widen + fail-closed + supported validator packs | **Preferred / LOCKED** |
+| A2 Persist-hook only | Only expand `command.executed` names | **Rejected** — IDs still dropped; permissions still deny; validator still invalid |
+| A3 Permission widen only | Only add globs | **Rejected** — persist never invoked; context still `tui-auto` |
+| A4 Fail-closed-only | Precise errors, no success path | **Rejected** — AC-1/AC-2 require a usable fallback |
+| A5 Second persist store | `ctx.storage` / sidecar JSON | **Rejected** — state.md remains SOT |
+| A6 Route manual phases through `runAutoLifecycle` | Treat `/execute` as auto drain | **Rejected** — `/auto` remains BUG-0024; would start the lifecycle loop |
+| A7 Add `--repo --enforce` to Python CLI | Dual interface | **Rejected** — D5; Cursor packs already correct |
+
+### Locked tokens (architecture-owned — DQ3/DQ6)
+
+| Code | When |
+|------|------|
+| `OPENCODE_MANUAL_PHASE_WRITE_DENIED` | Required glob still denied — fail **before work** |
+| `OPENCODE_MANUAL_PHASE_PERSIST_DENIED` | `persistIsolationViaPython` / bridge non-ok after work — no success claim |
+| `OPENCODE_MANUAL_PHASE_PERSIST_NOT_INVOKED` | Persist never ran by STOP (R-0119 / missing `command.executed`) |
+| `OPENCODE_PLACEHOLDER_PARENT_REJECTED` | `tui-auto` as `parentID` or `orchestratorRunId` — do not write evidence |
+| `OPENCODE_MANUAL_PHASE_CONTEXT_MISSING` | Real session and/or story/sprint/run ids missing — do not invent |
+
+Closed set: five tokens. Do not proliferate without a new research lock. Do **not** reuse BUG-0024 `OPENCODE_AUTO_TUI_*` tokens for this miss.
+
+Existing compose tokens stay unchanged: `OPENCODE_AUTO_TUI_DISPATCH_UNSUPPORTED`, `OPENCODE_SUBTASK_IGNORED`, `OPENCODE_DRIVER_INVOKE_FAILED`, BUG-0016 deny-last.
+
+### Helper + field pins (LOCKED)
+
+| Name | Pin |
+|------|-----|
+| `persistManualPhaseIsolation` | Thin invoker for manual phase commands; builds IsolationEvidence; calls `persistIsolationViaPython` |
+| `persistIsolationViaPython` | Shared durable write; extended argv for identity fields; still Python SOT |
+| `IsolationEvidence` | Existing `parentID`, `sessionID`, `role`, `phase_id`, `timestamp`, `fresh_context_marker` **plus** `storyId?`, `sprintId?`, `orchestratorRunId?`, `bugId?` |
+| `MANUAL_PHASE_COMMAND_NAMES` | Closed list above; `auto` excluded |
+| Python `--append-isolation` | Add `--story-id`, `--sprint-id`, `--orchestrator-run-id`, `--bug-id` |
+
+## Design challenge (assumptions / simpler / risks)
+
+- **Alternative persist path?** Route `/execute` through `runAutoLifecycle`. Starts the auto drain loop and collides with BUG-0024. **Rejected.**
+- **Alternative store?** `ctx.storage` or sidecar JSON looks smaller and forks the audit SOT. **Rejected.**
+- **Alternative permissions?** Fail-closed-only without glob widen leaves AC-1/AC-2 success unusable. Widen-only leaves H1 persist miss. Hybrid is the simplest design that meets both.
+- **Alternative validator?** Adding `--repo --enforce` to Python papers over the pack bug and forks Cursor-correct CLI. **Rejected.**
+- **Can this be simpler?** Expanding only `command.executed` names is smaller and still drops IDs / denies writes / ships invalid CLI. A1 is the smallest design that meets D1–D8 and R-0151 A*.
+- **Governance fork?** Residual of already-accepted IsolationEvidence / BUG-0016 matrix / US-0125 CLI — not a DEC-class product fork. **`decision_gate=false`**. No companion DEC.
+
+## Components
+
+### IsolationEvidence + Python bridge (DQ2)
+
+`.opencode/plugins/orchestrator.ts` + template + `scripts/opencode_auto_bridge.py` (+ template):
+
+- Add identity fields to the TypeScript interface and to `--append-isolation`.
+- `spawnPhase` copies `storyId`/`sprintId`/`orchestratorRunId`/`bugId` onto evidence (stop dropping).
+- `persistIsolationViaPython` rejects `tui-auto` before spawn; maps persist failure to `OPENCODE_MANUAL_PHASE_PERSIST_DENIED` (keep `OPENCODE_SUBTASK_IGNORED` for identical parent/session).
+- Durable SOT remains `docs/engineering/state.md` (US-0048 / DEC-0029).
+
+### Manual persist invoker (DQ1)
+
+`persistManualPhaseIsolation`:
+
+- Input: plugin ctx + `command.executed` payload (or RPC/tool `sessionID`).
+- Resolve IDs via the context chain above.
+- Fail closed with locked tokens; never invent proof tuples.
+- `/auto` continues to persist via `runAutoLifecycle` using the **same** Python helper.
+
+Optional secondary: `tool.execute.after` / `session.idle` → same function, mutex-guarded.
+
+### Permission matrix (DQ3)
+
+`.opencode/agents/dev.md` + `qa.md` + template mirrors: additive globs only; `"**": deny` last. Tests assert deny-default still holds for unrelated paths.
+
+Fail-closed-before-work lives in command-pack prose + persist helper, **not** a duplicated permission array in the plugin (DEC-0124).
+
+### Command packs (DQ4 / DQ5)
+
+Stay ≤20 lines (US-0125 compose). Exact Validator-bridge rewrite:
+
+- **intake.md** (active + template): `python scripts/intake_evidence_validate.py --file <bundle.json>` (or `--stdin` / `--self-test`). Remove `--repo . --enforce`. Persist sentence names `persistManualPhaseIsolation` (today's "plugin enforces persistence" is false until this bug ships).
+- **execute.md** / **discovery.md**: drop `intake_evidence_validate` entirely. Optional isolation-persist sentence only.
+- **qa.md** / **verify-work.md**: keep `bug_issue_validate.py --repo . --check-acceptance`.
+- `.cursor/commands/` **OUT**.
+
+### Consumer upgrade / parity (DQ9)
+
+`its-magic --mode upgrade --host opencode|both` **overwrites** framework-owned OpenCode commands/agents/orchestrator/bridge paths via existing copy helpers. Do **not** overwrite Cursor command packs.
+
+Extend `check_intake_template_parity.py` with additive `BUG0027_PAIRS` (keep `BUG0024_PAIRS`).
+
+Runbook: one-line correction of the stale `intake_evidence_validate.py --repo . --enforce` stub (US-0125 compose; do not reopen US-0125 ACs). Recipe: (1) upgrade to the BUG-0027 release; (2) `its-magic --mode upgrade --host opencode|both`; (3) restart OpenCode; (4) direct `/execute` (or `/intake`) persists isolation with real IDs — or honest locked code. `/auto` toast remains BUG-0024.
+
+US-0125 fixture + `test_us0125_validator_subprocess_fail_closed` named-CLI: compose-amend to supported invocation (contract evolution; ACs stay DONE).
+
+## Test contract (DQ8 — ten markers)
+
+Preferred file: `tests/bug0027_opencode_manual_phase_persist_test.py` (+ small node harness/fixture that mocks `command.executed` / RPC against fakes). **No live OpenCode CLI TUI probe** in default CI (`UAT_PROBE_FORBIDDEN`). Markers must **fail current tree**.
+
+| # | Marker | Asserts |
+|---|--------|---------|
+| 1 | `test_bug0027_manual_phase_persists_isolation` | `/execute` (or `/intake`) mock `command.executed` with real `sessionID` + story/sprint/run → IsolationEvidence append includes those IDs (AC-1, AC-2, AC-3) |
+| 2 | `test_bug0027_denied_persist_not_success` | Persist helper non-ok → phase result `ok: false` with `OPENCODE_MANUAL_PHASE_PERSIST_DENIED`; no success claim (AC-2) |
+| 3 | `test_bug0027_rpc_forwards_story_sprint_run` | `runAutoLifecycleRpc` no longer drops IDs (AC-3) |
+| 4 | `test_bug0027_tui_auto_rejected_as_release_evidence` | `tui-auto` as parentID or orchestratorRunId fail-closes `OPENCODE_PLACEHOLDER_PARENT_REJECTED`; not written as evidence (AC-3, DQ6) |
+| 5 | `test_bug0027_no_fabricated_proof_when_orchestrator_unavailable` | Missing orchestrator/run context → `OPENCODE_MANUAL_PHASE_CONTEXT_MISSING`; no invented proof tuple (AC-4) |
+| 6 | `test_bug0027_auto_tui_toast_not_claimed` | Dispatch toast / `OPENCODE_AUTO_TUI_DISPATCH_UNSUPPORTED` path **unchanged** (AC-4; compose BUG-0024) |
+| 7 | `test_bug0027_validator_invocation_file_stdin_not_repo_enforce` | Active+template command packs contain no `intake_evidence_validate.py --repo . --enforce`; intake uses `--file`/`--stdin`/`--self-test` (AC-5) |
+| 8 | `test_bug0027_non_intake_packs_drop_intake_validator` | execute.md / discovery.md do not require intake_evidence_validate (AC-5, DQ5) |
+| 9 | `test_bug0027_active_template_parity` | Touched OpenCode commands/agents/plugin/bridge byte-parity (AC-6) |
+| 10 | `test_bug0027_permission_matrix_phase_writes` | Dev allows `state.md` + `summary.md`; qa allows `state.md`; deny-last held (AC-1, DQ3) |
+
+Keep `test_bug0024_*` / `test_us0124_*` / `test_us0125_*` green — additive only except the named US-0125 CLI compose-amend owned by marker 7.
+
+## Touch surfaces (execute)
+
+| Surface | Change |
+|---------|--------|
+| `.opencode/plugins/orchestrator.ts` + template | IsolationEvidence fields; `persistManualPhaseIsolation`; RPC forward; `command.executed` manual-phase limb; `spawnPhase` copy IDs; do **not** change TUI toast path |
+| `scripts/opencode_auto_bridge.py` + template | `--append-isolation` identity fields |
+| `.opencode/agents/{dev,qa}.md` + template | Targeted glob widen; deny-last held |
+| `.opencode/commands/{intake,execute,discovery}.md` + template | Validator rewrite / drop; persist sentence truthful |
+| `.opencode/commands/{qa,verify-work}.md` + template | Keep `bug_issue_validate.py --repo . --check-acceptance` |
+| `.cursor/commands/` | **OUT** |
+| `tests/us0125_contract_test.py` + `tests/us0125/fixtures/validator_artifact_mapping.json` | Compose-amend named CLI to supported invocation |
+| `scripts/check_intake_template_parity.py` | Additive `BUG0027_PAIRS` |
+| `tests/bug0027_*` | 10 markers |
+| `tests/bug0024_*` / `us0124_*` / `us0125_*` | Unchanged compose (except US-0125 CLI amend) |
+| `docs/engineering/runbook.md` (+ template) | One-line validator stub correction + manual-phase persist recipe |
+| `installer.py` / `installer.sh` / `installer.ps1` | Overwrite touched OpenCode pack paths |
+
+## Non-goals
+
+- Allocate a companion DEC / rewrite `# BUG-0024` / `# BUG-0023` / R-0140 / R-0150
+- Reopen BUG-0024 ACs / S0159; claim CLI/TUI `/auto` toast repair
+- Restore STOP-only / empty `auto.md`; JSON `commands.auto` template
+- Route manual phases through `runAutoLifecycle`
+- Add `--repo --enforce` to `intake_evidence_validate.py`
+- Second persist store (`ctx.storage`, sidecar JSON)
+- Fabricate strict-proof tuples when orchestrator/run context is missing
+- Merge/drain BUG-0022 / BUG-0026
+- Mutate US-0150 as this bug's implementation
+- Rewrite `.cursor/commands/`
+- Reopen BUG-0016 / US-0125 ACs
+- Live OpenCode CLI TUI probe in default CI
+- Create `sprints/S0160/` this phase
+
+## Risks
+
+| Risk | Severity | Mitigation |
+|------|----------|------------|
+| R1 `command.executed` does not fire for markdown commands (R-0119) | MEDIUM | Fail-closed `OPENCODE_MANUAL_PHASE_PERSIST_NOT_INVOKED`; optional secondary `tool.execute.after` / `session.idle`; marker 2 |
+| R2 Permission widen looks like reopening BUG-0016 | LOW | Additive globs only; deny-last held; marker 10 |
+| R3 US-0125 fixture compose-amend looks like reopen | LOW | Additive `test_bug0027_*` own the new CLI; US-0125 ACs stay DONE; document as contract evolution |
+| R4 RPC ID forward confused with BUG-0024 toast work | MEDIUM | Marker 6 asserts toast path unchanged; `/auto` drain loop unamended |
+| R5 Fabricated proofs under unavailable orchestrator | HIGH | Marker 5; helper refuses `tui-auto` and missing run ids |
+| R6 Dual-fire double-append isolation | LOW | Mutex on persist invoker; `/auto` remains distinct |
+
+## AC coverage mapping (bug acceptance + R-0151)
+
+| AC | Architecture owner | Seeds / tests |
+|----|-------------------|----------------|
+| AC-1 | Persist-eligible names + glob widen + fail-closed-before-work | T-002, T-004; markers 1, 10 |
+| AC-2 | Persist-or-not-success | T-002, T-001; marker 2 |
+| AC-3 | Real session/run IDs; reject `tui-auto` | T-001, T-003; markers 1, 3, 4 |
+| AC-4 | `/auto` remains BUG-0024; no fabricated proofs | T-anch, T-003; markers 5, 6 |
+| AC-5 | Supported validator CLI; drop from non-intake | T-005; markers 7, 8 |
+| AC-6 | Contract tests + active/template parity | T-006, T-007; markers 1–10 |
+
+Acceptance checkbox: `docs/product/acceptance.md` BUG-0027 row remains unchecked until closure (US-0045). Status stays **OPEN**.
+
+## Atomic task seeds (for `/sprint-plan` → **S0160**)
+
+| # | Seed | Surfaces |
+|---|------|----------|
+| T-anch | Verify `# BUG-0027` H1 + A1 + R-0151 DQ1–DQ10 + no companion DEC + do not rewrite `# BUG-0024` + do not reopen 0024 + do not claim toast repair + do not merge 0022/0026 + do not wipe R-0150/R-0140 | architecture.md, R-0151 (read-only) |
+| T-001 | IsolationEvidence identity fields; `spawnPhase` copy; `persistIsolationViaPython` + `--append-isolation` `--story-id`/`--sprint-id`/`--orchestrator-run-id`/`--bug-id` | `orchestrator.ts` + `opencode_auto_bridge.py` (active + template) |
+| T-002 | `persistManualPhaseIsolation` + `command.executed` limb for `MANUAL_PHASE_COMMAND_NAMES`; optional secondary event; **not** `runAutoLifecycle`; mutex vs double-append | `orchestrator.ts` (active + template) |
+| T-003 | RPC/context forward; reject `tui-auto`; emit locked reason-code tokens; no fabricated proofs | `orchestrator.ts` `runAutoLifecycleRpc` + persist helper |
+| T-004 | Permission glob widen (dev: `state.md` + `summary.md`; qa: `state.md`) + fail-closed-before-work; deny-last held | `.opencode/agents/{dev,qa}.md` + template |
+| T-005 | Rewrite intake pack to `--file`/`--stdin`/`--self-test`; drop intake validator from execute.md/discovery.md; keep qa/verify-work `bug_issue_validate.py --repo . --check-acceptance` | `.opencode/commands/` + template |
+| T-006 | Add 10 `test_bug0027_*` markers; no live OpenCode probe in default CI; do not weaken bug0024/us0124 except US-0125 CLI compose-amend | `tests/bug0027_*.py` (+ harness) |
+| T-007 | US-0125 fixture named-CLI compose-amend + `BUG0027_PAIRS` + upgrade overwrite + runbook one-line validator stub correction | us0125 fixture + parity script + installer + runbook |
+
+**Task count**: 8 seeds (T-anch + T-001..T-007). `SPRINT_MAX_TASKS=12` — no auto-split. Not `/quick`. Sprint-plan owns **S0160** materialization — **this phase does not create `sprints/S0160/`**. Ten `test_bug0027_*` named above.
+
+## Decision linkage
+
+- Decision: **none** (companion DEC not required — cite **R-0151** / this `# BUG-0027`)
+- Compose (do not amend bodies): **DEC-0122** (permission matrix), **DEC-0124** / **DEC-0125** (plugin vs command.md), **DEC-0029** / **DEC-0038** (`compute_strict_proof_hash` tuple UNAMENDED)
+- Research: **R-0151** (do not wipe **R-0150** / **R-0140**; **no new R-id**)
+- Related: **US-0121**, **US-0122**, **US-0124**, **US-0125**, **US-0126**, **US-0150** compose/link; **BUG-0016 DONE** / **BUG-0024 DONE** — out of reopen scope; **BUG-0022 OPEN** / **BUG-0026 OPEN** — not mutated
+
+## Isolation evidence (US-0048 / DEC-0029)
+
+- `phase_id=architecture`, `role=tech-lead`, `bug_id=BUG-0027`, `sprint_id=none` (S0160 expected at sprint-plan)
+- `delivery_mode=ultra_lean`, `macro_phase=plan`, `model_id=inherit` (CROSS_MODEL_REVIEW=0)
+- `fresh_context_marker=tl-BUG0027-architecture-20260921T212200Z-fresh`, `timestamp=2026-09-21T21:22:00Z` (UTC)
+- `orchestrator_run_id=auto-20260921-bug0027`, `parent_orchestrator_run_id=ir-20260921T190544Z-bug0027`
+- `evidence_ref=docs/engineering/research.md ## R-0151; docs/product/backlog.md ### BUG-0027; docs/engineering/architecture.md (this # BUG-0027); handoffs/resume_brief.md; handoffs/po_to_tl.md`
+- Fresh tech-lead subagent per BUG-0006; narrow-read only. No `.env`. No companion DEC. No `sprints/S0160/`. No Status/AC mutation. No `/sprint-plan` spawn. No npm-publish. No git push. No sovereign-critic (CROSS_MODEL_REVIEW=0). No BUG-0024 reopen. No toast-repair claim. No BUG-0022/0026 drain.
+
+## Strict runtime proof
+
+- `runtime_proof_id=rp-auto-20260921-bug0027-architecture-techlead-20260921T212200Z-BUG-0027`
+- Hash via `scripts.token_cost_lib.compute_strict_proof_hash` (positional; compact sorted-key JSON).
+- Canonical hashed payload: `{"orchestrator_run_id":"auto-20260921-bug0027","phase_id":"architecture","proof_issued_at":"2026-09-21T21:22:00Z","proof_ttl_seconds":3600,"role":"tech-lead","runtime_proof_id":"rp-auto-20260921-bug0027-architecture-techlead-20260921T212200Z-BUG-0027"}`
+- Isolation extras (not hashed): `delivery_mode=ultra_lean`, `macro_phase=plan`, `model_id=inherit`, `sprint_id=none`, `bug_id=BUG-0027`, `skipped_phases=[intake]`, `CROSS_MODEL_REVIEW=0`, `native_chain_active=true`, `native_chain_continuing=true`, `segment_work_item_kind=bug`
+- `proof_hash=766B032B5B6FEBFCC6524E30F4A94DEED4EFBCE14AB73F56D2DCBF893FEFE489`
+- `proof_ttl=2026-09-21T22:22:00Z`
+- `hash_recompute_confirmation=true` (compute_strict_proof_hash → 766B032B5B6FEBFCC6524E30F4A94DEED4EFBCE14AB73F56D2DCBF893FEFE489; independently MATCH; **64 hex** verified)
+- Consumed research proof: `rp-auto-20260921-bug0027-research-techlead-20260921T211500Z-BUG-0027` / `F89D067B09A413B1AC41D5B7811EBAC8BC4CA4D6FCD7264BC2BFD7C3BFCD8782` — RUNTIME_PROOF_VALID MATCH before TTL `2026-09-21T22:15:00Z` (consumed_at `2026-09-21T21:22:00Z`; not STALE)
+

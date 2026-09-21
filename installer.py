@@ -347,12 +347,22 @@ def prune_retired_opencode_auto_md(target_root, source_root, host):
 
 
 # BUG-0019: TUI slash listing surface copied onto already-pruned consumers.
-# BUG-0023: also overwrite shared rpc.ts + orchestrator register path (copy2).
+# BUG-0023 / BUG-0024: also overwrite shared rpc.ts + orchestrator register path (copy2).
+# BUG-0024: overwrite must refresh peer-brand + stage-code live-dispatch residual on Axis-A trees.
+# BUG-0027: overwrite manual-phase persist surfaces (agents/commands/bridge).
 OPENCODE_AUTO_LISTING_RELS = (
     ".opencode/plugins/its-magic-auto/index.ts",
     ".opencode/plugins/its-magic-auto/tui.ts",
     ".opencode/plugins/its-magic-auto/rpc.ts",
     ".opencode/plugins/orchestrator.ts",
+    ".opencode/agents/dev.md",
+    ".opencode/agents/qa.md",
+    ".opencode/commands/intake.md",
+    ".opencode/commands/execute.md",
+    ".opencode/commands/discovery.md",
+    ".opencode/commands/qa.md",
+    ".opencode/commands/verify-work.md",
+    "scripts/opencode_auto_bridge.py",
 )
 
 
@@ -375,6 +385,10 @@ def copy_opencode_auto_listing_surface(target_root, source_root, host):
     `Plugin.define` trees receive reshaped `{ id, tui }`. Identical dest is skipped.
     BUG-0023: also overwrites `rpc.ts` + orchestrator register path (not
     copy-if-absent) so already-Axis-A trees receive branded Rpc.define dispatch.
+    BUG-0024: same overwrite path refreshes peer-brand signal + stage-distinct
+    OPENCODE_* live-dispatch residual (not copy-if-absent).
+    BUG-0027: also overwrites agents/dev.md, agents/qa.md, manual-phase
+    command packs, and scripts/opencode_auto_bridge.py.
     Invoked from upgrade --host opencode|both. Not a general sweeper.
     Does not restore `.opencode/commands/auto.md`.
     """

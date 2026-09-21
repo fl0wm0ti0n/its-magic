@@ -13,6 +13,56 @@ Canonical queue state now lives under:
 
 ---
 
+## Release finalized note (S0160)
+
+- Sprint: `S0160`
+- Bug: `BUG-0027` (OpenCode manual phase commands cannot persist canonical workflow evidence; A1 Hybrid)
+- Release: **finalized** (`2026-09-21T22:12:00Z`, `orchestrator_run_id=auto-20260921-bug0027`, `fresh_context_marker=release-BUG0027-20260921T221200Z-fresh`, `runtime_proof_id=rp-auto-20260921-bug0027-release-release-20260921T221200Z-BUG-0027`, `proof_hash=4B3FAF496F33A53FB75DB67796C44B8F3B60536B3A3BAB8F8A2D1CC41FB67AFE`, `model_id=inherit`)
+- Queue: **`handoffs/release_queue.md`** row **`S0160`** = **`released`** (workflow-only; no kit semver bump; backlog reconciliation deferred to `/closure`)
+- **Verdict**: **PASS** -- mandatory release gates green; scoped pytest bug0027 10/10 + compose 66/66 (`harness_fail_zero_claimed=false`).
+- **Run / verify:** `python -m pytest tests/bug0027_opencode_manual_phase_persist_test.py -v` -> 10/10; parity `--scope bug-0027` OK; metadata exit 0. See **`handoffs/releases/S0160-release-notes.md`** **## Run** / **## Verify**.
+- **Operator summary**: start=`python -m pytest tests/bug0027_opencode_manual_phase_persist_test.py -v`; endpoint=n/a (OpenCode plugin/contract slice); verify pointer=`handoffs/releases/S0160-release-notes.md` ## Verify; post-ship optional live OpenCode manual-phase persist re-probe after upgrade.
+- **Gate snapshot**: check_in_tests=PASS; qa=PASS (0 blockers); verify_work=PASS (6/6 ACs; 7/7 UAT); uat=PASS (`contract_tests_primary`; live_opencode_cli_tui_pass_claimed=false); isolation=PASS; strict_runtime_proof=PASS; finalization=PASS.
+- **Backlog status**: BUG-0027 remains **OPEN** -- closure deferred
+- **Acceptance**: BUG-0027 row remains **unchecked**
+- Publish: **`RELEASE_PUBLISH_MODE=confirm`** -- deferred (`PUBLISH_CONFIRMATION_REQUIRED`; `npm_published=false`; no kit semver bump)
+- Sync: **`SYNC_POLICY_MODE=disabled`** -> `push_decision=not_eligible`
+- Canonical notes: `handoffs/releases/S0160-release-notes.md`
+- Findings: `sprints/S0160/release-findings.md`
+- **Next**: orchestrator **`/closure`** (fresh **qe** default; Cursor has no qe type -- spawn **curator**; CROSS_MODEL_REVIEW=0 -- no release critic)
+
+### Unreleased queue visibility
+
+- S0158 US-0150 = **blocked** (stale harness / missing isolation+proof -- out of scope this release)
+- (S0160 released with publish deferred under confirm mode)
+
+---
+
+## Release finalized note (S0159)
+
+- Sprint: `S0159`
+- Bug: `BUG-0024` (OpenCode CLI TUI listed `/auto` live-dispatch residual after BUG-0023 Axis A; A1 Hybrid)
+- Release: **finalized** (`2026-09-21T20:12:00Z`, `orchestrator_run_id=auto-20260921-bug0024`, `fresh_context_marker=release-BUG0024-20260921T201200Z-fresh`, `runtime_proof_id=rp-auto-20260921-bug0024-release-release-20260921T201200Z-BUG-0024`, `proof_hash=8789E1E0776761CC0A4EF1B33CCB472707946DC4CCCA3E9D231D0CC4A8BE9A6C`, `model_id=inherit`)
+- Queue: **`handoffs/release_queue.md`** row **`S0159`** = **`released`** (workflow-only; no kit semver bump; backlog reconciliation deferred to `/closure`)
+- **Verdict**: **PASS** — mandatory release gates green; scoped pytest bug0024 8/8 + compose 45/45 (`harness_fail_zero_claimed=false`).
+- **Run / verify:** `python -m pytest tests/bug0024_opencode_cli_tui_live_dispatch_residual_test.py -v` → 8/8; parity `--scope bug-0024` OK; metadata exit 0. See **`handoffs/releases/S0159-release-notes.md`** **## Run** / **## Verify**.
+- **Operator summary**: start=`python -m pytest tests/bug0024_opencode_cli_tui_live_dispatch_residual_test.py -v`; endpoint=n/a (CLI TUI plugin slice); verify pointer=`handoffs/releases/S0159-release-notes.md` ## Verify; post-ship optional live OpenCode CLI TUI re-probe after upgrade.
+- **Gate snapshot**: check_in_tests=PASS; qa=PASS (0 blockers); verify_work=PASS (8/8 ACs; 9/9 UAT); uat=PASS (`contract_tests_primary`; live_opencode_cli_tui_pass_claimed=false); isolation=PASS; strict_runtime_proof=PASS; finalization=PASS.
+- **Backlog status**: BUG-0024 remains **OPEN** — closure deferred
+- **Acceptance**: BUG-0024 row remains **unchecked**
+- Publish: **`RELEASE_PUBLISH_MODE=confirm`** — deferred (`PUBLISH_CONFIRMATION_REQUIRED`; `npm_published=false`; no kit semver bump)
+- Sync: **`SYNC_POLICY_MODE=disabled`** → `push_decision=not_eligible`
+- Canonical notes: `handoffs/releases/S0159-release-notes.md`
+- Findings: `sprints/S0159/release-findings.md`
+- **Next**: orchestrator **`/closure`** (fresh **qe**; curator fallback if qe unavailable; CROSS_MODEL_REVIEW=0 — no release critic)
+
+### Unreleased queue visibility
+
+- S0158 US-0150 = **blocked** (stale harness / missing isolation+proof — out of scope this release)
+- (S0159 released with publish deferred under confirm mode)
+
+---
+
 ## Release finalized note (S0157)
 
 - Sprint: `S0157`

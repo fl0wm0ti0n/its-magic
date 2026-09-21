@@ -14452,68 +14452,127 @@ T-anch (`# US-0142` + DEC-0142), T-001 `packages/browser-uat` + Pi-import grep +
 
 ## R-0140 - BUG-0024 OpenCode CLI TUI listed `/auto` still toasts OPENCODE_AUTO_TUI_DISPATCH_UNSUPPORTED after BUG-0023 Axis A (live dispatch)
 
-- **Date**: 2026-09-14
-- **Topic**: After BUG-0023 DONE (S0148 Axis A: `Rpc.define` + `client.rpc(Defined)` + await `ctx.rpc.register`; mock-invoke tests; live CLI `UAT_PROBE_FORBIDDEN`), operator listed `/auto` still toasts `OPENCODE_AUTO_TUI_DISPATCH_UNSUPPORTED` instead of starting `runAutoLifecycle`. Axis A **files are present**. Live dispatch is **falsified**.
-- **Linked**: BUG-0024 (OPEN), BUG-0023 DONE / **R-0137** / **R-0136** (Axis A compose — do **not** wipe; do **not** reopen ACs / S0148), R-0134 / BUG-0021 DONE (listing limb — toast title proves listed invoke; do **not** reopen), R-0124 (DISPATCH token defined), R-0126 / BUG-0020 DONE (desktop OUT), BUG-0019 DONE, BUG-0018 DONE (do **not** restore STOP-only `auto.md`), BUG-0022 OPEN (Cursor inherit — distinct; do not merge; do not drain), US-0124, US-0125, US-0069; R-0138 (US-0141) / R-0139 (US-0142) distinct — do not wipe/reuse
-- **Confidence**: high that Axis A files shipped and live listed `/auto` still hits the DISPATCH toast; high that CI mock-invoke cannot prove live `client.rpc(Defined)`; medium on exact live gap among H1–H5 — `/discovery` / `/research` lock
-- **Status**: current (intake research; not a substitute for `/research`)
-- **Query**: Why does listed CLI TUI `/auto` still toast `OPENCODE_AUTO_TUI_DISPATCH_UNSUPPORTED` after Axis A files are present? What host-true `tui(api)` client wiring starts `runAutoLifecycle` without restoring markdown/JSON Command.Info ownership?
-- **Producer consumed**: `/intake bug` operator packet 2026-09-14T03:50:00Z (German `/ask` repo-vs-plan + “was läuft nun wieder falsch?”; live DISPATCH toast; Axis A files present)
-- **EARLY_RESEARCH posture**: intake-time live-fetch OpenCode v2 RPC (`https://opencode.ai/v2/docs/build/plugins/rpc/`) + Context7 `/websites/opencode_ai_v2` TUI `context.client.rpc` + `/anomalyco/opencode` TUI plugin `api.client` — not a substitute for `/research`. Compose **R-0137** / **R-0136** / **R-0134** / **R-0124** (do not wipe R-0136, R-0137, R-0138, R-0139).
-- **ID policy**: highest existing research heading was **R-0139** (US-0142). This entry is **R-0140**. Do **not** wipe, renumber, or rewrite R-0120..R-0139. Do **not** reuse R-0136 (BUG-0023 intake), R-0137 (BUG-0023 research), R-0138 (US-0141), or R-0139 (US-0142). `ID_NAMESPACE_BOOTSTRAP=0` → continuation (no bootstrap).
+- **Date**: 2026-09-14 (intake stub) → **2026-09-21** (`/research` lock). **Bug**: BUG-0024. **Status**: **research-locked** (ready for `/architecture`). **Confidence**: high.
+- **Linked**: BUG-0024 (OPEN), BUG-0023 DONE / **R-0137** / **R-0136** (Axis A compose — do **not** wipe; do **not** reopen ACs / S0148), R-0134 / BUG-0021 DONE (listing limb — toast title proves listed invoke; do **not** reopen), R-0124 (DISPATCH token), R-0126 / BUG-0020 DONE, BUG-0019 DONE, BUG-0018 DONE (do **not** restore STOP-only `auto.md`), BUG-0022 OPEN (Cursor inherit — do not merge; do not drain), BUG-0027 OPEN (manual phase persistence — compose only), US-0124, US-0125, US-0069; R-0138..R-0150 distinct — do **not** wipe/reuse
+- **Topic**: After BUG-0023 Axis A files shipped (`Rpc.define` + `client.rpc(Defined)` + await `ctx.rpc.register`; mock-invoke; `UAT_PROBE_FORBIDDEN`), live listed `/auto` still toasts `OPENCODE_AUTO_TUI_DISPATCH_UNSUPPORTED` and never reaches `runAutoLifecycle`.
+- **Query**: Close discovery DQ1–DQ10; pick winning approach **A\*** so live CLI TUI `{ id, tui }` `/auto` starts `runAutoLifecycle` without restoring `auto.md` / JSON Command.Info.
+- **Producer consumed**: discovery `rp-auto-20260921-bug0024-discovery-po-20260921T193200Z-BUG-0024` / `0772F0DA79960D0D5045CE994F7973E8F968B9DA95F2C030EE6979A5838A8BE4` — `compute_strict_proof_hash` **RUNTIME_PROOF_VALID MATCH** at research issue `2026-09-21T19:37:00Z`; not STALE (ttl `2026-09-21T20:32:00Z`). CROSS_MODEL_REVIEW=0 — no sovereign-critic. `fresh_context_marker=tl-BUG0024-research-20260921T193700Z-fresh`
+- **EARLY_RESEARCH posture**: EARLY_RESEARCH=0 — intake stub held; this phase **locks** DQ1–DQ10 in place (do **not** invent a new R-id; do **not** wipe R-0140 / R-0136 / R-0137 / R-0134 / R-0124).
+- **ID policy**: this heading remains **R-0140**. Do **not** wipe, renumber, or rewrite R-0120..R-0139 or R-0141+. `ID_NAMESPACE_BOOTSTRAP=0`.
+- **Recommendation**: **A1 (A\*) Hybrid residual live-dispatch** — keep `{ id, tui }` listing + `editor.add` execute + Axis A `client.rpc(Defined).runAutoLifecycle` / `OpenCode.make({ baseUrl }).rpc(Defined)` happy path; require **peer-branded** `@opencode/plugin/rpc` `Rpc.define` for TUI dispatch success (local identity-`define` stays load-safe for orchestrator but is **not** sufficient for live `client.rpc`); stop silent register-skip and catch-all→DISPATCH — emit stage-distinct `OPENCODE_*` (missing client / rpc absent / Defined unbranded / register skipped / make unreachable); DISPATCH remains umbrella only when all limbs exhausted; never silent `localhost:4096`; never restore `auto.md`. **No companion DEC** — `# BUG-0024` at `/architecture` only. Expected sprint **S0159**.
+- **Rejected**: reopen BUG-0023/BUG-0021; merge/drain BUG-0022; drain BUG-0027; restore `auto.md`; JSON `commands.auto`+`template`; switch TUI default back to `Plugin.define` (re-breaks listing); treat Axis A files present / Cursor-only as done; invent POST `{ input }`.
 
-### Web / docs / code sources (2026-09-14 live-fetch)
+### Web / docs / code sources (research 2026-09-21 + intake compose)
 
-- Live `https://opencode.ai/v2/docs/build/plugins/rpc/` (re-fetched this intake):
-  - Define with **`Rpc.define({ id, methods })`** from `@opencode/plugin/rpc`. Kit `rpc.ts` now uses `Rpc.define` (optional peer; else **local** `define` that returns the spec).
-  - Implement in **server** `Plugin.define({ setup })`: **`await ctx.rpc.register(Acme, impl)`**. Kit orchestrator still **skips** register when `ctx.rpc.register` is absent.
-  - Call from HTTP: `OpenCode.make({ baseUrl })` then **`client.rpc(Acme)`**. Kit uses this as fallback **only if** `resolveClientBaseUrl(client)` finds a string; **no** silent `http://localhost:4096`.
-  - Call from a **TUI plugin** in public docs: **`Plugin.define({ setup(context) { context.client.rpc(Acme) } })`** from `@opencode/plugin/tui` — the **CLI plugin** shape, **not** the `{ id, tui }` file-plugin `tui(api)` loader that BUG-0021 locked. That mismatch remains live.
-- Context7 `/websites/opencode_ai_v2` “Call RPC from a plugin using context.client”: same `Plugin.define({ setup })` + `context.client.rpc(Acme)` example.
-- Context7 `/anomalyco/opencode` `packages/opencode/specs/tui-plugins.md`: `{ id, tui }` file plugins; `tui(api)` groups include **`api.client`**. Spec examples use generated SDK methods (`client.session.get`). Spec does **not** document `api.client.rpc(Rpc)`.
-- Kit working tree (this intake; Axis A present, live dispatch still toasting):
-  - `.opencode/plugins/its-magic-auto/rpc.ts` — `Rpc.define` + `runAutoLifecycle`
-  - `.opencode/plugins/its-magic-auto/tui.ts` — `{ id, tui }`; `run: async (input) => dispatchRunAutoLifecycle({ api, client: api?.client }, input)`; DISPATCH toast if `!client`, import fail, `!Defined`, no `client.rpc` method, no `runAutoLifecycle` on subclient, no `baseUrl`, or `@opencode/client` unusable; **all RPC try/catch swallowed** → same toast
-  - `.opencode/plugins/orchestrator.ts` — `await ctx.rpc.register(...)` **if** `ctx.rpc.register` exists; keep `editor.add`
-  - `.opencode/tui.json` lists `./plugins/its-magic-auto/tui.ts`
-  - `.opencode/commands/auto.md` **absent**
-- Compose **R-0137** winning Axis A (`Rpc.define` + `client.rpc(Defined)`): **files shipped**, **live CLI not probed** (`UAT_PROBE_FORBIDDEN`). Operator toast is that residual **live-falsified**.
-- Compose **R-0136** H1–H4: still candidates. Additive H5: local `Rpc.define` fallback is not host-true `Defined`, so `client.rpc(Defined)` does not return `runAutoLifecycle`.
+- Context7 `/anomalyco/opencode` `tui-plugins.md` (re-query): `tui(api)` API groups **include `api.client`** (“always reflects the current runtime client”); examples use SDK methods (`session.get`); **does not** document `api.client.rpc(Rpc)`.
+- Context7 `/websites/opencode_ai_v2` RPC: define `Rpc.define` from `@opencode/plugin/rpc`; server `await ctx.rpc.register(Defined, impl)`; call via `client.rpc(Defined)` (HTTP `OpenCode.make({ baseUrl })` or Plugin.define TUI `context.client.rpc`). Public TUI RPC example is **`Plugin.define({ setup })`**, not `{ id, tui }` — docs mismatch vs BUG-0021 loader lock remains.
+- Kit (narrow-read, Axis A present): `rpc.ts` optional peer else **local identity define**; `tui.ts` `run()` → `dispatchRunAutoLifecycle({ api, client: api?.client }, input)` — all miss/error paths toast **same** DISPATCH; orchestrator `await ctx.rpc.register` **only if** `ctx.rpc.register` exists (else silent skip); `editor.add` kept; `auto.md` absent; `tui.json` lists TUI plugin.
+- Compose R-0137 Axis A: files shipped; live CLI never probed — this bug is that residual live-falsification.
 
-### Gap confirmation (intake)
+### Gap confirmation (research)
 
-- BUG-0023 DONE shipped Axis A. Operator `/ask`: “prüfe das repo is alles so wie nach dem letzten bug geplant vorhanden? was läuft nun wieder falsch?”
-- Files **are present**. Listed `/auto` still toasts title `its-magic /auto`, body `OPENCODE_AUTO_TUI_DISPATCH_UNSUPPORTED`. Lifecycle does **not** start.
-- Leading hypotheses (not locked): (H1) `{ id, tui }` `api.client` missing so `run()` `{ api, client: api?.client }` toasts immediately; (H2) `.rpc` missing or requires host-true `Rpc.define` branding (H5 local define); (H3) server `ctx.rpc.register` never ran; (H4) `OpenCode.make` fallback never runs (`baseUrl` absent / `@opencode/client` unusable) and errors swallowed. `/research` picks winner.
-- Do **not** restore STOP-only `auto.md` (BUG-0018). Do **not** reopen BUG-0023 ACs (slice still true; live limb is new). Do **not** reopen BUG-0021. Do **not** merge BUG-0022.
+- Toast title `its-magic /auto` proves listing + `run()` invoke (BUG-0021 held). Body DISPATCH proves `dispatchRunAutoLifecycle` fail-closed before lifecycle start.
+- **H1** (low–medium): `api.client` missing on live host despite spec — `run()` only passes `api?.client`. Spec lists `api.client`; conforming hosts should have it.
+- **H2 / H5** (high): local identity-`Rpc.define` is not host-branded → `client.rpc(Defined)` throws or returns no `runAutoLifecycle`; catch swallowed → DISPATCH.
+- **H3** (high): `ctx.rpc.register` skipped when absent → method unregistered even if TUI `.rpc` works.
+- **H4** (medium): `OpenCode.make` unreachable when `baseUrl` absent / `@opencode/client` missing; catch swallowed → DISPATCH.
 
-### Alternatives (intake recommendation; discovery/architecture lock)
+### DQ1 — Live `tui(api)` client surface (LOCKED)
 
-| Option | Summary | Intake verdict |
+- **Winner**: host-true client is **`api.client`** (`tui-plugins.md`). Keep `run()` → `{ api, client: api?.client }` as primary pass-through.
+- If `api.client` absent on a live host: fail-closed with distinct **missing-client** `OPENCODE_*` (architecture pins token); do **not** invent alternate owners (`Plugin.define` TUI, SessionPrompt, Command.Info).
+- Public docs `context.client` = same generated client class on Plugin.define shape — **not** a second stack for file plugins.
+
+### DQ2 — `api.client.rpc(Defined)` on file-plugin shape (LOCKED)
+
+- Spec does **not** document `.rpc` on `api.client`; v2 RPC documents `.rpc(Defined)` on generated OpenCode client (HTTP + Plugin.define `context.client`).
+- **Winner**: treat `typeof api.client.rpc === "function"` → `client.rpc(Defined).runAutoLifecycle(payload)` as happy path when present (Axis A compose).
+- When `.rpc` absent: fall through to `OpenCode.make({ baseUrl }).rpc(Defined)` (DQ5). Never invented POST `{ input }`.
+
+### DQ3 — Local `Rpc.define` vs peer brand (LOCKED)
+
+- **Winner**: TUI dispatch happy path requires **peer** `@opencode/plugin/rpc` `Rpc.define` branding. Local identity-`define` remains allowed so orchestrator/`editor.add` still loads without the peer, but is **not** sufficient for live `client.rpc(Defined)` success.
+- When peer unresolved / Defined unbranded: emit distinct **Defined-unbranded** `OPENCODE_*` (architecture pins), not silent DISPATCH.
+- Shared `ITS_MAGIC_AUTO_RPC` continues to live in `./its-magic-auto/rpc.ts` (compose Axis A).
+
+### DQ4 — Orchestrator `ctx.rpc.register` on CLI TUI host (LOCKED)
+
+- Current: register runs **only if** `ctx.rpc.register` exists; otherwise silent skip (attach-optional compose BUG-0019).
+- **Winner**: keep `await ctx.rpc.register(ITS_MAGIC_AUTO_RPC, { runAutoLifecycle: runAutoLifecycleRpc })` when present (Axis A). When **absent**: emit honest distinct **register-skipped** `OPENCODE_*` (observable to operator/tests) — do **not** treat skip as success; TUI may still try client/make limbs, then umbrella DISPATCH if all fail.
+- Keep `editor.add` execute owner. TUI `run()` stays dispatch-only.
+
+### DQ5 — `OpenCode.make({ baseUrl })` reachability (LOCKED)
+
+- **Winner**: `resolveClientBaseUrl(client)` from `client.baseUrl` | `client.config?.baseUrl` | `client.defaults?.baseUrl` only — **never** silent `http://localhost:4096`.
+- When client present, `.rpc` missing/failed, and no usable `baseUrl` / `@opencode/client`: emit distinct **make-unreachable** `OPENCODE_*`.
+- Host-true HTTP remains `OpenCode.make({ baseUrl }).rpc(Defined).runAutoLifecycle(payload)`.
+
+### DQ6 — Swallowed try/catch vs distinct codes (LOCKED)
+
+- **Winner**: stage-distinct codes for missing-client / rpc-absent / Defined-unbranded / register-skipped / make-unreachable (exact tokens architecture-owned). Reuse **`OPENCODE_AUTO_TUI_DISPATCH_UNSUPPORTED`** as **umbrella** only when all limbs exhausted or host truly cannot dispatch (AC-1/AC-2).
+- Reject keeping catch-all→DISPATCH as the only diagnostic after Axis A live-falsification.
+
+### DQ7 — Winning approach family → A\* (LOCKED)
+
+| Approach | Summary | Verdict |
 |---|---|---|
-| **1** | Persist **NEW BUG-0024**; keep BUG-0023 DONE; listed `/auto` must reach `runAutoLifecycle` on live CLI; tests must catch this live miss (not mock-only if that is the gap) | **Recommended** |
-| 2 | Reopen BUG-0023 ACs / S0148 | **Rejected** — slice closed honestly with `UAT_PROBE_FORBIDDEN`; this is a new live-falsification |
-| 3 | Reopen BUG-0021 | **Rejected** — listing limb succeeded (toast title proves listed invoke) |
-| 4 | Merge BUG-0022 | **Rejected** — Cursor Task inherit ≠ OpenCode TUI dispatch |
-| 5 | Restore STOP-only `.opencode/commands/auto.md` | **Rejected** — recreates BUG-0018 |
-| 6 | Treat Axis A files present as success | **Rejected** — operator asked what is wrong again |
-| 7 | Cursor-only as product outcome | **Rejected** — Cursor IDE `/auto` is the working path **until fix**, not done |
+| **A1 (A\*) Hybrid residual** | Peer-branded Defined for TUI success + stage codes + register-skip honesty + Axis A client/make path held; `{ id, tui }` + `editor.add` held | **WINNER** |
+| A2 Client pass-through only | Only expand `api?.client` wiring | **Rejected** — insufficient vs H2/H5/H3 |
+| A3 Register timing only | Only force/await register | **Rejected** — residual may be branding/client |
+| A4 Defined branding only | Only peer Rpc.define | **Rejected** — register-skip + diagnostics still required |
+| A5 HTTP fallback only | Only OpenCode.make | **Rejected** — no silent localhost; primary is still client.rpc |
+| A6 Restore auto.md / Plugin.define TUI / JSON template | — | **Rejected** — D3/D4 / BUG-0018 / BUG-0021 |
 
-### Seeds for `/discovery` / `/research` (not locked here)
+Architecture pins token strings + exact residual limb order; research locks family **A1**.
 
-- Confirm whether live TUI `tui(api)` actually has `api.client` / `client.rpc` / `baseUrl`.
-- Align file-plugin `{ id, tui }` vs public `Plugin.define({ setup })` `context.client.rpc(Rpc.define)`.
-- Confirm orchestrator `ctx.rpc.register` runs in the CLI TUI host (not skipped).
-- Do not silent-default `localhost:4096`. Do not re-invent POST `{ input }`.
-- Keep `editor.add` execute owner. Do not SessionPrompt / Command.Info template / LLM chat.
-- Fail-closed: reuse `OPENCODE_AUTO_TUI_DISPATCH_UNSUPPORTED` until **live** dispatch works; honest `OPENCODE_*` only when host-true cannot dispatch.
-- Tests: additive `test_bug0024_*` that would have failed BUG-0023’s mock-only suite on the live miss (missing `api.client` / swallowed RPC). Keep 0023/0021/0020/0019/0018 compose. `UAT_PROBE_FORBIDDEN` remains default unless architecture opts in.
-- Upgrade: live dispatch-path change must copy to already-Axis-A trees; still prune leftover `auto.md`.
+### DQ8 — `test_bug0024_*` contract (LOCKED)
 
-### Decision gate
+Additive markers (architecture pins file name; count **6–8**). Must fail current tree / BUG-0023 mock-only gap:
 
-- **decision_gate=false** for intake persistence. Exact host-true live client wiring remains a `/research` DQ.
-- **Status**: current. **Next**: `/discovery` for **BUG-0024**.
+1. `test_bug0024_run_missing_api_client_distinct_code` — `run()`/`dispatch` with `{ api }` and no `api.client` → missing-client code (not silent umbrella-only without stage)
+2. `test_bug0024_local_unbranded_defined_not_happy_path` — identity-define Defined does not count as TUI success
+3. `test_bug0024_register_skipped_observable` — absent `ctx.rpc.register` surfaces register-skipped (not silent)
+4. `test_bug0024_make_unreachable_without_baseurl` — client without `.rpc` and without `baseUrl` → make-unreachable; never invent localhost
+5. `test_bug0024_swallowed_rpc_error_not_only_dispatch` — rpc throw maps to stage code before umbrella DISPATCH
+6. `test_bug0024_keep_editor_add_no_auto_md` — compose D3/D4
+7. `test_bug0024_active_template_parity` — AC-8
+8. `test_bug0024_upgrade_copies_dispatch_still_prunes_auto_md` — AC-7
+
+Keep `test_bug0023_*` / `0021` / `0020` / `0019` / `0018` compose. **CI default `UAT_PROBE_FORBIDDEN`** for live OpenCode CLI unless architecture invents a better non-live contract (D8).
+
+### DQ9 — Upgrade / parity (LOCKED)
+
+- Consumer upgrade `--host opencode|both` overwrites live dispatch path (`tui.ts` / `rpc.ts` / orchestrator register limb) onto already-Axis-A trees; **still prunes** leftover `auto.md`.
+- Active ↔ `template/.opencode/...` byte-parity for touched dispatch surfaces (AC-8).
+
+### DQ10 — Architecture anchor / R-id / sprint (LOCKED)
+
+- Architecture: additive **`# BUG-0024` only** — **no companion DEC** (same class as BUG-0019/0020/0021/0023/0025).
+- **R-id**: lock **R-0140** in place. Do **not** wipe R-0136 / R-0137 / R-0134 / R-0124 / R-0140+.
+- Expected sprint **S0159** (S0158 occupied). Do **not** create sprint this phase.
+
+### Risks and mitigations
+
+| Risk | Mitigation |
+|---|---|
+| Stage-code proliferation vs AC-2 DISPATCH semantics | Architecture pins small closed set; DISPATCH stays umbrella |
+| Peer `@opencode/plugin/rpc` absent on consumer hosts | Distinct Defined-unbranded code; orchestrator still loads via local define |
+| Register-skipped on attach-optional hosts confuses operators | Document as honest residual; Cursor IDE remains working path until fix (D7) |
+| Tests overfit mock and miss live again | Markers target BUG-0023 mock gap (missing client / unbranded / register-skip / no baseUrl); UAT_PROBE_FORBIDDEN held |
+
+### Architecture seeds (preview)
+
+- `/architecture` authors **`# BUG-0024`** (no companion DEC): pin A1 limb order, reason-code tokens, test file + marker IDs, upgrade/parity surfaces, residual H1–H5 acceptance.
+- `/sprint-plan` materializes **S0159** (≤12 tasks from architecture seeds).
+- Do not implement application code this phase.
+
+### Research attestation — architecture handoff (2026-09-21T19:37:00Z)
+
+- Consumed discovery: `rp-auto-20260921-bug0024-discovery-po-20260921T193200Z-BUG-0024` / `0772F0DA79960D0D5045CE994F7973E8F968B9DA95F2C030EE6979A5838A8BE4` — MATCH; not STALE.
+- Discovery D1–D10 → DQ1–DQ10 LOCKED. **decision_gate=false**. Status remains OPEN; ACs unchecked.
+- Do not author `# BUG-0024`, any `decisions/DEC-*`, or `sprints/S0159/` this phase. **Next**: `/architecture` (fresh tech-lead). CROSS_MODEL_REVIEW=0 — do not spawn sovereign-critic.
+
+- **Delivery closure (2026-09-21T20:46:00Z, curator, `orchestrator_run_id=auto-20260921-bug0024`)**: **`BUG-0024`** **DONE**; sprint **`S0159`** **released**; A1 Hybrid residual live-dispatch (peer-branded `@opencode/plugin/rpc`, stage-distinct `OPENCODE_*`, register-skip honesty, eight **`test_bug0024_*`**, upgrade/parity) delivered per **R-0140** / architecture **`# BUG-0024`** (no companion DEC); compose **BUG-0023** Axis A / **US-0133** kit held; honest residual: live OpenCode CLI TUI **`UAT_PROBE_FORBIDDEN`** (NB1 — no live PASS); **`npm_published=false`** — **`PUBLISH_CONFIRMATION_REQUIRED`**; BUG-0022/BUG-0026/BUG-0027 **not** drained; orchestrator STOP — segment complete.
 
 ## R-0141 - US-0143 Delivery routing and full-autonomy scheduler research
 
@@ -15419,3 +15478,139 @@ Count **5–6** named tests. **R-id**: **R-0149**. Expected sprint **S0157**. Ar
 - Test seam escaping to production: production constructors reject test-only factories unless an explicit test environment guard is active.
 - `/architecture` should author `# US-0150` and a companion `DEC-0150`; lock host interface, lifecycle, dependency graph, reason-code family, and AC-to-test map. No implementation, sprint, backlog-status, or acceptance mutation in research.
 - **Next**: `/architecture` in a fresh tech-lead context. **decision_gate=false**.
+
+## R-0151 — BUG-0027 OpenCode manual phase commands cannot persist canonical workflow evidence
+
+- **Date**: 2026-09-21 (`/research` lock). **Bug**: BUG-0027. **Status**: **delivered** (delivery closure trailer below; curator refresh **2026-09-21T22:30:00Z**). **Confidence**: high.
+- **Linked**: BUG-0027 (OPEN), BUG-0024 DONE / **R-0140** / S0159 (compose only — do **not** reopen ACs; do **not** claim CLI/TUI `/auto` toast repair), BUG-0016 DONE (permission matrix compose — do **not** reopen), BUG-0022 OPEN / BUG-0026 OPEN (do not merge/drain), US-0121 / US-0122 / US-0124 / US-0125 / US-0126 (compose), US-0150 OPEN (compose/link only — do **not** mutate as this bug’s implementation); **R-0150** held — do **not** wipe/reuse; R-0140 held.
+- **Topic**: Direct OpenCode phase commands (`/intake`, `/execute`, `/qa`, `/verify-work`) cannot persist canonical sprint/handoff artifacts plus isolation linked to the current story/bug and sprint; `runAutoLifecycleRpc` drops `storyId`/`sprintId`/`orchestratorRunId` and defaults `orchestratorSessionId` to `tui-auto`; `command.executed` only handles `name === "auto"`; permission matrix denies phase-required writes (dev: no `state.md` / `summary.md`; QA: no `state.md`); command packs invoke `intake_evidence_validate.py --repo . --enforce` (exit 2; script only `--file`/`--stdin`/`--self-test`).
+- **Query**: Close discovery DQ1–DQ10; pick winning approach **A*** so manual phases persist canonical artifacts + linked isolation, or fail closed with a precise reason before claiming success — without fabricating proofs or claiming BUG-0024 toast repair.
+- **Producer consumed**: discovery `rp-auto-20260921-bug0027-discovery-po-20260921T210800Z-BUG-0027` / `89A067227D7A3E3A1656FEA163F9F91FFB91231112EF23946096783B7763F9F7` — `compute_strict_proof_hash` **RUNTIME_PROOF_VALID MATCH** at research issue `2026-09-21T21:15:00Z`; not STALE (ttl `2026-09-21T22:08:00Z`). CROSS_MODEL_REVIEW=0 — no sovereign-critic. `fresh_context_marker=tl-BUG0027-research-20260921T211500Z-fresh`
+- **EARLY_RESEARCH posture**: EARLY_RESEARCH=0 — discovery stub only; this phase **authors** **R-0151** and locks DQ1–DQ10. Do **not** wipe/reuse **R-0150** / **R-0140**.
+- **ID policy**: this heading is **R-0151**. Highest existing was **R-0150** (US-0150). `ID_NAMESPACE_BOOTSTRAP=0`. Do **not** wipe, renumber, or rewrite R-0140 / R-0150.
+- **Recommendation**: **A1 (A*) Hybrid manual-phase persist** — extend `IsolationEvidence` + `persistIsolationViaPython` + Python `--append-isolation` with real `storyId`/`sprintId`/`orchestratorRunId` (no second persist store); invoke that helper from a thin **manual-phase persist path** (not `runAutoLifecycle` drain); carry parent `sessionID` from OpenCode `command.executed` / RPC input (never default `tui-auto` for release evidence); targeted permission-matrix widen for phase-required writes (compose BUG-0016 deny-last); fail closed before claiming success when persist is denied or the orchestrator is unavailable (no fabricated proofs); rewrite active+template command packs to the validator’s supported `--file`/`--stdin`/`--self-test` and drop intake-validator from non-intake packs. **No companion DEC** — `# BUG-0027` at `/architecture` only. Expected sprint **S0160**.
+- **Rejected**: permission-widen-only (persist hook still missing); fail-closed-only without usable success path (fallback stays unusable); second persist implementation (`ctx.storage` / parallel JSON); routing `/execute` through `runAutoLifecycle`; adding `--repo --enforce` to `intake_evidence_validate.py`; restoring `auto.md`; reopening BUG-0024 ACs / S0159; claiming TUI toast repair; fabricating strict-proof tuples; merge/drain BUG-0022 / BUG-0026; mutating US-0150 as this bug’s implementation.
+
+### Web / docs / code sources (research 2026-09-21)
+
+- Context7 `/anomalyco/opencode` `command.executed` schema: `{ name, sessionID, arguments, messageID }` — markdown slash commands **do** emit a real `sessionID` (not a TUI placeholder). Session objects expose `parentID` via `api.state.session.get(sessionID)`.
+- Context7 `/websites/opencode_ai_plugins`: plugin events include `command.executed`, `tool.execute.before`, `tool.execute.after`, `session.idle`. Custom tools receive `{ agent, sessionID, messageID, directory, worktree }`.
+- Kit (narrow-read): `.opencode/plugins/orchestrator.ts` `IsolationEvidence` has only `parentID`/`sessionID`/`role`/`phase_id`/`timestamp`/`fresh_context_marker`; `spawnPhase` receives `storyId`/`sprintId`/`orchestratorRunId` then **drops** them on evidence; `persistIsolationViaPython` / `scripts/opencode_auto_bridge.py --append-isolation` do not accept those IDs; `runAutoLifecycleRpc` forwards only `sessionID`/`prompt`/`delivery` and defaults `orchestratorSessionId` to `"tui-auto"`; `command.executed` subscriber gated `name === "auto"` → `runAutoLifecycle`; `.opencode/agents/dev.md` deny-last omits `docs/engineering/state.md` and `sprints/S*/summary.md`; `.opencode/agents/qa.md` omits `state.md`; `.opencode/commands/{intake,execute,discovery}.md` + template mirrors invoke `--repo . --enforce`; `scripts/intake_evidence_validate.py` argparse is `--file`/`--stdin`/`--self-test` only; `tests/us0125_contract_test.py` + `tests/us0125/fixtures/validator_artifact_mapping.json` still assert the invalid CLI (US-0125 compose-amend, not reopen).
+- US-0125 archived mapping table (`architecture-pack-20260912.md`) listed `intake_evidence_validate.py --repo . --enforce` — **stale vs actual CLI**. This bug does **not** reopen US-0125 ACs; command packs follow the live argparse.
+
+### Gap confirmation (research)
+
+- **H1** (high): persist path never invoked for manual `command.md` (subscriber is `/auto`-only; command prose claims “plugin enforces persistence” and that is false).
+- **H2** (high): even `/auto` persist cannot satisfy release evidence — IsolationEvidence omits story/sprint/run; RPC defaults `tui-auto`.
+- **H3** (high): OpenCode role permission matrix (BUG-0016 compose) denies writes execute/QA isolation + execute `summary.md` require.
+- **H4** (high): intake validator invocation is invalid (exit 2); execute/discovery incorrectly require the intake CLI.
+- **H5** (medium): `command.executed` is documented and carries `sessionID`; R-0119 residual (event may not fire on some hosts) → fail-closed if persist was never invoked by STOP, do not silently claim success.
+
+### DQ1 — Parent session + story/sprint/run without `/auto` (LOCKED)
+
+- **Winner**: manual phase commands obtain **parent `sessionID`** from the OpenCode `command.executed` payload (or RPC/tool context `sessionID`). Obtain **`storyId`/`sprintId`/`orchestratorRunId`** from (1) RPC/event arguments when present, else (2) Python bridge reading `handoffs/resume_brief.md` / `docs/engineering/state.md` (same parser as `selectFirstPhaseViaPython` / `_parse_resume_brief`). Do **not** default `orchestratorSessionId` to `tui-auto`. Do **not** route `/intake` `/execute` `/qa` `/verify-work` through `runAutoLifecycle` (that remains `/auto` drain — BUG-0024 compose).
+- Extend `runAutoLifecycleRpc` input to **forward** `storyId`/`sprintId`/`orchestratorRunId` when `/auto` does use RPC — that is AC-3 context-propagation, **not** toast repair.
+
+### DQ2 — Persist path (LOCKED)
+
+- **Winner**: **extend** `IsolationEvidence` + `persistIsolationViaPython` + `opencode_auto_bridge.py --append-isolation` with optional `--story-id` / `--sprint-id` / `--orchestrator-run-id` (and bug id when segment is a bug). One Python SOT remains `docs/engineering/state.md` (US-0048 / DEC-0029). **Reject** a second persist store (`ctx.storage`, sidecar JSON).
+- Manual phases call a thin **`persistManualPhaseIsolation`** (architecture pins name) that builds IsolationEvidence and calls the same Python helper. `/auto` keeps `runAutoLifecycle` → persist. Shared helper, distinct invokers.
+
+### DQ3 — Permission matrix vs fail-closed-before-work (LOCKED)
+
+- **Winner**: **hybrid**. Targeted **widen** of phase-required globs on the existing deny-last matrix (compose BUG-0016 — do not reopen; do not `edit: allow` all):
+  - **dev**: add `docs/engineering/state.md` and `sprints/S*/summary.md` (execute.md already lists `summary.md`; agent currently cannot write it).
+  - **qa**: add `docs/engineering/state.md` (isolation checkpoint). PO already allows `state.md`.
+- **Plus** fail-closed-before-work: if a required write is still denied, or persist returns non-ok, do **not** claim phase success. Architecture pins reason-code tokens (research proposes `OPENCODE_MANUAL_PHASE_PERSIST_DENIED`, `OPENCODE_MANUAL_PHASE_WRITE_DENIED`).
+- **Reject** widen-only (H1 persist miss remains). **Reject** fail-closed-only (AC-1/AC-2 success path would stay unusable).
+
+### DQ4 — Validator CLI (LOCKED)
+
+- **Winner**: **rewrite command packs** to the supported `--file <bundle.json>` / `--stdin` / `--self-test`. **Do not** add `--repo --enforce` to `intake_evidence_validate.py` (would fork the Cursor-correct CLI and paper over the pack bug).
+- Compose-amend US-0125 fixture + `test_us0125_validator_subprocess_fail_closed` named-CLI set so they expect the supported invocation (contract evolution; US-0125 ACs stay DONE — same class as US-0143 lifting deferred `/auto`). Do not reopen US-0125.
+
+### DQ5 — Non-intake packs requiring intake validator (LOCKED)
+
+- **Winner**: **drop** `intake_evidence_validate` from `execute.md` and `discovery.md` (active + template). Keep it **only** on `intake.md`, with supported `--file`/`--stdin`.
+- `qa.md` / `verify-work.md` already use `bug_issue_validate.py --repo . --check-acceptance` — that CLI **does** accept `--repo` / `--check-acceptance` (confirmed argparse). Keep those; do not replace with intake validator. Architecture pins exact thin-command prose (stay ≤20 lines per US-0125 compose).
+
+### DQ6 — Reject `tui-auto` (LOCKED)
+
+- **Winner**: reject `tui-auto` as **both** `parentID` **and** `orchestratorRunId` for **release evidence**. Placeholder cannot satisfy AC-3. Persist helper fail-closes with a distinct code (research proposes `OPENCODE_PLACEHOLDER_PARENT_REJECTED`) rather than writing `tui-auto` into `state.md`.
+- Missing real session/run context → fail closed (`OPENCODE_MANUAL_PHASE_CONTEXT_MISSING`); do not invent IDs.
+
+### DQ7 — Winning approach family → A* (LOCKED)
+
+| Approach | Summary | Verdict |
+|---|---|---|
+| **A1 (A*) Hybrid manual-phase persist** | Context-propagation + shared IsolationEvidence persist helper + targeted permission widen + fail-closed + supported validator packs | **WINNER** |
+| A2 Persist-hook only | Only expand `command.executed` names | **Rejected** — IDs still dropped; permissions still deny; validator still invalid |
+| A3 Permission widen only | Only add globs | **Rejected** — persist never invoked; context still `tui-auto` |
+| A4 Fail-closed-only | Precise errors, no success path | **Rejected** — AC-1/AC-2 require a usable fallback |
+| A5 Second persist store | `ctx.storage` / sidecar JSON | **Rejected** — state.md remains SOT |
+| A6 Route manual phases through `runAutoLifecycle` | Treat `/execute` as auto drain | **Rejected** — `/auto` remains BUG-0024; would start the lifecycle loop |
+| A7 Add `--repo --enforce` to Python CLI | Dual interface | **Rejected** — D5; Cursor packs already correct |
+
+Architecture pins helper names, reason-code tokens, and exact glob strings; research locks family **A1**.
+
+### DQ8 — `test_bug0027_*` contract (LOCKED)
+
+Additive markers (architecture pins file name; count **8–10**). Must fail current tree:
+
+1. `test_bug0027_manual_phase_persists_isolation` — `/execute` (or `/intake`) mock `command.executed` with real `sessionID` + story/sprint/run → IsolationEvidence append includes those IDs (AC-1, AC-2, AC-3)
+2. `test_bug0027_denied_persist_not_success` — persist helper non-ok → phase result `ok: false` with persist-denied code; no success claim (AC-2)
+3. `test_bug0027_rpc_forwards_story_sprint_run` — `runAutoLifecycleRpc` no longer drops IDs (AC-3)
+4. `test_bug0027_tui_auto_rejected_as_release_evidence` — `tui-auto` as parentID or orchestratorRunId fail-closes; not written as evidence (AC-3, DQ6)
+5. `test_bug0027_no_fabricated_proof_when_orchestrator_unavailable` — missing orchestrator/run context → fail-closed; no invented proof tuple (AC-4)
+6. `test_bug0027_auto_tui_toast_not_claimed` — dispatch toast / `OPENCODE_AUTO_TUI_DISPATCH_UNSUPPORTED` path **unchanged** (AC-4; compose BUG-0024)
+7. `test_bug0027_validator_invocation_file_stdin_not_repo_enforce` — active+template command packs contain no `intake_evidence_validate.py --repo . --enforce`; intake uses `--file`/`--stdin`/`--self-test` (AC-5)
+8. `test_bug0027_non_intake_packs_drop_intake_validator` — execute.md / discovery.md do not require intake_evidence_validate (AC-5, DQ5)
+9. `test_bug0027_active_template_parity` — touched OpenCode commands/agents/plugin/bridge byte-parity (AC-6)
+10. `test_bug0027_permission_matrix_phase_writes` — dev allows `state.md` + `summary.md`; qa allows `state.md`; deny-last held (AC-1, DQ3)
+
+Keep `test_bug0024_*` / `test_us0124_*` / `test_us0125_*` compose. Compose-amend US-0125 named-CLI fixture as part of marker 7 (not a reopen). **CI default**: mock-ctx / stub-harness; no live OpenCode CLI TUI probe required (do not claim BUG-0024 live dispatch).
+
+### DQ9 — Surfaces (LOCKED)
+
+| Surface | Action |
+|---|---|
+| `.opencode/commands/{intake,execute,discovery}.md` + `template/.opencode/commands/` | Rewrite validator prose; drop intake CLI from non-intake; byte-parity |
+| `.opencode/commands/{qa,verify-work}.md` + template | Keep `bug_issue_validate.py --repo . --check-acceptance` (valid); no intake CLI |
+| `.opencode/agents/{dev,qa}.md` + `template/.opencode/agents/` | Targeted glob widen; byte-parity |
+| `.opencode/plugins/orchestrator.ts` + template | IsolationEvidence fields; persist helper; RPC forward; `command.executed` manual-phase limb; do **not** change TUI toast path |
+| `scripts/opencode_auto_bridge.py` + template | `--append-isolation` identity fields |
+| `.cursor/commands/` | **OUT** of rewrite — Cursor intake already uses `--file`/`--stdin`/`--self-test` |
+| US-0125 fixture + contract test named CLI | Compose-amend to supported invocation |
+| US-0125 runbook stub line `--repo . --enforce` | Architecture may pin a one-line correction; do not reopen US-0125 ACs |
+
+Upgrade `--host opencode|both` overwrites the touched OpenCode pack paths.
+
+### DQ10 — Architecture anchor / R-id / sprint (LOCKED)
+
+- Architecture: additive **`# BUG-0027` only** — **no companion DEC** (same class as BUG-0019/0020/0021/0023/0024/0025).
+- **R-id**: author **R-0151**. Do **not** wipe R-0150 / R-0140.
+- Expected sprint **S0160** (S0159 occupied by BUG-0024 DONE). Do **not** create sprint this phase.
+
+### Risks and mitigations
+
+| Risk | Mitigation |
+|---|---|
+| `command.executed` does not fire for markdown commands on some hosts (R-0119) | Fail-closed if persist never ran by STOP; architecture may add `tool.execute.after` / `session.idle` as secondary trigger — not a second persist store |
+| Permission widen looks like reopening BUG-0016 | Additive globs only; deny-last held; tests assert matrix still deny-default |
+| US-0125 fixture compose-amend looks like reopen | Additive `test_bug0027_*` own the new CLI; US-0125 ACs stay DONE; document as contract evolution |
+| RPC ID forward confused with BUG-0024 toast work | Marker 6 asserts toast path unchanged; `/auto` drain loop unamended |
+| Fabricated proofs under unavailable orchestrator | Marker 5; persist helper refuses `tui-auto` and missing run ids |
+
+### Architecture seeds (preview)
+
+- `/architecture` authors **`# BUG-0027`** (no companion DEC): pin A1 helper names, IsolationEvidence field list, reason-code tokens, permission globs, command-pack prose, test file + marker IDs, US-0125 compose-amend, upgrade/parity surfaces.
+- `/sprint-plan` materializes **S0160** (≤12 tasks from architecture seeds).
+- Do not implement application code this phase.
+
+### Research attestation — architecture handoff (2026-09-21T21:15:00Z)
+
+- Consumed discovery: `rp-auto-20260921-bug0027-discovery-po-20260921T210800Z-BUG-0027` / `89A067227D7A3E3A1656FEA163F9F91FFB91231112EF23946096783B7763F9F7` — MATCH; not STALE.
+- Discovery D1–D10 → DQ1–DQ10 LOCKED. **A1 (A*) Hybrid manual-phase persist**. **decision_gate=false**. Status remains OPEN; ACs unchecked.
+- Do not author `# BUG-0027`, any `decisions/DEC-*`, or `sprints/S0160/` this phase. **Next**: `/architecture` (fresh tech-lead). CROSS_MODEL_REVIEW=0 — do not spawn sovereign-critic.
+
+- **Delivery closure (2026-09-21T22:30:00Z, curator, `orchestrator_run_id=auto-20260921-bug0027`)**: **`BUG-0027`** **DONE**; sprint **`S0160`** **released**; A1 Hybrid manual-phase persist (`IsolationEvidence` identity fields, `persistManualPhaseIsolation`, RPC ID forward, reject `tui-auto`, permission-matrix widen, validator pack rewrite, ten **`test_bug0027_*`**, upgrade/parity **`BUG0027_PAIRS`**, US-0125 named-CLI compose-amend) delivered per **R-0151** / architecture **`# BUG-0027`** (no companion DEC); compose **BUG-0024** / **US-0125** held — no toast-repair claim; honest residual: live OpenCode CLI/TUI manual-phase **`UAT_PROBE_FORBIDDEN`** (NB1 — no live PASS); **`npm_published=false`** — **`PUBLISH_CONFIRMATION_REQUIRED`**; BUG-0022/BUG-0026 **not** drained; orchestrator STOP — segment complete.

@@ -7,9 +7,9 @@ import { runCliArgv } from "./run.ts";
  * `auth`/`models` delegate to auth-models only; workflow commands use OperatorCommandFacade.
  */
 const argv = process.argv.slice(2);
-const host = await createRuntimeHost({ projectRoot: process.cwd() });
+const host = await createRuntimeHost({ projectRoot: process.cwd(), lifetime: "direct-cli" });
 try {
 	process.exitCode = await runCliArgv(argv, { projectRoot: host.projectRoot, host });
 } finally {
-	host.dispose();
+	await host.dispose();
 }

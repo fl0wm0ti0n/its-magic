@@ -97,7 +97,9 @@ def test_us0135_no_pi_imports_in_auth_models():
         assert marker in contract, marker
 
     cli = (root / "standalone" / "apps" / "cli" / "src" / "index.ts").read_text(encoding="utf-8")
-    assert "@its-magic/auth-models" in cli
+    cli_pkg = _load_json(root / "standalone" / "apps" / "cli" / "package.json")
+    assert "@its-magic/auth-models" in (cli_pkg.get("dependencies") or {})
+    assert "@its-magic/runtime-host" in cli
     assert "@earendil-works/pi-" not in cli
     kernel_src = "\n".join(
         p.read_text(encoding="utf-8")

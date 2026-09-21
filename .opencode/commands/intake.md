@@ -14,6 +14,6 @@ role: po
 - handoffs/po_to_tl.md
 
 ## Validator bridge
-Before writing to `handoffs/intake_evidence/*.json`, run `python scripts/intake_evidence_validate.py --repo . --enforce` and surface any non-zero exit reason code to the operator. The orchestrator plugin enforces persistence.
+Before writing to `handoffs/intake_evidence/*.json`, run `python scripts/intake_evidence_validate.py --file <bundle.json>` (or `--stdin` / `--self-test`) and surface any non-zero exit. persistManualPhaseIsolation writes IsolationEvidence.
 
 STOP

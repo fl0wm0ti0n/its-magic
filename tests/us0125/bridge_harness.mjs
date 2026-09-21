@@ -68,7 +68,7 @@ async function main() {
 
   // Subprocess throw → OPENCODE_DRIVER_INVOKE_FAILED + refuse write.
   if (scenario === "release-blocked-throw") {
-    const validatorArgv = "python scripts/intake_evidence_validate.py --repo . --enforce".split(/\s+/);
+    const validatorArgv = "python scripts/intake_evidence_validate.py --file bundle.json".split(/\s+/);
     const mock = mockMod.createMockSubprocess({ nextThrow: true });
     const result = mockMod.bridgeEnforceWrite(validatorArgv, mock.spawn);
     out({
@@ -82,7 +82,7 @@ async function main() {
 
   // Exit 0 → allow.
   if (scenario === "release-allowed") {
-    const validatorArgv = "python scripts/intake_evidence_validate.py --repo . --enforce".split(/\s+/);
+    const validatorArgv = "python scripts/intake_evidence_validate.py --file bundle.json".split(/\s+/);
     const mock = mockMod.createMockSubprocess({ nextExitCode: 0 });
     const result = mockMod.bridgeEnforceWrite(validatorArgv, mock.spawn);
     out({

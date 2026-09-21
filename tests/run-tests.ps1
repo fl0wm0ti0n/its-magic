@@ -1756,6 +1756,12 @@ Assert-True "BUG-0026 packaged range contract tests pass" ($bug0026Contract.Exit
 $us0149Contract = Start-Process python -ArgumentList @("-m", "pytest", "tests\us0149_global_itsm_launcher_test.py", "-q") -PassThru -NoNewWindow -Wait -WorkingDirectory $root
 Assert-True "US-0149 global itsm launcher contract tests pass" ($us0149Contract.ExitCode -eq 0)
 
+# 26AV) BUG-0027 — OpenCode manual phase persist (IsolationEvidence + validator packs)
+$bug0027Parity = Start-Process python -ArgumentList @((Join-Path $root "scripts\check_intake_template_parity.py"), "--scope=bug-0027") -PassThru -NoNewWindow -Wait -WorkingDirectory $root
+Assert-True "check_intake_template_parity --scope=bug-0027 passes (BUG-0027)" ($bug0027Parity.ExitCode -eq 0)
+$bug0027Contract = Start-Process python -ArgumentList @("-m", "pytest", "tests\bug0027_opencode_manual_phase_persist_test.py", "-q") -PassThru -NoNewWindow -Wait -WorkingDirectory $root
+Assert-True "BUG-0027 OpenCode manual phase persist contract tests pass" ($bug0027Contract.ExitCode -eq 0)
+
 # Cleanup
 if (Test-Path (Join-Path $root "tests\.tmp-install")) {
   Remove-Item -Recurse -Force (Join-Path $root "tests\.tmp-install") -ErrorAction SilentlyContinue

@@ -3,6 +3,7 @@
 from __future__ import annotations
 
 import json
+import re
 import subprocess
 import sys
 import unittest
@@ -48,6 +49,16 @@ class ReadmeFeatureCoverageFixturesTest(unittest.TestCase):
         )
         self.assertIn("# US-0091", arch)
         section = arch[arch.find("# US-0091") :]
+        pointer = re.search(r"Archived body in pack_ref:\s*(\S+)", section)
+        if pointer:
+            archived = (ROOT / pointer.group(1)).read_text(encoding="utf-8")
+            heading = re.search(r"^# US-0091(?=[:\s]|$)", archived, re.MULTILINE)
+            self.assertIsNotNone(heading, "archive must retain # US-0091")
+            if heading is None:
+                self.fail("archive must retain # US-0091")
+            start = heading.start()
+            end = archived.find("\n# ", start + len("# US-0091"))
+            section = archived[start:] if end == -1 else archived[start:end]
         for token in (
             "DEC-0074",
             "US-0030",

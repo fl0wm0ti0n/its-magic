@@ -1,3 +1,27 @@
+# Release-to-Dev Handoff - S0158 / US-0150
+
+**date**: 2026-09-20
+**from**: release
+**to**: dev / operator
+
+## Blocker
+
+`/release` is blocked by `RELEASE_TEST_STALE`, `RELEASE_TEST_FAILED`, `PHASE_CONTEXT_ISOLATION_MISSING`, and `RUNTIME_PROOF_MISSING`.
+
+- Validator bridge passes: `python scripts/bug_issue_validate.py --repo . --check-acceptance` -> `[BUG_VALIDATION_OK]`.
+- `tests/report.md` is stale and has Pass 843 / Fail 28.
+- S0158 has no genuine execute/QA/verify-work fresh-context isolation evidence or strict-proof tuples.
+
+No release notes, publish, push, backlog, or acceptance status was changed. Queue row `S0158` is `blocked`.
+
+## Required Remediation
+
+1. Produce a current passing configured test report.
+2. Persist genuine fresh-context isolation and strict-proof evidence for execute, QA, and verify-work.
+3. Rerun `/release`; do not rerun `/closure` until release is PASS.
+
+---
+
 # Release-to-Dev Handoff — S0122 / US-0122
 
 **date**: 2026-08-24

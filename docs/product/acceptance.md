@@ -208,8 +208,9 @@ Per **`DEC-0061`** §8 / **`US-0079`**: portfolio checkbox rows **`- [ ]` / `- [
 - [x] BUG-0021: OpenCode CLI TUI still has no invokable /auto after BUG-0020 tui.json (C-limb live-falsified)
 - [ ] BUG-0022: `/auto` Task-spawns inherit parent chat model instead of role_catalog
 - [x] BUG-0023: OpenCode CLI TUI listed `/auto` toasts OPENCODE_AUTO_TUI_DISPATCH_UNSUPPORTED (dispatch live-falsified)
-- [ ] BUG-0024: OpenCode CLI TUI listed `/auto` still toasts OPENCODE_AUTO_TUI_DISPATCH_UNSUPPORTED after BUG-0023 Axis A (live dispatch falsified)
+- [x] BUG-0024: OpenCode CLI TUI listed `/auto` still toasts OPENCODE_AUTO_TUI_DISPATCH_UNSUPPORTED after BUG-0023 Axis A (live dispatch falsified) — A1 slice shipped (eight `test_bug0024_*`); live OpenCode CLI TUI residual `UAT_PROBE_FORBIDDEN` (NB1; operator live re-probe optional)
 - [x] BUG-0025: npm publish of its-magic@0.1.3 omits scripts/standalone_runtime_install_lib.py (upgrade FileNotFoundError) — kit fix shipped at 0.1.4; registry republish deferred (`npm_published=false`; operator confirm)
 - [ ] BUG-0026: Published its-magic@0.1.4 upgrade fail-closes KERNEL_CONTRACT_MISMATCH (omitted package-root standalone/) on Windows and Linux
+- [x] BUG-0027: OpenCode manual phase commands cannot persist canonical workflow evidence — A1 Hybrid slice shipped (ten `test_bug0027_*`); live OpenCode CLI/TUI manual-phase residual `UAT_PROBE_FORBIDDEN` (NB1; operator live re-probe optional); publish deferred (`npm_published=false`)
 
 Validator (backlog bugs + optional drift vs this section): `python scripts/bug_issue_validate.py --backlog docs/product/backlog.md --check-acceptance`.

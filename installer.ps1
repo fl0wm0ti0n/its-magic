@@ -305,6 +305,8 @@ function Invoke-PruneRetiredOpencodeAutoMd {
 # BUG-0019: copy TUI listing files onto already-pruned consumers (not a sweeper).
 # BUG-0021: overwrite tui.ts even when dest exists (Copy-Item -Force, not copy-if-absent).
 # BUG-0023: also overwrite rpc.ts + orchestrator.ts (dispatch path, not copy-if-absent).
+# BUG-0024: same overwrite refreshes peer-brand + stage-code live-dispatch residual.
+# BUG-0027: overwrites agents/dev.md, agents/qa.md, manual-phase command packs, opencode_auto_bridge.py.
 function Invoke-CopyOpencodeAutoListingSurface {
   param(
     [string]$TargetRoot,
@@ -316,7 +318,15 @@ function Invoke-CopyOpencodeAutoListingSurface {
     ".opencode/plugins/its-magic-auto/index.ts",
     ".opencode/plugins/its-magic-auto/tui.ts",
     ".opencode/plugins/its-magic-auto/rpc.ts",
-    ".opencode/plugins/orchestrator.ts"
+    ".opencode/plugins/orchestrator.ts",
+    ".opencode/agents/dev.md",
+    ".opencode/agents/qa.md",
+    ".opencode/commands/intake.md",
+    ".opencode/commands/execute.md",
+    ".opencode/commands/discovery.md",
+    ".opencode/commands/qa.md",
+    ".opencode/commands/verify-work.md",
+    "scripts/opencode_auto_bridge.py"
   )
   foreach ($rel in $rels) {
     $src = Join-Path $SourceRoot $rel

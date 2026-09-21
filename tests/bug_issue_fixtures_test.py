@@ -38,6 +38,10 @@ def test_repo_backlog_passes() -> None:
     )
 
 
+def test_repo_flag_uses_repo_defaults() -> None:
+    assert _run([VALIDATOR, "--repo", ".", "--check-acceptance"]) == 0
+
+
 def test_fixture_invalid_status() -> None:
     md = """## Bug issues (canonical)
 
@@ -122,6 +126,7 @@ def test_intake_guard_bug_kind_ok() -> None:
 def main() -> int:
     test_validator_self_test()
     test_repo_backlog_passes()
+    test_repo_flag_uses_repo_defaults()
     test_fixture_invalid_status()
     test_fixture_valid_single_bug()
     test_intake_guard_story_clean()

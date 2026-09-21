@@ -364,7 +364,9 @@ prune_retired_opencode_auto_md() {
 
 # BUG-0019: copy TUI listing files onto already-pruned consumers (not a sweeper).
 # BUG-0021: overwrite tui.ts even when dest exists (`cp -f`, not copy-if-absent).
-# BUG-0023: also overwrite rpc.ts + orchestrator.ts (dispatch path, not copy-if-absent).
+# BUG-0023 / BUG-0024: also overwrite rpc.ts + orchestrator.ts (dispatch path, not copy-if-absent).
+# BUG-0024: refreshes peer-brand + stage-code live-dispatch residual on Axis-A trees.
+# BUG-0027: overwrites agents/dev.md, agents/qa.md, manual-phase command packs, opencode_auto_bridge.py.
 copy_opencode_auto_listing_surface() {
   target_root="$1"
   source_root="$2"
@@ -373,7 +375,7 @@ copy_opencode_auto_listing_surface() {
     opencode|both) ;;
     *) return 0 ;;
   esac
-  for rel in .opencode/plugins/its-magic-auto/index.ts .opencode/plugins/its-magic-auto/tui.ts .opencode/plugins/its-magic-auto/rpc.ts .opencode/plugins/orchestrator.ts; do
+  for rel in .opencode/plugins/its-magic-auto/index.ts .opencode/plugins/its-magic-auto/tui.ts .opencode/plugins/its-magic-auto/rpc.ts .opencode/plugins/orchestrator.ts .opencode/agents/dev.md .opencode/agents/qa.md .opencode/commands/intake.md .opencode/commands/execute.md .opencode/commands/discovery.md .opencode/commands/qa.md .opencode/commands/verify-work.md scripts/opencode_auto_bridge.py; do
     src="$source_root/$rel"
     if [ ! -f "$src" ]; then
       src="$source_root/template/$rel"

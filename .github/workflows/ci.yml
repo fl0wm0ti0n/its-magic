@@ -100,6 +100,42 @@ jobs:
           echo "::error::Tests or lint failed. See summary above."
           exit 1
 
+  # ── Kit-only standalone and packaging checks (never copied downstream) ──
+  npm-test:
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: standalone
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+          cache-dependency-path: standalone/package-lock.json
+      - name: Install standalone dependencies
+        run: npm ci
+      - name: Test standalone runtime
+        run: npm test
+
+  brew-test:
+    runs-on: macos-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Test Homebrew formula locally
+        run: sh packaging/homebrew/test-brew-local.sh
+
+  choco-test:
+    runs-on: windows-latest
+    defaults:
+      run:
+        shell: pwsh
+        working-directory: packaging/chocolatey
+    steps:
+      - uses: actions/checkout@v4
+      - name: Build Chocolatey package
+        run: choco pack
+
   # ── Auto-fix attempt (runs only when checks fail) ─────────────────
   auto-fix:
     needs: checks

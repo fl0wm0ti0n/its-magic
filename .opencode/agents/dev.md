@@ -8,7 +8,9 @@ permission:
     "template/**": allow
     "tests/**": allow
     "sprints/S*/progress.md": allow
+    "sprints/S*/summary.md": allow
     "sprints/S*/qa-findings.md": allow
+    "docs/engineering/state.md": allow
     "handoffs/dev_to_qa.md": allow
     "**": deny
   bash: ask

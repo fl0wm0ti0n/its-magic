@@ -105,7 +105,7 @@ async function main() {
     ctx = mockMod.createMockCtx(cfg);
   }
 
-  const api = plugin.default.setup(ctx);
+  const api = await plugin.default.setup(ctx);
   const args = {
     phaseId: scenario === "spawn-unknown-phase" ? "bogus-phase" : "execute",
     prompt: "phase-prompt",

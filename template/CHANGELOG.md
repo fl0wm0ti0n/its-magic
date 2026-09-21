@@ -7,9 +7,15 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
-### Added
-- US-0111: Release trigger adapters - multi-source release trigger abstraction (manual, git-push, github-release, npm-publish, file-watch), TriggerContext dataclass, 12/12 contract tests passing, 9 fail-closed reason codes, DEC-0111.
-- US-0085 through US-0110: Core framework enhancements including multi-model orchestration, sovereign memory integration, adversarial critics, self-healing deploy, goal convergence loops, and various framework extensions (commits 45065e3-813b867).
+## [0.1.5] - 2026-09-19
+
+### Fixed
+- **BUG-0026**: Ship an npm-safe standalone supported-kernel range fallback and required installer peers so `upgrade --host both` materializes `.its-magic/bin/itsm` instead of reporting a false `KERNEL_CONTRACT_MISMATCH` when the private root `standalone/` workspace is omitted.
+
+## [0.1.4] - 2026-09-18
+
+### Fixed
+- **BUG-0025**: Include `scripts/standalone_runtime_install_lib.py` in npm pack allowlist; fail-closed standalone bootstrap loader (`STANDALONE_BOOTSTRAP_FAILED`); kit `0.1.4` packaging twins; six `test_bug0025_*` markers. npm publish deferred (`RELEASE_PUBLISH_MODE=confirm`). Sprint evidence: [`S0157`](handoffs/releases/S0157-release-notes.md).
 
 ## [Released]
 

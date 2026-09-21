@@ -58,7 +58,7 @@ async function main() {
     const ctx = mockMod.createMockCtx({}, "phase-complete", {
       withCommandTransform: true,
     });
-    const api = plugin.default.setup(ctx);
+    const api = await plugin.default.setup(ctx);
     out({
       attachSupported: api.attachSupported,
       attachReasonCode: api.attachReasonCode ?? null,
@@ -73,7 +73,7 @@ async function main() {
     const ctx = mockMod.createMockCtx({}, "phase-complete", {
       withCommandTransform: true,
     });
-    const api = plugin.default.setup(ctx);
+    const api = await plugin.default.setup(ctx);
     const r = await api.runAutoLifecycle({
       orchestratorSessionId: mockMod.MOCK_ORCHESTRATOR_SESSION_ID,
       prompt: "run-auto",
@@ -104,7 +104,7 @@ async function main() {
     // Strip command/event if present
     delete ctx.command;
     delete ctx.event;
-    const api = plugin.default.setup(ctx);
+    const api = await plugin.default.setup(ctx);
     const r = await api.runAutoLifecycle({
       orchestratorSessionId: mockMod.MOCK_ORCHESTRATOR_SESSION_ID,
       prompt: "should-fail",
@@ -122,7 +122,7 @@ async function main() {
     const ctx = mockMod.createMockCtx({}, "phase-complete", {
       withCommandTransform: true,
     });
-    const api = plugin.default.setup(ctx);
+    const api = await plugin.default.setup(ctx);
     // Attach ok, but remove session.create
     ctx.session = {};
     const r = await api.runAutoLifecycle({
@@ -150,7 +150,7 @@ async function main() {
       releaseWait = resolve;
     });
     ctx._setWaitGate(gate);
-    const api = plugin.default.setup(ctx);
+    const api = await plugin.default.setup(ctx);
 
     const first = api.runAutoLifecycle({
       orchestratorSessionId: mockMod.MOCK_ORCHESTRATOR_SESSION_ID,

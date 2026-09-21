@@ -138,12 +138,28 @@ def append_isolation(
     phase_id: str,
     timestamp: str,
     fresh_context_marker: str,
+    story_id: str | None = None,
+    sprint_id: str | None = None,
+    orchestrator_run_id: str | None = None,
+    bug_id: str | None = None,
     state_path: Path | None = None,
 ) -> dict:
+    placeholder = "tui-auto"
+    if parent_id == placeholder or orchestrator_run_id == placeholder:
+        return {"ok": False, "reasonCode": "OPENCODE_PLACEHOLDER_PARENT_REJECTED"}
     if not parent_id or not session_id or session_id == parent_id:
         return {"ok": False, "reasonCode": "OPENCODE_SUBTASK_IGNORED"}
     path = state_path or (repo / "docs" / "engineering" / "state.md")
     path.parent.mkdir(parents=True, exist_ok=True)
+    extra = ""
+    if story_id:
+        extra += f"- storyId=`{story_id}`\n"
+    if sprint_id:
+        extra += f"- sprintId=`{sprint_id}`\n"
+    if orchestrator_run_id:
+        extra += f"- orchestratorRunId=`{orchestrator_run_id}`\n"
+    if bug_id:
+        extra += f"- bugId=`{bug_id}`\n"
     block = (
         "\n### IsolationEvidence (OpenCode plugin / BUG-0015)\n\n"
         f"- parentID=`{parent_id}`\n"
@@ -152,6 +168,7 @@ def append_isolation(
         f"- phase_id=`{phase_id}`\n"
         f"- timestamp=`{timestamp or _utc_now_iso()}`\n"
         f"- fresh_context_marker=`{fresh_context_marker}`\n"
+        f"{extra}"
         f"- sessionID_ne_parentID=`true`\n"
     )
     if path.is_file():
@@ -160,6 +177,17 @@ def append_isolation(
     else:
         path.write_text(block.lstrip() + "\n", encoding="utf-8")
     return {"ok": True}
+
+
+def resolve_manual_phase_context(repo: Path) -> dict:
+    resume = _parse_resume_brief(repo)
+    return {
+        "ok": True,
+        "storyId": resume.get("story_id", ""),
+        "sprintId": resume.get("sprint_id", ""),
+        "orchestratorRunId": resume.get("orchestrator_run_id", ""),
+        "bugId": resume.get("bug_id", ""),
+    }
 
 
 def main() -> int:
@@ -188,6 +216,14 @@ def main() -> int:
     parser.add_argument("--phase-id", default=None)
     parser.add_argument("--timestamp", default=None)
     parser.add_argument("--fresh-context-marker", default=None)
+    parser.add_argument("--story-id", default=None, dest="story_id")
+    parser.add_argument("--sprint-id", default=None, dest="sprint_id")
+    parser.add_argument("--bug-id", default=None, dest="bug_id")
+    parser.add_argument(
+        "--resolve-context",
+        action="store_true",
+        help="Emit JSON story/sprint/run/bug from resume_brief",
+    )
     parser.add_argument("--state-path", default=None, help="Override state.md path")
     args = parser.parse_args()
     repo = Path(args.repo).resolve()
@@ -199,6 +235,12 @@ def main() -> int:
         sys.stdout.write(json.dumps(payload, sort_keys=True, separators=(",", ":")))
         sys.stdout.write("\n")
         return EXIT_OK if payload.get("ok") else EXIT_FAIL
+
+    if args.resolve_context:
+        payload = resolve_manual_phase_context(repo)
+        sys.stdout.write(json.dumps(payload, sort_keys=True, separators=(",", ":")))
+        sys.stdout.write("\n")
+        return EXIT_OK
 
     if args.append_isolation:
         if not all(
@@ -221,6 +263,10 @@ def main() -> int:
             phase_id=args.phase_id,
             timestamp=args.timestamp or _utc_now_iso(),
             fresh_context_marker=args.fresh_context_marker,
+            story_id=args.story_id,
+            sprint_id=args.sprint_id,
+            orchestrator_run_id=args.orchestrator_run_id,
+            bug_id=args.bug_id,
             state_path=state_path,
         )
         sys.stdout.write(json.dumps(payload, sort_keys=True, separators=(",", ":")))

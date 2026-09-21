@@ -6,7 +6,7 @@
   "rows": [
     {
       "artifact_path": "handoffs/intake_evidence/*.json",
-      "validator_cli": "scripts/intake_evidence_validate.py --repo . --enforce",
+      "validator_cli": "scripts/intake_evidence_validate.py --file <bundle.json>",
       "reason_codes": [
         "INTAKE_PERSISTENCE_BLOCKED",
         "INTAKE_REQUIRED_TOPIC_MISSING"

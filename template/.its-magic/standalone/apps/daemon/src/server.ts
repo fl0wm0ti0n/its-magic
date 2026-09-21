@@ -356,14 +356,14 @@ export async function startDaemonServer(deps: DaemonServerDeps): Promise<Started
 			for (const client of wss.clients) {
 				client.close();
 			}
+			await new Promise<void>((resolve) => wss.close(() => resolve()));
+			await new Promise<void>((resolve) => httpServer.close(() => resolve()));
 			eventStore.close();
 			if (deps.runtime) {
-				deps.runtime.dispose();
+				await deps.runtime.dispose();
 			} else {
 				store.close();
 			}
-			await new Promise<void>((resolve) => wss.close(() => resolve()));
-			await new Promise<void>((resolve) => httpServer.close(() => resolve()));
 		},
 	};
 }

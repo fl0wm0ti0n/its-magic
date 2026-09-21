@@ -405,6 +405,17 @@ Generated test scaffolding + auto-run behavior (US-0066):
 
 ## Commands and workflow
 
+### Standalone runtime workflow
+
+- `/acceptance` — Provider authentication, model routing, and health diagnostics (`BUG-0021`).
+- `/auto` — Fresh role sessions and runtime attestation (`BUG-0023`).
+- `/engineering` — Brokered tools, policy decisions, and security audit records (`BUG-0025`).
+- `code_context(task)` — Persistent code intelligence and reproducible context packs (`US-0139`).
+- `/intake` through `/refresh-context` — Canonical lifecycle routing, gates, rework, resume, and E2E fixtures (`US-0140`).
+- `itsm start/stop/restart/health` — Application runtime execution and bounded cleanup (`US-0141`).
+- `itsm_browser` — Owned browser UAT actions and evidence recording (`US-0142`).
+- `/auto` drain — Delivery routing, phase skipping, and bounded full-autonomy execution (`US-0143`).
+
 ### Core commands
 
 - `/ask`: ask questions using project context (read-only, no artifacts created).
