@@ -1,7 +1,7 @@
 {
   "browser_prereq": "missing",
   "contract_schema_version": 1,
-  "kernel_version": "0.1.4",
+  "kernel_version": "0.1.9",
   "standalone_source": "template-mirror",
   "supported_range": {
     "includePrerelease": true,

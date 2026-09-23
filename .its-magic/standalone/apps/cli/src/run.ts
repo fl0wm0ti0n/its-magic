@@ -1,5 +1,6 @@
 import { dispatchItsmCommand } from "@its-magic/auth-models";
 import { createAuthRuntimeAdapter } from "@its-magic/pi-kernel";
+import type { SessionSupervisor } from "@its-magic/role-runtime";
 import {
 	createCommandRouter,
 	createOperatorCommandFacade,
@@ -7,21 +8,40 @@ import {
 	createOperatorSession,
 	createRunsStore,
 	isRouteScheduled,
-	resolveOperatorTransport,
 	type RouteInput,
+	resolveOperatorTransport,
 } from "@its-magic/runtime-core";
-import type { SessionSupervisor } from "@its-magic/role-runtime";
+import type { RuntimeHost } from "@its-magic/runtime-host";
 
 export interface CliRunDeps {
 	projectRoot: string;
-	supervisor: SessionSupervisor;
+	host?: RuntimeHost;
+	/** Test-only dependency seam. Production callers inject RuntimeHost. */
+	supervisor?: SessionSupervisor;
 	routeInput?: Partial<RouteInput>;
 	env?: NodeJS.ProcessEnv;
+}
+
+function printHelp(): void {
+	console.log(`itsm - its-magic operator CLI
+
+Usage:
+  itsm status
+  itsm resume
+  itsm auth <list|login|logout|migrate>
+  itsm models <list|test>
+  itsm <phase-or-command>
+
+Run 'itsm status' to inspect the installed repository.`);
 }
 
 export async function runCliArgv(argv: string[], deps: CliRunDeps): Promise<number> {
 	const env = deps.env ?? process.env;
 	const token = argv[0];
+	if (!token || token === "help" || token === "--help" || token === "-h") {
+		printHelp();
+		return 0;
+	}
 	if (token === "auth" || token === "models") {
 		return dispatchItsmCommand(argv, {
 			adapter: createAuthRuntimeAdapter(),
@@ -29,7 +49,14 @@ export async function runCliArgv(argv: string[], deps: CliRunDeps): Promise<numb
 			env,
 		});
 	}
-	const store = createRunsStore(":memory:");
+	if (!deps.host && !deps.supervisor) {
+		throw new Error("RUNTIME_HOST_REQUIRED");
+	}
+	const supervisor = deps.host?.supervisor ?? deps.supervisor;
+	if (!supervisor) {
+		throw new Error("RUNTIME_HOST_REQUIRED");
+	}
+	const store = deps.host?.store ?? createRunsStore(":memory:");
 	const operatorSession = createOperatorSession();
 	await resolveOperatorTransport({
 		projectRoot: deps.projectRoot,
@@ -38,21 +65,15 @@ export async function runCliArgv(argv: string[], deps: CliRunDeps): Promise<numb
 		requireDaemon: process.env.ITS_MAGIC_REQUIRE_DAEMON === "1",
 		client_kind: "cli",
 	});
-	const router = createCommandRouter({
-		supervisor: deps.supervisor,
-		config: {},
-		kernelRoot: deps.projectRoot,
-		env,
-	});
+	const router =
+		deps.host?.router ??
+		createCommandRouter({ supervisor, config: {}, kernelRoot: deps.projectRoot, env });
 	const facade = createOperatorCommandFacade({ router, defaultRouteInput: deps.routeInput });
 	const observability = createOperatorObservabilityService({
 		projectRoot: deps.projectRoot,
 		store,
 		readOnlyTokenLedger: true,
 	});
-	if (!token) {
-		return 0;
-	}
 	const parsed = await facade.routeArgv(argv, deps.routeInput);
 	if (typeof parsed === "object" && "kind" in parsed && parsed.kind === "dedicated") {
 		switch (parsed.command) {
@@ -76,11 +97,15 @@ export async function runCliArgv(argv: string[], deps: CliRunDeps): Promise<numb
 		}
 	}
 	if (isRouteScheduled(parsed)) {
-		console.log(JSON.stringify({ scheduled: true, command: parsed.command, plan: parsed.plan }, null, 2));
+		console.log(
+			JSON.stringify({ scheduled: true, command: parsed.command, plan: parsed.plan }, null, 2),
+		);
 		return 0;
 	}
 	if (parsed && typeof parsed === "object" && "ok" in parsed && parsed.ok) {
-		console.log(JSON.stringify({ routed: true, phase_id: parsed.phase_id, role_id: parsed.role_id }, null, 2));
+		console.log(
+			JSON.stringify({ routed: true, phase_id: parsed.phase_id, role_id: parsed.role_id }, null, 2),
+		);
 		return 0;
 	}
 	return 0;

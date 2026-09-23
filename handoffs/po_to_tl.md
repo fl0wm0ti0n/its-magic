@@ -636,4 +636,12 @@ T-anch + T-001..T-011 per `# US-0148` in `docs/engineering/architecture.md` (≤
 - **Hot-surface note**: Architecture handoff **appended** (newest at end) so oldest-prefix rollover retains it (DEC-0054). Post-append `--check` STATE_ARCHIVE_REQUIRED (state 1272/1200; architecture 3081/3000) → `--rollover --json` moved state=2 pack_ref=`docs/engineering/state-archive/state-pack-20260921-k.md` (retained_lines=1091); architecture moved=1 pack_ref=`docs/engineering/architecture-archive/architecture-pack-20260921-a.md` (retained_lines=2860); po_to_tl not rolled; heading policy PASS `baseline_h2_count=0`; `[CODEBASE_MAP_OK] preserved_existing`; final `--check` PASS.
 - **Status**: BUG-0027 remains **OPEN**. AC-1..AC-6 remain unchecked. **Next**: `/sprint-plan` in fresh **tech-lead** subagent. CROSS_MODEL_REVIEW=0 — do not spawn sovereign-critic. Do not spawn sprint-plan from this architecture chat. STOP.
 
+## Intake handoff — Standalone CLI UX, authentication, and interactive TUI
+
+- **Phase completed**: intake. **Timestamp (UTC)**: 2026-09-23T21:30:43Z. **Evidence**: `handoffs/intake_evidence/standalone-cli-ux-intake-20260923T213043Z.json` validated with `intake_evidence_validate.py` before canonical writes.
+- **New work items**: BUG-0028 (unnecessary full-runtime cold start), BUG-0029 (missing API-key input and false login success), and US-0155 (deferred Pi-style interactive TUI).
+- **Priority and ordering**: Investigate BUG-0028 and BUG-0029 independently. US-0155 depends on US-0151 so it can use the shared daemon transport rather than duplicate runtime ownership.
+- **Locked boundaries**: Keep workflow-command admission, policy, kernel-contract validation, and persistent execution intact while optimizing read-only paths. API keys must never appear in argv, terminal output, logs, or repository artifacts. US-0146 remains completed lightweight ANSI/client work; US-0155 is additive. Do not reopen US-0150, US-0151, or US-0146.
+- **Discovery anchors**: `standalone/apps/cli/src/index.ts`; `packages/runtime-host/src/index.ts`; `packages/code-intelligence/src/provider.ts`; `packages/auth-models/src/cli.ts`; `packages/pi-kernel/src/auth-runtime.ts`; `apps/tui/src/{index,panels}.ts`; standalone Pi masterplan section 29.
+- **Next**: `/discovery` in a fresh PO/tech-lead context, beginning with BUG-0028 or BUG-0029. Do not implement from intake.
 

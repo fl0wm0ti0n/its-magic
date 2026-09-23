@@ -1,11 +1,11 @@
+import { readFileSync } from "node:fs";
+import { join } from "node:path";
 import {
 	DAEMON_UNREACHABLE,
 	EVENT_SEQ_GAP,
 	jsonRpcCall,
 	type RuntimeEvent,
 } from "@its-magic/protocol";
-import { readFileSync } from "node:fs";
-import { join } from "node:path";
 import WebSocket from "ws";
 import type {
 	AttachRunInput,

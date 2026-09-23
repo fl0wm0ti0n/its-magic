@@ -1,0 +1,70 @@
+{
+  "selected_pack": "small-intake-pack",
+  "intake_run_id": "ir-20260923T213043Z-standalone-cli-ux",
+  "writer_id": "po-standalone-cli-ux",
+  "INTAKE_GUIDED_MODE": 0,
+  "INTAKE_WORK_ITEM_KIND": "mixed",
+  "requested_mode": "mixed",
+  "intake_boundary_utc": "2026-09-23T21:30:43Z",
+  "ID_NAMESPACE_BOOTSTRAP": 0,
+  "bug_ids": ["BUG-0028", "BUG-0029"],
+  "story_ids": ["US-0155"],
+  "asked_topics": [
+    "outcome_success_criteria",
+    "impacted_components",
+    "constraints_compatibility_risks",
+    "required_tests_acceptance_checks",
+    "done_definition"
+  ],
+  "missing_topics": [],
+  "assumptions_confirmed": "(none)",
+  "topic_coverage": [
+    {
+      "topic_key": "outcome_success_criteria",
+      "satisfied_by": "answer_ref",
+      "ref": "ie:ir-20260923T213043Z-standalone-cli-ux:0:77c2fb014e99c851",
+      "quoted_user_text": "das muss alles beachtet werden, l\u00fccken gef\u00fcllt werden. das standalone muss vollst\u00e4ndig funktionieren",
+      "intake_run_id": "ir-20260923T213043Z-standalone-cli-ux",
+      "turn_index": 0
+    },
+    {
+      "topic_key": "impacted_components",
+      "satisfied_by": "answer_ref",
+      "ref": "ie:ir-20260923T213043Z-standalone-cli-ux:1:9460e03b4d2e2cc3",
+      "quoted_user_text": "der itsm befehl ist derzweit extrem langsam... vor allem wenn ich itsm alleine ausf\u00fchre... es dauert ~10-20 sekunden bis etzwas passiert. egal ob window soder linux",
+      "intake_run_id": "ir-20260923T213043Z-standalone-cli-ux",
+      "turn_index": 1
+    },
+    {
+      "topic_key": "constraints_compatibility_risks",
+      "satisfied_by": "answer_ref",
+      "ref": "ie:ir-20260923T213043Z-standalone-cli-ux:2:213796cc58d684c8",
+      "quoted_user_text": "und wollten wir nicht einen pi tui style machen? oder ist da sin den offenen userstories?",
+      "intake_run_id": "ir-20260923T213043Z-standalone-cli-ux",
+      "turn_index": 2
+    },
+    {
+      "topic_key": "required_tests_acceptance_checks",
+      "satisfied_by": "answer_ref",
+      "ref": "ie:ir-20260923T213043Z-standalone-cli-ux:3:b838c21d4d1a32be",
+      "quoted_user_text": "ich denke itsm befehle haben noch probleme",
+      "intake_run_id": "ir-20260923T213043Z-standalone-cli-ux",
+      "turn_index": 3
+    },
+    {
+      "topic_key": "done_definition",
+      "satisfied_by": "answer_ref",
+      "ref": "ie:ir-20260923T213043Z-standalone-cli-ux:4:f4ae76f800f4ef43",
+      "quoted_user_text": "zb da wie soll ich da eine key eingeben?",
+      "intake_run_id": "ir-20260923T213043Z-standalone-cli-ux",
+      "turn_index": 4
+    }
+  ],
+  "duplicate_check_pass": true,
+  "duplicate_check_notes": "BUG-0028 owns unnecessary cold-start work; BUG-0029 owns credential-input and false-success behavior; US-0155 owns the deferred interactive Pi-style TUI. US-0150 and US-0151 compose only.",
+  "decomposition_verdict": "two_bugs_plus_dependent_story",
+  "decomposition_rationale": "Latency, secret input correctness, and interactive TUI are independently testable and have distinct risk boundaries.",
+  "WORK_KIND_ROUTING": 0,
+  "EARLY_RESEARCH": 0,
+  "FRAMEWORK_KIT_REPO": 1
+}

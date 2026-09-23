@@ -7,6 +7,11 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Fixed
+
+- **BUG-0027**: Hybrid manual-phase persist for OpenCode direct slash commands — IsolationEvidence identity fields, `persistManualPhaseIsolation`, reject `tui-auto`, targeted glob widen, supported validator CLI, ten `test_bug0027_*` markers. npm publish deferred (`RELEASE_PUBLISH_MODE=confirm`). Sprint evidence: [`S0160`](handoffs/releases/S0160-release-notes.md).
+- **BUG-0024**: Hybrid residual live-dispatch for OpenCode CLI TUI listed `/auto` — peer-branded Defined gate, stage-distinct `OPENCODE_*`, DISPATCH umbrella-only, eight `test_bug0024_*` markers. npm publish deferred (`RELEASE_PUBLISH_MODE=confirm`). Sprint evidence: [`S0159`](handoffs/releases/S0159-release-notes.md).
+
 ## [0.1.5] - 2026-09-19
 
 ### Fixed

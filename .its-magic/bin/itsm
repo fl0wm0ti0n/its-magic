@@ -1,3 +1,7 @@
 #!/usr/bin/env sh
 export ITSM_STANDALONE_ROOT="G:/workdir/github/sonstiges/gsd_cursor/.its-magic/standalone"
+if ! node -e 'const v=process.versions.node.split(".").map(Number);process.exit(v[0]>22||(v[0]===22&&(v[1]>19||(v[1]===19&&v[2]>=0)))?0:1)'; then
+  echo '[ITSM_NODE_VERSION_UNSUPPORTED] itsm requires Node.js >=22.19.0. Install Node.js 22.19.0 or newer, then retry.' >&2
+  exit 1
+fi
 exec node --experimental-strip-types "G:/workdir/github/sonstiges/gsd_cursor/.its-magic/standalone/apps/cli/src/index.ts" "$@"

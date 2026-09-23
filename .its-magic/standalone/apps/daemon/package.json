@@ -17,6 +17,7 @@
 	"dependencies": {
 		"@its-magic/protocol": "0.0.0",
 		"@its-magic/runtime-core": "0.0.0",
+		"@its-magic/runtime-host": "0.0.0",
 		"@its-magic/role-runtime": "0.0.0",
 		"ws": "^8.18.0"
 	}

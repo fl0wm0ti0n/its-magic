@@ -180,6 +180,7 @@
 - [ ] US-0152: Production application and browser UAT integration — real app/browser services, fail-closed evidence, workflow gates, and E2E fixtures (6 ACs)
 - [ ] US-0153: Real parallel delivery and release execution — QA arbitration, configured target adapters, deploy verification, bounded repair, and closure evidence (5 ACs)
 - [ ] US-0154: Standalone operator-path quality gate — installed-entrypoint E2E tests and authoritative standalone CI (6 ACs)
+- [ ] US-0155: Interactive Pi-style standalone operator TUI — daemon-client terminal UI with live events, approvals, bounded panels, reconnect, and cross-platform integration tests (5 ACs)
 
 ## Bug acceptance (canonical)
 
@@ -212,5 +213,7 @@ Per **`DEC-0061`** §8 / **`US-0079`**: portfolio checkbox rows **`- [ ]` / `- [
 - [x] BUG-0025: npm publish of its-magic@0.1.3 omits scripts/standalone_runtime_install_lib.py (upgrade FileNotFoundError) — kit fix shipped at 0.1.4; registry republish deferred (`npm_published=false`; operator confirm)
 - [ ] BUG-0026: Published its-magic@0.1.4 upgrade fail-closes KERNEL_CONTRACT_MISMATCH (omitted package-root standalone/) on Windows and Linux
 - [x] BUG-0027: OpenCode manual phase commands cannot persist canonical workflow evidence — A1 Hybrid slice shipped (ten `test_bug0027_*`); live OpenCode CLI/TUI manual-phase residual `UAT_PROBE_FORBIDDEN` (NB1; operator live re-probe optional); publish deferred (`npm_published=false`)
+- [ ] BUG-0028: `itsm` read-only commands initialize the full runtime and have excessive cold-start latency — split lightweight command paths from full workflow admission (5 ACs)
+- [ ] BUG-0029: `itsm auth login` cannot accept API-key input and reports false configuration success — secure TTY/stdin credential entry and verified outcomes (5 ACs)
 
 Validator (backlog bugs + optional drift vs this section): `python scripts/bug_issue_validate.py --backlog docs/product/backlog.md --check-acceptance`.

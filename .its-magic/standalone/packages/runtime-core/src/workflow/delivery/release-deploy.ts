@@ -1,20 +1,15 @@
+import { createHash } from "node:crypto";
 import { appendFileSync, mkdirSync } from "node:fs";
 import { dirname, join } from "node:path";
-import { createHash } from "node:crypto";
-import { type ConfigView, lookupSelfHealingDeploy } from "../config-view.ts";
 import { releaseCannotMarkDone } from "../closure.ts";
+import { type ConfigView, lookupSelfHealingDeploy } from "../config-view.ts";
 import { WorkflowError } from "../types.ts";
 import type { DeliveryBridge } from "./parallel-dev.ts";
 
 export const DEPLOY_DEFERRED = "DEPLOY_DEFERRED";
 export const DEPLOY_HEALING_DEFERRED = "DEPLOY_HEALING_DEFERRED";
 
-export type ReleaseTargetKind =
-	| "git_github"
-	| "npm"
-	| "ssh_command"
-	| "docker"
-	| "custom_command";
+export type ReleaseTargetKind = "git_github" | "npm" | "ssh_command" | "docker" | "custom_command";
 
 export interface ReleaseTargetContext {
 	kernelRoot: string;
@@ -49,7 +44,11 @@ function targetRunKey(ctx: ReleaseTargetContext): string {
 	return createHash("sha256").update(raw).digest("hex").slice(0, 32);
 }
 
-function baseResult(ctx: ReleaseTargetContext, kind: ReleaseTargetKind, ok: boolean): DeployTargetResult {
+function baseResult(
+	ctx: ReleaseTargetContext,
+	kind: ReleaseTargetKind,
+	ok: boolean,
+): DeployTargetResult {
 	return {
 		target_id: ctx.target_id,
 		kind,
@@ -93,10 +92,7 @@ export function listReleaseTargetKinds(): ReleaseTargetKind[] {
 	return Object.keys(ADAPTERS) as ReleaseTargetKind[];
 }
 
-export function appendDeployTargetResult(
-	kernelRoot: string,
-	entry: DeployTargetResult,
-): string {
+export function appendDeployTargetResult(kernelRoot: string, entry: DeployTargetResult): string {
 	const rel = join("handoffs", "deploy_results", "deploy_results.jsonl");
 	const abs = join(kernelRoot, rel);
 	mkdirSync(dirname(abs), { recursive: true });
@@ -195,7 +191,7 @@ export class ReleaseDeployPipeline {
 				ok: false,
 				deferred: true,
 				reason_code: healing.reason_code || DEPLOY_DEFERRED,
-				attempts: Number(healing.result?.attempts ?? 0),
+				attempts: 0,
 			};
 		}
 		return {
@@ -210,7 +206,9 @@ export class ReleaseDeployPipeline {
 	}
 }
 
-export function createReleaseDeployPipeline(deps: ReleaseDeployPipelineDeps): ReleaseDeployPipeline {
+export function createReleaseDeployPipeline(
+	deps: ReleaseDeployPipelineDeps,
+): ReleaseDeployPipeline {
 	return new ReleaseDeployPipeline(deps);
 }
 

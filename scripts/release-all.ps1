@@ -73,6 +73,8 @@ if ($DryRun) {
         $pkg = Get-Content package.json -Raw | ConvertFrom-Json
         $newVersion = $pkg.version
     }
+    python scripts/sync_kernel_version.py --repo $repoRoot --version $newVersion
+    if ($LASTEXITCODE -ne 0) { Err "kernel metadata synchronization failed" }
 }
 Log "New version: $newVersion"
 

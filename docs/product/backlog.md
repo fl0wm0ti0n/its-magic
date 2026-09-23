@@ -5595,6 +5595,40 @@ Per **`DEC-0061`** / **`US-0079`**: defect work items use **`BUG-####`** ids (**
 - related_us: US-0121, US-0122, US-0124, US-0125, US-0126, US-0150
 - related_bugs: BUG-0016, BUG-0024
 
+### BUG-0028 — `itsm` read-only commands initialize the full runtime and have excessive cold-start latency
+- user_visible: true
+- Status: OPEN
+- Acceptance:
+  - [ ] AC-1: `itsm`, `itsm --help`, `itsm auth ...`, and `itsm models ...` handle their local command path before creating `RuntimeHost`, the Pi kernel, code intelligence, ToolBroker, or SQLite store.
+  - [ ] AC-2: `itsm status` uses a bounded read-only composition that does not recursively load the repository into code intelligence or create an unused workflow session.
+  - [ ] AC-3: Workflow commands retain production runtime admission and deterministic unavailable-service errors; the optimization must not bypass policy, kernel-contract, or persistent-run requirements.
+  - [ ] AC-4: Cross-platform tests prove no-help/auth/models/status path constructs code intelligence or scans project files, and installed-entrypoint checks cover Windows and Linux launch behavior.
+  - [ ] AC-5: Operator documentation distinguishes lightweight inspection/auth commands from commands that intentionally admit the full runtime.
+- environment: Windows and Linux standalone installations. The operator observes approximately 10-20 seconds before `itsm` with no arguments, `status`, or `models list` produces output.
+- steps_to_reproduce: 1. Open an installed standalone project. 2. Run `itsm`, `itsm models list`, or `itsm status`. 3. Observe the command waits while the full host and repository code intelligence are initialized before it prints its read-only result. 4. Repeat on the other OS.
+- expected: Help and local auth/model commands respond without initializing unrelated runtime services; status reads only the data it displays.
+- actual: `standalone/apps/cli/src/index.ts` creates `RuntimeHost` before argv dispatch. That construction creates code intelligence, whose provider recursively reads supported project documents, even when the command only prints help or a model list.
+- evidence_refs: `bin/itsm.js`; `standalone/apps/cli/src/index.ts`; `standalone/packages/runtime-host/src/index.ts`; `standalone/packages/code-intelligence/src/provider.ts`; `handoffs/intake_evidence/standalone-cli-ux-intake-20260923T213043Z.json`.
+- intake_notes (2026-09-23, PO): New standalone command-path performance bug. Distinct from US-0150 production composition and US-0151 lifecycle transport: this bug removes unnecessary composition only from commands that do not require it; workflow commands remain admitted. Do not merge with BUG-0029 credential correctness or US-0155 TUI product work. Next: `/discovery` for BUG-0028.
+- related_us: US-0150, US-0151, US-0154
+
+### BUG-0029 — `itsm auth login` cannot accept API-key input and reports false configuration success
+- user_visible: true
+- Status: OPEN
+- Acceptance:
+  - [ ] AC-1: API-key login obtains a secret from an interactive TTY without echoing it, logging it, or placing it in command-line arguments.
+  - [ ] AC-2: A documented non-interactive `--api-key-stdin` path accepts one secret from standard input and rejects non-TTY interactive login without pretending success.
+  - [ ] AC-3: Cancelled, empty, invalid, or persistence-failed login exits non-zero with a deterministic redacted diagnostic and never emits `{"auth":"configured"}`.
+  - [ ] AC-4: Login verifies stored credentials through the runtime before emitting configured success; `auth list`, logout, and Pi migration retain their existing behavior.
+  - [ ] AC-5: Cross-platform tests cover masked TTY input, stdin input, cancellation, redaction, false-success prevention, and no-secret-in-argv/output/storage outside the owned auth store.
+- environment: Windows and Linux standalone `itsm`; `itsm auth login openai --type api_key` prints `Enter OpenAI API key` and immediately prints configured success without accepting input.
+- steps_to_reproduce: 1. Run `itsm auth login openai --type api_key` in an interactive terminal. 2. Observe `Enter OpenAI API key`. 3. Observe no input is accepted and the command immediately prints configured success. 4. Run `itsm auth list` or a model auth check to determine whether a credential was actually configured.
+- expected: The operator can securely provide an API key or receive an honest failure; success means the credential was actually stored and verified.
+- actual: The CLI supplies no `io.prompt`, so secret prompts resolve to `undefined`; the command then unconditionally reports configured success.
+- evidence_refs: `standalone/packages/auth-models/src/cli.ts`; `standalone/packages/auth-models/src/auth-service.ts`; `standalone/packages/pi-kernel/src/auth-runtime.ts`; `handoffs/intake_evidence/standalone-cli-ux-intake-20260923T213043Z.json`.
+- intake_notes (2026-09-23, PO): New credential-entry correctness and security bug. `auth migrate --from-pi` is an existing migration path, not a replacement for interactive login. Distinct from BUG-0028 startup latency and US-0150 Pi runtime composition. Next: `/discovery` for BUG-0029.
+- related_us: US-0135, US-0150, US-0154
+
 ## US-0150 — Production standalone runtime composition
 - user_visible: true
 - Title: Start a real Pi-backed runtime from every standalone entrypoint
@@ -5688,5 +5722,22 @@ Per **`DEC-0061`** / **`US-0079`**: defect work items use **`BUG-####`** ids (**
   - [ ] AC-6: Acceptance documentation records US-0133 through US-0148 as completed library/contract slices and US-0150 through US-0154 as their required production-integration follow-up, without marking phase-9 deferrals as missing v1 work.
 - Boundaries: This story validates the integration sequence; it does not expand product scope or replace deterministic fake seams used by unit tests.
 - related_us: US-0133, US-0134, US-0135, US-0136, US-0137, US-0138, US-0139, US-0140, US-0141, US-0142, US-0143, US-0144, US-0145, US-0146, US-0147, US-0148
+
+## US-0155 — Interactive Pi-style standalone operator TUI
+- user_visible: true
+- Title: Deliver the deferred interactive Pi-style terminal client
+- Summary: As an operator, I want an interactive terminal UI with conversation, live run events, approvals, phase/timeline, tools, changed files, app/browser evidence, and model/token/cost panels so I can operate the standalone runtime without relying on a static ANSI snapshot or an IDE.
+- Priority: P1
+- Status: OPEN
+- depends_on: US-0151
+- intake_evidence_ref: `handoffs/intake_evidence/standalone-cli-ux-intake-20260923T213043Z.json`
+- Acceptance:
+  - [ ] AC-1: The TUI uses Pi TUI components or compatible interactive primitives while remaining a client of the daemon/operator transport, not a second runtime or workflow engine.
+  - [ ] AC-2: The operator can submit supported commands, see streaming agent and tool events, receive actionable failure diagnostics, and approve, cancel, pause, or resume work through the same admitted runtime as CLI clients.
+  - [ ] AC-3: Panels cover conversation, active phase/role, timeline, tool activity, changed files, app/log health, browser evidence, and model/token/cost data with bounded rendering for large streams.
+  - [ ] AC-4: Keyboard interaction, resize/collapse behavior, secret redaction, reconnect/replay, and non-interactive fallback work on Windows and Linux terminals.
+  - [ ] AC-5: Integration tests exercise the real daemon protocol and prove event ordering, approval/cancel paths, reconnect, redaction, and responsive panel behavior without creating a Pi session outside runtime admission.
+- Boundaries: US-0146 remains the completed lightweight ANSI/client slice and is not rewritten. US-0151 owns shared executable transport. Do not add web, mobile, IDE, or remote-worker clients in this story.
+- related_us: US-0146, US-0148, US-0151, US-0154
 
 

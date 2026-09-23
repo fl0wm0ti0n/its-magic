@@ -56,6 +56,7 @@ if $DRY_RUN; then
 else
   npm version "$BUMP" --no-git-tag-version >/dev/null
   NEW_VERSION=$(node -p "require('./package.json').version")
+  python scripts/sync_kernel_version.py --repo "$REPO_ROOT" --version "$NEW_VERSION"
 fi
 TAG_NAME="v$NEW_VERSION"
 log "New version: $NEW_VERSION  (tag: $TAG_NAME)"

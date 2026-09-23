@@ -1,5 +1,5 @@
-import { createInProcessTransport, type InProcessTransportDeps } from "./in-process-transport.ts";
 import { createDaemonTransport, isDaemonReachable } from "./daemon-transport.ts";
+import { createInProcessTransport, type InProcessTransportDeps } from "./in-process-transport.ts";
 import type { OperatorTransport } from "./operator-transport.ts";
 
 export interface ResolveTransportInput extends InProcessTransportDeps {
@@ -11,12 +11,13 @@ export interface ResolveTransportInput extends InProcessTransportDeps {
 	client_kind?: "cli" | "tui" | "test";
 }
 
-export async function resolveOperatorTransport(input: ResolveTransportInput): Promise<OperatorTransport> {
+export async function resolveOperatorTransport(
+	input: ResolveTransportInput,
+): Promise<OperatorTransport> {
 	const prefer = input.preferDaemon ?? true;
 	if (prefer || input.requireDaemon) {
 		const reachable =
-			input.daemonBaseUrl !== undefined ||
-			(await isDaemonReachable(input.projectRoot));
+			input.daemonBaseUrl !== undefined || (await isDaemonReachable(input.projectRoot));
 		if (reachable || input.daemonBaseUrl) {
 			return createDaemonTransport({
 				projectRoot: input.projectRoot,
@@ -26,7 +27,10 @@ export async function resolveOperatorTransport(input: ResolveTransportInput): Pr
 			});
 		}
 		if (input.requireDaemon) {
-			return createDaemonTransport({ projectRoot: input.projectRoot, client_kind: input.client_kind });
+			return createDaemonTransport({
+				projectRoot: input.projectRoot,
+				client_kind: input.client_kind,
+			});
 		}
 	}
 	return createInProcessTransport(input);

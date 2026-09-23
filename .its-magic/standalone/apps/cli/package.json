@@ -15,6 +15,7 @@
 		"@its-magic/kernel-bridge": "*",
 		"@its-magic/pi-kernel": "*",
 		"@its-magic/runtime-core": "*",
+		"@its-magic/runtime-host": "*",
 		"@its-magic/role-runtime": "*"
 	}
 }
