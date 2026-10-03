@@ -196,17 +196,11 @@ async function main() {
         },
       },
     );
-    const rpc = await plugin.runAutoLifecycleRpc({
-      sessionID: "tui-auto",
-      prompt: "go",
-    });
     out({
       parentOk: asParent.ok,
       parentCode: asParent.reasonCode,
       runOk: asRun.ok,
       runCode: asRun.reasonCode,
-      rpcOk: rpc.ok,
-      rpcCode: rpc.reasonCode,
       writtenCount: written.length,
     });
     return;

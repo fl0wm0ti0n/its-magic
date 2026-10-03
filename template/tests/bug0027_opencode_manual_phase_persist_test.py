@@ -91,21 +91,17 @@ def test_bug0027_denied_persist_not_success():
     assert "MANUAL_PHASE_PERSIST_DENIED" in src
 
 
-def test_bug0027_rpc_forwards_story_sprint_run():
-    """Marker 3: runAutoLifecycleRpc no longer drops IDs (AC-3)."""
-    out = _run_harness("rpc-forward")
+def test_bug0027_manual_persist_is_independent_of_retired_auto_rpc():
+    """Marker 3: manual persistence keeps its IDs after the `/auto` route retires."""
+    out = _run_harness("manual-execute-persist")
+    evidence = out.get("evidence") or {}
+    assert evidence.get("storyId") == "US-0001"
+    assert evidence.get("sprintId") == "S0160"
+    assert evidence.get("orchestratorRunId") == "auto-20260921-bug0027"
+    assert evidence.get("bugId") == "BUG-0027"
     src = ACTIVE_PLUGIN.read_text(encoding="utf-8")
-    assert 'input.sessionID ?? "tui-auto"' not in src
-    assert "storyId: input.storyId" in src
-    assert "sprintId: input.sprintId" in src
-    assert "orchestratorRunId: input.orchestratorRunId" in src
-    forwarded = out.get("forwarded") or {}
-    assert forwarded.get("storyId") == "US-0001"
-    assert forwarded.get("sprintId") == "S0160"
-    assert forwarded.get("orchestratorRunId") == "run-rpc-1"
-    assert forwarded.get("bugId") == "BUG-0027"
-    assert out.get("rpcForwardsIds") is True
-    assert out.get("rpcMissingUsedTuiAuto") is False
+    assert "persistManualPhaseIsolation" in src
+    assert "runAutoLifecycleRpc" not in src
 
 
 def test_bug0027_tui_auto_rejected_as_release_evidence():
@@ -115,8 +111,6 @@ def test_bug0027_tui_auto_rejected_as_release_evidence():
     assert out.get("parentCode") == PLACEHOLDER_REJECTED
     assert out.get("runOk") is False
     assert out.get("runCode") == PLACEHOLDER_REJECTED
-    assert out.get("rpcOk") is False
-    assert out.get("rpcCode") == PLACEHOLDER_REJECTED
     assert out.get("writtenCount") == 0
     src = ACTIVE_PLUGIN.read_text(encoding="utf-8")
     assert PLACEHOLDER_REJECTED in src
@@ -139,24 +133,18 @@ def test_bug0027_no_fabricated_proof_when_orchestrator_unavailable():
     assert "do not invent" in src.lower() or "CONTEXT_MISSING" in src
 
 
-def test_bug0027_auto_tui_toast_not_claimed():
-    """Marker 6: dispatch toast / DISPATCH_UNSUPPORTED path unchanged (BUG-0024 compose)."""
-    tui = ACTIVE_TUI.read_text(encoding="utf-8")
-    tpl_tui = TEMPLATE_TUI.read_text(encoding="utf-8")
+def test_bug0027_manual_persist_has_no_retired_tui_dependency():
+    """Marker 6: retiring the private route does not remove manual persistence."""
     orch = ACTIVE_PLUGIN.read_text(encoding="utf-8")
-    assert DISPATCH_UNSUPPORTED in tui
-    assert DISPATCH_UNSUPPORTED in tpl_tui
-    assert "dispatchRunAutoLifecycle" in tui
-    assert "OPENCODE_AUTO_TUI_MISSING_CLIENT" in tui
-    assert "toast repair" not in orch.lower()
-    assert "runAutoLifecycleRpc" in orch
+    assert not ACTIVE_TUI.exists()
+    assert not TEMPLATE_TUI.exists()
+    assert "runAutoLifecycleRpc" not in orch
     for token in (
         "OPENCODE_MANUAL_PHASE_WRITE_DENIED",
         "OPENCODE_MANUAL_PHASE_PERSIST_DENIED",
         "OPENCODE_PLACEHOLDER_PARENT_REJECTED",
     ):
         assert token in orch
-        assert token not in tui
 
 
 def test_bug0027_validator_invocation_file_stdin_not_repo_enforce():
@@ -235,25 +223,25 @@ def test_bug0027_active_template_parity():
 
 
 def test_bug0027_permission_matrix_phase_writes():
-    """Marker 10: dev allows state.md + summary.md; qa allows state.md; deny-last held."""
+    """Marker 10: role-specific writes override a broad deny-first default."""
     for path in (ACTIVE_DEV, TEMPLATE_DEV):
         text = path.read_text(encoding="utf-8")
         assert '"docs/engineering/state.md": allow' in text
         assert '"sprints/S*/summary.md": allow' in text
         lines = [ln.strip() for ln in text.splitlines() if ln.strip()]
         assert '"**": deny' in text
-        deny_idx = text.rfind('"**": deny')
+        deny_idx = text.find('"**": deny')
         state_idx = text.find('"docs/engineering/state.md": allow')
         summary_idx = text.find('"sprints/S*/summary.md": allow')
-        assert 0 <= state_idx < deny_idx
-        assert 0 <= summary_idx < deny_idx
+        assert 0 <= deny_idx < state_idx
+        assert 0 <= deny_idx < summary_idx
     for path in (ACTIVE_QA, TEMPLATE_QA):
         text = path.read_text(encoding="utf-8")
         assert '"docs/engineering/state.md": allow' in text
         assert '"**": deny' in text
-        deny_idx = text.rfind('"**": deny')
+        deny_idx = text.find('"**": deny')
         state_idx = text.find('"docs/engineering/state.md": allow')
-        assert 0 <= state_idx < deny_idx
+        assert 0 <= deny_idx < state_idx
     orch = ACTIVE_PLUGIN.read_text(encoding="utf-8")
     assert WRITE_DENIED in orch
     # Plugin must not copy the permission array (DEC-0124).

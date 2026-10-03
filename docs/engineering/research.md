@@ -15614,3 +15614,425 @@ Upgrade `--host opencode|both` overwrites the touched OpenCode pack paths.
 - Do not author `# BUG-0027`, any `decisions/DEC-*`, or `sprints/S0160/` this phase. **Next**: `/architecture` (fresh tech-lead). CROSS_MODEL_REVIEW=0 — do not spawn sovereign-critic.
 
 - **Delivery closure (2026-09-21T22:30:00Z, curator, `orchestrator_run_id=auto-20260921-bug0027`)**: **`BUG-0027`** **DONE**; sprint **`S0160`** **released**; A1 Hybrid manual-phase persist (`IsolationEvidence` identity fields, `persistManualPhaseIsolation`, RPC ID forward, reject `tui-auto`, permission-matrix widen, validator pack rewrite, ten **`test_bug0027_*`**, upgrade/parity **`BUG0027_PAIRS`**, US-0125 named-CLI compose-amend) delivered per **R-0151** / architecture **`# BUG-0027`** (no companion DEC); compose **BUG-0024** / **US-0125** held — no toast-repair claim; honest residual: live OpenCode CLI/TUI manual-phase **`UAT_PROBE_FORBIDDEN`** (NB1 — no live PASS); **`npm_published=false`** — **`PUBLISH_CONFIRMATION_REQUIRED`**; BUG-0022/BUG-0026 **not** drained; orchestrator STOP — segment complete.
+
+## R-0152 — BUG-0030 OpenCode 1.18.32 standard-command path replaces private RPC assumption
+
+- **Date**: 2026-09-25. **Bug**: BUG-0030. **Status**: current. **Confidence**: high.
+- **Query**: Identify a documented, host-valid path that starts its-magic `/auto` on OpenCode without relying on the private RPC API assumed by the current adapter.
+- **Sources**:
+  - Local runtime: `opencode --version` reports `1.18.32`.
+  - Current adapter: `.opencode/plugins/its-magic-auto/rpc.ts`, `tui.ts`, and `.opencode/plugins/orchestrator.ts`.
+  - Official command documentation: `https://opencode.ai/docs/commands/` (retrieved 2026-09-26).
+  - Local verification: `npm view @opencode/plugin@1.18.32 version --json` returns E404; `npm view @opencode-ai/plugin@1.18.32 version --json` reports `1.18.32`.
+  - Existing prior assumptions: R-0137/R-0140 and `tests/bug0024_opencode_cli_tui_live_dispatch_residual_test.py`.
+- **Findings**:
+  - OpenCode 1.18.32 does not expose the adapter's assumed private RPC surfaces: `@opencode/plugin/rpc`, `Rpc.define`, `client.rpc`, and `ctx.rpc.register`. The present dynamic import therefore falls back to `localRpcDefine`, leaves `ITS_MAGIC_AUTO_RPC_PEER_BRANDED=false`, and produces the observed error.
+  - The v2 build-plugin documentation is not evidence for the installed v1.18.32 host: it names `@opencode/plugin`, which is unavailable at that version. The proposed `Plugin.define` / `ctx.command.transform` design is therefore unverified and must not be implemented.
+  - The documented, available command surface is `.opencode/commands/<name>.md`. Its YAML frontmatter supports `agent`, and its body is submitted as the durable command prompt. `.opencode/commands/auto.md` with `agent: auto` therefore selects the existing spawn-only auto agent without private RPC or a JSON command template.
+  - The current `tui.json` file-plugin plus bespoke RPC bridge is not the documented command-dispatch contract. Its mock tests prove only a private fallback branch, not the OpenCode host path.
+- **Decision**: The operator selected **Option A**, pinning the supported contract to **OpenCode 1.18.32**. Support `/auto` through a standard Markdown command and the existing `auto` agent. The earlier “no auto.md” rule applies only to the STOP-only command that shadowed an unregistered private handler; it does not prohibit this documented command body.
+- **Recommended architecture direction**: Restore a framework-owned `.opencode/commands/auto.md` with `agent: auto` frontmatter and the canonical spawn-only orchestration prompt. Remove the legacy TUI/RPC route from the command path. Add a real command-path integration check that observes command registration and prompt admission; do not claim model/lifecycle completion.
+- **Rejected**: `localRpcDefine` as a dispatch-capable definition; invented localhost HTTP RPC; undocumented per-consumer package installation; unverified `@opencode/plugin` v2 APIs; STOP-only command body; JSON `command` template; mock-only closure; an unversioned or private host API.
+- **Linked**: BUG-0030; BUG-0024 (historical diagnosis only); US-0124, US-0125, US-0126; R-0137, R-0140.
+- **Next**: `/architecture` in a fresh tech-lead context. Author `# BUG-0030` and a companion decision only if architecture requires one; do not implement or create a sprint in research.
+
+### R-0152 delivery closure trailer (refresh-context, 2026-09-27T15:10:00Z)
+
+- **Status**: **DELIVERED** — consumed by `# BUG-0030` architecture (A1 locked), `DEC-0151` Accepted, S0161 T-anch + T-001..T-005, six `test_bug0030_*` markers (credentialed live `session.command("auto")` prompt-admission, model `openai/gpt-5.6-terra`), `S0161` **released** @ 2026-09-27T14:35:00Z, **BUG-0030 DONE** (backlog AC-1..AC-5 `[x]`; acceptance row `[x]`).
+- **Correction upheld**: documented `1.18.32` Markdown-command route validated; private RPC/TUI route retired (not mocked). No `@opencode/plugin` v2 API used. No JSON command template. No STOP-only body.
+- **Residual (honest)**: NB1 full provider-driven auto-lifecycle completion remains operator UAT post-ship (`provider_completion_claimed=false`); no toast-repair claim.
+- **Sprint evidence**: `sprints/S0161/`; `handoffs/releases/S0161-release-notes.md`; `CHANGELOG.md` Unreleased.
+
+## R-0153 - US-0156 OpenCode `/auto` continuous lifecycle parity
+
+- **Date**: 2026-09-27. **Story**: US-0156. **Status**: current. **Confidence**: high.
+- **Query**: How can the documented OpenCode Markdown-command route provide Cursor-parity continuous phase execution, story/bug scheduling, resume/start-from, and phase-selection policy while retaining fresh Task isolation and all existing hard stops?
+- **Sources**:
+  - `handoffs/intake_evidence/US-0156-intake-20260927T000000Z.json` and `docs/product/vision.md` `## Discovery Notes — US-0156`.
+  - `.opencode/commands/auto.md` and `.opencode/agents/auto.md`: the supported command selects the primary `auto` agent, which may spawn role Tasks but cannot directly edit or run shell commands.
+  - `.opencode/plugins/orchestrator.ts`: `runAutoLifecycle`, `spawnPhase`, `dispatchStopMatrix`, and `selectFirstPhaseViaPython`; BUG-0030 explicitly detaches this plugin from command dispatch.
+  - `scripts/opencode_auto_bridge.py`: current first-phase precedence, `AUTO_SCHEDULER_CONFLICT`, resume parsing, and current unsafe default to `execute`.
+  - US-0037, US-0044, US-0070, US-0087, US-0088, US-0092, US-0095, BUG-0022, BUG-0027, and R-0152.
+- **Gap confirmation**:
+  - The Markdown command now admits the correct `auto` agent, but its body does not yet define a complete multi-phase or multi-segment scheduling algorithm.
+  - `runAutoLifecycle` is no longer the command-dispatch path (`attachSupported=false`) and cannot be repurposed through the retired TUI/RPC route.
+  - Both `selectFirstPhaseViaPython` and `select_first_phase` can silently choose `execute` on bridge failure, malformed output, or absent context. That is incompatible with the discovery fail-closed resume contract.
+  - The bridge has no effective-plan intersection, dependency-aware story selection, next-segment selection, or idempotent continuation tuple. Its current `completed` stop handling terminates the loop rather than proving a continuation decision.
+
+### Recommendation - A1 (A*) command-owned sequential Task lifecycle
+
+- Keep `.opencode/commands/auto.md` as the sole OpenCode `/auto` owner with `agent: auto`. Expand the `auto` agent/command contract so one parent session sequentially creates and waits for one fresh, policy-resolved role Task per phase. The auto agent remains scheduling-only and writes no phase artifacts.
+- Give the command-owned scheduler one canonical, fail-closed continuation resolver. It must resolve, before any Task spawn: explicit `start-from`; otherwise validated `resume_brief`; otherwise validated `state.md`; then a single effective phase plan; then one scheduler choice (explicit bug target or eligible story drain). No resolver or bridge failure may default to `execute`.
+- After each child phase, consume only durable evidence and the existing Stop-Matrix decision. Continue only when the decision explicitly returns an admitted next phase or next eligible segment. Hard gate, decision, pause, missing evidence, unknown policy, conflict, retry/cycle cap, and release-boundary outcomes stop the parent run with their existing reason code and remediation.
+- Persist an idempotent continuation tuple at each phase and segment boundary: run ID, work-item kind and ID, sprint ID when known, effective plan, skipped phases, completed phase, next phase or segment, queue cursor and remaining budget, stop reason, and child isolation evidence reference. A resumed command must reject ambiguous or duplicate tuples instead of replaying an already-completed phase.
+- Reuse BUG-0027 `persistManualPhaseIsolation` only for direct manual slash commands. The `/auto` parent must use fresh child Task evidence; neither path may fabricate completion, strict proof, or a placeholder parent.
+
+### DQ1 - Host-valid continuation mechanism (LOCKED)
+
+- **Winner**: the command-selected `auto` agent performs sequential Task creation and waits for the result before resolving the next boundary. This uses the documented Markdown-command and agent surfaces proven by R-0152, not the retired TUI/RPC adapter.
+- **Reject**: restoring `ctx.rpc.register`, `client.rpc`, `tui.json` plugins, a JSON command template, a localhost service, or recursively re-invoking `/auto` for each phase. These either repeat BUG-0030's invalid host contract or lose the one-parent-run continuity requirement.
+
+### DQ2 - Resolver and precedence contract (LOCKED)
+
+- **Winner**: `start-from` is highest precedence. With no explicit anchor, accept a validated `resume_brief` pointer first and `state.md` only as its fallback. Resolve phase-selection exactly once and intersect it with the anchor; an empty intersection is a failure, not a default phase.
+- Explicit `bug-target` selects the bug scheduler for the run. Without it, `AUTO_BACKLOG_DRAIN=1` selects dependency-eligible OPEN stories. Configured story drain and bug queue without the explicit-target exception return `AUTO_SCHEDULER_CONFLICT`.
+- **Reject**: `fallback_execute`, scratchpad-only resume that overrides durable evidence, LLM-selected work items, or running both schedulers concurrently.
+
+### DQ3 - Continuation and Stop-Matrix (LOCKED)
+
+- **Winner**: preserve `scripts/auto_outer_driver.py` as the Stop-Matrix authority and consume a typed action at every boundary. Only an explicit continuation action may schedule another phase or segment. `completed` means "evaluate the next boundary" only when the matrix returns an admitted successor; it is not an unconditional success or a bypass of verify/release ownership.
+- **Terminal**: decision gates, pause, blocked mandatory evidence, quality/UAT failure, release boundary, security-hard conditions, resolver errors, scheduler conflicts, and exhausted caps. **Bounded/retryable** behavior remains exactly the existing retry-ledger policy; the OpenCode command must not invent retries.
+
+### DQ4 - Durable provenance and idempotence (LOCKED)
+
+- **Winner**: extend the bridge-owned state/resume representation rather than a new OpenCode-local store. A continuation record is keyed by `orchestrator_run_id + work_item_kind + work_item_id + phase_id`; repeated emission with the same completed evidence is a no-op, while conflicting evidence or a reused child session fails closed.
+- The record carries `effective_phase_plan`, `skipped_phases`, queue position/budget, selected source, stop reason, and the child `IsolationEvidence` reference. Direct manual persistence remains distinct and cannot satisfy an `/auto` child proof.
+
+### DQ5 - DoD and boundary rules (LOCKED)
+
+- BUG-0022 and BUG-0027 are closure prerequisites and must be verified as DONE by verify-work before US-0156 can close. BUG-0028 and BUG-0029 remain separately OPEN unless their own lifecycle completes them; the scheduler must not silently merge or close them.
+- Active and `template/` command, auto-agent, resolver, plugin-support, test, installer-overwrite, and documentation surfaces require parity. Desktop Command.Info, `opencode --pure`, standalone `itsm`, npm publish, git push, and `.env` access remain out of scope.
+
+### Test strategy (architecture seeds)
+
+1. Command/agent contract proves `/auto` selects `agent: auto`, remains Task-only, and has no retired TUI/RPC or JSON-template dependency.
+2. Sequential lifecycle contract proves distinct child session/role evidence for each admitted phase and no parent artifact write.
+3. Resolver contract rejects bridge errors, missing/stale/ambiguous resume, unknown phase IDs, and empty start/plan intersections; it proves no `fallback_execute` remains.
+4. Scheduler contract proves explicit bug-target precedence, story/bug mutex, dependency order, OPEN-only selection, and empty/DONE/unknown failure codes.
+5. Stop contract proves hard stops, release ownership, retry/cycle/backlog caps, and only explicit continuation actions advance the run.
+6. Resume/idempotence contract proves persisted plan/cursor/provenance resume exactly once and rejects a duplicate or conflicting child tuple.
+7. DoD/parity contract proves BUG-0022/BUG-0027 gating, BUG-0028/BUG-0029 non-closure, active/template equality, and installer overwrite of all owned OpenCode files.
+
+### Risks and architecture handoff
+
+| Risk | Mitigation |
+|---|---|
+| An LLM parent treats a completed child as permission to continue past a hard stop | Machine-readable resolver/Stop-Matrix result is the only continuation authority; tests cover every terminal class. |
+| Resume artifacts contain stale parallel pointers | Require one matching continuation tuple and fail closed on ambiguity or conflicting run/item/phase fields. |
+| Continuous run replays a child after interruption | Idempotency key includes run, item, and phase; child evidence session IDs must be unique. |
+| BUG-0030 command route regresses during parity work | Retain command-owned `agent: auto`; explicitly forbid retired TUI/RPC and JSON surfaces in contract tests. |
+| Template/installer drift leaves consumers with a one-shot command | Pair every changed OpenCode surface with its template/installer manifest entry and parity test. |
+
+- **Approach verdict**: **A1 (A*)** is the only host-valid direction. **decision_gate=false**. `/architecture` should author `# US-0156` and determine whether the cross-host continuation/preference contract needs a companion decision. Do not implement, create a sprint, mutate backlog/acceptance, or claim live OpenCode completion in research.
+- **Research persistence note**: The delegated research phase was denied writes (`OPENCODE_MANUAL_PHASE_WRITE_DENIED`). This direct artifact continuation records static research; it does not create a runtime isolation proof.
+- **Next**: `/architecture` in a fresh tech-lead context.
+
+## R-0154 — BUG-0022 `/auto` Task-spawns inherit parent chat model instead of role_catalog
+
+- **Date**: 2026-09-28. **Bug**: BUG-0022 (OPEN). **Status**: current (delivered — `/architecture` next; no delivery closure trailer yet). **Confidence**: high.
+- **Producer**: `tech-lead` on `bug-target=BUG-0022`, `/research`, fresh subagent (BUG-0006). Parent discovery `po-cursor-20260928-BUG0022-discovery`; no runtime proof issued this phase (D5 mock-injection proof belongs to execute/verify-work per discovery note 2026-09-28).
+- **ID policy**: highest existing **`R-0153`** (US-0156). Author **`R-0154`**. `ID_NAMESPACE_BOOTSTRAP=0`. Do not wipe, renumber, or rewrite **R-0151** / **R-0152** / **R-0153** / **R-0150** / **R-0140**.
+- **Linked**: BUG-0022 (this defect; OPEN, AC-1..AC-8 unchecked), **do not mutate**; US-0101 / US-0102 / DEC-0086 / DEC-0087 (role-catalog resolver contract, **DONE** — compose only, not reopened); DEC-0104 / US-0104 (cross-model critic overlay, **DONE** — compose only); US-0130 (critic resolver selection, **DONE** — compose only); US-0056 / DEC-0038 (strict runtime proof — compose only); US-0048 / DEC-0029 (per-phase isolation — compose only); US-0069 / DEC-0051 (strict phase role matrix — compose only); US-0087 / US-0088 / US-0092 / US-0095 (continuous/auto-chain — compose only); US-0118 / US-0119 / US-0096 (delivery-mode / autonomy presets — compose only); **R-0133** (prior spawn-model research) — compose only, not rewritten; **R-0150** / **R-0151** / **R-0152** / **R-0153** — compose only, not rewritten; BUG-0021 **DONE** (Cursor IDE `/auto` TUI listing — do not reopen); BUG-0023 **DONE** / BUG-0024 **DONE** / BUG-0030 **DONE** (OpenCode `/auto` dispatch class — do not merge, do not reopen); BUG-0026 **OPEN** (standalone bootstrap — do not merge, do not drain); BUG-0027 **DONE** (manual-phase persistence — do not reopen, compose only); BUG-0028 / BUG-0029 **OPEN** (prerequisite slices — do not merge, do not drain); **US-0156 OPEN** (BUG-0022 is its DoD gate — close BUG-0022 unblocks US-0156 closure; this phase does **not** tick or release US-0156).
+- **Topic**: When `MODEL_RESOLVE=role_catalog` and `MODEL_CATALOG` points at a v2 role catalog, every `/auto` **producer** Task spawn still carries `model: inherit` (parent chat slug) and the **critic** spawn still pins `composer-2.5-fast` — **even though** `scripts/model_tier_lib.resolve_model_for_phase` and `scripts/sovereign_critic_lib.select_critic_model` are DONE and implement the 5-step precedence chain including the `roles.critic` overlay. The defect is one hop downstream: the Cursor-spawn orchestration (prompt-level; `.cursor/commands/auto.md` + `.cursor/agents/{po,dev,qa,release,security,tech-lead,curator}.mdc` + `docs/engineering/auto-orchestration-reference.md`) never invokes those resolvers at spawn time, and the agent frontmatter defaults to `model: inherit` (po.mdc, release.mdc) or to no `model:` key (dev, qa, security, tech-lead, curator) — which Cursor then resolves as `inherit`.
+- **Query**: Lock DQ1–DQ10 from discovery; pick winning approach **A*** so every `/auto` Task producer spawn carries the catalog-resolved `model:` and the critic spawn carries `select_critic_model(...)` output — or emits a documented `MODEL_*` / `MODEL_ROLE_SLUG_UNKNOWN` / `MODEL_RESOLVE_FALLBACK` token — never silent parent-inherit — while preserving **US-0101 / US-0102 / US-0104 / US-0130** resolver-lib ACs untouched, keeping `scripts/model_tier_lib.py` parity with `template/scripts/model_tier_lib.py`, and not reopening or draining any sibling (BUG-0021/0023/0024/0026/0027/0028/0029/0030) or US-0156.
+- **Gap confirmation (research)**:
+  - **H1** (high): `.cursor/agents/po.mdc` and `.cursor/agents/release.mdc` frontmatter hardcode `model: inherit` — the parent-inher default is baked into the agent definitions the orchestrator spawns.
+  - **H2** (high): `.cursor/agents/{dev,qa,security,tech-lead,curator}.mdc` frontmatter has **no** `model:` key — Cursor treats that as `inherit` (parent chat).
+  - **H3** (high): `.cursor/commands/auto.md` steps **4/5** ("spawn fresh subagents per intersected schedule") never mention a per-phase model resolution step — the spawn contract is silent on `model:`.
+  - **H4** (high): The critic hook (auto.md § *Cross-model adversarial critic post-phase hook* step 2) already names `resolve_model_for_phase` + `select_critic_model` — but only for **isolation evidence**, not as a Task `model:` source; the critic spawn itself still uses a hardcoded release slug in production runs (`composer-2.5-fast` observed at intake).
+  - **H5** (medium): `MODEL_CATALOG='.cursor/model-catalog.local.example.role-based-balanced_cursor_only.json'` exists in active repo (and template); `scripts/model_tier_lib.py` `resolve_model_for_phase` returns `ResolveResult.success_slug(slug=<catalog roles[logical-role]>)` when `MODEL_RESolve=role_catalog` for resolvable roles — the resolver is correct, the **spawn path** is not consuming it.
+  - **H6** (medium): The resolver already records `provenance=host=cursor;path=<catalog-relative>;step=<step-1|step-2|step-3|step-4|step-5>` on every success (US-0132 overlay) — this is the exact token D6 (provenance distinguishability) needs; the spawn path just stops using it in isolation evidence.
+- **EARLY_RESEARCH posture**: EARLY_RESEARCH=1 — this phase **authors** `R-0154` and locks DQ1–DQ10. Do **not** wipe, renumber, or rewrite **R-0150** / **R-0151** / **R-0152** / **R-0153** / **R-0151** / **R-0150** / **R-0140**.
+- **Producer consumed**: discovery D1–D10 from `docs/product/vision.md § Discovery Notes — BUG-0022` (2026-09-28), `docs/product/backlog.md § ### BUG-0022` discovery_notes (2026-09-28), `handoffs/po_to_tl.md § Discovery handoff — BUG-0022`. No runtime proof issued/consumed (D5 mock-injection proof is execute/verify-work scope).
+- **Recommendation**: **A1 (A*) Resolve-then-spawn contract** — the `/auto` orchestrator MUST call `resolve_model_for_phase(phase_id, scratchpad, catalog)` **before** Task emission for **every** producer phase (po/discovery, research, architecture, sprint-plan, plan-verify, execute, qa, verify-work, security-review, release, closure, refresh-context), thread the resulting `slug` (or `alias`) into the Task `model:` payload, and thread `result.provenance` (`provenance=host=cursor;path=...;step=...`) into the per-spawn isolation evidence row; the **critic** spawn MUST call `select_critic_model(producer_model_id, scratchpad, phase_id)` and thread `critic_model_id` into the Task `model:` payload. `MODEL_FALLBACK=inherit` is honored **only** when steps 1–4 all miss **and** a documented override (`MODEL_<PHASE>` / `MODEL_TIER_<PHASE>` / `MODEL_TIER_DEFAULT` / `MODEL_RESOLVE_FALLBACK`) is present in scratchpad — never as the silent default for a resolvable role. Fail-closed `MODEL_ROLE_SLUG_UNKNOWN` / `MODEL_OVERRIDE_SLUG_UNKNOWN` / `MODEL_SLUG_UNKNOWN` are **per-spawn tokens**, emitted in isolation evidence and **not** as a silent `inherit` alias. **No companion DEC** — `# BUG-0022` additive at `/architecture` only. Expected sprint **S0163** (S0162 = US-0156 verify-work; do **not** create this phase).
+- **Rejected**: A2 (keep `model: inherit` frontmatter and accept parent-inher as the product behavior — re-derives the defect; re-open US-0101/US-0102/US-0130 ACs indirectly); A3 (rewrite the resolver libs to add a "default=inherit" path — inverts the D4/D5 contract and mutates DONE resolver ACs); A4 (add a `roles.<role-slug>` key per phase in the catalog — a schema redesign, out of scope, D8); A5 (route the fix through OpenCode orchestrator.ts / `.opencode/commands/auto.md` — that is BUG-0030 / US-0156 scope; BUG-0022 is the Cursor IDE Task-spawn surface, distinct class); A6 (hardcode the catalog slugs in `.cursor/agents/<role>.mdc` frontmatter — loses per-catalog `MODEL_CATALOG` selection and D6 detectability); A7 (add a per-phase JSON spawn-manifest in `handoffs/` that the orchestrator consults before each spawn — duplicate source of truth; the resolver is already the SOT and the resolver is already DONE); A8 (mutate the `catalog_validation_reason_code` / `load_catalog` / `validate_catalog_schema` / `resolve_model_for_phase` / `select_critic_model` functions to return "inherit" on miss — mutates DONE resolver-lib ACs; rejected); A9 (add a `model:` literal to the Task prose but leave agent frontmatter as `inherit` — Cursor's `model:` on a Task overrides the agent `model:`, so this would work **only** if the orchestrator prose is enforced strictly; the A1 contract makes the resolve-then-spawn step **mandatory** with D6 detectable provenance, which A9 alone does not); A10 (merge BUG-0022 into US-0156 as a slice — US-0156 is already OPEN at S0162 verify-work; merging would mutate US-0156 body, re-scope S0162, and bypass the DoD gate; rejected); A11 (drain / reopen BUG-0021 / BUG-0023 / BUG-0024 / BUG-0026 / BUG-0028 / BUG-0029 / BUG-0030 to absorb the fix — sibling integrity violation; rejected); A12 (claim live Cursor IDE completion or run a UAT probe — D5 mock-injection only, per discovery; a live-probe PASS would need UAT_PROBE_FORBIDDEN waived and is not in scope here; rejected).
+
+### DQ1 — Where exactly does the Cursor `/auto` spawn path set `model:` (LOCKED)
+
+- **Winner**: The spawn path does **not** currently set `model:` from the role catalog. The parent-inher default is introduced by **two surfaces**, both prompt-level:
+  1. **Agent frontmatter**: `.cursor/agents/po.mdc`, `.cursor/agents/release.mdc` set `model: inherit` explicitly; `.cursor/agents/{dev,qa,security,tech-lead,curator}.mdc` set **no** `model:` key. Cursor's Task-spawn resolution then falls back to the agent-definition `model:` (or defaults to `inherit` when absent) — that is the parent-inher leak.
+  2. **Orchestrator contract silence**: `.cursor/commands/auto.md` steps 4/5 (spawn fresh subagents per intersected schedule) say nothing about a `model:` parameter. The critic hook already names the resolvers but only for isolation evidence, not for the Task `model:` payload.
+- **Implication for the fix**: The minimal, contract-correct place to thread resolver output is the **orchestrator contract** (auto.md + `docs/engineering/auto-orchestration-reference.md` Step 5 preflight) — resolve per phase, then emit the Task with the resolved `model:` and record `provenance`.
+- **Reject**: adding a `scripts/cursor_spawn_model_spawn_helper.py` (no host-valid need — the resolver `resolve_model_for_phase` is already the callable SOT); adding a `handoffs/` manifest; adding a `Task` JSON schema file; changing the agent frontmatter (A2/A6); adding per-role `model:` keys in the catalog (A4).
+
+### DQ2 — Minimal contract-correct point to call `resolve_model_for_phase` per phase (LOCKED)
+
+- **Winner**: In `.cursor/commands/auto.md` **step 4** (before "spawn a fresh subagent for that phase's canonical role"), **and** in `docs/engineering/auto-orchestration-reference.md` Step 5 (IDE native chain), add a **normative pre-spawn step**:
+  > **Pre-spawn model resolution (BUG-0022 / R-0154)**: before **any** Task spawn, call `resolve_model_for_phase(phase_id, scratchpad, catalog)` per DEC-0087 / US-0102. On success: emit the Task with `model: <slug or alias>` and record `model_id=<slug or alias>`, `model_provenance=<result.provenance>` on the spawn isolation row in `state.md`. On fail-closed: emit the Task **with no silent `model:`**; record the fail-closed token (`MODEL_ROLE_SLUG_UNKNOWN` / `MODEL_OVERRIDE_SLUG_UNKNOWN` / `MODEL_SLUG_UNKNOWN` / `MODEL_RESOLVE_FALLBACK`) on the isolation row and apply the documented fallback (`MODEL_FALLBACK=inherit` **only** when a documented override in scratchpad is present). Never emit a Task that inherits silently.
+- **Critic spawn** (auto.md § *Cross-model adversarial critic post-phase hook* step 1): change step 1 from "Resolve `producer_model_id` from phase context **or** `model_tier_lib.resolve_model_for_phase`" to "Resolve `producer_model_id` via `model_tier_lib.resolve_model_for_phase(phase_id, scratchpad, catalog)` **and** use the resulting `slug` as the producer `model:`"; step 2 already calls `select_critic_model(...)` — thread its `critic_model_id` into the critic Task `model:`.
+- **Reject**: calling the resolver per phase inside `.cursor/hooks.json` event handlers (would bypass spawn-only / BUG-0006); adding a `pre_spawn_model` hook (no host-valid hook contract for that in the kit; rejected).
+
+### DQ3 — How the critic spawn obtains `select_critic_model` output (LOCKED)
+
+- **Winner**: The critic spawn in `.cursor/commands/auto.md` steps (1) and (2) already names `select_critic_model`. The change is to **thread the output**:
+  - **Producer spawn**: `model: <resolve_model_for_phase(...).slug>` (or `alias`).
+  - **Critic spawn**: `model: <select_critic_model(producer_model_id, scratchpad, phase_id).critic_model_id>`.
+  - **Isolation row**: record both `producer_model_id=<producer-model>` and `critic_model_id=<critic-model>` (existing DEC-0038 tuple fields) **plus** the additive `model_provenance` (D6).
+  - If `select_critic_model` returns `degraded=true` (CROSS_MODEL_DEGRADED_MODE), the critic Task still carries `model: <producer-model>` — that is the existing US-0130 behavior, unchanged.
+  - **Never** hardcode `composer-2.5-fast` or any release slug in a critic spawn.
+- **Reject**: reading the critic model from `.cursor/agents/*.mdc` frontmatter (that's the role catalog's job, not the agent definition's); hardcoding the critic slug in the command prose (the resolver is the SOT); dropping the `degraded` branch (US-0130 contract).
+
+### DQ4 — Authoritative scratchpad keys + interaction with the 5-step chain (LOCKED)
+
+- **Winner**: the canonical scratchpad keys (per `docs/engineering/runbook.md § Direct per-phase model slug override + role catalog (US-0102 / DEC-0087)` lines 771–806) are **exactly**:
+  - **Step 1**: `MODEL_<PHASE>` — `MODEL_INTAKE`, `MODEL_DISCOVERY`, `MODEL_RESEARCH`, `MODEL_ARCHITECTURE`, `MODEL_SPRINT-PLAN`, `MODEL_PLAN-VERIFY`, `MODEL_EXECUTE`, `MODEL_QA`, `MODEL_VERIFY-WORK`, `MODEL_SECURITY-REVIEW`, `MODEL_RELEASE`, `MODEL_CLOSURE`, `MODEL_REFRESH-CONTEXT`, `MODEL_AUTO` (auto is a no-op per `PHASE_LOGICAL_ROLE["auto"]=None`).
+  - **Step 2**: `MODEL_TIER_<PHASE>` — `MODEL_TIER_INTAKE`, …, `MODEL_TIER_AUTO`.
+  - **Step 3**: `MODEL_RESOLVE=role_catalog` (exact literal) + `MODEL_CATALOG` (path) + `MODEL_FALLBACK` (`inherit` or other).
+  - **Step 4**: `MODEL_TIER_DEFAULT` (`cheap` | `balanced` | `strong`).
+  - **Step 5**: (no scratchpad key — cursor stable alias via `TIER_ALIAS_MAP`).
+  - **Critic overlay**: `MODEL_SOVEREIGN-CRITIC` (hyphen exact, per `scripts/sovereign_critic_lib.py::phase_to_model_key("sovereign-critic")` line 257) and the optional `roles.critic` in the `MODEL_CATALOG` JSON.
+- **Interaction**: `MODEL_FALLBACK=inherit` is honored **only** at **step 4 and step 5** when steps 1–3 all miss **and** a documented override is present in scratchpad. It is **not** the silent default for a resolvable catalog role (D4). For the balanced catalog example (`model-catalog.local.example.role-based-balanced_cursor_only.json`), every `PHASE_LOGICAL_ROLE` key resolves (po, tech-lead, curators-dev, qa, security, release) — so for that catalog the only legitimate path to `inherit` is operator-set `MODEL_<PHASE>=` or `MODEL_TIER_<PHASE>=` that resolve to the balanced/strong tier and produce an `inherit` alias via `TIER_ALIAS_MAP[Tier.BALANCED]="inherit"`.
+- **Reject**: adding a `MODEL_PARENT_INHERIT` key (not in the 5-step chain; would be a schema extension — A4); adding a `MODEL_RESOLVE_DEFAULT` key (not in the chain); mutating `resolve_model_for_phase` to add a step 0 "inherit if role_catalog miss" (inverts the D4 contract); reading `MODEL_*` from `.cursor/scratchpad.copy.md` or `.cursor/scratchpad.local.md` (both are local, untracked files — gitignored; the canonical keys are defined in the runbook, not the operator's file).
+
+### DQ5 — Exact fail-closed reason set + single legitimate inherit case (LOCKED)
+
+- **Winner**: per `scripts/model_tier_lib.py` `ReasonCode` (lines 38–46) + `docs/engineering/runbook.md` lines 826–833, the complete fail-closed reason set the spawn path must distinguish is:
+  - `MODEL_TIER_INVALID` — unknown tier value (DQ4 step 2 / step 4).
+  - `MODEL_CATALOG_INVALID` — malformed catalog JSON (step 3 when `MODEL_CATALOG` is unreadable).
+  - `MODEL_SLUG_UNKNOWN` — step 2 / step 4 tier key missing from catalog.
+  - `MODEL_RESOLVE_FALLBACK` — steps 3/4 lookup failed, using documented `MODEL_FALLBACK` override (this is the **only** inherit alias that is a *legitimate* outcome; it is **not** silent).
+  - `MODEL_OVERRIDE_SLUG_UNKNOWN` — step 1 direct-slug validation failure.
+  - `MODEL_ROLE_SLUG_UNKNOWN` — step 3 role catalog lookup miss (this is the D3 token; emitted when a resolvable role has no catalog entry; **not** an inherit alias).
+  - `MODEL_CATALOG_SCHEMA_V2_INVALID` — step 3 when `schema_version` is not 1 or 2.
+- **The single legitimate inherit case**: a spawn is allowed to carry `model: inherit` **only** when the 5-step chain reaches step 4 or 5 and the chain returns `ResolveResult.alias == "inherit"` **with** a provenance string (`provenance=host=cursor;path=...;step=step-4|step-5`) **and** a scratchpad-documented override (`MODEL_<PHASE>` / `MODEL_TIER_<PHASE>` / `MODEL_TIER_DEFAULT`) is present in scratchpad. A spawn that inherits **without** either of those is the **silent-inherit defect** this bug fixes.
+- **Reject**: emitting `MODEL_ROLE_SLUG_UNKNOWN` and silently inheriting (that is the defect); emitting any token that is not in `ReasonCode`; using tokens in isolation evidence for non-model concerns (the existing `PHASE_*`, `RUNTIME_PROOF_*`, `AUTO_*` families are orthogonal).
+
+### DQ6 — Role→catalog gaps tracked alongside, not force-mapped (LOCKED)
+
+- **Winner**: the role→catalog gaps `qe` / `curator` / `tech-lead` / `closure` / `sprint-plan` / `dev_difficult` must remain **unresolved-but-cited** — the existing `LOGICAL_ROLE_TO_CATALOG_KEY` (line 114) already maps `curator→dev`, `tech-lead→sa`, and `PHASE_LOGICAL_ROLE` (lines 93–111) already maps `sprint-plan` / `closure` to no explicit key (they are not in the dict — they resolve to `base_role=None` → `"dev"` per `resolve_logical_role` line 366). These are **bounded, tracked-alongside** alignment follow-ons (D8), **not** this bug's scope, **not** a schema redesign.
+- **Contract**: a spawn that hits one of these gaps (e.g. `qe` in a `CLOSURE_ROLE=qe` override) **must** fail closed with `MODEL_ROLE_SLUG_UNKNOWN` on the isolation row — never silently inherit.
+- **Catalog hygiene follow-on record** (bounded, for a future `US-0157`/`US-0158` slot): (a) `qe` key in v2 catalogs, (b) `curator` key in v2 catalogs, (c) `tech-lead` key in v2 catalogs (current mapping uses `sa`), (d) explicit `closure` / `sprint-plan` in `PHASE_LOGICAL_ROLE`, (e) update stale `notes` in `.cursor/model-catalog.local.example.*.json` (currently claim "Claude Opus 4.8 (PO, SA, …)" but the roles map to `gpt-5.6-sol-high`).
+- **Reject**: force-mapping `qe→dev` / `curator→qa` (arbitrary; would mask the D8 gap); adding a catalog v3 schema (out of scope); inventing a `roles.<unknown-key>` fallback (the `validate_roles_object` schema is strict, lines 241–255).
+
+### DQ7 — The mock-injection contract test (D5) — 8 markers (LOCKED)
+
+- **Winner**: a single new contract file **`tests/bug0022_cursor_task_spawn_model_test.py`** (active) with the mirrored template copy (parity guard `active_template_parity`). It uses a **mock Task-spawn harness** that injects a fake `Task` emission (per R-0151 / BUG-0027's mock-only precedent for host-probe-class units) to prove the spawn contract, **not** to prove live Cursor completion (D5 — "mock-only is acceptable for this spawn-path unit proof; this is not a live-Cursor-probe bug" per the backlog AC-5 at line 5478). Eight markers (all fail on current tree — the current prose has no pre-spawn resolve step):
+  1. `test_bug0022_producer_spawn_carries_catalog_model_when_role_catalog` — `MODEL_RESOLVE=role_catalog` + `MODEL_CATALOG=<balanced>` → each producer phase Task has `model: <catalog-resolved>` (not `inherit`), for the resolvable role set (po, sa/tech-lead, dev, qa, security, release). Covers AC-1.
+  2. `test_bug0022_critic_spawn_carries_roles_critic` — `MODEL_RESOLVE=role_catalog` + `MODEL_CATALOG=<balanced>` → critic Task has `model: gpt-5.6-luna-medium` (the catalog `roles.critic` for the balanced example), **not** `composer-2.5-fast`. Covers AC-2.
+  3. `test_bug0022_role_catalog_gaps_fail_closed` — catalog with `qe` / `curator` / `tech-lead` / `closure` / `sprint-plan` keys **absent** → Task for those phases carries `MODEL_ROLE_SLUG_UNKNOWN` on the isolation row and **no silent `inherit` alias**; the token is per-spawn, not an alias. Covers AC-3.
+  4. `test_bug0022_inherit_only_on_documented_fallback` — `MODEL_FALLBACK=inherit` + a documented `MODEL_<PHASE>=` / `MODEL_TIER_<PHASE>=` / `MODEL_TIER_DEFAULT=` scratchpad override → spawn may carry `inherit` **with** a `MODEL_RESOLVE_FALLBACK` reason code and provenance; no scratchpad override → the spawn is **not** silently inherit. Covers AC-4.
+  5. `test_bug0022_5_step_chain_unchanged` — `pytest -k us0101 or us0102 or us0104 or us0130` (compose-only suite) still passes **and** the model_tier_lib self-test (`python scripts/model_tier_lib.py --self-test`) still returns `[MODEL_TIER_SELF_TEST_OK]`. Covers AC-7 (sibling integrity).
+  6. `test_bug0022_provenance_isolation_row` — every producer and critic spawn isolation row in `state.md` contains an **additive** `model_id` and `model_provenance` pair (`provenance=host=cursor;path=...;step=...`), distinguishable from the existing `role` / `phase_id` / `fresh_context_marker`. Covers AC-6.
+  7. `test_bug0022_active_template_parity` — `.opencode/commands/auto.md` byte-parity between active and template (and `.cursor/agents/*.mdc` parity, and `scripts/model_tier_lib.py` / `template/scripts/model_tier_lib.py` parity). Covers AC-8.
+  8. `test_bug0022_no_sibling_mutation` — BUG-0021 / BUG-0023 / BUG-0024 / BUG-0026 / BUG-0027 / BUG-0028 / BUG-0029 / BUG-0030 ACs remain as-is (the compose-only regression suites `test_bug0021_*` / `test_bug0023_*` / `test_bug0030_*` all still pass; `US-0156` status and ACs remain OPEN in `docs/product/backlog.md`). Covers AC-7 + D9.
+- **Reject**: live Cursor IDE probe (D5 mock-only); claiming live completion (rejected); adding a per-phase JSON spawn manifest (A7).
+- **Compose-only regression guard**: the existing `test_bug0021_*` / `test_bug0023_*` / `test_bug0030_*` suites are **not** rewritten — they are run as-is in the CI pass (this proves sibling integrity by running the existing compose-only tests **after** the BUG-0022 contract change lands).
+
+### DQ8 — Resolved-vs-inherited distinction on isolation / provenance (LOCKED)
+
+- **Winner**: per-spawn isolation row in `docs/engineering/state.md` adds two **additive** fields (the existing `producer_model_id` and `critic_model_id` from US-0104 § *Isolation `model_id` v2* already exist and are not rewritten):
+  - `model_id=<resolved slug or alias | "inherit">`
+  - `model_provenance=<result.provenance string, or "unresolved-<REASON_CODE>">`
+- **Detection rule** (for a reviewer): if `model_id == "inherit"` **and** `model_provenance` does **not** contain `step=step-4` **and** `step=step-5` **or** contains no step token at all → **silent-inherit defect** (BUG-0022 class). If `model_id == "inherit"` **and** `model_provenance` contains `step=step-4` or `step=step-5` **and** a documented scratchpad override is present → legitimate `MODEL_RESOLVE_FALLBACK`. If `model_id != "inherit"` → resolved from catalog or direct override (D1/D6 satisfied).
+- **Reject**: reusing the existing `role` field to encode the model resolution (the role is a different axis); dropping the provenance token (loses D6 detectability); adding a `model_source` field (redundant with `model_provenance`).
+
+### DQ9 — Active/template parity surfaces + intentional out-of-scope files (LOCKED)
+
+- **Winner**: the active/template parity set for this bug is **exactly**:
+  - `.opencode/commands/auto.md` ↔ `template/.opencode/commands/auto.md` (byte-parity)
+  - `.opencode/agents/{po,dev,qa,security,tech-lead,curator}.mdc` ↔ `template/.opencode/agents/*.mdc` (byte-parity — frontmatter alignment: remove hard `model: inherit` from po/release; add no key to dev/qa/security/tech-lead/curator)
+  - `scripts/model_tier_lib.py` ↔ `template/scripts/model_tier_lib.py` (byte-parity — **unchanged**; the parity is a regression guard, not a change)
+  - `.cursor/model-catalog.local.example.*.json` ↔ `template/.cursor/model-catalog.local.example.*.json` **byte-parity** (8 paths, per the runbook § *Catalog example parity*: `python scripts/check_intake_template_parity.py --scope model-tier-overrides` line 1026 `MODEL_CATALOG_EXAMPLE_PARITY_SCOPE_OK`)
+  - `handoffs/po_to_tl.md` — compose-only (discovery handoff already persists at the BUG-0022 section; do not mutate)
+  - `docs/product/backlog.md § ### BUG-0022` — status and ACs remain OPEN/unchecked; a phase cites to DONE only at verify-work/closure (US-0045)
+  - `docs/product/acceptance.md § BUG-0022` — unchecked until a phase cites to DONE
+- **Intentionally out of scope** (D8 / D9 / A1 reject):
+  - `.cursor/scratchpad.copy.md`, `.cursor/scratchpad.local.md`, `.cursor/scratchpad.local.example.md` — operator-local, untracked, gitignored; not the parity set.
+  - `.cursor/model-catalog.local.json` — gitignored operator file; if absent, the D7 catalog-gap fail-closed path applies.
+  - `scripts/sovereign_critic_lib.py` — **unchanged**; composer only.
+  - `scripts/auto_outer_driver.py`, `scripts/opencode_auto_bridge.py`, `scripts/opencode_model_catalog_apply.py` — compose-only; the OpenCode dispatch class is BUG-0030 / US-0156 scope, **not** this bug's.
+  - `.opencode/plugins/orchestrator.ts` — **unchanged**; it is the OpenCode runtime and is composed-only, not rewritten (the Cursor IDE Task-spawn surface is the fix target).
+  - `.cursor/model-catalog.local.example.*.json` **schema** — unchanged; the follow-on D8 catalog hygiene (qe / curator / tech-lead / closure / sprint-plan keys, stale notes) is tracked separately (see DQ6 contract).
+  - `decisions/DEC-*.md` — **no companion DEC** for this phase; the architecture phase will determine if one is needed (per the R-0151 / R-0152 / R-0153 defect-class pattern).
+- **Reject**: adding a new `scripts/cursor_task_spawn_model_helper.py` (no host-valid need — the resolver `resolve_model_for_phase` is the callable SOT); mutating `scripts/model_tier_lib.py` or `scripts/sovereign_critic_lib.py` (DONE resolver-lib ACs — compose only); rewriting `.opencode/commands/auto.md` body beyond the BUG-0030 / US-0156 locked form (distinct class); reading or writing `.cursor/scratchpad.local.md` / `.cursor/model-catalog.local.json` (operator-local, gitignored); authoring a companion DEC in research (architecture decides); creating `sprints/S0163/` (sprint-plan owns); ticking `docs/product/acceptance.md` or flipping `### BUG-0022` status (verify-work / closure owns per US-0045).
+
+### DQ10 — Architecture anchor / R-id / sprint / DoD-gate (LOCKED)
+
+- **Architecture**: additive **`# BUG-0022`** only at `/architecture` — **no companion DEC** this phase (same defect-class pattern as BUG-0021 / BUG-0023 / BUG-0024 / BUG-0025 / BUG-0027 / BUG-0030). Architecture pins: (a) the exact `.opencode/commands/auto.md` pre-spawn step wording + template twin; (b) the `.opencode/agents/{po,dev,qa,security,tech-lead,curator}.mdc` frontmatter changes (remove `model: inherit` from po/release — they become keyless like dev/qa/security/tech-lead/curator) + template twins; (c) the isolation `model_provenance` token format; (d) the 8 `test_bug0022_*` markers from DQ7 + template twin; (e) the runbook § *Role catalog enablement recipe* addendum (one line: "the `/auto` orchestrator MUST run `resolve_model_for_phase` per phase before Task spawn and record `model_provenance` on the isolation row"); (f) the `check_intake_template_parity.py --scope model-tier-overrides` regression guard (already exists — compose-only).
+- **R-id**: author **`R-0154`**. Do **not** wipe R-0150 / R-0151 / R-0152 / R-0153 / R-0140.
+- **Expected sprint**: **S0163** (S0162 = US-0156 verify-work; S0161 = BUG-0030 DONE; do **not** create this phase).
+- **DoD gate (D10)**: BUG-0022 is the last **OPEN** DoD blocker for US-0156 (BUG-0027 **DONE**). Closing BUG-0022 **unblocks** US-0156 closure — but this research phase **does not** tick or release US-0156 (that is US-0156's own verify-work / closure per US-0045).
+- **Reject**: creating `sprints/S0163/` in research; creating a `# BUG-0022` architecture body in research (architecture owns); authoring a DEC in research; claiming a live Cursor IDE completion; mutating US-0156.
+
+### Risks and mitigations
+
+| Risk | Mitigation |
+|---|---|
+| D8 catalog-hygiene follow-on looks like a schema redesign | DQ6 contract: gaps `qe` / `curator` / `tech-lead` / `closure` / `sprint-plan` are **recorded** as a bounded follow-on in the isolation row (with `MODEL_ROLE_SLUG_UNKNOWN` token) and in a future `US-xxxx` backlog row — explicitly **out of scope** here. |
+| Agent frontmatter change (remove `model: inherit` from po/release) looks like a schema redesign | It is a **frontmatter alignment** only — the resolver `resolve_model_for_phase` is the SOT and is unchanged. The frontmatter becomes keyless (like dev/qa/security/tech-lead/curator). No new key, no new schema. |
+| "Silent inherit" vs "documented fallback" ambiguity | D5 (DQ7 marker 4) + D6 (DQ8) — the isolation row always carries `model_provenance`; the reviewer can distinguish. The fail-closed reason set is exact (7 tokens, DQ5). |
+| `model_provenance` field looks like a schema change | It is **additive** (the isolation row is a free-form key-value record in `state.md`; the existing `model_id` field is not removed). Per US-0104 § *Isolation `model_id` v2* the row already carries `producer_model_id` and `critic_model_id` — the additive `model_provenance` is orthogonal. |
+| The OpenCode orchestrator (`runAutoLifecycle`) is not touched — is the bug class the same? | No — BUG-0022 is the **Cursor IDE Task-spawn** class; BUG-0030 / US-0156 is the **OpenCode Markdown-command** class. The two are distinct defect classes (D9 sibling boundary). The Cursor IDE `/auto` surface is the target of this bug. |
+| Catalog-hygiene follow-on (qe/curator/tech-lead/closure/sprint-plan keys) gets silently absorbed | The DQ6 contract explicitly records it as a bounded follow-on for a future `US-xxxx` slot. The follow-on row is **not** this bug's scope; the resolver still emits `MODEL_ROLE_SLUG_UNKNOWN` for the gap (D5 fail-closed). |
+| `MODEL_FALLBACK=inherit` is treated as a silent default | D4 (DQ5) + D5 (DQ7 marker 4) — the inherit alias is **only** legitimate when a documented scratchpad override is present and the 5-step chain reaches step 4 or 5. The isolation row distinguishes. |
+| Sibling bug ACs (BUG-0021/0023/0024/0026/0027/0028/0029/0030) get mutated by the parity change | DQ7 marker 8 (`test_bug0022_no_sibling_mutation`) + DQ9 (active/template parity set is **exactly** the 5 surfaces, nothing else). The compose-only regression suites (`test_bug0021_*` / `test_bug0023_*` / `test_bug0030_*`) are run as-is after the BUG-0022 contract change lands. |
+| A live Cursor IDE UAT probe is claimed | D5 is **mock-only** per the backlog AC-5 ("Mock-only is acceptable for this spawn-path unit proof; this is not a live-Cursor-probe bug"). The live Cursor IDE run is operator UAT post-ship (similar to R-0152 NB1 "provider completion not claimed"). |
+
+### Architecture seeds (preview)
+
+- `/architecture` authors additive **`# BUG-0022`** (no companion DEC this phase) and locks the 5 surfaces above (DQ9) at byte-parity. Architecture pins the exact prose wording, the `model_provenance` token format, and the 8 `test_bug0022_*` markers from DQ7.
+- `/sprint-plan` materializes **S0163** (≤12 tasks from architecture seeds; the DQ7 markers map 1:1 to tasks).
+- `/execute` (fresh dev) implements the 5-surface change + the 8 test markers.
+- `/qa` + `/verify-work` (fresh qa) run the 8 markers + the compose-only regression suites and tick AC-1..AC-8 in `docs/product/backlog.md § ### BUG-0022` (ACs) and `docs/product/acceptance.md` (primary row) **only** after independent verification.
+- `/release` (fresh release) ships the kit with the 5-surface change + the 8 markers + the runbook addendum.
+- `/closure` (fresh curator, AUTO_ROLE_CLOSURE alternate) flips `### BUG-0022` Status OPEN→DONE and ticks the acceptance row US-0045.
+- `/refresh-context` (fresh curator) refreshes `docs/engineering/state.md`, `docs/engineering/decisions.md`, `docs/engineering/sovereign-memory/retrospectives/S0163.md`, and the `docs/engineering/research.md § R-0154` delivery closure trailer.
+
+### Research attestation — architecture handoff (2026-09-28)
+
+- **Producer**: `tech-lead` on `bug-target=BUG-0022`, `/research`, fresh subagent (BUG-0006). No runtime proof issued this phase (D5 mock-injection is execute/verify-work scope).
+- **Discovery consumed**: `docs/product/vision.md § Discovery Notes — BUG-0022` (2026-09-28), `docs/product/backlog.md § ### BUG-0022` discovery_notes (2026-09-28), `handoffs/po_to_tl.md § Discovery handoff — BUG-0022` (2026-09-28) — **all D1–D10 LOCKED** and **DQ1–DQ10** carried forward as **research** questions.
+- **Research DQ1–DQ10**: **LOCKED** above.
+- **Approach verdict**: **A1 (A*)** — resolve-then-spawn contract. Rejected A2–A12 (in-order, including the two "silent-inherit-accept" and "schema-redesign" paths).
+- **decision_gate**: **false**.
+- **Sprint**: expected **S0163** (S0162 = US-0156 verify-work). Do **not** create this phase.
+- **DoD gate (D10)**: BUG-0022 is the last OPEN DoD blocker for US-0156. Closing it unblocks US-0156 closure. This phase **does not** tick or release US-0156.
+- **Next**: `/architecture` in a fresh **tech-lead** context. Author `# BUG-0022` additive (no companion DEC). Do **not** implement, create a sprint, or mutate backlog/acceptance in research.
+- **Siblings**: BUG-0021 / BUG-0023 / BUG-0024 / BUG-0026 / BUG-0027 / BUG-0028 / BUG-0029 / BUG-0030 **do not merge**, **do not drain**, **do not reopen**; US-0101 / US-0102 / US-0104 / US-0130 **do not reopen** (resolver-lib ACs); US-0156 **does not tick** (DoD gate is BUG-0022's closure, not US-0156's own).
+- **Status**: BUG-0022 remains **OPEN**. `docs/product/acceptance.md` BUG-0022 row remains **unchecked**. `docs/product/backlog.md § ### BUG-0022` remains **OPEN**, AC-1..AC-8 **unchecked**.
+
+## R-0155 — BUG-0031 `/closure` cannot complete on OpenCode: no spawnable closure role is authorized to write the canonical DONE-flip paths
+
+- **Date**: 2026-10-01. **Bug**: BUG-0031. **Status**: current (delivered — `/architecture` next; no delivery closure trailer yet). **Confidence**: high.
+- **Producer**: `tech-lead` on `bug` target BUG-0031, `/research`, fresh subagent (BUG-0006). No runtime proof issued this phase (D9 mock-injection / permission-map proof belongs to execute/verify-work per the research persistence note). `fresh_context_marker=tl-BUG0031-research-20261001T141000Z-fresh`; `bug_id=BUG-0031`; `discovery_consumed=po-BUG0031-discovery-20261001T124000Z-fresh` (2026-10-01 DISCOVERY_PASS).
+- **ID policy**: Author **`R-0155`** (next free). Highest existing **`R-0154`** (BUG-0022) — **do not wipe or renumber**. `ID_NAMESPACE_BOOTSTRAP=0`.
+- **Linked**: BUG-0031 (this defect; OPEN — not flipped this phase); **`qe`** (not spawnable — no `.opencode/agents/qe.md`, no `**/qe.mdc`, no TUI/RPC registration); **`curator`** (SELECTED owner — spawnable `mode: subagent`; sanctioned `AUTO_ROLE_CLOSURE` alternate per DEC-0051 §1 L41 / §2 L53 / §3 L70-72 **and** DEC-0052 §4 L87-89); **`qa`** (rejected owner — not in closure role list; holds `state.md` but not the 3 flip paths); **S0163/BUG-0022** (live-falsified consumer — `CLOSURE_VERIFY_PASS` + blocked flip — do **not** mutate, do **not** complete); **US-0156** (DoD gate — BUG-0022 DONE; do **not** tick or release); **US-0045 / DEC-0025** (canonical status owner — closure owns DONE flip); **US-0120** (`AUTO_ROLE_CLOSURE` contract); **BUG-0016** (DONE — general bash/edit posture + `S*` globs — additive-only under its own guard, **not reopened**); **BUG-0027** (DONE — manual-phase persistence, **distinct mechanism**); **BUG-0024 / BUG-0030** (dispatch class — distinct); **BUG-0023 / BUG-0025 / BUG-0028 / BUG-0029** (do not drain/reopen); **US-0047/0048/0049 / US-0120 / US-0122 / US-0124/0125/0126** (DONE — do not reopen); DEC-0152 (deny-by-default ordering — **compose, do not rewrite**); DEC-0051 (phase→role contract — compose); DEC-0052 (phase plan + `AUTO_ROLE_CLOSURE` — compose); **R-0154** (BUG-0022 — compose, not rewrite).
+- **Topic**: On the OpenCode host, `/closure` cannot complete: the primary closure role `qe` is **not spawnable** (no `qe` subagent type), and the spawnable closure role **`curator`** plus `qa` have **no write authorization** over exactly **three** of the four canonical DONE-flip paths — `docs/product/backlog.md` `Status: OPEN`→`DONE` (+AC), `docs/product/acceptance.md` row `[ ]`→`[x]`, `sprints/S0xxx/closure-verification.md` (create) — while **`docs/engineering/state.md`** (the 4th) is **already** allowed (curator L7). Result: hard fail-closed `CLOSURE_BLOCKED_PERMISSION_MATRIX` and only an operator hand-flip workaround. Live-falsified in S0163/BUG-0022 (`CLOSURE_VERIFY_PASS` + blocked flip).
+- **Query (DQ1–DQ10, discovery-locked; research locks the answers with evidence)**: DQ1 curator = the ONE authorized spawnable closure role · DQ2 exact parity delta (active+template) · DQ3 additive-append vs deny-reorder under DEC-0152 L40-43 · DQ4 state.md checkpoint already held · DQ5 closure-verification.md `S*` wildcard · DQ6 (A2) Cursor/OpenCode surface parity note · DQ7 (A3) `qa` fallback (default **no**) · DQ8 fail-closed diagnostic contract (3 denied paths + spawnable role) · DQ9 `test_bug0031_*` composing with `test_bug0027_*` · DQ10 sibling-integrity + independent R-0155 free-ID check.
+- **EARLY_RESEARCH posture**: EARLY_RESEARCH=1 — this phase **authors** `R-0155` and LOCKS DQ1–DQ10. Compose (do **not** wipe/renumber) **R-0150 / R-0151 / R-0152 / R-0153 / R-0154** and **DEC-0051 / DEC-0052 / DEC-0152**.
+- **Producer consumed**: discovery D1–D10 from `docs/product/vision.md § Discovery Notes — BUG-0031` (2026-10-01), `docs/product/backlog.md § ### BUG-0031` discovery_notes, `handoffs/po_to_tl.md § Discovery handoff — BUG-0031` (appended). No runtime proof issued or consumed (D9 mock-injection proof is execute/verify-work scope).
+
+### DQ1 — Curator is the ONE authorized spawnable closure role on OpenCode (LOCKED)
+
+- **Winner**: **`curator`**. It is the sanctioned `AUTO_ROLE_CLOSURE` alternate (DEC-0051 §1 L41 `qe | curator`; §2 L53; §3 L70-72 `role:qe` default / `role:curator` override; DEC-0052 §4 L87-89 `role:qe or override`) and is **spawnable in this kit** (`.opencode/agents/curator.md` exists, `mode: subagent` L3). `qe` is the default in the contract but **not spawnable on OpenCode** (no `.opencode/agents/qe.md`; no `**/qe.{md,mdc}`; no TUI/RPC registration; `qe` is a Cursor-host shape only) — so per DEC-0051 §3 L70-72 the override path **must** resolve to the spawnable sanctioned alternate = **`curator`**.
+- **Reject**: `qe` as owner (unspawnable host type — no file, no registration); a "new `qe`" type (scope invention); `qa` as owner (not in the closure role list — see DQ7).
+- **Evidence**: `.opencode/agents/curator.md` L1-17 (`mode: subagent` L3, `edit:` allow set L5-14); `.opencode/agents/` directory contains `{auto,curator,dev,po,qa,release,security,tech-lead}` — **no `qe.md`**; `template/.opencode/agents/` same set, **no `qe.md`**; DEC-0051 L41 / L53 / L70-72; DEC-0052 §4 L87-89; `.cursor/agents/` (no `qe.mdc`); S0163 live-record (state.md L1575 "qe ... curator alternate performs canonical flip per DEC-0052").
+
+### DQ2 — Exact parity delta (curator active ↔ template, byte-level before→after) (LOCKED)
+
+- **Winner**: Add **exactly three** `edit:` `allow` rows to **both** `.opencode/agents/curator.md` (active) and `template/.opencode/agents/curator.md` (template), **appended after the last existing allow** (after `handoffs/archive/**`) and **before `bash: ask`**, preserving deny-first ordering. Both files are byte-identical today (SHA-256 `9CC4CC11…624595`), so the SAME delta lands in both (US-0017 parity).
+  - **BEFORE** (active L6-L14 = template L6-L14):
+    ```
+       6   "**": deny
+       7   "docs/engineering/state.md": allow
+       8   "docs/engineering/state-archive/**": allow
+       9   "docs/engineering/decisions.md": allow
+      10   "docs/engineering/research.md": allow
+      11   "handoffs/resume_brief.md": allow
+      12   "handoffs/portfolio_state.md": allow
+      13   "handoffs/continuation_hygiene.md": allow
+      14   "handoffs/archive/**": allow
+    ```
+  - **AFTER (append 3 rows; existing L6-L14 unchanged in order):**
+    ```
+       6   "**": deny
+       7   "docs/engineering/state.md": allow
+       8   "docs/engineering/state-archive/**": allow
+       9   "docs/engineering/decisions.md": allow
+      10   "docs/engineering/research.md": allow
+      11   "handoffs/resume_brief.md": allow
+      12   "handoffs/portfolio_state.md": allow
+      13   "handoffs/continuation_hygiene.md": allow
+      14   "handoffs/archive/**": allow
+    NEW:   "docs/product/backlog.md": allow
+    NEW:   "docs/product/acceptance.md": allow
+    NEW:   "sprints/S*/closure-verification.md": allow
+    ```
+  - `bash: ask` / `task: deny` (L15-16) **stay**. After the 3-row append, active and template remain **byte-identical** (parity recomputed by the DQ9 test).
+- **Reject**: reordering the existing allow rows; moving the `"**": deny`; granting a 4th path (over-broad); a specific-sprint literal in place of the wildcard.
+- **Evidence**: `.opencode/agents/curator.md` L6-L16 (active); `template/.opencode/agents/curator.md` L6-L16 (template) — both identical (SHA-256 `9CC4CC11B07BE362B86A20B7C8405F2ABE30064C8E791A4653D99D6B24624595`); discovery D2 (vision.md L2845); po_to_tl.md L695-706; state.md L1620-1623 (the 4 canonical flip surfaces).
+
+### DQ3 — Additive-append composes with DEC-0152 (deny-first) and BUG-0016 (LOCKED)
+
+- **Winner**: The 3 rows are **appended after** the existing allow set; the broad `"**": deny` (L6) is **not reordered, widened, or rewritten**; last-matching-wins is preserved (DEC-0152 §Consequences L40-43). This is an **additive** change to the curator allow set only — it does **not** reopen or mutate BUG-0016's DONE baseline (general bash/edit posture + `S*` glob grants for po/tech-lead/curator/dev/qa/release), which is compose-only under its own additive-only guard.
+- **Reject**: moving the broad deny after the path-allows (breaks last-matching-wins); broadening `"**"`; mutating BUG-0016's matrix or DEC-0152.
+- **Evidence**: DEC-0152 §Consequences L40-43 (broad-deny-before-path-allow, last-matching-wins); BUG-0016 DONE baseline (acceptance L207 `[x]`; vision L2829 "composes BUG-0016, does not reopen it"); `.opencode/agents/curator.md` L6 (broad deny stays L6).
+
+### DQ4 — state.md checkpoint already held by curator (no delta) (LOCKED)
+
+- **Winner**: `docs/engineering/state.md` is **already** `allow` for curator at **L7** (active **and** template). The 4th flip (closure-checkpoint append-bottom, US-0058 / DEC-0040) therefore needs **no** new allow. The S0163 block's state-write half was never the problem — the 3 missing paths were.
+- **Reject**: adding a redundant `state.md` allow; assuming all 4 flips are missing.
+- **Evidence**: `.opencode/agents/curator.md` L7 `"docs/engineering/state.md": allow`; `template/.opencode/agents/curator.md` L7 (identical); discovery D4 (po_to_tl.md L715); vision L2845 (D2 "state.md no change").
+
+### DQ5 — `sprints/S*/closure-verification.md` wildcard shape (resolves A4) (LOCKED)
+
+- **Winner**: Use the **`S*` wildcard** (`"sprints/S*/closure-verification.md": allow`) to match the **existing per-role `S*` allow pattern** used by every other role — parity with the kit's established glob convention. A specific-sprint literal (e.g. `sprints/S0163/...`) would require per-sprint re-amendment and is a US-0017 drift anti-pattern.
+- **Evidence (each role's sprint-scope `S*` declares)**:
+  - dev.md L11-13: `"sprints/S*/progress.md"`, `"sprints/S*/summary.md"`, `"sprints/S*/qa-findings.md"`
+  - tech-lead.md L13-14: `"sprints/S*/sprint.md"`, `"sprints/S*/tasks.md"`
+  - release.md L13: `"sprints/S*/release-findings.md"`
+  - qa.md L7-11: `"sprints/S*/qa-findings.md"`, `"sprints/S*/plan-verify.json"`, `"sprints/S*/verify-work-findings.md"`, `"sprints/S*/uat.md"`, `"sprints/S*/uat.json"`
+  - closure-verification.md target surface: `.cursor/commands/closure.md` L19/L51/L117-120/L139 (`sprints/Sxxxx/closure-verification.md`); live S0163 = `sprints/S0163/closure-verification.md` (state.md L1622).
+- **Reject**: a specific-sprint literal (per-sprint re-amendment, drift risk).
+
+### DQ6 — Cursor-surface `closure.md` OpenCode parity note (resolves A2) (LOCKED)
+
+- **Decision**: **YES — a short additive parity note is recommended** (not a blocker; not a unilateral PO edit). `closure.md` is **host-agnostic**: `qe` (default) appears at L4/L9, `qe|curator` at L28/L120 (via DEC-0052 §2 override / §3 preflight). It is the single-source closure contract. The OpenCode-host reality is that **`qe` is unspawnable**, so the role must be resolved to the sanctioned `curator` alternate (DQ1). Because there is **no existing prose in `closure.md` that distinguishes OpenCode vs Cursor closure-role availability** (the file is host-agnostic), a **short additive note** at `.cursor/commands/closure.md` L9-10 (Phase role / override block) is the least-disruptive place to record the parity + the BUG-0031 authorization requirement:
+  > **OpenCode-surface parity note (BUG-0031 / R-0155)**: On an OpenCode host the default `qe` closure subagent is **not spawnable** (no `qe` subagent type). Resolve `/closure` to the sanctioned alternate **`curator`** (via `AUTO_ROLE_CLOSURE=curator`; DEC-0052 §2/§3). The spawning role must be **authorized to write** the three closure-owned flip paths it does **not** already hold — `docs/product/backlog.md` (status+AC), `docs/product/acceptance.md` (row), and `sprints/S*/closure-verification.md` (create). `docs/engineering/state.md` checkpoint is already curator-held. If a spawnable closure role lacks these, `/closure` fails closed with **`CLOSURE_PERMISSION_FLIP_PATHS_DENIED`** (DQ8) — **never** an operator hand-flip.
+  - **Placement**: `.cursor/commands/closure.md` L9-10 (Phase role / `override` block) — additive, after the existing override line, before `## Phase responsibility`.
+  - **Not required for the fix on the OpenCode surface** (the actual bug/fix is the curator permission map; this note documents cross-surface parity + the denial diagnostic). Discovered that the `qa`/`curator` prose is already host-agnostic at L120, so the note is a **recording/observability** addition, not a contract redesign.
+  - **Residual risk**: Low — additive prose; does not change the `qe|curator` role set or the flip semantics; `qa` is still **not** a sanctioned closure alternat (DQ7). If a PO questions scope, it can be dropped without affecting the OpenCode fix.
+
+### DQ7 — `qa` fallback for the 3 flip paths (resolves A3) (LOCKED)
+
+- **Decision**: **NO — do not grant `qa` the 3 additional flip-path allows.** `qa` is **not** in the closure role list:
+  - `closure.md` L9 role = `qe`; L28/L120 role list = `qe|curator` — **`qa` absent**.
+  - DEC-0051 §1 L41 (closure row): `qe, curator (via AUTO_ROLE_CLOSURE override)` — **`qa` absent**; §2 L53 `AUTO_ROLE_CLOSURE`: values `qe | curator`.
+  - DEC-0052 §4 L87-89: closure capability gate = `role:qe or override` (curator). Fail-closed `PHASE_CAPABILITY_MISSING`.
+  - qa is the **quality-gate** owner (plan-verify / verify-work / qa-findings / uat) — it does **not** hold backlog-STATUS / acceptance-row / closure-verification.md as a role-responsibility surface (qa L7-11 are QA-owned artifacts only: `qa-findings.md`, `plan-verify.json`, `verify-work-findings.md`, `uat.{md,json}`; L13-15 QA handoffs).
+  - Granting `qa` the 3 flip paths as a "defense-in-depth fallback" would (a) widen the closure role set beyond the documented `qe|curator` closed set (a **DEC-0051 §2 / DEC-0052 §4 amendment** — out of BUG-0031 scope), (b) violate DEC-0051 §3 L72 "curator must NOT write qa-owned surfaces" by symmetry (qa writing backlog/acceptance closure-verification.md is a role-boundary expansion), and (c) introduce a second writable path to the 3 flip paths = **least-privilege violation** (BUG-0016 additive-only guard is about **curator**, not qa).
+  - The **only** spawnable, sanctioned, least-privilege owner is **`curator`** (DQ1). If a host genuinely lacks curator, the correct response is the **fail-closed diagnostic** (DQ8), **not** a qa fallback.
+- **Evidence**: `closure.md` L9 / L28 / L120; DEC-0051 §1 L41, §2 L53, §3 L70-72; DEC-0052 §4 L87-89; `.opencode/agents/qa.md` L5-16 (qa map has none of the 3 flip paths); vision L2880 (DQ7 recommendation: no); po_to_tl L694 (qa REJECTED).
+
+### DQ8 — Fail-closed diagnostic contract (resolves A1) (LOCKED)
+
+- **Decision**: When no spawnable closure role is authorized over the 3 closure-owned flip paths, `/closure` MUST emit a **stage-precise** reason code (compose the existing vocabulary at closure.md L161-171; do **not** replace) that **names the exact denied paths** + **the spawnable closure role** + an explicit **remediation** — and **never** silently falls to an operator hand-flip.
+  - **Recommended stage-precise token**: **`CLOSURE_PERMISSION_FLIP_PATHS_DENIED`** (new, additive to the closure reason-code family; aligns with the `CLOSURE_*` / `PHASE_*_OVERRIDE_*` naming at L161-171: `CLOSURE_RELEASE_EVIDENCE_MISSING`, `CLOSURE_VERIFICATION_FAILED`, `PHASE_OVERRIDE_EVIDENCE_MISSING`, etc.).
+  - **Exact output shape** (emitted into the closure-verification.md `stop_reason` / `normalization_notes` and the state.md closure block, and surfaced to the operator):
+    ```
+    reason_code: CLOSURE_PERMISSION_FLIP_PATHS_DENIED
+    phase_id: closure
+    spawnable_closure_role: curator    (qe unspawnable on this host)
+    denied_flip_paths:
+      - docs/product/backlog.md
+      - docs/product/acceptance.md
+      - sprints/S*/closure-verification.md
+    already_authorized:
+      - docs/engineering/state.md
+    remediation: grant the three above to curator in BOTH
+      .opencode/agents/curator.md and template/.opencode/agents/curator.md
+      active ↔ template parity per DEC-0152 L40-43 (additive, last-matching-wins);
+      re-run /closure. Do NOT operator hand-flip.
+    ```
+  - **Placement**: the closure phase's stop matrix (closure.md `## Stop conditions` L56-74 → add the stage; `## Fail-safe reason codes` L161-171 → add the row `CLOSURE_PERMISSION_FLIP_PATHS_DENIED` with a remediation column "authorize the 3 flip paths to curator + re-run"); and the orchestrator's post-closure verification (closure.md L106-113) must **not** silently hand-flip when the flip writes are denied — it must surface the code.
+  - **Residual risk**: Low-medium — the token is a **new** `CLOSURE_*` in the family; architecture must add it to the reason-code registry (runbook L4351-4357 / `docs/engineering/reason_codes.md`) and to the `test_bug0031_*` mock (DQ9) so the denial path is asserted, not just documented.
+- **Evidence**: closure.md L161-171 (existing reason codes), L106-113 (orchestrator verification), L56-74 (stop conditions); state.md L1572-1642 (S0163 live `CLOSURE_VERIFY_PASS` + blocked flip — the diagnostic gap); acceptance L222 (BUG-0031 "fail-closed `CLOSURE_BLOCKED_PERMISSION_MATRIX` and operator hand-flip workaround"); intake JSON L49 (quoted user text: "muss /closure die exakten verweigerten Pfade und die fehlende spawnbare Rolle melden und NICHT schweigend in einen Operator-Workaround abfallen"); vision L2846 (D3 candidate tokens); runbook L4351-4357.
+
+### DQ9 — `test_bug0031_*` compose-with-`test_bug0027_*` shape (LOCKED)
+
+- **Decision**: Define an **additive** (not a rewrite) `tests/bug0031_opencode_closure_flip_authz_test.py` (active) + the **`template/tests/`** twin (parity). Mirror the **`test_bug0027_*`** marker pattern (numbered marker tests, byte-parity assert, deny-before-allow index assert at L225-251). **Do not modify** `test_bug0027_*` or BUG-0016's tests.
+  - **Test IDs** (mirroring `test_bug0027_manual_phase_persists_isolation` / `test_bug0027_permission_matrix_phase_writes`):
+    1. `test_bug0031_curator_flip_paths_present_active` — **curator active**: all **4** flip paths present in `edit:` allow set (3 new + `state.md` L7) AND `"**": deny` (L6) precedes all allows (deny-first); `bash: ask` / `task: deny` unchanged.
+    2. `test_bug0031_curator_flip_paths_present_template` — same asserts on **template** curator.
+    3. `test_bug0031_curator_active_template_byte_parity` — `active.read_bytes() == template.read_bytes()` (US-0017 parity; the SAME 3 rows in both — po_to_tl L705, discovery D7 vision L2850).
+    4. `test_bug0031_qa_flip_paths_denied` — **qa active + template**: the 3 flip paths are **NOT** in qa's allow set (least-privilege; DQ7 NO).
+    5. `test_bug0031_deny_before_allow_index` — across both curator files: `"**": deny` index **<** each new allow index (last-matching-wins, DEC-0152 L40-43), mirroring `test_bug0027_permission_matrix_phase_writes` L225-251.
+    6. `test_bug0031_sprint_wildcard_shape` — asserts the **wildcard** literal `"sprints/S*/closure-verification.md"` (DQ5), and that none of the role maps pins a specific-sprint literal (no `sprints/S0163/...` in the flip allow set).
+    7. `test_bug0031_fail_closed_diagnostic_token_present` — mock injection: assert the **`CLOSURE_PERMISSION_FLIP_PATHS_DENIED`** token (DQ8) is the stage-precise denial surfaced (in closure.md stop conditions / reason-code registry and/or a mock ctx), and that it **names the 3 denied paths** + **the spawnable role `curator`** + remediation; assert it composes with (does not replace) the existing `CLOSURE_*` tokens.
+    8. `test_bug0031_no_sibling_mutation` — assert BUG-0016 / BUG-0022 / BUG-0027 / US-0156 / US-0045 / US-0120 / US-0122 / BUG-0028 / BUG-0029 are **not** mutated (DQ10 sibling-integrity); US-0156 AC-7 remains **not** ticked; BUG-0022/BUG-0027 rows remain un-mutated.
+  - **Compose contract**: tests 1-6 are **pure** read/parse of the agent frontmatter (no host probe). Test 7 is mock-injection (UAT_PROBE_FORBIDDEN — same as `test_bug0027_*` marker 4/5). Test 8 is read-only assertion. The `test_bug0027_*` suite (markers 1-10, esp. L225-251 deny-before-allow + byte-parity) **must continue to pass unmodified** — it covers the *dev/qa* permission matrix; `test_bug0031_*` covers the *curator* flip authorizations **additively**. Parity is enforced by the **`test_bug0031_curator_active_template_byte_parity`** marker (mirroring `test_bug0027_active_template_parity` L182-222).
+- **Reject**: a new role-spawn live probe (UAT_PROBE_FORBIDDEN); modifying `test_bug0027_*` or BUG-0016 tests; a specific-sprint literal in the allow set (DQ5 reject).
+- **Evidence**: `tests/bug0027_opencode_manual_phase_persist_test.py` (marker pattern, byte-parity marker L182-222, deny-before-allow marker L225-251); po_to_tl L720 (DQ9 "additive test ... composes (not breaks) test_bug0027_* / BUG-0016"); vision L2847 (D4 "compose with test_bug0027_*"); acceptance L222 (5 ACs); intake JSON L49 (reproducible test requirement).
+
+### DQ10 — Sibling-integrity scope + independent R-0155 free-ID (LOCKED)
+
+- **Decision**: **Sibling-integrity scope** (closing BUG-0031 does **not** touch — compose-only):
+  - **Bugs (do not reopen / drain / mutate)**: BUG-0016 (DONE baseline, additive-only under its own guard), BUG-0022 (OPEN — S0163 flip is BUG-0022's **own** post-fix closure; BUG-0031 **unblocks**, does **not** perform), BUG-0027 (DONE — persistence, distinct), BUG-0023 / BUG-0024 / BUG-0025 / BUG-0026 / BUG-0028 / BUG-0029 / BUG-0030 (dispatch / unrelated classes).
+  - **Stories (do not reopen / tick)**: US-0045 (canonical status owner), US-0120 (closure contract), US-0122, US-0124 / US-0125 / US-0126, US-0047 / US-0048 / US-0049, **US-0156** (AC-7 DoD gate = BUG-0022 DONE — **this phase does not tick or release US-0156**).
+  - **Decisions (do not rewrite; compose)**: DEC-0051 (phase→role), DEC-0052 (phase plan + `AUTO_ROLE_CLOSURE`), DEC-0152 (deny-by-default — the **additive amendment**, if approved at `/architecture`, is architecture's job; **research does not author a DEC**).
+  - **R-ID free check (independent re-verification — did not trust discovery's claim)**: `docs/engineering/research.md` has **152** `## R-` headings; the **highest** is **`## R-0154`** (L15720, BUG-0022). **`## R-0155` is free** — no collision, **not** reused/wiped. This entry (R-0155) is the correct next allocation. **Do not wipe R-0154.** Re-verifying the heading count / highest R independently (grep of `^## R-0\d{3}` → 152 matches; last = R-0154) confirms the allocation.
+- **Reject**: any sibling mutation; reusing/wiping R-0154; authoring a DEC in research; flipping BUG-0031 or its acceptance row.
+- **Evidence**: vision L2849 (D6 sibling integrity), L2868-2871 (sibling boundary), L2889 (DoD #4), L2913 (isolation+STOP); po_to_tl L721 (DQ10 sibling-integrity + R-0155 free); backlog `### BUG-0031` L5661-5671 (related_bugs / related_us); acceptance L222 (BUG-0031 unchecked); research.md **count 152 R-headings, highest R-0154 at L15720** (independently re-verified).
+- **Residual risk**: Low — sibling boundaries are all DONE or OPEN-and-compose; the R-0155 allocation is independently re-verified (not discovery's claim); the only **new** artifacts are the curator 3-allow delta (active+template) + the optional `closure.md` parity note (DQ6) + the `test_bug0031_*` suite (DQ9) + the DEC additive amendment (architecture's job, not research's).
+
+### Approach / verdict (A1 winner notation, matching R-0154 "A1 (A*)" structure)
+
+- **Approach verdict**: **A1 (A\*) curator-only 3-allow additive parity repair** is the only contract-correct direction. **`curator`** is the single spawnable, sanctioned, least-privilege owner (DQ1); the delta is **3 additive `edit:` allows** in **both** active + template (DQ2), **appended** so deny-first ordering is preserved (DQ3); `state.md` is **already** held (DQ4); the flip artifact uses the **`S*` wildcard** (DQ5); the Cursor-surface `closure.md` gets a **short additive OpenCode-parity note** (DQ6); **`qa` is NOT granted** the flip paths (DQ7); the fail-closed diagnostic is the stage-precise **`CLOSURE_PERMISSION_FLIP_PATHS_DENIED`** naming the 3 denied paths + the spawnable role (DQ8); `test_bug0031_*` is an **additive** suite composing with `test_bug0027_*` (DQ9); siblings compose-only and **R-0155 is genuinely free** (DQ10). **Rejected**: making `qe` spawnable (scope invention); granting `qa` the flip paths (DEC-0051/0052 closed-set violation + least-privilege); a specific-sprint literal (drift anti-pattern); reordering the broad deny (breaks last-matching-wins); rewriting DEC-0152/0051/0052 (architecture's job); a live OpenCode host probe (UAT_PROBE_FORBIDDEN).
+- **decision_gate**: **false**. EARLY_RESEARCH=1 (this phase authored R-0155; no implementation, no DEC, no sprint). Do **not** flip BUG-0031 status or tick the acceptance row. Do **not** author a DEC.
+- **Companion DEC**: **none from research** — an additive amendment to **DEC-0052 §4** (closure capability: add the 3 flip-path authorization to the sanctioned closure role on deny-by-default hosts) **or** a new **DEC-01xx** is **`/architecture`'s** job if it deems the authorization a DEC-level contract, not a permission-map row. Research **does not author a DEC**.
+- **Out of scope (carry-forward from discovery)**: no `qe` spawnable type; no DEC authoring (research); no `.opencode/` / `.cursor/` config edits in **research** (the curator permission-map **write** is `/execute`'s job once research+architecture lock it); no `scripts/` **logic** authoring; no npm publish / git push / `.env` reads; do not drain BUG-0022 / BUG-0028 / BUG-0029 / BUG-0026; do not reopen BUG-0016 / BUG-0027 / siblings.
+- **EARLY_RESEARCH note (prior research anchors, cited — not reinvented)**:
+  - **R-0153** (US-0156 OpenCode `/auto` continuous lifecycle parity) and **R-0154** (BUG-0022 role-catalog `model:` inherit) define the **OpenCode host surface**, the **spawn-only Task isolation** (BUG-0006), the **fresh_context_marker** / isolation-evidence pattern, and the **active+template byte-parity** + parity-script convention this entry reuses (DQ9 mirrors `test_bug0027_*` which mirrors R-0153/R-0154's parity markers). Cite, do not rewrite.
+  - **DEC-0051 / DEC-0052 / DEC-0152** (closure role contract + phase plan + deny-by-default ordering) are the **permission/contract prior art** this entry composes — DQ1/DQ3/DQ7/DQ8 all cite these rather than reinventing.
+  - **BUG-0027** (manual-phase persistence, R-0151-class) is the **test-pattern prior art** for DQ9's mock-injection + parity-marker shape; **BUG-0016** is the **permission-baseline prior art** for DQ3's additive-only guard.
+- **Next**: `/architecture` in a fresh tech-lead context. Author `# BUG-0031` (+ the curator 3-allow delta, active+template parity, the optional `closure.md` DQ6 note, the `test_bug0031_*` suite, and the DEC additive amendment **if** architecture deems the authorization DEC-level). Do **not** implement, create a sprint, flip BUG-0031, or tick its acceptance row in research. Do **not** author a DEC from this phase.

@@ -1,3 +1,156 @@
+## Sprint-plan handoff — BUG-0022 / S0163 — `/execute` next (fresh dev)
+
+- **Phase completed**: sprint-plan. **Role**: tech-lead. **Bug**: BUG-0022 only — Status **OPEN** (authority `docs/product/backlog.md`, AC-1..AC-8 **unchecked**; **not flipped** this phase).
+- **Sprint**: **S0163** (authoritative — S0162 = US-0156 / S0161 = BUG-0030, both distinct and untouched).
+- **Verdict**: PASS (`SPRINT_PLAN_PASS`; `decision_gate=false`).
+- **Anchors**: R-0154 (DQ1–DQ10 LOCKED); `docs/engineering/architecture.md` `# BUG-0022`; **no companion DEC** (same defect-class pattern as BUG-0021/0023/0024/0025/0027/0030 — no `decisions/DEC-*` authored).
+- **Approach (A1 A\*)**: resolve-then-spawn contract. Before **any** Cursor `/auto` Task spawn the orchestrator MUST call `model_tier_lib.resolve_model_for_phase(phase_id, scratchpad, catalog)` and thread the `slug`/`alias` into the Task `model:` payload; the **critic** spawn MUST thread `sovereign_critic_lib.select_critic_model(...)` output `critic_model_id` (catalog `roles.critic`) — never a hardcoded release slug (`composer-2.5-fast`). `MODEL_FALLBACK=inherit` legitimate **only** when the chain reaches step 4/5 **and** a documented override is present in scratchpad; otherwise the spawn carries **no silent `model:`** (fail-closed per the 7-token `ReasonCode` set).
+- **Touch surfaces** (active ↔ template byte-parity; Cursor IDE class only):
+  - `.cursor/commands/auto.md` + `template/.cursor/commands/auto.md` (additive pre-spawn step before step 4 + critic step-1/step-2 alignment)
+  - `.cursor/agents/{po,release}.mdc` + template twins (remove `model: inherit`, keyless; dev/qa/security/tech-lead already keyless; curator `model: fast` untouched)
+  - `tests/bug0022_cursor_task_spawn_model_test.py` + `template/` mirror (8 markers: m1–m6 in T-005, m7+m8 in T-006)
+  - `docs/engineering/runbook.md` § *Role catalog enablement recipe* one-line addendum (orchestrator MUST run `resolve_model_for_phase` per phase before Task spawn and record `model_provenance`)
+  - **Untouched** (compose-only / regression guards): `scripts/model_tier_lib.py` + template twin (parity-only, **no edit**); `scripts/sovereign_critic_lib.py` + template twin; `.cursor/model-catalog.local.example.*.json` (8-path `MODEL_CATALOG_EXAMPLE_PARITY_SCOPE_OK` compose-only, **schema unchanged**); the entire `.opencode/` surface (distinct OpenCode BUG-0030/US-0156 class — out of scope).
+- **Task list** (7 tasks, T-anch + T-001..T-007, within `SPRINT_MAX_TASKS=12`, no split, 1:1 from `# BUG-0022` seeds):
+  - T-anch — verify `# BUG-0022`, R-0154 DQ1–DQ10, no companion DEC, the 5 surfaces (D9), and the sibling/DoD guard set; confirm resolver libs + catalog schema unchanged. (DC)
+  - T-001 — Active `.cursor/commands/auto.md` pre-spawn step (insert **before step 4**) + critic step-1 (resolve `producer_model_id` via `resolve_model_for_phase`, use as producer `model:`) and step-2 (thread `critic_model_id`) alignment, using exact `# BUG-0022` wording; fail-closed on `ReasonCode` (record token, emit **no silent `model:`**); `MODEL_RESOLVE_FALLBACK` only when steps 1–4 all miss and a documented override is present (`AC-1, AC-2, AC-3, AC-4`).
+  - T-002 — `template/.cursor/commands/auto.md` byte-parity mirror of T-001. (`AC-1, AC-2, AC-8`)
+  - T-003 — Frontmatter alignment: **remove** `model: inherit` from `.cursor/agents/{po,release}.mdc` (+ template twins), keyless like dev/qa/security/tech-lead; confirm `curator.mdc` `model: fast` is untouched. No new key, no schema change. (`AC-4, AC-8`)
+  - T-004 — Provenance / isolation-row contract: lock additive `model_id` + `model_provenance` (or `unresolved-<REASON_CODE>`) row format, D8 silent-inherit detection rule, and the **one-line** `runbook.md` § *Role catalog enablement recipe* addendum; keep prose consistent across `auto.md` / runbook / reference. (`AC-6`)
+  - T-005 — `tests/bug0022_cursor_task_spawn_model_test.py` (active) mock-injection markers **m1–m6**: producer catalog model; critic `roles.critic`; role-gap fail-closed (`MODEL_ROLE_SLUG_UNKNOWN`, no silent inherit); inherit-only-on-documented-fallback (`MODEL_RESOLVE_FALLBACK` + provenance); 5-step-chain compose (us0101/us0102/us0104/us0130 + `model_tier_lib --self-test` → `[MODEL_TIER_SELF_TEST_OK]` green); provenance isolation row. (`AC-5, AC-6`)
+  - T-006 — `template/tests/bug0022_cursor_task_spawn_model_test.py` (parity mirror) + **m7** `test_bug0022_active_template_parity` (byte-parity `auto.md` + twin, 6-agent `.mdc` pair set, `scripts/model_tier_lib.py` ↔ template, test-file mirror, 8-path catalog-example parity → `MODEL_CATALOG_EXAMPLE_PARITY_SCOPE_OK`) + **m8** `test_bug0022_no_sibling_mutation` (`test_bug0021_*` / `test_bug0023_*` / `test_bug0030_*` suites green as-is; US-0156 OPEN/unchecked; `backlog ### BUG-0022` OPEN). (`AC-7, AC-8`)
+  - T-007 — Regressions + docs: run `test_us0101_*` / `test_us0102_*` / `test_us0104_*` / `test_us0130_*` + `python scripts/model_tier_lib.py --self-test` → `[MODEL_TIER_SELF_TEST_OK]`; run `test_bug0021_*` / `test_bug0023_*` / `test_bug0030_*` suites green as-is; confirm `scripts/model_tier_lib.py` ↔ `template` byte-parity and **no resolver-lib mutation**; complete runbook addendum + template-parity sync. No npm publish, no git push, no `.env` reads. (`AC-7, AC-8`)
+- **Surjective AC→task map** (all 8 criteria covered): AC-1→T-001,T-002,T-005(m1); AC-2→T-001,T-002,T-005(m2); AC-3→T-001,T-005(m3); AC-4→T-001,T-003,T-005(m4); AC-5→T-005(m1–m4,m6),T-006; AC-6→T-004,T-005(m6); AC-7→T-006(m8),T-007; AC-8→T-002,T-006(m7),T-007; DC→T-anch.
+- **Locked reason codes (7-token `ReasonCode` set — DO NOT extend; DO NOT add schema v3)**: `MODEL_TIER_INVALID` / `MODEL_CATALOG_INVALID` / `MODEL_SLUG_UNKNOWN` / `MODEL_RESOLVE_FALLBACK` / `MODEL_OVERRIDE_SLUG_UNKNOWN` / `MODEL_ROLE_SLUG_UNKNOWN` / `MODEL_CATALOG_SCHEMA_V2_INVALID`.
+- **Follow-on (bounded, tracked alongside — NOT this bug)**: catalog-hygiene alignment (missing `qe`/`curator`/`tech-lead`/`closure`/`sprint-plan` keys + stale "Claude Opus 4.8" catalog-example notes) recorded as a future `US-xxxx` slot. Gaps fail-closed as `MODEL_ROLE_SLUG_UNKNOWN` per spawn; never force-mapped; not a schema redesign.
+- **DoD gate (D10)**: BUG-0022 is the **last OPEN** DoD blocker for **US-0156** (BUG-0027 already DONE). Closing BUG-0022 unblocks US-0156 closure — this sprint-plan phase does **not** tick, flip, or release US-0156 (verify-work / closure owns per US-0045).
+- **Compose guards (non-negotiable)**:
+  - DO NOT merge/drain/reopen BUG-0021 / 0023 / 0024 / 0026 / 0027 / 0028 / 0029 / 0030.
+  - DO NOT reopen US-0101 / US-0102 / US-0104 / US-0130 (resolver-lib) ACs.
+  - DO NOT mutate `scripts/model_tier_lib.py` / `scripts/sovereign_critic_lib.py` or their `template/` twins (parity is a regression guard only — **no edit**).
+  - DO NOT change the catalog `schema` (`schema_version` 1/2 unchanged); DO NOT invent a v3.
+  - DO NOT touch the `.opencode/` surface (OpenCode BUG-0030 / US-0156 dispatch class — distinct); DO NOT restore STOP-only `.opencode/commands/auto.md`; DO NOT add JSON `commands.auto` templates.
+  - DO NOT touch `.cursor/model-catalog.local.json` or `.cursor/scratchpad*.md` (operator-local, gitignored).
+  - DO NOT author a companion DEC; DO NOT author `decisions/DEC-*`.
+  - DO NOT claim a live Cursor IDE run — `UAT_PROBE_FORBIDDEN` held (D5 mock-only; live Cursor is operator UAT post-ship).
+  - NO npm publish, NO git push, NO `.env` reads.
+- **Deliverables landed (this /sprint-plan package — matches `.opencode/commands/sprint-plan.md` § Artifacts)**:
+  - `sprints/S0163/sprint.md` (written)
+  - `sprints/S0163/tasks.md` (written)
+  - `handoffs/tl_to_dev.md` (this closure — written)
+  - `sprints/S0163/progress.md` is **not** a `/sprint-plan` deliverable (dev owns progress.md; out of tech-lead role scope).
+- **Plan-verify**: NOT in resolved_phase_plan (ultra_lean) — skipped; not a QA spawn; no plan-verify subagent.
+- `fresh_context_marker`: `tl-cursor-20260929-BUG0022-sprintplan-fresh` (fresh subagent, BUG-0006)
+- `timestamp`: 2026-09-29 (UTC session) / 2026-09-28T22:19:57Z (clock)
+- **Sprint-plan proof (legitimate — recomputed, not fabricated; downstream `/execute` phase consumes before T-anch)**:
+  - `sprint_plan_proof`: `rp-sprintplan-2026-09-28T22:19:57Z` / `51D2DE0CE7919FDA1927D05BDA3FADE6A7F71B48631999F64FB08328D5327A94`
+  - **Method**: `SHA-256( bytes(sprints/S0163/sprint.md) ‖ bytes(sprints/S0163/tasks.md) )` — 10,383 + 6,040 = **16,423** bytes. Recomputed locally from the on-disk artifact bytes (not inherited, not inherited from upstream, not a hash of this closure block).
+  - `consumed_sprint_plan_proof`: `rp-sprintplan-2026-09-28T22:19:57Z` / `51D2DE0CE7919FDA1927D05BDA3FADE6A7F71B48631999F64FB08328D5327A94` — **RUNTIME_PROOF_VALID** for the downstream `/execute` (dev) consumer.
+- **First execute task**: T-anch (NO-OP / verification).
+- **Next scheduled phase**: `/execute` in a fresh **dev** context (BUG-0006). Do **not** spawn `/execute`, `/plan-verify`, or sovereign-critic (CROSS_MODEL_REVIEW=0) from this tech-lead.
+- **Status held (no mutation)**: BUG-0022 remains **OPEN** (AC-1..AC-8 unchecked); US-0156 remains **OPEN** (DoD gate held); `### BUG-0022` in `docs/product/backlog.md` and the primary row in `docs/product/acceptance.md` **unchanged**.
+- **STOP**: Orchestrator MUST spawn `/execute` in a fresh dev subagent. Do not implement from this planning phase.
+
+---
+
+## Architecture closure — BUG-0022 `/auto` Task-spawns inherit parent chat model instead of role_catalog — `/sprint-plan` next (fresh tech-lead)
+
+- **Phase completed**: architecture. **Role**: tech-lead. **Bug**: BUG-0022 only. **Sprint**: (none this phase; expected **S0163** — S0162 = US-0156 verify-work; do **not** create `sprints/S0163/` here). **Verdict**: PASS (`decision_gate=false`). **Research anchor**: `R-0154` (DQ1–DQ10 LOCKED). **Companion DEC**: **none** (same defect-class pattern as BUG-0021/0023/0024/0025/0027/0030).
+- **Timestamp (UTC)**: 2026-09-29. **Writer**: `tl-cursor-20260929-BUG0022-architecture` (fresh subagent, BUG-0006). **Run**: `/architecture` (direct, `bug-target=BUG-0022`). **Fresh context marker**: `tl-cursor-20260929-BUG0022-architecture-fresh`. No runtime proof issued (D5 mock-injection proof is execute/verify-work scope).
+- **Architecture artifact**: additive **# BUG-0022** anchored at the bottom of `docs/engineering/architecture.md` (after `# US-0156`). Historical bodies **`# BUG-0021` / `# BUG-0023` / `# BUG-0024` / `# BUG-0025` / `# BUG-0027` / `# BUG-0030` / `# US-0156`** unchanged; **no body rewrite**; `US-0156` remains OPEN (BUG-0022 is its DoD gate — do NOT tick/release US-0156 this phase).
+- **Approach locked (A1 A\*)**: **resolve-then-spawn contract**. Before **any** cursor `/auto` Task spawn the orchestrator MUST call `model_tier_lib.resolve_model_for_phase(phase_id, scratchpad, catalog)` (DEC-0087 / US-0102, **unchanged** source) and thread `slug`/`alias` into the Task `model:` payload; the **critic** spawn MUST thread `sovereign_critic_lib.select_critic_model(...)` output `critic_model_id` (catalog `roles.critic`) — never a hardcoded release slug (`composer-2.5-fast` at intake). `MODEL_FALLBACK=inherit` legitimate **only** when chain reaches step 4/5 **and** a documented override is present in scratchpad; otherwise spawn carries **no silent `model:`** — fail-closed per the 7-token `ReasonCode` set (`MODEL_TIER_INVALID` / `MODEL_CATALOG_INVALID` / `MODEL_SLUG_UNKNOWN` / `MODEL_RESOLVE_FALLBACK` / `MODEL_OVERRIDE_SLUG_UNKNOWN` / `MODEL_ROLE_SLUG_UNKNOWN` / `MODEL_CATALOG_SCHEMA_V2_INVALID`).
+- **Touch surfaces (active ↔ template byte-parity)**: `.cursor/commands/auto.md` (+ `template/` twin — additive pre-spawn step before step 4 + critic step-1 alignment); `.cursor/agents/{po,release}.mdc` (+ template twins — **remove** `model: inherit`, keyless; dev/qa/security/tech-lead already keyless; curator `model: fast` untouched); `tests/bug0022_cursor_task_spawn_model_test.py` (+ template mirror — 8 markers); `docs/engineering/runbook.md` § *Role catalog enablement recipe* one-line addendum. **`scripts/model_tier_lib.py` UNCHANGED** (parity guard only). **Catalog schema UNCHANGED** (`schema_version` 1/2; 8-path example parity `MODEL_CATALOG_EXAMPLE_PARITY_SCOPE_OK` compose-only).
+- **Out of scope (D8/D9/D10)**: Cursor `.cursor/scratchpad*.md` (operator-local, gitignored); `.cursor/model-catalog.local.json` (gitignored); `.opencode/commands/auto.md` and all `.opencode/agents/*.md` (distinct OpenCode US-0156/BUG-0030 dispatch class — do **not** merge/drain); resolver libs (`model_tier_lib.py` / `sovereign_critic_lib.py` — DONE resolver-lib ACs, compose only); `decisions/DEC-*` (no companion DEC); `.cursor/agents/curator.mdc` `model: fast` (out of inherit surface); all sibling bug/story architecture bodies.
+- **Follow-on (bounded, tracked alongside — NOT this bug)**: catalog-hygiene alignment slice for a future `US-xxxx` slot — missing `qe`/`curator`/`tech-lead`/`closure`/`sprint-plan` keys + stale "Claude Opus 4.8" catalog-example notes. Gaps fail-closed as `MODEL_ROLE_SLUG_UNKNOWN` per spawn; never force-mapped.
+- **8 markers (D7, mock-injection, no live Cursor probe)**: `test_bug0022_producer_spawn_carries_catalog_model_when_role_catalog` / `_critic_spawn_carries_roles_critic` / `_role_catalog_gaps_fail_closed` / `_inherit_only_on_documented_fallback` / `_5_step_chain_unchanged` (us0101+us0102+us0104+us0130 suites + `model_tier_lib --self-test` green) / `_provenance_isolation_row` (additive `model_id` + `model_provenance` on state rows) / `_active_template_parity` (byte-parity + 8-path catalog-example parity + test mirror) / `_no_sibling_mutation` (bug0021/0023/0030 suites as-is; US-0156 OPEN; BUG-0022 OPEN).
+- **Sprint seeds (≤12)**: `T-anch` + `T-001` (active auto.md step) + `T-002` (template mirror) + `T-003` (frontmatter alignment) + `T-004` (provenance format lock) + `T-005` (active test file) + `T-006` (template test + parity) + `T-007` (regressions + runbook addendum). **7 tasks incl. T-anch** — within `SPRINT_MAX_TASKS=12`.
+- **compose_guards (non-negotiable)**: DO NOT merge/drain/reopen BUG-0021/0023/0024/0026/0027/0028/0029/0030; DO NOT reopen US-0101/US-0102/US-0104/US-0130 resolver-lib ACs; DO NOT tick US-0156 or BUG-0022 acceptance; DO NOT mutate backlog/acceptance status this phase (verify-work/closure owns per US-0045); DO NOT author a companion DEC; DO NOT create `sprints/S0163/` this phase; DO NOT restore STOP-only `.opencode/commands/auto.md`; DO NOT add JSON `commands.auto` template; DO NOT touch the `.opencode/` surface; DO NOT extend the 7-token `ReasonCode` set or add a schema-version v3; DO NOT touch `.cursor/model-catalog.local.json` or `.cursor/scratchpad*.md` (operator-local, gitignored); DO NOT read `.env`; DO NOT npm-publish; DO NOT git push; DEC-0038 tuple unamended; `UAT_PROBE_FORBIDDEN` held (no live Cursor IDE claimed — D5 mock-only).
+- **STOP**: Orchestrator MUST spawn `/sprint-plan` in a **fresh tech-lead** context (owner of **S0163**). DO NOT spawn `/sprint-plan` from this architect. DO NOT spawn critic or `/execute` from this tech-lead (BUG-0006). CROSS_MODEL_REVIEW=0 — do not spawn sovereign-critic from this phase. **STOP.**
+
+---
+
+## Research handoff — BUG-0022 `/auto` Task-spawns inherit parent chat model instead of role_catalog — `/architecture` next (fresh tech-lead)
+
+- **Phase completed**: research. **Role**: tech-lead. **Bug**: BUG-0022 only. **Sprint**: (pending; expected **S0163** — S0162 = US-0156 verify-work). **Verdict**: PASS (`decision_gate=false`). **Research anchor**: `R-0154`.
+- **Timestamp (UTC)**: 2026-09-28. **Writer**: `tl-cursor-20260928-BUG0022-research`. **Run**: `/research bug` (direct, `bug-target=BUG-0022`). **Fresh context**: BUG-0006. No runtime proof issued this phase (D5 mock-injection contract test belongs to execute/verify-work).
+- **Discovery consumed**: `docs/product/vision.md § Discovery Notes — BUG-0022`; `docs/product/backlog.md § ### BUG-0022` (Status OPEN, AC-1..AC-8 unchecked); `handoffs/po_to_tl.md § Discovery handoff — BUG-0022`; `handoffs/intake_evidence/BUG-0022-intake-20260913.json` (`[INTAKE_EVIDENCE_VALIDATION_OK]`). **D1–D10 LOCKED**; **DQ1–DQ10** carried forward as research questions and now LOCKED in `R-0154`.
+- **Locked approach A1 (A*)**: **resolve-then-spawn contract.** Before **any** `/auto` Task spawn, the orchestrator MUST call `resolve_model_for_phase(phase_id, scratchpad, catalog)` (DEC-0087 / US-0102) and thread the resulting `slug`/`alias` into the Task `model:` payload, plus the `provenance` string into the per-spawn isolation row. The **critic** spawn MUST call `select_critic_model(producer_model_id, scratchpad, phase_id)` (US-0130 / DEC-0104) and thread `critic_model_id` into the Task `model:` payload — never a hardcoded release slug (`composer-2.5-fast`). `MODEL_FALLBACK=inherit` is honored **only** when the 5-step chain reaches step 4/5 **and** a documented override (`MODEL_<PHASE>` / `MODEL_TIER_<PHASE>` / `MODEL_TIER_DEFAULT`) is present. Fail-closed set is the 7 `ReasonCode` tokens (`MODEL_TIER_INVALID`, `MODEL_CATALOG_INVALID`, `MODEL_SLUG_UNKNOWN`, `MODEL_RESOLVE_FALLBACK`, `MODEL_OVERRIDE_SLUG_UNKNOWN`, `MODEL_ROLE_SLUG_UNKNOWN`, `MODEL_CATALOG_SCHEMA_V2_INVALID`); a role gap (`qe`/`curator`/`tech-lead`/`closure`/`sprint-plan`) emits `MODEL_ROLE_SLUG_UNKNOWN` per spawn and **never** silently inherits.
+- **Surfaces (byte-parity, active ↔ template)**: `.opencode/commands/auto.md` + `.opencode/agents/{po,dev,qa,security,tech-lead,curator}.mdc` (remove hard `model: inherit` from po/release — make them keyless like dev/qa/security/tech-lead/curator) + `scripts/model_tier_lib.py` (unchanged; parity regression guard) + `.cursor/model-catalog.local.example.*.json` (schema unchanged; 8-path parity) + `handoffs/po_to_tl.md` (compose-only, BUG-0022 section). **Out of scope** (D8/D9/D10): resolver libs; `.opencode/plugins/orchestrator.ts`; `.cursor/scratchpad*.md` (operator-local, gitignored); `decisions/DEC-*` (no companion DEC this phase); `.cursor/model-catalog.local.json` (gitignored). Follow-on catalog hygiene (qe/curator/tech-lead/closure/sprint-plan keys, stale "Claude Opus 4.8" notes) is a **bounded, tracked-alongside** alignment slice for a future `US-xxxx` — not this bug, not a schema redesign.
+- **8 test_bug0022_* markers (D7, mock-injection, no live Cursor probe)**: producer catalog model; critic `roles.critic`; role-gap fail-closed; inherit-only-on-documented-fallback; 5-step-chain compose (us0101/us0102/us0104/us0130 stay green); provenance isolation row; active/template parity; no-sibling-mutation (bug0021/bug0023/bug0030 suites stay green).
+- **DoD gate (D10)**: BUG-0022 is the **last OPEN** DoD blocker for **US-0156** (BUG-0027 already DONE). Closing BUG-0022 unblocks US-0156 closure — research does **not** tick or release US-0156 (that is US-0156's own verify-work/closure).
+- **Safety / siblings**: No npm publish, no git push, no `.env` reads. Do **not** merge/drain/reopen BUG-0021 / 0023 / 0024 / 0026 / 0027 / 0028 / 0029 / 0030; do **not** reopen US-0101 / US-0102 / US-0104 / US-0130 (resolver-lib ACs); do **not** restore STOP-only `auto.md`; do **not** claim live Cursor completion; do **not** create `sprints/S0163/` this phase.
+- **Status**: BUG-0022 remains **OPEN**; `docs/product/acceptance.md` BUG-0022 row **unchecked**; backlog `### BUG-0022` **OPEN**, AC-1..AC-8 **unchecked**.
+- **Next**: `/architecture` in a fresh **tech-lead** context. Author additive **`# BUG-0022`** (no companion DEC). Do **not** implement, create a sprint, or mutate backlog/acceptance in research. STOP.
+
+---
+## Sprint-plan handoff — US-0156 / S0162 — `/execute` next (fresh dev, ultra_lean)
+
+- **Phase completed**: sprint-plan. **Role**: tech-lead. **Story**: US-0156. **Sprint**: S0162. **Verdict**: PASS (`SPRINT_PLAN_PASS`; `decision_gate=false`).
+- **Anchors**: `R-0153`; `docs/engineering/architecture.md` `# US-0156`; and accepted `DEC-0152`; plan artifacts `sprints/S0162/{sprint,tasks}.md`.
+- **Plan**: ten tasks, T-anch + T-001..T-009, mapped surjectively to AC-1..AC-10 and within `SPRINT_MAX_TASKS=12`. Plan-verify is skipped for ultra-lean; `/execute` is next in a fresh dev context.
+- **Approach A1 (locked)**: The documented Markdown command remains the only `/auto` owner and selects the primary `auto` agent. One scheduling-only parent resolves one plan/item, sequentially spawns and waits for fresh role Tasks, and advances only after a typed Stop-Matrix continuation action and durable child evidence.
+- **Resolver/scheduler**: Remove `fallback_execute`. Precedence is explicit `start-from`, validated `resume_brief`, then validated `state.md`, followed by one plan intersection. Explicit `bug-target` wins; otherwise dependency-eligible OPEN-story drain applies. Invalid source/plan, empty intersection, unknown/DONE/blocked/empty selection, scheduler conflict, cap exhaustion, or conflicting provenance fails closed before a Task spawn.
+- **Provenance and manual boundary**: Persist bridge-owned idempotent continuation provenance keyed by run, work item, and phase, including source, effective plan, skips, cursor/budget, stop reason, and fresh child isolation reference. Exact repeats are no-ops; conflict or child-session reuse fails closed. `persistManualPhaseIsolation` remains separate and cannot establish `/auto` child completion.
+- **Permissions/tests**: Broad deny is first and owned-path/auto-Task allows follow it (OpenCode last-match semantics); security remains read-only. Deliver all `test_us0156_*` contracts, the permission-order regression, active/template parity, installer overwrite coverage, runbook guidance, and BUG-0027/BUG-0030 compose regressions.
+- **DoD and guards**: BUG-0022 and BUG-0027 must be DONE before US-0156 closure; BUG-0027 is already DONE and must not be reopened. BUG-0028/0029 remain independently OPEN; BUG-0026 is out of scope. Do not restore TUI/RPC, add a JSON template or localhost endpoint, recursively invoke `/auto`, let the parent edit phase artifacts, weaken Stop-Matrix/gates/caps/secrets, claim desktop/`--pure`/provider completion, read `.env`, publish, push, mark the story DONE, or tick acceptance.
+- **Execute order**: T-anch → T-001 → T-002 → T-003 → T-004 → T-005 → T-006 → T-007 → T-008 → T-009.
+- **Next**: `/execute` in a fresh dev context. STOP before implementation from this planning context.
+
+---
+## Sprint-plan handoff — BUG-0030 / S0161 — /execute (fresh dev, ultra_lean)
+
+- sprint_id: S0161
+- story_id: (none — bug work item)
+- bug_id: BUG-0030 (Status OPEN — authority docs/product/backlog.md)
+- companion_dec: DEC-0151 Accepted
+- research_anchor: R-0152
+- architecture_anchor: docs/engineering/architecture.md # BUG-0030
+- approach: A1 — documented OpenCode 1.18.32 `.opencode/commands/auto.md` with `agent: auto` and a non-STOP spawn-only prompt; retire managed private TUI/RPC path; preserve BUG-0027 manual persistence.
+- sprint_plan_verdict: PASS (SPRINT_PLAN_PASS)
+- decision_gate: false
+- sprint_status: PLANNED (backlog OPEN; AC-1..AC-5 unchecked)
+- task_count: 6 (T-anch + T-001..T-005, <= SPRINT_MAX_TASKS=12, no split)
+- ac_surjective_map: AC-1→T-001,T-005; AC-2→T-001,T-004; AC-3→T-002,T-004; AC-4→T-004,T-005; AC-5→T-002,T-003,T-004; DC→T-anch
+- task_order: T-anch → T-001 → T-002 → T-003 → T-004 → T-005
+- plan-verify: ultra_lean — skipped; not in the resolved phase plan
+- compose_guards: Do not use `@opencode/plugin` v2 APIs, private RPC, `client.rpc`, `ctx.rpc.register`, or invented localhost. Do not add JSON command templates or STOP-only auto.md. Do not reopen BUG-0023/0024/0027, alter `.cursor/commands/auto.md`, read `.env`, mark BUG-0030 DONE, tick ACs, npm-publish, or git push.
+- first_execute_task: T-anch
+- key_locked_artifacts: `.opencode/commands/auto.md` + template twin; managed OpenCode TUI/RPC assets; `installer.py`, `installer.sh`, `installer.ps1`; `tests/bug0030_*`; parity validator; runbook.
+- next_scheduled_phase: /execute (role=dev)
+- next_scheduled_role: dev
+- next_sprint_macro: build+verify
+- stop_condition: STOP after sprint-plan. Start `/execute` only in a fresh dev context. Do not implement from this planning phase.
+
+---
+
+## Research handoff - US-0156 OpenCode `/auto` parity - `/architecture` next
+
+- **Phase completed**: research. **Role**: tech-lead. **Story**: US-0156 only. **Verdict**: PASS (`decision_gate=false`). **Research anchor**: `R-0153`.
+- **Execution note**: The delegated research command was blocked by `OPENCODE_MANUAL_PHASE_WRITE_DENIED`; this direct continuation persists the analysis but does not claim a manual-phase isolation record or a live OpenCode run.
+- **Approach**: **A1 (A*)** - `.opencode/commands/auto.md` remains the documented `/auto` owner with `agent: auto`; its primary auto agent sequentially spawns and waits for fresh role Tasks. The parent remains scheduling-only and never directly edits phase artifacts. Do not restore TUI/RPC, add a JSON command template, or invent localhost.
+- **Critical correction**: Remove the `fallback_execute` behavior from the OpenCode resolver and bridge. Resolve `start-from` first, then validated `resume_brief`, then validated `state.md`; resolve a single effective phase plan and intersect it with the anchor. Any bridge, policy, source, ID, or intersection failure is fail-closed before a Task spawn.
+- **Scheduling**: Explicit `bug-target` selects the bug scheduler. Otherwise `AUTO_BACKLOG_DRAIN=1` selects dependency-eligible OPEN stories. Story drain and bug queue are mutually exclusive absent explicit-target precedence. Persist an idempotent run/item/phase continuation tuple with effective plan, skipped phases, cursor/budget, stop reason, and child isolation reference.
+- **Safety**: Only a typed existing Stop-Matrix continuation action schedules another phase or segment. Preserve all decision, pause, quality/UAT, release, security, resolver, conflict, and cap stops. `persistManualPhaseIsolation` remains for manual slash commands and cannot replace fresh `/auto` child evidence.
+- **DoD and scope**: BUG-0022 and BUG-0027 must be DONE before US-0156 closure; BUG-0028 and BUG-0029 remain separate OPEN slices. Preserve active/template and installer parity. Desktop Command.Info, `opencode --pure`, standalone runtime, npm publish, git push, and `.env` reads are out.
+- **Architecture seeds**: Pin the canonical resolver/continuation API, typed Stop-Matrix action mapping, continuation-record schema/idempotence semantics, scheduler dependency ordering, test inventory, active/template/installer surfaces, and whether a companion decision is required. Do not implement or create a sprint in architecture.
+- **Next**: `/architecture` in a fresh tech-lead context. STOP.
+
+---
+
+## Architecture handoff - US-0156 OpenCode `/auto` parity - `/sprint-plan` next
+
+- **Phase completed**: architecture. **Role**: tech-lead. **Story**: US-0156 only. **Verdict**: PASS (`decision_gate=false`). **Anchors**: `R-0153`, `docs/engineering/architecture.md` `# US-0156`, and accepted `DEC-0152`.
+- **Execution note**: The delegated architecture command was blocked by `OPENCODE_MANUAL_PHASE_WRITE_DENIED`. This direct continuation persists the architecture but does not claim delegated-phase isolation evidence or a live OpenCode run.
+- **Approach A1 (locked)**: The documented Markdown command remains the sole `/auto` owner and selects the primary `auto` agent. One parent session resolves one plan/item, sequentially spawns and waits for fresh role Tasks, and advances only on a typed Stop-Matrix continuation action. The parent performs no phase artifact edits.
+- **Resolver and scheduler**: Eliminate `fallback_execute`. Precedence is explicit `start-from`, validated `resume_brief`, then validated `state.md`, followed by one phase-plan intersection. Explicit `bug-target` wins; otherwise story drain selects dependency-eligible OPEN stories. Invalid source/plan, empty intersection, scheduler conflict, unknown/DONE/blocked/empty selection, or conflicting provenance fails closed before a Task spawn.
+- **State contract**: Persist bridge-owned idempotent continuation provenance keyed by run, work-item, and phase. It carries selected source, effective plan, skipped phases, completed/next phase, cursor/budget, stop reason, and fresh child isolation reference. Exact repeat is a no-op; conflict or reused child session fails closed. Manual `persistManualPhaseIsolation` remains separate.
+- **Permission correction**: OpenCode uses the last matching permission rule. Broad `"**": deny` and `"*": deny` are now first in active/template role maps, allowing the following owned-path and auto-Task rules to take effect while preserving deny-by-default. Security remains read-only.
+- **Decision and closure**: `DEC-0152` accepts this contract. BUG-0022 and BUG-0027 must be DONE before US-0156 closure; BUG-0028/0029 remain independent OPEN slices. No TUI/RPC restoration, JSON template, localhost, Desktop/`--pure` claim, standalone runtime work, `.env` read, publish, or push.
+- **Sprint seeds**: T-anch plus T-001..T-009; expected sprint `S0162` (10 tasks, within cap). Test inventory includes resolver, fresh Task lifecycle, scheduler/mutex, Stop-Matrix/caps, idempotence, DoD/parity, and permission-order regression contracts.
+- **Next**: `/sprint-plan` in a fresh tech-lead context. STOP before implementation.
+
+---
+
 ## Sprint-plan handoff — BUG-0027 / S0160 — /execute (fresh dev, ultra_lean)
 
 - sprint_id: S0160
@@ -2347,4 +2500,16 @@ Canonical payload: `{"orchestrator_run_id":"auto-20260628-04","phase_id":"sprint
 
 ## Plan-verify handoff â **US-0107** / **S0107** â post-**`/plan-verify`** â **`/execute`** (**qa**)
 
+
+---
+
+## Research handoff — BUG-0030 OpenCode `/auto` documented command/plugin path
+
+- **Phase completed**: research. **Role**: tech-lead. **Bug**: BUG-0030. **Verdict**: PASS (`decision_gate=false`).
+- **Research anchor**: `docs/engineering/research.md` **R-0152**.
+- **Pinned host**: `opencode --version` = `1.18.32`. `@opencode/plugin@1.18.32` returns E404; do not use v2 `Plugin.define` / `ctx.command.transform` documentation as a v1 implementation contract.
+- **Decision**: The operator selected the version-pinned documented API path. Use `.opencode/commands/auto.md` with `agent: auto` and a canonical spawn-only body. The current private RPC bridge is invalid and must not be repaired by an undocumented dependency or invented HTTP endpoint.
+- **Architecture direction**: Remove the legacy TUI/RPC route from the command path, preserve the existing `auto` agent as lifecycle owner, and prove actual command registration/prompt admission without claiming a provider completed the lifecycle.
+- **Non-negotiable guards**: Do not retain `localRpcDefine` as a happy path, invent localhost HTTP RPC, use a STOP-only command body, add a JSON command template, claim mock success as live success, create a sprint, or implement in this phase.
+- **Next**: `/architecture` in a fresh tech-lead context. BUG-0030 remains OPEN; AC-1..AC-5 remain unchecked. STOP.
 

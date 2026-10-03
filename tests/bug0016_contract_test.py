@@ -150,7 +150,7 @@ def test_bug0016_po_tl_curator_bash_ask():
 
 
 def test_bug0016_po_intake_resume_state_allows():
-    """PO edit allows intake_evidence/**, resume_brief.md, state.md; ** deny last; no scripts/**."""
+    """PO edit allows its artifacts after broad deny; no scripts/**."""
     fm, _ = _read_agent("po")
     edit = _permission_subkey_value(fm, "edit")
     assert isinstance(edit, list)
@@ -159,7 +159,7 @@ def test_bug0016_po_intake_resume_state_allows():
     assert values.get("handoffs/intake_evidence/**") == "allow"
     assert values.get("handoffs/resume_brief.md") == "allow"
     assert values.get("docs/engineering/state.md") == "allow"
-    assert keys[-1] == "**"
+    assert keys[0] == "**"
     assert values["**"] == "deny"
     assert "scripts/**" not in values or values["scripts/**"] != "allow"
     allow_keys = {k for k, v in edit if v == "allow"}
@@ -201,7 +201,7 @@ def test_bug0016_release_duty_paths():
     assert values.get("handoffs/resume_brief.md") == "allow"
     assert values.get("docs/engineering/runbook.md") == "allow"
     assert values.get("handoffs/verify_to_release.md") == "allow"
-    assert keys[-1] == "**"
+    assert keys[0] == "**"
     assert values["**"] == "deny"
     bash = _permission_subkey_value(fm, "bash")
     assert bash == "ask"
@@ -211,7 +211,7 @@ def test_bug0016_release_duty_paths():
 
 
 def test_bug0016_success_test_c_non_dev_no_production_allow():
-    """Non-dev roles: no production/code allow; object-form edit keeps ** deny last."""
+    """Non-dev roles: no production/code allow; object-form edit starts broad deny."""
     for name in sorted(US0003_ROLES - {"dev"}):
         fm, _ = _read_agent(name)
         edit = _permission_subkey_value(fm, "edit")
@@ -220,7 +220,7 @@ def test_bug0016_success_test_c_non_dev_no_production_allow():
             continue
         keys = [k for k, _ in edit]
         values = {k: v for k, v in edit}
-        assert keys[-1] == "**"
+        assert keys[0] == "**"
         assert values["**"] == "deny"
         allow_keys = {k for k, v in edit if v == "allow"}
         assert not allow_keys & PRODUCTION_DENY_GLOBS, (
@@ -232,7 +232,7 @@ def test_bug0016_success_test_c_non_dev_no_production_allow():
 
 
 def test_bug0016_security_auto_unchanged():
-    """security edit deny + bash ask; auto edit/bash deny + 7-role task allow + * deny last."""
+    """security is read-only; auto starts broad task deny before its seven-role allowlist."""
     sec_fm, _ = _read_agent("security")
     assert _permission_subkey_value(sec_fm, "edit") == "deny"
     assert _permission_subkey_value(sec_fm, "bash") == "ask"
@@ -247,7 +247,7 @@ def test_bug0016_security_auto_unchanged():
     values = {k: v for k, v in task}
     allow_roles = {k for k, v in task if v == "allow"}
     assert allow_roles == US0003_ROLES
-    assert keys[-1] == "*"
+    assert keys[0] == "*"
     assert values["*"] == "deny"
 
 

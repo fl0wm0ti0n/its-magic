@@ -3,6 +3,7 @@ description: Curator agent — engineering memory, state archive, resume brief
 mode: subagent
 permission:
   edit:
+    "**": deny
     "docs/engineering/state.md": allow
     "docs/engineering/state-archive/**": allow
     "docs/engineering/decisions.md": allow
@@ -11,7 +12,9 @@ permission:
     "handoffs/portfolio_state.md": allow
     "handoffs/continuation_hygiene.md": allow
     "handoffs/archive/**": allow
-    "**": deny
+    "docs/product/backlog.md": allow
+    "docs/product/acceptance.md": allow
+    "sprints/S*/closure-verification.md": allow
   bash: ask
   task: deny
 ---

@@ -9,6 +9,8 @@
 - **role**: `qe`
 - **override**: `AUTO_ROLE_CLOSURE` scratchpad key allows `qe` or `curator`; default `qe` when empty (DEC-0052, §2 override, §3 preflight capability gate).
 
+**OpenCode-surface parity note (BUG-0031 / R-0155)**: On an OpenCode host the default `qe` closure subagent is **not spawnable** (no `qe` subagent type). Resolve `/closure` to the sanctioned alternate **`curator`** (via `AUTO_ROLE_CLOSURE=curator`; DEC-0052 §2/§3). The spawning role must be **authorized to write** the three closure-owned flip paths it does **not** already hold — `docs/product/backlog.md` (status+AC), `docs/product/acceptance.md` (row), and `sprints/S*/closure-verification.md` (create). `docs/engineering/state.md` is already curator-held. If a spawnable closure role lacks these, `/closure` fails closed with **`CLOSURE_PERMISSION_FLIP_PATHS_DENIED`** (DQ8) — **never** an operator hand-flip.
+
 ## Phase responsibility
 
 Story Closure holds exclusive responsibility for:
@@ -59,6 +61,7 @@ The `/closure` phase consumes the following release artifacts as input evidence 
 - Canonical status source contradictory (release evidence vs backlog state) → `CANONICAL_STATUS_CONFLICT`
 - Multiple candidate stories ambiguous for closure → `CLOSURE_AMBIGUOUS_TARGET`
 - Target story not found in backlog.md → `CLOSURE_TARGET_NOT_FOUND`
+- Permission matrix denies a closure-owned flip path → `CLOSURE_PERMISSION_FLIP_PATHS_DENIED`
 
 ## Input prerequisites (fail-gated)
 
@@ -169,6 +172,7 @@ For in-flight stories at US-0120 ship boundary (stories that completed `/release
 | `PHASE_OWNERSHIP_VIOLATION` | `/closure` tried to mutate non-owned artifact | Check cross-phase ownership guard |
 | `PHASE_OVERRIDE_EVIDENCE_MISSING` | Override path configured but evidence missing | Provide override evidence or disable override |
 | `CLOSURE_LEGACY_DRIFT` | Pre-US-0120 story with released+OPEN | Manual reconciliation or backfill closure |
+| `CLOSURE_PERMISSION_FLIP_PATHS_DENIED` | Spawnable closure role (curator) lacks the flip-path allows on a deny-by-default host (the 3 flip paths it does not already hold: `docs/product/backlog.md`, `docs/product/acceptance.md`, `sprints/S*/closure-verification.md`) | Grant the 3 flip paths to curator in both `.opencode/agents/curator.md` and `template/.opencode/agents/curator.md` (active↔template parity); re-run /closure; do NOT operator hand-flip. |
 
 ## Strict runtime proof (DEC-0038)
 

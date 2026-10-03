@@ -3,12 +3,12 @@ description: Product Owner agent — product docs and PO handoff only
 mode: subagent
 permission:
   edit:
+    "**": deny
     "docs/product/**": allow
     "handoffs/po_to_tl.md": allow
     "handoffs/intake_evidence/**": allow
     "handoffs/resume_brief.md": allow
     "docs/engineering/state.md": allow
-    "**": deny
   bash: ask
   task: deny
 ---

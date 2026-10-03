@@ -302,11 +302,7 @@ function Invoke-PruneRetiredOpencodeAutoMd {
   }
 }
 
-# BUG-0019: copy TUI listing files onto already-pruned consumers (not a sweeper).
-# BUG-0021: overwrite tui.ts even when dest exists (Copy-Item -Force, not copy-if-absent).
-# BUG-0023: also overwrite rpc.ts + orchestrator.ts (dispatch path, not copy-if-absent).
-# BUG-0024: same overwrite refreshes peer-brand + stage-code live-dispatch residual.
-# BUG-0027: overwrites agents/dev.md, agents/qa.md, manual-phase command packs, opencode_auto_bridge.py.
+# BUG-0030: copy the documented command plus existing manual-persist surfaces.
 function Invoke-CopyOpencodeAutoListingSurface {
   param(
     [string]$TargetRoot,
@@ -315,10 +311,8 @@ function Invoke-CopyOpencodeAutoListingSurface {
   )
   if ($HostValue -notin @("opencode", "both")) { return }
   $rels = @(
-    ".opencode/plugins/its-magic-auto/index.ts",
-    ".opencode/plugins/its-magic-auto/tui.ts",
-    ".opencode/plugins/its-magic-auto/rpc.ts",
     ".opencode/plugins/orchestrator.ts",
+    ".opencode/commands/auto.md",
     ".opencode/agents/dev.md",
     ".opencode/agents/qa.md",
     ".opencode/commands/intake.md",
@@ -340,6 +334,24 @@ function Invoke-CopyOpencodeAutoListingSurface {
       New-Item -ItemType Directory -Path $dstDir -Force | Out-Null
     }
     Copy-Item -LiteralPath $src -Destination $dst -Force
+  }
+}
+
+function Remove-LegacyOpencodeAutoRoute {
+  param(
+    [string]$TargetRoot,
+    [string]$HostValue
+  )
+  if ($HostValue -notin @("opencode", "both")) { return }
+  foreach ($rel in @(
+    ".opencode/plugins/its-magic-auto/index.ts",
+    ".opencode/plugins/its-magic-auto/tui.ts",
+    ".opencode/plugins/its-magic-auto/rpc.ts"
+  )) {
+    $path = Join-Path $TargetRoot $rel
+    if (Test-Path -LiteralPath $path -PathType Leaf) {
+      Remove-Item -LiteralPath $path -Force
+    }
   }
 }
 
@@ -390,12 +402,9 @@ function Invoke-CopyOrMergeOpencodeTuiJson {
     if ($item -is [string]) { $names += $item }
     elseif ($item -is [System.Array] -and $item.Count -gt 0) { $names += [string]$item[0] }
   }
-  if ($names -contains $spec) { return }
-  $newPlugins = @($plugins) + $spec
+  if ($names -notcontains $spec) { return }
+  $newPlugins = @($plugins | Where-Object { $_ -ne $spec })
   $data | Add-Member -NotePropertyName plugin -NotePropertyValue $newPlugins -Force
-  if (-not $data.PSObject.Properties.Name.Contains('$schema')) {
-    $data | Add-Member -NotePropertyName '$schema' -NotePropertyValue 'https://opencode.ai/tui.json' -Force
-  }
   $json = $data | ConvertTo-Json -Depth 8
   $comment = "  // BUG-0020 / BUG-0021: CLI TUI plugin load only. Does NOT list /auto in desktop Command.Info. Listing is the load path, not proof of /auto."
   $lines = $json -split "`n"
@@ -1093,6 +1102,7 @@ if ($mode -eq "upgrade") {
 
   Invoke-CopyOpencodeAutoListingSurface -TargetRoot $targetRoot -SourceRoot $sourceRoot -HostValue $hostValue
   Invoke-CopyOrMergeOpencodeTuiJson -TargetRoot $targetRoot -SourceRoot $sourceRoot -HostValue $hostValue
+  Remove-LegacyOpencodeAutoRoute -TargetRoot $targetRoot -HostValue $hostValue
   Invoke-PruneRetiredOpencodeAutoMd -TargetRoot $targetRoot -SourceRoot $sourceRoot -HostValue $hostValue
 
   Invoke-KitConfigPostinstall -TargetRoot $targetRoot -Mode "upgrade"

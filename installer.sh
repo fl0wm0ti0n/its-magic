@@ -362,11 +362,7 @@ prune_retired_opencode_auto_md() {
   printf '%s\n' "[OPENCODE_AUTO_MARKDOWN_COLLISION] leftover $RETIRED_OPENCODE_AUTO_MD could not be removed; delete the file then re-run upgrade --host opencode|both"
 }
 
-# BUG-0019: copy TUI listing files onto already-pruned consumers (not a sweeper).
-# BUG-0021: overwrite tui.ts even when dest exists (`cp -f`, not copy-if-absent).
-# BUG-0023 / BUG-0024: also overwrite rpc.ts + orchestrator.ts (dispatch path, not copy-if-absent).
-# BUG-0024: refreshes peer-brand + stage-code live-dispatch residual on Axis-A trees.
-# BUG-0027: overwrites agents/dev.md, agents/qa.md, manual-phase command packs, opencode_auto_bridge.py.
+# BUG-0030: copy the documented command plus existing manual-persist surfaces.
 copy_opencode_auto_listing_surface() {
   target_root="$1"
   source_root="$2"
@@ -375,7 +371,7 @@ copy_opencode_auto_listing_surface() {
     opencode|both) ;;
     *) return 0 ;;
   esac
-  for rel in .opencode/plugins/its-magic-auto/index.ts .opencode/plugins/its-magic-auto/tui.ts .opencode/plugins/its-magic-auto/rpc.ts .opencode/plugins/orchestrator.ts .opencode/agents/dev.md .opencode/agents/qa.md .opencode/commands/intake.md .opencode/commands/execute.md .opencode/commands/discovery.md .opencode/commands/qa.md .opencode/commands/verify-work.md scripts/opencode_auto_bridge.py; do
+  for rel in .opencode/plugins/orchestrator.ts .opencode/commands/auto.md .opencode/agents/dev.md .opencode/agents/qa.md .opencode/commands/intake.md .opencode/commands/execute.md .opencode/commands/discovery.md .opencode/commands/qa.md .opencode/commands/verify-work.md scripts/opencode_auto_bridge.py; do
     src="$source_root/$rel"
     if [ ! -f "$src" ]; then
       src="$source_root/template/$rel"
@@ -387,7 +383,17 @@ copy_opencode_auto_listing_surface() {
   done
 }
 
-# BUG-0020: copy-if-absent / JSONC-merge project tui.json (CLI TUI load path).
+remove_legacy_opencode_auto_route() {
+  target_root="$1"
+  host="$2"
+  case "$host" in
+    opencode|both) ;;
+    *) return 0 ;;
+  esac
+  rm -f "$target_root/.opencode/plugins/its-magic-auto/index.ts" "$target_root/.opencode/plugins/its-magic-auto/tui.ts" "$target_root/.opencode/plugins/its-magic-auto/rpc.ts"
+}
+
+# BUG-0030: copy missing tui.json or remove the retired framework TUI entry.
 OPENCODE_TUI_JSON=".opencode/tui.json"
 OPENCODE_TUI_PLUGIN_SPEC="./plugins/its-magic-auto/tui.ts"
 
@@ -415,39 +421,9 @@ copy_or_merge_opencode_tui_json() {
     cp -f "$src" "$dst"
     return 0
   fi
-  grep -F -q "$OPENCODE_TUI_PLUGIN_SPEC" "$dst" && return 0
+  grep -F -q "$OPENCODE_TUI_PLUGIN_SPEC" "$dst" || return 0
   tmp="$dst.its-magic-tui-merge.$$"
-  if grep -Eq '"plugin"[[:space:]]*:' "$dst"; then
-    awk -v spec="$OPENCODE_TUI_PLUGIN_SPEC" '
-      BEGIN { inserted=0 }
-      {
-        if (!inserted && $0 ~ /"plugin"[[:space:]]*:[[:space:]]*\[/) {
-          if ($0 ~ /\[\]/) {
-            sub(/\[\]/, "[\n    \"" spec "\"\n  ]")
-            inserted=1
-          } else if ($0 ~ /\[/) {
-            sub(/\[/, "[\n    \"" spec "\",")
-            inserted=1
-          }
-        }
-        print
-      }
-    ' "$dst" > "$tmp" && mv "$tmp" "$dst"
-  else
-    awk -v spec="$OPENCODE_TUI_PLUGIN_SPEC" '
-      { lines[NR]=$0 }
-      END {
-        last=NR
-        while (last>0 && lines[last] !~ /}/) last--
-        for (i=1; i<=NR; i++) {
-          if (i==last && last>1) {
-            print "  ,\"plugin\": [\"" spec "\"]"
-          }
-          print lines[i]
-        }
-      }
-    ' "$dst" > "$tmp" && mv "$tmp" "$dst"
-  fi
+  sed -e "s#\"$OPENCODE_TUI_PLUGIN_SPEC\"[[:space:]]*,[[:space:]]*##" -e "s#,[[:space:]]*\"$OPENCODE_TUI_PLUGIN_SPEC\"##" -e "s#\"$OPENCODE_TUI_PLUGIN_SPEC\"##" "$dst" > "$tmp" && mv "$tmp" "$dst"
 }
 
 clean_one_path() {
@@ -953,6 +929,7 @@ if [ "$MODE" = "upgrade" ]; then
 
   copy_opencode_auto_listing_surface "$TARGET_ROOT" "$SOURCE_ROOT" "$HOST"
   copy_or_merge_opencode_tui_json "$TARGET_ROOT" "$SOURCE_ROOT" "$HOST"
+  remove_legacy_opencode_auto_route "$TARGET_ROOT" "$HOST"
   prune_retired_opencode_auto_md "$TARGET_ROOT" "$SOURCE_ROOT" "$HOST"
 
   kit_config_postinstall "$TARGET_ROOT" "upgrade"

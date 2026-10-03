@@ -3,6 +3,7 @@ description: QA agent — sprint verification artifacts and QA handoffs
 mode: subagent
 permission:
   edit:
+    "**": deny
     "sprints/S*/qa-findings.md": allow
     "sprints/S*/plan-verify.json": allow
     "sprints/S*/verify-work-findings.md": allow
@@ -12,7 +13,6 @@ permission:
     "handoffs/qa_to_dev.md": allow
     "handoffs/qa_to_verify.md": allow
     "handoffs/qa_to_verify_work.md": allow
-    "**": deny
   bash: ask
   task: deny
 ---

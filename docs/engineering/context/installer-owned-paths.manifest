@@ -129,12 +129,8 @@ template/.opencode/agents/**
 template/.opencode/commands/**
 template/.opencode/model-catalog.local.example.json
 template/.opencode/plugins/orchestrator.ts
-template/.opencode/plugins/its-magic-auto/index.ts
-# BUG-0021: tui.ts is framework-owned overwrite (copy2 even if dest exists).
-# tui.json remains copy-if-absent / JSONC merge (BUG-0020 load path ≠ listing proof).
-template/.opencode/plugins/its-magic-auto/tui.ts
-# BUG-0023: shared Rpc.define contract — framework-owned overwrite (copy2).
-template/.opencode/plugins/its-magic-auto/rpc.ts
+# BUG-0030: framework-owned Markdown command replaces the retired TUI/RPC route.
+template/.opencode/commands/auto.md
 .opencode/tui.json
 template/.opencode/tui.json
 scripts/opencode_model_catalog_apply.py

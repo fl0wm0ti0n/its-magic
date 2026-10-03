@@ -3,6 +3,7 @@ description: Dev agent — code, template pack, tests, sprint progress handoffs
 mode: subagent
 permission:
   edit:
+    "**": deny
     "scripts/**": allow
     "its_magic/**": allow
     "template/**": allow
@@ -12,7 +13,6 @@ permission:
     "sprints/S*/qa-findings.md": allow
     "docs/engineering/state.md": allow
     "handoffs/dev_to_qa.md": allow
-    "**": deny
   bash: ask
   task: deny
 ---

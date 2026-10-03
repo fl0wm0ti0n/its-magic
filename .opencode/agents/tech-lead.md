@@ -3,6 +3,7 @@ description: Tech Lead agent — architecture, decisions, sprint plan artifacts
 mode: subagent
 permission:
   edit:
+    "**": deny
     "docs/engineering/architecture.md": allow
     "docs/engineering/decisions.md": allow
     "docs/engineering/state.md": allow
@@ -11,7 +12,6 @@ permission:
     "handoffs/tl_to_dev.md": allow
     "sprints/S*/sprint.md": allow
     "sprints/S*/tasks.md": allow
-    "**": deny
   bash: ask
   task: deny
 ---

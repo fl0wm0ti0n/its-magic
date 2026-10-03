@@ -618,16 +618,8 @@ BUG0015_PAIRS: tuple[tuple[str, str], ...] = (
     ),
 )
 
-# BUG-0019 additive: OpenCode /auto TUI slash listing surfaces (keep BUG0015 orchestrator pair).
+# BUG-0019 historical evidence retained after BUG-0030 command migration.
 BUG0019_PAIRS: tuple[tuple[str, str], ...] = (
-    (
-        ".opencode/plugins/its-magic-auto/index.ts",
-        "template/.opencode/plugins/its-magic-auto/index.ts",
-    ),
-    (
-        ".opencode/plugins/its-magic-auto/tui.ts",
-        "template/.opencode/plugins/its-magic-auto/tui.ts",
-    ),
     (
         ".opencode/plugins/orchestrator.ts",
         "template/.opencode/plugins/orchestrator.ts",
@@ -670,12 +662,8 @@ BUG0020_PAIRS: tuple[tuple[str, str], ...] = (
     ),
 )
 
-# BUG-0021 additive: reshaped { id, tui } CLI TUI load (keep BUG0020_PAIRS / BUG0019_PAIRS).
+# BUG-0021 historical evidence retained after BUG-0030 command migration.
 BUG0021_PAIRS: tuple[tuple[str, str], ...] = (
-    (
-        ".opencode/plugins/its-magic-auto/tui.ts",
-        "template/.opencode/plugins/its-magic-auto/tui.ts",
-    ),
     (
         ".opencode/tui.json",
         "template/.opencode/tui.json",
@@ -698,16 +686,8 @@ BUG0021_PAIRS: tuple[tuple[str, str], ...] = (
     ),
 )
 
-# BUG-0023 additive: shared Rpc.define dispatch (keep BUG0021_PAIRS / BUG0020_PAIRS / BUG0019_PAIRS).
+# BUG-0023 historical evidence retained after BUG-0030 command migration.
 BUG0023_PAIRS: tuple[tuple[str, str], ...] = (
-    (
-        ".opencode/plugins/its-magic-auto/rpc.ts",
-        "template/.opencode/plugins/its-magic-auto/rpc.ts",
-    ),
-    (
-        ".opencode/plugins/its-magic-auto/tui.ts",
-        "template/.opencode/plugins/its-magic-auto/tui.ts",
-    ),
     (
         ".opencode/plugins/orchestrator.ts",
         "template/.opencode/plugins/orchestrator.ts",
@@ -715,10 +695,6 @@ BUG0023_PAIRS: tuple[tuple[str, str], ...] = (
     (
         "tests/bug0023_opencode_cli_tui_dispatch_rpc_test.py",
         "template/tests/bug0023_opencode_cli_tui_dispatch_rpc_test.py",
-    ),
-    (
-        "tests/bug0023_dispatch_harness.mjs",
-        "template/tests/bug0023_dispatch_harness.mjs",
     ),
     (
         "docs/engineering/runbook.md",
@@ -730,16 +706,8 @@ BUG0023_PAIRS: tuple[tuple[str, str], ...] = (
     ),
 )
 
-# BUG-0024 additive: live-dispatch residual peer-brand + stage codes (keep BUG0023_PAIRS).
+# BUG-0024 historical evidence retained after BUG-0030 command migration.
 BUG0024_PAIRS: tuple[tuple[str, str], ...] = (
-    (
-        ".opencode/plugins/its-magic-auto/rpc.ts",
-        "template/.opencode/plugins/its-magic-auto/rpc.ts",
-    ),
-    (
-        ".opencode/plugins/its-magic-auto/tui.ts",
-        "template/.opencode/plugins/its-magic-auto/tui.ts",
-    ),
     (
         ".opencode/plugins/orchestrator.ts",
         "template/.opencode/plugins/orchestrator.ts",
@@ -747,10 +715,6 @@ BUG0024_PAIRS: tuple[tuple[str, str], ...] = (
     (
         "tests/bug0024_opencode_cli_tui_live_dispatch_residual_test.py",
         "template/tests/bug0024_opencode_cli_tui_live_dispatch_residual_test.py",
-    ),
-    (
-        "tests/bug0024_dispatch_harness.mjs",
-        "template/tests/bug0024_dispatch_harness.mjs",
     ),
     (
         "docs/engineering/runbook.md",
@@ -802,6 +766,21 @@ BUG0027_PAIRS: tuple[tuple[str, str], ...] = (
     (
         "docs/engineering/runbook.md",
         "template/docs/engineering/runbook.md",
+    ),
+)
+
+# BUG-0030: documented Markdown /auto command and retired private TUI/RPC route.
+BUG0030_PAIRS: tuple[tuple[str, str], ...] = (
+    (".opencode/commands/auto.md", "template/.opencode/commands/auto.md"),
+    (".opencode/tui.json", "template/.opencode/tui.json"),
+    (
+        "tests/bug0030_opencode_auto_command_test.py",
+        "template/tests/bug0030_opencode_auto_command_test.py",
+    ),
+    ("docs/engineering/runbook.md", "template/docs/engineering/runbook.md"),
+    (
+        "docs/engineering/context/installer-owned-paths.manifest",
+        "template/docs/engineering/context/installer-owned-paths.manifest",
     ),
 )
 
@@ -919,6 +898,7 @@ SCOPES: dict[str, tuple[tuple[str, str], ...]] = {
     "bug-0023": BUG0023_PAIRS,
     "bug-0024": BUG0024_PAIRS,
     "bug-0027": BUG0027_PAIRS,
+    "bug-0030": BUG0030_PAIRS,
     "us-0131": US0131_PAIRS,
     "us-0132": US0132_PAIRS,
     "all": (
@@ -954,6 +934,7 @@ SCOPES: dict[str, tuple[tuple[str, str], ...]] = {
         + BUG0023_PAIRS
         + BUG0024_PAIRS
         + BUG0027_PAIRS
+        + BUG0030_PAIRS
         + US0131_PAIRS
         + US0132_PAIRS
     ),

@@ -3,6 +3,7 @@ description: Release agent — release queue, notes, changelog handoffs
 mode: subagent
 permission:
   edit:
+    "**": deny
     "handoffs/release_queue.md": allow
     "handoffs/release_notes.md": allow
     "handoffs/releases/*.md": allow
@@ -15,7 +16,6 @@ permission:
     "docs/engineering/runbook.md": allow
     "CHANGELOG.md": allow
     "template/CHANGELOG.md": allow
-    "**": deny
   bash: ask
   task: deny
 ---

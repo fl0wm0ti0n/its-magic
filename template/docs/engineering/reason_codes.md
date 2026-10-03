@@ -465,5 +465,6 @@ Reason codes for other stories live in their respective architecture sections:
 - **US-0086** (remote automation): `REMOTE_TARGET_*`, `REMOTE_AUTOMATION_MODE_OFF`
 - **US-0092** (full autonomy): `AUTO_FLOW_MODE_CONFLICT`, `AUTO_OUTER_DRIVER_*`
 - **US-0096** (delivery modes): `DELIVERY_MODE_UNKNOWN`, `LEAN_MEMORY_*`
+- **BUG-0031** (OpenCode `/closure` flip-path authorization): `CLOSURE_PERMISSION_FLIP_PATHS_DENIED`
 
 See `docs/engineering/architecture.md` for normative definitions.

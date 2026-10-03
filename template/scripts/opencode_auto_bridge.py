@@ -5,6 +5,9 @@ Durable SOT remains docs/engineering/state.md (US-0048 / DEC-0029).
 First-phase order (architecture CF3 / R-0114 DQ3):
   argv --start-from → resume_brief → scratchpad → US-0087 bug-queue.
 AUTO_SCHEDULER_CONFLICT mutex semantics unchanged (story-drain vs bug-queue).
+US-0156 / DEC-0152: no validated source → fail closed (no default phase);
+new `--resolve-continuation` emits the typed plan/item tuple (or a reason-coded
+failure) and never falls back to an unvalidated phase.
 """
 
 from __future__ import annotations
@@ -74,59 +77,365 @@ def _parse_state_next_phase(repo: Path) -> str | None:
     return None
 
 
+PHASE_PLAN_ORDER = (
+    "intake",
+    "discovery",
+    "research",
+    "architecture",
+    "sprint-plan",
+    "plan-verify",
+    "execute",
+    "qa",
+    "verify-work",
+    "release",
+    "closure",
+    "refresh-context",
+)
+
+PHASE_PLAN = tuple(PHASE_PLAN_ORDER)
+
+
+def _is_known_phase(phase_id: str) -> bool:
+    return phase_id in PHASE_PLAN_ORDER
+
+
+def _validate_resume_brief(repo: Path) -> dict:
+    resume = _parse_resume_brief(repo)
+    if not resume:
+        return {"ok": False, "reason": "empty"}
+    if not resume.get("story_id") and not resume.get("bug_id") and not resume.get("orchestrator_run_id"):
+        return {"ok": False, "reason": "missing_work_item_anchor"}
+    phase = None
+    for key in ("intended_resume_phase", "next_scheduled_phase"):
+        val = (resume.get(key) or "").strip().lstrip("/")
+        if val and val not in ("(none)", "auto", "n/a"):
+            phase = val
+            break
+    if not _is_known_phase(phase or ""):
+        return {"ok": False, "reason": "unknown_phase"}
+    return {"ok": True, "value": phase, "source": f"resume_brief"}
+
+
+def _validate_state(repo: Path) -> dict:
+    phase = _parse_state_next_phase(repo)
+    if not phase:
+        return {"ok": False, "reason": "empty"}
+    if not _is_known_phase(phase):
+        return {"ok": False, "reason": "unknown_phase"}
+    return {"ok": True, "value": phase, "source": "state.md"}
+
+
+def _effective_plan_intersection(phase_id: str, anchor_phase: str | None) -> list[str]:
+    if not _is_known_phase(phase_id):
+        return []
+    if anchor_phase and _is_known_phase(anchor_phase) and anchor_phase != phase_id:
+        i_anchor = PHASE_PLAN_ORDER.index(anchor_phase)
+        i_phase = PHASE_PLAN_ORDER.index(phase_id)
+        if i_anchor > i_phase:
+            return list(PHASE_PLAN_ORDER[i_phase:])
+        return list(PHASE_PLAN_ORDER[i_anchor:])
+    return list(PHASE_PLAN_ORDER[PHASE_PLAN_ORDER.index(phase_id):])
+
+
+def _select_next_open_story(repo: Path) -> dict:
+    path = repo / "docs" / "product" / "backlog.md"
+    if not path.is_file():
+        return {"ok": False, "reasonCode": "OPENCODE_AUTO_DEPENDENCY_BLOCKED",
+                "reason": "backlog_missing"}
+    text = path.read_text(encoding="utf-8")
+    blocks = re.split(r"(?=^## US-\d+)", text, flags=re.MULTILINE)
+    for block in blocks:
+        m = re.match(r"^## (US-\d+)", block)
+        if not m:
+            continue
+        if not re.search(r"Status\s*[:=]\s*`*OPEN\b", block, re.IGNORECASE):
+            continue
+        if re.search(r"Status\s*[:=]\s*`*(DONE|IN_PROGRESS|BLOCKED|PAUSED)\b", block, re.IGNORECASE):
+            continue
+        return {"ok": True, "value": m.group(1), "source": "backlog.md"}
+    return {"ok": False, "reasonCode": "OPENCODE_AUTO_DEPENDENCY_BLOCKED",
+            "reason": "no_dependency_eligible_story"}
+
+
+def _select_next_sprint_from_backlog(repo: Path, story_id: str) -> str:
+    path = repo / "docs" / "product" / "backlog.md"
+    if not path.is_file():
+        return ""
+    text = path.read_text(encoding="utf-8")
+    m = re.search(
+        rf"^## {re.escape(story_id)}.*?(?=^## (?:US|BUG)-\d+\Z|\Z)",
+        text,
+        flags=re.MULTILINE | re.DOTALL,
+    )
+    if not m:
+        return ""
+    sm = re.search(r"Sprint\s*[:=]\s*`*(S\d+)\b", m.group(0), re.IGNORECASE)
+    if sm:
+        return sm.group(1)
+    sm2 = re.search(r"(S\d{3,})", m.group(0))
+    return sm2.group(1) if sm2 else ""
+
+
 def select_first_phase(
     repo: Path,
     *,
     start_from: str | None,
     bug_target: str | None,
 ) -> dict:
-    if start_from and start_from.strip():
-        return {
-            "ok": True,
-            "phase_id": start_from.strip().lstrip("/"),
-            "source": "argv",
-        }
+    """Legacy entry retained for adapter compatibility.
 
-    resume = _parse_resume_brief(repo)
-    for key in ("intended_resume_phase", "next_scheduled_phase"):
-        val = resume.get(key, "").strip().lstrip("/")
-        if val and val not in ("(none)", "auto", "n/a"):
-            return {"ok": True, "phase_id": val, "source": f"resume_brief:{key}"}
+    US-0156 / DEC-0152: precedence is start-from → validated resume_brief →
+    validated state.md. All fail-closed paths emit a reason code and never
+    fall back to an unvalidated phase.
+    """
+    if start_from and start_from.strip():
+        phase = start_from.strip().lstrip("/")
+        if _is_known_phase(phase):
+            return {"ok": True, "phase_id": phase, "source": "argv"}
+        return {"ok": False, "reasonCode": "OPENCODE_AUTO_PHASE_PLAN_INVALID",
+                "source": "argv"}
 
     scratch = _merge_scratchpad(repo)
-    # Story-drain vs bug-queue mutex (US-0087) — unchanged conflict code.
     story_drain = scratch.get("AUTO_BACKLOG_DRAIN", "0") == "1"
     bug_queue = scratch.get("AUTO_BUG_QUEUE", "0") == "1"
     if story_drain and bug_queue and not bug_target:
-        return {"ok": False, "reasonCode": "AUTO_SCHEDULER_CONFLICT"}
+        return {"ok": False, "reasonCode": "AUTO_SCHEDULER_CONFLICT",
+                "source": "scheduler"}
 
-    for key in (
-        "INTENDED_RESUME_PHASE",
-        "NEXT_SCHEDULED_PHASE",
-        "AUTO_START_FROM",
-    ):
-        val = scratch.get(key, "").strip().lstrip("/")
-        if val:
+    resume_check = _validate_resume_brief(repo)
+    if resume_check["ok"]:
+        return {"ok": True, "phase_id": resume_check["value"],
+                "source": f"resume_brief"}
+
+    for key in ("INTENDED_RESUME_PHASE", "NEXT_SCHEDULED_PHASE", "AUTO_START_FROM"):
+        val = (scratch.get(key) or "").strip().lstrip("/")
+        if val and _is_known_phase(val):
             return {"ok": True, "phase_id": val, "source": f"scratchpad:{key}"}
+        if val and not _is_known_phase(val):
+            return {"ok": False, "reasonCode": "OPENCODE_AUTO_PHASE_PLAN_INVALID",
+                    "source": f"scratchpad:{key}"}
+
+    state_check = _validate_state(repo)
+    if state_check["ok"]:
+        return {"ok": True, "phase_id": state_check["value"], "source": "state.md"}
 
     if bug_queue or bug_target:
-        # US-0087 bug-queue win: start at intake/discovery for the bug segment.
+        return {"ok": True,
+                "phase_id": "intake" if not bug_target else "research",
+                "source": "us0087_bug_queue",
+                "bug_target": bug_target or ""}
+
+    return {"ok": False, "reasonCode": "OPENCODE_AUTO_RESOLUTION_FAILED",
+            "source": "no_validated_source"}
+
+
+# --- US-0156 / DEC-0152: typed continuation resolver --------------
+#
+# Module-level provenance registry (idempotence + conflict detection).
+# Tests reset via reset_continuation_registry_for_tests().
+continuation_registry: dict[str, dict] = {}
+
+
+def reset_continuation_registry_for_tests() -> None:
+    continuation_registry.clear()
+
+
+def _continuation_key(
+    orchestrator_run_id: str,
+    work_item_kind: str,
+    work_item_id: str,
+    phase_id: str,
+) -> str:
+    return f"{orchestrator_run_id}|{work_item_kind}|{work_item_id}|{phase_id}"
+
+
+def resolve_continuation(
+    repo: Path,
+    *,
+    start_from: str | None,
+    bug_target: str | None,
+    orchestrator_run_id: str | None,
+    cursor: int = 0,
+    remaining_budget: int = 32,
+) -> dict:
+    """US-0156 / DEC-0152 typed, read-only continuation resolution.
+
+    Inputs: explicit start anchor, merged policy, durable resume/state sources.
+    Output: ok=true with one complete plan/item tuple, or ok=false with one
+    architecture-owned reason code (no fallback execution).
+    """
+    if remaining_budget <= 0:
+        return {"ok": False,
+                "reasonCode": "OPENCODE_AUTO_RESOLUTION_FAILED",
+                "reason": "exhausted_retry_or_loop_budget"}
+
+    scratch = _merge_scratchpad(repo)
+    story_drain = scratch.get("AUTO_BACKLOG_DRAIN", "0") == "1"
+    bug_queue = scratch.get("AUTO_BUG_QUEUE", "0") == "1"
+
+    # Scheduler mutex (US-0087, US-0156): story-drain + bug-queue without
+    # explicit bug_target ⇒ AUTO_SCHEDULER_CONFLICT (fail close before any
+    # phase resolution).
+    if story_drain and bug_queue and not bug_target:
+        return {"ok": False, "reasonCode": "AUTO_SCHEDULER_CONFLICT",
+                "source": "scheduler"}
+
+    phase_id: str | None = None
+    source: str = "no_validated_source"
+    resume = _parse_resume_brief(repo)
+
+    if start_from and start_from.strip():
+        phase_id = start_from.strip().lstrip("/")
+        source = "argv"
+        if not _is_known_phase(phase_id):
+            return {"ok": False, "reasonCode": "OPENCODE_AUTO_PHASE_PLAN_INVALID",
+                    "source": "argv"}
+    else:
+        resume_val = None
+        for key in ("intended_resume_phase", "next_scheduled_phase"):
+            val = (resume.get(key) or "").strip().lstrip("/")
+            if val and val not in ("(none)", "auto", "n/a", "none"):
+                resume_val = val
+                break
+        state_val = _parse_state_next_phase(repo)
+
+        if resume_val is not None:
+            if state_val and state_val != resume_val:
+                return {"ok": False,
+                        "reasonCode": "OPENCODE_AUTO_RESUME_AMBIGUOUS",
+                        "source": "resume_brief+state.md"}
+            if not _is_known_phase(resume_val):
+                return {"ok": False,
+                        "reasonCode": "OPENCODE_AUTO_PHASE_PLAN_INVALID",
+                        "source": "resume_brief"}
+            phase_id = resume_val
+            source = "resume_brief"
+        elif state_val:
+            if not _is_known_phase(state_val):
+                return {"ok": False,
+                        "reasonCode": "OPENCODE_AUTO_PHASE_PLAN_INVALID",
+                        "source": "state.md"}
+            phase_id = state_val
+            source = "state.md"
+
+        if phase_id is None and (bug_queue or bug_target):
+            phase_id = "intake" if not bug_target else "research"
+            source = "us0087_bug_queue"
+
+    if phase_id is None:
+        return {"ok": False,
+                "reasonCode": "OPENCODE_AUTO_RESOLUTION_FAILED",
+                "source": "no_validated_source"}
+
+    def _clean(v: str | None) -> str:
+        s = (v or "").strip()
+        if s in ("(none)", "n/a", "auto", "", "null", "None", "none"):
+            return ""
+        return s
+
+    story_id = _clean(resume.get("story_id"))
+    sprint_id = _clean(resume.get("sprint_id"))
+    run_id = _clean(orchestrator_run_id or resume.get("orchestrator_run_id"))
+    bug_id = _clean(resume.get("bug_id"))
+    if bug_target:
+        bug_id = bug_target
+
+    work_item_kind: str
+    work_item_id: str
+    if bug_id:
+        work_item_kind = "bug"
+        work_item_id = bug_id
+    elif story_id:
+        work_item_kind = "story"
+        work_item_id = story_id
+    else:
+        if story_drain:
+            story_sel = _select_next_open_story(repo)
+            if not story_sel["ok"]:
+                return {"ok": False,
+                        "reasonCode": story_sel.get("reasonCode", "OPENCODE_AUTO_DEPENDENCY_BLOCKED"),
+                        "source": "backlog.md"}
+            work_item_kind = "story"
+            work_item_id = story_sel["value"]
+            story_id = story_sel["value"]
+            sprint_id = sprint_id or _clean(_select_next_sprint_from_backlog(repo, story_sel["value"]))
+        elif bug_queue:
+            return {"ok": False,
+                    "reasonCode": "OPENCODE_AUTO_RESOLUTION_FAILED",
+                    "source": "no_bug_id_in_queue"}
+        else:
+            return {"ok": False,
+                    "reasonCode": "OPENCODE_AUTO_RESOLUTION_FAILED",
+                    "source": "no_work_item_anchor"}
+
+    plan = _effective_plan_intersection(phase_id, None)
+    if not plan:
+        return {"ok": False, "reasonCode": "OPENCODE_AUTO_PHASE_PLAN_INVALID",
+                "source": "anchor_intersection_empty"}
+
+    ckey = _continuation_key(run_id or "missing", work_item_kind, work_item_id, phase_id)
+    existing = continuation_registry.get(ckey)
+    if existing is not None:
+        if existing.get("session_id") and existing.get("phase_id") != phase_id:
+            return {"ok": False, "reasonCode": "OPENCODE_AUTO_CONTINUATION_CONFLICT",
+                    "source": "registry"}
         return {
             "ok": True,
-            "phase_id": "intake" if not bug_target else "research",
-            "source": "us0087_bug_queue",
-            "bug_target": bug_target or resume.get("bug_id", ""),
+            "idempotent_noop": True,
+            "source": existing.get("source", source),
+            "work_item_kind": work_item_kind,
+            "story_id": story_id,
+            "bug_id": bug_id,
+            "sprint_id": sprint_id,
+            "effective_phase_plan": existing.get("effective_phase_plan", plan),
+            "skipped_phases": existing.get("skipped_phases", []),
+            "phase_id": phase_id,
+            "cursor": cursor,
+            "remaining_budget": remaining_budget,
+            "continuation_key": ckey,
         }
+    skipped_phases = (
+        list(PHASE_PLAN_ORDER[: PHASE_PLAN_ORDER.index(phase_id)])
+        if _is_known_phase(phase_id)
+        else []
+    )
 
-    state_phase = _parse_state_next_phase(repo)
-    if state_phase and state_phase not in ("(none)", "auto"):
-        return {
-            "ok": True,
-            "phase_id": state_phase.lstrip("/"),
-            "source": "state.md",
-        }
+    continuation_registry[ckey] = {
+        "source": source,
+        "phase_id": phase_id,
+        "effective_phase_plan": plan,
+        "skipped_phases": skipped_phases,
+        "session_id": None,
+    }
 
-    return {"ok": True, "phase_id": "execute", "source": "default"}
+    return {
+        "ok": True,
+        "idempotent_noop": False,
+        "source": source,
+        "work_item_kind": work_item_kind,
+        "story_id": story_id,
+        "bug_id": bug_id,
+        "sprint_id": sprint_id,
+        "effective_phase_plan": plan,
+        "skipped_phases": skipped_phases,
+        "phase_id": phase_id,
+        "cursor": cursor,
+        "remaining_budget": remaining_budget,
+        "continuation_key": ckey,
+    }
+
+
+def note_continuation_session(
+    ckey: str,
+    session_id: str,
+) -> None:
+    existing = continuation_registry.get(ckey)
+    if existing is None:
+        return
+    if existing.get("session_id") and existing["session_id"] != session_id:
+        existing["_conflict"] = True
+    else:
+        existing["session_id"] = session_id
 
 
 def append_isolation(
@@ -224,6 +533,13 @@ def main() -> int:
         action="store_true",
         help="Emit JSON story/sprint/run/bug from resume_brief",
     )
+    parser.add_argument(
+        "--resolve-continuation",
+        action="store_true",
+        help="US-0156 / DEC-0152: typed, read-only continuation resolution",
+    )
+    parser.add_argument("--cursor", default="0", help="Cursor for continuation accounting")
+    parser.add_argument("--remaining-budget", default="32", dest="remaining_budget")
     parser.add_argument("--state-path", default=None, help="Override state.md path")
     args = parser.parse_args()
     repo = Path(args.repo).resolve()
@@ -231,6 +547,19 @@ def main() -> int:
     if args.select_first_phase:
         payload = select_first_phase(
             repo, start_from=args.start_from, bug_target=args.bug_target
+        )
+        sys.stdout.write(json.dumps(payload, sort_keys=True, separators=(",", ":")))
+        sys.stdout.write("\n")
+        return EXIT_OK if payload.get("ok") else EXIT_FAIL
+
+    if args.resolve_continuation:
+        payload = resolve_continuation(
+            repo,
+            start_from=args.start_from,
+            bug_target=args.bug_target,
+            orchestrator_run_id=args.orchestrator_run_id,
+            cursor=int(args.cursor or 0),
+            remaining_budget=int(args.remaining_budget or 32),
         )
         sys.stdout.write(json.dumps(payload, sort_keys=True, separators=(",", ":")))
         sys.stdout.write("\n")

@@ -165,13 +165,13 @@ def test_us0122_po_permission_object_form():
 
 
 def test_us0122_po_production_code_denial():
-    """PO edit deny-last; amended duty allows; no production path allow keys (BUG-0016 / DEC-0122 §2)."""
+    """PO uses broad-deny-first so its specific artifact paths remain writable."""
     _, fm, _ = _read_agent("po")
     edit_pairs = _permission_subkey_value(fm, "edit")
     assert isinstance(edit_pairs, list)
     keys = [k for k, _ in edit_pairs]
     values = {k: v for k, v in edit_pairs}
-    assert keys[-1] == "**", "last edit key must be ** (deny-last)"
+    assert keys[0] == "**", "first edit key must be ** (broad deny first)"
     assert values["**"] == "deny"
     assert values.get("docs/product/**") == "allow"
     assert values.get("handoffs/po_to_tl.md") == "allow"
@@ -201,7 +201,7 @@ def test_us0122_po_production_code_denial():
 
 
 def test_us0122_auto_task_allowlist():
-    """auto.md task object: exact 7-role allow set; * deny last."""
+    """auto.md task object: broad deny first, then the exact seven-role allowlist."""
     _, fm, _ = _read_agent("auto")
     task = _permission_subkey_value(fm, "task")
     assert isinstance(task, list), "auto permission.task must be object mapping"
@@ -209,7 +209,7 @@ def test_us0122_auto_task_allowlist():
     values = {k: v for k, v in task}
     allow_roles = {k for k, v in task if v == "allow"}
     assert allow_roles == AUTO_TASK_ALLOW
-    assert keys[-1] == "*"
+    assert keys[0] == "*"
     assert values["*"] == "deny"
 
 

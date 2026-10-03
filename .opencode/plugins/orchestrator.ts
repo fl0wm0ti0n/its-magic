@@ -26,7 +26,6 @@
 
 import { existsSync } from "node:fs";
 import { join } from "node:path";
-import { ITS_MAGIC_AUTO_RPC } from "./its-magic-auto/rpc.ts";
 
 type PluginDefineFn = (spec: any) => any;
 let Plugin: { define: PluginDefineFn } = {
@@ -84,11 +83,13 @@ export const REASON_CODES = {
   MANUAL_PHASE_PERSIST_NOT_INVOKED: "OPENCODE_MANUAL_PHASE_PERSIST_NOT_INVOKED",
   PLACEHOLDER_PARENT_REJECTED: "OPENCODE_PLACEHOLDER_PARENT_REJECTED",
   MANUAL_PHASE_CONTEXT_MISSING: "OPENCODE_MANUAL_PHASE_CONTEXT_MISSING",
+  // US-0156 / DEC-0152 additive — fail-closed resolver (no fallback_execute).
+  RESOLUTION_FAILED: "OPENCODE_AUTO_RESOLUTION_FAILED",
+  RESUME_AMBIGUOUS: "OPENCODE_AUTO_RESUME_AMBIGUOUS",
+  PHASE_PLAN_INVALID: "OPENCODE_AUTO_PHASE_PLAN_INVALID",
+  CONTINUATION_CONFLICT: "OPENCODE_AUTO_CONTINUATION_CONFLICT",
+  DEPENDENCY_BLOCKED: "OPENCODE_AUTO_DEPENDENCY_BLOCKED",
 } as const;
-
-// Shared Rpc.define lives in ./its-magic-auto/rpc.ts (BUG-0023). Re-export
-// so existing importers keep ITS_MAGIC_AUTO_RPC. RPC id: "its-magic.auto".
-export { ITS_MAGIC_AUTO_RPC };
 
 // US-0069 / DEC-0051 phase→role matrix (compose, not amend). The plugin
 // resolves phase_id → role here; it does NOT copy the agent permission array
@@ -418,6 +419,19 @@ export interface FirstPhaseSelection {
   source?: string;
 }
 
+export interface ContinuationSelection extends FirstPhaseSelection {
+  idempotent_noop?: boolean;
+  work_item_kind?: string;
+  story_id?: string;
+  bug_id?: string;
+  sprint_id?: string;
+  effective_phase_plan?: string[];
+  skipped_phases?: string[];
+  cursor?: number;
+  remaining_budget?: number;
+  continuation_key?: string;
+}
+
 export interface PersistIsolationResult {
   ok: boolean;
   reasonCode?: string;
@@ -452,6 +466,9 @@ export interface AutoLifecycleOpts {
   pythonBin?: string;
   bridgePath?: string;
   maxCycles?: number;
+  cursor?: number;
+  remainingBudget?: number;
+  resolveContinuationFn?: (opts: AutoLifecycleOpts) => ContinuationSelection;
 }
 
 export interface AutoLifecycleResult {
@@ -494,9 +511,8 @@ export function selectFirstPhaseViaPython(
     pyArgs.push("--orchestrator-run-id", opts.orchestratorRunId);
   const proc = spawnFn(pyArgs);
   if (proc.status !== 0) {
-    // Fail soft to a safe default phase so attach/spawn tests can still run
-    // when the bridge is unavailable; production hosts inject a working spawnFn.
-    return { ok: true, phase_id: "execute", source: "fallback_execute" };
+    // US-0156: fail closed before a Task spawn; no fallback phase.
+    return { ok: false, reasonCode: REASON_CODES.RESOLUTION_FAILED };
   }
   try {
     const parsed = JSON.parse(proc.stdout || "{}") as {
@@ -505,11 +521,11 @@ export function selectFirstPhaseViaPython(
       reasonCode?: string;
       source?: string;
     };
-    if (parsed.reasonCode === "AUTO_SCHEDULER_CONFLICT") {
-      return { ok: false, reasonCode: "AUTO_SCHEDULER_CONFLICT" };
+    if (parsed.reasonCode) {
+      return { ok: false, reasonCode: parsed.reasonCode };
     }
     if (!parsed.ok || !parsed.phase_id) {
-      return { ok: true, phase_id: "execute", source: "fallback_execute" };
+      return { ok: false, reasonCode: REASON_CODES.RESOLUTION_FAILED };
     }
     return {
       ok: true,
@@ -517,7 +533,55 @@ export function selectFirstPhaseViaPython(
       source: parsed.source ?? "python",
     };
   } catch {
-    return { ok: true, phase_id: "execute", source: "fallback_execute" };
+    return { ok: false, reasonCode: REASON_CODES.RESOLUTION_FAILED };
+  }
+}
+
+/**
+ * US-0156 / DEC-0152: typed, read-only continuation resolution.
+ * Bridge owns the precedence, work-item selection, plan intersection, and
+ * idempotent provenance. No fallback phase on any bridge failure.
+ */
+export function resolveContinuationViaPython(
+  opts: AutoLifecycleOpts,
+): ContinuationSelection {
+  if (typeof opts.resolveContinuationFn === "function") {
+    return opts.resolveContinuationFn(opts);
+  }
+  const spawnFn = opts.bridgeSpawnFn ?? defaultBridgeSpawnFn;
+  const pythonBin = opts.pythonBin ?? "python";
+  const bridgePath = opts.bridgePath ?? "scripts/opencode_auto_bridge.py";
+  const pyArgs = [bridgePath, "--resolve-continuation"];
+  if (opts.startFrom) pyArgs.push("--start-from", opts.startFrom);
+  if (opts.bugTarget) pyArgs.push("--bug-target", opts.bugTarget);
+  if (opts.orchestratorRunId)
+    pyArgs.push("--orchestrator-run-id", opts.orchestratorRunId);
+  if (typeof opts.cursor === "number")
+    pyArgs.push("--cursor", String(opts.cursor));
+  if (typeof opts.remainingBudget === "number")
+    pyArgs.push("--remaining-budget", String(opts.remainingBudget));
+  const proc = spawnFn(pyArgs);
+  if (proc.status !== 0) {
+    return { ok: false, reasonCode: REASON_CODES.RESOLUTION_FAILED };
+  }
+  try {
+    const parsed = JSON.parse(proc.stdout || "{}") as ContinuationSelection & {
+      reasonCode?: string;
+    };
+    if (!parsed.ok) {
+      return {
+        ok: false,
+        reasonCode:
+          parsed.reasonCode ??
+          REASON_CODES.RESOLUTION_FAILED,
+      };
+    }
+    if (!parsed.phase_id) {
+      return { ok: false, reasonCode: REASON_CODES.PHASE_PLAN_INVALID };
+    }
+    return parsed;
+  } catch {
+    return { ok: false, reasonCode: REASON_CODES.RESOLUTION_FAILED };
   }
 }
 
@@ -889,14 +953,22 @@ export async function runAutoLifecycle(
     return { ok: false, reasonCode: REASON_CODES.AUTO_ALREADY_RUNNING };
   }
   try {
-    const selection = selectFirstPhaseViaPython(opts);
-    if (!selection.ok) {
+    const continuation = resolveContinuationViaPython(opts);
+    if (!continuation.ok) {
+      // US-0156: fail closed before a Task spawn; no fallback phase.
       return {
         ok: false,
-        reasonCode: selection.reasonCode ?? "AUTO_SCHEDULER_CONFLICT",
+        reasonCode: continuation.reasonCode ?? REASON_CODES.RESOLUTION_FAILED,
       };
     }
-    let phaseId = selection.phase_id ?? "execute";
+    const initialPhase = continuation.phase_id;
+    if (!initialPhase) {
+      return { ok: false, reasonCode: REASON_CODES.PHASE_PLAN_INVALID };
+    }
+    let phaseId = initialPhase;
+    const continuationStoryId = continuation.story_id || opts.storyId;
+    const continuationSprintId = continuation.sprint_id || opts.sprintId;
+    const continuationBugId = continuation.bug_id || opts.bugId || opts.bugTarget;
     const spawnFn = opts.spawnPhaseFn ?? spawnPhase;
     const stopFn = opts.dispatchStopMatrixFn ?? dispatchStopMatrix;
     const maxCycles = opts.maxCycles ?? 32;
@@ -924,10 +996,10 @@ export async function runAutoLifecycle(
         prompt: opts.prompt ?? `phase=${phaseId}`,
         orchestratorSessionId: opts.orchestratorSessionId,
         freshContextMarker: fresh,
-        storyId: opts.storyId,
-        sprintId: opts.sprintId,
+        storyId: continuationStoryId,
+        sprintId: continuationSprintId,
         orchestratorRunId: opts.orchestratorRunId,
-        bugId: opts.bugId ?? opts.bugTarget,
+        bugId: continuationBugId,
       });
       if (!spawnResult.ok) {
         // Fail-closed paths clear mutex in finally (critic NB clear-on-fail-closed).
@@ -996,54 +1068,6 @@ export async function runAutoLifecycle(
   } finally {
     clearAutoMutex();
   }
-}
-
-/**
- * Thin RPC wrapper around `runAutoLifecycle` for TUI `run()` dispatch (BUG-0019).
- * TUI keymap `run` lives in the CLI process; this handler runs on the server plugin.
- */
-export async function runAutoLifecycleRpc(
-  ctxOrInput: any = {},
-  inputOrCtx: any = {},
-): Promise<AutoLifecycleResult> {
-  // Host RPC calls (input, context). Kit callers pass (ctx, input).
-  const firstIsPluginCtx =
-    ctxOrInput &&
-    typeof ctxOrInput === "object" &&
-    (typeof ctxOrInput.session === "object" ||
-      typeof ctxOrInput.command === "object" ||
-      typeof ctxOrInput.rpc === "object" ||
-      typeof ctxOrInput.tool === "object" ||
-      typeof ctxOrInput.directory === "string");
-  const ctx = firstIsPluginCtx ? ctxOrInput : inputOrCtx;
-  const input = firstIsPluginCtx ? inputOrCtx ?? {} : ctxOrInput ?? {};
-  const sessionID =
-    typeof input.sessionID === "string" ? input.sessionID.trim() : "";
-  if (
-    isPlaceholderParent(sessionID) ||
-    isPlaceholderParent(input.orchestratorRunId)
-  ) {
-    return {
-      ok: false,
-      reasonCode: REASON_CODES.PLACEHOLDER_PARENT_REJECTED,
-    };
-  }
-  if (!sessionID) {
-    return {
-      ok: false,
-      reasonCode: REASON_CODES.MANUAL_PHASE_CONTEXT_MISSING,
-    };
-  }
-  return runAutoLifecycle(ctx, {
-    orchestratorSessionId: sessionID,
-    prompt: input.prompt,
-    delivery: input.delivery,
-    storyId: input.storyId,
-    sprintId: input.sprintId,
-    orchestratorRunId: input.orchestratorRunId,
-    bugId: input.bugId,
-    attachSupported: true,
-  });
 }
 
 /**
@@ -1350,15 +1374,6 @@ export interface OrchestratorApi {
   invokeHeadless: (prompt: string, opts?: InvokeOptions) => HeadlessResult;
   buildHeadlessArgv: (prompt: string) => HeadlessArgv;
   runAutoLifecycle: (opts: AutoLifecycleOpts) => Promise<AutoLifecycleResult>;
-  runAutoLifecycleRpc: (input: {
-    sessionID?: string;
-    prompt?: string;
-    delivery?: string;
-    storyId?: string;
-    sprintId?: string;
-    orchestratorRunId?: string;
-    bugId?: string;
-  }) => Promise<AutoLifecycleResult>;
   persistManualPhaseIsolation: (
     event: ManualPhasePersistInput,
     opts?: AutoLifecycleOpts,
@@ -1387,46 +1402,9 @@ const plugin = Plugin.define({
       });
     }
 
-    let attachSupported = false;
-    let autoExecute:
-      | ((args: {
-          sessionID: string;
-          prompt?: string;
-          delivery?: string;
-        }) => Promise<AutoLifecycleResult>)
-      | null = null;
-
-    const bindExecute = () => {
-      autoExecute = async ({ sessionID, prompt, delivery }) => {
-        return runAutoLifecycle(ctx, {
-          orchestratorSessionId: sessionID,
-          prompt,
-          delivery,
-          attachSupported: true,
-        });
-      };
-      return autoExecute;
-    };
-
-    // Primary attach (DQ1 / CF6): command.transform → editor.add({ name: "auto" })
-    if (ctx?.command && typeof ctx.command.transform === "function") {
-      const transformResult = ctx.command.transform((editor: any) => {
-        if (editor && typeof editor.add === "function") {
-          editor.add({
-            name: "auto",
-            description:
-              "its-magic auto: orchestrator dispatch entry (spawn-only).",
-            execute: bindExecute(),
-          });
-          attachSupported = true;
-        }
-      });
-      // Support both sync and Promise-returning transform implementations.
-      if (transformResult && typeof transformResult.then === "function") {
-        // Fire-and-forget await for hosts that return a Promise; tests use sync.
-        void transformResult;
-      }
-    }
+    // BUG-0030: `/auto` is owned by .opencode/commands/auto.md. This plugin
+    // retains only orchestration support and BUG-0027 manual-phase persistence.
+    const attachSupported = false;
 
     // Secondary defense only (CF1 / CF6): command.executed / event.subscribe.
     // Mutex-gated — second entry → OPENCODE_AUTO_ALREADY_RUNNING (marker 5).
@@ -1434,17 +1412,6 @@ const plugin = Plugin.define({
       ctx.event.subscribe((event: any) => {
         const type = event?.type ?? event?.event;
         const name = event?.name ?? event?.command ?? event?.properties?.name;
-        if (type === "command.executed" && name === "auto") {
-          const sessionID =
-            event?.sessionID ??
-            event?.properties?.sessionID ??
-            "orchestrator-session-unknown";
-          return runAutoLifecycle(ctx, {
-            orchestratorSessionId: sessionID,
-            prompt: event?.arguments ?? event?.properties?.arguments,
-            attachSupported: true,
-          });
-        }
         if (type === "command.executed" && isManualPhaseCommandName(name)) {
           return persistManualPhaseIsolation(ctx, event ?? {});
         }
@@ -1458,53 +1425,22 @@ const plugin = Plugin.define({
         }
         return undefined;
       });
-      // Event subscribe alone counts as usable attach when transform missing.
-      if (!attachSupported) {
-        attachSupported = true;
-        bindExecute();
-      }
     }
 
-    // BUG-0023: await branded Rpc.define register so TUI `run()` can reach
-    // runAutoLifecycle. BUG-0024: absent register → REGISTER_SKIPPED (observable;
-    // not silent success). TUI may still try client/make limbs.
-    let autoTuiRegisterSkipped = false;
-    let autoTuiRegisterSkippedReasonCode: string | undefined;
-    if (ctx?.rpc && typeof ctx.rpc.register === "function") {
-      try {
-        await ctx.rpc.register(ITS_MAGIC_AUTO_RPC, {
-          runAutoLifecycle: runAutoLifecycleRpc,
-        });
-      } catch {
-        // RPC optional at attach time (register present but threw)
-      }
-    } else {
-      const skipEmission = emitAutoTuiRegisterSkipped(ctx);
-      autoTuiRegisterSkipped = true;
-      autoTuiRegisterSkippedReasonCode = skipEmission.reasonCode;
-    }
+    const autoTuiRegisterSkipped = false;
+    const autoTuiRegisterSkippedReasonCode: string | undefined = undefined;
 
     // BUG-0020: desktop Command.Info silent-miss is the defect. Emit after
     // editor.add when list() has no name === "auto" while execute is registered.
     // Non-blocking for attach + TUI keymap. Must not add a Command.Info template.
     let desktopListingUnsupported = false;
     let desktopListingReasonCode: string | undefined;
-    if (attachSupported && !commandInfoListHasAuto(ctx)) {
-      const emission = emitDesktopCommandInfoListingUnsupported(ctx);
-      desktopListingUnsupported = true;
-      desktopListingReasonCode = emission.reasonCode;
-    }
 
     // BUG-0021: listed-but-skipped residual. Best-effort only if the host
     // exposes TUI load skip for the listed spec. After editor.add (must not
     // block attach). Session-visible notice, not TUI-toast-only.
     let cliTuiPluginLoadUnsupported = false;
     let cliTuiPluginLoadReasonCode: string | undefined;
-    if (hostExposesCliTuiPluginLoadSkip(ctx)) {
-      const loadEmission = emitCliTuiPluginLoadUnsupported(ctx);
-      cliTuiPluginLoadUnsupported = true;
-      cliTuiPluginLoadReasonCode = loadEmission.reasonCode;
-    }
 
     const api: OrchestratorApi = {
       spawnPhase: (args: SpawnArgs) => spawnPhase(ctx, args),
@@ -1519,15 +1455,6 @@ const plugin = Plugin.define({
               ? opts.attachSupported
               : attachSupported,
         }),
-      runAutoLifecycleRpc: (input: {
-        sessionID?: string;
-        prompt?: string;
-        delivery?: string;
-        storyId?: string;
-        sprintId?: string;
-        orchestratorRunId?: string;
-        bugId?: string;
-      }) => runAutoLifecycleRpc(ctx, input ?? {}),
       persistManualPhaseIsolation: (
         event: ManualPhasePersistInput,
         opts?: AutoLifecycleOpts,
@@ -1544,10 +1471,7 @@ const plugin = Plugin.define({
       cliTuiPluginLoadReasonCode,
       autoTuiRegisterSkipped,
       autoTuiRegisterSkippedReasonCode,
-      sessionError:
-        desktopListingReasonCode ??
-        cliTuiPluginLoadReasonCode ??
-        autoTuiRegisterSkippedReasonCode,
+      sessionError: undefined,
     };
     return api;
   },

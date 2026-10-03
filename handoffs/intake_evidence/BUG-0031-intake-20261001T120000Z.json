@@ -1,0 +1,84 @@
+{
+  "selected_pack": "small-intake-pack",
+  "intake_run_id": "po-cursor-20261001-BUG0031-intake",
+  "writer_id": "po-cursor-20261001-BUG0031-intake",
+  "INTAKE_GUIDED_MODE": 0,
+  "INTAKE_WORK_ITEM_KIND": "bug",
+  "requested_mode": "bug",
+  "intake_boundary_utc": "2026-10-01T12:00:00Z",
+  "ID_NAMESPACE_BOOTSTRAP": 0,
+  "bug_id": "BUG-0031",
+  "asked_topics": [
+    "outcome_success_criteria",
+    "impacted_components",
+    "constraints_compatibility_risks",
+    "required_tests_acceptance_checks",
+    "done_definition"
+  ],
+  "missing_topics": [],
+  "assumptions_confirmed": "(none)",
+  "topic_coverage": [
+    {
+      "topic_key": "outcome_success_criteria",
+      "satisfied_by": "answer_ref",
+      "ref": "ie:po-cursor-20261001-BUG0031-intake:0:304d5a672842ee13",
+      "quoted_user_text": "Auf dem OpenCode-Host muss /closure eine spawnberechtigte Rolle (curator oder qe) die closure-eigenen Artefakte flippen koennen: ### BUG/US nach Status: DONE in docs/product/backlog.md, - [x] Zeile in docs/product/acceptance.md, sprints/S0xxx/closure-verification.md neu anlegen und state.md Closure-Checkpoint schreiben - so dass der Segment-Schluss per Phase passiert, statt in CLOSURE_BLOCKED_PERMISSION_MATRIX oder Operator-Handarbeit zu enden.",
+      "intake_run_id": "po-cursor-20261001-BUG0031-intake",
+      "turn_index": 0
+    },
+    {
+      "topic_key": "impacted_components",
+      "satisfied_by": "answer_ref",
+      "ref": "ie:po-cursor-20261001-BUG0031-intake:1:b41aed1200da3c5e",
+      "quoted_user_text": ".opencode/agents/{curator,qa}.md Outputs-Listen und deren deny-by-default Permission-Maps, .cursor/commands/closure.md (closure_role: qe|curator, vier Closure-Outputs), die qe-Rolle (auf OpenCode nicht spawnbar), das S0163/BUG-0022-Segment mit CLOSURE_VERIFY_PASS aber CLOSURE_BLOCKED_PERMISSION_MATRIX, sowie US-0156 deren DoD auf BUG-0022-DONE wartet.",
+      "intake_run_id": "po-cursor-20261001-BUG0031-intake",
+      "turn_index": 1
+    },
+    {
+      "topic_key": "constraints_compatibility_risks",
+      "satisfied_by": "answer_ref",
+      "ref": "ie:po-cursor-20261001-BUG0031-intake:2:b09bd82fdd210253",
+      "quoted_user_text": "DEC-0152 (deny-by-default, breite deny vor path-allow) darf nicht umgangen werden; US-0045 (Release darf nicht DONE markieren) und BUG-0006 (spawn-only) bleiben unveraendert; die Cursor-Host-Semantik, wo der Flip historisch lief (S0146, S0159, S0160, S0161), gilt nicht als OpenCode-Beweis; template/.opencode/**-Paritaet muss bleiben.",
+      "intake_run_id": "po-cursor-20261001-BUG0031-intake",
+      "turn_index": 2
+    },
+    {
+      "topic_key": "required_tests_acceptance_checks",
+      "satisfied_by": "answer_ref",
+      "ref": "ie:po-cursor-20261001-BUG0031-intake:3:fedcc0424b266557",
+      "quoted_user_text": "Fail-closed-Vertrag: auf einem Host, dessen Permission-Matrix die Closure-Pfade verweigert, muss /closure die exakten verweigerten Pfade und die fehlende spawnbare Rolle melden und NICHT schweigend in einen Operator-Workaround abfallen; plus ein reproducible-Test, dass der naechste closure-Flip via spawnberechtigter Rolle, nicht per Hand, passiert; bug_issue_validate.py muss im fixierten Zustand exit 0 bleiben.",
+      "intake_run_id": "po-cursor-20261001-BUG0031-intake",
+      "turn_index": 3
+    },
+    {
+      "topic_key": "done_definition",
+      "satisfied_by": "answer_ref",
+      "ref": "ie:po-cursor-20261001-BUG0031-intake:4:07493b4b522fdfcd",
+      "quoted_user_text": "BUG-0031 ist DONE, wenn /closure auf dem OpenCode-Host per Phase durchlaeuft: curator (oder qe) flippt alle closure-eigenen Stellen ohne Permission-Denial; ein Folge-Segment (z.B. der ausstehende BUG-0022-Flip) wird ueber die Phase, nicht vom Operator, abgeschlossen; US-0156-DoD wird korrekt aus BUG-0022-DONE abgeleitet; kein npm publish, kein git push, kein .env-Lesen.",
+      "intake_run_id": "po-cursor-20261001-BUG0031-intake",
+      "turn_index": 4
+    }
+  ],
+  "duplicate_check_pass": true,
+  "duplicate_check_notes": "Neuer Bug. BUG-0027 deckt Persistenz manueller Phasen-Evidenz ab und BUG-0024/BUG-0030 den /auto-Dispatch; keines der beiden deckt die Closure-Phase-Luecke ab, in der die closure-berechtigte Rolle die closure-eigenen Artefakte (docs/product/*, sprints/*/closure-verification.md) auf dem OpenCode-Host nicht schreiben darf, weil die breite deny-by-default-Matrix (DEC-0152) vor path-allow steht und qe dort nicht spawnbar ist. Live beobachtet aus dem S0163/BUG-0022-Segment (CLOSURE_BLOCKED_PERMISSION_MATRIX).",
+  "decomposition_verdict": "single_bug",
+  "decomposition_rationale": "Eine einzige vertikale Vertragsluecke: auf Hosts mit deny-by-default Permission-Matrix besitzt /closure keine spawnberechtigte Rolle, die die closure-eigenen Artefakte schreiben darf. Das ist eine Rollen-/Matrix-/Vertragsreparatur, keine Feature-Erweiterung; Zerlegung in kleinere senkrechte Stuecke bleibt inkomplett.",
+  "sibling_not_persisted": "BUG-0022 und US-0156 bleiben OPEN und ungedreht: BUG-0031 repariert denMechanismus, ueber den BUG-0022 (und weitere Segmente) per Phase geschlossen werden koennen; der eigentliche S0163-Flip gehoert in die Closure-Ergaenzung von BUG-0022 NACH dem Fix. Operator-Handflip ist kein Fix. BUG-0026/0027/0028/0029/0024/0030 unangetastet.",
+  "WORK_KIND_ROUTING": 0,
+  "EARLY_RESEARCH": 0,
+  "FRAMEWORK_KIT_REPO": 1,
+  "related_us": [
+    "US-0045",
+    "US-0156",
+    "US-0124",
+    "US-0125",
+    "US-0126"
+  ],
+  "related_bugs": [
+    "BUG-0006",
+    "BUG-0022",
+    "BUG-0024",
+    "BUG-0027",
+    "BUG-0030"
+  ]
+}

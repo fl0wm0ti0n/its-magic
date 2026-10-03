@@ -180,11 +180,14 @@
 - [ ] US-0152: Production application and browser UAT integration — real app/browser services, fail-closed evidence, workflow gates, and E2E fixtures (6 ACs)
 - [ ] US-0153: Real parallel delivery and release execution — QA arbitration, configured target adapters, deploy verification, bounded repair, and closure evidence (5 ACs)
 - [ ] US-0154: Standalone operator-path quality gate — installed-entrypoint E2E tests and authoritative standalone CI (6 ACs)
+
 - [ ] US-0155: Interactive Pi-style standalone operator TUI — daemon-client terminal UI with live events, approvals, bounded panels, reconnect, and cross-platform integration tests (5 ACs)
+- [x] US-0156: OpenCode `/auto` parity — complete the half-finished /auto concept to parity with Cursor /auto full-automation semantics: native in-chat auto-chain, continuous multi-phase, backlog drain, bug-queue targeting, start-from/resume, phase-selection policy (10 ACs; DoD = BUG-0022 + BUG-0027 DONE, BUG-0028/0029 triaged as prerequisite slices; default full_autonomy) — canonical flip at S0162 closure (curator, `sprints/S0162/closure-verification.md`; backlog `## US-0156` L5784 `Status: DONE` + AC-1..10 `[x]`; release **RELEASE_PASS** RETRY #3 `handoffs/releases/S0162-release-notes.md`, release proof `1CB6DF6E…56FD` independently recompute-confirmed; chain execute/initial-qa/verify-work recompute-MATCH; UAT `VERIFY_PASS` 10/10; DoD gate MET; publish deferred `npm_published=false`)
 
 ## Bug acceptance (canonical)
 
 Per **`DEC-0061`** §8 / **`US-0079`**: portfolio checkbox rows **`- [ ]` / `- [x]`** per **`BUG-xxxx`**, sorted by id, derived from **`docs/product/backlog.md`** **`## Bug issues (canonical)`** — never the inverse (**`US-0045`** bug family). When no bug issues exist, leave this subsection as narrative stub only (no orphan **`BUG-####`** rows).
+
 
 - [x] BUG-0001: Template/install payload omits intake gate scripts
 - [x] BUG-0002: map-codebase does not write codebase-map in fresh repos
@@ -207,7 +210,7 @@ Per **`DEC-0061`** §8 / **`US-0079`**: portfolio checkbox rows **`- [ ]` / `- [
 - [x] BUG-0019: OpenCode slash palette has no `/auto` after plugin-only ownership (BUG-0018 residual listing)
 - [x] BUG-0020: OpenCode still has no invokable auto mode after BUG-0019 TUI keymap (Command.Info picker live-falsifies E*)
 - [x] BUG-0021: OpenCode CLI TUI still has no invokable /auto after BUG-0020 tui.json (C-limb live-falsified)
-- [ ] BUG-0022: `/auto` Task-spawns inherit parent chat model instead of role_catalog
+- [x] BUG-0022: `/auto` Task-spawns inherit parent chat model instead of role_catalog — A1 catalog-resolve spawn slice shipped (6 + 8 `test_bug0022_*` active↔template); S0163 chain execute PASS → qa QA_PASS → verify-work **S0163_REMEDIATED_OK** (8/8 ACs) → release **RELEASE_PASS** → closure **CLOSURE_PASS** (curator, `sprints/S0163/closure-verification.md`; release proof `9649B6C8…D417` independently recompute-confirmed; chain-TTL wall gap recorded as provenance, hash MATCH — not STALE-stamped); live Cursor IDE `/auto` residual `UAT_PROBE_FORBIDDEN` (NB1; operator live re-probe optional); publish deferred (`npm_published=false`)
 - [x] BUG-0023: OpenCode CLI TUI listed `/auto` toasts OPENCODE_AUTO_TUI_DISPATCH_UNSUPPORTED (dispatch live-falsified)
 - [x] BUG-0024: OpenCode CLI TUI listed `/auto` still toasts OPENCODE_AUTO_TUI_DISPATCH_UNSUPPORTED after BUG-0023 Axis A (live dispatch falsified) — A1 slice shipped (eight `test_bug0024_*`); live OpenCode CLI TUI residual `UAT_PROBE_FORBIDDEN` (NB1; operator live re-probe optional)
 - [x] BUG-0025: npm publish of its-magic@0.1.3 omits scripts/standalone_runtime_install_lib.py (upgrade FileNotFoundError) — kit fix shipped at 0.1.4; registry republish deferred (`npm_published=false`; operator confirm)
@@ -215,5 +218,7 @@ Per **`DEC-0061`** §8 / **`US-0079`**: portfolio checkbox rows **`- [ ]` / `- [
 - [x] BUG-0027: OpenCode manual phase commands cannot persist canonical workflow evidence — A1 Hybrid slice shipped (ten `test_bug0027_*`); live OpenCode CLI/TUI manual-phase residual `UAT_PROBE_FORBIDDEN` (NB1; operator live re-probe optional); publish deferred (`npm_published=false`)
 - [ ] BUG-0028: `itsm` read-only commands initialize the full runtime and have excessive cold-start latency — split lightweight command paths from full workflow admission (5 ACs)
 - [ ] BUG-0029: `itsm auth login` cannot accept API-key input and reports false configuration success — secure TTY/stdin credential entry and verified outcomes (5 ACs)
+- [x]  BUG-0030: OpenCode `/auto` aborts with `OPENCODE_AUTO_TUI_DEFINED_UNBRANDED` — documented `auto.md` command dispatch and a non-mock lifecycle-start acceptance check (5 ACs)
+- [x] BUG-0031: `/closure` cannot complete on OpenCode — no spawnable closure role (qe not spawnable; curator/qa permission-deny) is authorized to write the canonical DONE-flip paths (backlog STATUS/AC, acceptance row, closure-verification.md, state.md checkpoint), forcing fail-closed `CLOSURE_BLOCKED_PERMISSION_MATRIX` and an operator hand-flip workaround (5 ACs) — curator 3-allow delta shipped (active + template byte-identical, 837b) + additive `CLOSURE_PERMISSION_FLIP_PATHS_DENIED` fail-closed token + eight `test_bug0031_*` markers; live host retest CLOSURE_PASS at S0164 closure (live-gate re-adoption post-repair); `UAT_PROBE_FORBIDDEN` held for pre-ship contract slice (operator live re-probe optional)
 
 Validator (backlog bugs + optional drift vs this section): `python scripts/bug_issue_validate.py --backlog docs/product/backlog.md --check-acceptance`.

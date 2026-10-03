@@ -520,7 +520,23 @@ used for resume/materialization failures):
    intersect with plan.
 3. Record continuation metadata (`invocation_mode=auto`, `requested_start_from`,
    `resolved_start_phase`, `resolution_source`, `resolution_status`, `timestamp`).
+3a. **Pre-spawn model resolution (BUG-0022 / R-0154)**: before **any** Task
+   spawn, call `model_tier_lib.resolve_model_for_phase(phase_id, scratchpad,
+   catalog)` (DEC-0087 / US-0102). On success, emit the Task with
+   `model: <slug or alias>` and record `model_id=<slug-or-alias>` and
+   `model_provenance=<result.provenance>` on the per-spawn isolation row in
+   `docs/engineering/state.md`. On fail-closed, record the `ReasonCode` token
+   (`MODEL_TIER_INVALID`, `MODEL_CATALOG_INVALID`, `MODEL_SLUG_UNKNOWN`,
+   `MODEL_RESOLVE_FALLBACK`, `MODEL_OVERRIDE_SLUG_UNKNOWN`,
+   `MODEL_ROLE_SLUG_UNKNOWN`, `MODEL_CATALOG_SCHEMA_V2_INVALID`) on that row
+   and emit the Task with **no `model:` key** — except when steps 1–4 all
+   miss **and** a documented override (`MODEL_<PHASE>` / `MODEL_TIER_<PHASE>`
+   / `MODEL_TIER_DEFAULT`) is present in scratchpad, in which case `model:
+   inherit` with `MODEL_RESOLVE_FALLBACK` provenance is the **only**
+   legitimate inherit. **Never emit a Task that inherits silently.**
 4. Spawn fresh subagents per intersected schedule; enforce **US-0069** preflight/post checks.
+   The step 3a model resolution applies to each spawn; record `model_id` and
+   `model_provenance` per-spawn on the isolation row.
 5. **Multi-phase continuation** (normative detail: **reference Step 5** in
    **`docs/engineering/auto-orchestration-reference.md`** `## Steps` item 5):
    advance through **all remaining phases** in the intersected resolved schedule

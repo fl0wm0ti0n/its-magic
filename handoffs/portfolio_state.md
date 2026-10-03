@@ -1,6 +1,6 @@
 # Portfolio State
 
-Last refreshed: 2026-07-06T21:02:00Z by curator (refresh-context for S0119 / US-0119 terminal phase closure — **DRAIN ACTIVE 1/10**: US-0119 closed, 0 active bugs, 0 genuine OPEN stories remaining in drain queue; drain budget remaining = 9 of AUTO_BACKLOG_MAX_STORIES=10 — US-0108 status-drift flagged as non-blocking finding for operator awareness).
+Last refreshed: 2026-09-27T15:10:00Z by curator (refresh-context for S0161 / BUG-0030 terminal phase closure — **BUG-0030 DONE** released, 4 OPEN bugs remaining: BUG-0022, BUG-0026, BUG-0028, BUG-0029 — not drained; BUG-0023/0024/0027 held DONE).
 
 ## Active stories
 
@@ -34,14 +34,26 @@ Last refreshed: 2026-07-06T21:02:00Z by curator (refresh-context for S0119 / US-
 
 | bug_id | title | status | sprint_id | notes |
 |--------|-------|--------|-----------|-------|
-| (none) | — | — | — | No open bug issues |
+| BUG-0022 | `/auto` Task-spawns inherit parent chat model instead of role_catalog | OPEN | (none) | not drained |
+| BUG-0026 | Published its-magic@0.1.4 upgrade fail-closes KERNEL_CONTRACT_MISMATCH | OPEN | (none) | not drained |
+| BUG-0028 | `itsm` read-only commands cold-start full runtime excessively | OPEN | (none) | not drained |
+| BUG-0029 | `itsm auth login` cannot accept API-key input; false success | OPEN | (none) | not drained |
 
 ## Recently closed bugs
 
 | bug_id | title | status | sprint_id | closed_at |
 |--------|-------|--------|-----------|-----------|
-| BUG-0014 | Sovereign-loop era features missing from README feature coverage catalog and legacy release_notes.md | DONE | S-BUG0014 | 2026-07-03T20:15:00Z |
-| BUG-0013 | scratchpad-example-stale (9 sovereign-loop-era sections missing from template) | DONE | S-BUG0013 | 2026-07-01T23:11:00Z |
+| BUG-0030 | OpenCode `/auto` aborts with OPENCODE_AUTO_TUI_DEFINED_UNBRANDED | DONE | S0161 | 2026-09-27T15:05:00Z |
+| BUG-0027 | OpenCode manual phase commands persist canonical workflow evidence | DONE | S0160 | 2026-09-21T22:20:00Z |
+| BUG-0024 | OpenCode CLI TUI live-dispatch residual after BUG-0023 Axis A | DONE | S0159 | 2026-09-21T20:20:00Z |
+| BUG-0023 | OpenCode CLI TUI listed `/auto` toasts DISPATCH on invoke | DONE | S0148 | 2026-09-14T01:30:00Z |
+| BUG-0021 | OpenCode CLI TUI no invokable `/auto` after BUG-0020 tui.json | DONE | S0146 | 2026-09-13T15:05:00Z |
+| BUG-0020 | OpenCode no invokable auto mode after BUG-0019 TUI keymap | DONE | S0140 | 2026-09-13T03:20:00Z |
+| BUG-0019 | OpenCode slash palette no `/auto` after plugin-only ownership | DONE | S0139 | 2026-09-12T22:30:00Z |
+| BUG-0018 | OpenCode markdown `/auto` wins over plugin execute (STOP) | DONE | S0138 | 2026-09-12T18:00:00Z |
+| BUG-0017 | OpenCode on Linux ignores its-magic slash commands (CRLF) | DONE | S0137 | 2026-09-12T15:00:00Z |
+| BUG-0016 | OpenCode Layer-1 role permissions block lifecycle writes | DONE | S0136 | 2026-09-12T12:00:00Z |
+| BUG-0015 | OpenCode `/auto` never triggers orchestrator plugin dispatch | DONE | S0131 | 2026-09-06T16:00:00Z |
 
 ## Drain state
 

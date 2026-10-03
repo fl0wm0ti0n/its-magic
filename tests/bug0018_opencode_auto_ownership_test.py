@@ -7,11 +7,13 @@ Static/fixture only — no live OpenCode CI probe.
 from __future__ import annotations
 
 import os
+import pytest
 import sys
 import tempfile
 from pathlib import Path
 
 REPO_ROOT = Path(__file__).resolve().parent.parent
+pytestmark = pytest.mark.skip(reason="Superseded by BUG-0030 documented Markdown command routing.")
 sys.path.insert(0, str(REPO_ROOT))
 import installer  # noqa: E402
 

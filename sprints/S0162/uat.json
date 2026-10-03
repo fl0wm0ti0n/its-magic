@@ -1,0 +1,147 @@
+{
+  "sprint": "S0162",
+  "sprint_id": "S0162",
+  "story_id": "US-0156",
+  "bug_id": null,
+  "orchestrator_run_id": "auto-20260927-us0156",
+  "delivery_mode": "ultra_lean",
+  "macro_phase": "build+verify",
+  "phase_id": "verify-work",
+  "role": "qa",
+  "story_type": "code",
+  "uat_lifecycle": "populated",
+  "placeholder_only": false,
+  "verified_ready": true,
+  "verdict": "VERIFY_PASS",
+  "verdict_note": "Functional verification of US-0156 PASS on its own scope (all US-0156 contract markers green; own-surface active/template parity byte-identical; mandated bug_issue_validate bridge GREEN). AC-7 DoD gate now MET: BUG-0022 DONE (backlog L5465 Status: DONE, AC-1..8 [x], acceptance L213 [x]; closed via S0163 CLOSURE_PASS) + BUG-0027 DONE (acceptance L218 [x]) — verified in the re-run verify-work-findings.md VERIFY_PASS block (S0162_DO_D_GATE_MET). The prior VERIFY_BLOCKED record (BUG-0022 OPEN, 2026-09-28) was correctly fail-closed and is preserved below as history, not erased. US-0156 remains OPEN/unchecked — closure owns the DONE flip (US-0045). Carried platform finding (NB1) and repo-wide `--scope all` drift (NB2) remain honestly surfaced, non-blocking to this verdict.",
+  "total": 10,
+  "passed": 10,
+  "failed": 0,
+  "summary": {
+    "passed": 10,
+    "failed": 0
+  },
+  "reproduced_by_qa": {
+    "us0156_contract": "pytest tests/us0156_contract_test.py -q -> 10 passed (10/10)",
+    "compose": "pytest bug0027 + bug0030 + us0124 + us0156 -> 36 passed, 2 skipped (live-desktop probes intentionally skipped)",
+    "validator_bridge": "python scripts/bug_issue_validate.py --repo . --check-acceptance -> [BUG_VALIDATION_OK] exit 0 (mandated bridge GREEN)",
+    "parity_scope_all": "python scripts/check_intake_template_parity.py --repo . --scope all -> [INTAKE_TEMPLATE_PARITY_ERROR] exit 2 (2 RED pairs, see NB2)",
+    "note": "All evidence independently re-run by this qa verify-work subagent, not taken on trust from the qa-phase handoff."
+  },
+  "steps": [
+    {"id": "UAT-1", "ac": "AC-1", "description": "Native in-chat auto-chain: auto.md selects agent auto, spawn-only parent, no retired TUI/RPC route", "result": "pass", "marker": "test_us0156_auto_command_owns_spawn_only_parent", "probe_kind": "contract_tests_primary"},
+    {"id": "UAT-2", "ac": "AC-2", "description": "Continuous multi-phase loop: sequential fresh-phase Tasks, distinct session per phase, PHASE_ROLE_MATRIX covers all 12 phases", "result": "pass", "marker": "test_us0156_sequential_fresh_phase_tasks", "probe_kind": "contract_tests_primary"},
+    {"id": "UAT-3", "ac": "AC-3", "description": "Backlog drain: bug-target precedence, dependency-eligible OPEN-story selection, scheduler mutex", "result": "pass", "marker": "test_us0156_story_bug_scheduler_mutex_and_order", "probe_kind": "contract_tests_primary"},
+    {"id": "UAT-4", "ac": "AC-4", "description": "Bug-queue targeting: explicit bug-target selects bug scheduler (work_item_kind=bug)", "result": "pass", "marker": "test_us0156_story_bug_scheduler_mutex_and_order", "probe_kind": "contract_tests_primary"},
+    {"id": "UAT-5", "ac": "AC-5", "description": "Start-from/resume: start-from -> resume_brief -> state.md precedence; OPENCODE_AUTO_RESUME_AMBIGUOUS on conflict", "result": "pass", "marker": "test_us0156_start_from_resume_phase_plan_precedence", "probe_kind": "contract_tests_primary"},
+    {"id": "UAT-6", "ac": "AC-6", "description": "Phase-selection policy: Stop-Matrix + budget-cap boundaries fail closed, reason-coded", "result": "pass", "marker": "test_us0156_stop_matrix_and_cap_boundaries", "probe_kind": "contract_tests_primary"},
+    {"id": "UAT-7", "ac": "AC-7", "description": "DoD gate: BUG-0022 + BUG-0027 DONE and cited; BUG-0028/0029 triaged as prerequisite slices (not merged/closed)", "result": "pass", "probe_kind": "dod_gate", "notes": "MET. DoD gate MET — BUG-0022 now DONE (backlog L5465, AC-1..8 [x], acceptance L213 [x], closed via S0163 CLOSURE_PASS) + BUG-0027 DONE; verified in re-run verify-work-findings.md (VERIFY_PASS, S0162_DO_D_GATE_MET). The prior BLOCKED state (BUG-0022 OPEN) was correctly fail-closed and is preserved in the history below."},
+    {"id": "UAT-8", "ac": "AC-8", "description": "Normal-host parity and retired-route exclusion: no fallback_execute, no active client.rpc(, no localhost endpoint, retired TUI/RPC absent", "result": "pass", "marker": "test_us0156_no_retired_route_or_fallback", "probe_kind": "contract_tests_primary"},
+    {"id": "UAT-9", "ac": "AC-9", "description": "Tests and release-pack evidence: 9 test_us0156_* markers + installer overwrite coverage; no live-desktop/--pure/provider-complete claim", "result": "pass", "marker": "test_us0156_dod_and_active_template_parity", "probe_kind": "contract_tests_primary"},
+    {"id": "UAT-10", "ac": "AC-10", "description": "Boundary and template parity (US-0156 touched surfaces): bridge/orchestrator/auto-command/auto-agent/7 role agents active==template", "result": "pass", "marker": "test_us0156_dod_and_active_template_parity", "probe_kind": "parity_validator", "notes": "US-0156's own surfaces byte-identical (verified). Repo-wide `--scope all` parity is separately RED on 2 pre-existing drift pairs (NB2) that are NOT US-0156 surfaces."}
+  ],
+  "ac_results": [
+    {"ac": "AC-1", "status": "PASS", "evidence": "test_us0156_auto_command_owns_spawn_only_parent (green)"},
+    {"ac": "AC-2", "status": "PASS", "evidence": "test_us0156_sequential_fresh_phase_tasks (green)"},
+    {"ac": "AC-3", "status": "PASS", "evidence": "test_us0156_story_bug_scheduler_mutex_and_order (green)"},
+    {"ac": "AC-4", "status": "PASS", "evidence": "test_us0156_story_bug_scheduler_mutex_and_order (green)"},
+    {"ac": "AC-5", "status": "PASS", "evidence": "test_us0156_start_from_resume_phase_plan_precedence (green)"},
+    {"ac": "AC-6", "status": "PASS", "evidence": "test_us0156_stop_matrix_and_cap_boundaries (green)"},
+    {"ac": "AC-7", "status": "MET", "evidence": "DoD gate MET: BUG-0022 DONE (backlog L5465 `Status: DONE`, AC-1..8 [x], acceptance L213 [x]) + BUG-0027 DONE (L218 [x]). Verified in re-run verify-work-findings.md."},
+    {"ac": "AC-8", "status": "PASS", "evidence": "test_us0156_no_retired_route_or_fallback (green; no fallback_execute / no active client.rpc( / no localhost)"},
+    {"ac": "AC-9", "status": "PASS", "evidence": "test_us0156_dod_and_active_template_parity (green); 9 markers present; no fake-claim"},
+    {"ac": "AC-10", "status": "PASS", "evidence": "US-0156 own surfaces byte-identical; repo-wide `--scope all` red (NB2) tracked separately as pre-existing drift, not a US-0156 surface"}
+  ],
+  "contract_test_markers": [
+    "test_us0156_auto_command_owns_spawn_only_parent",
+    "test_us0156_sequential_fresh_phase_tasks",
+    "test_us0156_resolver_never_falls_back_to_execute",
+    "test_us0156_start_from_resume_phase_plan_precedence",
+    "test_us0156_story_bug_scheduler_mutex_and_order",
+    "test_us0156_stop_matrix_and_cap_boundaries",
+    "test_us0156_resume_idempotence_provenance",
+    "test_us0156_dod_and_active_template_parity",
+    "test_us0156_no_retired_route_or_fallback",
+    "test_opencode_agent_permission_specific_paths_override_broad_deny"
+  ],
+  "contract_test_total": 10,
+  "contract_test_passed": 10,
+  "contract_test_failed": 0,
+  "contract_test_command": "python -m pytest tests/us0156_contract_test.py -q",
+  "contract_test_output": "10 passed in 0.93s (replicated by qa verify-work)",
+  "compose_test_command": "python -m pytest tests/bug0027_opencode_manual_phase_persist_test.py tests/bug0030_opencode_auto_command_test.py tests/us0124_contract_test.py tests/us0156_contract_test.py -q",
+  "compose_test_output": "36 passed, 2 skipped in 3.57s (2 skipped = live-desktop probes, UAT_PROBE_FORBIDDEN)",
+  "parity_scope_all": "python scripts/check_intake_template_parity.py --repo . --scope all -> [INTAKE_TEMPLATE_PARITY_ERROR] exit 2: CHANGELOG.md (7690b)!=template/CHANGELOG.md (7174b); tests/bug0016_contract_test.py (9897b)!=template/tests/bug0016_contract_test.py (9810b)",
+  "live_opencode_session_command_pass_claimed": false,
+  "live_opencode_cli_tui_pass_claimed": false,
+  "live_opencode_desktop_pass_claimed": false,
+  "fake_browser_pass_claimed": false,
+  "harness_fail_zero_claimed": false,
+  "toast_repair_claimed": false,
+  "provider_completion_claimed": false,
+  "harness_fail_zero_note": "verify-work did NOT run the credentialed live session-command smoke (no live-opencode claim). US-0156 is a command/scheduler/lifecycle story; its evidence is contract_tests_primary. No live desktop / --pure / provider-complete / full-lifecycle completion claimed.",
+  "blocking_findings": 0,
+  "blocking_findings_list": [
+    {"id": "B1", "ac": "AC-7", "severity": "non_blocking (resolved)", "kind": "dod_gate_unmet", "resolved": true, "description": "US-0156 DoD gate was NOT met at the time of recording (2026-09-28): BUG-0022 (Cursor Task model-inheritance) was OPEN in docs/product/backlog.md. architecture # US-0156 closure gate: 'US-0156 remains OPEN until BUG-0022 and BUG-0027 are DONE and verify-work records both prerequisites.' BUG-0027 = DONE (satisfied); BUG-0022 = OPEN (NOT satisfied at the time). This BLOCKED record is preserved as history, not erased.", "disposition": "RESOLVED: BUG-0022 now DONE (S0163 CLOSURE_PASS); gate MET; verified in re-run VERIFY_PASS (S0162_DO_D_GATE_MET); this BLOCKED record is preserved as history, not erased", "evidence": "Prior (superseded): docs/product/backlog.md '### BUG-0022' - Status: OPEN. Current: docs/product/backlog.md L5465 - Status: DONE (AC-1..8 [x]; acceptance L213 [x]; closed via S0163 CLOSURE_PASS)."}
+  ],
+  "non_blocking_findings": 2,
+  "non_blocking_findings_list": [
+    {"id": "NB1", "severity": "non_blocking", "kind": "carried_platform_issue", "carried_from": "sprints/S0162/qa-findings.md B-2 (qa phase)", "description": "qa role fenced out of its own QA artifacts by opencode last-match-wins permission semantics: the qa agent's trailing broad deny ('**': deny) ends last in the merged rule list and overrides its own specific owned-path allows, so designated writes (sprints/S*/qa-findings.md, handoffs/qa_to_dev.md) are denied despite explicit allow patterns in .opencode/agents/qa.md. Same failure family as BUG-0016 / BUG-0027 (Layer-1 role permissions). Sanctioned path per S0161 precedent: role-owned artifact mutations via the orchestrator-enforced persistence path; the qa record is preserved verbatim. Reorderings and contract loosening are NOT valid repairs (they break the kit's own permission-order contract + bug0027 marker 10).", "disposition": "Platform issue for opencode permission semantics vs allowlist-subagent model. Do NOT file/merge in this run. Do NOT reorder agent permission lists or loosen kit permission-order contracts in this session. Candidate for a future platform bug; requires operator/host-level action.", "note": "qa verify-work still produced its UAT/handoff artifacts for S0162 (see sprints/S0162/uat.{json,md}, sprints/S0162/verify-work-findings.md, handoffs/qa_to_verify.md). If any such write was denied in this invocation, it reproduced B-1/NB1 and is surfaced here."},
+    {"id": "NB2", "severity": "non_blocking", "kind": "repo_hygiene_template_drift", "description": "Repo-wide template parity is RED: `check_intake_template_parity.py --repo . --scope all` -> [INTAKE_TEMPLATE_PARITY_ERROR] exit 2. Two active-vs-template byte mismatches, both OUTSIDE US-0156's touch surface (US-0156's own surfaces are byte-identical and green): (a) CHANGELOG.md (7690b) vs template/CHANGELOG.md (7174b) — active carries an extra '- **BUG-0030**:' Fixed row that the template mirror lacks; (b) tests/bug0016_contract_test.py (9897b) vs template/tests/bug0016_contract_test.py (9810b) — active carries an extra docstring line on test_bug0016_success_test_c_non_dev_no_production_allow. These look like pre-session active/template sync drift from BUG-0030 CHANGELOG work and a bug0016 docstring edit.", "disposition": "NOT a US-0156 defect. Route to orchestrator/dev (template-mirror sync) as a separate hygiene item; would block a clean repo-wide `--scope all` release gate. qa verify-work does not write templates or production code. Do not silently waive.", "evidence": "git diff --no-index of the two pairs (active ahead of template by one line each; pure additive lines, not deletions)."}
+  ],
+  "dod_gate_details": {
+    "US-0156_AC7_rule": "BUG-0022 + BUG-0027 DONE and cited in verify-work evidence; BUG-0028/0029 triaged as prerequisite slices (OPEN, not merged/closed)",
+    "BUG-0022_status": "DONE (backlog L5465 Status: DONE, AC-1..8 [x], acceptance L213 [x]; closed via S0163 CLOSURE_PASS)",
+    "BUG-0027_status": "DONE (docs/product/backlog.md '### BUG-0027' - Status: DONE)",
+    "BUG-0030_status": "DONE (compose guard; '### BUG-0030' - Status: DONE)",
+    "BUG-0028_status": "OPEN (carried as prerequisite slice, not merged/closed)",
+    "BUG-0029_status": "OPEN (carried as prerequisite slice, not merged/closed)",
+    "gate_met": true,
+    "reason": "BUG-0022 DONE (S0163) + BUG-0027 DONE -> gate MET"
+  },
+  "validator_bridge": {
+    "command": "python scripts/bug_issue_validate.py --repo . --check-acceptance",
+    "result": "[BUG_VALIDATION_OK]",
+    "exit": 0,
+    "note": "Mandated validator bridge for /verify-work is GREEN. The B-1 acceptance-row corruption (stray em-dash on BUG-0001 row, BUG_RECONCILE_ACCEPTANCE_MISSING_ROW:BUG-0001) from the qa phase is already REMEDIATED and no longer reproduces. qa verify-work did NOT mutate any backlog/acceptance bug rows (US-0156 remains [ ] unchecked).",
+    "non_zero_exit_surfaced": false
+  },
+  "manual_phase_isolation": {
+    "persistManualPhaseIsolation": "preserved / untouched by this qa verify-work phase",
+    "IsolationEvidence": "verify-work is a manual phase; the manual-phase isolation evidence route is intact per BUG-0027 DONE; this phase records UAT artifacts but does not mint or fabricate strict-release proof tuples",
+    "no_fabricated_proof": "No runtime proof hash is minted or claimed here (consistent with the do-not-fabricate-strict-proofs discipline from BUG-0027 D7 / S0161 lessons). Proof minting is the orchestrator runtime's job, not qa verify-work's."
+  },
+  "waived_probes": [
+    {"probe_class": "browser_smoke", "reason": "US-0156 is the OpenCode /auto command/scheduler/bridge story; no web UI", "reason_code": "UAT_PROBE_FORBIDDEN"},
+    {"probe_class": "live_opencode_session_command", "reason": "Not required for US-0156's own ACs (its primary evidence is contract_tests_primary); full-lifecycle provider completion remains operator UAT post-shippage and is NOT claimed here", "reason_code": "UAT_PROBE_FORBIDDEN"},
+    {"probe_class": "live_opencode_cli_tui", "reason": "Listed/invokable /auto CLI TUI dispatch is owned by BUG-0023/BUG-0024 (DONE held), not US-0156; do not claim toast repair or live CLI PASS", "reason_code": "UAT_PROBE_FORBIDDEN"},
+    {"probe_class": "opencode_pure_desktop", "reason": "US-0156 is host-parity in the OpenCode Markdown-command route, not OpenCode --pure/desktop Command.Info", "reason_code": "UAT_PROBE_FORBIDDEN"},
+    {"probe_class": "manual_operator", "reason": "Full auto-lifecycle provider-driven completion (phase-spawn loop) remains operator UAT after release; verify-work proves command/scheduler/registry contracts only", "reason_code": "UAT_PROBE_FORBIDDEN"}
+  ],
+  "probe_results": [],
+  "compose_guards_held": [
+    "BUG-0027 DONE held (10/10 in compose; live-desktop probes intentionally skipped) — NOT reopened",
+    "BUG-0030 DONE held (6/6 in compose) — NOT reopened",
+    "US-0124 in compose (green) — not opened",
+    "no fallback_execute (stripped comments) — verified by marker",
+    "no active client.rpc( / no localhost:NNNN — verified by marker",
+    "retired its-magic-auto/{index,tui,rpc}.ts — removed (git status D), NOT restored",
+    "permission-order contract intact (broad-deny-first, security read-only) — marker green",
+    "BUG-0022 / BUG-0026 / BUG-0028 / BUG-0029 — NOT merged, NOT drained, NOT flipped"
+  ],
+  "guards_do_not": [
+    "Do NOT mark US-0156 DONE (stays OPEN; closure owner only)",
+    "Do NOT tick US-0156 acceptance (stays [ ])",
+    "Do NOT merge/drain/flip BUG-0022/0026/0028/0029",
+    "Do NOT reopen BUG-0027/BUG-0030/BUG-0016",
+    "Do NOT restore retired TUI/RPC route / auto.md non-BUG-0030 form / JSON command template / localhost endpoint",
+    "Do NOT reorder agent permission lists or loosen the kit permission-order contract (B-1/NB1)",
+    "Do NOT write templates, production code, or bug-row/AC-row mutations (qa role boundary)",
+    "Do NOT npm-publish or git-push",
+    "Do NOT claim live desktop / --pure / provider-complete / full-lifecycle-completion PASS",
+    "Do NOT advance US-0156 to /release until BUG-0022 reaches DONE"
+  ],
+  "next": "STOP after VERIFY_PASS (DoD gate MET). US-0156 functional verification PASS + gate MET. /release is the orchestrator's next spawn. /closure owns the US-0156 DONE flip per US-0045 — not performed here.",
+  "timestamp": "2026-10-02T18:20:00Z",
+  "fresh_context_marker": "qa-US0156-S0162-uat-reconcile-20261002T182000Z-fresh"
+}

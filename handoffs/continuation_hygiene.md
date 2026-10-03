@@ -4,6 +4,30 @@ Chronological segment-closure notes for curator refresh-context passes.
 
 ---
 
+## S0161 / BUG-0030 terminal phase closure (2026-09-27T15:10:00Z)
+
+- **phase_id**: refresh-context
+- **role**: curator
+- **bug_id**: BUG-0030 (OpenCode `/auto` documented Markdown command route)
+- **sprint_id**: S0161 (CLOSED / released @ 2026-09-27T14:35:00Z)
+- **release_ref**: handoffs/releases/S0161-release-notes.md
+- **verdict**: PASS (terminal phase)
+- **lifecycle**: intake → discovery → research (R-0152) → architecture → sprint-plan → execute → qa → verify-work → release → closure → refresh-context
+- **fresh_context_marker**: cur-BUG0030-refresh-20260927T151000Z-fresh
+- **runtime_proof_id**: rp-auto-20260927-bug0030-refresh-context-curator-20260927T151000Z-BUG-0030 (hash EAE1586A10CB50D668E44C8A2E1C7B87CCE4C3A04D2E8DD348E42F29FFBF8294; MATCH)
+- **Key learnings**:
+  - The earlier RELEASE_BLOCKED (gates 4a/4b) was closed by remediation-before-rerun: isolation checkpoints appended to state.md for execute/qa/verify-work and three DEC-0038 strict-proof tuples minted + recomputed MATCH, rather than by weakening the gates.
+  - The credentialed host smoke required an explicit model knob (`ITS_MAGIC_OPENCODE_SMOKE_MODEL`) because `auto.md` intentionally declares no model; waiting for provider completion in the smoke was the wrong admission model (non-blocking command fire + poll for durable prompt).
+- **Compose guards preserved**: BUG-0027 behavior held (10/10); BUG-0023/0024 historical artifacts not reopened; BUG-0022/0026/0028/0029 OPEN untouched.
+- **Do-not-claim discipline**: NB1 provider-completion residual (provider_completion_claimed=false); no toast-repair; no fake browser PASS; full-harness Fail:0 not claimed.
+- **Publish/push**: deferred (RELEASE_PUBLISH_MODE=confirm; npm_published=false; kit 0.1.9); push not eligible (SYNC_POLICY_MODE=disabled).
+- **Portfolio state**: 4 OPEN bugs (BUG-0022, BUG-0026, BUG-0028, BUG-0029); drain not active.
+- **Artifacts reconciled**: state.md terminal checkpoint; decisions.md pack prepend; resume_brief.md top pointer; portfolio_state.md bug tables + timestamp; research.md R-0152 delivery closure trailer; sprints/S0161/summary.md closure section.
+- **Remaining active work**: BUG-0022, BUG-0026, BUG-0028, BUG-0029 (operator /intake /auto eligible).
+- **Next action for orchestrator**: none — segment terminal; operator may enqueue BUG-0022/0026/0028/0029.
+
+---
+
 ## S0114 / US-0114 terminal phase closure (2026-07-04T07:20:00Z)
 
 - **phase_id**: refresh-context

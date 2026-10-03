@@ -802,6 +802,7 @@ Operator slugs live in `.cursor/scratchpad.local.md` and `.cursor/model-catalog.
 3. Set `MODEL_RESOLVE=role_catalog` in `.cursor/scratchpad.local.md`.
 4. Optional: set `MODEL_<PHASE>=<slug>` for direct overrides (step 1 wins over role lookup).
 5. Run `python scripts/model_tier_validate.py --repo .` to validate.
+6. Pre-spawn model resolution (BUG-0022 / R-0154): the `/auto` orchestrator MUST run `resolve_model_for_phase` per phase **before** Task spawn and record `model_provenance` on the isolation row.
 
 On role lookup miss → `MODEL_ROLE_SLUG_UNKNOWN` emitted; resolver falls through to `MODEL_TIER_DEFAULT` then Cursor alias.
 
@@ -4354,6 +4355,7 @@ For stories that completed `/release` before US-0120 ship:
 | `PHASE_OWNERSHIP_VIOLATION` | `/closure` tried to mutate non-owned artifact (release notes, qa findings, execute summary). | Check cross-phase ownership guard; `/closure` owns ONLY backlog.md flip, acceptance.md tick, state.md checkpoint, closure-verification.md. |
 | `PHASE_OVERRIDE_EVIDENCE_MISSING` | Override path configured (AUTO_ROLE_CLOSURE=curator) but evidence missing. | Provide override evidence or disable override (set `AUTO_ROLE_CLOSURE=` empty). |
 | `CLOSURE_LEGACY_DRIFT` | Pre-US-0120 story with all 3 signals (released+OPEN+[ ]) detected by drain hook. | Run `/closure` backfill for in-flight stories; document in closure-verification.md `backward_compat_note`. |
+| `CLOSURE_PERMISSION_FLIP_PATHS_DENIED` | curator not authorized on the 3 flip paths (`docs/product/backlog.md`, `docs/product/acceptance.md`, `sprints/S*/closure-verification.md`) on a deny-by-default host. | Grant to curator in both `.opencode/agents/curator.md` and `template/.opencode/agents/curator.md` (active↔template parity); re-run /closure; do NOT operator hand-flip. |
 
 ### Compose guards (read-only consumers — UNCHANGED by US-0120)
 
@@ -4890,4 +4892,12 @@ Repair: `python installer.py --standalone-bootstrap --target <repo>` or `its-mag
 **Release status (S0154 / US-0147)**: **`released`** (`2026-09-17T21:30:00Z`); backlog **OPEN** (closure deferred). Operator verify: **`handoffs/releases/S0154-release-notes.md`** **## Verify**; publish skipped while **`RELEASE_PUBLISH_MODE=confirm`** (no operator confirm this turn). Gate-1 evidence: scoped `python -m pytest tests/us0147_contract_test.py -q` 10/10 + US-0071 metadata exit 0 (`harness_fail_zero_claimed=false`).
 
 **Release status (S0155 / US-0145)**: **`released`** (`2026-09-17T21:00:00Z`); backlog **OPEN** (closure deferred). Operator verify: **`handoffs/releases/S0155-release-notes.md`** **## Verify**; publish skipped while **`RELEASE_PUBLISH_MODE=confirm`** (no operator confirm this turn). Gate-1 evidence: scoped `cd standalone && node --experimental-strip-types --test tests/contract/us0145.contract.test.ts` 13/13 + US-0071 metadata exit 0 (`harness_fail_zero_claimed=false`).
+
+### OpenCode `/auto` command migration (BUG-0030)
+
+OpenCode `1.18.32` registers `/auto` from `.opencode/commands/auto.md`; its frontmatter selects the existing `auto` agent. Upgrade with `its-magic --mode upgrade --host opencode` (or `both`) and restart OpenCode. The upgrade removes only the retired `its-magic-auto` TUI/RPC files and their `tui.json` plugin entry; unrelated TUI settings and plugin entries remain unchanged.
+
+Verify in a configured project with an authenticated provider: start `opencode`, enter `/auto`, and provide a work request. The command must enter the spawn-only auto-agent flow, not emit a legacy `OPENCODE_AUTO_TUI_*` dispatch result. `opencode --pure` and desktop Command.Info behavior are out of scope for this migration.
+
+For the automated admission proof, set `ITS_MAGIC_OPENCODE_SESSION_SMOKE=1` and `ITS_MAGIC_OPENCODE_SMOKE_MODEL` to a configured provider/model, then run `python -m pytest tests/bug0030_opencode_auto_command_test.py -q`. It creates a local session, calls `session.command(..., "auto")`, and checks that the selected agent and canonical prompt are stored. It does not claim model completion.
 

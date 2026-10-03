@@ -8,12 +8,14 @@ OpenCode runtime probe.
 from __future__ import annotations
 
 import json
+import pytest
 import re
 import shutil
 import subprocess
 from pathlib import Path
 
 REPO_ROOT = Path(__file__).resolve().parent.parent
+pytestmark = pytest.mark.skip(reason="Superseded by BUG-0030 documented Markdown command routing.")
 PLUGIN_PATH = REPO_ROOT / "template" / ".opencode" / "plugins" / "orchestrator.ts"
 ACTIVE_PLUGIN = REPO_ROOT / ".opencode" / "plugins" / "orchestrator.ts"
 MOCK_PATH = REPO_ROOT / "tests" / "us0124" / "mock_ctx.ts"

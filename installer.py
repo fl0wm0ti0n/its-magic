@@ -351,10 +351,8 @@ def prune_retired_opencode_auto_md(target_root, source_root, host):
 # BUG-0024: overwrite must refresh peer-brand + stage-code live-dispatch residual on Axis-A trees.
 # BUG-0027: overwrite manual-phase persist surfaces (agents/commands/bridge).
 OPENCODE_AUTO_LISTING_RELS = (
-    ".opencode/plugins/its-magic-auto/index.ts",
-    ".opencode/plugins/its-magic-auto/tui.ts",
-    ".opencode/plugins/its-magic-auto/rpc.ts",
     ".opencode/plugins/orchestrator.ts",
+    ".opencode/commands/auto.md",
     ".opencode/agents/dev.md",
     ".opencode/agents/qa.md",
     ".opencode/commands/intake.md",
@@ -410,13 +408,29 @@ def copy_opencode_auto_listing_surface(target_root, source_root, host):
     return "unchanged"
 
 
-# BUG-0020: project tui.json is the CLI TUI load path (not desktop Command.Info).
+def remove_legacy_opencode_auto_route(target_root, host):
+    """Remove only framework-owned private TUI/RPC files from an upgrade target."""
+    if host not in ("opencode", "both"):
+        return "skipped-host"
+    legacy_rels = (
+        ".opencode/plugins/its-magic-auto/index.ts",
+        ".opencode/plugins/its-magic-auto/tui.ts",
+        ".opencode/plugins/its-magic-auto/rpc.ts",
+    )
+    removed = False
+    for rel in legacy_rels:
+        dst = os.path.join(target_root, *rel.split("/"))
+        if os.path.isfile(dst):
+            os.unlink(dst)
+            removed = True
+    return "removed" if removed else "absent"
+
+
+# BUG-0030: remove only the retired framework TUI entry from consumer JSONC.
 OPENCODE_TUI_JSON_REL = ".opencode/tui.json"
 OPENCODE_TUI_PLUGIN_SPEC = "./plugins/its-magic-auto/tui.ts"
 OPENCODE_TUI_JSONC_COMMENT = (
-    "BUG-0020 / BUG-0021: CLI TUI plugin load only. "
-    "Does NOT list /auto in desktop Command.Info. "
-    "Listing is the load path, not proof of /auto."
+    "BUG-0030: `/auto` is registered by .opencode/commands/auto.md."
 )
 
 
@@ -502,14 +516,7 @@ def _write_tui_jsonc(path, data):
 
 
 def copy_or_merge_opencode_tui_json(target_root, source_root, host):
-    """Copy-if-absent or JSONC-merge tui.json plugin spec (BUG-0020).
-
-    Invoked from upgrade --host opencode|both. If consumer tui.json is absent,
-    copy the template. If it exists, merge `./plugins/its-magic-auto/tui.ts`
-    into the plugin array without wholesale overwrite of theme/keybinds/attention.
-    Does not restore `.opencode/commands/auto.md`. Does not ship plugin-local
-    `its-magic-auto/tui.json`.
-    """
+    """Copy missing tui.json or remove only the retired its-magic entry."""
     if host not in ("opencode", "both"):
         return "skipped-host"
     src = _resolve_listing_source(source_root, OPENCODE_TUI_JSON_REL)
@@ -529,18 +536,14 @@ def copy_or_merge_opencode_tui_json(target_root, source_root, host):
     if not isinstance(data, dict):
         return "unchanged-unparsed"
     plugins = data.get("plugin")
-    names = _plugin_entry_names(plugins if isinstance(plugins, list) else [])
-    if OPENCODE_TUI_PLUGIN_SPEC in names:
+    if not isinstance(plugins, list):
         return "unchanged"
-    if isinstance(plugins, list):
-        plugins.append(OPENCODE_TUI_PLUGIN_SPEC)
-        data["plugin"] = plugins
-    else:
-        data["plugin"] = [OPENCODE_TUI_PLUGIN_SPEC]
-    if "$schema" not in data:
-        data["$schema"] = "https://opencode.ai/tui.json"
+    retained = [item for item in plugins if item != OPENCODE_TUI_PLUGIN_SPEC]
+    if len(retained) == len(plugins):
+        return "unchanged"
+    data["plugin"] = retained
     _write_tui_jsonc(dst, data)
-    return "merged"
+    return "removed"
 
 
 # After merge (local > baseline > example), these must be non-empty (fail closed).
@@ -1737,7 +1740,7 @@ def main():
 
         copy_opencode_auto_listing_surface(target_root, source_root, host)
         copy_or_merge_opencode_tui_json(target_root, source_root, host)
-        prune_retired_opencode_auto_md(target_root, source_root, host)
+        remove_legacy_opencode_auto_route(target_root, host)
 
         # Kernel preflight runs during standalone postinstall, so its contract must
         # match the upgraded version before that hook is entered.
