@@ -46,4 +46,16 @@ description: "its-magic research: gather references and risks before architectur
    emit `ID_BOOTSTRAP_NOT_FRESH` diagnostic and continue with highest-existing
    continuation. Follow the entry schema defined in the research.md header
    (per DEC-0011 / DEC-0034).
-4. Record any decisions triggered by research and update state.
+ 4. Record any decisions triggered by research and update state.
+
+## Continuation contract (BUG-0035 / DEC-0153)
+Only this completed phase child may author its paired continuation record
+(`handoffs/resume_brief.md` plus the `docs/engineering/state.md` checkpoint).
+Commit order is state first, then the brief pointer, and only after the exact
+pair key
+(`orchestrator_run_id|work_item_kind|bug_id|completed_phase|runtime_proof_id`)
+and the locked tuple are validated. The spawn-only parent remains
+validate-and-spawn-only: it never writes either artifact, never falls back to
+state alone, never refreshes the brief automatically, and never schedules the
+next phase on `RESUME_BRIEF_STALE` or `RESUME_BRIEF_UNPARSEABLE` evidence.
+`RESUME_BRIEF_AUTO_REFRESH=0` remains an absolute prohibition.

@@ -487,6 +487,29 @@ extends scratchpad vs **`resume_brief`** ordering — full matrix: reference):
 If `resume_brief.md` is present but stale or unparseable, fail fast instead
 of silently falling back.
 
+## Paired continuation ownership (BUG-0035 / DEC-0153)
+
+- The completed, canonical **phase child** is the sole authorized writer of its
+  state-first paired continuation record (`docs/engineering/state.md` first,
+  then `handoffs/resume_brief.md`). It commits the state checkpoint first,
+  validates the exact pair key
+  `orchestrator_run_id|work_item_kind|bug_id|completed_phase|runtime_proof_id`
+  and the locked tuple, then atomically updates the brief pointer.
+- This `/auto` orchestrator is permanently **read/validate/spawn-only**: it
+  **never** writes the state checkpoint or the resume brief, **never** applies
+  a state-only fallback, **never** repairs or auto-refreshes the pair, and
+  **never** schedules the next phase (including `/architecture`) when the pair
+  is stale, missing, malformed, conflicting, unauthorized, or reused.
+- Fail-closed vocabulary: syntax → **`RESUME_BRIEF_UNPARSEABLE`**; stale,
+  absent-required, conflicting, authorization, replay, or proof/isolation
+  invalid → **`RESUME_BRIEF_STALE`** (predicate retained). A retry is a
+  **fresh** authorized child with a new marker and new strict-proof ID.
+  `RESUME_BRIEF_AUTO_REFRESH=0` remains an absolute prohibition. Exact
+  canonical replay is the sole no-op.
+- Full reference: **`docs/engineering/auto-orchestration-reference.md`**
+  § Paired continuation ownership (BUG-0035 / DEC-0153); remediation runs
+  per **`docs/engineering/runbook.md`** § BUG-0035 remediation (DEC-0153).
+
 ## Fail-fast error code contract
 
 All resume-resolution failures must use:

@@ -1,0 +1,38 @@
+{
+  "schema_version": 1,
+  "sprint_id": "S0167",
+  "bug_id": "BUG-0034",
+  "phase_id": "qa",
+  "role": "qa",
+  "timestamp": "2026-10-06T23:50:16Z",
+  "verdict": "QA_PASS",
+  "uat_lifecycle": "populated",
+  "verified_ready": true,
+  "total": 8,
+  "passed": 8,
+  "failed": 0,
+  "fresh_context_marker": "qa-BUG0034-qa-20261006T235016Z-fresh",
+  "runtime_proof_id": "rp-auto-20261006-bug0034-qa-20261006T235016Z-BUG-0034",
+  "proof_hash": "F67FD2461747028123247ECB38CD58A2DFED634E04BB7B30176EBDFB55A4D27A",
+  "hash_recompute_confirmation": true,
+  "steps": [
+    {"id": "UAT-1", "ac": "AC-1", "result": "PASS", "evidence": "active marker 1-3; YAML row class/kind/cap/rationale"},
+    {"id": "UAT-2", "ac": "AC-2", "result": "PASS", "evidence": "marker 5; reason-code active/template byte parity"},
+    {"id": "UAT-3", "ac": "AC-3", "result": "PASS", "evidence": "marker 6; no-refresh runbook active/template byte parity"},
+    {"id": "UAT-4", "ac": "AC-4", "result": "PASS", "evidence": "marker 7 and ledger self-test: cap, authorized override, audit, exhaustion, breadcrumb"},
+    {"id": "UAT-5", "ac": "AC-5", "result": "PASS", "evidence": "architecture anchor and matrix documentation parity"},
+    {"id": "UAT-6", "ac": "AC-6", "result": "PASS_WITH_CARRIED_BASELINES", "evidence": "active 8/8; template 8/8; acceptance validator PASS; US-0119 8P/2F and US-0120 9P/1F reproduced unchanged"},
+    {"id": "UAT-7", "ac": "AC-7", "result": "PASS", "evidence": "marker 8; security-hard negative classifications and no-refresh guard"},
+    {"id": "UAT-DC", "ac": "status_guard", "result": "PASS", "evidence": "BUG-0034 OPEN; backlog ACs and acceptance row unchecked"}
+  ],
+  "non_blocking_findings": [
+    "US-0119: unchanged 8 passed, 2 failed baseline with five pre-existing orphan reports.",
+    "US-0120: unchanged 9 passed, 1 failed baseline caused by missing US-0043 architecture reference.",
+    "Dev execute proof hash recomputes MATCH; its TTL elapsed before this QA mint."
+  ],
+  "prohibited_claims": [
+    "No live-host or live-IDE UAT pass claimed.",
+    "BUG-0034 status was not changed and no acceptance criterion was ticked.",
+    "No downstream phase was run or spawned."
+  ]
+}

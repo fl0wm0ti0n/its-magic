@@ -4,6 +4,7 @@ mode: subagent
 permission:
   edit:
     "**": deny
+    "handoffs/resume_brief.md": allow
     "docs/engineering/architecture.md": allow
     "docs/engineering/decisions.md": allow
     "docs/engineering/state.md": allow

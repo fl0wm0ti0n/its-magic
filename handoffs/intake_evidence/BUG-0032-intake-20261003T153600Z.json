@@ -1,0 +1,78 @@
+{
+  "selected_pack": "small-intake-pack",
+  "intake_run_id": "po-opencode-20261003-BUG0032-intake",
+  "writer_id": "po-opencode-20261003-BUG0032-intake",
+  "INTAKE_GUIDED_MODE": 0,
+  "INTAKE_WORK_ITEM_KIND": "bug",
+  "requested_mode": "bug",
+  "intake_boundary_utc": "2026-10-03T15:36:00Z",
+  "ID_NAMESPACE_BOOTSTRAP": 0,
+  "bug_id": "BUG-0032",
+  "asked_topics": [
+    "outcome_success_criteria",
+    "impacted_components",
+    "constraints_compatibility_risks",
+    "required_tests_acceptance_checks",
+    "done_definition"
+  ],
+  "missing_topics": [],
+  "assumptions_confirmed": "(none)",
+  "topic_coverage": [
+    {
+      "topic_key": "outcome_success_criteria",
+      "satisfied_by": "answer_ref",
+      "ref": "ie:po-opencode-20261003-BUG0032-intake:0:f0442b2b591cb9ad",
+      "quoted_user_text": "AUTONOMY_PRESET and AUTONOMY_STOP_POLICY in .cursor/scratchpad.md (live: none / block) and .its-magic/config.json (baseline: full / auto_repair_then_block) are asserted identical (config.json header: Values mirrored from .cursor/scratchpad.md) but are currently NOT identical. Wanted: a fail-closed drift-detect contract (check_intake_template_parity.py --scope=autonomy-flags) that breaks future CI, plus a remediation doc; live values stay untouched (operator action).",
+      "intake_run_id": "po-opencode-20261003-BUG0032-intake",
+      "turn_index": 0
+    },
+    {
+      "topic_key": "impacted_components",
+      "satisfied_by": "answer_ref",
+      "ref": "ie:po-opencode-20261003-BUG0032-intake:1:41010435f345476f",
+      "quoted_user_text": ".its-magic/config.json L317-L320 (AUTONOMY_PRESET=full, AUTONOMY_STOP_POLICY=auto_repair_then_block), .cursor/scratchpad.md L639-L640 (AUTONOMY_PRESET=none, AUTONOMY_STOP_POLICY=block), .cursor/scratchpad copy.md L640 (operator-intent trace: auto_repair_then_block used once), check_intake_template_parity.py (new scope=autonomy-flags), CI runbook; composable US-0119, US-0131/DEC-0131, US-0017 template-drift guard.",
+      "intake_run_id": "po-opencode-20261003-BUG0032-intake",
+      "turn_index": 1
+    },
+    {
+      "topic_key": "constraints_compatibility_risks",
+      "satisfied_by": "answer_ref",
+      "ref": "ie:po-opencode-20261003-BUG0032-intake:2:29189f6055031b11",
+      "quoted_user_text": "Do NOT change the live values (operator action). config.json remains the baseline source (US-0131/DEC-0131). US-0119 AUTONOMY_PRESET=none default stays. INTAKE_AUTONOMY_MODE=0 + INTAKE_SUBAGENT_FALLBACK=deny (config.json L145-146, L323-324) unchanged. No npm-publish, no git-push, no .env reads. No spawner recursion; no bash-bypass of deny-by-default (DEC-0152).",
+      "intake_run_id": "po-opencode-20261003-BUG0032-intake",
+      "turn_index": 2
+    },
+    {
+      "topic_key": "required_tests_acceptance_checks",
+      "satisfied_by": "answer_ref",
+      "ref": "ie:po-opencode-20261003-BUG0032-intake:3:f38830fbd927c4f6",
+      "quoted_user_text": "check_intake_template_parity.py --scope=autonomy-flags must exit 1 on drift (AUTONOMY_PRESET or AUTONOMY_STOP_POLICY differ) and exit 0 when identical; bug_issue_validate.py --check-acceptance exit 0 PRE- and POST-write; no test ticks BUG-0032 ACs (intake = register, not close); US-0119 tests must not regress.",
+      "intake_run_id": "po-opencode-20261003-BUG0032-intake",
+      "turn_index": 3
+    },
+    {
+      "topic_key": "done_definition",
+      "satisfied_by": "answer_ref",
+      "ref": "ie:po-opencode-20261003-BUG0032-intake:4:f7256276525dfbf6",
+      "quoted_user_text": "BUG-0032 is DONE when (1) config.json and scratchpad.md agree on AUTONOMY_PRESET and AUTONOMY_STOP_POLICY (operator-set) OR (2) the drift-detect contract runs in CI and exits 1 on any future drift plus a remediation doc explains how the operator syncs the two sources - both without live-value mutation by PO/Kit. Intake = register; no ACs checked.",
+      "intake_run_id": "po-opencode-20261003-BUG0032-intake",
+      "turn_index": 4
+    }
+  ],
+  "duplicate_check_pass": true,
+  "duplicate_check_notes": "Drift between baseline (config.json) and live (scratchpad) is a distinct configuration-consistency defect. Not duplicate of US-0119 (shipped AUTONOMY_PRESET feature), US-0017 (template drift guard; scope=autonomy-flags is new), US-0126 (OpenCode reason codes), BUG-0013 (scratchpad example stale - template). Distinct from every OPEN bug in the queue.",
+  "decomposition_verdict": "single_bug",
+  "decomposition_rationale": "One vertical gap: two config sources (baseline + live) assert identity but are currently not identical. A drift-detect contract + remediation doc is the minimal complete fix.",
+  "sibling_not_persisted": "BUG-0016/0022/0026/0027/0028/0029/0030/0031 UNTOUCHED. US-0154/US-0155 UNTOUCHED (OPEN). US-0156 DONE (S0162) UNTOUCHED.",
+  "WORK_KIND_ROUTING": 0,
+  "EARLY_RESEARCH": 0,
+  "FRAMEWORK_KIT_REPO": 1,
+  "related_us": [
+    "US-0119",
+    "US-0131",
+    "US-0017",
+    "DEC-0131",
+    "DEC-0060"
+  ],
+  "related_bugs": []
+}

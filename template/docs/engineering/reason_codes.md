@@ -466,5 +466,8 @@ Reason codes for other stories live in their respective architecture sections:
 - **US-0092** (full autonomy): `AUTO_FLOW_MODE_CONFLICT`, `AUTO_OUTER_DRIVER_*`
 - **US-0096** (delivery modes): `DELIVERY_MODE_UNKNOWN`, `LEAN_MEMORY_*`
 - **BUG-0031** (OpenCode `/closure` flip-path authorization): `CLOSURE_PERMISSION_FLIP_PATHS_DENIED`
+- **BUG-0032** (declared-mirror drift-detect on `AUTONOMY_PRESET` / `AUTONOMY_STOP_POLICY`; composes US-0119): `AUTONOMY_FLAGS_DRIFT`
+- **BUG-0034 / US-0119** (PO closure-precondition conflict): `PO_CLOSURE_PRECONDITION_CONFLICT` is an `autonomy_resolvable` `disambiguate_state` repair with matrix cap `3`. It may select only one existing, validated closure-precondition state; `RESUME_AMBIGUOUS` remains security-hard, syntax is `RESUME_BRIEF_UNPARSEABLE`, and every missing, stale, conflicting, unauthorized, replayed, proof-invalid, or isolation-invalid pair remains `RESUME_BRIEF_STALE` with its predicate retained. `RESUME_BRIEF_AUTO_REFRESH=0` prohibits refresh, fallback, reconciler, and hand edit.
+
 
 See `docs/engineering/architecture.md` for normative definitions.

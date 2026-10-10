@@ -1683,6 +1683,15 @@ Assert-True "check_intake_template_parity --scope=us-0131 passes (US-0131)" ($us
 $us0131Contract = Start-Process python -ArgumentList @("-m", "pytest", "tests\us0131_contract_test.py", "-q") -PassThru -NoNewWindow -Wait -WorkingDirectory $root
 Assert-True "US-0131 contract tests pass" ($us0131Contract.ExitCode -eq 0)
 
+# BUG-0032 — AUTONOMY_FLAGS_DRIFT declared-mirror drift-detect (R-0156 DQ3 / AC-3).
+# Always-run (NOT changed-file filtered): asserts the identity fixture exit-0
+# + exact banner, then runs the 8-marker `test_bug0032_*` suite. Fail-closed;
+# the identity fixture is the AC-2 "exit 0 + reason-code-free banner" case.
+$bug0032Identity = Start-Process python -ArgumentList @((Join-Path $root "scripts\check_intake_template_parity.py"), "--scope=autonomy-flags", "--repo", (Join-Path $root "tests\fixtures\bug0032_autonomy_flags\identity")) -PassThru -NoNewWindow -Wait -WorkingDirectory $root
+Assert-True "check_intake_template_parity --scope=autonomy-flags identity fixture exit-0 (BUG-0032 / AC-2)" ($bug0032Identity.ExitCode -eq 0)
+$bug0032Contract = Start-Process python -ArgumentList @("-m", "pytest", "tests\bug0032_autonomy_flags_drift_test.py", "-q") -PassThru -NoNewWindow -Wait -WorkingDirectory $root
+Assert-True "BUG-0032 8-marker drift-detect suite (tests/bug0032_autonomy_flags_drift_test.py)" ($bug0032Contract.ExitCode -eq 0)
+
 # 26AF) US-0132 — Cursor/OpenCode model configuration contract
 $us0132Parity = Start-Process python -ArgumentList @((Join-Path $root "scripts\check_intake_template_parity.py"), "--scope=us-0132") -PassThru -NoNewWindow -Wait -WorkingDirectory $root
 Assert-True "check_intake_template_parity --scope=us-0132 passes (US-0132)" ($us0132Parity.ExitCode -eq 0)
@@ -1761,6 +1770,12 @@ $bug0027Parity = Start-Process python -ArgumentList @((Join-Path $root "scripts\
 Assert-True "check_intake_template_parity --scope=bug-0027 passes (BUG-0027)" ($bug0027Parity.ExitCode -eq 0)
 $bug0027Contract = Start-Process python -ArgumentList @("-m", "pytest", "tests\bug0027_opencode_manual_phase_persist_test.py", "-q") -PassThru -NoNewWindow -Wait -WorkingDirectory $root
 Assert-True "BUG-0027 OpenCode manual phase persist contract tests pass" ($bug0027Contract.ExitCode -eq 0)
+
+# 26AW) BUG-0033 — thin OpenCode command diagnostics-only Stop/Fail-safe parity
+$bug0033Parity = Start-Process python -ArgumentList @((Join-Path $root "scripts\check_intake_template_parity.py"), "--scope=bug-0033") -PassThru -NoNewWindow -Wait -WorkingDirectory $root
+Assert-True "check_intake_template_parity --scope=bug-0033 passes (BUG-0033)" ($bug0033Parity.ExitCode -eq 0)
+$bug0033Contract = Start-Process python -ArgumentList @("-m", "pytest", "tests\bug0033_opencode_command_parity_test.py", "-q") -PassThru -NoNewWindow -Wait -WorkingDirectory $root
+Assert-True "BUG-0033 10-marker command parity suite (tests/bug0033_opencode_command_parity_test.py)" ($bug0033Contract.ExitCode -eq 0)
 
 # Cleanup
 if (Test-Path (Join-Path $root "tests\.tmp-install")) {

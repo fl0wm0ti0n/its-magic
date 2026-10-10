@@ -121,7 +121,15 @@ def test_us0143_auto_route_implemented():
     for entry in workspaces:
         assert "standalone" not in str(entry).replace("\\", "/")
     assert not (root / "standalone" / "packages" / "auto-scheduler").exists()
-    assert not (root / ".opencode" / "commands" / "auto.md").exists()
+    # BUG-0030 deliberately restored the documented OpenCode /auto command.
+    # It dispatches to the host auto agent; it must not become a standalone
+    # runtime-core dependency or reintroduce a Pi import boundary violation.
+    opencode_auto = root / ".opencode" / "commands" / "auto.md"
+    assert opencode_auto.is_file()
+    opencode_auto_text = opencode_auto.read_text(encoding="utf-8")
+    assert "agent: auto" in opencode_auto_text
+    assert "@earendil-works/pi-" not in opencode_auto_text
+    assert "@its-magic/pi-kernel" not in opencode_auto_text
     src = _runtime_core_src(root)
     assert 'SCHEDULER_COMMANDS = ["/auto", "/quick"]' in src
     assert "DEFERRED_COMMANDS = [] as const" in src

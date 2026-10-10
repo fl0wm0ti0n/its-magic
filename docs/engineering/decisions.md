@@ -1,5 +1,24 @@
 # Decisions
 
+## DEC-0154 Accepted
+
+- Bug: BUG-0033 (thin→rich command-pair parity; US-0125 clone-guard line-cap tension)
+- Status: **Accepted** (2026-10-08; file `decisions/DEC-0154.md`)
+- Topic: adopt R-0159 DQ6 **Option A** — an **additive** US-0125 line-cap reconciliation for the five BUG-0033 parity-target files only (`{closure,ask,auto,refresh-context,execute}.md`), raising the per-file line cap so both `## Stop conditions` + `## Fail-safe reason codes` are achievable (AC-1..AC-5); the **similarity ≤ 0.30 clone-guard, the clone strip-list, and the frontmatter-shape marker remain INTACT for all files** (only the line *count* cap is exempted, for the five named files).
+- Composes on: R-0159 (DQ6), US-0125 (thin dispatch-only, additive), US-0156 (`auto.md` re-addition — 14→15 inventory / 49-line `auto.md` already a shipped deviation), BUG-0031 (active↔template byte parity). Options B (re-scope to `ask.md`) and C (accept new red) are REJECTED. Seed task T-002 in the `# BUG-0033` architecture H1.
+- Architecture H1: **`# BUG-0033`** — architecture-owned.
+
+## DEC-0153 Accepted
+
+- Bug: BUG-0035 (research-to-architecture resume-brief ownership deadlock)
+- Status: **Accepted** (2026-10-03; file `decisions/DEC-0153.md`)
+- Topic: the completed phase child, never the spawn-only parent, writes a
+  state-first paired continuation record under one exact resume-brief allow;
+  invalid evidence remains `RESUME_BRIEF_STALE`/`RESUME_BRIEF_UNPARSEABLE`.
+- Composes on: R-0157, DEC-0069, DEC-0038, and DEC-0152. No self-heal,
+  state fallback, or `RESUME_BRIEF_AUTO_REFRESH=0` bypass.
+- Architecture H1: **`# BUG-0035`** — architecture-owned.
+
 ## Current context pack (2026-09-27 — **`BUG-0030`** **DONE** / **`S0161` released** — `auto-20260927-bug0030`, `fresh_context_marker=cur-BUG0030-refresh-20260927T151000Z-fresh`, `runtime_proof_id=rp-auto-20260927-bug0030-refresh-context-curator-20260927T151000Z-BUG-0030`, `proof_hash=EAE1586A10CB50D668E44C8A2E1C7B87CCE4C3A04D2E8DD348E42F29FFBF8294`, `proof_ttl=2026-09-27T16:10:00Z`; research anchor **`R-0152`** **delivered**; binding **`DEC-0151`** (Accepted — documented OpenCode `1.18.32` Markdown-command route); approach **A1**; `decision_gate=false`; **`backlog_drain_active=false`**; **`native_chain_active=true`**; **`native_chain_continuing=false`**; **`segment_closed=true`**; **`stop_reason=completed`**; **`stop_phase=refresh-context`**; **`drain_advance_action=not_applicable`** (BUG-0022/BUG-0026/BUG-0028/BUG-0029 not drained; BUG-0023/0024/0027 DONE not reopened) — next action **none** (orchestrator MUST NOT reopen BUG-0030; CROSS_MODEL_REVIEW=0 — no critic).
 
 - **`BUG-0030`** (**DONE**, **`S0161`**, **released**): OpenCode `/auto` private TUI/RPC route replaced by documented `.opencode/commands/auto.md` (active + template, `agent: auto`, non-STOP spawn-only prompt) + `auto` agent on **`auto-20260927-bug0030`** — full lifecycle **PASS** through **`/refresh-context`** **`2026-09-27T15:10:00Z`**; **`handoffs/release_queue.md`** **`S0161`** **`released`** @ `2026-09-27T14:35:00Z`; **`handoffs/releases/S0161-release-notes.md`** RELEASE_PASS (gates 1/2/3/4a/4b); architecture **`# BUG-0030`**; six **`test_bug0030_*`** markers (incl. credentialed live `session.command("auto")` prompt-admission smoke, model `openai/gpt-5.6-terra`); `ITS_MAGIC_OPENCODE_SMOKE_MODEL` knob; BUG-0027 compose preserved (10/10). Curator reconciles **`state.md`**, **`decisions.md`**, **`sprints/S0161/summary.md`**, **`handoffs/resume_brief.md`**, **`docs/engineering/research.md`** **R-0152** delivery closure trailer, **`handoffs/portfolio_state.md`**, **`handoffs/continuation_hygiene.md`**. **SOVEREIGN_MEMORY=0** — retrospective skipped. **Next**: none — bug segment terminal. Honest residual: NB1 full provider-driven auto-lifecycle completion remains operator UAT post-ship (`provider_completion_claimed=false`); no toast-repair claim; **`npm_published=false`** — operator confirm before `npm publish` (kit `0.1.9`); **no git push** (`SYNC_POLICY_MODE=disabled`).

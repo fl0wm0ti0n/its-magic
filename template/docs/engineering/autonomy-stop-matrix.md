@@ -59,7 +59,7 @@ Reason codes that are NEVER auto-repaired. Violation of any triggers terminal `A
 | `SECURITY_REVIEW_CRITICAL_FINDING` | Security review critical = security boundary |
 | `ARCH_LINKAGE_ROLLOVER_BLOCKED` | Architecture rollover would drop headings still required by contract tests (US-0129); never skip, including under `AUTONOMY_STOP_POLICY=auto_repair_then_skip` |
 
-## Autonomy-resolvable gates (9 codes)
+## Autonomy-resolvable gates (10 codes)
 
 Reason codes that may be auto-repaired when `AUTONOMY_STOP_POLICY` allows. Cap per (run, reason_code) from matrix `cap` column.
 
@@ -70,6 +70,7 @@ Reason codes that may be auto-repaired when `AUTONOMY_STOP_POLICY` allows. Cap p
 | `ARTIFACT_HOT_SURFACE_OVERSIZE` | `truncate_hot_surface` | `3` | Archive rollover (mechanical fix) |
 | `BLOCK_RETRY_CAP_EXHAUSTED` | `reset_retry_counter` | `3` | Reset to 0 (ledger entry) |
 | `STATE_PHASE_AMBIGUOUS` | `disambiguate_state` | `3` | Pick last-known phase (unambiguous selection) |
+| `PO_CLOSURE_PRECONDITION_CONFLICT` | `disambiguate_state` | `3` | Select only one already-evidenced closure-precondition state; ambiguity or paired-brief evidence remains fail-closed. |
 | `RESUME_BRIEF_MISSING` | `auto_refresh_brief` | `3` | Regenerate brief from state.md (when `RESUME_BRIEF_AUTO_REFRESH=1`) |
 | `PLAN_FIDELITY_VIOLATION` | `approve_plan_deviation` | `3` | Ledger waiver (bounded audit trail) |
 | `ISOLATION_EVIDENCE_INVALID` | `regenerate_isolation_evidence` | `3` | Re-run context-refresh (mechanical fix) |

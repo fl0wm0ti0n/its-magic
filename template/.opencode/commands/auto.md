@@ -34,7 +34,28 @@ US-0156 / DEC-0152 — sequential, command-owned fresh-Task contract (approach A
    child isolation reference). Exact repeats are no-ops; conflicting evidence
    or a reused child session fails closed.
 
+BUG-0035 / DEC-0153 — paired continuation ownership: the completed, canonical
+phase child alone authors its state-first paired continuation record (the
+`docs/engineering/state.md` checkpoint first, then the `handoffs/resume_brief.md`
+latest-pointer block after exact pair-key and tuple validation). This parent is
+permanently read/validate/spawn-only: it never writes either artifact, never
+applies a state fallback, never refreshes the brief, never repairs, and never
+schedules the next phase on `RESUME_BRIEF_STALE` or `RESUME_BRIEF_UNPARSEABLE`
+evidence. `RESUME_BRIEF_AUTO_REFRESH=0` remains an absolute prohibition.
+
 Retired and forbidden: do not recursively invoke `/auto`, do not restore the
 TUI/RPC dispatch route, a JSON command template, or a localhost endpoint, and
 do not let direct manual phase commands substitute for fresh child Task
 evidence.
+
+## Stop conditions
+
+- Deterministic stop reasons (see rich `.cursor/commands/auto.md` Stop matrix): `completed`, `decision_gate`,
+  `missing_input`, `pause_request`, `loop_max`, `error`, `blocked`.
+
+## Fail-safe reason codes
+
+- Resume-resolution failures use the `[AUTO_RESUME_ERROR] <code>: <summary>` envelope: `INVALID_START_FROM`,
+  `RESUME_BRIEF_MISSING`, `RESUME_BRIEF_STALE`, `RESUME_BRIEF_UNPARSEABLE`, `RESUME_STATE_CONFLICT`,
+  `STATE_PHASE_AMBIGUOUS`, `STATE_PHASE_UNRECOVERABLE`, `AUTO_SCHEDULER_CONFLICT`, `AUTO_BUG_QUEUE_EMPTY`,
+  `AUTO_BUG_TARGET_UNKNOWN`, `AUTO_BUG_TARGET_NOT_OPEN`. Full contract: the Cursor rich `auto.md`.

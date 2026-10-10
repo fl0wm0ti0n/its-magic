@@ -499,6 +499,385 @@ def resolve_manual_phase_context(repo: Path) -> dict:
     }
 
 
+# --- BUG-0035 / DEC-0153: phase-child-owned paired continuation record -------
+#
+# The completed, canonical phase child is the ONLY authorized writer of its
+# state-first paired continuation record (state checkpoint first, then the
+# resume latest-pointer block). The spawn-only parent never writes either
+# artifact and never treats child completion as authority to advance.
+#
+# Pair key (DEC-0153 §3, exact):
+#   orchestrator_run_id|work_item_kind|bug_id|completed_phase|runtime_proof_id
+#
+# Failure semantics (DEC-0153 §4):
+#   - syntax failure only            → RESUME_BRIEF_UNPARSEABLE
+#   - stale, absent-required, conflicting, unauthorized, replay, or
+#     proof/isolation-invalid        → RESUME_BRIEF_STALE (predicate retained)
+# There is NO state fallback, NO parent repair, NO reconciler, NO next spawn,
+# and `RESUME_BRIEF_AUTO_REFRESH=0` remains an absolute prohibition.
+
+RESUME_BRIEF_STALE = "RESUME_BRIEF_STALE"
+RESUME_BRIEF_UNPARSEABLE = "RESUME_BRIEF_UNPARSEABLE"
+
+# Canonical locked tuple fields the state side and the brief side must agree on.
+PAIR_LOCKED_FIELDS = (
+    "orchestrator_run_id",
+    "work_item_kind",
+    "bug_id",
+    "completed_phase",
+    "writer_role",
+    "fresh_context_marker",
+    "resolution_source",
+    "effective_plan",
+    "skipped_phases",
+    "completed_phases",
+    "next_scheduled_phase",
+    "next_scheduled_role",
+    "phase_cursor",
+    "budget_scope",
+    "stop_reason",
+    "runtime_proof_id",
+    "proof_hash",
+    "proof_issued_at",
+    "proof_ttl_seconds",
+    "phase_id",
+)
+
+# Registry of already-authorized pairs: key → canonical tuple (idempotence +
+# replay/conflict detection). Tests reset via reset_resume_pair_registry_for_tests().
+resume_pair_registry: dict[str, dict] = {}
+
+
+def reset_resume_pair_registry_for_tests() -> None:
+    """Clear the child-owned pair registry (test isolation only)."""
+    resume_pair_registry.clear()
+
+
+def build_resume_pair_key(record: dict) -> str:
+    """Construct the exact DEC-0153 pair key from a canonical record."""
+    value = record or {}
+    return "|".join(
+        str(value.get(field, ""))
+        for field in (
+            "orchestrator_run_id",
+            "work_item_kind",
+            "bug_id",
+            "completed_phase",
+            "runtime_proof_id",
+        )
+    )
+
+
+def _pair_field_ok(field: str, value: object) -> bool:
+    if isinstance(value, bool):
+        return False
+    if isinstance(value, (int, float, str)) or value is None:
+        return True
+    if isinstance(value, (list, tuple)):
+        return all(_pair_field_ok(field, item) for item in value)
+    if isinstance(value, dict):
+        if not value:
+            return False
+        return all(
+            isinstance(item, str) and _pair_field_ok(field, item2)
+            for item, item2 in value.items()
+        )
+    return False
+
+
+def _validate_pair_tuple(record: object) -> dict:
+    """Syntax-level validation of one pair-record dict.
+
+    Returns {"ok": True, "record": cleaned} or a reason-coded failure with the
+    retained predicate. Syntax failures are RESUME_BRIEF_UNPARSEABLE; absent
+    required evidence is RESUME_BRIEF_STALE.
+    """
+    if not isinstance(record, dict):
+        return {
+            "ok": False,
+            "reasonCode": RESUME_BRIEF_UNPARSEABLE,
+            "predicate": "pair_record_not_object",
+        }
+    if not record or record.get("record_key") is None:
+        return {
+            "ok": False,
+            "reasonCode": RESUME_BRIEF_STALE,
+            "predicate": "absent_required_record_key",
+        }
+    key = record.get("record_key")
+    if not isinstance(key, str) or not all(part for part in key.split("|")):
+        return {
+            "ok": False,
+            "reasonCode": RESUME_BRIEF_UNPARSEABLE,
+            "predicate": "malformed_record_key",
+        }
+    for field in PAIR_LOCKED_FIELDS:
+        if field not in record:
+            return {
+                "ok": False,
+                "reasonCode": RESUME_BRIEF_STALE,
+                "predicate": f"absent_required_field:{field}",
+            }
+        if not _pair_field_ok(field, record[field]):
+            return {
+                "ok": False,
+                "reasonCode": RESUME_BRIEF_UNPARSEABLE,
+                "predicate": f"malformed_field:{field}",
+            }
+    marker = record.get("fresh_context_marker")
+    if not (
+        isinstance(marker, str)
+        and marker
+        and marker != "tui-auto"
+        and marker.endswith("-fresh")
+    ):
+        return {
+            "ok": False,
+            "reasonCode": RESUME_BRIEF_STALE,
+            "predicate": "fresh_marker_reused_or_missing",
+        }
+    proof_role = record.get("phase_id")
+    if not (
+        isinstance(proof_role, str)
+        and proof_role
+        and proof_role in PHASE_PLAN_ORDER
+    ):
+        return {
+            "ok": False,
+            "reasonCode": RESUME_BRIEF_STALE,
+            "predicate": "strict_proof_phase_invalid",
+        }
+    proof_ttl = record.get("proof_ttl_seconds")
+    if (
+        not isinstance(proof_ttl, int)
+        or isinstance(proof_ttl, bool)
+        or proof_ttl <= 0
+    ):
+        return {
+            "ok": False,
+            "reasonCode": RESUME_BRIEF_UNPARSEABLE,
+            "predicate": "strict_proof_ttl_invalid",
+        }
+    if not (
+        isinstance(record.get("proof_issued_at"), str)
+        and record["proof_issued_at"]
+    ):
+        return {
+            "ok": False,
+            "reasonCode": RESUME_BRIEF_STALE,
+            "predicate": "strict_proof_issued_at_missing",
+        }
+    if not (
+        isinstance(record.get("runtime_proof_id"), str)
+        and record["runtime_proof_id"]
+    ):
+        return {
+            "ok": False,
+            "reasonCode": RESUME_BRIEF_STALE,
+            "predicate": "strict_proof_id_missing",
+        }
+    if not (
+        isinstance(record.get("proof_hash"), str)
+        and len(record["proof_hash"]) == 64
+        and all(c in "0123456789abcdefABCDEF" for c in record["proof_hash"])
+    ):
+        return {
+            "ok": False,
+            "reasonCode": RESUME_BRIEF_UNPARSEABLE,
+            "predicate": "strict_proof_hash_invalid",
+        }
+    return {"ok": True, "record": dict(record)}
+
+
+def validate_resume_pair(
+    repo: Path,
+    *,
+    writer_role: str | None,
+    state_tuple: object = None,
+    brief_tuple: object = None,
+) -> dict:
+    """Read/validate-only the BUG-0035 state/brief continuation pair (DEC-0153).
+
+    The spawn-only parent uses this to compare a completed child's state
+    checkpoint against the resume latest-pointer block. It NEVER writes either
+    artifact and NEVER falls back to state alone: an incomplete or invalid pair
+    is a hard fail-closed stop with the retained predicate.
+    """
+    # -- writer authorization (unauthorized writer → RESUME_BRIEF_STALE) ---
+    if (
+        not isinstance(writer_role, str)
+        or not writer_role
+        or writer_role == "auto"
+        or writer_role in ("parent", "orchestrator")
+    ):
+        return {
+            "ok": False,
+            "reasonCode": RESUME_BRIEF_STALE,
+            "predicate": "unauthorized_writer_role",
+            "next_scheduled_phase": None,
+        }
+    state = _validate_pair_tuple(state_tuple)
+    if not state["ok"]:
+        return {
+            "ok": False,
+            "reasonCode": state["reasonCode"],
+            "predicate": state["predicate"],
+            "next_scheduled_phase": None,
+        }
+    rec_s = state["record"]
+    if rec_s.get("writer_role") != writer_role:
+        return {
+            "ok": False,
+            "reasonCode": RESUME_BRIEF_STALE,
+            "predicate": "writer_role_mismatch",
+            "next_scheduled_phase": None,
+        }
+    brief = _validate_pair_tuple(brief_tuple)
+    if not brief["ok"]:
+        return {
+            "ok": False,
+            "reasonCode": brief["reasonCode"],
+            "predicate": brief["predicate"],
+            "next_scheduled_phase": None,
+        }
+    rec_b = brief["record"]
+    key_s = rec_s.get("record_key")
+    key_b = rec_b.get("record_key")
+    if key_s != key_b:
+        return {
+            "ok": False,
+            "reasonCode": RESUME_BRIEF_STALE,
+            "predicate": "pair_key_mismatch",
+            "next_scheduled_phase": None,
+        }
+    for field in PAIR_LOCKED_FIELDS:
+        if rec_s[field] != rec_b[field]:
+            return {
+                "ok": False,
+                "reasonCode": RESUME_BRIEF_STALE,
+                "predicate": f"tuple_conflict:{field}",
+                "next_scheduled_phase": None,
+            }
+    # -- replay / idempotence: exact canonical replay is the sole no-op -----
+    seen = resume_pair_registry.get(key_s)
+    if seen is not None:
+        if seen != rec_s:
+            return {
+                "ok": False,
+                "reasonCode": RESUME_BRIEF_STALE,
+                "predicate": "replay_conflict",
+                "next_scheduled_phase": None,
+            }
+        return {
+            "ok": True,
+            "idempotent_noop": True,
+            "reasonCode": None,
+            "predicate": "exact_canonical_replay",
+            "key": key_s,
+            "next_scheduled_phase": rec_s.get("next_scheduled_phase"),
+        }
+    resume_pair_registry[key_s] = dict(rec_s)
+    return {
+        "ok": True,
+        "idempotent_noop": False,
+        "reasonCode": None,
+        "predicate": None,
+        "key": key_s,
+        "next_scheduled_phase": rec_s.get("next_scheduled_phase"),
+    }
+
+
+def _write_resume_pointer_block(
+    repo: Path,
+    *,
+    record_key: str,
+    writer_role: str,
+    next_phase: str,
+    next_role: str,
+    completed_phase: str,
+    fresh_marker: str,
+) -> Path:
+    """Atomically prepend the resume latest-pointer block to resume_brief.md.
+
+    Uses the temporary-file-plus-replace strategy already established by
+    DEC-0069 history retention; cross-file atomicity is deliberately NOT
+    claimed (the validation rule, not a partial write, is the safety boundary).
+    """
+    path = repo / "handoffs" / "resume_brief.md"
+    path.parent.mkdir(parents=True, exist_ok=True)
+    header = (
+        f"# Resume Brief — BUG-0035 CONTINUATION PAIR — {record_key}"
+        f" (role={writer_role})\n\n"
+        f"- `record_key`: `{record_key}`\n"
+        f"- `writer_role`: `{writer_role}`\n"
+        f"- `completed_phase`: `{completed_phase}`\n"
+        f"- `next_scheduled_phase`: `{next_phase}`\n"
+        f"- `next_scheduled_role`: `{next_role}`\n"
+        f"- `fresh_context_marker`: `{fresh_marker}`\n"
+    )
+    prior = ""
+    if path.is_file():
+        prior = "\n---\n\n" + path.read_text(encoding="utf-8")
+    tmp = path.with_suffix(".md.tmp")
+    content = header + prior
+    tmp.write_text(content, encoding="utf-8")
+    tmp.replace(path)
+    return path
+
+
+def write_resume_pair(
+    repo: Path,
+    *,
+    writer_role: str,
+    state_checkpoint_text: str,
+    state_path: Path | None = None,
+    state_tuple: object = None,
+    brief_tuple: object = None,
+) -> dict:
+    """BUG-0035 / DEC-0153 §2: state-first, validate-then-brief pair update.
+
+    Only the completed, canonical phase child (whose role owns
+    `handoffs/resume_brief.md` in the active permission map) may call this.
+    Order is deliberately state, then validation, then the atomic brief
+    pointer: a denial or crash before the brief leaves no lawful continuation
+    record and fails closed. No state fallback, no reconciler, no next spawn
+    is scheduled here.
+    """
+    path = state_path or (repo / "docs" / "engineering" / "state.md")
+    path.parent.mkdir(parents=True, exist_ok=True)
+    block = state_checkpoint_text.rstrip("\n") + "\n"
+    if path.is_file():
+        existing = path.read_text(encoding="utf-8")
+        path.write_text(block + "\n" + existing, encoding="utf-8")
+    else:
+        path.write_text(block.lstrip("\n"), encoding="utf-8")
+
+    if state_tuple is None:
+        state_tuple = {"record_key": None}
+    if brief_tuple is None:
+        brief_tuple = {}
+    result = validate_resume_pair(repo, writer_role=writer_role,
+                                  state_tuple=state_tuple,
+                                  brief_tuple=brief_tuple)
+    if not result.get("ok"):
+        if "next_scheduled_phase" not in result:
+            result["next_scheduled_phase"] = None
+        return result
+    if result.get("idempotent_noop"):
+        return result
+    rec = resume_pair_registry.get(result.get("key") or "") or {}
+    _write_resume_pointer_block(
+        repo,
+        record_key=str(rec.get("record_key") or result.get("key")),
+        writer_role=str(rec.get("writer_role") or writer_role),
+        next_phase=str(rec.get("next_scheduled_phase") or ""),
+        next_role=str(rec.get("next_scheduled_role") or ""),
+        completed_phase=str(rec.get("completed_phase") or ""),
+        fresh_marker=str(rec.get("fresh_context_marker") or ""),
+    )
+    return result
+
+
 def main() -> int:
     parser = argparse.ArgumentParser(description="BUG-0015 OpenCode auto bridge")
     parser.add_argument("--repo", default=".", help="Repository root")
@@ -541,6 +920,19 @@ def main() -> int:
     parser.add_argument("--cursor", default="0", help="Cursor for continuation accounting")
     parser.add_argument("--remaining-budget", default="32", dest="remaining_budget")
     parser.add_argument("--state-path", default=None, help="Override state.md path")
+    parser.add_argument(
+        "--write-resume-pair",
+        action="store_true",
+        help="BUG-0035 / DEC-0153: state-first, validate-then-brief pair update "
+             "(child-owned; writer_role required; state/brief tuples via "
+             "JSON object: {state: {...}, brief: {...}})",
+    )
+    parser.add_argument(
+        "--resume-pair-json",
+        default=None,
+        dest="resume_pair_json",
+        help="JSON object with state/brief pair tuples for --write-resume-pair",
+    )
     args = parser.parse_args()
     repo = Path(args.repo).resolve()
 
@@ -597,6 +989,37 @@ def main() -> int:
             orchestrator_run_id=args.orchestrator_run_id,
             bug_id=args.bug_id,
             state_path=state_path,
+        )
+        sys.stdout.write(json.dumps(payload, sort_keys=True, separators=(",", ":")))
+        sys.stdout.write("\n")
+        return EXIT_OK if payload.get("ok") else EXIT_FAIL
+
+    if args.write_resume_pair:
+        if not args.role:
+            sys.stderr.write(
+                "write-resume-pair requires --role (the child writer role)\n"
+            )
+            return EXIT_FAIL
+        pair: dict = {}
+        if args.resume_pair_json:
+            try:
+                pair = json.loads(args.resume_pair_json)
+            except ValueError as exc:
+                sys.stderr.write(f"resume-pair-json parse error: {exc}\n")
+                return EXIT_FAIL
+        checkpoint = (
+            f"## Resume pair checkpoint — BUG-0035 / DEC-0153 (role={args.role})\n\n"
+            f"- writer_role=`{args.role}`\n"
+            f"- pair_key=see state/brief tuples\n"
+            f"- commit_order=state_then_brief\n"
+        )
+        payload = write_resume_pair(
+            repo,
+            writer_role=args.role,
+            state_checkpoint_text=checkpoint,
+            state_path=Path(args.state_path) if args.state_path else None,
+            state_tuple=(pair or {}).get("state") or {},
+            brief_tuple=(pair or {}).get("brief") or {},
         )
         sys.stdout.write(json.dumps(payload, sort_keys=True, separators=(",", ":")))
         sys.stdout.write("\n")

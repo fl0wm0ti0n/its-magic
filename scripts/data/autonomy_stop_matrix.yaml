@@ -199,6 +199,12 @@ reason_codes:
     cap: 3
     rationale: Pick last-known phase is safe when unambiguous
 
+  - code: PO_CLOSURE_PRECONDITION_CONFLICT
+    stop_class: autonomy_resolvable
+    auto_repair_kind: disambiguate_state
+    cap: 3
+    rationale: Closure preconditions can be selected only from one already-evidenced state; ambiguous or paired-brief evidence remains fail-closed.
+
   - code: RESUME_BRIEF_MISSING
     stop_class: autonomy_resolvable
     auto_repair_kind: auto_refresh_brief

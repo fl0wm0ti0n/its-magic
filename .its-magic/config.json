@@ -315,9 +315,9 @@
     // RELEASE_TRIGGER_FALLBACK_TO_LOCAL: 0|1 (default 0; npm adapter offline fallback)
     "RELEASE_TRIGGER_FALLBACK_TO_LOCAL": "0",
     // AUTONOMY_PRESET: none|balanced|full (default=none)
-    "AUTONOMY_PRESET": "full",
+    "AUTONOMY_PRESET": "none",
     // AUTONOMY_STOP_POLICY: block|auto_repair_then_block|auto_repair_then_skip (default=block)
-    "AUTONOMY_STOP_POLICY": "auto_repair_then_block",
+    "AUTONOMY_STOP_POLICY": "block",
     // ARCH_LINKAGE_AUTO_REPAIR: 0|1 (default=0) -- opt-in H1-stub restore; not in AUTONOMY_PRESET
     "ARCH_LINKAGE_AUTO_REPAIR": "0",
     // INTAKE_AUTONOMY_MODE: 0|1 (default=0)

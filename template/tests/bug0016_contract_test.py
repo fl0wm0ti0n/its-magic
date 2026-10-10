@@ -271,4 +271,7 @@ def test_bug0016_active_template_agent_parity():
         "Sxxxx",
     ):
         assert forbidden not in plugin, f"write-guard appears to encode Layer-1 glob {forbidden!r}"
-    assert 'tool.hook("execute.before"' in plugin or 'ctx.tool.hook("execute.before"' in plugin
+    assert (
+        'tool.hook("execute.before"' in plugin
+        or 'ctx.tool.hook("execute.before"' in plugin
+    )

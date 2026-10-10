@@ -35,6 +35,10 @@ setup stays in the root `README.md` (user channel).
 - **US-0141** — Application runtime execution and bounded cleanup; traceability: architecture `# US-0141`, `decisions/DEC-0141.md`.
 - **US-0142** — Owned browser UAT actions and evidence recording; traceability: architecture `# US-0142`, `decisions/DEC-0142.md`.
 - **US-0143** — Delivery routing and bounded full-autonomy execution; traceability: architecture `# US-0143`, `decisions/DEC-0143.md`.
+- **BUG-0024** — OpenCode CLI TUI `/auto` live-dispatch residual (`OPENCODE_AUTO_TUI_DISPATCH_UNSUPPORTED`); traceability: architecture `# BUG-0024`.
+- **BUG-0030** — OpenCode `/auto` command-route dispatch + non-mock lifecycle-start check; traceability: architecture `# BUG-0030`.
+- **BUG-0034** — PO closure precondition conflict registered in the autonomy stop matrix (`PO_CLOSURE_PRECONDITION_CONFLICT`, `disambiguate_state`, cap 3); traceability:
+  runbook `## PO_CLOSURE_PRECONDITION_CONFLICT`, architecture `# BUG-0034`.
 
 ## Quality gates
 
@@ -70,6 +74,11 @@ setup stays in the root `README.md` (user channel).
   runbook `## Cursor/OpenCode model configuration contract (US-0132)`, architecture `# US-0132`, `decisions/DEC-0132.md`.
 - **US-0134** — KernelBridge consume contract + four `KERNEL_*` handshake codes; traceability:
   runbook `### KernelBridge consume contract + upgrade (US-0134 / R-0122 / DEC-0134)`, architecture `# US-0134`, `decisions/DEC-0134.md`.
+- **BUG-0031** — OpenCode `/closure` completion: spawnable curator closure role authorized over the canonical DONE-flip paths; traceability:
+  architecture `# BUG-0031`, `decisions/DEC-0152.md`.
+- **BUG-0032** — `AUTONOMY_FLAGS_DRIFT` drift-detect + live-wins sync (`--scope=autonomy-flags`); traceability:
+  runbook `## AUTONOMY_FLAGS_DRIFT`, architecture `# BUG-0032`.
+- **BUG-0033** — OpenCode thin command surfaces (closure, ask, auto, refresh-context, execute) carry Stop conditions and Fail-safe reason codes, byte-identical to template, with a bug-0033 parity scope; traceability: architecture `# BUG-0033`, `decisions/DEC-0154.md`.
 
 ## Architecture notes
 
@@ -90,6 +99,10 @@ setup stays in the root `README.md` (user channel).
 - **US-0146** — CLI/TUI operational observability; traceability: architecture `# US-0146`, `decisions/DEC-0146.md`.
 - **US-0147** — Installation, update, and existing-project adoption; traceability: architecture `# US-0147`, `decisions/DEC-0147.md`.
 - **US-0148** — Recoverable daemon control protocol and lifecycle; traceability: architecture `# US-0148`, `decisions/DEC-0148.md`.
+- **US-0156** — OpenCode `/auto` parity: continuous lifecycle, drain, resume, and phase selection; traceability: architecture `# US-0156`.
+- **BUG-0022** — `/auto` Task-spawns resolve phase models from role_catalog (no parent-chat inherit); traceability: architecture `# BUG-0022`.
+- **BUG-0027** — OpenCode manual phase commands persist canonical workflow evidence; traceability: architecture `# BUG-0027`.
+- **BUG-0035** — Phase-child-owned paired continuation repair (lawful resume without `RESUME_BRIEF_STALE`); traceability: architecture `# BUG-0035`, `decisions/DEC-0153.md`.
 - High-level contracts live in `docs/engineering/architecture.md` (search for story ids).
 - Installer ownership is driven by `docs/engineering/context/installer-owned-paths.manifest`.
 - Template parity: changes in repo root often require the same edit under `template/`.

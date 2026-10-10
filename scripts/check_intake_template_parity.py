@@ -24,12 +24,19 @@ Scoped modes (DEC-0073 §10 / US-0090):
   --scope=bug-0015               BUG-0015 OpenCode /auto dispatch attach surfaces.
   --scope=bug-0016               BUG-0016 OpenCode Layer-1 agent permission surfaces.
   --scope=bug-0019               BUG-0019 OpenCode /auto slash listing surfaces.
-  --scope=all              union of all tables.
+  --scope=autonomy-flags         BUG-0032 semantic declared-mirror drift-detect
+                                 (AUTONOMY_PRESET / AUTONOMY_STOP_POLICY across the
+                                 config baseline and the live scratchpad; a dedicated
+                                 SEMANTIC scope, NOT a byte-pair SCOPES entry;
+                                 drift-DETECT only, not drift-FIX).
+  --scope=all              union of all byte-pair tables, plus the semantic
+                           autonomy-flags drift-detect invoked after them.
 """
 
 from __future__ import annotations
 
 import argparse
+import json
 import sys
 from pathlib import Path
 
@@ -226,7 +233,6 @@ RELEASE_CHANGELOG_PAIRS: tuple[tuple[str, str], ...] = (
         "scripts/release_changelog_backfill.py",
         "template/scripts/release_changelog_backfill.py",
     ),
-    ("CHANGELOG.md", "template/CHANGELOG.md"),
     (".cursor/commands/release.md", "template/.cursor/commands/release.md"),
     ("scripts/release-all.sh", "template/scripts/release-all.sh"),
     (
@@ -769,6 +775,27 @@ BUG0027_PAIRS: tuple[tuple[str, str], ...] = (
     ),
 )
 
+
+def check_release_changelog_semantics(root: Path) -> tuple[bool, str]:
+    """Check the shared changelog contract without conflating lifecycle ledgers.
+
+    The active changelog records this repository's released history. The template
+    is a clean install baseline and therefore intentionally omits that history.
+    Both must nevertheless retain the common US-0100 format anchors used by the
+    release tools. This is semantic parity, not an unsafe byte-copy of release
+    history into newly generated repositories.
+    """
+    required = ("# Changelog", "Keep a Changelog", "## [Unreleased]")
+    for rel in ("CHANGELOG.md", "template/CHANGELOG.md"):
+        path = root / rel
+        if not path.is_file():
+            return False, f"missing file: {rel}"
+        text = path.read_text(encoding="utf-8")
+        for marker in required:
+            if marker not in text:
+                return False, f"semantic mismatch: {rel} missing {marker!r}"
+    return True, ""
+
 # BUG-0030: documented Markdown /auto command and retired private TUI/RPC route.
 BUG0030_PAIRS: tuple[tuple[str, str], ...] = (
     (".opencode/commands/auto.md", "template/.opencode/commands/auto.md"),
@@ -781,6 +808,26 @@ BUG0030_PAIRS: tuple[tuple[str, str], ...] = (
     (
         "docs/engineering/context/installer-owned-paths.manifest",
         "template/docs/engineering/context/installer-owned-paths.manifest",
+    ),
+)
+
+# BUG-0033 additive (R-0159 DQ3): the five thin OpenCode command bodies that
+# carry the DQ1/DQ2 diagnostics-only `## Stop conditions` + `## Fail-safe reason
+# codes` pair, plus the BUG-0033 10-marker parity test and its template twin.
+# Byte-identity enforces active==template for every pair (the same guarantee the
+# T-001 edits establish). The test-file pair is byte-identical by T-004.
+BUG0033_PAIRS: tuple[tuple[str, str], ...] = (
+    (".opencode/commands/closure.md", "template/.opencode/commands/closure.md"),
+    (".opencode/commands/ask.md", "template/.opencode/commands/ask.md"),
+    (".opencode/commands/auto.md", "template/.opencode/commands/auto.md"),
+    (
+        ".opencode/commands/refresh-context.md",
+        "template/.opencode/commands/refresh-context.md",
+    ),
+    (".opencode/commands/execute.md", "template/.opencode/commands/execute.md"),
+    (
+        "tests/bug0033_opencode_command_parity_test.py",
+        "template/tests/bug0033_opencode_command_parity_test.py",
     ),
 )
 
@@ -899,8 +946,16 @@ SCOPES: dict[str, tuple[tuple[str, str], ...]] = {
     "bug-0024": BUG0024_PAIRS,
     "bug-0027": BUG0027_PAIRS,
     "bug-0030": BUG0030_PAIRS,
+    "bug-0033": BUG0033_PAIRS,
     "us-0131": US0131_PAIRS,
     "us-0132": US0132_PAIRS,
+    # BUG-0032 (R-0156 DQ1): a dedicated SEMANTIC scope, NOT a byte-pair table.
+    # The empty tuple is only an argparse-registered sentinel; the real check
+    # runs in check_autonomy_flags() and is invoked by main() before the byte
+    # loop for --scope=autonomy-flags and AFTER the byte loop for --scope=all.
+    # It intentionally fails on the real repo until the operator remediates
+    # the observed drift (drift-DETECT, not drift-FIX; T-005 = operator step).
+    "autonomy-flags": (),
     "all": (
         INTAKE_TEMPLATE_PAIRS
         + CAVEMAN_COMPRESS_PAIRS
@@ -935,10 +990,198 @@ SCOPES: dict[str, tuple[tuple[str, str], ...]] = {
         + BUG0024_PAIRS
         + BUG0027_PAIRS
         + BUG0030_PAIRS
+        + BUG0033_PAIRS
         + US0131_PAIRS
         + US0132_PAIRS
     ),
 }
+
+
+# ---------------------------------------------------------------------------
+# BUG-0032 (R-0156 DQ1/DQ2/DQ3, AC-2/AC-3) — semantic declared-mirror
+# drift-detect for exactly two autonomy keys.  A dedicated SEMANTIC scope,
+# NOT a byte-pair SCOPES entry.  Reads the shared baseline (JSONC
+# ``.its-magic/config.json shared.<key>``) against the live scratchpad
+# (``.cursor/scratchpad.md`` ``KEY=VALUE``) and fails CLOSED on any
+# divergence / missing / duplicate / unreadable / unparseable input.
+#
+# Drift-DETECT only (NOT drift-FIX).  Remediation is the operator's
+# live-wins sync, documented in ``runbook.md`` (§ AUTONOMY_FLAGS_DRIFT) —
+# this scope must never mutate either surface (T-005 is an operator step).
+# ---------------------------------------------------------------------------
+
+AUTONOMY_FLAGS_SCOPE = "autonomy-flags"
+# Fixed key order (R-0156 DQ1): AUTONOMY_PRESET first, then AUTONOMY_STOP_POLICY.
+AUTONOMY_FLAGS_KEYS: tuple[str, ...] = ("AUTONOMY_PRESET", "AUTONOMY_STOP_POLICY")
+_AUTONOMY_CONFIG_REL = ".its-magic/config.json"
+_AUTONOMY_SCRATCHPAD_REL = ".cursor/scratchpad.md"
+_MISSING = "<missing>"
+_OK_BANNER = "[INTAKE_TEMPLATE_PARITY_OK] scope=autonomy-flags"
+_DRIFT_PREFIX = "[AUTONOMY_FLAGS_DRIFT] scope=autonomy-flags"
+
+
+def _strip_jsonc(text: str) -> str:
+    """Strip line comments (``//``) and block comments from JSONC text.
+
+    Local mirror of ``host_runtime_config_lib.strip_jsonc`` so this checker stays
+    stdlib-only.  Comment markers that appear inside JSON strings are preserved.
+    """
+    out: list[str] = []
+    i = 0
+    n = len(text or "")
+    in_string = False
+    escape = False
+    while i < n:
+        ch = text[i]
+        if in_string:
+            out.append(ch)
+            if escape:
+                escape = False
+            elif ch == "\\":
+                escape = True
+            elif ch == '"':
+                in_string = False
+            i += 1
+            continue
+        if ch == '"':
+            in_string = True
+            out.append(ch)
+            i += 1
+            continue
+        if ch == "/" and i + 1 < n:
+            nxt = text[i + 1]
+            if nxt == "/":
+                i += 2
+                while i < n and text[i] not in "\n\r":
+                    i += 1
+                continue
+            if nxt == "*":
+                i += 2
+                while i + 1 < n and not (text[i] == "*" and text[i + 1] == "/"):
+                    out.append(text[i] if text[i] in "\n\r" else " ")
+                    i += 1
+                i += 2
+                continue
+        out.append(ch)
+        i += 1
+    return "".join(out)
+
+
+def _config_shared_values(config_path: Path) -> tuple[dict[str, str], bool]:
+    """Return (shared mapping as str->str, errored).
+
+    ``errored`` is True when the config file is missing, unreadable, not valid
+    JSON (after JSONC comment stripping), not an object, or ``shared`` is not an
+    object.  Unevaluable input is treated as drift so the scope fails closed.
+    """
+    try:
+        raw = config_path.read_text(encoding="utf-8")
+    except (OSError, UnicodeDecodeError):
+        return {}, True
+    try:
+        data = json.loads(_strip_jsonc(raw))
+    except (json.JSONDecodeError, ValueError):
+        return {}, True
+    if not isinstance(data, dict):
+        return {}, True
+    shared = data.get("shared")
+    if not isinstance(shared, dict):
+        return {}, True
+    out: dict[str, str] = {}
+    for key, value in shared.items():
+        if isinstance(value, str):
+            out[key] = value
+        elif isinstance(value, bool):
+            out[key] = "true" if value else "false"
+        elif isinstance(value, (int, float)):
+            out[key] = json.dumps(value)
+        # Nested objects/arrays on autonomy keys are not scalar; leave them out
+        # so the key is reported as <missing> (fail-closed).
+    return out, False
+
+
+def _scratchpad_assignments(scratchpad_path: Path) -> tuple[dict[str, list[str]], bool]:
+    """Return (exact KEY=VALUE assignment map key->list-of-values, errored).
+
+    Only non-comment, ``KEY=VALUE`` lines are considered.  ``errored`` is True
+    when the scratchpad is missing or unreadable (unevaluable -> fail closed).
+    Duplicate assignment = the same key appears on more than one line.
+    """
+    try:
+        raw = scratchpad_path.read_text(encoding="utf-8")
+    except (OSError, UnicodeDecodeError):
+        return {}, True
+    out: dict[str, list[str]] = {}
+    for line in raw.splitlines():
+        stripped = line.strip()
+        if not stripped or stripped.startswith("#") or "=" not in stripped:
+            continue
+        key, _, value = stripped.partition("=")
+        key = key.strip()
+        if not key:
+            continue
+        out.setdefault(key, []).append(value.strip())
+    return out, False
+
+
+def _scratch_value(values: dict[str, list[str]], key: str) -> str | None:
+    """Return the single value for ``key`` exactly assigned once, else None.
+
+    None => the key is unevaluable for parity: missing, empty, or duplicated.
+    """
+    if key not in values:
+        return None
+    vals = values[key]
+    if len(vals) != 1:  # duplicate assignment (or zero)
+        return None
+    if vals[0] == "":  # present but empty — not a usable value
+        return None
+    return vals[0]
+
+
+def check_autonomy_flags(root: Path) -> int:
+    """BUG-0032 / --scope=autonomy-flags semantic drift-detect (drift-DETECT).
+
+    Both keys present exactly once AND equal  => ``0`` + exact banner.
+    Any mismatch / missing / duplicate / unreadable / unparseable => ``1``,
+    one fixed-order line per affected key (AUTONOMY_PRESET first), NO banner.
+    ``--repo`` redirects both inputs so fixtures are fully isolated.
+    Never writes to either surface.
+    """
+    config_path = root / _AUTONOMY_CONFIG_REL
+    scratchpad_path = root / _AUTONOMY_SCRATCHPAD_REL
+
+    config_map, config_errored = _config_shared_values(config_path)
+    scratch_map, scratch_errored = _scratchpad_assignments(scratchpad_path)
+
+    lines: list[str] = []
+    for key in AUTONOMY_FLAGS_KEYS:
+        # Baseline (config) value.
+        if config_errored or key not in config_map:
+            config_val = _MISSING
+        else:
+            config_val = config_map[key]
+        # Live (scratchpad) value.
+        live_val = None if scratch_errored else _scratch_value(scratch_map, key)
+        scratch_val = _MISSING if live_val is None else live_val
+
+        affected = (
+            config_val != scratch_val
+            or config_val == _MISSING
+            or scratch_val == _MISSING
+        )
+        if affected:
+            lines.append(
+                f"{_DRIFT_PREFIX} key={key} "
+                f"config={config_val} scratchpad={scratch_val}"
+            )
+
+    if lines:
+        for line in lines:
+            print(line)
+        return 1
+    print(_OK_BANNER)
+    return 0
 
 
 def main() -> int:
@@ -957,6 +1200,14 @@ def main() -> int:
     )
     args = p.parse_args()
     root: Path = args.repo
+
+    # BUG-0032 (R-0156 DQ1): dedicated SEMANTIC scope, NOT a byte-pair table.
+    # Short-circuit branch — runs the drift-detect against
+    # .its-magic/config.json and .cursor/scratchpad.md only, then returns the
+    # semantic verdict and skips the byte loop entirely (R-0156 DQ1 + arch §1).
+    if args.scope == AUTONOMY_FLAGS_SCOPE:
+        return check_autonomy_flags(root)
+
     pairs = SCOPES[args.scope]
     failed = False
     for rel_active, rel_tpl in pairs:
@@ -976,6 +1227,16 @@ def main() -> int:
             failed = True
     if failed:
         return 2
+    if args.scope == "release-changelog":
+        semantic_ok, detail = check_release_changelog_semantics(root)
+        if not semantic_ok:
+            print(f"[INTAKE_TEMPLATE_PARITY_ERROR] {detail}")
+            return 2
+    # BUG-0032 (R-0156 DQ1): --scope=all invokes the semantic autonomy-flags
+    # drift-detect AFTER the byte-pair checks and therefore intentionally fails
+    # until the operator remediates the observed drift (drift-DETECT, T-005).
+    if args.scope == "all":
+        return check_autonomy_flags(root)
     print(f"[INTAKE_TEMPLATE_PARITY_OK] scope={args.scope}")
     return 0
 

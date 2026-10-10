@@ -1,3 +1,57 @@
+# Release-to-Dev Handoff - S0167 / BUG-0034
+
+**date**: 2026-10-06T22:11:51Z
+**from**: release (`release-BUG0034-20261006T221151Z-fresh`)
+**to**: dev / orchestrator
+**verdict**: **RELEASE_BLOCKED** - `RELEASE_TEST_FAILED`; no override or waiver.
+
+## Blocker
+
+The configured mandatory `TEST_COMMAND` was run fresh:
+
+```powershell
+powershell -ExecutionPolicy Bypass -File "tests/run-tests.ps1"
+```
+
+It exited `1` and wrote `tests/report.md` at `2026-10-06T22:10:38Z` with
+`Pass: 865` and `Fail: 12`. The failing report rows are triad (two), slim auto,
+README coverage (two), BUG-0009, release-changelog/US-0100 (two), US-0101,
+BUG-0016 parity, US-0133, and US-0143. Mandatory Gate 1 therefore fails
+closed; no later gate or finalization was advanced.
+
+Independent scoped checks remain green (active/template BUG-0034 suites 8/8
+each, ledger self-test, acceptance validator, US-0131 10/10, and four
+active/template SHA-256 pairs). They do not override the failed consolidated
+test gate. The execute/QA/verify-work proof hashes recompute MATCH, but the
+execute proof elapsed before QA issued its proof; it must be replaced, not
+reused, for a future strict-proof triad.
+
+## Required route
+
+1. Orchestrator runs fresh **`/execute` as dev** for BUG-0034/S0167 to triage
+   and repair the report failures, rerun `TEST_COMMAND` to a fresh passing
+   report, and mint a new execute isolation/proof record.
+2. Then fresh **`/qa`**, then fresh **`/verify-work`**, each independently
+   validating the repaired evidence and carrying distinct strict proofs.
+3. Then fresh **`/release`** re-runs the entire ordered release chain.
+
+## Do not
+
+- Do not mark BUG-0034 DONE, tick backlog ACs, or change its acceptance row.
+- Do not reuse the elapsed execute proof or waive the test failure.
+- Do not publish, push, run `/closure`, or spawn later phases from this release
+  context.
+
+## Evidence
+
+- `sprints/S0167/release-findings.md`
+- `tests/report.md`
+- `sprints/S0167/{qa-findings.md,uat.json,uat.md,verify-work-findings.md}`
+- `docs/engineering/state.md`
+- `handoffs/release_queue.md` (S0167 = `blocked`)
+
+---
+
 # Release-to-Dev Handoff - S0162 / US-0156 (RETRY #2)
 
 **date**: 2026-10-03

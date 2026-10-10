@@ -211,7 +211,6 @@ def test_bug0016_release_duty_paths():
 
 
 def test_bug0016_success_test_c_non_dev_no_production_allow():
-    """Non-dev roles: no production/code allow; object-form edit starts broad deny."""
     for name in sorted(US0003_ROLES - {"dev"}):
         fm, _ = _read_agent(name)
         edit = _permission_subkey_value(fm, "edit")
@@ -272,4 +271,7 @@ def test_bug0016_active_template_agent_parity():
         "Sxxxx",
     ):
         assert forbidden not in plugin, f"write-guard appears to encode Layer-1 glob {forbidden!r}"
-    assert 'tool.hook("execute.before"' in plugin or 'ctx.tool.hook("execute.before"' in plugin
+    assert (
+        'tool.hook("execute.before"' in plugin
+        or 'ctx.tool.hook("execute.before"' in plugin
+    )

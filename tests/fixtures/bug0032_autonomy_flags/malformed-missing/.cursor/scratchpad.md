@@ -1,0 +1,1 @@
+AUTONOMY_STOP_POLICY=block

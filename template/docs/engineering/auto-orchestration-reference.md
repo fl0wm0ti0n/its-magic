@@ -737,6 +737,35 @@ for resolver/materialization failures):
 - `AUTO_BUG_TARGET_UNKNOWN`
 - `AUTO_BUG_TARGET_NOT_OPEN`
 
+## Paired continuation ownership (BUG-0035 / DEC-0153)
+
+This section is **binding** and refines the resume-source precedence above for the
+research→architecture boundary without weakening fail-closed behavior.
+
+- **Owner of the pair**: the completed, canonical **phase child** is the sole
+  authorized writer of its paired continuation record — the
+  `docs/engineering/state.md` checkpoint **first**, then the
+  `handoffs/resume_brief.md` latest-pointer block, and only after it has
+  constructed and validated the exact pair key
+  `orchestrator_run_id|work_item_kind|bug_id|completed_phase|runtime_proof_id`
+  plus every locked tuple/strict-proof field on both sides.
+- **Parent boundary**: the spawn-only `auto` parent is permanently
+  read/validate/spawn-only. It **never** writes the state checkpoint or the
+  resume brief, **never** applies a state-only fallback, **never** repairs or
+  refreshes the pair, and **never** schedules the next phase (including
+  architecture) when the pair is stale, missing, malformed, conflicting,
+  unauthorized, or reused.
+- **Reason codes**: syntax failure is **`RESUME_BRIEF_UNPARSEABLE`**; stale,
+  absent-required, conflicting, authorization, replay, or proof/isolation-invalid
+  evidence is **`RESUME_BRIEF_STALE`** with the failed predicate retained. A new
+  retry is a **fresh** authorized child with a new marker and new strict-proof
+  ID — not a mutation, refresh, fallback, reconciler step, or implicit next
+  spawn of the prior record. `RESUME_BRIEF_AUTO_REFRESH=0` remains an absolute
+  prohibition.
+- **Exact replay**: the sole no-op is an exact same-key, canonical-field-replay of
+  the child's own pair; any changed field under the same key is
+  `RESUME_BRIEF_STALE`.
+
 ## Continuous multi-phase execution (US-0088)
 
 A single `/auto` orchestrated run (or a **documented equivalent outer driver** —

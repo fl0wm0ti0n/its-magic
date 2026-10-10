@@ -94,6 +94,10 @@ unavailable). Guided and decision-gated modes remain the default.
 - `/workdir` — installer.sh fails in shell path with `set: Illegal option -` (`BUG-0004`).
 - `MIGRATION` scratchpad flag — Smart Upgrade Mode (`US-0018`).
 - `/auto` — OpenCode pack LF so Linux slash commands parse (`BUG-0017`).
+- `/auto` — Catalog-resolved Cursor Task spawns prevent silent parent-model inheritance (`BUG-0022`).
+- `/auto` — Hybrid OpenCode CLI-TUI dispatch is retained as a guarded fallback (`BUG-0024`).
+- `/auto` — Direct OpenCode slash phases persist isolation evidence before continuation (`BUG-0027`).
+- `/auto` — Paired state/resume continuation records reject stale or conflicting handoffs (`BUG-0035`).
 - `US-0016` scratchpad flag — Homebrew Version Sync (`US-0016`).
 - `/acceptance` — Standalone authentication and model routing with Codex OAuth, API-key providers, 6-step precedence, thinking levels, critic pinning, and health diagnostics (`BUG-0021`, `US-0135`).
 - `/auto` — Fresh role sessions and runtime attestation with SessionSupervisor, RoleCatalog, spawn/start/end attestations, and fail-closed isolation (`BUG-0023`, `US-0136`).
@@ -109,6 +113,7 @@ unavailable). Guided and decision-gated modes remain the default.
 - CLI/TUI polish — Operational observability with status, logs, run tracking, and TUI mode for interactive sessions (`US-0146`).
 - `its-magic --target` — Installation, update, and existing-project adoption with fresh/upgrade/overwrite/clean-repo modes and lifecycle QA matrix (`US-0147`).
 - Recoverable daemon — Stable control protocol with boot UUID, process tracking, session recovery, and graceful shutdown (`US-0148`).
+- OpenCode `/auto` parity — Spawn-only command-owned lifecycle orchestration with phase-plan and Stop-Matrix gates (`US-0156`).
 
 ## Setup
 
@@ -435,6 +440,12 @@ Generated test scaffolding + auto-run behavior (US-0066):
 - **US-0124**: OpenCode orchestrator plugin spawn-only `/auto` (Task-spawns US-0069 roles, never executes phase work in-session).
 - **BUG-0019** — OpenCode TUI slash lists `/auto` via `its-magic-auto/tui.ts` keymap after plugin-only ownership (`BUG-0018`); does not restore `auto.md`.
 - **BUG-0020** — OpenCode desktop Command.Info cannot list execute-only `/auto`; CLI TUI `/auto` via project `.opencode/tui.json` + desktop fail-closed `OPENCODE_AUTO_DESKTOP_COMMAND_INFO_LISTING_UNSUPPORTED`; does not restore `auto.md`.
+- **BUG-0024** — OpenCode CLI-TUI `/auto` routing keeps peer-branded dispatch stages and rejects undefined residual routes.
+- **BUG-0030** — OpenCode `/auto` is a documented spawn-only command that selects the `auto` agent; retired private TUI/RPC routes remain forbidden.
+- **BUG-0031** — `/closure` authorization has a narrow curator-owned DONE-flip path; release and QA cannot bypass ownership.
+- **BUG-0032** — Autonomy flag drift is detected fail-closed against the live shared baseline; it is never auto-repaired.
+- **BUG-0033** — OpenCode thin command surfaces (closure, ask, auto, refresh-context, execute) carry Stop conditions and Fail-safe reason codes, byte-identical to template, with a bug-0033 parity scope.
+- **BUG-0034** — PO closure precondition conflict registered in the autonomy stop matrix with `disambiguate_state` repair (cap 3); never auto-refreshes the brief.
 
 ### OpenCode host operator runbook (US-0126)
 

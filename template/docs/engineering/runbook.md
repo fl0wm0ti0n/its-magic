@@ -4240,6 +4240,15 @@ autonomy_relaxed: <reason_code> -> <auto_repair_kind>
 
 **One line per soft-stop** (not aggregated per phase). Breadcrumb is operator-audit trail — not a governance gate.
 
+### `PO_CLOSURE_PRECONDITION_CONFLICT` remediation (BUG-0034 / US-0119)
+
+1. Preserve the observed closure-precondition and paired-continuation evidence; do not alter the brief, state, backlog, or acceptance surfaces.
+2. Use `disambiguate_state` only when exactly one already-existing, validated closure-precondition state is evidenced, then rerun the closure precondition through the existing ledger path. The matrix cap is `3` per `(orchestrator_run_id, reason_code)` unless an authorized positive-integer `AUTONOMY_REPAIR_CAP_OVERRIDE` applies.
+3. If the selection is non-unique, stop as `RESUME_AMBIGUOUS`. If pair syntax is invalid, stop as `RESUME_BRIEF_UNPARSEABLE`. For missing, stale, conflicting, unauthorized, replayed, proof-invalid, or isolation-invalid pairs, stop as `RESUME_BRIEF_STALE` and retain the failed predicate.
+4. For any pair failure, obtain a fresh authorized child only after the normal continuation validation succeeds. Never refresh a brief, fall back to state evidence, reconcile, hand-edit, manually repair through the parent, or schedule from invalid evidence. `RESUME_BRIEF_AUTO_REFRESH=0` remains absolute.
+
+Emit `autonomy_relaxed: PO_CLOSURE_PRECONDITION_CONFLICT -> disambiguate_state` only after a genuine unique success. Failed, ambiguous, invalid-evidence, and cap-exhausted attempts emit no success breadcrumb.
+
 ### Operator recipe
 
 1. Set `AUTONOMY_PRESET=balanced` for moderate autonomy (8 flags).
@@ -4279,6 +4288,43 @@ US-0119 adds one new sub-block in `its_magic/README.md` (§"### Autonomy preset 
 - **Matrix YAML**: `scripts/data/autonomy_stop_matrix.yaml`
 - **Tests**: `tests/us0119_autonomy_preset_test.py` (10 markers)
 - **Ledger path**: `handoffs/autonomy_repair_ledger/*.jsonl`
+
+## AUTONOMY_FLAGS_DRIFT
+
+**BUG-0032 — declared-mirror drift-detect on `AUTONOMY_PRESET` / `AUTONOMY_STOP_POLICY`**
+
+`AUTONOMY_FLAGS_DRIFT` is the `exit 1` diagnostic emitted by
+`python scripts/check_intake_template_parity.py --scope=autonomy-flags` when the
+two autonomy keys diverge between the baseline and the live surface, or when a key
+is missing / duplicated on either surface. This scope is **drift-DETECT, not drift-FIX**:
+it never writes to either file and never auto-repairs. Each affected key is reported
+once, in the fixed order `AUTONOMY_PRESET` then `AUTONOMY_STOP_POLICY`, as:
+
+```
+[AUTONOMY_FLAGS_DRIFT] scope=autonomy-flags key=<KEY> config=<value-or-<missing>> scratchpad=<value-or-<missing>>
+```
+
+### Where each side lives
+- **Baseline** (non-cursor hosts): `.its-magic/config.json` — `shared.<key>` (JSONC).
+- **Live** (cursor-host authoritative): `.cursor/scratchpad.md` — the exact `KEY=VALUE` assignment.
+
+### Operator remediation (live-wins sync — per US-0131 / DEC-0131)
+1. Re-read the exact live values from `.cursor/scratchpad.md` (`AUTONOMY_PRESET=...`, `AUTONOMY_STOP_POLICY=...`).
+2. Copy **exactly those two values** into `.its-magic/config.json` under `shared` (`"AUTONOMY_PRESET": "<live>"`, `"AUTONOMY_STOP_POLICY": "<live>"`), so the baseline matches live. Live wins — do **not** edit the scratchpad to match the baseline.
+3. Re-run the scope; it must now print `[INTAKE_TEMPLATE_PARITY_OK] scope=autonomy-flags` and exit 0:
+   `python scripts/check_intake_template_parity.py --scope=autonomy-flags --repo .`
+4. Record the operator decision (live-wins sync) in BUG-0032's closure evidence.
+
+### Do NOT
+- Do **not** auto-repair or rewrite either file from within CI (the scope is drift-DETECT only).
+- Do **not** register `AUTONOMY_FLAGS_DRIFT` in `scripts/data/autonomy_stop_matrix.yaml` as an `autonomy_resolvable` auto-repair code — that stop-matrix registration is owned by **BUG-0034** (acceptance L225). This token is a parity/CI diagnostic on the US-0126-owned documentation surface only.
+- Do **not** alter `autonomy_preset_lib.py`, its 12 per-feature flags, `PRESET_DEFINITIONS`, the `explicit > preset > defaults` precedence, stop-matrix logic, or the `security_hard` rows (`auto_repair_kind=n/a`). `INTAKE_AUTONOMY_MODE=0` and `INTAKE_SUBAGENT_FALLBACK=deny` remain unchanged (this bug does not relax intake autonomy).
+### Related artifacts
+- **Architecture**: `docs/engineering/architecture.md` `# BUG-0032`
+- **Research**: `docs/engineering/research.md` `## R-0156` (DQ1–DQ3)
+- **Reason-code index**: `docs/engineering/reason_codes.md` (`AUTONOMY_FLAGS_DRIFT`)
+- **Contract tests**: `tests/bug0032_autonomy_flags_drift_test.py` (8 `test_bug0032_*` markers)
+- **CI**: `tests/run-tests.ps1` + `tests/run-tests.sh` (after the US-0131 block; always-run)
 
 ## Story closure (US-0120)
 

@@ -216,3 +216,30 @@ Chronological segment-closure notes for curator refresh-context passes.
   - US-0112 (OPEN, P2) — model-catalog installer preset delivery
 - **Compose guards honored**: US-0008, US-0040, US-0054, US-0100, US-0103, US-0107, US-0110 UNCHANGED
 - **Next action**: no_active_work (US-0112 is the only remaining OPEN story; operator decides when to advance)
+
+---
+
+## S0165 / BUG-0035 segment closure (2026-10-04T04:30:46Z)
+
+- **phase_id**: closure
+- **role**: curator
+- **bug_id**: BUG-0035 (Research-to-architecture resume-brief ownership deadlock — P0, DONE)
+- **sprint_id**: S0165 (CLOSED — execute / qa / verify-work / closure all PASS; terminal phase of this segment)
+- **verdict**: **CLOSURE_PASS**
+- **fresh_context_marker**: cur-BUG0035-closure-20261004T043046Z-fresh (FRESH — never-reused; grep-verified 0 prior occurrences repo-wide at mint; distinct from dev `dev-BUG0035-execute-20261004T024333Z-fresh`, qa `qa-BUG0035-qa-20261004T032000Z-fresh`, verify-work `qa-BUG0035-verify-work-20261004T054808Z-fresh`)
+- **runtime_proof_id**: rp-auto-20261004-bug0035-closure-curator-20261004T043046Z-BUG-0035 (DEC-0038 6-tuple; proof_hash `3608AE1FB5522536DBE343EAB354AC8A5C237407923513E3DA7AA9C0BF423DC9` twice-recompute MATCH)
+- **Segment closure summary**: Full lifecycle PASS through /closure. BUG-0035 (Research→architecture resume-brief ownership deadlock; phase-child-owned paired continuation repair) closed. 7/7 named `test_bug0035_*` groups PASS in both active and template suites (independently re-run this closure session, exit 0). Compose regression (bug0027 + us0156) = 20/20 PASS. 5/5 spot-check parity pairs MATCH (active = template); 13/13 parity pairs recomputed MATCH by the qa phase. `bug_issue_validate.py --repo . --check-acceptance` exit 0 pre + post flip; `check_intake_template_parity.py --scope bug-0027` exit 0. backlog BUG-0035 `Status: OPEN`→`DONE` + AC-1..AC-7 `[ ]`→`[x]` (+ plan/execute/qa/verify/closure notes). acceptance.md L226 `[ ]`→`[x]`. Sibling guards held (bug0032/0033/0034 OPEN untouched; us0154/0155 OPEN untouched; us0156 DONE untouched; bug0027/bug0031 DONE untouched; DEC-0153 `Status: Accepted` unamended; stop-matrix untouched; S0165 T-001..T-007 artifacts intact; no TUI/RPC/JSON/localhost restoration; UAT_PROBE_FORBIDDEN held).
+- **Artifacts reconciled**:
+  - `docs/product/backlog.md` — `### BUG-0035` L5737 `Status:` + AC-1..AC-7 all flipped + plan/execute/qa/verify/closure notes appended
+  - `docs/product/acceptance.md` — L226 BUG-0035 row `[ ]`→`[x]` (closure provenance note appended)
+  - `sprints/S0165/closure-verification.md` — NEW (per-AC evidence table, guard audit, companion artifact list, state checkpoint pointer)
+  - `docs/engineering/state.md` — CLOSURE checkpoint appended (append-bottom; phase_id=closure, role=curator, bug_id=BUG-0035, sprint_id=S0165, verdict=CLOSURE_PASS, decision_gate=false)
+  - `handoffs/resume_brief.md` — new top pointer prepended (S0165/BUG-0035 CLOSURE_PASS; next action = `drain_terminated` OR next active bug fresh tech-lead)
+  - `handoffs/continuation_hygiene.md` — this segment closure record
+- **Remaining active work**:
+  - BUG-0032 (OPEN, P0) — scratchpad/config-baseline drift on AUTONOMY_PRESET / AUTONOMY_STOP_POLICY (next: /research fresh tech-lead)
+  - BUG-0033 (OPEN, P1) — thin/rich command-pair parity on OpenCode surface (next: /research fresh tech-lead)
+  - BUG-0034 (OPEN, P1) — PO_CLOSURE_PRECONDITION_CONFLICT token registry (operator decision gate on `auto_repair_kind`; next: /research fresh tech-lead)
+- **Compose guards honored**: US-0156 DONE/US-0154 OPEN/US-0155 OPEN UNTOUCHED; BUG-0027/BUG-0031 DONE UNTOUCHED; BUG-0032/0033/0034 OPEN UNTOUCHED; DEC-0152/DEC-0153/DEC-0069/DEC-0038/DEC-0124 UNTOUCHED (DEC-0153 `Status: Accepted` binds; no DEC authored or amended this session); stop-matrix UNTOUCHED; S0165 T-001..T-007 artifacts UNTOUCHED (5/5 spot-check parity pairs MATCH post-flip; 7/7 active + 7/7 template PASS post-flip); TUI/RPC/JSON/localhost NOT restored
+- **Drain state**: S0165/BUG-0035 segment CLOSED (CLOSURE_PASS); the 3 open bugs (BUG-0032 P0 / BUG-0033 P1 / BUG-0034 P1) are each in their own `/research` fresh tech-lead context per US-0045 / BUG-0006; operator MAY re-order or batch.
+- **Next action**: `drain_terminated` — this curator closure context stops. Orchestrator MAY spawn `/refresh-context` (fresh curator) as the terminal phase per US-0045 / BUG-0006 to archive + consolidate (S0163/S0164 precedent), OR spawn BUG-0032 `/research` (fresh tech-lead) as the highest-priority remaining OPEN bug. Operator's call. STOP after this closure record.

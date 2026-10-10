@@ -16036,3 +16036,309 @@ Upgrade `--host opencode|both` overwrites the touched OpenCode pack paths.
   - **DEC-0051 / DEC-0052 / DEC-0152** (closure role contract + phase plan + deny-by-default ordering) are the **permission/contract prior art** this entry composes — DQ1/DQ3/DQ7/DQ8 all cite these rather than reinventing.
   - **BUG-0027** (manual-phase persistence, R-0151-class) is the **test-pattern prior art** for DQ9's mock-injection + parity-marker shape; **BUG-0016** is the **permission-baseline prior art** for DQ3's additive-only guard.
 - **Next**: `/architecture` in a fresh tech-lead context. Author `# BUG-0031` (+ the curator 3-allow delta, active+template parity, the optional `closure.md` DQ6 note, the `test_bug0031_*` suite, and the DEC additive amendment **if** architecture deems the authorization DEC-level). Do **not** implement, create a sprint, flip BUG-0031, or tick its acceptance row in research. Do **not** author a DEC from this phase.
+
+## R-0156 — BUG-0032 autonomy flag baseline/live drift contract
+
+- **Date**: 2026-10-03. **Bug**: BUG-0032. **Status**: current; research complete, delivery not started. **Confidence**: high.
+- **Producer / isolation**: fresh tech-lead `/research`; `fresh_context_marker=tl-BUG0032-research-20261003T160000Z-fresh`; `orchestrator_run_id=auto-20261003-bug0032-research`; explicit `bug-target=BUG-0032` overrides `AUTO_BACKLOG_DRAIN=1`; no `/auto`, subagent, live probe, `.env` read, or production/config mutation.
+- **Finding**: `.its-magic/config.json` declares `full` / `auto_repair_then_block` while `.cursor/scratchpad.md` declares `none` / `block`, despite the config mirror claim. This is a two-key declared-mirror defect, not active↔template byte parity and not a US-0119 preset-expansion change.
+
+### DQ1 — Exact `--scope=autonomy-flags` contract (LOCKED)
+
+- Add a dedicated semantic scope to `check_intake_template_parity.py`, not a byte-pair `SCOPES` entry. Its fixed key order is `AUTONOMY_PRESET`, then `AUTONOMY_STOP_POLICY`; read JSONC `config.json shared.<key>` and exact scratchpad `KEY=VALUE` assignments.
+- Both keys present exactly once and equal: return **0** and print exactly `[INTAKE_TEMPLATE_PARITY_OK] scope=autonomy-flags`.
+- Value mismatch, missing key, duplicate assignment, or unreadable/unparseable required input: return **1**, print one fixed-order line per affected key beginning `[AUTONOMY_FLAGS_DRIFT] scope=autonomy-flags key=<KEY> config=<value-or-<missing>> scratchpad=<value-or-<missing>>`, and print no success banner. Treat unevaluable input as drift so CI fails closed.
+- Preserve existing scopes' return semantics. `--repo` redirects both inputs for fixtures. `--scope=all` invokes this semantic scope after byte-pair checks, so it intentionally fails until the currently observed drift is operator-remediated.
+
+### DQ2 — Reason-code, live-wins, and security boundary (LOCKED)
+
+- `AUTONOMY_FLAGS_DRIFT` is one additive diagnostic/remediation token in the existing US-0126-owned runbook/reason-code documentation surface; do not modify US-0126's completed code inventory or acceptance contract.
+- Remediation is explicitly live-wins: the operator selects `.cursor/scratchpad.md` values and copies exactly those two values to `.its-magic/config.json shared`, then reruns the scope. This leaves DEC-0131 resolver precedence/local-file preservation intact; current values remain untouched in this phase.
+- Do **not** alter `autonomy_preset_lib.py`, its 12 flags, `PRESET_DEFINITIONS`, `explicit > preset > defaults` precedence, stop-matrix logic, or `security_hard` rows. `AUTONOMY_PRESET=none` remains empty/byte-identical pre-US-0119; security-hard rows retain `auto_repair_kind=n/a`.
+- Parity applies to changed checker/test/runbook active↔template twins. The compared inputs are active baseline/live sources, not a template pair; do not byte-pair the scratchpad because operational values may differ from template defaults.
+
+### DQ3 — CI wiring and test strategy (LOCKED)
+
+- Add mirrored BUG-0032 blocks immediately after US-0131 in `tests/run-tests.ps1` and `tests/run-tests.sh`: run the new scope, assert zero, then run `pytest tests/bug0032_autonomy_flags_drift_test.py -q`. Always-run CI is stronger than changed-file filtering and catches a PR touching either source.
+- Planned mirrored test file has exactly eight markers: scope registration/checker byte parity; equal fixture exit-0/banner; preset-only drift; policy-only drift; two-key deterministic order; malformed/missing/duplicate fail-closed; `--repo` fixture isolation/no source mutation; US-0119 `none` plus security-hard invariants. Fixtures live under `tests/fixtures/bug0032_autonomy_flags/`; no real source file is edited by tests.
+- Validation order: eight markers; direct fixture equal/drift probes; US-0119 and US-0131 regressions; active/template byte checks; both OS harnesses. Baseline: US-0131 passes 10/10. US-0119 has two pre-existing matrix-reference failures and is not to be weakened or repaired by BUG-0032.
+
+### Architecture handoff / verdict
+
+- **Approach**: **A1 (A\*) semantic declared-mirror drift gate** — checker scope, additive token/remediation, mirrored docs/tests/checker, and both OS harness hooks. No companion DEC recommended; `/architecture` authors only additive `# BUG-0032` and locks paths/markers.
+- **Decision gate**: false. Future operator synchronization is closure evidence, not a design-choice gate. **Expected sprint**: next free S0xxx at `/sprint-plan`; do not create it here.
+- **Next**: `/architecture` in a fresh tech-lead context only. Do not implement, alter autonomy values, change status/ACs, author architecture/DEC, or create test markers in research.
+
+## R-0157 — BUG-0035 research→architecture paired-continuation ownership
+
+- **Date**: 2026-10-03. **Bug**: BUG-0035 (OPEN P0; acceptance remains unchecked). **Status**: current; research complete, no architecture or delivery work started. **Confidence**: high.
+- **Authority and inputs**: `handoffs/po_to_tl.md` BUG-0035 intake handoff; `handoffs/intake_evidence/BUG-0035-intake-20261003T160000Z.json`; `docs/product/acceptance.md` BUG-0035 row; DEC-0069 / BUG-0005; US-0048 / DEC-0029; US-0056 / DEC-0038; US-0156 continuation contract. The supplied explicit `start-from=research` and `bug-target=BUG-0035` are the boundary selectors for this research run; they are not a repair of the stale resume brief.
+- **Problem confirmed**: the default research child can append `docs/engineering/state.md` and write `handoffs/tl_to_dev.md`, while `.opencode/agents/tech-lead.md` denies `handoffs/resume_brief.md`; the spawn-only `auto` parent has `edit: deny`. Thus no authorized actor can complete the mandatory DEC-0069 pair after a lawful research pass. This is an ownership gap, not evidence that a stale brief may be ignored.
+
+### DQ1 — Minimum-authority writer (LOCKED)
+
+- **A1 (A\*) — phase-child-owned paired update**: grant the **tech-lead phase child only** the exact path `handoffs/resume_brief.md`, in addition to its existing state/research/handoff paths. The same child writes the completed-phase state checkpoint first, then atomically replaces/prepends the resume latest-pointer block only after it has constructed the identical validated continuation tuple. The parent remains scheduling-only, read/validate/spawn-only, and writes neither artifact.
+- This is one additive allow in each of `.opencode/agents/tech-lead.md` and `template/.opencode/agents/tech-lead.md`; it is not a wildcard handoff grant, a parent allow, a role substitution, or a permission for production/config/TUI/RPC/JSON-command/localhost surfaces. Existing PO and curator/release permissions are not widened or repurposed.
+- **Why A1 is minimum**: research and architecture are both canonically tech-lead-owned. The precise path closes their pair without granting the auto parent phase-artifact writes or creating a bridge writer that would have to trust/interpret child work. A `po` research alternate already has its independently scoped intake-owned resume permission; its use must still pass the same role/tuple checks.
+- **Rejected**: (A2) parent writes the brief after reading state — violates spawn-only parent behavior; (A3) state-only fallback or accepting a stale brief — violates DEC-0069 and the intake evidence; (A4) broad `handoffs/**` or all-role access — exceeds least privilege; (A5) autonomous reconciler/auto-refresh — prohibited while `RESUME_BRIEF_AUTO_REFRESH=0` and risks masking conflicting evidence; (A6) a new bridge/ledger writer — adds a second writer and reconciliation authority without an acceptance need.
+
+### DQ2 — Paired continuation record, ordering, and exact consistency (LOCKED)
+
+- The **same canonical field values** must appear in the state checkpoint and resume latest-pointer block. The record is keyed by `orchestrator_run_id | work_item_kind | bug_id | completed_phase | runtime_proof_id` and contains: `writer_role`, `resolution_source`, `effective_plan`, `skipped_phases`, `completed_phases`, `next_scheduled_phase`, `next_scheduled_role`, `phase_cursor`, `budget_scope`, `stop_reason`, `fresh_context_marker`, and the complete strict-proof tuple (`runtime_proof_id`, `proof_hash`, `proof_issued_at`, `proof_ttl_seconds`, `phase_id`, `role`).
+- For this boundary the locked values are: `work_item_kind=bug`; `bug_id=BUG-0035`; `resolution_source=explicit start-from`; `effective_plan=[spec, plan, build+verify, ship]`; `skipped_phases=[discovery]`; `completed_phases=[intake,research]`; `next_scheduled_phase=architecture`; `next_scheduled_role=tech-lead`; `phase_cursor=plan/1-of-3`; `budget_scope=explicit BUG-0035 only; AUTO_BUG_QUEUE=0; no backlog drain`; `stop_reason=research_complete_phase_boundary`.
+- Commit order is deliberately **state then brief**. A crash or denial before the brief update leaves no lawful continuation record and therefore fails closed. A brief is never accepted merely because it names a next phase: the parent validates the corresponding state checkpoint, isolation evidence, strict proof, writer authorization, and the whole continuation tuple before it may request a fresh architecture child.
+- The resume write must be atomic for its own file (temporary file plus replace/prepend strategy already established by DEC-0069), preserving prior history as appropriate. Cross-file atomicity is not claimed; the validation rule, not a partial write, is the safety boundary.
+
+### DQ3 — Provenance, idempotency, and fail-closed reconciliation (LOCKED)
+
+- **Idempotency**: an exact replay with the same key and byte-for-byte/canonical-field-equivalent tuple is a no-op and records no second continuation. Any altered field under the same key, duplicate proof ID, reused fresh marker/session, different next phase/role, or different proof hash is a conflict and blocks continuation. A new retry is a new fresh child with a new marker and strict-proof ID; it is not a mutation of the old record.
+- **Authorization predicate**: the checkpoint `phase_id`/`role` must satisfy the phase-role matrix, the declared `writer_role` must equal the evidence role, and that role must own the exact resume path in the active permission map. A parent/orchestrator, unknown role, manual artifact edit, or permission-mismatched writer is unauthorized evidence.
+- **Fail closed, never infer**: absent paired evidence, malformed/unparseable brief, invalid/missing/reused/stale strict proof, conflicting state/brief tuple, or unauthorized writer produces the existing fail-closed resume path (`RESUME_BRIEF_UNPARSEABLE` where syntactically malformed; `RESUME_BRIEF_STALE` for stale, absent-required, conflicting, or unauthorized continuation evidence; underlying isolation/proof reason remains attached). There is no `state.md` fallback, no next Task spawn, and no auto-repair while `RESUME_BRIEF_AUTO_REFRESH=0`.
+- **Reconciliation boundary**: A1 is a writer correction, not a reconciler. The parent may only compare evidence and hard-stop. A future reconciler would require a separate approved decision, a single-writer proof predicate, append-only audit, and an explicit nonzero policy gate; it is out of BUG-0035.
+
+### DQ4 — Active/template parity and runbook remediation (LOCKED)
+
+- **Implementation parity surfaces**: active/template byte-parity for the two tech-lead agent permission maps is mandatory. The implementation must also keep the active/template pairs for the documented phase/continuation contract in sync: `.opencode/commands/{research,architecture,auto}.md`, `.cursor/commands/{research,architecture,auto}.md`, `docs/engineering/auto-orchestration-reference.md`, and `docs/engineering/runbook.md`, wherever the existing pair is installer-owned. The architecture phase must reduce this inventory to actual owned pairs and must not introduce a JSON command template.
+- **Explicitly out of scope**: changing scratchpad/config values, `.env`, TUI/RPC/plugin routes, JSON command templates, localhost endpoints, production bridge behavior, stop-matrix policy, status/acceptance, or BUG-0005/BUG-0034 artifacts.
+- **Runbook remediation contract**: when `RESUME_BRIEF_STALE` reports a missing, malformed, conflicting, or unauthorized pair, stop; report the expected `bug_id`, completed/next phase, record key, and failing predicate; retain both artifacts for audit; do not hand-edit a brief, silently fall back to state, or spawn the next phase. With auto-refresh disabled, the orchestrator/operator must obtain a fresh authorized completed-phase child run that emits a new valid pair; only then can the parent independently re-resolve.
+
+### DQ5 — Seven-AC contract-test inventory (LOCKED)
+
+The canonical acceptance row supplies the seven-AC count but not an expanded list; this inventory preserves that count without changing any acceptance text. Architecture/sprint planning must map the repository's detailed AC wording to these seven non-overlapping proof groups:
+
+| AC group | Contract marker intent | Required assertion |
+| --- | --- | --- |
+| AC-1 | `test_bug0035_research_child_can_commit_paired_continuation` | Authorized fresh tech-lead research child can write the state checkpoint and matching resume block, resolving `architecture` without false stale failure. |
+| AC-2 | `test_bug0035_parent_remains_spawn_only_and_edit_denied` | Auto parent has no edit allow and cannot author state, brief, or phase deliverables; only a fresh child may establish completion. |
+| AC-3 | `test_bug0035_fresh_isolation_and_strict_proof_required` | Unique child marker, phase/role match, unique proof ID, canonical hash, and proof linkage are required before continuation. |
+| AC-4 | `test_bug0035_missing_or_malformed_pair_fails_closed` | Missing state/brief side or malformed brief emits the proper resume failure and schedules no architecture Task or state fallback. |
+| AC-5 | `test_bug0035_conflicting_tuple_fails_closed` | Any mismatch in exact tuple fields (including source, BUG id, plan, cursor/budget, next role, marker, or proof) produces `RESUME_BRIEF_STALE` and no spawn. |
+| AC-6 | `test_bug0035_unauthorized_writer_and_replay_fail_closed` | Parent/wrong-role evidence, reused marker/proof, or non-identical duplicate key fails; exact replay is the sole idempotent no-op. |
+| AC-7 | `test_bug0035_active_template_parity_and_runbook_remediation` | Exact agent-map parity, no broad allow/forbidden-surface delta, and documented hard-stop/remediation are present; BUG-0005 and BUG-0034 regression guards remain green and untouched. |
+
+- Tests are fixture/mock contract tests only; no live host claim. They must exercise both active and template fixtures, distinguish `RESUME_BRIEF_UNPARSEABLE` from stale/conflict behavior, assert no parent edit, and reuse existing US-0156 resolver/idempotency coverage rather than changing its semantics.
+
+### Research verdict and handoff
+
+- **Verdict**: `RESEARCH_PASS`; `decision_gate=false`. A companion DEC is **not** authored in research; `/architecture` decides whether this cross-phase permission/continuation contract needs a companion DEC before implementation.
+- **Comparison boundary**: BUG-0005 remains the completed intake-boundary writer refresh precedent (DEC-0069); BUG-0035 supplies the missing research→architecture child writer. BUG-0034 is a separate PO closure reason-code registration. Neither is reopened, merged, or changed.
+- **Next**: parent independently re-resolves and, only if the strict tuple and Stop-Matrix action validate, may spawn `/architecture` in a fresh tech-lead child for BUG-0035 only. This research child does not spawn it, write a resume brief, author architecture/DEC/sprint artifacts, or implement any permission/command/code change.
+
+## R-0158 — BUG-0034 `PO_CLOSURE_PRECONDITION_CONFLICT` repair-kind and integration lock
+
+- **Date**: 2026-10-05. **Bug**: BUG-0034 (OPEN P1; backlog AC-1..AC-7 and acceptance row remain unchecked). **Verdict**: `RESEARCH_PASS`; `decision_gate=false`; **companion DEC: none**. This is an additive registration/dispatch integration using the accepted DEC-0119 taxonomy, not a new cross-phase contract.
+- **Authority / evidence**: `docs/product/backlog.md` `### BUG-0034`; `handoffs/intake_evidence/BUG-0034-intake-20261003T153600Z.json` (validated); DEC-0119 §§2–5 and §7; `scripts/data/autonomy_stop_matrix.yaml` rows `STATE_PHASE_AMBIGUOUS` / `RESUME_BRIEF_MISSING`; `scripts/autonomy_repair_ledger_lib.py`; US-0120 closure ownership; BUG-0035 / DEC-0153 paired-continuation rules. The explicit `bug-target=BUG-0034` has scheduler precedence.
+
+### DQ1 — Repair-kind selection (LOCKED)
+
+- **A1 (selected): `disambiguate_state`.** Register `PO_CLOSURE_PRECONDITION_CONFLICT` as `stop_class: autonomy_resolvable`, `auto_repair_kind: disambiguate_state`, `cap: 3`. The repair may select the last-known closure-precondition state **only when canonical state evidence is singular and already valid**; it must not invent a phase, fabricate a prerequisite, mutate a status/acceptance row, or alter a resume brief.
+- **A2 (rejected): `auto_refresh_brief`.** DEC-0119 defines it as regeneration from `state.md` only when `RESUME_BRIEF_AUTO_REFRESH=1`. The resolved value is **`RESUME_BRIEF_AUTO_REFRESH=0`**; BUG-0035 / DEC-0153 makes that an absolute prohibition on refresh, fallback, reconciliation, or a next spawn from incomplete/conflicting continuation evidence. Therefore A2 is not a lawful repair for this run and needs no operator decision.
+- **Fail-closed boundary**: absent, stale, malformed, or conflicting paired continuation evidence remains `RESUME_BRIEF_STALE` (or `RESUME_BRIEF_UNPARSEABLE` for syntax); non-unique state selection is `RESUME_AMBIGUOUS` and remains security-hard. A failed repair is ledgered and blocks; cap exhaustion emits the existing `AUTONOMY_REPAIR_CAP_EXHAUSTED`. None of these paths may refresh a brief while the flag remains `0`.
+
+### DQ2 — Exact delivery integration (LOCKED)
+
+- Add one YAML row beside `STATE_PHASE_AMBIGUOUS`, with the exact classification above and rationale: **"Closure preconditions can be selected only from one already-evidenced state; ambiguous or paired-brief evidence remains fail-closed."** Do not change any `security_hard` row, the nine-kind taxonomy, `AUTONOMY_PRESET=none`, the twelve feature flags, or intake gates.
+- Mirror the operator inventory in active + `template/` `docs/engineering/autonomy-stop-matrix.md`; add active + template `reason_codes.md` BUG-0034 / US-0119 cross-reference; and add active + template `runbook.md` remediation: preserve closure evidence, select only a unique evidenced state, rerun the closure precondition, and obtain a fresh authorized child for any brief/pair failure—never hand-edit or refresh the brief.
+- The active ledger surface is `scripts/autonomy_repair_ledger_lib.py`, not the nonexistent `autonomy_repair_lib.py` named as an intake alternative. Its current generic `attempt_repair(run, reason_code, kind, success, evidence_path)` already counts by `(run, reason_code)` but hard-codes `DEFAULT_CAP`; implementation must make its effective cap come from the resolved matrix row with an authorized `AUTONOMY_REPAIR_CAP_OVERRIDE`, then append the unchanged audit fields using this token and `disambiguate_state`. The implementation must not create a second ledger or a special untracked PO path.
+- The closure dispatch must read the YAML row, call the existing ledger path `handoffs/autonomy_repair_ledger/<orchestrator_run_id>.jsonl`, and emit `autonomy_relaxed: PO_CLOSURE_PRECONDITION_CONFLICT -> disambiguate_state` only after a real successful, uniquely evidenced repair. The generic matrix validator requires the new YAML code be referenced in its US-0119 surface, so the active/template operator matrix entry is required.
+
+### DQ3 — Test and scope contract (LOCKED)
+
+- Plan eight `test_bug0034_*` markers (active + template test twins): matrix row/class; chosen kind only; cap/rationale; matrix/operator-doc parity; reason-code row; runbook remediation and explicit no-refresh rule; ledger count/override/cap-exhaustion with the token; and no sibling/security-gate mutation plus `bug_issue_validate.py --check-acceptance` / US-0119 / US-0120 regressions.
+- Required negative fixtures prove: `RESUME_BRIEF_AUTO_REFRESH=0` never invokes a refresh; ambiguous state emits `RESUME_AMBIGUOUS`; missing/conflicting/malformed continuation evidence retains the BUG-0035 fail-closed codes; no TUI/RPC/JSON-template/localhost route, config/scratchpad mutation, live-host claim, `.env` read, publish, or push is introduced.
+- **Architecture handoff**: append only `# BUG-0034` with this A1 lock, exact touch inventory, marker contract, and AC mapping. Do not create a sprint, implement, register the token, edit template/code/tests, or alter backlog/acceptance in research.
+
+### Research isolation and continuation
+
+- `fresh_context_marker=tl-BUG0034-research-20261005T105849Z-fresh`; `runtime_proof_id=rp-auto-20261005-bug0034-research-techlead-20261005T105849Z-BUG-0034`; `proof_hash=9F7828427E083E46A20A40FD9532ACBD612442B2CDFC2CBEB9098439A0CCEFB6` over the DEC-0038 tuple (`phase_id=research`, `role=tech-lead`, `proof_issued_at=2026-10-05T10:58:49Z`, `proof_ttl_seconds=3600`). Marker/proof were grep-confirmed unused before mint; hash was independently recomputed.
+- **Next**: only after the state-first paired continuation record validates may the parent independently spawn `/architecture` in a fresh tech-lead context. This research child does not spawn it.
+
+---
+
+## R-0159
+
+- **Date**: 2026-10-08
+- **Topic**: BUG-0033 — Thin→rich command-pair parity: lock the exact `## Fail-safe reason codes` + `## Stop conditions` section text to copy into the five thin `.opencode/commands/{closure,ask,auto,refresh-context,execute}.md`, the active↔template byte-parity test shape, the `test_bug0033_*` marker inventory, and the new-reason-code count.
+- **Query**: Which section text, insertion point, ordering, parity mechanism, test markers, and reason-code additions does BUG-0033's `/execute` need — and does US-0125's thin/dispatch-only + clone-guard contract constrain the design?
+- **Sources**: `.opencode/commands/{closure,ask,auto,refresh-context,execute}.md` (thin, 557/186/2921/517/561 b, active==template byte-identical); `.cursor/commands/{closure,ask,auto,refresh-context,execute}.md` (rich, 10252/2914/40728/5793/23328 b); `tests/us0125_contract_test.py` (clone-guard ≤20-line + ≤0.30-similarity cap; COMMANDS_DIR=`template/.opencode/commands`); `tests/us0126_contract_test.py` (marker 3 runs `--scope=opencode-adapter`); `scripts/check_intake_template_parity.py` (SCOPES table, OPENCODE_ADAPTER_PAIRS L499, BUG0027_PAIRS L736, BUG0030_PAIRS L800); `tests/bug0031_opencode_closure_flip_authz_test.py` (BUG-0031 byte-parity precedent, marker 3 `ACTIVE==TEMPLATE.read_bytes()`); `docs/product/backlog.md` L5695-5715 (BUG-0033 block); `docs/product/backlog.md` L5691 (BUG-0032 "837b shipped delta" + `--scope=autonomy-flags` precedent); `docs/product/backlog.md` L5690 (BUG-0034 closure_notes "real-repo `check_intake_template_parity.py --scope=autonomy-flags` exit 0 + `[INTAKE_TEMPLATE_PARITY_OK]`"); `handoffs/intake_evidence/BUG-0033-intake-20261003T153600Z.json` (`[INTAKE_EVIDENCE_VALIDATION_OK]`).
+- **Linked**: US-0120 (closure phase), US-0125 (thin opencode commands + validator bridge, clone-guard), US-0126 (reason codes + `--scope=opencode-adapter` parity), US-0156 (OpenCode `/auto` parity), BUG-0016/BUG-0019/BUG-0020/BUG-0021/BUG-0023/BUG-0024 (opencode /auto retired-then-restored), BUG-0027 (manual-phase persist parity precedent), BUG-0030 (auto.md parity + tui.json `"plugin": []` lock, DEC-0151), BUG-0031 (active↔template byte-parity precedent, "837b shipped delta"), BUG-0035/DEC-0153 (paired continuation), US-0045/US-0048/BUG-0006 (spawn-only + status authority).
+- **Confidence**: high
+- **Status**: current
+
+### Context and scope
+
+BUG-0033 (P1, OPEN; backlog L5695-5715) is a **thin→rich section-parity defect** on exactly five command pairs. The thin OpenCode command bodies are dispatch-only (US-0125) and do **not** surface the `## Fail-safe reason codes` + `## Stop conditions` documentation that the rich `.cursor/commands/*` counterparts carry. Intake is complete (L5713: `**Next**: /research (fresh tech-lead) to lock the exact section-text to copy and the active↔template byte-parity test shape. STOP after intake.`). This research LOCKS that section-text, the insertion geometry, the byte-parity mechanism, the marker inventory, and the new-code count, and — critically — documents the one architectural input the fix depends on (the US-0125 clone-guard line-cap reconciliation). The FIX itself (editing the five thin files + their template twins + the parity scope + the `test_bug0033_*` file) belongs to `/execute`, NOT research.
+
+### Current surface (evidence)
+
+| file | thin (active==template) lines | thin bytes | rich `.cursor` lines | rich `## Stop conditions` | rich `## Fail-safe reason codes` |
+|---|---|---|---|---|---|
+| closure.md | 19 | 557 | 191 | L58 (5 codes) | L164 `## Fail-safe reason codes and remediation guidance` (8-code table) |
+| ask.md | 12 | 186 | 55 | L29 `(none — answer the question and stop)` | **NONE** |
+| auto.md | 49 | 2921 | 711 | L414 (7 stop reasons) | **NONE** (nearest: L513 `## Fail-fast error code contract`) |
+| refresh-context.md | 18 | 517 | 120 | L27 `(Missing critical artifacts)` | **NONE** |
+| execute.md | 24 | 561 | 369 | L54 (2 bullets) | **NONE** |
+
+**Key structural finding (drives DQ1):** a `## Fail-safe reason codes` section exists in the rich source for **closure.md only** (L164, full 8-condition table). For **ask / auto / refresh-context / execute the rich source has NO `## Fail-safe reason codes` heading** — they carry only `## Stop conditions` (auto additionally has `## Fail-fast error code contract` at L513, a different heading). Therefore **"copy the rich section verbatim" is only possible for closure's fail-safe section.** The other four files must receive a thin-surface *derived* `## Fail-safe reason codes` that references the authoritative rich source. This is the single most important design fact in the bug.
+
+### DQ1 — Section text (LOCKED) and verbatim-vs-adapted decision
+
+**Decision (LOCKED): thin-surface adapted, not verbatim — for four of five files; verbatim-derived for closure.**
+
+Justification: (a) verbatim is *impossible* for ask/auto/refresh-context/execute because no rich `## Fail-safe reason codes` section exists to copy (DQ1 finding above); (b) even for closure, a verbatim 13-line condition+remediation table (L164-176) would (i) push closure from 19→32 lines (the DQ6 line-cap tension), and (ii) violate US-0125's "diagnostics only, enforcement in Python" principle (DQ7 of DEC-0125) by embedding a remediation-action table in a dispatch-only command body. The US-0125 contract is **additive over US-0125** (BUG-0033 `expected`, backlog L5701): the thin file stays dispatch-only *in spirit* — the two added `##` sections are **documentation surface, not dispatch logic** (they add no spawn logic, no new validator, no new code, no new reason codes). So the locked approach is a terse, diagnostics-only pair per file that names the fail-closed vocabulary and points to the authoritative rich source. This keeps clone-guard similarity well under 0.30 (measured ≤0.031) and keeps every file's added surface ≤ ~12 lines.
+
+**Exact locked section text per file** (insert before the final `STOP` sentinel; auto.md has no `STOP` sentinel → append at EOF, see DQ2). Ordering is LOCKED as `## Stop conditions` first, then `## Fail-safe reason codes` — **matching the physical rich-file ordering** (`.cursor/commands/closure.md`: `## Stop conditions` L58 precedes `## Fail-safe reason codes` L164). *(Note: the intake/task illustrative "fail-safe-then-stop" example does not match the actual rich ordering; the empirically-correct rich order is locked here.)*
+
+```
+--- closure.md (thin; insert before final STOP, L19) ---
+## Stop conditions
+
+- Fail-closed stop tokens (diagnostics only; enforcement in the Python validator bridge):
+  `CLOSURE_RELEASE_EVIDENCE_MISSING`, `CANONICAL_STATUS_CONFLICT`, `CLOSURE_AMBIGUOUS_TARGET`,
+  `CLOSURE_TARGET_NOT_FOUND`, `CLOSURE_PERMISSION_FLIP_PATHS_DENIED`.
+
+## Fail-safe reason codes
+
+- Diagnostic vocabulary surfaced by the closure validator bridge — this file does not enforce them.
+- Full condition + remediation table: `.cursor/commands/closure.md` `## Fail-safe reason codes and remediation guidance`.
+
+--- ask.md (thin; insert before final STOP, L12) ---
+## Stop conditions
+
+- (none — answer the question and stop)
+
+## Fail-safe reason codes
+
+- None. `/ask` is strictly read-only (no writes, no validator bridge); it has no fail-closed vocabulary.
+
+--- auto.md (thin; NO STOP sentinel → append at EOF) ---
+## Stop conditions
+
+- Deterministic stop reasons (see rich `.cursor/commands/auto.md` Stop matrix): `completed`, `decision_gate`,
+  `missing_input`, `pause_request`, `loop_max`, `error`, `blocked`.
+
+## Fail-safe reason codes
+
+- Resume-resolution failures use the `[AUTO_RESUME_ERROR] <code>: <summary>` envelope: `INVALID_START_FROM`,
+  `RESUME_BRIEF_MISSING`, `RESUME_BRIEF_STALE`, `RESUME_BRIEF_UNPARSEABLE`, `RESUME_STATE_CONFLICT`,
+  `STATE_PHASE_AMBIGUOUS`, `STATE_PHASE_UNRECOVERABLE`, `AUTO_SCHEDULER_CONFLICT`, `AUTO_BUG_QUEUE_EMPTY`,
+  `AUTO_BUG_TARGET_UNKNOWN`, `AUTO_BUG_TARGET_NOT_OPEN`. Full contract: the Cursor rich `auto.md`.
+
+--- refresh-context.md (thin; insert before final STOP, L18) ---
+## Stop conditions
+
+- Missing critical artifacts
+
+## Fail-safe reason codes
+
+- Deterministic artifact-ordering / ownership tokens (diagnostics only): `ARTIFACT_ORDERING_ANCHOR_AMBIGUOUS`,
+  `STATE_ARCHIVE_WRITE_FAILED`, `STATE_ARCHIVE_BOUNDARY_AMBIGUOUS`, `STATE_ARCHIVE_VERIFICATION_FAILED`,
+  `PHASE_OWNERSHIP_VIOLATION`. Full detail: the Cursor rich `refresh-context.md`.
+
+--- execute.md (thin; insert before final STOP, L24) ---
+## Stop conditions
+
+- Decision gate triggered
+- Missing task definition or unclear scope
+
+## Fail-safe reason codes
+
+- Fail-closed tokens surfaced during execute (diagnostics only): `ISOLATION_EVIDENCE_MODEL_ID_MISSING`
+  (isolation model id absent under `CROSS_MODEL_REVIEW=1`), `UAT_BROWSER_PROBE_FAILED`, `UAT_BROWSER_UNAVAILABLE`
+  (browser UAT). Full contract: the Cursor rich `execute.md`.
+```
+
+**Token-fidelity check (LOCKED, 0 new codes):** every token in the above is drawn verbatim from the rich source or an already-registered token:
+- closure stop codes ← `.cursor/commands/closure.md` L60-64 (verbatim).
+- closure fail-safe pointer ← L164 heading (verbatim).
+- auto stop reasons ← L414-418 (verbatim); auto fail-fast codes ← L520-526, L531-534 (verbatim).
+- refresh-context tokens ← L106, L108-111, L119 (verbatim).
+- execute tokens: `ISOLATION_EVIDENCE_MODEL_ID_MISSING` ← execute.md L25; `UAT_BROWSER_PROBE_FAILED` ← L77, L80; `UAT_BROWSER_UNAVAILABLE` ← L78 (verbatim).
+- ask: no tokens (read-only, no vocabulary).
+No token in the locked text is invented; **0 new reason codes** (see DQ5).
+
+### DQ2 — Insertion point + ordering (LOCKED)
+
+- **Anchor**: the two sections are inserted **immediately before the final `STOP` sentinel line** in each of closure/ask/refresh-context/execute, after the existing `## Validator bridge` section (closure/refresh-context/execute) or after the dispatch prose (ask). auto.md has **no** `STOP` sentinel (its body ends with the "Retired and forbidden" paragraph) → the two sections are **appended at EOF** after a single blank line.
+- **Ordering within the block**: `## Stop conditions` first, then `## Fail-safe reason codes` (LOCKED per DQ1 — matches rich physical ordering closure.md L58→L164).
+- **Projected line counts** (thin-surface text above, active==template so both mirrors): closure 19→29, ask 12→19, auto 49→61, refresh-context 18→27, execute 24→34. Measured clone-guard similarity vs rich stays ≤0.031 (cap 0.30) and no US-0125 forbidden/policy/clone token is introduced. The line-count growth is the DQ6 tension.
+
+### DQ3 — Active↔template byte-parity test shape (LOCKED, BUG-0031 precedent)
+
+**Mechanism: a new `--scope=bug-0033` byte-pair table in `scripts/check_intake_template_parity.py`** (the existing SCOPES dict + `--scope` choices), NOT a new ad-hoc comparator. Rationale from the shipped precedent:
+- **BUG-0031** parity was enforced as an *active↔template byte-identical* assertion (`tests/bug0031_..._test.py` marker 3: `ACTIVE_CURATOR.read_bytes() == TEMPLATE_CURATOR.read_bytes()`; backlog L5701 calls this the "837b shipped delta" — active + `template/` mirrors BOTH receive the identical content, then parity is proven byte-for-byte).
+- **BUG-0032** (backlog L5690/5691) used the *parity CLI* for its drift-detect: "real-repo `check_intake_template_parity.py --scope=autonomy-flags` exit 0 + `[INTAKE_TEMPLATE_PARITY_OK] scope=autonomy-flags`."
+- No existing scope covers all five target files: `execute.md` is already in `BUG0027_PAIRS` (L752-754) and `auto.md` is already in `BUG0030_PAIRS` (L801), but **closure.md, ask.md, refresh-context.md are in NO scope.** Hence a dedicated `--scope=bug-0033` (BUG-####-per-scope precedent: BUG-0016/0019/0020/0021/0023/0024/0027/0030 each own a scope).
+
+**Locked `BUG0033_PAIRS` table (active, template) — 5 command pairs + the parity validator twin + the contract-test twin:**
+```
+(".opencode/commands/closure.md",       "template/.opencode/commands/closure.md"),
+(".opencode/commands/ask.md",           "template/.opencode/commands/ask.md"),
+(".opencode/commands/auto.md",          "template/.opencode/commands/auto.md"),
+(".opencode/commands/refresh-context.md","template/.opencode/commands/refresh-context.md"),
+(".opencode/commands/execute.md",       "template/.opencode/commands/execute.md"),
+("tests/bug0033_opencode_command_parity_test.py","template/tests/bug0033_opencode_command_parity_test.py"),
+```
+The fix must apply the identical DQ1 text to **both** the active and template mirrors of each of the five files, so the byte-pair check is green. `--scope=all` already unions all byte-pair tables (L959), so the new pairs are also covered by `--scope=all` without further wiring.
+
+**Parity assertion shape (for the `test_bug0033_*` suite):** (a) run `python scripts/check_intake_template_parity.py --scope=bug-0033` → exit 0 + stdout `[INTAKE_TEMPLATE_PARITY_OK] scope=bug-0033` (mirrors `test_us0126_parity_scope_opencode_adapter` marker 3); (b) direct `read_bytes()` equality per pair (mirrors BUG-0031 marker 3). Both forms are locked.
+
+### DQ4 — `test_bug0033_*` marker inventory (LOCKED, 10 markers ≥ 8 required)
+
+New file `tests/bug0033_opencode_command_parity_test.py` (+ template twin `template/tests/bug0033_opencode_command_parity_test.py`). Active + template twins byte-identical (DQ3).
+
+| # | marker | AC | assertion |
+|---|---|---|---|
+| 1 | `test_bug0033_closure_has_both_headings` | AC-1 | active + template closure.md each contain `## Fail-safe reason codes` AND `## Stop conditions` |
+| 2 | `test_bug0033_ask_has_both_headings` | AC-2 | active + template ask.md each contain both headings |
+| 3 | `test_bug0033_auto_has_both_headings` | AC-3 | active + template auto.md each contain both headings |
+| 4 | `test_bug0033_refresh_context_has_both_headings` | AC-4 | active + template refresh-context.md each contain both headings |
+| 5 | `test_bug0033_execute_has_both_headings` | AC-5 | active + template execute.md each contain both headings |
+| 6 | `test_bug0033_active_template_byte_parity` | AC-6 | for each of the 5 pairs, `active.read_bytes() == template.read_bytes()` |
+| 7 | `test_bug0033_parity_scope_bug0033_green` | AC-6/AC-7 | `check_intake_template_parity.py --scope=bug-0033` → exit 0 + `[INTAKE_TEMPLATE_PARITY_OK] scope=bug-0033` banner |
+| 8 | `test_bug0033_thin_dispatch_only_preserved` | AC-7 | none of the 5 files (active + template) contain a US-0125 spawn literal (`spawn(`, `spawn =`, `ctx.session.create`, `Session.create`), any `POLICY_TEXT_FRAGMENTS`, `OPENCODE_VALIDATOR_FAILED`, `OPENCODE_DRIVER_INVOKE_FAILED`, `npm install`, or `require(`; frontmatter `agent:` preserved (closure `qa`, ask none, auto `auto`, refresh-context `curator`, execute `dev`) |
+| 9 | `test_bug0033_us0125_us0126_no_regression` | AC-7 | run `us0125_contract_test.py` + `us0126_contract_test.py` in an isolated subprocess; assert the set of failing marker names is a SUBSET of the documented pre-existing red baseline (DQ6) — i.e. BUG-0033 adds no NEWLY-failing us0125/us0126 marker AND `.opencode/tui.json` + `template/.opencode/tui.json` still contain `"plugin": []` (BUG-0030/DEC-0151 lock) |
+| 10 | `test_bug0033_zero_new_reason_codes` | non-goal (DQ5) | every fail-closed token cited in the 5 thin `## Fail-safe reason codes`/`## Stop conditions` sections is already present in `docs/engineering/reason_codes.md` OR `docs/engineering/runbook.md` OR its rich `.cursor/commands/*` source — assert no new code string was introduced |
+
+AC-8 ("8+ markers + `bug_issue_validate.py --check-acceptance` exit 0") is satisfied by the ≥8 markers above (10) plus the closure/execute gate that runs `python scripts/bug_issue_validate.py --repo . --check-acceptance` → exit 0 (validator bridge already present in the thin files).
+
+### DQ5 — New reason codes (LOCKED: 0)
+
+**0 new reason codes.** Every token in the DQ1 locked text is pre-existing and already documented in the rich source or the canonical registries:
+- Verified present in `docs/engineering/reason_codes.md` **or** `docs/engineering/runbook.md` (registry-registered): `CLOSURE_RELEASE_EVIDENCE_MISSING`, `CLOSURE_VERIFICATION_FAILED`, `CANONICAL_STATUS_CONFLICT`, `BACKLOG_STATUS_DRIFT`, `CLOSURE_PERMISSION_FLIP_PATHS_DENIED`, `INVALID_START_FROM`, `RESUME_BRIEF_MISSING`, `RESUME_BRIEF_STALE`, `RESUME_BRIEF_UNPARSEABLE`, `RESUME_STATE_CONFLICT`, `STATE_PHASE_AMBIGUOUS`, `STATE_PHASE_UNRECOVERABLE`, `AUTO_SCHEDULER_CONFLICT`, `AUTO_BUG_QUEUE_EMPTY`, `AUTO_BUG_TARGET_UNKNOWN`, `AUTO_BUG_TARGET_NOT_OPEN`, `ARTIFACT_ORDERING_ANCHOR_AMBIGUOUS`, `STATE_ARCHIVE_WRITE_FAILED`, `STATE_ARCHIVE_BOUNDARY_AMBIGUOUS`, `STATE_ARCHIVE_VERIFICATION_FAILED`, `PHASE_OWNERSHIP_VIOLATION`, `ISOLATION_EVIDENCE_MODEL_ID_MISSING`.
+- Verified present in the **rich source** (surfaced there, registry status unchanged by this bug): `CLOSURE_AMBIGUOUS_TARGET` + `CLOSURE_TARGET_NOT_FOUND` (closure.md L62-63), `UAT_BROWSER_PROBE_FAILED` + `UAT_BROWSER_UNAVAILABLE` (execute.md L77-80).
+BUG-0033 does **not** register any new token in `reason_codes.md`, `runbook.md`, `scripts/data/autonomy_stop_matrix.yaml`, or the repair ledger — that surface belongs to BUG-0034 (stop-matrix registration), not this bug. `reason_codes.md`, `runbook.md`, and the stop matrix are explicitly NOT mutated.
+
+### DQ6 — CRITICAL FINDING: US-0125 clone-guard line-cap tension (LOCKED recommendation → architecture)
+
+This is the one architectural input the fix depends on, and it is **pre-existing, not caused by BUG-0033**:
+
+1. **US-0125 baseline is ALREADY RED (5 pre-existing failures)** — re-ran `tests/us0125_contract_test.py` + `tests/us0126_contract_test.py`: `test_us0125_command_inventory` (FAIL: `template/.opencode/commands` has 15 files incl. `auto.md`; `EXPECTED_COMMANDS` is 14 — US-0156 re-added `auto.md`), `test_us0125_clone_guard` (FAIL: `research.md`=27, `architecture.md`=28, `execute.md`=24 already exceed the ≤20-line cap), `test_us0125_missing_command_does_not_disable_plugin` (FAIL: 14 vs 13 after delete), `test_us0125_auto_command_dispatch_only` (FAIL: `auto.md`=49 > 20), and `test_us0126_default_host_reminder` (FAIL: `README.md` missing `Default install is cursor-only`). **None of these five failures is caused by BUG-0033.** The S0167 release harness (Pass=877/Fail=0) does not run `us0125_contract_test.py` / `us0126_contract_test.py` by name (no matching harness invocation), so this red is a latent standalone-suite baseline, not a harness regression.
+2. **The ≤20-line cap is structurally in tension with AC-1..AC-5.** `test_us0125_clone_guard` (marker 2) asserts every `template/.opencode/commands/*.md` is `≤ 20` lines; `test_us0125_auto_command_dispatch_only` (marker 8) asserts `auto.md ≤ 20`. Adding the DQ1 sections yields projected line counts (DQ2): closure **29**, ask **19** (only file that fits), auto **61**, refresh-context **27**, execute **34**. So **4 of 5** parity-target files will be (or remain) over 20 lines; closure and refresh-context NEWLY cross the cap (19→29, 18→27); execute and auto are already over and grow further. `ask.md` alone fits at 19.
+3. **The cap's intent is "no 200-line Cursor clone" (similarity ≤ 0.30), which the DQ1 text does NOT breach** — measured clone-guard similarity stays ≤ 0.031 (cap 0.30) and no forbidden/clone/policy token is introduced. The line *count* cap is the only thing in tension, and it is already being violated by other files (research/architecture/execute + auto) — i.e. the cap is not currently enforced-green anywhere in the suite.
+
+**LOCKED recommendation for `/architecture` (BUG-0033 must resolve this to satisfy AC-1..AC-5 without "regressing" the guard's *intent*):** the fix must reconcile the line cap so AC-1..AC-5 (both headings in all five files) are achievable. The two viable options:
+- **A (recommended, additive, preserves intent):** amend `test_us0125_clone_guard` / `test_us0125_auto_command_dispatch_only` to raise the per-file line cap for the **five BUG-0033 parity-target files only** (e.g. a `BUG0033_PARITY_TARGETS` exemption set, or a per-file cap of ~35), keeping the similarity ≤ 0.30 clone-guard intact for all files. Justification: the two added sections are diagnostics-only documentation (US-0125 DQ4/DQ7 "diagnostics only, enforcement in Python"), not dispatch logic; similarity (the actual "clone" signal) is unchanged. This is a US-0125 **additive** contract amendment, consistent with US-0125 being "additive" (backlog L5701) and with the precedent that US-0156 already re-added `auto.md` (so the 14→15 inventory + 49-line auto.md is already a known, shipped deviation from US-0125's original 14-file/≤20-line shape).
+- **B (re-scope, REJECTED):** limit BUG-0033 to only `ask.md` (the one file that fits ≤20). REJECTED because it fails AC-1/AC-3/AC-4/AC-5 (four of the five required heading presences) — AC-8's "8+ markers covering AC-1..AC-7" becomes unsatisfiable.
+- **C (do NOT mutate the cap; accept red) — REJECTED:** leaving `test_us0125_clone_guard` to gain new offenders (closure, refresh-context) without any US-0125 amendment would make BUG-0033's own `/execute`/`/qa` report NEW line-cap offenders on an already-red test — a defensible "no new *marker-level* failure" (the test is already red) but it muddies "no regression" and leaves the parity-target files with an unexplained cap breach. Option A is cleaner and is locked as the recommendation.
+
+**This is NOT a research blocker** — research has fully characterized the conflict with evidence and a locked recommendation (Option A). It is an **architecture-phase decision** (a US-0125 contract amendment is architecture's scope). `/architecture` MUST adopt Option A (or an equivalent additive cap reconciliation) and emit it as a mandatory seed task so `/execute` can satisfy AC-1..AC-8. If `/architecture` instead refuses any US-0125 amendment, it must re-scope BUG-0033 (Option B) and the AC set — which this research flags as the fallback.
+
+### DQ7 — Explicit non-goals (LOCKED)
+
+- **No changes to any `.cursor/commands/*` rich file** (read-only reference source; the fix is on the thin OpenCode surface only).
+- **No US-0125/US-0126 contract edits beyond the DQ6 Option A line-cap reconciliation** — no change to the similarity cap (0.30), no change to the clone-guard strip list, no change to the frontmatter-shape marker, no change to the `--scope=opencode-adapter` pair table (US-0126 territory, untouched).
+- **No `.opencode/tui.json` change** — `"plugin": []` (BUG-0030/DEC-0151 lock) active + template byte-identical and unchanged.
+- **No reason-code additions** (DQ5: 0 new codes); no `reason_codes.md` / `runbook.md` / `scripts/data/autonomy_stop_matrix.yaml` / repair-ledger mutation (that is BUG-0034's surface).
+- **No BUG-0006/US-0048 spawn-only change** — the orchestrator remains read/validate/spawn-only; BUG-0035/DEC-0153 paired-continuation rules unchanged.
+- **No changes to any of the other 10 thin command files** (intake/discovery/research/architecture/sprint-plan/plan-verify/qa/verify-work/release/quick) — BUG-0033's scope is exactly the five named pairs. (The audit of the remaining thin/rich pairs noted in intake L5713 may be a separate follow-up slice, not this bug.)
+- **No mutation of any DONE bug** (BUG-0022/0026/0027/0028/0029/0030/0031/0034/0035) or any other OPEN item, the stop matrix, `reason_codes.md`, `runbook.md`, production code, existing tests, template twins (except the five target mirrors), `.cursor/commands/*` rich files, config/scratchpad.
+
+### DQ8 — Handoff to architecture (LOCKED)
+
+`/architecture` (fresh tech-lead) MUST: (1) adopt DQ1 (thin-surface adapted sections, exact text above), DQ2 (insertion before `STOP` / EOF for auto; Stop-conditions-first ordering), DQ3 (new `--scope=bug-0033` byte-pair table, active==template mirrors), DQ4 (10 `test_bug0033_*` markers), DQ5 (0 new codes), DQ7 (non-goals); (2) **resolve DQ6 by adopting Option A** (additive US-0125 line-cap reconciliation for the five parity-target files, similarity cap intact) and emit it as a seed task; (3) append a `# BUG-0033` H1 to `architecture.md` with this R-0159 lock + the DQ6 Option A decision + touch inventory + marker contract + AC mapping. Research authors no source file, no test, no parity-scope change, no thin-file edit, and flips nothing (BUG-0033 stays OPEN, ACs `[ ]` — closure owns the flip per US-0045 / BUG-0031 curator 3-allow).
+
+### Research isolation and continuation
+
+- `fresh_context_marker=tl-BUG0033-research-20261008T204813Z-fresh`; `runtime_proof_id=rp-auto-20261008-bug0033-research-techlead-20261008T204813Z-BUG-0033`; `proof_hash=a70066fcac790420b4963f6802f4d1ce9d115b41859d6a0f17c427e90d9bcd1a` over the DEC-0038 6-tuple (`orchestrator_run_id=auto-20261008-bug0033-research`, `runtime_proof_id=rp-auto-20261008-bug0033-research-techlead-20261008T204813Z-BUG-0033`, `phase_id=research`, `role=tech-lead`, `proof_issued_at=2026-10-08T20:48:13Z`, `proof_ttl_seconds=3600`). Marker + proof id were grep-confirmed 0 prior occurrences repo-wide before mint (distinct from all prior BUG-0034/BUG-0035 markers); hash was independently double-verified (lib `compute_strict_proof_hash` + plain `hashlib.sha256(json.dumps(obj, sort_keys=True, separators=(",",":")).encode())` over the same 6-tuple) — identical hexdigest, `hash_recompute_confirmation=true`.
+- **Next**: only after the state-first paired continuation record validates may the parent independently spawn `/architecture` in a fresh tech-lead context. This research child does not spawn it. STOP after RESEARCH_PASS.

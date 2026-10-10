@@ -1,0 +1,82 @@
+{
+  "selected_pack": "small-intake-pack",
+  "intake_run_id": "po-opencode-20261003-BUG0035-intake",
+  "writer_id": "po-opencode-20261003-BUG0035-intake",
+  "INTAKE_GUIDED_MODE": 0,
+  "INTAKE_WORK_ITEM_KIND": "bug",
+  "requested_mode": "bug",
+  "intake_boundary_utc": "2026-10-03T16:00:00Z",
+  "ID_NAMESPACE_BOOTSTRAP": 0,
+  "bug_id": "BUG-0035",
+  "asked_topics": [
+    "outcome_success_criteria",
+    "impacted_components",
+    "constraints_compatibility_risks",
+    "required_tests_acceptance_checks",
+    "done_definition"
+  ],
+  "missing_topics": [],
+  "assumptions_confirmed": "(none)",
+  "topic_coverage": [
+    {
+      "topic_key": "outcome_success_criteria",
+      "satisfied_by": "answer_ref",
+      "ref": "ie:po-opencode-20261003-BUG0035-intake:0:da9a2fdbbb323f45",
+      "quoted_user_text": "The research child documented next step architecture in state.md and handoffs/tl_to_dev.md, while handoffs/resume_brief.md remained at intake to research.",
+      "intake_run_id": "po-opencode-20261003-BUG0035-intake",
+      "turn_index": 0
+    },
+    {
+      "topic_key": "impacted_components",
+      "satisfied_by": "answer_ref",
+      "ref": "ie:po-opencode-20261003-BUG0035-intake:1:aa51be6a952d8a75",
+      "quoted_user_text": "The Research-Child may write state.md and handoffs/tl_to_dev.md, but cannot write resume_brief.md; the spawn-only Parent may not write phase artifacts.",
+      "intake_run_id": "po-opencode-20261003-BUG0035-intake",
+      "turn_index": 1
+    },
+    {
+      "topic_key": "constraints_compatibility_risks",
+      "satisfied_by": "answer_ref",
+      "ref": "ie:po-opencode-20261003-BUG0035-intake:2:eb817d9803861e41",
+      "quoted_user_text": "The contract requires a stop when an existing resume brief is stale, not a silent fallback on state.md; RESUME_BRIEF_AUTO_REFRESH=0 prevents automatic repair.",
+      "intake_run_id": "po-opencode-20261003-BUG0035-intake",
+      "turn_index": 2
+    },
+    {
+      "topic_key": "required_tests_acceptance_checks",
+      "satisfied_by": "answer_ref",
+      "ref": "ie:po-opencode-20261003-BUG0035-intake:3:5a3fed70f5cde47a",
+      "quoted_user_text": "AUTO_RESUME_ERROR RESUME_BRIEF_STALE must block a conflicting resume brief; no fallback or next spawn is permitted until valid boundary evidence exists.",
+      "intake_run_id": "po-opencode-20261003-BUG0035-intake",
+      "turn_index": 3
+    },
+    {
+      "topic_key": "done_definition",
+      "satisfied_by": "answer_ref",
+      "ref": "ie:po-opencode-20261003-BUG0035-intake:4:989cc92bc3dd8bc9",
+      "quoted_user_text": "The issue is an orchestration and permissions deadlock: Research is complete, but the mandatory Resume-Nachweis cannot be advanced, so architecture cannot start.",
+      "intake_run_id": "po-opencode-20261003-BUG0035-intake",
+      "turn_index": 4
+    }
+  ],
+  "duplicate_check_pass": true,
+  "duplicate_check_notes": "Distinct from BUG-0005, which covers a stale brief immediately after bug intake. This defect is a research-to-architecture phase-boundary ownership deadlock: the completed child and spawn-only parent have no authorized writer for the mandatory resume brief. Distinct from BUG-0034, which registers a PO closure token, and from US-0023/US-0048, which require rather than repair phase isolation.",
+  "decomposition_verdict": "single_bug",
+  "decomposition_rationale": "One vertical orchestration contract gap: a lawful completed phase cannot advance its paired resume evidence under the permission matrix, creating a permanent fail-closed deadlock.",
+  "sibling_not_persisted": "BUG-0005, BUG-0032, BUG-0033, BUG-0034 and all existing US items remain untouched.",
+  "WORK_KIND_ROUTING": 0,
+  "EARLY_RESEARCH": 0,
+  "FRAMEWORK_KIT_REPO": 1,
+  "related_us": [
+    "US-0023",
+    "US-0037",
+    "US-0048",
+    "US-0056",
+    "US-0119",
+    "US-0124"
+  ],
+  "related_bugs": [
+    "BUG-0005",
+    "BUG-0034"
+  ]
+}

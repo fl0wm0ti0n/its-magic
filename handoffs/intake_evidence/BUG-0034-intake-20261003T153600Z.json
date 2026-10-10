@@ -1,0 +1,79 @@
+{
+  "selected_pack": "small-intake-pack",
+  "intake_run_id": "po-opencode-20261003-BUG0034-intake",
+  "writer_id": "po-opencode-20261003-BUG0034-intake",
+  "INTAKE_GUIDED_MODE": 0,
+  "INTAKE_WORK_ITEM_KIND": "bug",
+  "requested_mode": "bug",
+  "intake_boundary_utc": "2026-10-03T15:36:00Z",
+  "ID_NAMESPACE_BOOTSTRAP": 0,
+  "bug_id": "BUG-0034",
+  "asked_topics": [
+    "outcome_success_criteria",
+    "impacted_components",
+    "constraints_compatibility_risks",
+    "required_tests_acceptance_checks",
+    "done_definition"
+  ],
+  "missing_topics": [],
+  "assumptions_confirmed": "(none)",
+  "topic_coverage": [
+    {
+      "topic_key": "outcome_success_criteria",
+      "satisfied_by": "answer_ref",
+      "ref": "ie:po-opencode-20261003-BUG0034-intake:0:715cdf9ff947fd54",
+      "quoted_user_text": "PO_CLOSURE_PRECONDITION_CONFLICT is a fail-closed reason code that occurred live once (operator observation: Po Task - Finalize US-0108 product closure - Stopped fail-closed: PO_CLOSURE_PRECONDITION_CONFLICT) but is registered nowhere in the kit (grep *.md|yaml|json|py|jsonl = 0 hits; NOT in scripts/data/autonomy_stop_matrix.yaml, NOT in docs/engineering/reason_codes.md, NOT in docs/engineering/runbook.md). Wanted: register the token as an autonomy_resolvable code with auto_repair_kind=disambiguate_state (or auto_refresh_brief - TL decides in research), add a reason_codes.md US-xxxx row, 8 contract-test markers, and autonomy_repair_ledger integration for the new code.",
+      "intake_run_id": "po-opencode-20261003-BUG0034-intake",
+      "turn_index": 0
+    },
+    {
+      "topic_key": "impacted_components",
+      "satisfied_by": "answer_ref",
+      "ref": "ie:po-opencode-20261003-BUG0034-intake:1:d18bbec4b23c74f3",
+      "quoted_user_text": "scripts/data/autonomy_stop_matrix.yaml (new code block near L173-L231, beside STATE_PHASE_AMBIGUOUS/disambiguate_state and RESUME_BRIEF_MISSING/auto_refresh_brief), docs/engineering/reason_codes.md (new US-0034 row), docs/engineering/runbook.md (PO closure precondition conflict remediation), the autonomy repair ledger (disambiguate_state or auto_refresh_brief handling), docs/engineering/architecture.md (token + repair path), tests/test_bug0034_* (8 markers). Composable US-0119 (autonomy stop matrix + 12 per-feature flags), US-0120 (closure phase), BUG-0031 (closure role permission), DEC-0119 (autonomy repair matrix).",
+      "intake_run_id": "po-opencode-20261003-BUG0034-intake",
+      "turn_index": 1
+    },
+    {
+      "topic_key": "constraints_compatibility_risks",
+      "satisfied_by": "answer_ref",
+      "ref": "ie:po-opencode-20261003-BUG0034-intake:2:af6401ab6f7eb58d",
+      "quoted_user_text": "autonomy_resolvable = bounded auto-repair, NOT a security gate; cap=3 (matrix default per L174-L231). US-0119 12 per-feature flags UNTOUCHED; AUTONOMY_PRESET=none default unchanged; BUG-0031 curator-allow-set UNTOUCHED; BUG-0006/US-0048 spawn-only UNTOUCHED. No npm-publish, git-push, .env reads. INTAKE_AUTONOMY_MODE=0 + INTAKE_SUBAGENT_FALLBACK=deny (config.json) unchanged. template/ parity preserved.",
+      "intake_run_id": "po-opencode-20261003-BUG0034-intake",
+      "turn_index": 2
+    },
+    {
+      "topic_key": "required_tests_acceptance_checks",
+      "satisfied_by": "answer_ref",
+      "ref": "ie:po-opencode-20261003-BUG0034-intake:3:d9e3da5aa13e9a81",
+      "quoted_user_text": "8 test_bug0034_* markers: (1) autonomy_stop_matrix.yaml contains PO_CLOSURE_PRECONDITION_CONFLICT block with stop_class=autonomy_resolvable; (2) auto_repair_kind is disambiguate_state OR auto_refresh_brief (one, chosen by research); (3) cap=3; (4) rationale text present; (5) reason_codes.md contains a row for PO_CLOSURE_PRECONDITION_CONFLICT; (6) runbook.md contains remediation text; (7) the autonomy repair ledger handles the token in the repair flow; (8) bug_issue_validate.py --check-acceptance exit 0. No US-0119/US-0120 test regression.",
+      "intake_run_id": "po-opencode-20261003-BUG0034-intake",
+      "turn_index": 3
+    },
+    {
+      "topic_key": "done_definition",
+      "satisfied_by": "answer_ref",
+      "ref": "ie:po-opencode-20261003-BUG0034-intake:4:48053ee6ff76ac1d",
+      "quoted_user_text": "BUG-0034 is DONE when PO_CLOSURE_PRECONDITION_CONFLICT is registered in autonomy_stop_matrix.yaml (autonomy_resolvable + auto_repair_kind + cap=3 + rationale), documented in reason_codes.md + runbook.md, wired into the autonomy repair ledger + architecture.md, and 8 test_bug0034_* markers PASS with bug_issue_validate.py --check-acceptance exit 0 and no US-0119/US-0120 regression. Intake = register, not close - no ACs checked.",
+      "intake_run_id": "po-opencode-20261003-BUG0034-intake",
+      "turn_index": 4
+    }
+  ],
+  "duplicate_check_pass": true,
+  "duplicate_check_notes": "Unregistered fail-closed token is a distinct registry/documentation defect. Not duplicate of US-0119 (shipped; matrix + 12 flags + ledger exist, token registration is the gap), US-0120 (closure phase; the token is a distinct code, not a phase), BUG-0031 (closure role permission; token registration is separate). Grep 0 hits repo-wide confirms it is unregistered. Distinct from every OPEN bug in the queue.",
+  "decomposition_verdict": "single_bug",
+  "decomposition_rationale": "One vertical registry gap: a live-observed token missing from matrix + reason_codes + runbook + repair_ledger. Those four artifacts are the minimal complete fix set; splitting is incomplete.",
+  "sibling_not_persisted": "BUG-0016/0022/0026/0027/0028/0029/0030/0031 UNTOUCHED. US-0154/US-0155 UNTOUCHED (OPEN). US-0156 DONE UNTOUCHED. US-0119/US-0120 DONE (compose-only, no reopen).",
+  "WORK_KIND_ROUTING": 0,
+  "EARLY_RESEARCH": 0,
+  "FRAMEWORK_KIT_REPO": 1,
+  "related_us": [
+    "US-0119",
+    "US-0120",
+    "DEC-0119",
+    "DEC-0060"
+  ],
+  "related_bugs": [
+    "BUG-0031"
+  ]
+}

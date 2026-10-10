@@ -1,4 +1,85 @@
-# Handoff: /verify-work -> /release -- BUG-0027 / S0160
+# Verify-to-Release Handoff - S0167 / BUG-0034 (REPAIR #1)
+
+## Current handoff
+
+- **date**: 2026-10-07T21:05:17Z (UTC)
+- **from**: `verify-work` (fresh `/verify-work` subagent, repair cycle #1;
+  fresh_context_marker `qa-BUG0034-verify-work-20261007T210517Z-fresh`,
+  grep-confirmed zero prior occurrences repo-wide before mint;
+  orchestrator_run_id `auto-20261007-bug0034-verify-work`).
+- **to**: `release` (orchestrator-owned fresh `/release` context only).
+- **verdict**: **VERIFY_PASS** / `S0167_REPAIR_VERIFY_OK`; 0 blocking findings.
+- **bug / sprint**: BUG-0034 / S0167. BUG-0034 remains **OPEN**; its backlog
+  AC-1..AC-7 and acceptance row remain **unchecked**.
+- **why (context)**: the prior release `auto-20261006-bug0034-release` was
+  RELEASE_BLOCKED at Gate 1 (`RELEASE_TEST_FAILED`; harness
+  2026-10-06T22:10:38Z Pass=865/Fail=12). The 12 failures were repaired by the
+  fresh execute `auto-20261007-bug0034-execute` (EXECUTE_PASS) and
+  independently re-verified by the fresh QA `auto-20261007-bug0034-qa`
+  (QA_PASS / `S0167_REPAIR_VERIFY_OK`) and by this fresh verify-work. The
+  prior-cycle handoff entries below are **preserved below as history**.
+- **fresh evidence summary (independently re-run by this verify-work, not trusted from execute/QA)**:
+  - `python -m pytest tests/bug0034_autonomy_stop_matrix_test.py -q` → **8 passed in 0.26s**
+  - `python -m pytest tests/auto_command_contract_test.py -q` → **151 passed, 694 subtests passed in 1.80s**
+  - `python -m pytest tests/us0133_contract_test.py tests/us0143_contract_test.py -q` → **17 passed in 2.27s**
+  - `python scripts/bug_issue_validate.py --repo . --check-acceptance` → **`[BUG_VALIDATION_OK]`**, exit 0
+  - `tests/report.md` header → Timestamp **2026-10-07T20:51:30Z**, **Pass: 877 / Fail: 0** (post-repair green harness)
+  - UAT: prior-cycle records `sprints/S0167/uat.json` / `uat.md`
+    (2026-10-06T23:50:16Z, `verified_ready=true`, 8 passed/0 failed/8 total)
+    preserved unchanged as valid prior-cycle evidence; REPAIR #1 reconciliation
+    note appended to `uat.md` only; `uat.json` byte-identical; UAT verdict remains
+    verified.
+- **fresh verify-work proof tuple (minted this verify-work; recompute MATCH by both methods)**:
+  - orchestrator_run_id=`auto-20261007-bug0034-verify-work`
+  - phase_id=`verify-work`; role=`qa`
+  - fresh_context_marker=`qa-BUG0034-verify-work-20261007T210517Z-fresh`
+  - runtime_proof_id=`rp-auto-20261007-bug0034-verify-work-qa-20261007T210517Z-BUG-0034`
+  - proof_hash=`F5261785487445B04712B3395DE2BB2F8AEA85775485F44B06F1B7A6781BDDCD`
+    (DEC-0038 6-tuple; `scripts/token_cost_lib.compute_strict_proof_hash` and
+    independent compact sorted-key hashlib SHA-256 — identical hexdigest)
+  - proof_issued_at=`2026-10-07T21:05:17Z`; proof_ttl_seconds=3600 (TTL expiry 2026-10-07T22:05:17Z)
+- **consumed proofs (independently recomputed at this mint)**:
+  - QA: `rp-auto-20261007-bug0034-qa-20261007T205653Z-BUG-0034` /
+    `1CF2E37AB8968FC2774C9599DC3D3942664D7450B83F7FEBB55C13E96472DD57` →
+    recompute **MATCH** by both methods; **within-ttl=true** at issue
+    (2026-10-07T21:05:17Z < 2026-10-07T21:56:53Z).
+  - Execute: `rp-auto-20261007-bug0034-execute-dev-20261007T205320Z-BUG-0034` /
+    `2CF5C9D652BAF50D3AFDF354F84222221A6C42701C9A4FE0BC356CF1DAD7785D` →
+    recompute **MATCH** by both methods; **within-ttl=true** at issue
+    (2026-10-07T21:05:17Z < 2026-10-07T21:53:20Z); provenance.
+  - **No reuse**: prior-cycle execute `29132484...`, QA `F67FD246...`, and
+    verify-work `5957755B...` (auto-20261006) are provenance only, NOT reused.
+- **state checkpoints (isolation triple)**: `docs/engineering/state.md` now
+  carries the auto-20261007 BUG-0034 checkpoints
+  `## Execute checkpoint - BUG-0034 / S0167 / auto-20261007-bug0034-execute (role=dev)`,
+  `## QA checkpoint - BUG-0034 / S0167 / auto-20261007-bug0034-qa (role=qa)`, and
+  `## Verify-work checkpoint - BUG-0034 / S0167 / auto-20261007-bug0034-verify-work (role=qa)`.
+- **required release actions (explicit)**:
+  - A fresh `/release` context must **re-run the full ordered gate chain** with a
+    **fresh TEST_COMMAND harness run** (fresh `tests/report.md` from this release,
+    not the 2026-10-07T20:51:30Z one) before any finalization.
+  - It must **verify the isolation triple**: the auto-20261007 execute/qa/
+    verify-work checkpoints all present in `docs/engineering/state.md` with
+    distinct fresh markers and role alignment (dev/qa/qa).
+  - It must **verify the strict-proof chain**: all three auto-20261007 proofs
+    (execute `2CF5C9D6...`, qa `1CF2E37A...`, verify-work `F5261785...`)
+    recompute **MATCH** by both methods, and each was consumed **within TTL**
+    (all three TTLs — 21:53:20Z / 21:56:53Z / 22:05:17Z — must not be elapsed at
+    the consuming step; if any is elapsed, the chain is stale and a re-mint
+    cycle is required — no stale-proof waiver).
+  - Only then may it proceed to **Gate 5 finalization**.
+  - BUG-0034 stays OPEN: do not tick ACs, do not change backlog/acceptance, do
+    not run `/closure` from release, no publish, no push, no `.env` read.
+- **artifacts this phase**: `sprints/S0167/verify-work-findings.md` (new REPAIR #1
+  section; prior auto-20261006 record preserved below as history),
+  `sprints/S0167/uat.md` (appended REPAIR #1 reconciliation note; uat.json
+  byte-identical), `docs/engineering/state.md` (new bottom verify-work
+  checkpoint), this handoff (new top entry).
+- **stop condition**: STOP after this handoff. This verify-work context does not
+  spawn `/release`, `/closure`, or any child; orchestrator owns the next fresh
+  `/release`.
+
+---# Handoff: /verify-work -> /release -- BUG-0027 / S0160
 
 - **Sprint**: S0160
 - **Story**: (none)

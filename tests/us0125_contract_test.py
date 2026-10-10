@@ -86,6 +86,25 @@ US0125_CLONE_GUARD_STRIP_TOKENS: tuple[str, ...] = (
     "id",
 )
 
+# BUG-0033 parity-target files (DEC-0154 / R-0159 DQ6 Option A — additive).
+# These five thin command bodies carry the R-0159 DQ1/DQ2 diagnostics-only
+# `## Stop conditions` + `## Fail-safe reason codes` pair, so they legitimately
+# exceed the legacy ≤20-line *count* cap. The exemption is on the line *count*
+# alone, for these five named files only. The clone-guard *intent* — similarity
+# ≤ 0.30, the clone strip-list, and the frontmatter-shape marker — stays INTACT
+# for every file (see DEC-0154 §Decision 2). The shipped US-0156 re-addition of
+# `auto.md` (15-file inventory, 49→61 lines) was already a known line-count
+# deviation; this amendment makes the exemption explicit and scoped.
+BUG0033_PARITY_TARGETS: frozenset[str] = frozenset(
+    {
+        "closure",
+        "ask",
+        "auto",
+        "refresh-context",
+        "execute",
+    }
+)
+
 # Policy-text fragments that MUST NOT appear in command files (AC-6 —
 # validator logic belongs in Python CLIs + plugin hook, not command prose).
 POLICY_TEXT_FRAGMENTS: tuple[str, ...] = (
@@ -181,7 +200,15 @@ def test_us0125_command_inventory():
 
 
 def test_us0125_clone_guard():
-    """Marker 2 (AC-2): per-file line cap ≤ 20 + similarity ≤ 0.30 via difflib."""
+    """Marker 2 (AC-2): per-file line cap ≤ 20 + similarity ≤ 0.30 via difflib.
+
+    DEC-0154 (R-0159 DQ6 Option A): the line *count* cap is exempted for the
+    five BUG-0033 parity-target files only (they carry the DQ1/DQ2
+    diagnostics-only `## Stop conditions` + `## Fail-safe reason codes` pair).
+    The similarity ≤ 0.30 clone-guard, the clone strip-list, and the
+    frontmatter-shape marker remain INTACT for every file — only the count cap
+    is scoped-exempted.
+    """
     offenders_line: list[str] = []
     offenders_sim: list[str] = []
     for name in EXPECTED_COMMANDS:
@@ -191,7 +218,9 @@ def test_us0125_clone_guard():
         assert cursor_path.is_file(), f"missing cursor command for baseline: {name}.md"
         oc_text = oc_path.read_text(encoding="utf-8")
         line_count = len(oc_text.splitlines())
-        if line_count > 20:
+        # BUG-0033 parity targets are exempt from the line *count* cap only
+        # (DEC-0154). The similarity guard below is NOT exempted for them.
+        if name not in BUG0033_PARITY_TARGETS and line_count > 20:
             offenders_line.append(f"{name}.md: {line_count} lines > 20")
         oc_norm = _normalize_for_clone_guard(oc_text, name)
         cursor_norm = _normalize_for_clone_guard(cursor_path.read_text(encoding="utf-8"), name)
@@ -300,14 +329,18 @@ def test_us0125_missing_command_does_not_disable_plugin():
 
 
 def test_us0125_auto_command_dispatch_only():
-    """Marker 8 (AC-1, AC-7): if auto.md exists → ≤ 20 lines + no spawn
-    literals + agent: auto; absence is OK (BUG-0018 plugin-only /auto)."""
+    """Marker 8 (AC-1, AC-7): if auto.md exists → no spawn literals +
+    agent: auto + subtask: false; absence is OK (BUG-0018 plugin-only /auto).
+    DEC-0154: the ≤20 line *count* cap is exempted for auto.md (a BUG-0033
+    parity target carrying the DQ1/DQ2 diagnostics-only pair)."""
     auto_path = COMMANDS_DIR / "auto.md"
     if not auto_path.is_file():
         return
     text = auto_path.read_text(encoding="utf-8")
-    line_count = len(text.splitlines())
-    assert line_count <= 20, f"auto.md {line_count} lines > 20"
+    # DEC-0154 (R-0159 DQ6 Option A): auto.md is a BUG-0033 parity target and
+    # carries the DQ1/DQ2 diagnostics-only pair, so the ≤20 line *count* cap is
+    # exempted here (no line_count assertion). The dispatch-only contract below
+    # (no spawn literals, agent: auto, subtask: false) is NOT exempted.
     # Check the BODY (after frontmatter) for spawn-logic literals. The
     # frontmatter description "spawn-only" is permitted — it describes the
     # entry, not spawn logic.

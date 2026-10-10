@@ -1,0 +1,84 @@
+{
+  "selected_pack": "small-intake-pack",
+  "intake_run_id": "po-opencode-20261003-BUG0033-intake",
+  "writer_id": "po-opencode-20261003-BUG0033-intake",
+  "INTAKE_GUIDED_MODE": 0,
+  "INTAKE_WORK_ITEM_KIND": "bug",
+  "requested_mode": "bug",
+  "intake_boundary_utc": "2026-10-03T15:36:00Z",
+  "ID_NAMESPACE_BOOTSTRAP": 0,
+  "bug_id": "BUG-0033",
+  "asked_topics": [
+    "outcome_success_criteria",
+    "impacted_components",
+    "constraints_compatibility_risks",
+    "required_tests_acceptance_checks",
+    "done_definition"
+  ],
+  "missing_topics": [],
+  "assumptions_confirmed": "(none)",
+  "topic_coverage": [
+    {
+      "topic_key": "outcome_success_criteria",
+      "satisfied_by": "answer_ref",
+      "ref": "ie:po-opencode-20261003-BUG0033-intake:0:b9d43da7615101a5",
+      "quoted_user_text": "The thin .opencode/commands/*.md pairs (closure.md 557b, ask.md 186b, auto.md 2297b, refresh-context.md 517b, execute.md 365b) do NOT carry the rich ## Fail-safe reason codes and ## Stop conditions sections that their .cursor/commands/*.md counterparts do (closure.md 10252b, ask.md 2914b, auto.md 39231b, refresh-context.md 5793b, execute.md 23328b). Wanted: copy those two rich sections into the thin counterparts (closure.md first; then ask, auto, refresh-context, execute) while preserving active->template byte-parity (BUG-0031 precedent: shipped delta byte-identical across active + template).",
+      "intake_run_id": "po-opencode-20261003-BUG0033-intake",
+      "turn_index": 0
+    },
+    {
+      "topic_key": "impacted_components",
+      "satisfied_by": "answer_ref",
+      "ref": "ie:po-opencode-20261003-BUG0033-intake:1:45298c451267bf45",
+      "quoted_user_text": ".opencode/commands/{closure,ask,auto,refresh-context,execute}.md (THIN) and template/.opencode/commands/{closure,ask,auto,refresh-context,execute}.md (mirror). Source: .cursor/commands/{closure,ask,auto,refresh-context,execute}.md (RICH). Composable US-0120 (closure phase), US-0125 (thin opencode commands + validator bridge), US-0126 (reason codes + --scope=opencode-adapter parity), BUG-0031 (byte-identical active+template precedent), BUG-0027 (manual-phase evidence persistence), US-0156 (OpenCode /auto parity).",
+      "intake_run_id": "po-opencode-20261003-BUG0033-intake",
+      "turn_index": 1
+    },
+    {
+      "topic_key": "constraints_compatibility_risks",
+      "satisfied_by": "answer_ref",
+      "ref": "ie:po-opencode-20261003-BUG0033-intake:2:cc63a3af63519536",
+      "quoted_user_text": "active->template byte-parity must hold (BUG-0031 precedent). .opencode/agents/* unchanged; .opencode/plugins/orchestrator.ts unchanged; template/.cursor/commands/* unchanged. US-0120/US-0125/US-0126 contracts unchanged; BUG-0031 curator-allow-set UNTOUCHED; BUG-0006/US-0048 spawn-only UNTOUCHED; .opencode/tui.json stays plugin=[] (BUG-0030/DEC-0151 lock). No npm-publish, git-push, .env reads. INTAKE_AUTONOMY_MODE=0 + INTAKE_SUBAGENT_FALLBACK=deny (config.json) unchanged.",
+      "intake_run_id": "po-opencode-20261003-BUG0033-intake",
+      "turn_index": 2
+    },
+    {
+      "topic_key": "required_tests_acceptance_checks",
+      "satisfied_by": "answer_ref",
+      "ref": "ie:po-opencode-20261003-BUG0033-intake:3:a196145ca2738b13",
+      "quoted_user_text": "New test_bug0033_* markers (8) verify: (1) .opencode/commands/closure.md has both ## Fail-safe reason codes and ## Stop conditions; (2) .opencode/commands/ask.md has both; (3) .opencode/commands/auto.md has both; (4) .opencode/commands/refresh-context.md has both; (5) .opencode/commands/execute.md has both; (6) active .opencode/commands/*.md and template/.opencode/commands/*.md are byte-identical; (7) bug_issue_validate.py --check-acceptance exit 0; (8) US-0125 (thin dispatch-only) and US-0126 (reason codes) tests do not regress.",
+      "intake_run_id": "po-opencode-20261003-BUG0033-intake",
+      "turn_index": 3
+    },
+    {
+      "topic_key": "done_definition",
+      "satisfied_by": "answer_ref",
+      "ref": "ie:po-opencode-20261003-BUG0033-intake:4:596331a5624830ca",
+      "quoted_user_text": "BUG-0033 is DONE when the five thin opencode command files (closure, ask, auto, refresh-context, execute) contain the rich ## Fail-safe reason codes and ## Stop conditions sections, active+template are byte-identical, 8 test_bug0033_* markers PASS, bug_issue_validate.py --check-acceptance exit 0, and no US-0125/US-0126/BUG-0006 regression. Intake = register, not close - no ACs checked.",
+      "intake_run_id": "po-opencode-20261003-BUG0033-intake",
+      "turn_index": 4
+    }
+  ],
+  "duplicate_check_pass": true,
+  "duplicate_check_notes": "Thin/rich command-pair parity is a distinct OpenCode-host surface documentation-consistency defect. Not duplicate of BUG-0027 (manual-phase persist; distinct), BUG-0031 (closure role permission; distinct), US-0125 (thin dispatch contract; thin/rich parity is additive over US-0125), US-0126 (reason codes - parity is the fix). Distinct from every OPEN bug in the queue.",
+  "decomposition_verdict": "single_bug",
+  "decomposition_rationale": "One vertical parity gap: thin command files lack two rich sections. The five files (closure, ask, auto, refresh-context, execute) are the minimal complete fix set; splitting into smaller pieces is incomplete.",
+  "sibling_not_persisted": "BUG-0016/0022/0026/0027/0028/0029/0030/0031 UNTOUCHED. US-0154/US-0155 UNTOUCHED (OPEN). US-0156 DONE UNTOUCHED. US-0120/0125/0126 DONE (compose-only, no reopen).",
+  "WORK_KIND_ROUTING": 0,
+  "EARLY_RESEARCH": 0,
+  "FRAMEWORK_KIT_REPO": 1,
+  "related_us": [
+    "US-0120",
+    "US-0125",
+    "US-0126",
+    "US-0156",
+    "BUG-0027",
+    "BUG-0031"
+  ],
+  "related_bugs": [
+    "BUG-0016",
+    "BUG-0027",
+    "BUG-0030",
+    "BUG-0031"
+  ]
+}

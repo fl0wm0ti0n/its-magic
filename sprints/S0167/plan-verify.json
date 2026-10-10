@@ -1,0 +1,63 @@
+{
+  "schema_version": 1,
+  "story_id": null,
+  "bug_id": "BUG-0034",
+  "sprint_id": "S0167",
+  "phase_id": "plan-verify",
+  "role": "qa",
+  "orchestrator_run_id": "auto-20261006-bug0034-qa",
+  "delivery_mode": "ultra_lean",
+  "macro_phase": "build+verify",
+  "status": "PASS",
+  "verdict": "PASS",
+  "skipped": false,
+  "deferred": false,
+  "reason_code": null,
+  "verified_by": "qa",
+  "timestamp": "2026-10-06T23:50:16Z",
+  "fresh_context_marker": "qa-BUG0034-qa-20261006T235016Z-fresh",
+  "qa_runtime_proof_id": "rp-auto-20261006-bug0034-qa-20261006T235016Z-BUG-0034",
+  "qa_proof_hash": "F67FD2461747028123247ECB38CD58A2DFED634E04BB7B30176EBDFB55A4D27A",
+  "hash_recompute_confirmation": true,
+  "verification": "Ultra-lean plan-verify merged into QA. All seven BUG-0034 ACs have task coverage and fresh QA evidence. The active and template same-basename suites each passed 8/8 in separate invocations; four active/template pairs are byte-identical; ledger self-test and acceptance validator pass. US-0119 8P/2F and US-0120 9P/1F were reproduced unchanged as documented carried baselines only.",
+  "task_count": 8,
+  "acceptance_criteria": 7,
+  "ac_coverage_surjective": true,
+  "coverage_complete": true,
+  "uncovered_acs": [],
+  "gaps": [],
+  "ac_surjection": {
+    "AC-1": ["T-001", "T-002", "T-005"],
+    "AC-2": ["T-003", "T-005"],
+    "AC-3": ["T-003", "T-005"],
+    "AC-4": ["T-004", "T-005"],
+    "AC-5": ["T-anch", "T-002"],
+    "AC-6": ["T-005", "T-006"],
+    "AC-7": ["T-003", "T-006"]
+  },
+  "test_markers": [
+    "test_bug0034_matrix_row_autonomy_resolvable",
+    "test_bug0034_disambiguate_state_only_no_auto_refresh",
+    "test_bug0034_matrix_cap_three_and_rationale",
+    "test_bug0034_operator_matrix_active_template_parity",
+    "test_bug0034_reason_code_active_template_parity",
+    "test_bug0034_runbook_no_refresh_active_template_parity",
+    "test_bug0034_ledger_matrix_cap_override_audit_and_success_breadcrumb",
+    "test_bug0034_negative_pair_codes_and_compose_invariants"
+  ],
+  "evidence_refs": {
+    "execute_handoff": "handoffs/dev_to_qa.md lines 1-45",
+    "qa_findings": "sprints/S0167/qa-findings.md",
+    "matrix": "scripts/data/autonomy_stop_matrix.yaml lines 196-206",
+    "operator_docs": "docs/engineering/{autonomy-stop-matrix,reason_codes,runbook}.md and template twins",
+    "ledger": "scripts/autonomy_repair_ledger_lib.py and self-test",
+    "status": "docs/product/backlog.md lines 5717-5733; docs/product/acceptance.md line 225"
+  },
+  "non_blocking_findings": [
+    "US-0119 baseline: 8 passed, 2 failed; exactly five pre-existing US-0143 security-hard orphan reports.",
+    "US-0120 baseline: 9 passed, 1 failed; unchanged missing US-0043 architecture reference.",
+    "Execute proof hash recomputes MATCH but its TTL elapsed before this QA mint; functional evidence was independently rerun."
+  ],
+  "status_authority": "BUG-0034 remains OPEN and every backlog/acceptance AC remains unchecked; QA assessed evidence only.",
+  "next_phase_after_plan_verify": "/verify-work (fresh qa context, orchestrator-owned); no downstream phase was run by this QA context."
+}

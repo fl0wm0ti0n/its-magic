@@ -1,3 +1,497 @@
+# Resume Brief — BUG-0033 REFRESH_CONTEXT_PASS continuation pair (state-first, DEC-0153)
+
+- `record_key`: `auto-20261010-bug0033-refresh|bug|BUG-0033|refresh-context|rp-auto-20261010-bug0033-refresh-curator-20261010T215656Z-BUG-0033`
+- `orchestrator_run_id`: **`auto-20261010-bug0033-refresh`**
+- `work_item_kind`: **`bug`**; `bug_id`: **`BUG-0033`**; `completed_phase`: **`refresh-context`**; `writer_role`: **`curator`**
+- `phase_id`: **`refresh-context`**; `role`: **`curator`**; `verdict`: **`REFRESH_CONTEXT_PASS`**; `decision_gate`: **`false`**
+- `sprint_id`: **`S0168`**; `refresh_anchor`: `docs/engineering/state.md` REFRESH_CONTEXT_PASS checkpoint (segment terminal; harness provenance 2026-10-10T21:55:19Z Pass=879 Fail=0)
+- `intended_resume_phase`: **`none`**; `next_scheduled_phase`: **`none`**; `next_scheduled_role`: **`none`**
+- `resolution_source`: **`phase_child:refresh-context`**; `effective_plan`: `[spec, plan, build+verify, ship]`; `skipped_phases`: `[discovery]`; `completed_phases`: `[intake,research,architecture,sprint-plan,execute,qa,verify-work,release,closure,refresh-context]`; `phase_cursor`: **`ship/segment-complete`**
+- `budget_scope`: `explicit BUG-0033 only; AUTO_LOOP_MAX_CYCLES=40; backlog_drain_active=false; bug_queue_active=false`
+- `stop_reason`: **`completed`**; `stop_matrix_action`: **`SEGMENT_COMPLETE; do_not_drain; explicit BUG-0033 only`**
+- `fresh_context_marker`: **`curator-BUG0033-refresh-20261010T215656Z-fresh`**; `child_isolation_ref`: `docs/engineering/state.md#refresh-context-checkpoint-bug-0033-s0168-auto-20261010-bug0033-refresh`
+- `runtime_proof_id`: **`rp-auto-20261010-bug0033-refresh-curator-20261010T215656Z-BUG-0033`**; `proof_hash`: **`4b7d27ebe23f1768839f048825a8f69d99bd926fc1bb315a072f5fcd07c6bfea`**; `proof_issued_at`: `2026-10-10T21:56:56Z`; `proof_ttl_seconds`: `3600`; `proof_ttl`: `2026-10-10T22:56:56Z`; `hash_recompute_confirmation=true` (lib `compute_strict_proof_hash` + independent hashlib SHA-256 over verbatim DEC-0038 6-tuple; identical hexdigest)
+- `bug_status`: **BUG-0033 DONE** (backlog `Status: DONE`, AC-1..AC-8 `[x]`, acceptance L224 `[x]`)
+- **Pair validation / ordering:** refresh-context checkpoint appended **BOTTOM** first (DEC-0040 / DEC-0153 / DEC-0069), including this pair record. This brief prepend follows state-first. Segment complete — no further scheduled phase for BUG-0033.
+
+```json
+{"record_key":"auto-20261010-bug0033-refresh|bug|BUG-0033|refresh-context|rp-auto-20261010-bug0033-refresh-curator-20261010T215656Z-BUG-0033","orchestrator_run_id":"auto-20261010-bug0033-refresh","work_item_kind":"bug","bug_id":"BUG-0033","completed_phase":"refresh-context","writer_role":"curator","role":"curator","fresh_context_marker":"curator-BUG0033-refresh-20261010T215656Z-fresh","resolution_source":"phase_child:refresh-context","effective_plan":["spec","plan","build+verify","ship"],"skipped_phases":["discovery"],"completed_phases":["intake","research","architecture","sprint-plan","execute","qa","verify-work","release","closure","refresh-context"],"next_scheduled_phase":"none","next_scheduled_role":"none","phase_cursor":"ship/segment-complete","budget_scope":"explicit BUG-0033 only; AUTO_LOOP_MAX_CYCLES=40; backlog_drain_active=false; bug_queue_active=false","stop_reason":"completed","runtime_proof_id":"rp-auto-20261010-bug0033-refresh-curator-20261010T215656Z-BUG-0033","proof_hash":"4b7d27ebe23f1768839f048825a8f69d99bd926fc1bb315a072f5fcd07c6bfea","proof_issued_at":"2026-10-10T21:56:56Z","proof_ttl_seconds":3600,"phase_id":"refresh-context","stop_matrix_action":"SEGMENT_COMPLETE; do_not_drain; explicit BUG-0033 only"}
+```
+
+- **STOP:** `SEGMENT_COMPLETE; do_not_drain; explicit BUG-0033 only`. Ship macro terminal. Orchestrator owns any future drain-advance; this curator child did NOT spawn `/auto` or reopen BUG-0033.
+
+---
+
+# Resume Brief — BUG-0033 CLOSURE_PASS continuation pair (state-first, DEC-0153)
+
+- `record_key`: `auto-20261010-bug0033-closure2|bug|BUG-0033|closure|rp-auto-20261010-bug0033-closure2-curator-20261010T213800Z-BUG-0033`
+- `orchestrator_run_id`: **`auto-20261010-bug0033-closure2`**
+- `work_item_kind`: **`bug`**; `bug_id`: **`BUG-0033`**; `completed_phase`: **`closure`**; `writer_role`: **`curator`**
+- `phase_id`: **`closure`**; `role`: **`curator`**; `verdict`: **`CLOSURE_PASS`**; `decision_gate`: **`false`**
+- `sprint_id`: **`S0168`**; `closure_anchor`: `docs/engineering/state.md` CLOSURE_PASS checkpoint (closure2; harness 2026-10-10T21:55:19Z Pass=879 Fail=0)
+- `intended_resume_phase`: **`refresh-context`**; `next_scheduled_phase`: **`refresh-context`**; `next_scheduled_role`: **`curator`**
+- `resolution_source`: **`phase_child:closure`**; `effective_plan`: `[spec, plan, build+verify, ship]`; `skipped_phases`: `[discovery]`; `completed_phases`: `[intake,research,architecture,sprint-plan,execute,qa,verify-work,release,closure]`; `phase_cursor`: **`ship/closure-pass`**
+- `budget_scope`: `explicit BUG-0033 only; AUTO_LOOP_MAX_CYCLES=40; backlog_drain_active=false; bug_queue_active=true`
+- `stop_reason`: **`closure_complete_phase_boundary`**; `stop_matrix_action`: **`STOP_AFTER_CLOSURE_PASS; validate_pair_then_parent_may_spawn_refresh-context`**
+- `fresh_context_marker`: **`curator-BUG0033-closure2-20261010T213800Z-fresh`**; `child_isolation_ref`: `docs/engineering/state.md#closure-checkpoint-bug-0033-s0168-auto-20261010-bug0033-closure2`
+- `runtime_proof_id`: **`rp-auto-20261010-bug0033-closure2-curator-20261010T213800Z-BUG-0033`**; `proof_hash`: **`53A0D8AB729DC3204528A988D85B0981C554DEE25674699C7213BBF13F7BF8C7`**; `proof_issued_at`: `2026-10-10T21:38:00Z`; `proof_ttl_seconds`: `3600`; `proof_ttl`: `2026-10-10T22:38:00Z`; `hash_recompute_confirmation=true` (lib `compute_strict_proof_hash` + independent hashlib SHA-256 over verbatim DEC-0038 6-tuple; identical hexdigest)
+- `bug_status`: **BUG-0033 DONE** (backlog `Status: DONE`, AC-1..AC-8 `[x]`, acceptance L224 `[x]`)
+- **Pair validation / ordering:** closure checkpoint appended **BOTTOM** first (DEC-0040 / DEC-0153 / DEC-0069), including this pair record. This brief prepend follows state-first. Parent remains read/validate/spawn-only.
+
+```json
+{"record_key":"auto-20261010-bug0033-closure2|bug|BUG-0033|closure|rp-auto-20261010-bug0033-closure2-curator-20261010T213800Z-BUG-0033","orchestrator_run_id":"auto-20261010-bug0033-closure2","work_item_kind":"bug","bug_id":"BUG-0033","completed_phase":"closure","writer_role":"curator","role":"curator","fresh_context_marker":"curator-BUG0033-closure2-20261010T213800Z-fresh","resolution_source":"phase_child:closure","effective_plan":["spec","plan","build+verify","ship"],"skipped_phases":["discovery"],"completed_phases":["intake","research","architecture","sprint-plan","execute","qa","verify-work","release","closure"],"next_scheduled_phase":"refresh-context","next_scheduled_role":"curator","phase_cursor":"ship/closure-pass","budget_scope":"explicit BUG-0033 only; AUTO_LOOP_MAX_CYCLES=40; backlog_drain_active=false; bug_queue_active=true","stop_reason":"closure_complete_phase_boundary","runtime_proof_id":"rp-auto-20261010-bug0033-closure2-curator-20261010T213800Z-BUG-0033","proof_hash":"53A0D8AB729DC3204528A988D85B0981C554DEE25674699C7213BBF13F7BF8C7","proof_issued_at":"2026-10-10T21:38:00Z","proof_ttl_seconds":3600,"phase_id":"closure","stop_matrix_action":"STOP_AFTER_CLOSURE_PASS; validate_pair_then_parent_may_spawn_refresh-context"}
+```
+
+- **STOP:** `STOP_AFTER_CLOSURE_PASS; validate_pair_then_parent_may_spawn_refresh-context`. Parent is read/validate/spawn-only. It may spawn fresh `/refresh-context` in a fresh **curator** context for BUG-0033/S0168 only after independently validating this pair. This closure child did NOT spawn it.
+
+---
+
+# Resume Brief — BUG-0033 RELEASE_PASS continuation pair (state-first, DEC-0153)
+
+- `record_key`: `auto-20261010-bug0033-release2|bug|BUG-0033|release|rp-auto-20261010-bug0033-release2-release-20261010T211739Z-BUG-0033`
+- `orchestrator_run_id`: **`auto-20261010-bug0033-release2`**
+- `work_item_kind`: **`bug`**; `bug_id`: **`BUG-0033`**; `completed_phase`: **`release`**; `writer_role`: **`release`**
+- `phase_id`: **`release`**; `role`: **`release`**; `verdict`: **`RELEASE_PASS`**; `decision_gate`: **`false`**
+- `sprint_id`: **`S0168`**; `release_anchor`: `docs/engineering/state.md` RELEASE_PASS checkpoint (release2; harness 2026-10-10T21:26:41Z Pass=879 Fail=0)
+- `intended_resume_phase`: **`closure`**; `next_scheduled_phase`: **`closure`**; `next_scheduled_role`: **`curator`**
+- `resolution_source`: **`phase_child:release`**; `effective_plan`: `[spec, plan, build+verify, ship]`; `skipped_phases`: `[discovery]`; `completed_phases`: `[intake,research,architecture,sprint-plan,execute,qa,verify-work,release]`; `phase_cursor`: **`ship/release-pass`**
+- `budget_scope`: `explicit BUG-0033 only; AUTO_LOOP_MAX_CYCLES=40; backlog_drain_active=false; bug_queue_active=true`
+- `stop_reason`: **`release_complete_phase_boundary`**; `stop_matrix_action`: **`STOP_AFTER_RELEASE_PASS; validate_pair_then_parent_may_spawn_closure`**
+- `fresh_context_marker`: **`release-BUG0033-20261010T211739Z-fresh`**; `child_isolation_ref`: `docs/engineering/state.md#release-checkpoint-bug-0033-s0168-auto-20261010-bug0033-release2`
+- `runtime_proof_id`: **`rp-auto-20261010-bug0033-release2-release-20261010T211739Z-BUG-0033`**; `proof_hash`: **`8ba3e0d39bd3e8342bbe071d2488a15e4923c4aab92efd7e38e8a26715a5c132`**; `proof_issued_at`: `2026-10-10T21:17:39Z`; `proof_ttl_seconds`: `3600`; `proof_ttl`: `2026-10-10T22:17:39Z`; `hash_recompute_confirmation=true` (lib `compute_strict_proof_hash` + independent hashlib SHA-256 over verbatim DEC-0038 6-tuple; identical hexdigest)
+- `bug_status`: **BUG-0033 remains OPEN**, AC-1..AC-8 unchecked (closure owns the flip per US-0045)
+- **Pair validation / ordering:** release checkpoint appended **BOTTOM** first (DEC-0040 / DEC-0153 / DEC-0069), including this pair record. This brief prepend follows state-first. Parent remains read/validate/spawn-only.
+
+```json
+{"record_key":"auto-20261010-bug0033-release2|bug|BUG-0033|release|rp-auto-20261010-bug0033-release2-release-20261010T211739Z-BUG-0033","orchestrator_run_id":"auto-20261010-bug0033-release2","work_item_kind":"bug","bug_id":"BUG-0033","completed_phase":"release","writer_role":"release","role":"release","fresh_context_marker":"release-BUG0033-20261010T211739Z-fresh","resolution_source":"phase_child:release","effective_plan":["spec","plan","build+verify","ship"],"skipped_phases":["discovery"],"completed_phases":["intake","research","architecture","sprint-plan","execute","qa","verify-work","release"],"next_scheduled_phase":"closure","next_scheduled_role":"curator","phase_cursor":"ship/release-pass","budget_scope":"explicit BUG-0033 only; AUTO_LOOP_MAX_CYCLES=40; backlog_drain_active=false; bug_queue_active=true","stop_reason":"release_complete_phase_boundary","runtime_proof_id":"rp-auto-20261010-bug0033-release2-release-20261010T211739Z-BUG-0033","proof_hash":"8ba3e0d39bd3e8342bbe071d2488a15e4923c4aab92efd7e38e8a26715a5c132","proof_issued_at":"2026-10-10T21:17:39Z","proof_ttl_seconds":3600,"phase_id":"release","stop_matrix_action":"STOP_AFTER_RELEASE_PASS; validate_pair_then_parent_may_spawn_closure"}
+```
+
+- **STOP:** `STOP_AFTER_RELEASE_PASS; validate_pair_then_parent_may_spawn_closure`. Parent is read/validate/spawn-only. It may spawn fresh `/closure` in a fresh **curator** context for BUG-0033/S0168 only after independently validating this pair. This release child did not spawn it.
+
+---
+
+# Resume Brief — BUG-0033 VERIFY_PASS continuation pair (state-first, DEC-0153)
+
+- `record_key`: `auto-20261010-bug0033-verify-pair|bug|BUG-0033|verify-work|rp-auto-20261010-bug0033-verify-pair-curator-20261010T211336Z-BUG-0033`
+- `orchestrator_run_id`: **`auto-20261010-bug0033-verify-pair`**
+- `work_item_kind`: **`bug`**; `bug_id`: **`BUG-0033`**; `completed_phase`: **`verify-work`**; `writer_role`: **`curator`**
+- `phase_id`: **`verify-work`**; `role`: **`curator`**; `verdict`: **`VERIFY_PASS`** (provenance: verifywork2 VERIFY_PASS checkpoint); `decision_gate`: **`false`**
+- `sprint_id`: **`S0168`**; `verify_work_anchor`: `docs/engineering/state.md` VERIFY_PASS checkpoint (verifywork2; harness 2026-10-10T21:01:29Z Pass=879 Fail=0); consumed verify proof `rp-auto-20261010-bug0033-verifywork2-qa-20261010T205038Z-BUG-0033` (provenance only)
+- `intended_resume_phase`: **`release`**; `next_scheduled_phase`: **`release`**; `next_scheduled_role`: **`release`**
+- `resolution_source`: **`operator:resume-pair-repair`**; `effective_plan`: `[spec, plan, build+verify, ship]`; `skipped_phases`: `[discovery]`; `completed_phases`: `[intake,research,architecture,sprint-plan,execute,qa,verify-work]`; `phase_cursor`: **`build+verify/verify-pass`**
+- `budget_scope`: `explicit BUG-0033 only; AUTO_LOOP_MAX_CYCLES=40; backlog_drain_active=false; bug_queue_active=true`
+- `stop_reason`: **`verify_work_complete_phase_boundary`**; `stop_matrix_action`: **`STOP_AFTER_VERIFY_PASS_PAIR; validate_pair_then_parent_may_spawn_release`**
+- `fresh_context_marker`: **`curator-BUG0033-verifypair-20261010T211336Z-fresh`**; `child_isolation_ref`: `docs/engineering/state.md#verify-work-pair-repair-bug-0033-s0168-auto-20261010-bug0033-verify-pair`
+- `runtime_proof_id`: **`rp-auto-20261010-bug0033-verify-pair-curator-20261010T211336Z-BUG-0033`**; `proof_hash`: **`ff14618e9804de84d4abb92c66460c7032da6daf85163cd17f4d556a284657ac`**; `proof_issued_at`: `2026-10-10T21:13:36Z`; `proof_ttl_seconds`: `3600`; `proof_ttl`: `2026-10-10T22:13:36Z`; `hash_recompute_confirmation=true` (lib `compute_strict_proof_hash` + independent hashlib SHA-256 over verbatim DEC-0038 6-tuple; identical hexdigest; 0 prior occurrences repo-wide — RUNTIME_PROOF_REUSED honored)
+- `bug_status`: **BUG-0033 remains OPEN**, AC-1..AC-8 unchecked (closure owns the flip per US-0045)
+- **Repair/hard-gate lock:** operator-authorized DEC-0153 pair repair replacing stale qa-pair top pointer (`next_scheduled_phase=verify-work`) after verifywork2 VERIFY_PASS. Curator signs continuation pointer only; not a re-run of verify-work. Prior blocks below retained intact.
+- **Pair validation / ordering:** matching state checkpoint appended **BOTTOM** first (DEC-0040 / DEC-0153 / DEC-0069). Exact-key, canonical tuple, role/authorization, fresh marker/proof, and DEC-0038 strict-proof validation passed. State and brief carry the identical canonical record.
+
+```json
+{"record_key":"auto-20261010-bug0033-verify-pair|bug|BUG-0033|verify-work|rp-auto-20261010-bug0033-verify-pair-curator-20261010T211336Z-BUG-0033","orchestrator_run_id":"auto-20261010-bug0033-verify-pair","work_item_kind":"bug","bug_id":"BUG-0033","completed_phase":"verify-work","writer_role":"curator","role":"curator","fresh_context_marker":"curator-BUG0033-verifypair-20261010T211336Z-fresh","resolution_source":"operator:resume-pair-repair","effective_plan":["spec","plan","build+verify","ship"],"skipped_phases":["discovery"],"completed_phases":["intake","research","architecture","sprint-plan","execute","qa","verify-work"],"next_scheduled_phase":"release","next_scheduled_role":"release","phase_cursor":"build+verify/verify-pass","budget_scope":"explicit BUG-0033 only; AUTO_LOOP_MAX_CYCLES=40; backlog_drain_active=false; bug_queue_active=true","stop_reason":"verify_work_complete_phase_boundary","runtime_proof_id":"rp-auto-20261010-bug0033-verify-pair-curator-20261010T211336Z-BUG-0033","proof_hash":"ff14618e9804de84d4abb92c66460c7032da6daf85163cd17f4d556a284657ac","proof_issued_at":"2026-10-10T21:13:36Z","proof_ttl_seconds":3600,"phase_id":"verify-work","stop_matrix_action":"STOP_AFTER_VERIFY_PASS_PAIR; validate_pair_then_parent_may_spawn_release"}
+```
+
+- **STOP:** `STOP_AFTER_VERIFY_PASS_PAIR; validate_pair_then_parent_may_spawn_release`. Parent is read/validate/spawn-only. It may spawn fresh `/release` in a fresh **release** context for BUG-0033/S0168 only after independently validating this pair. This curator repair child did not spawn it.
+
+---
+
+# Resume Brief — BUG-0033 QA_PASS continuation pair (state-first, DEC-0153)
+
+- `record_key`: `auto-20261010-bug0033-qa-pair|bug|BUG-0033|qa|rp-auto-20261010-bug0033-qa-pair-curator-20261010T204746Z-BUG-0033`
+- `orchestrator_run_id`: **`auto-20261010-bug0033-qa-pair`**
+- `work_item_kind`: **`bug`**; `bug_id`: **`BUG-0033`**; `completed_phase`: **`qa`**; `writer_role`: **`curator`**
+- `phase_id`: **`qa`**; `role`: **`curator`**; `verdict`: **`QA_PASS`** (provenance: qa3 QA_PASS checkpoint); `decision_gate`: **`false`**
+- `sprint_id`: **`S0168`**; `qa_anchor`: `docs/engineering/state.md` QA_PASS checkpoint (qa3; harness 2026-10-10T19:48:23Z Pass=879 Fail=0); consumed qa proof `rp-auto-20261010-bug0033-qa3-qa-20261010T193901Z-BUG-0033` (provenance only)
+- `intended_resume_phase`: **`verify-work`**; `next_scheduled_phase`: **`verify-work`**; `next_scheduled_role`: **`qa`**
+- `resolution_source`: **`operator:resume-pair-repair`**; `effective_plan`: `[spec, plan, build+verify, ship]`; `skipped_phases`: `[discovery]`; `completed_phases`: `[intake,research,architecture,sprint-plan,execute,qa]`; `phase_cursor`: **`build+verify/qa-pass`**
+- `budget_scope`: `explicit BUG-0033 only; AUTO_LOOP_MAX_CYCLES=40; backlog_drain_active=false; bug_queue_active=true`
+- `stop_reason`: **`qa_complete_phase_boundary`**; `stop_matrix_action`: **`STOP_AFTER_QA_PASS_PAIR; validate_pair_then_parent_may_spawn_verify-work`**
+- `fresh_context_marker`: **`curator-BUG0033-qapair-20261010T204746Z-fresh`**; `child_isolation_ref`: `docs/engineering/state.md#qa-pair-repair-bug-0033-s0168-auto-20261010-bug0033-qa-pair`
+- `runtime_proof_id`: **`rp-auto-20261010-bug0033-qa-pair-curator-20261010T204746Z-BUG-0033`**; `proof_hash`: **`bd327520e4ce19d2cf9dd995091bb780cff71d9d01b87462023d75c0dd8b07c1`**; `proof_issued_at`: `2026-10-10T20:47:46Z`; `proof_ttl_seconds`: `3600`; `proof_ttl`: `2026-10-10T21:47:46Z`; `hash_recompute_confirmation=true` (lib `compute_strict_proof_hash` + independent hashlib SHA-256 over verbatim DEC-0038 6-tuple; identical hexdigest; 0 prior occurrences repo-wide — RUNTIME_PROOF_REUSED honored)
+- `bug_status`: **BUG-0033 remains OPEN**, AC-1..AC-8 unchecked (closure owns the flip per US-0045)
+- **Repair/hard-gate lock:** operator-authorized DEC-0153 pair repair replacing stale execute-pair top pointer (`next_scheduled_phase=qa`) after qa3 QA_PASS. Curator signs continuation pointer only; not a re-run of QA. Prior blocks below retained intact.
+- **Pair validation / ordering:** matching state checkpoint appended **BOTTOM** first (DEC-0040 / DEC-0153 / DEC-0069). Exact-key, canonical tuple, role/authorization, fresh marker/proof, and DEC-0038 strict-proof validation passed. State and brief carry the identical canonical record.
+
+```json
+{"record_key":"auto-20261010-bug0033-qa-pair|bug|BUG-0033|qa|rp-auto-20261010-bug0033-qa-pair-curator-20261010T204746Z-BUG-0033","orchestrator_run_id":"auto-20261010-bug0033-qa-pair","work_item_kind":"bug","bug_id":"BUG-0033","completed_phase":"qa","writer_role":"curator","role":"curator","fresh_context_marker":"curator-BUG0033-qapair-20261010T204746Z-fresh","resolution_source":"operator:resume-pair-repair","effective_plan":["spec","plan","build+verify","ship"],"skipped_phases":["discovery"],"completed_phases":["intake","research","architecture","sprint-plan","execute","qa"],"next_scheduled_phase":"verify-work","next_scheduled_role":"qa","phase_cursor":"build+verify/qa-pass","budget_scope":"explicit BUG-0033 only; AUTO_LOOP_MAX_CYCLES=40; backlog_drain_active=false; bug_queue_active=true","stop_reason":"qa_complete_phase_boundary","runtime_proof_id":"rp-auto-20261010-bug0033-qa-pair-curator-20261010T204746Z-BUG-0033","proof_hash":"bd327520e4ce19d2cf9dd995091bb780cff71d9d01b87462023d75c0dd8b07c1","proof_issued_at":"2026-10-10T20:47:46Z","proof_ttl_seconds":3600,"phase_id":"qa","stop_matrix_action":"STOP_AFTER_QA_PASS_PAIR; validate_pair_then_parent_may_spawn_verify-work"}
+```
+
+- **STOP:** `STOP_AFTER_QA_PASS_PAIR; validate_pair_then_parent_may_spawn_verify-work`. Parent is read/validate/spawn-only. It may spawn fresh `/verify-work` in a fresh **qa** context for BUG-0033/S0168 only after independently validating this pair. This curator repair child did not spawn it.
+
+---
+
+# Resume Brief — BUG-0033 EXECUTE_PASS continuation pair (state-first, DEC-0153)
+
+- `record_key`: `auto-20261010-bug0033-execute-pair|bug|BUG-0033|execute|rp-auto-20261010-bug0033-execute-pair-curator-20261010T192730Z-BUG-0033`
+- `orchestrator_run_id`: **`auto-20261010-bug0033-execute-pair`**
+- `work_item_kind`: **`bug`**; `bug_id`: **`BUG-0033`**; `completed_phase`: **`execute`**; `writer_role`: **`curator`**
+- `phase_id`: **`execute`**; `role`: **`curator`**; `verdict`: **`EXECUTE_PASS`** (provenance: dev readme-row checkpoint); `decision_gate`: **`false`**
+- `sprint_id`: **`S0168`**; `execute_anchor`: `docs/engineering/state.md` EXECUTE_PASS checkpoint (L1174-L1188; README feature-coverage row shipped); consumed dev proof `rp-auto-20261010-bug0033-readme-row-dev-20261010T184550Z-BUG-0033` (provenance only)
+- `intended_resume_phase`: **`qa`**; `next_scheduled_phase`: **`qa`**; `next_scheduled_role`: **`qa`**
+- `resolution_source`: **`operator:resume-pair-repair`**; `effective_plan`: `[spec, plan, build+verify, ship]`; `skipped_phases`: `[discovery]`; `completed_phases`: `[intake,research,architecture,sprint-plan,execute]`; `phase_cursor`: **`build+verify/execute-pass-rework`**
+- `budget_scope`: `explicit BUG-0033 only; AUTO_LOOP_MAX_CYCLES=40; backlog_drain_active=false; bug_queue_active=true`
+- `stop_reason`: **`execute_complete_phase_boundary`**; `stop_matrix_action`: **`STOP_AFTER_EXECUTE_PASS_PAIR; validate_pair_then_parent_may_spawn_qa`**
+- `fresh_context_marker`: **`curator-BUG0033-executepair-20261010T192730Z-fresh`**; `child_isolation_ref`: `docs/engineering/state.md#execute-pair-repair-bug-0033-s0168-auto-20261010-bug0033-execute-pair`
+- `runtime_proof_id`: **`rp-auto-20261010-bug0033-execute-pair-curator-20261010T192730Z-BUG-0033`**; `proof_hash`: **`401103e76dad8401c2ad7bb27d47d79674c388fb4b32e3114fa3384626ba28b8`**; `proof_issued_at`: `2026-10-10T19:27:30Z`; `proof_ttl_seconds`: `3600`; `proof_ttl`: `2026-10-10T20:27:30Z`; `hash_recompute_confirmation=true` (lib `compute_strict_proof_hash` + independent hashlib SHA-256 over verbatim DEC-0038 6-tuple; identical hexdigest; 0 prior occurrences repo-wide — RUNTIME_PROOF_REUSED honored)
+- `bug_status`: **BUG-0033 remains OPEN**, AC-1..AC-8 unchecked (closure owns the flip per US-0045)
+- **Repair/hard-gate lock:** operator-authorized DEC-0153 pair repair replacing stale closure-pair top pointer (`next_scheduled_phase=execute`) after dev EXECUTE_PASS. Curator signs continuation pointer only; not a re-execution. Prior blocks below retained intact.
+- **Pair validation / ordering:** matching state checkpoint appended **BOTTOM** first (DEC-0040 / DEC-0153 / DEC-0069). Exact-key, canonical tuple, role/authorization, fresh marker/proof, and DEC-0038 strict-proof validation passed. State and brief carry the identical canonical record.
+
+```json
+{"record_key":"auto-20261010-bug0033-execute-pair|bug|BUG-0033|execute|rp-auto-20261010-bug0033-execute-pair-curator-20261010T192730Z-BUG-0033","orchestrator_run_id":"auto-20261010-bug0033-execute-pair","work_item_kind":"bug","bug_id":"BUG-0033","completed_phase":"execute","writer_role":"curator","role":"curator","fresh_context_marker":"curator-BUG0033-executepair-20261010T192730Z-fresh","resolution_source":"operator:resume-pair-repair","effective_plan":["spec","plan","build+verify","ship"],"skipped_phases":["discovery"],"completed_phases":["intake","research","architecture","sprint-plan","execute"],"next_scheduled_phase":"qa","next_scheduled_role":"qa","phase_cursor":"build+verify/execute-pass-rework","budget_scope":"explicit BUG-0033 only; AUTO_LOOP_MAX_CYCLES=40; backlog_drain_active=false; bug_queue_active=true","stop_reason":"execute_complete_phase_boundary","runtime_proof_id":"rp-auto-20261010-bug0033-execute-pair-curator-20261010T192730Z-BUG-0033","proof_hash":"401103e76dad8401c2ad7bb27d47d79674c388fb4b32e3114fa3384626ba28b8","proof_issued_at":"2026-10-10T19:27:30Z","proof_ttl_seconds":3600,"phase_id":"execute","stop_matrix_action":"STOP_AFTER_EXECUTE_PASS_PAIR; validate_pair_then_parent_may_spawn_qa"}
+```
+
+- **STOP:** `STOP_AFTER_EXECUTE_PASS_PAIR; validate_pair_then_parent_may_spawn_qa`. Parent is read/validate/spawn-only. It may spawn fresh `/qa` in a fresh **qa** context for BUG-0033/S0168 only after independently validating this pair. This curator repair child did not spawn it.
+
+---
+
+# Resume Brief — BUG-0033 CLOSURE_BLOCKED continuation pair (state-first, DEC-0153)
+
+- `record_key`: `auto-20261010-bug0033-closure-pair|bug|BUG-0033|closure|rp-auto-20261010-bug0033-closure-pair-curator-20261010T183200Z-BUG-0033`
+- `orchestrator_run_id`: **`auto-20261010-bug0033-closure-pair`**
+- `work_item_kind`: **`bug`**; `bug_id`: **`BUG-0033`**; `completed_phase`: **`closure`**; `writer_role`: **`curator`**
+- `phase_id`: **`closure`**; `role`: **`curator`**; `verdict`: **`CLOSURE_BLOCKED`**; `reason_code`: **`BUG0033_README_FEATURE_COVERAGE_GAP`**; `decision_gate`: **`false`**
+- `sprint_id`: **`S0168`**; `closure_anchor`: `docs/engineering/state.md` CLOSURE_BLOCKED checkpoint (L1125-L1149; flip reverted OPEN); `closure_verification`: `sprints/S0168/closure-verification.md` (CLOSURE_BLOCKED record)
+- `intended_resume_phase`: **`execute`**; `next_scheduled_phase`: **`execute`**; `next_scheduled_role`: **`dev`**
+- `resolution_source`: **`operator:resume-pair-repair`**; `effective_plan`: `[spec, plan, build+verify, ship]`; `skipped_phases`: `[discovery]`; `completed_phases`: `[intake,research,architecture,sprint-plan,execute,qa,verify-work,release,closure]`; `phase_cursor`: **`ship/closure-blocked-rework`**
+- `budget_scope`: `explicit BUG-0033 only; AUTO_LOOP_MAX_CYCLES=40; backlog_drain_active=false; bug_queue_active=true`
+- `stop_reason`: **`closure_blocked_phase_boundary`**; `stop_matrix_action`: **`STOP_AFTER_CLOSURE_BLOCKED_PAIR; validate_pair_then_parent_may_spawn_execute`**
+- `fresh_context_marker`: **`curator-BUG0033-closurepair-20261010T183200Z-fresh`**; `child_isolation_ref`: `docs/engineering/state.md#closure-pair-repair-bug-0033-s0168-auto-20261010-bug0033-closure-pair`
+- `runtime_proof_id`: **`rp-auto-20261010-bug0033-closure-pair-curator-20261010T183200Z-BUG-0033`**; `proof_hash`: **`30768be4225678d651a5b0de7e1224f238ade953ac9c8246d2a662446724b881`**; `proof_issued_at`: `2026-10-10T18:32:00Z`; `proof_ttl_seconds`: `3600`; `proof_ttl`: `2026-10-10T19:32:00Z`; `hash_recompute_confirmation=true` (lib `compute_strict_proof_hash` + independent hashlib SHA-256 over verbatim DEC-0038 6-tuple; identical hexdigest; 0 prior occurrences repo-wide — RUNTIME_PROOF_REUSED honored)
+- `bug_status`: **BUG-0033 remains OPEN**, AC-1..AC-8 unchecked (closure owns the flip per US-0045); remediation scope = ship missing README feature-coverage row (US-0091) via fresh `/execute` dev
+- **Repair/hard-gate lock:** operator-authorized DEC-0153 pair repair replacing stale sprint-plan top pointer (TTL expired 2026-10-08T22:48:33Z) after parent `RESUME_BRIEF_STALE` / `RESUME_BRIEF_AUTO_REFRESH=0`. Prior blocks below retained intact.
+- **Pair validation / ordering:** matching state checkpoint appended **BOTTOM** first (DEC-0040 / DEC-0153 / DEC-0069). Exact-key, canonical tuple, role/authorization, fresh marker/proof, and DEC-0038 strict-proof validation passed. State and brief carry the identical canonical record.
+
+```json
+{"record_key":"auto-20261010-bug0033-closure-pair|bug|BUG-0033|closure|rp-auto-20261010-bug0033-closure-pair-curator-20261010T183200Z-BUG-0033","orchestrator_run_id":"auto-20261010-bug0033-closure-pair","work_item_kind":"bug","bug_id":"BUG-0033","completed_phase":"closure","writer_role":"curator","role":"curator","fresh_context_marker":"curator-BUG0033-closurepair-20261010T183200Z-fresh","resolution_source":"operator:resume-pair-repair","effective_plan":["spec","plan","build+verify","ship"],"skipped_phases":["discovery"],"completed_phases":["intake","research","architecture","sprint-plan","execute","qa","verify-work","release","closure"],"next_scheduled_phase":"execute","next_scheduled_role":"dev","phase_cursor":"ship/closure-blocked-rework","budget_scope":"explicit BUG-0033 only; AUTO_LOOP_MAX_CYCLES=40; backlog_drain_active=false; bug_queue_active=true","stop_reason":"closure_blocked_phase_boundary","runtime_proof_id":"rp-auto-20261010-bug0033-closure-pair-curator-20261010T183200Z-BUG-0033","proof_hash":"30768be4225678d651a5b0de7e1224f238ade953ac9c8246d2a662446724b881","proof_issued_at":"2026-10-10T18:32:00Z","proof_ttl_seconds":3600,"phase_id":"closure","stop_matrix_action":"STOP_AFTER_CLOSURE_BLOCKED_PAIR; validate_pair_then_parent_may_spawn_execute"}
+```
+
+- **STOP:** `STOP_AFTER_CLOSURE_BLOCKED_PAIR; validate_pair_then_parent_may_spawn_execute`. Parent is read/validate/spawn-only. It may spawn fresh `/execute` in a fresh **dev** context for BUG-0033/S0168 only after independently validating this pair. This curator repair child did not spawn it.
+
+---
+
+# Resume Brief — BUG-0033 SPRINT_PLAN_PASS continuation pair (state-first, DEC-0153)
+
+- `record_key`: `auto-20261008-bug0033-sprint-plan|bug|BUG-0033|sprint-plan|rp-auto-20261008-bug0033-sprint-plan-techlead-20261008T214833Z-BUG-0033`
+- `orchestrator_run_id`: **`auto-20261008-bug0033-sprint-plan`**
+- `work_item_kind`: **`bug`**; `bug_id`: **`BUG-0033`**; `completed_phase`: **`sprint-plan`**; `writer_role`: **`tech-lead`**
+- `phase_id`: **`sprint-plan`**; `role`: **`tech-lead`**; `verdict`: **`SPRINT_PLAN_PASS`**; `reason_code`: **`BUG0033_SPRINT_PLAN_PASS`**; `decision_gate`: **`false`**
+- `research_anchor`: `docs/engineering/research.md ## R-0159` (L16158-L16344; DQ1-DQ8) — **consumed + verified** (architecture proof `D9BF2A40…E91` recomputed MATCH by both methods; current 2026-10-08T21:45:40Z < TTL 2026-10-08T22:27:25Z → NOT_STALE); `architecture_anchor`: `docs/engineering/architecture.md # BUG-0033` (L2876-L2940); `companion_dec`: **`DEC-0154`** (Accepted; DQ6 Option A MANDATORY rule; `decisions/DEC-0154.md` + index L3-L9)
+- `sprint_id`: **`S0168`** (next free; `sprints/S0167` was max); task_count **5** (T-anch + T-001..T-004) ≤ SPRINT_MAX_TASKS=12; sequence T-anch → T-001 → T-002 → T-003 → T-004; AC coverage surjective over AC-1..AC-8
+- `intended_resume_phase`: **`execute`**; `next_scheduled_phase`: **`execute`**; `next_scheduled_role`: **`dev`**
+- `resolution_source`: `argv:bug-target=BUG-0033`; `effective_plan`: `[spec, plan, build+verify, ship]`; `skipped_phases`: `[discovery]`; `completed_phases`: `[intake,research,architecture,sprint-plan]`; `phase_cursor`: `plan/3-of-3`
+- `budget_scope`: `explicit BUG-0033 only; AUTO_LOOP_MAX_CYCLES=40; backlog_drain_active=false; bug_queue_active=true; bug_queue_position=(none); bug_queue_remaining=(none)`
+- `stop_reason`: `sprint_plan_complete_phase_boundary`; `stop_matrix_action`: `STOP_AFTER_SPRINT_PLAN_PASS; validate_pair_then_parent_may_spawn_execute`
+- `fresh_context_marker`: **`tl-BUG0033-sprintplan-20261008T214833Z-fresh`**; `child_isolation_ref`: `docs/engineering/state.md#sprint-plan-checkpoint-bug-0033-s0168-auto-20261008-bug0033-sprint-plan`
+- `runtime_proof_id`: **`rp-auto-20261008-bug0033-sprint-plan-techlead-20261008T214833Z-BUG-0033`**; `proof_hash`: **`46283b1c72ebccd93b5d46c84e9a773aa9fb86081d3b15014a46cbe36e9e9c17`**; `proof_issued_at`: `2026-10-08T21:48:33Z`; `proof_ttl_seconds`: `3600`; `proof_ttl`: `2026-10-08T22:48:33Z`; `hash_recompute_confirmation=true` (2-invocation: lib `compute_strict_proof_hash` + independent plain hashlib SHA-256 over verbatim DEC-0038 6-tuple; identical hexdigest; 0 prior occurrences repo-wide — RUNTIME_PROOF_REUSED honored)
+- `model_id`: `qwen3.8-27b` (CROSS_MODEL_REVIEW=0); `bug_status`: **BUG-0033 remains OPEN**, AC-1..AC-8 unchecked (backlog L5695-L5715; closure owns the flip per US-0045)
+- **Sprint artifacts (S0168):** sprints/S0168/sprint.md (157L) + tasks.md (104L) + progress.md (45L) + uat.md (53L) + uat.json (35L, PENDING placeholder) + plan-verify.json (20L, SKIPPED/deferred placeholder). The FIX belongs to `/execute`; no source/test/parity-scope work is done here.
+- **Repair/hard-gate lock:** select only a unique already-evidenced continuation state; ambiguity=`RESUME_AMBIGUOUS`; syntax=`RESUME_BRIEF_UNPARSEABLE`; every missing/stale/conflicting/unauthorized/replayed/proof-invalid/isolation-invalid pair=`RESUME_BRIEF_STALE`. `RESUME_BRIEF_AUTO_REFRESH=0` prohibits refresh, fallback, reconciler, hand edit, manual parent repair, and invalid-evidence spawn.
+- **Pair validation / ordering:** the matching state checkpoint (state.md L1170-L1192, appended FIRST) was validated before this prepend (state-first, DEC-0153/DEC-0069). Exact-key, canonical tuple, role/authorization, child-isolation, fresh marker/proof, and DEC-0038 strict-proof validation passed. State and brief carry the identical canonical record. The prior BUG-0033 ARCHITECTURE_PASS (below L24) and RESEARCH_PASS blocks and all earlier blocks are retained intact.
+
+```json
+{"record_key":"auto-20261008-bug0033-sprint-plan|bug|BUG-0033|sprint-plan|rp-auto-20261008-bug0033-sprint-plan-techlead-20261008T214833Z-BUG-0033","orchestrator_run_id":"auto-20261008-bug0033-sprint-plan","work_item_kind":"bug","bug_id":"BUG-0033","completed_phase":"sprint-plan","writer_role":"tech-lead","role":"tech-lead","fresh_context_marker":"tl-BUG0033-sprintplan-20261008T214833Z-fresh","resolution_source":"argv:bug-target=BUG-0033","effective_plan":["spec","plan","build+verify","ship"],"skipped_phases":["discovery"],"completed_phases":["intake","research","architecture","sprint-plan"],"next_scheduled_phase":"execute","next_scheduled_role":"dev","phase_cursor":"plan/3-of-3","budget_scope":"explicit BUG-0033 only; AUTO_LOOP_MAX_CYCLES=40; backlog_drain_active=false; bug_queue_active=true; bug_queue_position=(none); bug_queue_remaining=(none)","stop_reason":"sprint_plan_complete_phase_boundary","runtime_proof_id":"rp-auto-20261008-bug0033-sprint-plan-techlead-20261008T214833Z-BUG-0033","proof_hash":"46283b1c72ebccd93b5d46c84e9a773aa9fb86081d3b15014a46cbe36e9e9c17","proof_issued_at":"2026-10-08T21:48:33Z","proof_ttl_seconds":3600,"phase_id":"sprint-plan","child_isolation_ref":"docs/engineering/state.md#sprint-plan-checkpoint-bug-0033-s0168-auto-20261008-bug0033-sprint-plan","scheduler":{"segment_work_item_kind":"bug","active_bug_id":"BUG-0033","backlog_drain_active":false,"bug_queue_active":true,"bug_queue_position":"(none)","bug_queue_remaining":"(none)"},"stop_matrix_action":"STOP_AFTER_SPRINT_PLAN_PASS; validate_pair_then_parent_may_spawn_execute"}
+```
+
+- **STOP:** `STOP_AFTER_SPRINT_PLAN_PASS; validate_pair_then_parent_may_spawn_execute`. Parent is read/validate/spawn-only. It may spawn fresh `/execute` in a fresh **dev** context for BUG-0033/S0168 only after independently validating this pair. This sprint-plan child did not spawn it.
+
+---
+
+# Resume Brief — BUG-0033 ARCHITECTURE_PASS continuation pair (state-first, DEC-0153)
+
+- `record_key`: `auto-20261008-bug0033-architecture|bug|BUG-0033|architecture|rp-auto-20261008-bug0033-architecture-techlead-20261008T212725Z-BUG-0033`
+- `orchestrator_run_id`: **`auto-20261008-bug0033-architecture`**
+- `work_item_kind`: **`bug`**; `bug_id`: **`BUG-0033`**; `completed_phase`: **`architecture`**; `writer_role`: **`tech-lead`**
+- `phase_id`: **`architecture`**; `role`: **`tech-lead`**; `verdict`: **`ARCHITECTURE_PASS`**; `reason_code`: **`BUG0033_ARCHITECTURE_PASS`**; `decision_gate`: **`false`**
+- `research_anchor`: `docs/engineering/research.md ## R-0159` (L16158-L16344; DQ1-DQ8) — **consumed + verified** (research proof `A70066FC…D1A` recomputed MATCH by both methods; current 21:24:51Z < TTL 21:48:13Z → NOT_STALE); `architecture_anchor`: `docs/engineering/architecture.md # BUG-0033` (L2876-L2940); `companion_dec`: **`DEC-0154`** (Accepted; `decisions/DEC-0154.md` + index L3-L9)
+- `intended_resume_phase`: **`sprint-plan`**; `next_scheduled_phase`: **`sprint-plan`**; `next_scheduled_role`: **`tech-lead`**
+- `resolution_source`: `argv:bug-target=BUG-0033`; `effective_plan`: `[spec, plan, build+verify, ship]`; `skipped_phases`: `[discovery]`; `completed_phases`: `[intake,research,architecture]`; `phase_cursor`: `plan/2-of-3`
+- `budget_scope`: `explicit BUG-0033 only; AUTO_LOOP_MAX_CYCLES=40; backlog_drain_active=false; bug_queue_active=true; bug_queue_position=(none); bug_queue_remaining=(none)`
+- `stop_reason`: `architecture_complete_phase_boundary`; `stop_matrix_action`: `STOP_AFTER_ARCHITECTURE_PASS; validate_pair_then_parent_may_spawn_sprint-plan`
+- `fresh_context_marker`: **`tl-BUG0033-architecture-20261008T212725Z-fresh`**; `child_isolation_ref`: `docs/engineering/state.md#architecture-checkpoint-bug-0033-auto-20261008-bug0033-architecture`
+- `runtime_proof_id`: **`rp-auto-20261008-bug0033-architecture-techlead-20261008T212725Z-BUG-0033`**; `proof_hash`: **`D9BF2A40D8480E315F3D1266CA34702CAFC69A76D5C0F08DBD8C3AFAB1149E91`**; `proof_issued_at`: `2026-10-08T21:27:25Z`; `proof_ttl_seconds`: `3600`; `proof_ttl`: `2026-10-08T22:27:25Z`; `hash_recompute_confirmation=true` (2-invocation: lib `compute_strict_proof_hash` + independent plain hashlib SHA-256 over verbatim DEC-0038 6-tuple; identical hexdigest; 0 prior occurrences repo-wide — RUNTIME_PROOF_REUSED honored)
+- `model_id`: `qwen3.8:27b` (CROSS_MODEL_REVIEW=0); `bug_status`: **BUG-0033 remains OPEN**, AC-1..AC-8 unchecked (backlog L5695-L5715; closure owns the flip per US-0045)
+- **Architecture decision locked (DQ6 → DEC-0154)**: adopt **Option A** — additive US-0125 line-cap reconciliation for the **five parity-target files only** (`BUG0033_PARITY_TARGETS` exemption set / per-file cap ~35); **similarity ≤0.30 clone-guard + strip list + frontmatter-shape marker INTACT for all files** (only the line *count* cap is exempted). Options B (re-scope to ask.md) + C (accept new red) REJECTED. **MANDATORY seed task T-002.**
+- **Task seeds carried to /sprint-plan (T-anch + T-001..T-004, ≤12):** T-anch (consume R-0159 DQ1-DQ8 + this H1; verify 0 new tokens); T-001 (apply DQ1/DQ2 text to the 5 active+template mirrors, before `STOP`/EOF; AC-1..AC-6); T-002 (DQ6 Option A additive US-0125 line-cap reconciliation per DEC-0154; AC-7); T-003 (add `--scope=bug-0033` BUG0033_PAIRS to the parity CLI; AC-6/AC-7); T-004 (author 10 `test_bug0033_*` markers + byte-identical template twin + wire to run-tests.ps1/.sh; AC-1..AC-8).
+- **Repair/hard-gate lock:** select only a unique already-evidenced continuation state; ambiguity=`RESUME_AMBIGUOUS`; syntax=`RESUME_BRIEF_UNPARSEABLE`; every missing/stale/conflicting/unauthorized/replayed/proof-invalid/isolation-invalid pair=`RESUME_BRIEF_STALE`. `RESUME_BRIEF_AUTO_REFRESH=0` prohibits refresh, fallback, reconciler, hand edit, manual parent repair, and invalid-evidence spawn.
+- **Pair validation / ordering:** the matching state checkpoint (state.md, appended FIRST) was validated before this prepend (state-first, DEC-0153/DEC-0069). Exact-key, canonical tuple, role/authorization, child-isolation, fresh marker/proof, and DEC-0038 strict-proof validation passed. State and brief carry the identical canonical record. The prior BUG-0033 RESEARCH_PASS block (below) and all earlier blocks are retained intact.
+
+```json
+{"record_key":"auto-20261008-bug0033-architecture|bug|BUG-0033|architecture|rp-auto-20261008-bug0033-architecture-techlead-20261008T212725Z-BUG-0033","orchestrator_run_id":"auto-20261008-bug0033-architecture","work_item_kind":"bug","bug_id":"BUG-0033","completed_phase":"architecture","writer_role":"tech-lead","role":"tech-lead","fresh_context_marker":"tl-BUG0033-architecture-20261008T212725Z-fresh","resolution_source":"argv:bug-target=BUG-0033","effective_plan":["spec","plan","build+verify","ship"],"skipped_phases":["discovery"],"completed_phases":["intake","research","architecture"],"next_scheduled_phase":"sprint-plan","next_scheduled_role":"tech-lead","phase_cursor":"plan/2-of-3","budget_scope":"explicit BUG-0033 only; AUTO_LOOP_MAX_CYCLES=40; backlog_drain_active=false; bug_queue_active=true; bug_queue_position=(none); bug_queue_remaining=(none)","stop_reason":"architecture_complete_phase_boundary","runtime_proof_id":"rp-auto-20261008-bug0033-architecture-techlead-20261008T212725Z-BUG-0033","proof_hash":"D9BF2A40D8480E315F3D1266CA34702CAFC69A76D5C0F08DBD8C3AFAB1149E91","proof_issued_at":"2026-10-08T21:27:25Z","proof_ttl_seconds":3600,"phase_id":"architecture","child_isolation_ref":"docs/engineering/state.md#architecture-checkpoint-bug-0033-auto-20261008-bug0033-architecture","scheduler":{"segment_work_item_kind":"bug","active_bug_id":"BUG-0033","backlog_drain_active":false,"bug_queue_active":true,"bug_queue_position":"(none)","bug_queue_remaining":"(none)"},"stop_matrix_action":"STOP_AFTER_ARCHITECTURE_PASS; validate_pair_then_parent_may_spawn_sprint-plan"}
+```
+
+- **STOP:** `STOP_AFTER_ARCHITECTURE_PASS; validate_pair_then_parent_may_spawn_sprint-plan`. Parent is read/validate/spawn-only. It may spawn fresh `/sprint-plan` in a fresh tech-lead context for BUG-0033 only after independently validating this pair. This architecture child did not spawn it.
+
+---
+
+# Resume Brief — BUG-0033 RESEARCH_PASS continuation pair (state-first, DEC-0153)
+
+- `record_key`: `auto-20261008-bug0033-research|bug|BUG-0033|research|rp-auto-20261008-bug0033-research-techlead-20261008T204813Z-BUG-0033`
+- `orchestrator_run_id`: **`auto-20261008-bug0033-research`**
+- `work_item_kind`: **`bug`**; `bug_id`: **`BUG-0033`**; `completed_phase`: **`research`**; `writer_role`: **`tech-lead`**
+- `phase_id`: **`research`**; `role`: **`tech-lead`**; `verdict`: **`RESEARCH_PASS`**; `reason_code`: **`BUG0033_RESEARCH_PASS`**; `decision_gate`: **`false`**
+- `research_anchor`: `docs/engineering/research.md ## R-0159` (L16158-L16344; DQ1-DQ8)
+- `intended_resume_phase`: **`architecture`**; `next_scheduled_phase`: **`architecture`**; `next_scheduled_role`: **`tech-lead`**
+- `resolution_source`: `argv:bug-target=BUG-0033`; `effective_plan`: `[spec, plan, build+verify, ship]`; `skipped_phases`: `[discovery]`; `completed_phases`: `[intake,research]`; `phase_cursor`: `plan/1-of-3`
+- `budget_scope`: `explicit BUG-0033 only; AUTO_LOOP_MAX_CYCLES=40; backlog_drain_active=false; bug_queue_active=true; bug_queue_position=(none); bug_queue_remaining=(none)`
+- `stop_reason`: `research_complete_phase_boundary`; `stop_matrix_action`: `STOP_AFTER_RESEARCH_PASS; validate_pair_then_parent_may_spawn_architecture`
+- `fresh_context_marker`: **`tl-BUG0033-research-20261008T204813Z-fresh`**; `child_isolation_ref`: `docs/engineering/state.md#research-checkpoint-bug-0033-auto-20261008-bug0033-research`
+- `runtime_proof_id`: **`rp-auto-20261008-bug0033-research-techlead-20261008T204813Z-BUG-0033`**; `proof_hash`: **`A70066FCAC790420B4963F6802F4D1CE9D115B41859D6A0F17C427E90D9BCD1A`**; `proof_issued_at`: `2026-10-08T20:48:13Z`; `proof_ttl_seconds`: `3600`; `proof_ttl`: `2026-10-08T21:48:13Z`; `hash_recompute_confirmation=true` (2-invocation: lib `compute_strict_proof_hash` + independent plain hashlib SHA-256 over verbatim DEC-0038 6-tuple; identical hexdigest; 0 prior occurrences repo-wide — RUNTIME_PROOF_REUSED honored)
+- `model_id`: `qwen3.8:27b` (CROSS_MODEL_REVIEW=0); `bug_status`: **BUG-0033 remains OPEN**, AC-1..AC-8 unchecked (backlog L5695-L5715; closure owns the flip per US-0045)
+- **Research locks carried to /architecture (R-0159)**: DQ1 thin-surface ADAPTED section text (rich has `## Fail-safe reason codes` in closure.md ONLY; the other four get a diagnostics-only derived pair; all tokens verbatim from rich source / registries); DQ2 insert before final `STOP` sentinel (auto.md: no `STOP` sentinel → append at EOF), ordering LOCKED `## Stop conditions` → `## Fail-safe reason codes` (matches rich physical order closure.md L58→L164; intake's fail-safe-then-stop illustration corrected); DQ3 new `--scope=bug-0033` byte-pair table in `scripts/check_intake_template_parity.py` (BUG0033_PAIRS: 5 command pairs + test twin; `--scope=all` union covers it); DQ4 10 `test_bug0033_*` markers (≥8 required); DQ5 **0 new reason codes** (reason_codes.md / runbook.md / stop matrix / repair-ledger untouched); DQ7 non-goals (no `.cursor/commands/*`, no tui.json, no DONE-bug mutation, no other thin files).
+- **CRITICAL architecture input (DQ6, NOT a research blocker)**: US-0125 `test_us0125_clone_guard` ≤20-line cap + `test_us0125_auto_command_dispatch_only` (auto ≤20) are in structural tension with AC-1..AC-5 (projected lines: closure 29, ask 19, auto 61, refresh-context 27, execute 34 — only ask.md fits). Baseline re-run: us0125/us0126 ALREADY RED with 5 pre-existing failures, **none caused by BUG-0033**. LOCKED recommendation = **Option A**: additive US-0125 line-cap reconciliation for the five parity-target files only (exemption set / per-file cap ~35), similarity ≤0.30 cap + clone strip list + frontmatter-shape marker INTACT (measured similarity ≤0.031). Options B (re-scope to ask.md) and C (accept new cap offenders) REJECTED. `/architecture` MUST adopt Option A (or equivalent additive reconciliation) as a mandatory seed task, or re-scope BUG-0033 + AC set (flagged fallback).
+- **Repair/hard-gate lock:** select only a unique already-evidenced continuation state; ambiguity=`RESUME_AMBIGUOUS`; syntax=`RESUME_BRIEF_UNPARSEABLE`; every missing/stale/conflicting/unauthorized/replayed/proof-invalid/isolation-invalid pair=`RESUME_BRIEF_STALE`. `RESUME_BRIEF_AUTO_REFRESH=0` prohibits refresh, fallback, reconciler, hand edit, manual parent repair, and invalid-evidence spawn.
+- **Pair validation / ordering:** the matching state checkpoint (state.md L1205, appended FIRST) was validated before this prepend (state-first, DEC-0153/DEC-0069). Exact-key, canonical tuple, role/authorization, child-isolation, fresh marker/proof, and DEC-0038 strict-proof validation passed. State and brief carry the identical canonical record. Syntax invalidity maps only to `RESUME_BRIEF_UNPARSEABLE`; every other invalid/stale/missing/conflicting/replay/authorization/proof predicate maps to `RESUME_BRIEF_STALE`; neither schedules a next phase.
+
+```json
+{"record_key":"auto-20261008-bug0033-research|bug|BUG-0033|research|rp-auto-20261008-bug0033-research-techlead-20261008T204813Z-BUG-0033","orchestrator_run_id":"auto-20261008-bug0033-research","work_item_kind":"bug","bug_id":"BUG-0033","completed_phase":"research","writer_role":"tech-lead","role":"tech-lead","fresh_context_marker":"tl-BUG0033-research-20261008T204813Z-fresh","resolution_source":"argv:bug-target=BUG-0033","effective_plan":["spec","plan","build+verify","ship"],"skipped_phases":["discovery"],"completed_phases":["intake","research"],"next_scheduled_phase":"architecture","next_scheduled_role":"tech-lead","phase_cursor":"plan/1-of-3","budget_scope":"explicit BUG-0033 only; AUTO_LOOP_MAX_CYCLES=40; backlog_drain_active=false; bug_queue_active=true; bug_queue_position=(none); bug_queue_remaining=(none)","stop_reason":"research_complete_phase_boundary","runtime_proof_id":"rp-auto-20261008-bug0033-research-techlead-20261008T204813Z-BUG-0033","proof_hash":"A70066FCAC790420B4963F6802F4D1CE9D115B41859D6A0F17C427E90D9BCD1A","proof_issued_at":"2026-10-08T20:48:13Z","proof_ttl_seconds":3600,"phase_id":"research","child_isolation_ref":"docs/engineering/state.md#research-checkpoint-bug-0033-auto-20261008-bug0033-research","scheduler":{"segment_work_item_kind":"bug","active_bug_id":"BUG-0033","backlog_drain_active":false,"bug_queue_active":true,"bug_queue_position":"(none)","bug_queue_remaining":"(none)"},"stop_matrix_action":"STOP_AFTER_RESEARCH_PASS; validate_pair_then_parent_may_spawn_architecture"}
+```
+
+- **STOP:** `STOP_AFTER_RESEARCH_PASS; validate_pair_then_parent_may_spawn_architecture`. Parent is read/validate/spawn-only. It may spawn fresh `/architecture` in a fresh tech-lead context for BUG-0033 only after independently validating this pair. This research child did not spawn it.
+
+---
+
+# Resume Brief — BUG-0034 SPRINT_PLAN_PASS continuation pair (state-first, DEC-0153)
+
+- `record_key`: `auto-20261005-bug0034-sprint-plan|bug|BUG-0034|sprint-plan|rp-auto-20261005-bug0034-sprint-plan-techlead-20261005T111500Z-BUG-0034`
+- `orchestrator_run_id`: `auto-20261005-bug0034-sprint-plan`; `work_item_kind`: **`bug`**; `bug_id`: **`BUG-0034`**; `completed_phase`: **`sprint-plan`**; `writer_role`: **`tech-lead`**
+- `resolution_source`: `argv:bug-target=BUG-0034`; `effective_plan`: `[spec, plan, build+verify, ship]`; `skipped_phases`: `[discovery]`; `completed_phases`: `[intake,research,architecture,sprint-plan]`; `phase_cursor`: `plan/3-of-3`
+- `next_scheduled_phase`: `execute`; `next_scheduled_role`: `dev`; `budget_scope`: `explicit BUG-0034 only; AUTO_LOOP_MAX_CYCLES=40; backlog_drain_active=false; bug_queue_active=true; bug_queue_position=(none); bug_queue_remaining=(none)`; `stop_reason`: `sprint_plan_complete_phase_boundary`
+- `fresh_context_marker`: `tl-BUG0034-sprintplan-20261005T111500Z-fresh`; `child_isolation_ref`: `docs/engineering/state.md#sprint-plan-checkpoint-bug-0034-s0167-auto-20261005-bug0034-sprint-plan`
+- `runtime_proof_id`: **`rp-auto-20261005-bug0034-sprint-plan-techlead-20261005T111500Z-BUG-0034`**; `proof_hash`: **`531D66C493652ECB259C22512DAB56136A1E3A95AD1019019F17E13C0F89C2D2`**; `proof_issued_at`: `2026-10-05T11:15:00Z`; `proof_ttl_seconds`: `3600`; `proof_ttl`: `2026-10-05T12:15:00Z`
+- **Repair/hard-gate lock:** `PO_CLOSURE_PRECONDITION_CONFLICT` → `autonomy_resolvable` / `disambiguate_state` / cap `3`; select only a unique already-evidenced closure-precondition state. Ambiguity=`RESUME_AMBIGUOUS`; syntax=`RESUME_BRIEF_UNPARSEABLE`; every missing/stale/conflicting/unauthorized/replayed/proof-invalid/isolation-invalid pair=`RESUME_BRIEF_STALE`. `RESUME_BRIEF_AUTO_REFRESH=0` prohibits refresh, fallback, reconciler, hand edit, manual parent repair, and invalid-evidence spawn.
+
+```json
+{"record_key":"auto-20261005-bug0034-sprint-plan|bug|BUG-0034|sprint-plan|rp-auto-20261005-bug0034-sprint-plan-techlead-20261005T111500Z-BUG-0034","orchestrator_run_id":"auto-20261005-bug0034-sprint-plan","work_item_kind":"bug","bug_id":"BUG-0034","completed_phase":"sprint-plan","writer_role":"tech-lead","role":"tech-lead","fresh_context_marker":"tl-BUG0034-sprintplan-20261005T111500Z-fresh","resolution_source":"argv:bug-target=BUG-0034","effective_plan":["spec","plan","build+verify","ship"],"skipped_phases":["discovery"],"completed_phases":["intake","research","architecture","sprint-plan"],"next_scheduled_phase":"execute","next_scheduled_role":"dev","phase_cursor":"plan/3-of-3","budget_scope":"explicit BUG-0034 only; AUTO_LOOP_MAX_CYCLES=40; backlog_drain_active=false; bug_queue_active=true; bug_queue_position=(none); bug_queue_remaining=(none)","stop_reason":"sprint_plan_complete_phase_boundary","runtime_proof_id":"rp-auto-20261005-bug0034-sprint-plan-techlead-20261005T111500Z-BUG-0034","proof_hash":"531D66C493652ECB259C22512DAB56136A1E3A95AD1019019F17E13C0F89C2D2","proof_issued_at":"2026-10-05T11:15:00Z","proof_ttl_seconds":3600,"phase_id":"sprint-plan","child_isolation_ref":"docs/engineering/state.md#sprint-plan-checkpoint-bug-0034-s0167-auto-20261005-bug0034-sprint-plan","scheduler":{"segment_work_item_kind":"bug","active_bug_id":"BUG-0034","backlog_drain_active":false,"bug_queue_active":true,"bug_queue_position":"(none)","bug_queue_remaining":"(none)"},"stop_matrix_action":"STOP_AFTER_SPRINT_PLAN_PASS; validate_pair_then_parent_may_spawn_execute"}
+```
+
+- **Pair validation / ordering:** the matching state checkpoint was appended first. This latest-pointer block was prepended only after exact-key, canonical tuple, role/authorization, child-isolation, fresh marker/proof, and DEC-0038 strict-proof validation. The state and brief carry the identical canonical record. Syntax invalidity maps only to `RESUME_BRIEF_UNPARSEABLE`; every other invalid/stale/missing/conflicting/replay/authorization/proof predicate maps to `RESUME_BRIEF_STALE`; neither schedules a next phase.
+- **STOP:** `STOP_AFTER_SPRINT_PLAN_PASS; validate_pair_then_parent_may_spawn_execute`. Parent is read/validate/spawn-only. It may spawn fresh `/execute` in dev for BUG-0034/S0167 only after independently validating this pair. This sprint-plan child did not spawn it.
+
+---
+
+# Resume Brief — BUG-0034 ARCHITECTURE_PASS continuation pair (state-first, DEC-0153)
+
+- `record_key`: `auto-20261005-bug0034-architecture|bug|BUG-0034|architecture|rp-auto-20261005-bug0034-architecture-techlead-20261005T110500Z-BUG-0034`
+- `orchestrator_run_id`: `auto-20261005-bug0034-architecture`; `work_item_kind`: **`bug`**; `bug_id`: **`BUG-0034`**; `completed_phase`: **`architecture`**; `writer_role`: **`tech-lead`**
+- `resolution_source`: `argv:bug-target=BUG-0034`; `effective_plan`: `[spec, plan, build+verify, ship]`; `skipped_phases`: `[discovery]`; `completed_phases`: `[intake,research,architecture]`; `phase_cursor`: `plan/2-of-3`
+- `next_scheduled_phase`: `sprint-plan`; `next_scheduled_role`: `tech-lead`; `budget_scope`: `explicit BUG-0034 only; AUTO_LOOP_MAX_CYCLES=40; backlog_drain_active=false; bug_queue_active=true; bug_queue_position=(none); bug_queue_remaining=(none)`; `stop_reason`: `architecture_complete_phase_boundary`
+- `fresh_context_marker`: `tl-BUG0034-architecture-20261005T110500Z-fresh`; `child_isolation_ref`: `docs/engineering/state.md#architecture-checkpoint-bug-0034-auto-20261005-bug0034-architecture`
+- `runtime_proof_id`: **`rp-auto-20261005-bug0034-architecture-techlead-20261005T110500Z-BUG-0034`**; `proof_hash`: **`F57137960D1C77879E505762F8B331062C5F74455B701748A8506851DD345416`**; `proof_issued_at`: `2026-10-05T11:05:00Z`; `proof_ttl_seconds`: `3600`; `proof_ttl`: `2026-10-05T12:05:00Z`
+- **Repair/hard-gate lock:** `PO_CLOSURE_PRECONDITION_CONFLICT` → `autonomy_resolvable` / `disambiguate_state` / cap `3`; select only a unique already-evidenced closure-precondition state. Ambiguity=`RESUME_AMBIGUOUS`; syntax=`RESUME_BRIEF_UNPARSEABLE`; missing/stale/conflicting/unauthorized/replayed/proof-invalid pair=`RESUME_BRIEF_STALE`. `RESUME_BRIEF_AUTO_REFRESH=0` forbids refresh, fallback, reconciler, hand edit, manual parent repair, and invalid-evidence spawn.
+
+```json
+{"record_key":"auto-20261005-bug0034-architecture|bug|BUG-0034|architecture|rp-auto-20261005-bug0034-architecture-techlead-20261005T110500Z-BUG-0034","orchestrator_run_id":"auto-20261005-bug0034-architecture","work_item_kind":"bug","bug_id":"BUG-0034","completed_phase":"architecture","writer_role":"tech-lead","role":"tech-lead","fresh_context_marker":"tl-BUG0034-architecture-20261005T110500Z-fresh","resolution_source":"argv:bug-target=BUG-0034","effective_plan":["spec","plan","build+verify","ship"],"skipped_phases":["discovery"],"completed_phases":["intake","research","architecture"],"next_scheduled_phase":"sprint-plan","next_scheduled_role":"tech-lead","phase_cursor":"plan/2-of-3","budget_scope":"explicit BUG-0034 only; AUTO_LOOP_MAX_CYCLES=40; backlog_drain_active=false; bug_queue_active=true; bug_queue_position=(none); bug_queue_remaining=(none)","stop_reason":"architecture_complete_phase_boundary","runtime_proof_id":"rp-auto-20261005-bug0034-architecture-techlead-20261005T110500Z-BUG-0034","proof_hash":"F57137960D1C77879E505762F8B331062C5F74455B701748A8506851DD345416","proof_issued_at":"2026-10-05T11:05:00Z","proof_ttl_seconds":3600,"phase_id":"architecture","child_isolation_ref":"docs/engineering/state.md#architecture-checkpoint-bug-0034-auto-20261005-bug0034-architecture","scheduler":{"segment_work_item_kind":"bug","active_bug_id":"BUG-0034","backlog_drain_active":false,"bug_queue_active":true,"bug_queue_position":"(none)","bug_queue_remaining":"(none)"},"stop_matrix_action":"STOP_AFTER_ARCHITECTURE_PASS; validate_pair_then_parent_may_spawn_sprint-plan"}
+```
+
+- **Pair validation / ordering:** the matching state checkpoint was appended first; this latest-pointer block was prepended only after exact key, locked tuple, child-isolation, and DEC-0038 strict-proof validation. State and brief carry the identical canonical record. Invalid evidence is fail-closed and schedules nothing.
+- **STOP:** `STOP_AFTER_ARCHITECTURE_PASS; validate_pair_then_parent_may_spawn_sprint-plan`. Parent is read/validate/spawn-only. It may spawn fresh `/sprint-plan` for BUG-0034 only after independently validating this pair. This architecture child did not spawn it.
+
+---
+
+# Resume Brief — BUG-0034 RESEARCH_PASS continuation pair (state-first, DEC-0153)
+
+- `record_key`: `auto-20261005-bug0034-research|bug|BUG-0034|research|rp-auto-20261005-bug0034-research-techlead-20261005T105849Z-BUG-0034`
+- `orchestrator_run_id`: **`auto-20261005-bug0034-research`**
+- `work_item_kind`: **`bug`**; `bug_id`: **`BUG-0034`**; `completed_phase`: **`research`**; `writer_role`: **`tech-lead`**
+- `phase_id`: **`research`**; `role`: **`tech-lead`**; `verdict`: **`RESEARCH_PASS`**; `decision_gate`: **`false`**
+- `intended_resume_phase`: **`architecture`**; `next_scheduled_phase`: **`architecture`**; `next_scheduled_role`: **`tech-lead`**
+- `resolution_source`: `argv:bug-target=BUG-0034`; `effective_plan`: `[spec, plan, build+verify, ship]`; `skipped_phases`: `[discovery]`; `completed_phases`: `[intake,research]`; `phase_cursor`: `plan/1-of-3`
+- `budget_scope`: `explicit BUG-0034 only; AUTO_LOOP_MAX_CYCLES=40; backlog_drain_active=false; bug_queue_active=true; bug_queue_position=(none); bug_queue_remaining=(none)`
+- `stop_reason`: `research_complete_phase_boundary`; `stop_matrix_action`: `STOP_AFTER_RESEARCH_PASS; validate_pair_then_parent_may_spawn_architecture`
+- `fresh_context_marker`: **`tl-BUG0034-research-20261005T105849Z-fresh`**; `child_isolation_ref`: `docs/engineering/state.md#research-checkpoint-bug-0034-auto-20261005-bug0034-research`
+- `runtime_proof_id`: **`rp-auto-20261005-bug0034-research-techlead-20261005T105849Z-BUG-0034`**; `proof_hash`: **`9F7828427E083E46A20A40FD9532ACBD612442B2CDFC2CBEB9098439A0CCEFB6`**; `proof_issued_at`: `2026-10-05T10:58:49Z`; `proof_ttl_seconds`: `3600`; `proof_ttl`: `2026-10-05T11:58:49Z`
+- **Repair lock**: choose `disambiguate_state`; reject `auto_refresh_brief` because `RESUME_BRIEF_AUTO_REFRESH=0`. A unique existing state may be selected; ambiguous state is `RESUME_AMBIGUOUS`; malformed/missing/stale/conflicting pair evidence remains `RESUME_BRIEF_UNPARSEABLE` / `RESUME_BRIEF_STALE`. No state fallback, refresh, reconciler, hand edit, or next spawn on failure.
+- **Pair validation**: state checkpoint was appended before this prepend; prewrite canonical pair validation passed for this exact key and all locked tuple/proof fields. Exact same-key/canonical-field replay is the sole no-op; changed fields fail closed.
+
+```json
+{"record_key":"auto-20261005-bug0034-research|bug|BUG-0034|research|rp-auto-20261005-bug0034-research-techlead-20261005T105849Z-BUG-0034","orchestrator_run_id":"auto-20261005-bug0034-research","work_item_kind":"bug","bug_id":"BUG-0034","completed_phase":"research","writer_role":"tech-lead","role":"tech-lead","fresh_context_marker":"tl-BUG0034-research-20261005T105849Z-fresh","resolution_source":"argv:bug-target=BUG-0034","effective_plan":["spec","plan","build+verify","ship"],"skipped_phases":["discovery"],"completed_phases":["intake","research"],"next_scheduled_phase":"architecture","next_scheduled_role":"tech-lead","phase_cursor":"plan/1-of-3","budget_scope":"explicit BUG-0034 only; AUTO_LOOP_MAX_CYCLES=40; backlog_drain_active=false; bug_queue_active=true; bug_queue_position=(none); bug_queue_remaining=(none)","stop_reason":"research_complete_phase_boundary","runtime_proof_id":"rp-auto-20261005-bug0034-research-techlead-20261005T105849Z-BUG-0034","proof_hash":"9F7828427E083E46A20A40FD9532ACBD612442B2CDFC2CBEB9098439A0CCEFB6","proof_issued_at":"2026-10-05T10:58:49Z","proof_ttl_seconds":3600,"phase_id":"research","child_isolation_ref":"docs/engineering/state.md#research-checkpoint-bug-0034-auto-20261005-bug0034-research","scheduler":{"segment_work_item_kind":"bug","active_bug_id":"BUG-0034","backlog_drain_active":false,"bug_queue_active":true,"bug_queue_position":"(none)","bug_queue_remaining":"(none)"},"stop_matrix_action":"STOP_AFTER_RESEARCH_PASS; validate_pair_then_parent_may_spawn_architecture"}
+```
+
+- **STOP**: Parent is read/validate/spawn-only. It may spawn fresh `/architecture` for BUG-0034 only after independently validating this pair. This research child did not spawn it.
+
+---
+
+# Resume Brief — RELEASE_PASS (auto-20261004-bug0032-release; role=release; S0166/BUG-0032 release gate PASS; closure is next)
+
+- **orchestrator_run_id**: auto-20261004-bug0032 (parent) / auto-20261004-bug0032-release (this release context)
+- **role**: release (fresh context per BUG-0006 spawn-only rule)
+- **phase_id**: release
+- **bug_id**: **BUG-0032** (P0) — **AUTONOMY_FLAGS_DRIFT** — drift-detect contract on `AUTONOMY_PRESET` + `AUTONOMY_STOP_POLICY` between the config baseline and the live scratchpad
+- **sprint_id**: S0166 (execute / qa / verify-work / release all PASS; closure is the next and only missing phase)
+- **segment_work_item_kind**: bug (per DEC-0061 / US-0079)
+- **segment_closed**: false (release is complete; **closure is still pending** — orchestrator owns the next spawn)
+- **verdict**: **RELEASE_PASS**
+- **fresh_context_marker**: `release-BUG0032-20261004T233000Z-fresh` (FRESH — grep-verified 0 prior occurrences repo-wide at mint; distinct from all 5 S0166 chain markers: execute 14:40Z, qa 15:20Z, qa-reattest 16:30Z, verify-work 16:06Z, verify-rerun 22:52Z)
+- **timestamp**: 2026-10-04T23:30:00Z (UTC at mint)
+- **model_id**: `qwen3.8:27b` (CROSS_MODEL_REVIEW=0 — no sovereign-critic consume)
+- **runtime_proof_id**: `rp-auto-20261004-bug0032-release-release-20261004T233000Z-BUG-0032`
+- **proof_hash**: `9FDCD4ADCFEDB7154320DD9F176DA26CCBCBCE382EA59AB75BE86E54D53FDF1E` (64-hex uppercase; DEC-0038 6-tuple SHA-256; **2-invocation recompute MATCH by construction** — lib `compute_strict_proof_hash` + independent plain `hashlib.sha256` over verbatim canonical 6-tuple; `hash_recompute_confirmation=true`; 0 prior occurrences repo-wide — RUNTIME_PROOF_REUSED guard honored)
+- **proof_ttl**: 2026-10-04T24:30:00Z (3600s from issue)
+- **strict_proof chain (7/7 recompute-MATCH this release session)**:
+  - research `A3107ED0…910AC` MATCH · architecture `2E911042…E08F` MATCH · execute `1FE73AAD…7DD0C2` MATCH · qa re-attested `936C72CB…0606C2` MATCH · qa-reattest `FF6F1590…100BA` MATCH · verify-work 16:06Z `C7DF7744…B5DED` MATCH · verify-work re-run 22:52Z `941A0B22…C2DBE0E` MATCH. B-1 attestation defect repaired @16:30Z and independently reconfirmed by BOTH the 22:52Z re-run and this release.
+- **gate snapshot (all PASS on fresh independent re-run this release session)**:
+  - gate1 check_in_tests=PASS: 8/8 active + 8/8 template markers; 7-fixture `--scope=autonomy-flags` battery 7/7 AC-2; US-0131 10/10 unchanged; US-0119 8P/2F (N-2 pre-existing carried, not a regression); `[BUG_VALIDATION_OK]` exit 0; 4/4 byte-parity MATCH; both-OS CI wiring read-verified (always-run, NOT changed-file filtered)
+  - gate2 qa=PASS: QA_PASS re-attested @16:30Z; 7/7 ACs; 0 blocking
+  - gate3 uat=PASS: 9/9 PASS verified_ready=true; live_opencode_cli_tui_pass_claimed=false; fake_browser_pass_claimed=false; drift_FIXED_claimed=false; npm_published=false; git_pushed=false
+  - gate4 isolation=PASS: 6 distinct fresh_context_markers; role-aligned (US-0069/DEC-0051); CROSS_MODEL_REVIEW=0
+  - gate4b strict_runtime_proof=PASS: 7/7 chain + own release proof recompute MATCH
+  - readme_feature_coverage_3f=skipped_not_enforced · project_readme_3g=skipped (FRAMEWORK_KIT_REPO=1) · publish=DEFERRED (confirm-mode; npm_published=false; no kit semver bump — kit already `0.1.10`) · push=NOT_ELIGIBLE (SYNC_POLICY_MODE=disabled)
+- **BUG-0032_status**: **OPEN** (backlog L5676 `Status: OPEN`; AC-1..AC-7 L5685-L5691 `- [ ]`; acceptance L223 `- [ ]`) — **UNTOUCHED** (closure owns the DONE flip + AC ticks per US-0045 / architecture.md:610 / post-BUG-0031 curator 3-allow flip-path, DEC-0152 DENY-FIRST)
+- **siblings HOLD (UNTOUCHED this release)**: US-0119 DONE 8P/2F N-2 carried (BUG-0034 owns stop-matrix registration); US-0131 DONE 10/10 unchanged; BUG-0005/0016/0022/0027/0031 DONE (not reopened); BUG-0033 OPEN (not drained); BUG-0034 OPEN (owns stop-matrix); BUG-0035 DONE; US-0156 DONE (not reopened); US-0154/0155 OPEN (unmutated); DEC-0154 ABSENT (NOT allocated — no `decisions/DEC-*.md` authored or amended this release)
+- **live values UNTOUCHED (drift-DETECT only, NOT drift-FIX)**: `.its-magic/config.json` L318 `AUTONOMY_PRESET=full` / L320 `AUTONOMY_STOP_POLICY=auto_repair_then_block`; `.cursor/scratchpad.md` L639 `AUTONOMY_PRESET=none` / L640 `AUTONOMY_STOP_POLICY=block` — operator live-wins sync is T-005 at CLOSURE, not this release
+- **artifacts authored this release**: `sprints/S0166/release-findings.md` (RELEASE_PASS); `handoffs/releases/S0166-release-notes.md` (canonical); `handoffs/release_queue.md` row S0166 = `released`; `handoffs/release_notes.md` latest-pointer prepended; `CHANGELOG.md` `## [Unreleased]` `### Fixed` + BUG-0032 bullet (S0164 precedent); `docs/engineering/state.md` release checkpoint appended at bottom (DEC-0040 append-never-rewrite); this `handoffs/resume_brief.md` entry prepended at top (prior CLOSURE_PASS BUG-0035 entry preserved below unaltered)
+- **non-blocking findings carried (not new, not resolved by this release)**:
+  - N-1: state.md EXECUTE_CHECKPOINT_MISSING for S0166/BUG-0035 (S0165/BUG-0035 precedent — NON-BLOCKING; durable execute evidence intact in sprint artifacts)
+  - N-2: US-0119 2 pre-existing matrix-ref failures (5 orphans: BUDGET_EXHAUSTED / DECISION_UNRESOLVED / KERNEL_INCOMPATIBLE / QUALITY_EVIDENCE_FAILED / RESUME_AMBIGUOUS) — NOT_WEAKENED NOT_REPAIRED; BUG-0034 owns stop-matrix registration
+  - N-3: B-1 strict-proof attestation defect on QA leaf — REPAIRED @16:30Z; independently reconfirmed by 22:52Z re-run AND this release; no longer blocking; carried for audit transparency
+- **do_not_claim (this release session)**: live_opencode_cli_tui_pass_claimed=false · fake_browser_pass_claimed=false · toast_repair_claimed=false · drift_FIXED_claimed=false (drift-DETECT only) · BUG-0032_DONE_claimed=false (closure owns) · npm_published=false · git_pushed=false · provider_completion_claimed=false
+- **next_action_for_orchestrator**: **`/closure`** (fresh `curator` on this host, DEC-0052 sanctioned alternate since `qe` is unspawnable) to ship the canonical BUG-0032 DONE flip + AC ticks + `sprints/S0166/closure-verification.md` + operator live-wins sync (T-005) evidence. Then **`/refresh-context`** (optional, fresh curator, S0163/S0164 precedent).
+- **prior_top_pointer**: CLOSURE_PASS BUG-0035 (immediately below; preserved, not erased — this RELEASE_PASS S0166/BUG-0032 entry is the new TOP pointer)
+- **stop_condition**: **STOP after RELEASE_PASS.** Orchestrator spawns `/closure` next per BUG-0006 / US-0048. Do NOT spawn `/closure` / `/refresh-context` / `/auto` from this release subagent. Do NOT flip BUG-0032 status. Do NOT tick any acceptance row. Do NOT npm publish. Do NOT git push. Do NOT read `.env`. Do NOT spawn subagents. Do NOT modify `.its-magic/config.json` or `.cursor/scratchpad.md`.
+
+---
+
+# Resume Brief — CLOSURE_PASS (auto-20261004-bug0035-closure; role=curator; S0165/BUG-0035 canonical DONE-flip per US-0045)
+
+- **orchestrator_run_id**: auto-20261004-bug0035-closure
+- **scope**: BUG-0035 closed this segment (backlog L5740 `Status: OPEN`→`DONE` + L5747-L5753 AC-1..AC-7 `[ ]`→`[x]` + L5755-L5759 plan/execute/qa/verify/closure notes appended; `docs/product/acceptance.md` L226 `[ ]`→`[x]`; `sprints/S0165/closure-verification.md` NEW; `docs/engineering/state.md` closure checkpoint appended at bottom; `handoffs/continuation_hygiene.md` S0165/BUG-0035 closure record appended at bottom; `handoffs/resume_brief.md` THIS entry prepended above the prior PO_INTAKE_PASS top pointer preserved below unaltered)
+- **role**: curator (fresh context per BUG-0006 spawn-only rule; US-0045 completion-owner phase)
+- **phase_id**: closure
+- **bug_id**: **BUG-0035** (P0) — **DONE** (closed 2026-10-04T04:30:46Z by this curator context)
+- **sprint_id**: S0165 (CLOSED — execute / qa / verify-work / closure all PASS)
+- **segment_work_item_kind**: bug (per DEC-0061 / US-0079)
+- **segment_closed**: true (CLOSURE_PASS terminal; `/refresh-context` is the orchestrator's optional next spawn, NOT this curator context's)
+- **verdict**: **CLOSURE_PASS**
+- **reason_code**: n/a (pass; no fail-closed token this session; pre + post flip validators both exit 0; 7/7 active + 7/7 template `test_bug0035_*` PASS; 5/5 spot-check parity pairs MATCH)
+- **evidence (durable child artifacts consumed by this closure)**:
+  - `sprints/S0165/progress.md` L205 `Verdict: EXECUTE_PASS` (dev; proof `E3018317…01BA7E`)
+  - `sprints/S0165/qa-findings.md` L18-L21 `QA_PASS` / `S0165_UNBLOCK_OK` (qa; proof `E24B3302…DC2BC9`)
+  - `sprints/S0165/verify-work-findings.md` L21-L22 `VERIFY_WORK_PASS` / `S0165_VERIFY_OK` (qa; proof `70EF7A3F…FCB92AF3`)
+  - `handoffs/qa_to_verify_work.md` L1-L81 (top section — S0165/BUG-0035 QA_PASS handoff; S0164/BUG-0031 historical section retained L85+)
+  - `tests/bug0035_continuation_pair_test.py` (7/7 active `test_bug0035_*` groups; template mirror `template/tests/bug0035_continuation_pair_test.py` 7/7; byte-parity `671BAFD9…A39CD7` MATCH)
+  - compose: `tests/bug0027_opencode_manual_phase_persist_test.py` + `tests/us0156_contract_test.py` = 20 passed exit 0
+  - validators: `python scripts/bug_issue_validate.py --repo . --check-acceptance` pre + post flip **both exit 0**; `python scripts/check_intake_template_parity.py --repo . --scope bug-0027` exit 0
+  - 5 spot-check parity pairs (active = template, `Get-FileHash` SHA-256, this closure session):
+    - `.opencode/agents/tech-lead.md` `A4CB1B6C6EDD6F009E82C53BE6C3ACA78E441E1F946BB25B44D055FC85E72AC6` MATCH
+    - `.opencode/agents/dev.md` `D41F7084AC8A4D77D2EF554773C183D52E90611100713F90C057EA8804D404C8` MATCH
+    - `.opencode/agents/auto.md` `1B44357214C0E5D1CE5B0FE8292E112DB07680D56AB26D7BF234BA166241A3F7` MATCH
+    - `.opencode/plugins/orchestrator.ts` `1341B2034AA1A07E6AD25DF6EAE8033C6267D05AF7231D3A5DFCE318378FFBA8` MATCH
+    - `tests/bug0035_continuation_pair_test.py` `671BAFD9F772D1B38FAB5E9FD352817BC9BFEDB263FF405BE6FB7D72AF639CD7` MATCH
+- **fresh_context_marker**: **`cur-BUG0035-closure-20261004T043046Z-fresh`** (FRESH — never-reused; **grep-verified 0 prior occurrences repo-wide at mint**; distinct from dev `dev-BUG0035-execute-20261004T024333Z-fresh`, qa `qa-BUG0035-qa-20261004T032000Z-fresh`, verify-work `qa-BUG0035-verify-work-20261004T054808Z-fresh`)
+- **timestamp**: 2026-10-04T04:30:46Z (UTC at mint)
+- **runtime_proof_id**: **`rp-auto-20261004-bug0035-closure-curator-20261004T043046Z-BUG-0035`**
+- **proof_hash**: **`3608AE1FB5522536DBE343EAB354AC8A5C237407923513E3DA7AA9C0BF423DC9`** (64-hex uppercase; DEC-0038 6-tuple SHA-256; independently recomputed twice in two separate invocations — `scripts/token_cost_lib.compute_strict_proof_hash` AND compact sorted-key `hashlib.sha256` — both returned `3608AE1FB5522536DBE343EAB354AC8A5C237407923513E3DA7AA9C0BF423DC9`; **twice-recompute MATCH**; canonical sorted-key JSON payload over the 6-tuple `{"orchestrator_run_id":"auto-20261004-bug0035-closure","phase_id":"closure","proof_issued_at":"2026-10-04T04:30:46Z","proof_ttl_seconds":3600,"role":"curator","runtime_proof_id":"rp-auto-20261004-bug0035-closure-curator-20261004T043046Z-BUG-0035"}`)
+- **proof_ttl**: 2026-10-04T05:30:46Z (3600 seconds from issue)
+- **siblings HOLD (UNTOUCHED this closure; guard #2 & #8)**:
+  - BUG-0027 `Status: DONE` (backlog L5584) UNTOUCHED; acceptance L218 `[x]` UNTOUCHED.
+  - BUG-0031 `Status: DONE` (backlog L5661) UNTOUCHED; acceptance L222 `[x]` UNTOUCHED.
+  - BUG-0022 `Status: DONE` (backlog L5465) UNTOUCHED; acceptance L213 `[x]` UNTOUCHED.
+  - BUG-0016 / BUG-0005 status UNTOUCHED (guard #2).
+  - BUG-0032 `Status: OPEN` (backlog L5673) UNTOUCHED.
+  - BUG-0033 `Status: OPEN` (backlog L5694) UNTOUCHED.
+  - BUG-0034 `Status: OPEN` (backlog L5716) UNTOUCHED.
+  - US-0154 `Status: OPEN` (backlog L5833) UNTOUCHED.
+  - US-0155 `Status: OPEN` (backlog L5852) UNTOUCHED.
+  - US-0156 `Status: DONE` (backlog L5869) + acceptance L185 `[x]` UNTOUCHED.
+  - DEC-0152 / DEC-0153 / DEC-0069 / DEC-0038 / DEC-0124 / stop-matrix UNTOUCHED; `decisions/DEC-0153.md` L4 `Status: Accepted` re-read read-only (guard #1 held — no `decisions/DEC-*.md` authored or amended this session).
+  - S0165 executed artifacts T-001..T-007 intact (5/5 spot-check parity MATCH post-flip; 7/7 active + 7/7 template PASS post-flip; bridge module + runbook section + command pairs not mutated — guard #3 & #4 held).
+  - TUI / RPC / JSON command template / localhost endpoint **NOT restored** (guard #4 held).
+- **files_modified (THIS RUN)**:
+  - `docs/product/backlog.md` — L5740 `Status: OPEN`→`DONE`; L5747-L5753 AC-1..AC-7 `[ ]`→`[x]`; L5755-L5759 appended `plan_notes` / `execute_notes` / `qa_notes` / `verify_notes` / `closure_notes` (2-3 line summaries each, citing the durable child evidence above).
+  - `docs/product/acceptance.md` — L226 `- [ ] BUG-0035: ...` → `- [x] BUG-0035: ...` (closure provenance note appended).
+  - `sprints/S0165/closure-verification.md` — **NEW** (per-AC completion evidence table, 5 parity pairs, guard audit, companion artifact list, state checkpoint pointer).
+  - `docs/engineering/state.md` — bottom append: CLOSURE checkpoint section (append-never-rewrite per US-0058 / DEC-0040); `phase_id=closure`, `role=curator`, `bug_id=BUG-0035`, `sprint_id=S0165`, `verdict=CLOSURE_PASS`, `decision_gate=false`, fresh marker + runtime_proof_id + proof_hash.
+  - `handoffs/resume_brief.md` — THIS entry prepended at the very top; the prior PO_INTAKE_PASS top pointer is preserved below unaltered (per S0163/S0164 `upsert_latest_orchestration_pointer` convention).
+  - `handoffs/continuation_hygiene.md` — S0165/BUG-0035 closure record appended at the bottom (3-line format consistent with prior sprints).
+- **next_action_for_orchestrator**: **`drain_terminated`** — the S0165/BUG-0035 segment is closed (CLOSURE_PASS). The active backlog still carries three OPEN bugs from the 2026-10-03 PO intake (below the prior top pointer):
+  - **BUG-0032 (P0)** — Scratchpad/config-baseline Drift on `AUTONOMY_PRESET` / `AUTONOMY_STOP_POLICY` (backlog L5673; acceptance row registered by the PO_INTAKE_PASS entry below). Next: `/research` (fresh tech-lead) to pick `--scope=autonomy-flags` + `AUTONOMY_FLAGS_DRIFT` reason code.
+  - **BUG-0033 (P1)** — Thin/rich command-pair parity on OpenCode surface (backlog L5694). Next: `/research` (fresh tech-lead) to lock section-text + parity test shape.
+  - **BUG-0034 (P1)** — Register `PO_CLOSURE_PRECONDITION_CONFLICT` in autonomy_stop_matrix + reason_codes + runbook + repair-ledger (backlog L5716). **Operator decision gate** on `auto_repair_kind` (`disambiguate_state` vs `auto_refresh_brief`); TL decides in `/research`.
+  - Orchestrator MAY also spawn **`/refresh-context`** (fresh curator) as the terminal phase per US-0045 / BUG-0006 to archive + consolidate (S0163/S0164 precedent); NOT this curator context's action.
+  - The three open bugs are each in their own `/research` fresh tech-lead context (per US-0045 / BUG-0006 spawn-only). Operator may batch or re-order.
+- **do_not_claim (this closure session)**:
+  - `live_opencode_closure_pass_claimed=false` (UAT_PROBE_FORBIDDEN held; contract-tests-primary; no live host probe this session)
+  - `operator_hand_flip_claimed=false` (3 of 3 flip paths held by the curator role allow-list in `.opencode/agents/curator.md` — S0164 repair still in force — no operator hand-flip needed)
+  - `npm_published=false`; `git_pushed=false`
+  - `BUG-0032/0033/0034_DONE_claimed=false` (their own closures own those flips — not this session's)
+  - `US-0156_reopen_claimed=false` (UNTOUCHED DONE — S0162 closure's flip preserved)
+  - `provider_completion_claimed=false`; `toast_repair_claimed=false`; `fake_browser_PASS_claimed=false`
+- **next action**: **`drain_terminated`** OR spawn next active bug fresh tech-lead (per the three OPEN rows under the PO_INTAKE_PASS entry below). Orchestrator's call. STOP after this closure checkpoint.
+
+---
+
+# Resume Brief — PO_INTAKE_PASS (auto-20261003-po-intake; role=po; intake bug ×3) — operator command "spawn an intake command process to register the Stories/Bugs"
+
+- **orchestrator_run_id**: auto-20261003-po-intake
+- **intake_scope**: 3 new BUG rows registered (BUG-0032 / BUG-0033 / BUG-0034) + 3 intake-evidence JSON + 3 acceptance rows + 1 po_to_tl handoff + 1 state.md checkpoint
+- **role**: po (fresh PO intake — not /auto, not subagent-spawned; explicit operator command)
+- **phase_id**: intake
+- **bug_id(s)**: **BUG-0032** (P0), **BUG-0033** (P1), **BUG-0034** (P1) — all **OPEN**, all **unchecked** in `docs/product/acceptance.md`
+- **story_id(s)**: (none)
+- **sprint_id**: (none — intake = register, not close; no sprint materialized)
+- **delivery_mode**: inline intake (INTAKE_AUTONOMY_MODE=0, INTAKE_SUBAGENT_FALLBACK=deny — no subagent spawn)
+- **macro_phase**: spec (intake is the intake-boundary terminal — no downstream phase in this segment)
+- **last_completed_phase**: INTAKE (register 3 candidates as BUG-0032 / BUG-0033 / BUG-0034 in canonical backlog + acceptance)
+- **intended_resume_phase**: `/research` per bug in priority order (BUG-0032 → BUG-0033 → BUG-0034), or operator may batch / re-order
+- **next_scheduled_phase**: research (fresh tech-lead per bug; operator decides ordering)
+- **next_scheduled_role**: tech-lead
+- **segment_work_item_kind**: bug (INTAKE_WORK_ITEM_KIND=bug per DEC-0061 / US-0079)
+- **active_bug_id**: (none active — intake is register-only; each bug will be active on its own `/research`)
+- **segment_closed**: true (intake-boundary terminal per US-0048 / BUG-0006 isolation contract; downstream phases belong to a new orchestrator segment)
+- **stop_reason**: **intake_pass** (PO_INTAKE_PASS; not intake_fail)
+- **stop_phase**: intake
+- **verdict**: **PO_INTAKE_PASS**
+- **reason_code**: n/a (pass; if it were a fail the reason_code would be e.g. `PO_INTAKE_PRECONDITION_CONFLICT` — see BUG-0034 for the token it should register)
+- **CROSS_MODEL_REVIEW**: 0
+- **US-0156_status**: **DONE** (backlog L5784 `Status: DONE` + AC-1..10 `[x]`; acceptance L185 `[x]`) — **HOLD** (UNTOUCHED this intake; this intake did not re-flip, did not reopen)
+- **US-0154/US-0155_status**: **OPEN** (L5748-L5782) — **HOLD** (UNTOUCHED this intake)
+- **BUG-0026_status**: **OPEN** (backlog L5564 `Status: OPEN`; acceptance L217 `[ ]`) — **HOLD** (UNTOUCHED this intake; NOT drained, NOT mutated; TOP candidate remains operator's choice)
+- **BUG-0028 / BUG-0029_status**: **OPEN** (backlog L5608 / L5625; acceptance L219 / L220 `[ ]`) — **HOLD** (UNTOUCHED this intake)
+- **BUG-0016/0022/0027/0030/0031_status**: **DONE** (acceptance L207/L213/L218/L221/L222 `[x]`) — **HOLD** (UNTOUCHED this intake)
+- **BUG-0025/0032/0033/0034_status**: **BUG-0025 DONE**; **BUG-0032/0033/0034 OPEN** (this intake added)
+- **UNTOUCHED guard list (THIS RUN, preserved from resume_brief.md L30-L33)**:
+  - `docs/product/backlog.md` L5789 US-0156 `Status: DONE` UNTOUCHED, L5794-L5803 `- [x]` AC-1..AC-10 UNTOUCHED, L5465 BUG-0022 `Status: DONE` UNTOUCHED, L5586 BUG-0027 `Status: DONE` UNTOUCHED, L5564 BUG-0026 `Status: OPEN` UNTOUCHED, L5608 BUG-0028 `Status: OPEN` UNTOUCHED, L5625 BUG-0029 `Status: OPEN` UNTOUCHED, L5663 BUG-0031 `Status: DONE` UNTOUCHED
+  - `docs/product/acceptance.md` L185 `[x]` US-0156 UNTOUCHED, L177-L184 `[ ]` US-0149..US-0155 UNTOUCHED (this intake added three new `[ ]` BUG rows after L222; did not touch L177-L222), L213/L218 `[x]` BUG-0022/BUG-0027 UNTOUCHED, L217/L219/L220 `[ ]` BUG-0026/0028/0029 UNTOUCHED, L222 `[x]` BUG-0031 UNTOUCHED
+  - US-0045 / US-0120 / US-0122 / US-0124 / US-0125 / US-0126 / US-0154 / US-0155 — NO mutation
+- **3-new-BUGs (THIS RUN)**:
+  - **BUG-0032 — P0 — Scratchpad/config-baseline Drift on `AUTONOMY_PRESET` / `AUTONOMY_STOP_POLICY`** (backlog L5673; acceptance new row after L222). Live: `.cursor/scratchpad.md` L639-L640 (`none` / `block`); baseline: `.its-magic/config.json` L317-L320 (`full` / `auto_repair_then_block`). Operator command: register. Next: `/research` to pick `--scope=autonomy-flags` + `AUTONOMY_FLAGS_DRIFT` reason code.
+  - **BUG-0033 — P1 — Thin→rich command-pair parity on OpenCode surface** (backlog L5694; acceptance new row after BUG-0032). `.opencode/commands/{closure,ask,auto,refresh-context,execute}.md` lack the rich `## Fail-safe reason codes` + `## Stop conditions` sections; copy from `.cursor/commands/*` counterparts (closure-first); active↔template byte-parity preserved (BUG-0031 precedent). Next: `/research` to lock section text + parity test shape.
+  - **BUG-0034 — P1 — Register `PO_CLOSURE_PRECONDITION_CONFLICT`** (backlog L5716; acceptance new row after BUG-0033). Token was live-observed ("Po Task — Finalize US-0108 product closure — Stopped fail-closed: PO_CLOSURE_PRECONDITION_CONFLICT") but unregistered (grep 0 hits); add to `scripts/data/autonomy_stop_matrix.yaml` as `stop_class: autonomy_resolvable` with `auto_repair_kind=disambiguate_state` OR `auto_refresh_brief` (**operator decision gate** on which one; TL to decide in `/research`), `cap: 3`, rationale; reason_codes.md US-row; runbook remediation entry; autonomy_repair_ledger integration; 8 `test_bug0034_*` markers.
+- **fresh_context_marker**: **`po-BUG0032-intake-20261003T153600Z-fresh`** (FRESH — never-reused; **grep-verified 0 prior occurrences repo-wide** via `grep` tool). Distinct from all prior US-0156 / BUG-0022 / BUG-0031 chain markers and from the US-0156 SEGMENT_TERMINAL entry immediately below (`cur-US0156-S0162-refreshctx-20261003T090000Z-fresh`).
+- **timestamp**: 2026-10-03T15:36:00Z (UTC wall-clock at mint)
+- **runtime_proof_id**: **`rp-auto-20261003-po-intake-poi-20261003T153600Z-POINTAKE`**
+- **proof_hash**: **`059DF906BE1B6467D4C2D562E3F1DDD421FF56CE11E04941ACE6C54B1AEAF458`** (64-hex uppercase; canonical sorted-key JSON SHA-256 over DEC-0038 tuple `{"orchestrator_run_id":"auto-20261003-po-intake","proof_issued_at":"2026-10-03T15:36:00Z","proof_ttl_seconds":3600,"role":"po","phase_id":"intake","runtime_proof_id":"rp-auto-20261003-po-intake-poi-20261003T153600Z-POINTAKE"}`)
+- **proof_ttl**: 2026-10-03T16:36:00Z (proof_ttl_seconds=3600)
+- **hash_recompute_confirmation**: **true** — MINTED in one invocation (via `python -c "import token_cost_lib as t; t.compute_strict_proof_hash(...)"` on the repo's `scripts/token_cost_lib.py`) → `059DF906BE1B6467D4C2D562E3F1DDD421FF56CE11E04941ACE6C54B1AEAF458`; **independently RECOMPUTED in a second fresh invocation** (plain `hashlib` + `json.dumps(sort_keys=True, separators=...)` on the same 6-tuple) → identical 64-hex; **MATCH**; 64 hex verified; format check `[0-9A-F]{64}` passed; stored uppercase.
+- **validator_exit_codes**:
+  - **PRE-WRITE** `python scripts/bug_issue_validate.py --repo . --check-acceptance` → `[BUG_VALIDATION_OK]` **exit 0** (before any mutation of backlog.md / acceptance.md / resume_brief.md / state.md / po_to_tl.md).
+  - **POST-WRITE** `python scripts/bug_issue_validate.py --repo . --check-acceptance` → `[BUG_VALIDATION_OK]` **exit 0** (after all 3 backlog blocks + 3 acceptance rows are in; `--print-next-id` → `BUG-0035` confirming 3 rows added in ascending order).
+  - **INTAKE-EVIDENCE** `python scripts/intake_evidence_validate.py --file handoffs/intake_evidence/BUG-0032-intake-20261003T153600Z.json` → `[INTAKE_EVIDENCE_VALIDATION_OK]` **exit 0**; `BUG-0033...` → `[INTAKE_EVIDENCE_VALIDATION_OK]` **exit 0**; `BUG-0034...` → `[INTAKE_EVIDENCE_VALIDATION_OK]` **exit 0**.
+- **intake_evidence (3 durable artifacts)**:
+  - `handoffs/intake_evidence/BUG-0032-intake-20261003T153600Z.json` (intake_run_id `po-opencode-20261003-BUG0032-intake`, small-intake-pack, INTAKE_WORK_ITEM_KIND=bug, all 5 topics covered with distinct quoted_user_text per BUG-0007)
+  - `handoffs/intake_evidence/BUG-0033-intake-20261003T153600Z.json` (intake_run_id `po-opencode-20261003-BUG0033-intake`, small-intake-pack, INTAKE_WORK_ITEM_KIND=bug, all 5 topics covered with distinct quoted_user_text per BUG-0007)
+  - `handoffs/intake_evidence/BUG-0034-intake-20261003T153600Z.json` (intake_run_id `po-opencode-20261003-BUG0034-intake`, small-intake-pack, INTAKE_WORK_ITEM_KIND=bug, all 5 topics covered with distinct quoted_user_text per BUG-0007)
+- **files_modified (THIS RUN)**:
+  - `docs/product/backlog.md` — 3 new `### BUG-0032/0033/0034` blocks appended to the canonical `## Bug issues (canonical)` region (after `### BUG-0031`, before `## US-0150`); all `Status: OPEN`; all ACs `- [ ]` (unchecked). Each block: 5 required fields (environment, steps_to_reproduce, expected, actual, evidence_refs) + `Priority` + `Status` + `Acceptance:` (AC-1..AC-7 or AC-1..AC-8) + `intake_notes` + `related_us` + `related_bugs`.
+  - `docs/product/acceptance.md` — 3 new `- [ ] BUG-0032/0033/0034:` rows appended after the existing `- [x] BUG-0031:...` row in the `## Bug acceptance (canonical)` section (before the `Validator (backlog bugs...` trailer). All unchecked (intake = register, not close).
+  - `handoffs/intake_evidence/BUG-0032-intake-20261003T153600Z.json` — NEW
+  - `handoffs/intake_evidence/BUG-0033-intake-20261003T153600Z.json` — NEW
+  - `handoffs/intake_evidence/BUG-0034-intake-20261003T153600Z.json` — NEW
+  - `handoffs/resume_brief.md` — this PO_INTAKE_PASS top pointer PREPENDED above the prior US-0156 SEGMENT_TERMINAL entry (prior entry preserved, not erased)
+  - `handoffs/po_to_tl.md` — short PO→TL handoff PREPENDED above prior "Architecture handoff — US-0145" entry (prior entry preserved, not erased)
+  - `docs/engineering/state.md` — one intake-checkpoint block APPENDED at the very bottom (append-bottom, never rewrite) with the 3-item tuple + fresh marker + proof hash
+- **files_unmodified (THIS RUN)**: `.its-magic/config.json` UNTOUCHED (live / baseline values NOT mutated — that is operator action); `.cursor/scratchpad.md` UNTOUCHED (NOT mutated); `.cursor/scratchpad copy.md` UNTOUCHED (read-only evidence); `.opencode/commands/*` + template UNTOUCHED (read-only evidence for BUG-0033 candidate); `.cursor/commands/*` + template UNTOUCHED (read-only evidence for BUG-0033 candidate); `scripts/data/autonomy_stop_matrix.yaml` UNTOUCHED (BUG-0034 is registry registration, not mutation); `docs/engineering/reason_codes.md` UNTOUCHED; `docs/engineering/runbook.md` UNTOUCHED; `scripts/autonomy_repair_lib.py` (or equivalent) UNTOUCHED; `docs/engineering/architecture.md` UNTOUCHED (no `# BUG-0032` / `# BUG-0033` / `# BUG-0034` authored; that is architecture's job); `docs/engineering/research.md` UNTOUCHED (no R-xxxx allocated; next is `/research`'s job); `docs/engineering/decisions.md` UNTOUCHED (no DEC-xxxx authored; none needed for these bugs at intake); `tests/*` UNTOUCHED (no test_bug0032* / test_bug0033* / test_bug0034* authored; that is sprint-plan's job); `scripts/bug_issue_validate.py` UNTOUCHED; `scripts/bug_issue_lib.py` UNTOUCHED; `scripts/intake_evidence_lib.py` UNTOUCHED; `scripts/intake_evidence_validate.py` UNTOUCHED; `scripts/token_cost_lib.py` UNTOUCHED (invoked read-only for the 1 proof hash mint); `.opencode/agents/*` + template UNTOUCHED; `.cursor/agents/*` + template UNTOUCHED; `.opencode/tui.json` UNTOUCHED (`"plugin": []` lock preserved); `.opencode/plugins/orchestrator.ts` UNTOUCHED; `decisions/DEC-*` UNTOUCHED (none authored; none amended); `sprints/*` UNTOUCHED (no S0xxx materialized; that is `/sprint-plan`'s job); `CHANGELOG.md` UNTOUCHED (NOT re-added); `packaging/*` UNTOUCHED; `package.json` UNTOUCHED; `installer.py` / `installer.sh` / `installer.ps1` UNTOUCHED; `.gitignore` UNTOUCHED; `.env` UNTOUCHED (NOT read — per DEC-0005 / US-0085); `.github/*` UNTOUCHED; `template/` UNTOUCHED (active↔template byte-parity preserved; no template files added or mutated); `notes.md` UNTOUCHED; `tmp_proof.json` UNTOUCHED; `__pycache__/*` UNTOUCHED (pre-existing dirty state from prior runs; not part of this intake's changes)
+- **do_not_claim (THIS RUN)**: provider_completion_claimed=false; live_openCode_pass_claimed=false; live_cursor_pass_claimed=false (UAT_PROBE_FORBIDDEN held; no live IDE/TUI probe); `npm_published=false` (deferred-to-operator; kit 0.1.10 unchanged); git_pushed=false (SYNC_POLICY_MODE=disabled); no US/BUG status flipped; no `AC-[ ]`→`AC-[x]` ticks; no DEC authored/amended; no R-xxxx allocated; no sprint materialized; no downstream-phase work in this intake segment; **no spawner recursion** (no `/auto`, no subagent spawn, no `Task` invocation)
+- **decision_gate (OPERATOR / TL to decide — not decided by this intake)**:
+  1. **BUG-0034 repair-kind choice**: `auto_repair_kind=disambiguate_state` (US-0119 STATE_PHASE_AMBIGUOUS analogue; "pick last-known phase is safe when unambiguous") **OR** `auto_repair_kind=auto_refresh_brief` (US-0119 RESUME_BRIEF_MISSING analogue; "regenerate brief from state.md is safe when RESUME_BRIEF_AUTO_REFRESH=1") — TL to pick in `/research` for BUG-0034. Both are defensible for a PO-closure precondition conflict.
+  2. **Priority ordering**: as registered — **BUG-0032 (P0) → BUG-0033 (P1) → BUG-0034 (P1)**. Operator may re-order; `/research` is the first phase of each and can be batched.
+  3. **BUG-0033 scope**: closure-first per operator direction; the other thin/rich pairs (ask, auto, refresh-context, execute) are the same bug (one vertical parity fix). The remaining thin/rich pairs (intake, qa, verify-work, discovery, sprint-plan, research, plan-verify, quick, release, architecture) can be the same story's `/research` audit or a follow-up slice — TL to choose.
+- **UNTOUCHED guard list (this run)**: as above (BUG-0026/0028/0029 OPEN preserved; BUG-0016/0022/0027/0030/0031 DONE preserved; US-0154/US-0155 OPEN preserved; US-0156 DONE preserved; all DEC / US-0119 / US-0120 / US-0125 / US-0126 UNTOUCHED; no live probes; no npm publish; no git push; no `.env` read)
+- **prior_top_pointer**: US-0156 / S0162 SEGMENT_TERMINAL (immediately below; preserved, not erased — this PO_INTAKE_PASS entry is the new TOP pointer and the US-0156 entry remains immediately below, not deleted). **prior_lineage**: US-0156 SEGMENT_TERMINAL → BUG-0022 REFRESH_CONTEXT_PASS → … (lineage preserved in the prior entries below).
+- **stop_condition**: **STOP after PO_INTAKE_PASS.** Three new BUG rows registered (BUG-0032 / BUG-0033 / BUG-0034) — all **OPEN**, all **unchecked** in acceptance. No downstream phase executed. Do NOT spawn `/research`, `/architecture`, `/sprint-plan`, `/execute`, `/qa`, `/verify-work`, `/release`, `/closure`, `/close`, `/refresh-context`, or `/auto` from this PO-intake subagent (BUG-0006 / US-0048). Do NOT mutate any status / acceptance row / sibling bug / US-0156 / US-0154 / US-0155 / BUG-0026 / BUG-0028 / BUG-0029 / BUG-0016 / BUG-0022 / BUG-0027 / BUG-0030 / BUG-0031. Do NOT flip any `- [ ]` to `- [x]` (intake = register, not close). Do NOT npm publish. Do NOT git push. Do NOT read `.env`. Do NOT spawn subagents (INTAKE_SUBAGENT_FALLBACK=deny, config.json L145-L146). Do NOT recurse `/auto`. Do NOT modify `.its-magic/config.json` or `.cursor/scratchpad.md` (live values are the operator's canonical decision — BUG-0032 is drift-detect only). Do NOT modify `.opencode/commands/*` or `.cursor/commands/*` (BUG-0033 is the parity fix, not the intake). Do NOT modify `scripts/data/autonomy_stop_matrix.yaml` or `docs/engineering/reason_codes.md` or `docs/engineering/runbook.md` (BUG-0034 is the token registry, not the intake). Do NOT author any `decisions/DEC-*` (new or amended) — none needed for these bugs at intake. Do NOT allocate any `R-xxxx` — research does that. Do NOT materialize any sprint — `/sprint-plan` does that. Do NOT author any `# BUG-0032` / `# BUG-0033` / `# BUG-0034` H1 in `docs/engineering/architecture.md` — architecture does that. Do NOT author any `test_bug0032_*` / `test_bug0033_*` / `test_bug0034_*` markers — sprint-plan / execute do that. Operator / orchestrator owns the next segment (top candidate: **BUG-0032 (P0)** → `/research`; or operator may re-order / batch).
+---
+
 # Resume Brief — US-0156 / S0162 SEGMENT TERMINAL (auto-20261002-us0156; role=curator; refresh-context 3/3) — /handoff-to-operator
 
 - **orchestrator_run_id**: auto-20261002-us0156
@@ -102358,9 +102852,6 @@ sovereign-critic (sprint-plan) then /execute
 
 
 ```
-
-
-
 
 
 

@@ -2747,16 +2747,17 @@ class Us0100ReleaseChangelogContractTests(unittest.TestCase):
         self.assertIn("independent axes", runbook.lower())
 
     def test_us0101_template_agent_model_aliases(self) -> None:
-        """AC-5: Template agents use fast/inherit/omit only."""
+        """AC-5: Template aliases preserve the keyless strong/balanced contract."""
         root = self._root()
         template_agents_dir = root / "template" / ".cursor" / "agents"
         # Check curator uses fast (cheap tier)
         curator = (template_agents_dir / "curator.mdc").read_text(encoding="utf-8")
         self.assertIn("model: fast", curator)
-        # Check po uses inherit (balanced tier)
+        # PO is resolved by the phase catalog; an implicit host inherit must not
+        # bypass that resolver (BUG-0022).
         po = (template_agents_dir / "po.mdc").read_text(encoding="utf-8")
-        self.assertIn("model: inherit", po)
-        # Check dev uses no model field (strong tier = omit)
+        self.assertNotIn("model:", po)
+        # Dev likewise resolves through the tier catalog (strong tier = omit).
         dev = (template_agents_dir / "dev.mdc").read_text(encoding="utf-8")
         self.assertNotIn("model:", dev)
 

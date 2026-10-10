@@ -1551,6 +1551,18 @@ set -e
 assert_true "check_intake_template_parity --scope=us-0131 passes (US-0131)" "[ \"$US0131_PARITY_PY\" -eq 0 ]"
 assert_true "US-0131 contract tests pass" "[ \"$US0131_CONTRACT_PY\" -eq 0 ]"
 
+# BUG-0032 — AUTONOMY_FLAGS_DRIFT declared-mirror drift-detect (R-0156 DQ3 / AC-3).
+# Always-run (NOT changed-file filtered): asserts the identity fixture exit-0 +
+# exact banner, then runs the 8-marker `test_bug0032_*` suite. Fail-closed.
+set +e
+"$PY" "$ROOT/scripts/check_intake_template_parity.py" --scope=autonomy-flags --repo "$ROOT/tests/fixtures/bug0032_autonomy_flags/identity" >/dev/null 2>&1
+BUG0032_IDENTITY_PY=$?
+"$PY" -m pytest tests/bug0032_autonomy_flags_drift_test.py -q >/dev/null 2>&1
+BUG0032_CONTRACT_PY=$?
+set -e
+assert_true "check_intake_template_parity --scope=autonomy-flags identity fixture exit-0 (BUG-0032 / AC-2)" "[ \"$BUG0032_IDENTITY_PY\" -eq 0 ]"
+assert_true "BUG-0032 8-marker drift-detect suite (tests/bug0032_autonomy_flags_drift_test.py)" "[ \"$BUG0032_CONTRACT_PY\" -eq 0 ]"
+
 # 26AF) US-0132 — Cursor/OpenCode model configuration contract
 set +e
 "$PY" "$ROOT/scripts/check_intake_template_parity.py" --scope=us-0132 >/dev/null 2>&1
@@ -1691,6 +1703,18 @@ set +e
 BUG0027_CONTRACT_PY=$?
 set -e
 assert_true "BUG-0027 OpenCode manual phase persist contract tests pass" "[ \"$BUG0027_CONTRACT_PY\" -eq 0 ]"
+
+# 26AW) BUG-0033 — thin OpenCode command diagnostics-only Stop/Fail-safe parity
+set +e
+"$PY" scripts/check_intake_template_parity.py --scope=bug-0033 >/dev/null 2>&1
+BUG0033_PARITY=$?
+set -e
+assert_true "check_intake_template_parity --scope=bug-0033 passes (BUG-0033)" "[ \"$BUG0033_PARITY\" -eq 0 ]"
+set +e
+"$PY" -m pytest tests/bug0033_opencode_command_parity_test.py -q >/dev/null 2>&1
+BUG0033_CONTRACT_PY=$?
+set -e
+assert_true "BUG-0033 10-marker command parity suite (tests/bug0033_opencode_command_parity_test.py)" "[ \"$BUG0033_CONTRACT_PY\" -eq 0 ]"
 
 timestamp=$(date -u +"%Y-%m-%dT%H:%M:%SZ")
 {
