@@ -33,9 +33,11 @@ export function renderPanelLayout(model: TuiPanelModel, cols: number): string {
 					`\x1b[1mStatus\x1b[0m story=${model.status.story_id ?? "—"} sprint=${model.status.sprint_id ?? "—"}`,
 				);
 				break;
-			case "timeline":
-				lines.push(`\x1b[1mTimeline\x1b[0m ${model.timeline.length} events`);
+			case "timeline": {
+				const outcomes = model.timeline.map((entry) => entry.outcome).join(",");
+				lines.push(`\x1b[1mTimeline\x1b[0m ${model.timeline.length} events ${outcomes}`);
 				break;
+			}
 			case "tools":
 				lines.push(`\x1b[1mTools\x1b[0m ${model.tools.names.join(", ") || "—"}`);
 				break;

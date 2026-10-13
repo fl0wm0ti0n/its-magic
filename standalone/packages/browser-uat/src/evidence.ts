@@ -1,4 +1,4 @@
-import { mkdirSync, writeFileSync } from "node:fs";
+import { existsSync, mkdirSync, readFileSync, writeFileSync } from "node:fs";
 import { join } from "node:path";
 import {
 	BROWSER_EVIDENCE_GAP,
@@ -24,10 +24,27 @@ export function writeEvidence(root: string, record: ProbeRecord): ProbeRecord {
 	return safe;
 }
 
+function screenshotCounts(shot: string): boolean {
+	if (!shot || shot.includes("screenshot-placeholder")) {
+		return false;
+	}
+	if (existsSync(shot)) {
+		const body = readFileSync(shot);
+		if (body.toString("utf8") === "screenshot-placeholder") {
+			return false;
+		}
+	}
+	return true;
+}
+
 export function assertEvidenceComplete(record: ProbeRecord): void {
 	const refs = record.browser_evidence_refs;
-	const hasShot = (refs.screenshots?.length ?? 0) > 0;
+	const shots = refs.screenshots ?? [];
+	const hasShot = shots.length > 0 && shots.every(screenshotCounts);
 	const hasNav = Boolean(refs.navigation_url || record.final_url);
+	const hasConsole = Boolean(refs.console_summary);
+	const hasNetwork = Boolean(refs.network_summary);
+	const hasFinal = Boolean(record.final_url);
 	const hasSnap = Boolean(record.snapshot_summary);
 	const hasTrace = Boolean(record.trace_ref);
 	const hasDuration = Number.isFinite(record.duration_ms);
@@ -35,7 +52,16 @@ export function assertEvidenceComplete(record: ProbeRecord): void {
 	const hasRef = Boolean(record.app_runtime_ref);
 	if (
 		record.passed &&
-		(!hasShot || !hasNav || !hasSnap || !hasTrace || !hasDuration || !hasBackend || !hasRef)
+		(!hasShot ||
+			!hasNav ||
+			!hasConsole ||
+			!hasNetwork ||
+			!hasFinal ||
+			!hasSnap ||
+			!hasTrace ||
+			!hasDuration ||
+			!hasBackend ||
+			!hasRef)
 	) {
 		throw new BrowserUatError(BROWSER_EVIDENCE_GAP);
 	}

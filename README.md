@@ -151,6 +151,12 @@ walking upward. From another directory, select one explicitly with
 `npm uninstall -g --prefix <same-prefix> its-magic`. `itsm` requires Node.js
 `>=22.19.0`; older Node versions exit with `ITSM_NODE_VERSION_UNSUPPORTED`.
 
+To put the project shim `.its-magic/bin/itsm` on your user PATH at a directory
+you choose, opt in with `python installer.py --target <repo> --register-itsm-path`
+(or `ITS_MAGIC_REGISTER_ITSM_PATH=1`). That is separate from the npm `--prefix`
+commands above. Defaults, the `prompt` rule, and removal are in
+`docs/engineering/runbook.md` under **Global itsm PATH registration (US-0149)**.
+
 ### Global Linux install: empty `install_include_paths` (CRLF manifest)
 
 If **`its-magic --target <repo> --mode missing`** fails with **`[INSTALL_MANIFEST_ERROR] install_include_paths section is empty`** on Debian/Linux while the packaged manifest still lists paths, the global install likely has **CRLF** line endings in **`installer-owned-paths.manifest`** (visible as **`^M$`** with **`cat -A`**). **Fix in-tree** from **`0.1.2-41`**: **`installer.sh`** strips trailing carriage returns before section matching; **`.gitattributes`** keeps **`*.manifest`** LF; **`prepublishOnly`** runs **`guard_installer_publish`**. **Upgrade**: install a build **≥ `0.1.2-41`** (or reinstall from a fresh **`npm pack`** tarball after pull). Older tarballs such as **`its-magic@0.1.2-40`** may remain broken until republished — see **`docs/engineering/architecture.md`** **`# BUG-0008`**.

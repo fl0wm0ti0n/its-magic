@@ -8,7 +8,10 @@ Param(
   [switch]$CleanRepo,
   [switch]$Yes,
   [switch]$Help,
-  [switch]$Version
+  [switch]$Version,
+  [switch]$RegisterItsmPath,
+  [string]$ItsmPathDir,
+  [switch]$UnregisterItsmPath
 )
 
 $ErrorActionPreference = "Stop"
@@ -36,6 +39,53 @@ foreach ($a in $args) {
 if ($hostArgCount -gt 1) {
   Write-Host "[INSTALL_HOST_INVALID] duplicate --host argv (no last-wins). Accepted: cursor | opencode | both (default: cursor)."
   exit 1
+}
+
+# US-0149: forward PATH flags to installer.py. This script does not edit PATH.
+$script:ForwardRegister = [bool]$RegisterItsmPath
+$script:ForwardRegisterDir = if ($ItsmPathDir) { [string]$ItsmPathDir } else { "" }
+$script:ForwardUnregister = [bool]$UnregisterItsmPath
+for ($i = 0; $i -lt $args.Count; $i++) {
+  $token = [string]$args[$i]
+  if ($token -eq "--register-itsm-path") {
+    $script:ForwardRegister = $true
+    if (($i + 1) -lt $args.Count) {
+      $next = [string]$args[$i + 1]
+      if (-not $next.StartsWith("-")) {
+        $script:ForwardRegisterDir = $next
+        $i++
+      }
+    }
+  }
+  elseif ($token -eq "--unregister-itsm-path") {
+    $script:ForwardUnregister = $true
+  }
+}
+
+function Invoke-ForwardItsmPathFlags([string]$TargetRoot) {
+  if (-not $script:ForwardRegister -and -not $script:ForwardUnregister) { return }
+  $installerPy = Join-Path $scriptDir "installer.py"
+  if (-not (Test-Path $installerPy -PathType Leaf)) {
+    Write-Host "[ITSM_PATH_REGISTER_FAILED] installer.py missing next to installer.ps1."
+    exit 1
+  }
+  $py = Get-Command python -ErrorAction SilentlyContinue
+  if (-not $py) {
+    Write-Host "[ITSM_PATH_REGISTER_FAILED] PYTHON_NOT_FOUND: Python is required to forward itsm PATH flags."
+    exit 1
+  }
+  if ($script:ForwardUnregister) {
+    & python $installerPy --target $TargetRoot --unregister-itsm-path
+    if ($LASTEXITCODE -ne 0) { exit $LASTEXITCODE }
+  }
+  if ($script:ForwardRegister) {
+    if ($script:ForwardRegisterDir) {
+      & python $installerPy --target $TargetRoot --register-itsm-path $script:ForwardRegisterDir
+    } else {
+      & python $installerPy --target $TargetRoot --register-itsm-path
+    }
+    if ($LASTEXITCODE -ne 0) { exit $LASTEXITCODE }
+  }
 }
 
 function Normalize-PathSafe($Path) {
@@ -897,6 +947,9 @@ function Show-ItsMagicHelp($VersionString, $RepoUrl) {
   Write-Host "                    (docs/, scripts/, its_magic/, handoffs/, decisions/, sprints/,"
   Write-Host "                    .github/workflows/) always install regardless of -InstallHost."
   Write-Host "                    Note: -InstallHost (not -Host) avoids the PowerShell `$Host landmine."
+  Write-Host "  -RegisterItsmPath Forwarded to installer.py as --register-itsm-path (opt-in)."
+  Write-Host "  -ItsmPathDir      Optional directory forwarded with --register-itsm-path."
+  Write-Host "  -UnregisterItsmPath Forwarded to installer.py as --unregister-itsm-path."
   Write-Host "  Note: installer bootstraps runbook TEST/LINT/TYPECHECK commands from"
   Write-Host "        OS+stack detection; unresolved TEST_COMMAND fails fast with"
   Write-Host "        [RUNBOOK_BOOTSTRAP_ERROR] diagnostics."
@@ -1154,6 +1207,7 @@ if ($mode -eq "upgrade") {
   Write-Host ""
   Write-Host "Repository: $repoUrl"
   Write-Host ""
+  Invoke-ForwardItsmPathFlags -TargetRoot $targetRoot
   exit 0
 }
 
@@ -1215,5 +1269,6 @@ Show-ItsMagicBanner -IncludeInstallMessage
 Write-Host "its-magic v$appVersion"
 Write-Host "Repository: $repoUrl"
 Write-Host ""
+Invoke-ForwardItsmPathFlags -TargetRoot $targetRoot
 exit 0
 

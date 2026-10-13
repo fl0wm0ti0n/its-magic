@@ -1,3 +1,5 @@
+import { existsSync, readdirSync, readFileSync } from "node:fs";
+import { join } from "node:path";
 import type { KernelBridge } from "@its-magic/kernel-bridge";
 import type { SessionSupervisor, SupervisedSession } from "@its-magic/role-runtime";
 import { crashResume } from "../recovery/crash-resume.ts";
@@ -39,8 +41,14 @@ import {
 } from "./config-view.ts";
 import {
 	createParallelDevCoordinator,
+	createReleaseDeployPipeline,
 	kernelBridgeDeliveryAdapter,
+	PARALLEL_DEV_SELECTION_NO_PASS,
 	type ParallelDevCoordinator,
+	parallelHookFailsClosed,
+	type ReleaseDeployPipeline,
+	readRunReleaseEvidence,
+	writeParallelDevPick,
 } from "./delivery/index.ts";
 import {
 	appendRepairLedger,
@@ -127,6 +135,51 @@ export interface AutoRunResult {
 	resumed?: boolean;
 }
 
+export interface WorkflowAppPort {
+	start(req: {
+		id: string;
+		run_id: string;
+		phase_id: string;
+		cwd: string;
+		command?: string;
+		url?: string;
+		ports?: number[];
+		health_path?: string;
+	}): Promise<{ id: string; url?: string }>;
+	health(id: string): Promise<{ ok: boolean; health?: string; reason_code?: string }>;
+	restart(id: string): Promise<{ id: string; url?: string }>;
+	getRestartMax(): number;
+	logs(id: string): string[];
+	cleanup(reason: "success" | "failure" | "cancel" | "runtime_restart"): Promise<{
+		reason_code?: string;
+	}>;
+	snapshotHealth?(id?: string): { ok: boolean; reason_code?: string };
+}
+
+export interface WorkflowBrowserPort {
+	evidenceRoot: string;
+	driver: { kind: string };
+	perform(req: {
+		action: "navigate" | "snapshot" | "open" | "type";
+		url?: string;
+		account_ref?: string;
+		operator_approved?: boolean;
+	}): Promise<{
+		passed: boolean;
+		reason_code: string;
+		trace_ref?: string;
+		final_url?: string;
+		app_runtime_ref?: string;
+		browser_evidence_refs?: {
+			screenshots?: string[];
+			console_summary?: string;
+			network_summary?: string;
+		};
+	}>;
+	withRetry<T>(op: () => Promise<T>, classifiable: string): Promise<T>;
+	bindAppRuntime?(id: string): string;
+}
+
 export interface WorkflowEngineDeps {
 	supervisor: SessionSupervisor;
 	config: ConfigView;
@@ -135,6 +188,9 @@ export interface WorkflowEngineDeps {
 	env?: NodeJS.ProcessEnv;
 	qaPass?: (cycle: number) => boolean;
 	kernelRoot?: string;
+	app?: WorkflowAppPort;
+	browser?: WorkflowBrowserPort;
+	evidenceRoot?: string;
 }
 
 export class WorkflowEngine {
@@ -145,9 +201,15 @@ export class WorkflowEngine {
 		Partial<Pick<KernelBridge, "runSovereignOperation" | "runDeliveryOperation">>;
 	private readonly env?: NodeJS.ProcessEnv;
 	private readonly qaPass: (cycle: number) => boolean;
+	private readonly app?: WorkflowAppPort;
+	private readonly browser?: WorkflowBrowserPort;
+	private readonly evidenceRoot?: string;
+	private readonly kernelRoot?: string;
+	readonly phaseEvidence: Partial<Record<"execute" | "qa" | "uat" | "release", boolean>> = {};
 	private readonly gates = createGateEngine();
 	readonly sovereign: SovereignRuntime;
 	readonly parallelDev: ParallelDevCoordinator;
+	readonly releaseDeploy: ReleaseDeployPipeline;
 
 	constructor(deps: WorkflowEngineDeps) {
 		this.supervisor = deps.supervisor;
@@ -155,6 +217,10 @@ export class WorkflowEngine {
 		this.kernelBridge = deps.kernelBridge;
 		this.env = deps.env;
 		this.qaPass = deps.qaPass ?? (() => true);
+		this.app = deps.app;
+		this.browser = deps.browser;
+		this.evidenceRoot = deps.evidenceRoot;
+		this.kernelRoot = deps.kernelRoot;
 		this.sovereign = createSovereignRuntime({
 			config: deps.config,
 			kernelBridge: deps.kernelBridge,
@@ -171,6 +237,11 @@ export class WorkflowEngine {
 			supervisor: deps.supervisor,
 			bridge: deliveryBridge,
 			kernelRoot: deps.kernelRoot,
+		});
+		this.releaseDeploy = createReleaseDeployPipeline({
+			config: deps.config,
+			bridge: deliveryBridge,
+			kernelRoot: deps.kernelRoot ?? "",
 		});
 		this.router = createCommandRouter({
 			supervisor: deps.supervisor,
@@ -340,13 +411,13 @@ export class WorkflowEngine {
 					? plan.slice(executeAt + 1).filter((phase) => phase !== "qa")
 					: plan.filter((phase) => phase !== "execute" && phase !== "qa");
 			for (const phase of rest) {
+				if (phase === "verify-work") {
+					this.rememberPhaseEvidence("uat");
+				}
 				if (phase === "release") {
-					const gates = this.evaluateRelease({
-						tests_pass: true,
-						qa_evidence: true,
-						uat_pass: true,
-						artifact_refs: ["sprints/S0151/summary.md"],
-					});
+					const gates = this.evaluateRelease(
+						await this.prepareReleaseGate(await this.collectReleaseGateInput(input, qaOk)),
+					);
 					if (!gates.ok) {
 						this.failNonRelaxable(QUALITY_EVIDENCE_FAILED, matrix, preset);
 					}
@@ -488,17 +559,44 @@ export class WorkflowEngine {
 
 		for (let i = 0; i < max; i += 1) {
 			const execute = await this.requireOk("execute", input);
-			const parallelBefore = this.parallelDev.noopSnapshot();
-			const parallelHook = this.parallelDev.enabled()
-				? await this.parallelDev.afterExecutePass({
-						orchestrator_run_id: input.orchestrator_run_id,
-						story_id: input.orchestrator_run_id,
-						model_id: input.model_id,
-						kernel_root: input.kernelRoot,
-						producer_session_id: execute.session.kernel_session_id,
-					})
-				: parallelBefore;
-			void parallelHook;
+			this.rememberPhaseEvidence("execute");
+			if (!this.parallelDev.enabled()) {
+				void this.parallelDev.noopSnapshot();
+			} else {
+				const hook = await this.parallelDev.afterExecutePass({
+					orchestrator_run_id: input.orchestrator_run_id,
+					story_id: input.orchestrator_run_id,
+					model_id: input.model_id,
+					kernel_root: input.kernelRoot ?? this.kernelRoot,
+					producer_session_id: execute.session.kernel_session_id,
+				});
+				const denied = parallelHookFailsClosed(hook);
+				if (!denied.ok) {
+					throw new WorkflowError(denied.reason_code, "parallel execute hook failed closed");
+				}
+				const arbiter = await this.parallelDev.runQaArbiter({
+					orchestrator_run_id: input.orchestrator_run_id,
+					story_id: input.orchestrator_run_id,
+					model_id: input.model_id,
+					kernel_root: input.kernelRoot ?? this.kernelRoot,
+					producer_session_id: execute.session.kernel_session_id,
+					candidates: hook.candidates ?? [],
+				});
+				const root = input.kernelRoot ?? this.kernelRoot;
+				if (arbiter.outcome === "winner_selected" || arbiter.outcome === "reject_all") {
+					if (!root) {
+						throw new WorkflowError(PARALLEL_DEV_SELECTION_NO_PASS, "parallel pick root missing");
+					}
+					writeParallelDevPick(root, { ...arbiter, candidates: hook.candidates });
+				}
+				const arbiterDenied = parallelHookFailsClosed(arbiter);
+				if (!arbiterDenied.ok || arbiter.outcome === "reject_all") {
+					throw new WorkflowError(
+						arbiter.reason_code || PARALLEL_DEV_SELECTION_NO_PASS,
+						"parallel arbitration failed closed",
+					);
+				}
+			}
 			const hooks = await this.scheduleSupplementaryHooks(execute, input);
 			if (hooks.critic) {
 				supplementary_roles.push(hooks.critic.role_id);
@@ -510,6 +608,7 @@ export class WorkflowEngine {
 				...input,
 				parent_phase_session_id: execute.session.kernel_session_id,
 			});
+			this.rememberPhaseEvidence("qa");
 			const qa_pass = this.qaPass(i);
 			cycles.push({
 				execute,
@@ -609,6 +708,190 @@ export class WorkflowEngine {
 
 	evaluateRelease(input: ReleaseGateInput) {
 		return this.gates.evaluate(input);
+	}
+
+	/**
+	 * Release gates read the current run, UAT evidence, and artifact refs.
+	 * Engines without a kernel root keep the in-memory execute/qa result.
+	 */
+	async collectReleaseGateInput(
+		input: { orchestrator_run_id: string; kernelRoot?: string },
+		qaOk: boolean,
+	): Promise<ReleaseGateInput> {
+		const root = input.kernelRoot ?? this.kernelRoot;
+		if (!root) {
+			const uat = this.phaseEvidence.uat;
+			return {
+				tests_pass: qaOk,
+				qa_evidence: qaOk,
+				uat_pass: typeof uat === "boolean" ? uat : qaOk,
+				artifact_refs: qaOk ? [`runs/${input.orchestrator_run_id}/summary.md`] : [],
+			};
+		}
+		const evidence = readRunReleaseEvidence(root, input.orchestrator_run_id);
+		const ctx = {
+			kernelRoot: root,
+			sprint_id: input.orchestrator_run_id,
+			orchestrator_run_id: input.orchestrator_run_id,
+		};
+		const deployed = await this.releaseDeploy.applyConfiguredTargets(ctx);
+		const verified = await this.releaseDeploy.verifyConfiguredTargets(ctx);
+		const healing = await this.releaseDeploy.runPostDeployHealing({
+			orchestrator_run_id: input.orchestrator_run_id,
+			story_id: input.orchestrator_run_id,
+		});
+		const artifact_refs = [...evidence.artifact_refs];
+		for (const ref of verified.artifact_refs) {
+			if (!artifact_refs.includes(ref)) {
+				artifact_refs.push(ref);
+			}
+		}
+		const targetsPass =
+			deployed.deploy_targets_pass &&
+			verified.deploy_targets_pass &&
+			verified.artifact_refs.length > 0;
+		const healingPass = healing.ok === true;
+		return {
+			tests_pass: qaOk && evidence.tests_pass,
+			qa_evidence: qaOk && evidence.qa_pass,
+			uat_pass: evidence.uat_pass && (this.phaseEvidence.uat ?? true),
+			artifact_refs,
+			deploy_targets_pass: targetsPass && healingPass,
+			premature: evidence.premature || !targetsPass || !healingPass,
+		};
+	}
+
+	/** Execute, QA, UAT, and release read repository evidence when services are owned. */
+	rememberPhaseEvidence(phase: "execute" | "qa" | "uat" | "release"): boolean {
+		if (!this.app || !this.browser) {
+			return false;
+		}
+		const pass = this.repositoryUatPass(this.browser.evidenceRoot || this.evidenceRoot || "");
+		this.phaseEvidence[phase] = pass;
+		return pass;
+	}
+
+	/**
+	 * Sets `uat_pass` from app start/health, a browser probe, and bounded retry.
+	 * Engines without those services keep the caller input.
+	 */
+	async prepareReleaseGate(base: ReleaseGateInput): Promise<ReleaseGateInput> {
+		if (!this.app || !this.browser) {
+			return base;
+		}
+		const uat_pass = await this.collectUatPass();
+		this.phaseEvidence.release = uat_pass;
+		return { ...base, uat_pass };
+	}
+
+	private async collectUatPass(): Promise<boolean> {
+		const app = this.app;
+		const browser = this.browser;
+		if (!app || !browser) {
+			return false;
+		}
+		const root = browser.evidenceRoot || this.evidenceRoot || "";
+		let healthOk = false;
+		let handleId = "gate-app";
+		let url = "http://127.0.0.1/";
+		try {
+			const handle = await app.start({
+				id: handleId,
+				run_id: "gate",
+				phase_id: "execute",
+				cwd: root || ".",
+				url,
+			});
+			handleId = handle.id;
+			url = handle.url || url;
+			let health = await app.health(handleId);
+			let used = 0;
+			const cap = app.getRestartMax();
+			while (!health.ok && used < cap) {
+				used += 1;
+				try {
+					const restarted = await app.restart(handleId);
+					handleId = restarted.id || handleId;
+					url = restarted.url || url;
+				} catch {
+					health = { ok: false };
+					break;
+				}
+				health = await app.health(handleId);
+			}
+			healthOk = health.ok;
+		} catch {
+			healthOk = false;
+		}
+		if (!healthOk) {
+			return false;
+		}
+		try {
+			await browser.withRetry(
+				() => browser.perform({ action: "navigate", url }),
+				"BROWSER_CRASHED",
+			);
+			browser.bindAppRuntime?.(handleId);
+		} catch {
+			return false;
+		}
+		return this.repositoryUatPass(root);
+	}
+
+	private repositoryUatPass(root: string): boolean {
+		if (!root) {
+			return false;
+		}
+		const dir = join(root, ".its-magic", "runtime", "browser-evidence");
+		if (!existsSync(dir)) {
+			return false;
+		}
+		const files = readdirSync(dir)
+			.filter((name) => name.startsWith("probe-") && name.endsWith(".json"))
+			.sort();
+		const latest = files.at(-1);
+		if (!latest) {
+			return false;
+		}
+		let record: {
+			passed?: boolean;
+			trace_ref?: string;
+			final_url?: string;
+			app_runtime_ref?: string;
+			browser_evidence_refs?: {
+				screenshots?: string[];
+				console_summary?: string;
+				network_summary?: string;
+			};
+		};
+		try {
+			record = JSON.parse(readFileSync(join(dir, latest), "utf8")) as typeof record;
+		} catch {
+			return false;
+		}
+		if (record.passed !== true) {
+			return false;
+		}
+		const refs = record.browser_evidence_refs ?? {};
+		const shots = refs.screenshots ?? [];
+		if (shots.length === 0 || !refs.console_summary || !refs.network_summary) {
+			return false;
+		}
+		if (!record.trace_ref || !record.final_url || !record.app_runtime_ref) {
+			return false;
+		}
+		for (const shot of shots) {
+			if (shot.includes("screenshot-placeholder")) {
+				return false;
+			}
+			if (existsSync(shot)) {
+				const body = readFileSync(shot);
+				if (body.toString("utf8") === "screenshot-placeholder") {
+					return false;
+				}
+			}
+		}
+		return true;
 	}
 
 	writeRelease(evidence: ReleaseEvidence, gates: ReleaseGateInput) {

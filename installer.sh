@@ -53,7 +53,11 @@ show_help() {
   printf "                    Duplicate --host argv -> fail closed INSTALL_HOST_INVALID (no last-wins).\n"
   printf "                    --host gates ONLY .cursor/ and .opencode/ trees; kernel paths\n"
   printf "                    (docs/, scripts/, its_magic/, handoffs/, decisions/, sprints/,\n"
-  printf "                    .github/workflows/) always install regardless of --host.\n\n"
+  printf "                    .github/workflows/) always install regardless of --host.\n"
+  printf "  --register-itsm-path [dir|prompt]\n"
+  printf "                    Forwarded to installer.py. Opt-in itsm PATH registration.\n"
+  printf "  --unregister-itsm-path\n"
+  printf "                    Forwarded to installer.py. Removes the recorded registration.\n\n"
   printf "  Note: installer bootstraps runbook TEST/LINT/TYPECHECK commands from\n"
   printf "        OS+stack detection; unresolved TEST_COMMAND fails fast with\n"
   printf "        [RUNBOOK_BOOTSTRAP_ERROR] diagnostics.\n"
@@ -683,6 +687,36 @@ prompt_yes_no() {
   [ "$value" = "y" ] || [ "$value" = "yes" ]
 }
 
+forward_itsm_path_flags() {
+  target_root="$1"
+  if [ "$REGISTER_ITSM_PATH_SET" != "true" ] && [ "$UNREGISTER_ITSM_PATH" != "true" ]; then
+    return 0
+  fi
+  installer_py="$SCRIPT_DIR/installer.py"
+  if [ ! -f "$installer_py" ]; then
+    printf "%s\n" "[ITSM_PATH_REGISTER_FAILED] installer.py missing next to installer.sh."
+    exit 1
+  fi
+  if command -v python3 >/dev/null 2>&1; then
+    pybin="python3"
+  elif command -v python >/dev/null 2>&1; then
+    pybin="python"
+  else
+    printf "%s\n" "[ITSM_PATH_REGISTER_FAILED] PYTHON_NOT_FOUND"
+    exit 1
+  fi
+  if [ "$UNREGISTER_ITSM_PATH" = "true" ]; then
+    "$pybin" "$installer_py" --target "$target_root" --unregister-itsm-path || exit $?
+  fi
+  if [ "$REGISTER_ITSM_PATH_SET" = "true" ]; then
+    if [ -n "$REGISTER_ITSM_PATH_VALUE" ]; then
+      "$pybin" "$installer_py" --target "$target_root" --register-itsm-path "$REGISTER_ITSM_PATH_VALUE" || exit $?
+    else
+      "$pybin" "$installer_py" --target "$target_root" --register-itsm-path || exit $?
+    fi
+  fi
+}
+
 TARGET=""
 MODE=""
 HOST=""
@@ -693,6 +727,9 @@ CLEAN_REPO="false"
 ASSUME_YES="false"
 SHOW_HELP="false"
 SHOW_VERSION="false"
+REGISTER_ITSM_PATH_SET="false"
+REGISTER_ITSM_PATH_VALUE=""
+UNREGISTER_ITSM_PATH="false"
 
 if [ $# -eq 0 ]; then
   SHOW_HELP="true"
@@ -721,6 +758,21 @@ while [ $# -gt 0 ]; do
     --yes) ASSUME_YES="true"; shift 1 ;;
     --help|-h) SHOW_HELP="true"; shift 1 ;;
     --version|-v) SHOW_VERSION="true"; shift 1 ;;
+    --register-itsm-path)
+      REGISTER_ITSM_PATH_SET="true"
+      if [ $# -ge 2 ]; then
+        case "$2" in
+          --*) shift 1 ;;
+          *)
+            REGISTER_ITSM_PATH_VALUE="$2"
+            shift 2
+            ;;
+        esac
+      else
+        shift 1
+      fi
+      ;;
+    --unregister-itsm-path) UNREGISTER_ITSM_PATH="true"; shift 1 ;;
     *) shift 1 ;;
   esac
 done
@@ -973,6 +1025,7 @@ if [ "$MODE" = "upgrade" ]; then
     printf "    Check .cursor/scratchpad.local.example.md for new flags.\n"
   fi
   printf "\nRepository: %s\n\n" "$REPO_URL"
+  forward_itsm_path_flags "$TARGET_ROOT"
   exit 0
 fi
 
@@ -1033,4 +1086,5 @@ show_banner
 printf "its-magic v%s\n" "$APP_VERSION"
 printf "Repository: %s\n\n" "$REPO_URL"
 printf "\033[1;32m                    Installation complete!\033[0m\n\n"
+forward_itsm_path_flags "$TARGET_ROOT"
 exit 0

@@ -1,3 +1,115 @@
+# Dev-to-QA Handoff — S0175 / US-0155 (interactive standalone operator TUI)
+
+- **date**: 2026-10-12T19:46:05Z (UTC)
+- **from**: `dev` (fresh execute; marker `dev-US0155-execute-20261012T194605Z-fresh`)
+- **to**: `qa` (orchestrator-owned fresh `/qa` only — this child does not spawn it)
+- **verdict**: **EXECUTE_PASS**. `next_scheduled_phase=qa`. US-0155 stays **OPEN**. AC-1..AC-5 stay unchecked. Closure owns the DONE flip and the acceptance boxes.
+- **sprint**: S0175. Tasks T-anch and T-001..T-005 are checked. Research R-0165. Architecture `# US-0155`. Companion DEC: none.
+- **what shipped**: `runInteractiveTui` in `standalone/apps/tui` uses Node readline and the existing ANSI renderer. It calls `resolveOperatorTransport` and `createOperatorSession`. It does not construct `WorkflowEngine`, a second runs store, or import `@earendil-works/pi-coding-agent`, `pi-ai`, or `pi-tui`. `buildTuiModel` stays the one-shot observer. Interactive mode attaches as `controller`, submits admitted argv through `submitCommand`, and keeps `subscribeEvents` open. `execution_failure` and `gate_block` reason codes are painted. Approve uses `respondApproval`. Cancel uses `cancel`. Resume is argv `["resume"]`. Pause is argv `["pause"]` on the existing executor, mapped to `runAuto({ pauseRequested: true })`, which returns stop `pause_request` / `AUTO_PAUSE_REQUEST`. `DAEMON_RPC_METHODS` is unchanged. `interactive-panels.ts` composes `renderPanelLayout` and renders conversation, changed files, app/log health, browser evidence, and model/token/cost. `TuiPanelId` and `TUI_COLLAPSE_ORDER` are unchanged. Visible text is capped at 200 lines and 32 KiB with an evidence footer when truncated. At `cols <= 40`, `selectVisiblePanels` still returns only phase and status. Keys: Enter submit, Ctrl+Y approve, Ctrl+N deny, Ctrl+X cancel, Ctrl+P pause, Ctrl+R resume. Resize re-renders. Every painted payload goes through `redactEventPayload`. `EVENT_SEQ_GAP` re-attaches and resubscribes with `after_seq`. A non-TTY or `ITS_MAGIC_TUI_NONINTERACTIVE=1` prints one layout and exits; a pending approval in that mode returns `OPERATOR_INPUT_REQUIRED`. Template twins under `template/.its-magic/standalone` match via `scripts/sync_standalone_template.py`.
+- **tests**: standalone contract runner, five `test_us0155_*` markers, 5 pass / 0 fail (duration_ms 3228.9766): `test_us0155_tui_is_daemon_client_not_a_second_runtime`, `test_us0155_commands_stream_diagnostics_approve_cancel_pause_resume`, `test_us0155_bounded_panels_cover_operator_surfaces`, `test_us0155_keyboard_resize_redaction_reconnect_fallback`, `test_us0155_daemon_protocol_without_external_pi_session`. Harness `tests/report.md` timestamp **2026-10-12T19:44:40Z**, **Pass 880 / Fail 0**, exit 0. No paid credentials, no network, and no `.env`. `.cursor/scratchpad.md` was not edited. `handoffs/resume_brief.md` was not written.
+- **not touched**: US-0155 status and AC boxes, US-0149 through US-0154, US-0156, US-0146, `docs/engineering/architecture.md`, `handoffs/resume_brief.md`, `.env`, commit, push, publish.
+- **next**: fresh `/qa` for US-0155 / S0175. This dev child does not spawn it.
+
+---
+
+# Dev-to-QA Handoff — S0174 / US-0154 (standalone operator-path quality gate)
+
+- **date**: 2026-10-12T17:59:08Z (UTC)
+- **from**: `dev` (fresh execute; marker `dev-US0154-execute-20261012T175908Z-fresh`)
+- **to**: `qa` (orchestrator-owned fresh `/qa` only — this child does not spawn it)
+- **verdict**: **EXECUTE_PASS**. `next_scheduled_phase=qa`. US-0154 stays **OPEN**. AC-1..AC-6 stay unchecked. Closure owns the DONE flip and the acceptance boxes.
+- **sprint**: S0174. Tasks T-anch and T-001..T-006 are checked. Research R-0164. Architecture `# US-0154`. Companion DEC: none.
+- **what shipped**: `.github/workflows/ci.yml` job `standalone-test` is a matrix of `windows-latest` and `ubuntu-latest`, Node `22.19.0`, `npm ci` in `standalone/`, then `npm run typecheck && npm run lint && npm test`. Kit `TEST_COMMAND` stays. `LINT_COMMAND` and `TYPECHECK_COMMAND` stay blank. The pin is in `docs/engineering/runbook.md` and `template/docs/engineering/runbook.md`. `template/.github/workflows/ci.yml` was not edited. The five `test_us0154_*` markers spawn the public `itsm`, `itsm-daemon`, and `itsm-tui` bins, reject fake browser and synthetic release evidence, separate `unit_seam` from `operator_path`, and keep the US-0154 acceptance checkbox open. The US-0149 launcher failure was a CRLF/LF mismatch in `standalone/packages/runtime-core/src/operator/operator-executor.ts`; the source was normalized to LF so `scripts/sync_standalone_template.py --check` matches the publishable mirror. US-0149 assertions were not weakened.
+- **tests**: standalone contract runner, five `test_us0154_*` markers, 5 pass / 0 fail (duration_ms 31975.0321): `test_us0154_public_itsm_reaches_production_composition`, `test_us0154_operator_e2e_session_policy_validator_resume_replay_parity`, `test_us0154_production_rejects_fake_browser_and_synthetic_release`, `test_us0154_report_separates_seams_and_fails_closed`, `test_us0154_acceptance_records_library_slices_and_production_followup`. Harness `tests/report.md` timestamp **2026-10-12T17:58:14Z**, **Pass 880 / Fail 0**, exit 0. No paid credentials and no `.env`. `.cursor/scratchpad.md` was not edited. `handoffs/resume_brief.md` was not written.
+- **not touched**: US-0154 status and AC boxes, US-0149 through US-0153, US-0155, `docs/engineering/architecture.md`, `template/docs/product/acceptance.md`, `handoffs/resume_brief.md`, `.env`, commit, push, publish.
+- **next**: fresh `/qa` for US-0154 / S0174. This dev child does not spawn it.
+
+---
+
+# Dev-to-QA Handoff — S0173 / US-0153 (real parallel delivery and release execution)
+
+- **date**: 2026-10-11T20:50:22Z (UTC)
+- **from**: `dev` (fresh execute; marker `dev-US0153-execute-20261011T205022Z-fresh`)
+- **to**: `qa` (orchestrator-owned fresh `/qa` only — this child does not spawn it)
+- **verdict**: **EXECUTE_PASS**. `next_scheduled_phase=qa`. US-0153 stays **OPEN**. AC-1..AC-5 stay unchecked. Closure owns the DONE flip and the acceptance boxes.
+- **sprint**: S0173. Tasks T-anch and T-001..T-005 are checked. Research R-0163. Architecture `# US-0153`. Companion DEC: none.
+- **what shipped**: When `SOVEREIGN_PARALLEL_DEV=1`, `runExecuteQaLoop` keeps `afterExecutePass`, fails closed on a skipped hook or a `reason_code`, calls `runQaArbiter`, and writes `handoffs/parallel_dev_pick.json` for `winner_selected` and `reject_all`. `reject_all` uses `PARALLEL_DEV_SELECTION_NO_PASS`. The flag-off path stays the US-0145 `noopSnapshot`. Release apply and verify use configured targets (`kind`, `target_id`, `endpoint`). A missing target returns `ok: false` and `RELEASE_TARGET_UNCONFIGURED`, and the gate sets `deploy_targets_pass: false`. `artifact_sha: "fake-sha"` cannot set `deploy_targets_pass` true. `getReleaseTargetAdapter` dry-run success stays. `RELEASE_GATE_ORDER` is unchanged. The release phase reads the current run, UAT evidence, and artifact refs. `verify` cites a real artifact ref. Smoke uses `deploy_smoke_probe`. Repair uses `deploy_healing_retry`. Disabled healing is not a deploy pass. Exhausted repair stays `DEPLOY_DEFERRED` or `DEPLOY_HEALING_DEFERRED`. Premature closure stays `RELEASE_PREMATURE` and `CLOSURE_RELEASE_EVIDENCE_MISSING`. `releaseCannotMarkDone` stays. `DeliveryResourceGuard.check` and the existing path policy run before worktree create, deploy, and repair. A denied path uses `POLICY_TRAVERSAL_DENIED` or `POLICY_DEFAULT_DENY`. Each check appends one audit line to `handoffs/deploy_results/deploy_results.jsonl`. No new cap key. No distributed workers and no remote Debian execution. Template twins of the touched runtime-core files match.
+- **tests**: standalone contract runner, five `test_us0153_*` markers, 5 pass / 0 fail (2026-10-11T20:50:22Z, duration_ms 363.226): `test_us0153_arbitration_persists_selected_or_rejected`, `test_us0153_configured_adapter_or_fail_closed`, `test_us0153_smoke_verify_repair_closure_use_real_evidence`, `test_us0153_limits_audited_before_worktree_deploy_repair`, `test_us0153_fixture_success_and_failure_matrix`. Harness `tests/report.md` timestamp **2026-10-11T20:49:43Z**, **Pass 880 / Fail 0**, exit 0. No paid credentials and no network claim. `.cursor/scratchpad.md` was not edited. `handoffs/resume_brief.md` was not written.
+- **not touched**: US-0153 status and AC boxes, US-0149 through US-0152, US-0154, `docs/engineering/architecture.md`, `handoffs/resume_brief.md`, `.env`, commit, push, publish.
+- **next**: fresh `/qa` for US-0153 / S0173. This dev child does not spawn it.
+
+---
+
+# Dev-to-QA Handoff — S0172 / US-0152 (production app and browser UAT)
+
+- **date**: 2026-10-11T19:12:05Z (UTC)
+- **from**: `dev` (fresh execute; marker `dev-US0152-execute-20261011T191205Z-fresh`)
+- **to**: `qa` (orchestrator-owned fresh `/qa` only — this child does not spawn it)
+- **verdict**: **EXECUTE_PASS**. `next_scheduled_phase=qa`. US-0152 stays **OPEN**. AC-1..AC-6 stay unchecked. Closure owns the DONE flip and the acceptance boxes.
+- **sprint**: S0172. Tasks T-anch and T-001..T-006 are checked. Research R-0162. Architecture `# US-0152`. Companion DEC: none.
+- **what shipped**: `createRuntimeHost` constructs `createAppRuntime` and `createBrowserUat` with `new PlaywrightIsolatedDriver()`. `dispose` runs app cleanup and browser teardown before the store closes. Workflow and operator routes receive those same objects. Production browser mode returns existing `BROWSER_UNAVAILABLE` when Chromium cannot load. The `BrowserUAT` class default remains `FakeBrowserDriver` when a test omits a driver. `writeShot` writes image bytes for a non-fake driver and `screenshot-placeholder` only for `kind: "fake"`. Before `evaluateRelease`, `ReleaseGateInput` is set from app start/health, a browser probe, and bounded retry. `GateEngine` order is unchanged. The existing app restart cap and `BrowserUAT.withRetry` are used. No new cap key. Missing health or exhausted retry fails the gate, and `uat_pass` is false when evidence is missing. A redacted screenshot, trace ref, console summary, network summary, final URL, and `app_runtime_ref` persist through `writeEvidence` and `redactEvidencePayload`. `assertEvidenceComplete` blocks a passing row that lacks any of them (`BROWSER_EVIDENCE_GAP`, then `RELEASE_UAT_FAILED`). `screenshot-placeholder` is not evidence. `executeOperatorCommand` calls the host services for `app` and `browser` and returns only existing codes: `APP_HEALTH_UNAVAILABLE`, `APP_RUNTIME_START_FAILED`, `APP_RUNTIME_HEALTH_FAILED`, `APP_RUNTIME_CLEANUP_FAILED`, `BROWSER_UNAVAILABLE`, `BROWSER_CREDENTIAL_FORBIDDEN`, `BROWSER_EVIDENCE_GAP`. `readAppHealth` uses the same app service. The command does not return `{ok:true}` when the service did not run. Template twins of the touched files match. The success fixture does not use `FakeBrowserDriver` or `screenshot-placeholder`.
+- **tests**: standalone contract runner, six `test_us0152_*` markers, 6 pass / 0 fail (`test_us0152_host_owns_app_runtime_and_browser_uat`, `test_us0152_production_driver_is_isolated_or_unavailable`, `test_us0152_gates_use_app_health_browser_probe_and_retry`, `test_us0152_incomplete_evidence_blocks_uat`, `test_us0152_app_and_browser_commands_share_services`, `test_us0152_e2e_launch_gate_and_failure_fixtures`). Harness `tests/report.md` timestamp **2026-10-11T19:11:29Z**, **Pass 880 / Fail 0**. No paid credentials and no `.env`. `.cursor/scratchpad.md` was not edited. `handoffs/resume_brief.md` was not written.
+- **not touched**: US-0152 status and AC boxes, US-0149, US-0150, US-0151, US-0153, `docs/engineering/architecture.md`, `handoffs/resume_brief.md`, `.env`, commit, push, publish.
+- **next**: fresh `/qa` for US-0152 / S0172. This dev child does not spawn it.
+
+---
+
+# Dev-to-QA Handoff — S0171 / US-0151 (README feature-coverage row shipped while OPEN)
+
+- **date**: 2026-10-11T18:07:29Z (UTC)
+- **from**: `dev` (fresh execute; marker `dev-US0151-readme-row-20261011T180729Z-fresh`)
+- **to**: parent. This child does not spawn `/qa` or `/closure`.
+- **verdict**: coverage row shipped. US-0151 stays **OPEN**. AC-1..AC-6 stay unchecked. Closure owns the DONE flip.
+- **what shipped**: literal `US-0151` in the Features catalog of `its_magic/README.md` and the byte-identical `template/its_magic/README.md`. Bold `**US-0151**` with traceability to architecture `# US-0151` under `docs/developer/README.md` `## Architecture notes`. `template/docs/developer/README.md` unchanged.
+- **coverage**: affinity=`distribution`; `has_root_coverage=true`; `has_dev_coverage=true`; the Features section contains the literal `US-0151`; report status=PASS; `coverage_missing=[]`; US-0151 is absent from `coverage_present` while OPEN.
+- **not touched**: backlog status, acceptance boxes, `.cursor/scratchpad.md`, `docs/engineering/architecture.md`, `handoffs/resume_brief.md`, `.env`, commit, push, publish.
+- **phase authority**: the release continuation pair remains the authority and names `next_scheduled_phase=closure`. This note does not reschedule it.
+- **next**: stop. This dev child does not spawn the next phase.
+
+---
+
+# Dev-to-QA Handoff — S0171 / US-0151 (executable lifecycle and operator transport)
+
+- **date**: 2026-10-11T16:58:40Z (UTC)
+- **from**: `dev` (fresh execute; marker `dev-US0151-execute-20261011T165840Z-fresh`)
+- **to**: `qa` (orchestrator-owned fresh `/qa` only — this child does not spawn it)
+- **verdict**: **EXECUTE_PASS**. `next_scheduled_phase=qa`. US-0151 stays **OPEN**. AC-1..AC-6 stay unchecked. Closure owns the DONE flip and the acceptance boxes.
+- **sprint**: S0171. Tasks T-anch and T-001..T-006 are checked. Research R-0161. Architecture `# US-0151`. Companion DEC: none.
+- **what shipped**: CLI `runCliArgv` and TUI `buildTuiModel` keep the `OperatorTransport` from `resolveOperatorTransport`. Production paths do not call `createRunsStore(":memory:")`. The in-process transport receives `host.store`. `dispatchItsmCommand` and `OperatorCommandFacade` stay in `run.ts`. One executor in `runtime-core` operator code serves daemon `command.submit` and in-process `submitCommand`. Scheduler commands use `runAuto` / `runQuick`. A programmatic route that is a plan then runs `runStandardLifecycle`. Resume calls existing `crashResume` with `host.store` and `readRepoResume`. The daemon builds one `WorkflowEngine` for the process lifetime. Ask calls `host.intel.search`. Index calls `host.intel.refresh`. Unavailable intelligence returns `INTEL_INDEX_UNAVAILABLE` or `INDEX_UNAVAILABLE`. App returns `APP_HEALTH_UNAVAILABLE`. Browser returns `BROWSER_UNAVAILABLE`. No `AppRuntime` and no browser driver. TUI attaches, replays `/v1/events`, and reads `status.snapshot` through client `statusSnapshot()`. Protocol version stays 1. Panel ids and collapse order stay. An unreachable daemon surfaces `DAEMON_UNREACHABLE`. Dispositions are `success`, `gate_block`, or `execution_failure`, persisted on the host store and the daemon event log. Template twins of the touched files match.
+- **tests**: standalone contract runner, six `test_us0151_*` markers, 6 pass / 0 fail (`test_us0151_cli_tui_daemon_share_resolved_transport`, `test_us0151_lifecycle_persists_success_gate_or_failure`, `test_us0151_auto_resume_crash_uses_workflow_and_store`, `test_us0151_ask_index_app_browser_admit_or_fail_closed`, `test_us0151_attach_and_tui_replay_daemon_events`, `test_us0151_e2e_execute_gate_restart_replay_attach`). Harness `tests/report.md` timestamp **2026-10-11T16:57:16Z**, **Pass 873 / Fail 7**. The seven failing rows are `slim auto command contract markers`, `US-0090 caveman-compress contract subtests`, `readme_feature_coverage fixtures`, `BUG-0010 contract subtests`, `BUG-0009 contract subtests`, `US-0093 contract subtests`, and `US-0100 contract subtests`. Sample assertions look for `# US-0093` and `# US-0091` in `docs/engineering/architecture.md`; those headings are not in the hot file. This sprint did not edit that file, `.cursor/commands/auto.md`, or README coverage. No paid credentials and no network. `.cursor/scratchpad.md` was not edited. `handoffs/resume_brief.md` was not written.
+- **not touched**: US-0151 status and AC boxes, US-0149, US-0150, US-0152, PATH registration, `panels.ts` ids, protocol version, `handoffs/resume_brief.md`, `.env`, commit, push, publish.
+- **next**: fresh `/qa` for US-0151 / S0171. This dev child does not spawn it.
+
+---
+
+# Dev-to-QA Handoff — S0170 / US-0150 (production runtime composition)
+
+- **date**: 2026-10-11T15:13:10Z (UTC)
+- **from**: `dev` (fresh execute; marker `dev-US0150-execute-20261011T151310Z-fresh`)
+- **to**: `qa` (orchestrator-owned fresh `/qa` only — this child does not spawn it)
+- **verdict**: **EXECUTE_PASS**. `next_scheduled_phase=qa`. US-0150 stays **OPEN**. AC-1..AC-6 stay unchecked. Closure owns the DONE flip and the acceptance boxes.
+- **sprint**: S0170. Tasks T-anch and T-001..T-006 are checked. Research R-0150. Architecture `# US-0150`. Companion DEC-0150 already Accepted; none created here.
+- **what shipped**: `@its-magic/runtime-host` remains the only production composition root. It builds one hashed context pack through existing `codeContext`, or fails with `RUNTIME_SERVICE_UNAVAILABLE` and writes no pack. When `startDaemonServer` has a runtime host, `crashResume` receives that host's resolved config. CLI and daemon `index.ts` still call `createRuntimeHost` and `dispose()`. The supervisor-only empty-config branch stays for US-0148 and is not taken by those entrypoints. A no-factory `createRuntimeHost` creates a fresh attested custom-tool session on the deterministic local model seam, with deny-by-default project resources. File, edit, shell, git, and intelligence tools execute the admitted operation with an audit result or return a deterministic denial. Result text does not match `^ok:`. No browser or app tools. Bridge failure returns `RUNTIME_BRIDGE_UNAVAILABLE` before work. Config provenance is non-secret. The operational store holds run, session, audit, and index metadata only. `dispose()` may run twice and does not delete repository files. The publishable template mirror was synced.
+- **tests**: standalone contract runner, six `test_us0150_*` markers, 6 pass / 0 fail. US-0148 contract markers 14 pass. Harness `tests/report.md` timestamp **2026-10-11T15:13:10Z**, **Pass 880 / Fail 0**. No paid credentials and no network. `.cursor/scratchpad.md` was not edited. Baseline `AUTO_BACKLOG_MAX_STORIES` stays 3.
+- **not touched**: US-0150 status and AC boxes, US-0149 reopen, US-0151, BUG-0026, phase-9 clients, `pi-kernel` and `role-runtime` contracts, public exports of `context-engine` and `code-intelligence`, `handoffs/resume_brief.md`, `.env`, commit, push, publish.
+- **next**: fresh `/qa` for US-0150 / S0170. This dev child does not spawn it.
+
+---
+
+# Dev-to-QA Handoff — S0169 / US-0149 (opt-in itsm PATH registration)
+
+- **date**: 2026-10-11T13:26:49Z (UTC)
+- **from**: `dev` (fresh execute; marker `dev-US0149-execute-20261011T132649Z-fresh`)
+- **to**: `qa` (orchestrator-owned fresh `/qa` only — this child does not spawn it)
+- **verdict**: **EXECUTE_PASS**. `next_scheduled_phase=qa`. US-0149 stays **OPEN**. AC-1..AC-6 stay unchecked. Closure owns the DONE flip and the acceptance boxes.
+- **sprint**: S0169. Tasks T-anch and T-001..T-006 are checked. Research R-0160. Architecture `# US-0149`. No companion DEC.
+- **what shipped**: opt-in registration of the materialized `.its-magic/bin/itsm` into a user-chosen directory, then append that directory to the user PATH only when it was absent. Default is off. `--register-itsm-path` and `ITS_MAGIC_REGISTER_ITSM_PATH` / `ITS_MAGIC_ITSM_PATH_DIR`. `prompt` only on a TTY; non-TTY fail-closes with `ITSM_PATH_REGISTER_FAILED`. A missing shim (and `itsm.cmd` on Windows) returns `ITSM_PATH_SHIM_MISSING` and writes no ledger and no PATH entry. Windows copies the shim files and uses an injectable PATH store (production: `HKCU\Environment`, not `setx`). POSIX symlinks, with a mode `0755` copy fallback, and writes the marked snippet. Unregister deletes only recorded links and removes the PATH directory only when `path_entry_added` is true. `--unregister-itsm-path` always reverses the ledger. `uninstall-standalone` does so only when `link_target` is inside the target repo. `installer.ps1` and `installer.sh` forward flags only. The same PATH subsection is in both runbooks. README pointers sit beside the existing npm `--prefix` block.
+- **tests**: `python -m pytest tests/us0149_path_registration_test.py` — 8 passed. Harness `powershell -NoProfile -ExecutionPolicy Bypass -File tests/run-tests.ps1` → `tests/report.md` timestamp **2026-10-11T13:25:18Z**, **Pass 874 / Fail 6**. The row `US-0149 path registration contract tests pass` is PASS. The six fails are scratchpad active/template parity (`AUTO_BACKLOG_MAX_STORIES=7` vs template `3`) on: slim auto command contract markers; `--scope=dev-environment`; `--scope=dev-environment` (US-0099); `--scope=model-tier` (US-0101); `--scope=model-tier-overrides` (US-0102); `--scope=arch-linkage` (US-0129). This sprint did not edit `.cursor/scratchpad.md`. `tests/us0149_global_itsm_launcher_test.py` was not changed.
+- **not touched**: BUG-0026, `write_itsm_shim`, BUG-0025, US-0146, US-0147, BUG-0033, backlog status, AC boxes, `handoffs/resume_brief.md`, `.env`, publish, push.
+- **next**: fresh `/qa` for US-0149 / S0169. This dev child does not spawn it.
+
+---
+
 # Dev-to-QA Handoff - S0168 / BUG-0033 (README feature-coverage row shipped while OPEN)
 
 - **date**: 2026-10-10T18:54:05Z (UTC)

@@ -15407,7 +15407,7 @@ Count **5–6** named tests. **R-id**: **R-0149**. Expected sprint **S0157**. Ar
 
 ## R-0150 — US-0150 production standalone runtime composition
 
-- **Date**: 2026-09-19. **Story**: US-0150. **Status**: current. **Confidence**: high.
+- **Date**: 2026-09-19. **Story**: US-0150. **Status**: **delivered** (delivery closure trailer below; curator refresh **2026-10-11T16:08:00Z**). **Confidence**: high.
 - **Query**: How can the standalone CLI and daemon construct one project-scoped, Pi-backed runtime from the delivered package slices without duplicating workflow semantics, using placeholder services, or turning operational storage into project authority?
 - **Sources**:
   - `standalone/apps/cli/src/run.ts` and `standalone/apps/daemon/src/{index,server}.ts`: public paths construct throwing kernels or empty configuration.
@@ -15478,6 +15478,21 @@ Count **5–6** named tests. **R-id**: **R-0149**. Expected sprint **S0157**. Ar
 - Test seam escaping to production: production constructors reject test-only factories unless an explicit test environment guard is active.
 - `/architecture` should author `# US-0150` and a companion `DEC-0150`; lock host interface, lifecycle, dependency graph, reason-code family, and AC-to-test map. No implementation, sprint, backlog-status, or acceptance mutation in research.
 - **Next**: `/architecture` in a fresh tech-lead context. **decision_gate=false**.
+
+### Plan-macro reconfirm (2026-10-11)
+
+- **Date**: 2026-10-11. **Status**: **current** (this entry extended; heading unchanged). **EARLY_RESEARCH=0** — no web search and no new `R-` id. `ID_NAMESPACE_BOOTSTRAP=0`.
+- **Reconfirm**: DQ1–DQ8 and **A1** still hold. Discovery D1–D10 were reconfirmed the same day. **`DEC-0150`** is already Accepted, so this plan does not author another decision. `decision_gate=false`.
+- **Baseline on disk**: S0158 added `standalone/packages/runtime-host`. `standalone/apps/cli/src/index.ts` and `standalone/apps/daemon/src/index.ts` call `createRuntimeHost`. Six `test_us0150_*` markers exist in `standalone/tests/contract/us0150.contract.test.ts`. S0158 release and closure stayed blocked (`PHASE_CONTEXT_ISOLATION_MISSING`, `RUNTIME_PROOF_MISSING`). US-0150 remains **OPEN**.
+- **Residuals locked for S0170** (same approach, not a new one):
+  1. `startDaemonServer` still passes a literal empty config into `crashResume` when a host is present. The host-present path must pass the config that host already resolved.
+  2. `@its-magic/context-engine` is a declared dependency and is not constructed. The host must build one `ContextPack` through existing `codeContext` (that function already returns `withContentHash`). Unavailable intelligence fails with `RUNTIME_SERVICE_UNAVAILABLE` and does not invent a pack.
+  3. The supervisor-only empty-config branch in the CLI and daemon modules stays the US-0148 test seam. Production `index.ts` entrypoints must not take it.
+- **Sprint**: **S0170** (next free id after S0169). Do not reopen S0158. Do not wipe or renumber this heading.
+
+### Delivery closure (refresh-context curator, 2026-10-11)
+
+- **Status**: **delivered** — US-0150 backlog **DONE**, S0170 CLOSURE_PASS + REFRESH_CONTEXT_PASS; harness `tests/report.md` **2026-10-11T16:04:45Z** Pass=880 Fail=0; six `test_us0150_*` green. **Linked**: US-0151 (next OPEN; compose-only — do not reopen US-0150 ACs).
 
 ## R-0151 — BUG-0027 OpenCode manual phase commands cannot persist canonical workflow evidence
 
@@ -16342,3 +16357,568 @@ This is the one architectural input the fix depends on, and it is **pre-existing
 
 - `fresh_context_marker=tl-BUG0033-research-20261008T204813Z-fresh`; `runtime_proof_id=rp-auto-20261008-bug0033-research-techlead-20261008T204813Z-BUG-0033`; `proof_hash=a70066fcac790420b4963f6802f4d1ce9d115b41859d6a0f17c427e90d9bcd1a` over the DEC-0038 6-tuple (`orchestrator_run_id=auto-20261008-bug0033-research`, `runtime_proof_id=rp-auto-20261008-bug0033-research-techlead-20261008T204813Z-BUG-0033`, `phase_id=research`, `role=tech-lead`, `proof_issued_at=2026-10-08T20:48:13Z`, `proof_ttl_seconds=3600`). Marker + proof id were grep-confirmed 0 prior occurrences repo-wide before mint (distinct from all prior BUG-0034/BUG-0035 markers); hash was independently double-verified (lib `compute_strict_proof_hash` + plain `hashlib.sha256(json.dumps(obj, sort_keys=True, separators=(",",":")).encode())` over the same 6-tuple) — identical hexdigest, `hash_recompute_confirmation=true`.
 - **Next**: only after the state-first paired continuation record validates may the parent independently spawn `/architecture` in a fresh tech-lead context. This research child does not spawn it. STOP after RESEARCH_PASS.
+
+---
+
+## R-0160
+
+- **Date**: 2026-10-11
+- **Topic**: US-0149 — opt-in global `itsm` PATH registration at a user-chosen location on Windows and Linux (macOS stays on the Unix installer).
+- **Query**: Where does install/upgrade register `itsm` on the user PATH, what binary is registered, how does removal touch only that registration, and what must execute leave alone?
+- **Sources** (EARLY_RESEARCH=0; local only): `docs/product/backlog.md` US-0149 (L5030–L5058) and BUG-0026 (L5565–L5585); `handoffs/po_to_tl.md` discovery handoff; `scripts/standalone_runtime_install_lib.py` (`write_itsm_shim`, `uninstall_standalone`, `ITSM_SHIM_REL`); `installer.py` / `installer.ps1` / `installer.sh`; `bin/itsm.js`; `tests/us0149_global_itsm_launcher_test.py`; `docs/engineering/runbook.md` `## Standalone install, update, and adoption (US-0147)`; README npm `--prefix` setup block.
+- **Linked**: US-0147 DONE (repo-local shim; compose only); BUG-0026 OPEN (`blocks_us: US-0149`; compose, do not copy ACs); BUG-0025 DONE (do not reopen); US-0146 DONE (do not reopen); existing npm launcher tests (keep).
+- **Confidence**: high
+- **Status**: current
+- **Approach**: **A1** locked. **Companion DEC**: **none**. Discovery D1–D6 already pick the only viable design. `setx` is unsafe, and bounding macOS out would drop a platform `installer.sh` already covers.
+
+### Context
+
+US-0149 (P0, OPEN) registers the materialized project shim on the operator's user PATH, only when the operator opts in, at a directory the operator chooses. Intake is done. Discovery PASS (2026-10-11T12:47:40Z) confirmed `installer.ps1` / `installer.sh` never write a user PATH entry. PATH hits today are Python-on-PATH messages and manifest include/clean lists.
+
+A published npm bin already exists: `package.json` `bin.itsm` → `bin/itsm.js`, covered by `tests/us0149_global_itsm_launcher_test.py`, with README instructions to `npm install -g --prefix` and add that prefix to PATH by hand. That launcher discovers a repo by walking upward. It is not installer PATH registration. Execute keeps it. It does not satisfy AC-2..AC-4.
+
+### DQ1 — AC-1 materialize precondition (LOCKED, compose BUG-0026)
+
+Registration requires `.its-magic/bin/itsm` to already exist (and `itsm.cmd` on Windows, which `write_itsm_shim` already writes). If it does not, print `ITSM_PATH_SHIM_MISSING`, exit non-zero, and write neither PATH nor the ledger.
+
+BUG-0026 owns published-kit `KERNEL_CONTRACT_MISMATCH` / omitted-range materialize, including still-open AC-3. US-0149 does not re-own that defect. Execute does not edit BUG-0026 sources, `test_bug0026_*`, the pack allowlist, or `load_supported_range`. Execute does not reopen BUG-0025. Fixture tests create a shim with `write_itsm_shim` (or an equivalent fixture file). They do not publish a package and do not claim BUG-0026 AC-3.
+
+### DQ2 — AC-2 opt-in and user-chosen directory (LOCKED)
+
+Default is off. No flag and no env means no prompt, no ledger, no PATH edit.
+
+- `--register-itsm-path` with a directory uses that directory.
+- `--register-itsm-path` with no directory uses the documented default and does not prompt.
+- Value `prompt` prompts only when stdin is a TTY. A non-TTY `prompt` fail-closes `ITSM_PATH_REGISTER_FAILED` and does not hang.
+- `ITS_MAGIC_REGISTER_ITSM_PATH=1` opts in non-interactively. `ITS_MAGIC_ITSM_PATH_DIR` overrides the directory.
+
+Documented defaults:
+
+- Windows: `%LOCALAPPDATA%\its-magic\bin`
+- Linux and macOS: `$HOME/.local/bin`
+
+These are installer link directories. They are not the npm `--prefix` root. Docs must say so.
+
+### DQ3 — AC-3 Windows, Linux, and macOS (LOCKED)
+
+Place the materialized project shim into the chosen directory, then append that directory to the user PATH only when it is absent. Do not reorder existing entries.
+
+- POSIX: symlink `chosen/itsm` → absolute `.its-magic/bin/itsm`. If symlink creation fails, copy the shim and set mode `0755`.
+- Windows: copy `itsm.cmd` and the shim file. Do not require a symlink privilege.
+- Windows PATH store: read-modify-write `HKCU\Environment` `Path`, preserving the existing value type. **`setx` is rejected** (1024-character truncation). That is the only viable write path, so it is not a DEC.
+- POSIX PATH store: write `$HOME/.config/its-magic/itsm-path.sh` with the marked block below, and append one marked source line to `~/.profile` and `~/.bashrc` when those files exist. If neither exists, create `~/.profile` containing only that line. Never rewrite unrelated lines.
+
+```
+# its-magic:itsm-path:begin
+export PATH="<chosen-dir>:$PATH"
+# its-magic:itsm-path:end
+```
+
+macOS stays in scope. Discovery allows bounding it out only with a rationale, and `installer.sh` is already the Unix installer. One POSIX implementation covers Linux and macOS. No DEC.
+
+Logic lives in `scripts/standalone_runtime_install_lib.py`. `installer.py` owns the flags. `installer.ps1` and `installer.sh` only forward those flags into the Python entry. No second PATH implementation in shell.
+
+Tests inject a home directory and a fake PATH store. They must not open the live HKCU registry or the developer machine PATH.
+
+### DQ4 — AC-4 removal and fail-closed writes (LOCKED)
+
+Ledger (user scope, not the repo):
+
+- Windows: `%USERPROFILE%\.its-magic\itsm-path-registration.json`
+- POSIX: `$HOME/.config/its-magic/itsm-path-registration.json`
+
+Fields: `dir`, `path_entry_added` (bool), `link_names`, `link_target`. `path_entry_added` is true only when this registration appended the directory.
+
+Unregister deletes only the recorded link names inside the recorded directory. It removes the PATH directory only when `path_entry_added` is true. Every other PATH entry stays. If the chosen directory was already on PATH, unregister leaves that PATH entry in place and deletes only the links.
+
+- `--unregister-itsm-path` always reverses the ledger.
+- `uninstall-standalone` calls the same function only when `link_target` is inside that target repo.
+
+A failed directory create or PATH write rolls back any link just created and does not leave a new PATH entry. Token: `ITSM_PATH_REGISTER_FAILED`. Success tokens: `ITSM_PATH_REGISTER_OK`, `ITSM_PATH_UNREGISTER_OK`.
+
+These are installer print tokens. Do not add them to `scripts/data/autonomy_stop_matrix.yaml`, `reason_codes.md`, or the repair ledger.
+
+### DQ5 — AC-5 docs (LOCKED)
+
+Add one section to `docs/engineering/runbook.md` under `## Standalone install, update, and adoption (US-0147)`, and the same section to `template/docs/engineering/runbook.md`. Cover the flag, defaults, prompt rule, Windows vs POSIX, uninstall / `--unregister-itsm-path`, and `ITSM_PATH_SHIM_MISSING` pointing at BUG-0026 / `its-magic --mode upgrade`. The contract test compares those two sections.
+
+A short pointer may be added beside the existing README npm `--prefix` block in `README.md` and `template/README.md`. Do not delete that block. Do not fan the paragraph out to `its_magic/README.md` or `template/its_magic/README.md`.
+
+### DQ6 — AC-6 tests (LOCKED)
+
+New file `tests/us0149_path_registration_test.py`. Do not change assertions in `tests/us0149_global_itsm_launcher_test.py`. Wire the new file next to the existing US-0149 invocation in `tests/run-tests.ps1` and `tests/run-tests.sh`.
+
+| Marker | AC | Assert |
+|---|---|---|
+| `test_us0149_register_refuses_when_shim_missing` | AC-1 | `ITSM_PATH_SHIM_MISSING`; no ledger; no PATH write |
+| `test_us0149_register_opt_in_default_off` | AC-2 | install without flag/env writes nothing |
+| `test_us0149_register_user_chosen_dir` | AC-2 | explicit dir receives the link; default constants match DQ2 |
+| `test_us0149_register_windows_user_path` | AC-3 | fake Windows store appends the dir only when absent |
+| `test_us0149_register_posix_profile_snippet` | AC-3 | tmp HOME gets the marked snippet; second call is idempotent |
+| `test_us0149_unregister_removes_only_owned_entry` | AC-4 | unrelated PATH entries remain; pre-existing dir stays when `path_entry_added` is false |
+| `test_us0149_register_fail_closed_on_write_error` | AC-4 | simulated write failure leaves no partial PATH entry |
+| `test_us0149_runbook_path_section_parity` | AC-5 | active and template runbook sections match and name the tokens |
+
+### DQ7 — execute must not touch (LOCKED)
+
+- BUG-0026 implementation, tests, and AC boxes (including open AC-3). BUG-0025. US-0146. US-0148 daemon code. BUG-0033 command files.
+- `write_itsm_shim` body and bootstrap failure behavior. Callers may invoke them.
+- `bin/itsm.js` and `package.json` `bin.itsm`.
+- `scripts/data/autonomy_stop_matrix.yaml`, `reason_codes.md`, repair ledger, scratchpad, `.env`.
+- Backlog status, AC checkboxes, acceptance.md ticks.
+- npm publish, git push, live HKCU / live user PATH.
+- US-0150, US-0151, US-0152, US-0153, US-0154, US-0155.
+
+### DQ8 — sprint (LOCKED)
+
+Next free sprint on disk is **S0169** (`sprints/S0168/` exists; `sprints/S0169/` did not). Seven tasks (T-anch + T-001..T-006), under `SPRINT_MAX_TASKS=12`. `SPRINT_AUTO_SPLIT=1` does not fire. No companion DEC. Ultra-lean plan-verify stays a PENDING stub for QA.
+
+### Risks
+
+| Risk | Mitigation |
+|---|---|
+| Published kits still lack a shim until BUG-0026 AC-3 | Fail closed with `ITSM_PATH_SHIM_MISSING`. Do not implement that bug here. |
+| Test writes the developer PATH or HKCU | Injected home + fake store only |
+| `setx` truncates PATH | HKCU read-modify-write only |
+| Chosen dir already holds other tools | Remove links only unless this story appended the dir |
+| Windows symlink privilege | Copy the shim files |
+| npm `itsm` and the project link both exist | Append, do not reorder; docs distinguish the two commands |
+
+### Research isolation
+
+- Plan macro proof (one hash for research + architecture + sprint-plan): `fresh_context_marker=tl-US0149-plan-20261011T125459Z-fresh`; `runtime_proof_id=rp-auto-20261011-us0149-plan-techlead-20261011T125459Z`; `proof_hash=604facda30531a9cbe890329ce2346408fad2dbb3f4e08ebc4731a84829c08dc`; `phase_id=sprint-plan`; `role=tech-lead`; `proof_issued_at=2026-10-11T12:54:59Z`; `proof_ttl_seconds=3600`. Marker had 0 prior hits. Hash matched `compute_strict_proof_hash` and independent `hashlib`.
+- US-0149 stays **OPEN**. AC-1..AC-6 stay unchecked. This plan child does not spawn execute.
+
+### Delivery closure (refresh-context curator, 2026-10-11)
+
+- **Status**: **delivered** — US-0149 backlog **DONE**, S0169 CLOSURE_PASS + REFRESH_CONTEXT_PASS; harness `tests/report.md` **2026-10-11T14:31:11Z** Pass=880 Fail=0; eight `test_us0149_*` green. **Linked**: US-0150 (next OPEN; compose-only — **R-0150** remains **current**, do not wipe).
+
+## R-0161
+
+- **Date**: 2026-10-11
+- **Topic**: US-0151 — CLI, daemon, and TUI submit work to one persistent runtime and return real run events.
+- **Query**: Where do operator entrypoints drop the resolved transport, and which existing engine can execute a submitted command without a new protocol or a new UI?
+- **Sources** (EARLY_RESEARCH=0; local only): `docs/product/backlog.md` ## US-0151; `handoffs/po_to_tl.md` discovery handoff; `standalone/apps/cli/src/run.ts`; `standalone/apps/tui/src/index.ts`; `standalone/apps/daemon/src/server.ts`; `standalone/packages/runtime-core/src/daemon-client/`; `standalone/packages/runtime-core/src/workflow/workflow-engine.ts`; `standalone/packages/runtime-host/src/index.ts`; `standalone/packages/protocol/src/codes.ts`; `# US-0146`, `# US-0148`, `# US-0150`.
+- **Linked**: US-0150 DONE (host composition); US-0146 DONE (CLI/TUI panels); US-0148 DONE (JSON-RPC + event log). US-0152 owns app and browser implementation. Do not reopen US-0149 or US-0150.
+- **Confidence**: high
+- **Status**: delivered
+- **Approach**: **A1** locked. **Companion DEC**: **none**. Discovery D1–D6 already pick the only viable design. A new RPC method or a second state model would redesign US-0148 or US-0146.
+
+### Context
+
+US-0151 (P0, DONE at refresh) required `itsm intake`, `auto`, `resume`, `ask`, and the other lifecycle commands to execute admitted work. A rendered plan or `{ok:true}` is not success.
+
+Confirmed gap:
+
+- `runCliArgv` awaits `resolveOperatorTransport` and discards the result. `ask` / `index` / `app` / `browser` print `{ok:true}`. `resume` prints the brief. Scheduled routes print `{scheduled:true, plan}`. A missing host store falls back to `createRunsStore(":memory:")`.
+- Daemon `command.submit` calls `facade.routeArgv` and returns `{ok:true, outcome}` after appending `command.submitted`. The process increments `singletonWorkflowEngines` and never constructs `WorkflowEngine`.
+- `buildTuiModel` awaits `resolveOperatorTransport` and then reads `createRunsStore(":memory:")`.
+- `createInProcessTransport` also returns `{ok:true}` after an optional route.
+
+The pieces to compose already exist. `resolveOperatorTransport` prefers a reachable daemon and otherwise returns an in-process transport. `WorkflowEngine.runAuto`, `runQuick`, `runCommand`, and `runStandardLifecycle` execute plans. `crashResume` already runs on daemon startup when a host is present. `DaemonEventStore` plus `run.attach`, `status.snapshot`, and `/v1/events` already replay daemon-owned events. The host exposes `store`, `router`, `supervisor`, `config`, `bridge`, and `intel`.
+
+### DQ1 — one transport (LOCKED, AC-1)
+
+Production CLI and TUI keep the transport `resolveOperatorTransport` returns. They do not open a second store. Production paths do not call `createRunsStore(":memory:")`. The in-process fallback uses `host.store`. `ITS_MAGIC_IN_PROCESS` and `ITS_MAGIC_REQUIRE_DAEMON` stay as they are. Forcing every command onto a daemon, or auto-starting one, would change that resolver. That is not required.
+
+### DQ2 — execute, then persist (LOCKED, AC-2)
+
+`command.submit` and in-process `submitCommand` call one executor on the host that owns the store. Scheduler `auto` and `quick` call `runAuto` / `runQuick`. Programmatic lifecycle commands call `runCommand`, and a scheduled plan is then run with `runStandardLifecycle`. The operator result is `success`, `gate_block`, or `execution_failure`. `passed: true` or a gate/stop from the existing engine is success or gate block. A thrown `WorkflowError` is execution failure. Returning the route object with `ok: true` is not success.
+
+`status` stays a read of the host observability snapshot. It still appends one daemon event so existing US-0148 replay tests keep a sequence. It does not start a lifecycle run.
+
+### DQ3 — same workflow across processes (LOCKED, AC-3)
+
+The daemon constructs one `WorkflowEngine` for its process from the host supervisor, config, and bridge. It does not construct another engine per command. Resume submits `resume` through the transport. The executor calls existing `crashResume` with the host store and `readRepoResume`. Printing the brief is evidence, not success. Fresh role sessions stay inside the existing supervisor path. Do not add a session cache.
+
+### DQ4 — admitted service or explicit unavailable (LOCKED, AC-4)
+
+`ask` calls `host.intel.search` with the remainder of argv. `index` calls `host.intel.refresh` / `status`. If intelligence is unavailable, return the existing `INTEL_INDEX_UNAVAILABLE` or `INDEX_UNAVAILABLE`. `app` returns existing `APP_HEALTH_UNAVAILABLE`. `browser` returns existing `BROWSER_UNAVAILABLE`. Do not construct `AppRuntime` or a browser driver. That is US-0152. Do not add reason codes.
+
+### DQ5 — daemon replay, same panels (LOCKED, AC-5)
+
+TUI status and timeline come from `run.attach`, event replay, and existing `status.snapshot`. Add `statusSnapshot()` on `OperatorTransport` only as a client call to that existing RPC. Protocol version stays 1. No new JSON-RPC method. `panels.ts` ids and collapse order stay as US-0146 left them. A daemon that cannot be attached fails with existing `DAEMON_UNREACHABLE` instead of rendering an empty memory timeline as success.
+
+### DQ6 — tests (LOCKED, AC-6)
+
+Six markers in `standalone/tests/contract/us0151.contract.test.ts` drive the CLI and daemon entry functions: shared transport, lifecycle dispositions, auto/resume/crash store, ask/index/app/browser, attach/replay, and one end-to-end path for execute, gate failure, restart/resume, replay, and CLI/TUI attach. Use the deterministic local model seam. No paid model, no network, no `.env`.
+
+### DQ7 — sprint (LOCKED)
+
+Next free sprint on disk is **S0171** (`sprints/S0170/` exists; `sprints/S0171/` did not). Seven tasks (T-anch + T-001..T-006), under `SPRINT_MAX_TASKS=12`. `SPRINT_AUTO_SPLIT=1` does not fire. No companion DEC. Ultra-lean plan-verify stays a PENDING stub for QA.
+
+### DQ8 — compose boundaries (LOCKED)
+
+Keep US-0146 file assertions (`dispatchItsmCommand`, `OperatorCommandFacade`, panel ids) and US-0148 event sequencing. Update a template twin when the active file has one. Do not edit workflow-engine control flow except by calling it. Do not reopen US-0149, US-0150, US-0146, or US-0148. Do not start US-0152. Do not implement PATH registration or BUG-0026.
+
+### Risks
+
+| Risk | Mitigation |
+|---|---|
+| CLI prints a plan and tests treat that as success | Executor result disposition is success only after the engine runs |
+| In-process path uses `:memory:` and resume cannot see it | Production store is `host.store` |
+| `command.submit` of `status` starts a lifecycle and breaks US-0148 | `status` remains a snapshot plus one event |
+| TUI grows a second model | Timeline is replayed events only |
+| Ask grows a chat product | `intel.search` or an existing unavailable code |
+| App/browser work leaks in | Fail closed; US-0152 implements them |
+
+### Research isolation
+
+- Plan macro proof (one hash for research + architecture + sprint-plan): `fresh_context_marker=tl-US0151-plan-20261011T162642Z-fresh`; `runtime_proof_id=rp-auto-20261011-us0151-plan-techlead-20261011T162642Z`; `proof_hash=756c68acb9e8264e46cf871bd9072d8b0f3fbe71c1a70a5ab430ef04183015ac`; `phase_id=sprint-plan`; `role=tech-lead`; `proof_issued_at=2026-10-11T16:26:42Z`; `proof_ttl_seconds=3600`. Marker had 0 prior hits. Hash matched `compute_strict_proof_hash` and independent `hashlib`.
+- US-0151 stays **OPEN**. AC-1..AC-6 stay unchecked. This plan child does not spawn execute.
+
+### Delivery closure (refresh-context curator, 2026-10-11)
+
+- **Status**: **delivered** — US-0151 backlog **DONE**, S0171 CLOSURE_PASS + REFRESH_CONTEXT_PASS; harness `tests/report.md` **2026-10-11T18:17:53Z** Pass=880 Fail=0; six `test_us0151_*` green. **Linked**: US-0152 (next OPEN; compose-only — **R-0162** is the US-0152 anchor, do not wipe).
+
+## R-0162
+
+- **Date**: 2026-10-11
+- **Topic**: US-0152 — production composition owns application health and real browser UAT evidence.
+- **Query**: How does the existing host call US-0141 `AppRuntime` and US-0142 `BrowserUAT` so execute, QA, UAT, and release use real health and browser evidence?
+- **Sources** (EARLY_RESEARCH=0; local only): `docs/product/backlog.md` ## US-0152; `docs/product/vision.md` Discovery Notes — US-0152; `handoffs/po_to_tl.md` discovery handoff; `standalone/packages/runtime-host/src/index.ts`; `standalone/packages/runtime-core/src/operator/operator-executor.ts`; `standalone/packages/runtime-core/src/workflow/gates/gate-engine.ts`; `standalone/packages/app-runtime/src/app-runtime.ts`; `standalone/packages/browser-uat/src/browser-uat.ts`; `standalone/packages/browser-uat/src/isolated-driver.ts`; `standalone/packages/browser-uat/src/evidence.ts`; `# US-0141`, `# US-0142`, `# US-0150`, `# US-0151`.
+- **Linked**: US-0141 DONE (app runtime); US-0142 DONE (browser UAT). US-0149, US-0150, and US-0151 stay DONE. Do not start US-0153. **R-0152** stays BUG-0030. Do not wipe **R-0161**.
+- **Confidence**: high
+- **Status**: current
+- **Approach**: **A1** locked. **Companion DEC**: **none**. Discovery D1–D6 already pick the only viable design. A new package, a second runtime, or a fake production driver would miss those locks.
+
+### Context
+
+US-0152 (P1, OPEN) requires execute, QA, and UAT to launch a supported application and collect real browser evidence. A health miss or a text screenshot is not a release gate.
+
+Confirmed gap:
+
+- `createRuntimeHost` returns config, kernel, supervisor, intel, broker, store, and router. It does not construct `AppRuntime` or `BrowserUAT`. `dispose` closes the store and does not clean an app or a browser.
+- `executeOperatorCommand` returns `APP_HEALTH_UNAVAILABLE` for `app` and `BROWSER_UNAVAILABLE` for `browser` without calling a service.
+- Observability `readAppHealth` defaults to `APP_HEALTH_UNAVAILABLE` when no port is supplied.
+- `BrowserUAT` defaults its driver to `FakeBrowserDriver`. `writeShot` always writes the text `screenshot-placeholder`.
+- `PlaywrightIsolatedDriver` already fails closed with `BROWSER_UNAVAILABLE` when Chromium cannot load. It is not the operator path.
+- `GateEngine.evaluate` already fails UAT with `RELEASE_UAT_FAILED` when `uat_pass` is false. Nothing in the production workflow fills that flag from app health or browser evidence files.
+- `assertEvidenceComplete` and `redactEvidencePayload` already exist. Passing probe rows still cite placeholder paths.
+
+### DQ1 — host owns both services (LOCKED, AC-1)
+
+`createRuntimeHost` constructs one `AppRuntime` with `createAppRuntime` and one `BrowserUAT` with `createBrowserUat`. The browser receives `new PlaywrightIsolatedDriver()`. Both objects live on the host. `dispose` runs app cleanup and `BrowserUAT.teardown` before the store closes. Workflow release evaluation and operator `app` / `browser` routes use those same objects for start, health, logs, cleanup, browser actions, and evidence. A CLI-local runtime or a second package is not required.
+
+### DQ2 — Playwright or unavailable (LOCKED, AC-2)
+
+Production mode is `PlaywrightIsolatedDriver`. If Chromium cannot load, the driver throws the existing `BROWSER_UNAVAILABLE`. The class default `FakeBrowserDriver` stays so US-0142 unit tests that omit a driver remain test-only. The production host never uses that default. `writeShot` writes image bytes from a non-fake driver. The literal `screenshot-placeholder` is written only when `driver.kind` is `fake`. Pixel comparison stays deferred.
+
+### DQ3 — gates read repository evidence (LOCKED, AC-3)
+
+Execute, QA, UAT, and release keep `GateEngine` order. The workflow sets `ReleaseGateInput.uat_pass` only after app health and a browser probe have written repository evidence. Bounded retry stays `AppRuntime` restart cap and `BrowserUAT.withRetry`. No new cap key. A missing health result or an exhausted retry is a gate failure, not a skipped check. Do not rewrite `GateEngine`.
+
+### DQ4 — redacted evidence blocks gaps (LOCKED, AC-4)
+
+A passing probe persists a redacted screenshot, trace ref, console summary, network summary, final URL, and `app_runtime_ref` through existing `writeEvidence` / `redactEvidencePayload`. `assertEvidenceComplete` stays the blocker: a passing row with any of those missing becomes a failed UAT (`BROWSER_EVIDENCE_GAP` / `RELEASE_UAT_FAILED`). Do not treat the text placeholder as evidence.
+
+### DQ5 — same services on the CLI (LOCKED, AC-5)
+
+`itsm app` and `itsm browser` call the host services. Outcomes stay the existing codes: `APP_HEALTH_UNAVAILABLE`, `APP_RUNTIME_START_FAILED`, `APP_RUNTIME_HEALTH_FAILED`, `APP_RUNTIME_CLEANUP_FAILED`, `BROWSER_UNAVAILABLE`, `BROWSER_CREDENTIAL_FORBIDDEN`, and `BROWSER_EVIDENCE_GAP`. Authorization stays the existing operator-approval and credential checks. Cleanup returns the cleanup result. Do not add reason codes. Do not return `{ok:true}` when the service did not run.
+
+### DQ6 — fixtures (LOCKED, AC-6)
+
+Six markers in `standalone/tests/contract/us0152.contract.test.ts`. One local fixture app reaches browser evidence and a release-gate pass. Separate cases cover app or browser crash, a failed assertion, authorization refusal, and an evidence gap. The success fixture must not use `FakeBrowserDriver` or `screenshot-placeholder`. When Chromium is absent, production still returns `BROWSER_UNAVAILABLE`; the success fixture uses a non-fake driver that writes real image bytes. No paid model. No `.env`.
+
+### DQ7 — sprint (LOCKED)
+
+Next free sprint on disk is **S0172** (`sprints/S0171/` exists; `sprints/S0172/` did not). Seven tasks (T-anch + T-001..T-006), under `SPRINT_MAX_TASKS=12`. `SPRINT_AUTO_SPLIT=1` does not fire. No companion DEC. Ultra-lean plan-verify stays a PENDING stub for QA.
+
+### DQ8 — compose boundaries (LOCKED)
+
+Keep US-0141 and US-0142 package boundaries. Do not nest either service inside `GateEngine`. Do not reopen US-0149, US-0150, or US-0151. Do not start US-0153, US-0154, or US-0155. Pixel baselines and micro-VM isolation stay deferred. Mirror a template twin when the active `standalone/` file has one. US-0151 tests may still expect `APP_HEALTH_UNAVAILABLE` and `BROWSER_UNAVAILABLE` when the fixture cannot start a service. Do not change those assertions into `{ok:true}`.
+
+### Alternatives rejected
+
+| Option | Why rejected |
+|---|---|
+| A2 new wrapper package | US-0141 and US-0142 already exist |
+| A3 CLI constructs the services | AC-1 requires the composition to own them |
+| A4 host construction fails when Playwright is missing | D2 is command-level `BROWSER_UNAVAILABLE` |
+| A5 fake driver as the production fallback | D2 forbids it |
+| A6 pixel baselines or a micro-VM | Deferred by D8 |
+
+### Risks
+
+| Risk | Mitigation |
+|---|---|
+| US-0142 tests depend on the fake default | Class default stays fake; only the host passes Playwright |
+| Placeholder text is stored as a passing screenshot | Non-fake `writeShot` writes image bytes; gaps fail `assertEvidenceComplete` |
+| Gate boolean is set without files | `uat_pass` follows written evidence |
+| US-0151 app/browser tests start expecting success | Unavailable codes remain when the service cannot start |
+| Chromium missing in CI | Success fixture uses a non-fake byte-writing driver; production path still returns `BROWSER_UNAVAILABLE` |
+| Cleanup skips a child process | `dispose` runs app cleanup and browser teardown |
+
+### Research isolation
+
+- Plan macro proof (one hash for research + architecture + sprint-plan): `fresh_context_marker=tl-US0152-plan-20261011T183005Z-fresh`; `runtime_proof_id=rp-auto-20261011-us0152-plan-techlead-20261011T183005Z`; `proof_hash=8e86f4dcb0753dcd06d6d94b06ad9060821370cf80fa3e6e044912c7b1a168ba`; `phase_id=sprint-plan`; `role=tech-lead`; `proof_issued_at=2026-10-11T18:30:05Z`; `proof_ttl_seconds=3600`. Marker had 0 prior hits. Hash matched `compute_strict_proof_hash` and independent `hashlib`.
+- US-0152 stays **OPEN**. AC-1..AC-6 stay unchecked. This plan child does not spawn execute.
+
+### Delivery closure (refresh-context curator, 2026-10-11)
+
+- **Status**: **delivered** — US-0152 backlog **DONE**, S0172 CLOSURE_PASS + REFRESH_CONTEXT_PASS; harness `tests/report.md` **2026-10-11T20:09:04Z** Pass=880 Fail=0; six `test_us0152_*` green. **Linked**: US-0153 (next OPEN; compose-only — no R-0163 wipe until PO discovery).
+
+## R-0163
+
+- **Date**: 2026-10-11
+- **Topic**: US-0153 — parallel arbitration and configured release targets, with no synthetic release pass.
+- **Query**: How does the existing US-0145 workflow invoke candidate arbitration after worktrees exist, and how does release use a configured target instead of stub success?
+- **Sources** (EARLY_RESEARCH=0; local only): `docs/product/backlog.md` ## US-0153; `docs/product/vision.md` Discovery Notes — US-0153; `handoffs/po_to_tl.md` discovery handoff; `standalone/packages/runtime-core/src/workflow/workflow-engine.ts`; `standalone/packages/runtime-core/src/workflow/delivery/parallel-dev.ts`; `standalone/packages/runtime-core/src/workflow/delivery/release-deploy.ts`; `standalone/packages/runtime-core/src/workflow/delivery/resource-guard.ts`; `standalone/packages/runtime-core/src/workflow/gates/gate-engine.ts`; `standalone/packages/runtime-core/src/workflow/closure.ts`; `standalone/tests/contract/us0145.contract.test.ts`; `# US-0145`, `# US-0152`.
+- **Linked**: US-0145 DONE (compose only). US-0149, US-0150, US-0151, and US-0152 stay DONE. Do not start US-0154 or US-0155. **R-0153** stays US-0156. Do not wipe **R-0162**.
+- **Confidence**: high
+- **Status**: current
+- **Approach**: **A1** locked. **Companion DEC**: **none**. Discovery D1–D5 already pick the only design that keeps the US-0145 dry-run contract and still refuses a stub release pass.
+
+### Context
+
+US-0153 (P1, OPEN) requires parallel DEV candidates, release targets, deployment verification, and bounded repair to run only when a real configured service admits them. A skipped arbitration or a stub adapter success is not a release pass. Unconfigured targets fail closed.
+
+Confirmed gap:
+
+- `runExecuteQaLoop` assigns `afterExecutePass` to `parallelHook` and then discards it with `void parallelHook`. It never calls `runQaArbiter`.
+- When `SOVEREIGN_PARALLEL_DEV` is off, `noopSnapshot()` returns `{skipped: true, byte_identical: true}`. That default-off path is the US-0145 contract and stays.
+- When parallel is on, `afterExecutePass` can create worktrees and still return without a persisted pick. `runQaArbiter` can return `pick_ref: "handoffs/parallel_dev_pick.json"` without writing that file.
+- `stubAdapter` returns `ok: true` and `artifact_sha: "fake-sha"` for every kind. `verify` returns success with no target evidence. `getReleaseTargetAdapter` always returns that stub.
+- `test_us0145_release_target_matrix_dry_run` expects `dryRunTargets` to return `ok: true` for all five kinds with no configuration. That dry-run seam stays.
+- The release phase calls `evaluateRelease` with hardcoded `tests_pass: true`, `qa_evidence: true`, `uat_pass: true`, and `artifact_refs: ["sprints/S0151/summary.md"]`.
+- `GateEngine` fails deploy only when `deploy_targets_pass === false`. An omitted flag is not a failure. Disabled healing returns `{ok: true}` without a probe.
+- `DeliveryResourceGuard.check` runs before worktree create. It does not run before deploy or repair, and the check is not audited.
+
+### DQ1 — workflow arbitrates after worktrees (LOCKED, AC-1)
+
+When `SOVEREIGN_PARALLEL_DEV=1`, `runExecuteQaLoop` keeps the `afterExecutePass` result. A skipped hook or a `reason_code` after that call fails closed and does not continue as if arbitration ran. The workflow then calls `runQaArbiter` with the worktree candidates and writes `handoffs/parallel_dev_pick.json` for both `winner_selected` and `reject_all`. `reject_all` uses the existing `PARALLEL_DEV_SELECTION_NO_PASS`. When the flag is off, the US-0145 noop stays and the byte-identical path does not fail.
+
+### DQ2 — configured adapters, stub is not a release pass (LOCKED, AC-2)
+
+Release apply and verify take a configured target list (`kind`, `target_id`, `endpoint`) from resolved config. A target missing from that list returns `ok: false` and `RELEASE_TARGET_UNCONFIGURED`, and the release gate sets `deploy_targets_pass: false`. `artifact_sha: "fake-sha"` cannot set `deploy_targets_pass` true. `getReleaseTargetAdapter` and `dryRunTargets` stay so the US-0145 dry-run matrix still passes. `RELEASE_GATE_ORDER` stays literal. No `.env` read.
+
+### DQ3 — real smoke, verify, repair, and closure (LOCKED, AC-3)
+
+Replace the hardcoded release-gate booleans and the `sprints/S0151/summary.md` artifact ref with the current run, UAT evidence, and artifact refs. `verify` must cite a real artifact ref. Smoke uses the existing `deploy_smoke_probe`. Repair uses the existing `deploy_healing_retry`. Disabled healing is not a deploy pass. Exhausted repair stays `DEPLOY_DEFERRED` or `DEPLOY_HEALING_DEFERRED`. Premature closure stays `RELEASE_PREMATURE` and `CLOSURE_RELEASE_EVIDENCE_MISSING`. `releaseCannotMarkDone` stays. Release does not mark DONE.
+
+### DQ4 — limits before worktree, deploy, and repair (LOCKED, AC-4)
+
+`DeliveryResourceGuard.check` and the existing path policy (`POLICY_TRAVERSAL_DENIED` or `POLICY_DEFAULT_DENY` when the path is outside the admitted worktree root) run before worktree create, deploy, and repair. Each check appends one audit line to `handoffs/deploy_results/deploy_results.jsonl`. No new cap key. No distributed workers. No remote always-on Debian execution.
+
+### DQ5 — fixtures (LOCKED, AC-5)
+
+Five markers in `standalone/tests/contract/us0153.contract.test.ts`: `test_us0153_arbitration_persists_selected_or_rejected`, `test_us0153_configured_adapter_or_fail_closed`, `test_us0153_smoke_verify_repair_closure_use_real_evidence`, `test_us0153_limits_audited_before_worktree_deploy_repair`, and `test_us0153_fixture_success_and_failure_matrix`. The last marker covers configured fixture success plus unavailable target, rejected candidate, failed deploy verification, exhausted repair, and premature closure. Do not weaken the twelve `test_us0145_*` assertions. No paid model. No `.env`.
+
+### DQ6 — sprint (LOCKED)
+
+Next free sprint on disk is **S0173** (`sprints/S0172/` exists; `sprints/S0173/` did not). Six tasks (T-anch + T-001..T-005), under `SPRINT_MAX_TASKS=12`. `SPRINT_AUTO_SPLIT=1` does not fire. No companion DEC. Ultra-lean plan-verify stays a PENDING stub for QA.
+
+### DQ7 — compose boundaries (LOCKED)
+
+Keep the US-0145 package boundary and `RELEASE_GATE_ORDER`. Do not reopen US-0149, US-0150, US-0151, or US-0152. Do not start US-0154 or US-0155. Mirror a template twin when the active `standalone/` file has one, including `workflow-engine.ts` and the delivery modules under `template/.its-magic/standalone/`. US-0145 dry-run success stays a dry-run result. It is not a release pass.
+
+### DQ8 — result code (LOCKED)
+
+`RELEASE_TARGET_UNCONFIGURED` is a deploy-result code on the existing pipeline. It is not a new stop-matrix row. The gate already fails that result through `deploy_targets_pass: false` and `RELEASE_PREMATURE`. Overloading `DEPLOY_DEFERRED` would hide exhausted repair, which AC-5 lists as its own failure.
+
+### Alternatives rejected
+
+| Option | Why rejected |
+|---|---|
+| A2 delete `stubAdapter` | `test_us0145_release_target_matrix_dry_run` requires dry-run `ok: true` |
+| A3 a new deploy package | US-0145 already owns the pipeline |
+| A4 distributed workers or remote Debian | Phase-9 deferred by D7 |
+| A5 treat disabled healing `{ok:true}` as deploy verification | D3 requires real probe evidence |
+| A6 a companion DEC | The dry-run seam versus the release-pass path is already locked by D2 and the US-0145 test |
+
+### Risks
+
+| Risk | Mitigation |
+|---|---|
+| US-0145 dry-run tests start failing | Release apply/verify is a separate path; dry-run stays |
+| Default-off parallel becomes a hard failure | Flag off keeps `noopSnapshot` |
+| Stub `fake-sha` still reaches the gate | `deploy_targets_pass` stays false for that sha |
+| Hardcoded `sprints/S0151/summary.md` still passes release | Gate inputs come from the current run, UAT, and artifact refs |
+| Guard checks happen after the bridge call | Check and audit line run before create, deploy, and repair |
+| Release marks DONE | `releaseCannotMarkDone` stays |
+
+### Research isolation
+
+- Plan macro proof (one hash for research + architecture + sprint-plan): `fresh_context_marker=tl-US0153-plan-20261011T202311Z-fresh`; `runtime_proof_id=rp-auto-20261011-us0153-plan-techlead-20261011T202311Z`; `proof_hash=8e76ff0bac99740aea48e49b9d43026e787932573c4f1f13a852261a95b7d516`; `phase_id=sprint-plan`; `role=tech-lead`; `proof_issued_at=2026-10-11T20:23:11Z`; `proof_ttl_seconds=3600`. Marker had 0 prior hits. Hash matched `compute_strict_proof_hash` and independent `hashlib`.
+- US-0153 stays **OPEN**. AC-1..AC-5 stay unchecked. This plan child does not spawn execute.
+
+### Delivery closure (refresh-context curator, 2026-10-11)
+
+- **Status**: **delivered** — US-0153 backlog **DONE**, S0173 CLOSURE_PASS + REFRESH_CONTEXT_PASS; harness `tests/report.md` **2026-10-11T21:47:41Z** Pass=880 Fail=0; five `test_us0153_*` green. **Linked**: US-0154 (next OPEN; compose-only — no R-0164 wipe until PO discovery). Highest existing heading remains **R-0163**; next free id **R-0164**.
+
+## R-0164
+
+- **Date**: 2026-10-11
+- **Topic**: US-0154 — authoritative standalone CI and an installed `itsm` operator-path gate.
+- **Query**: How can CI require the public `itsm` entrypoint and the US-0150..US-0153 production seams without a new runtime, and without treating unit fake seams or phase-9 deferrals as missing v1 work?
+- **Sources** (EARLY_RESEARCH=0; local only): `docs/product/backlog.md` ## US-0154; `docs/product/vision.md` Discovery Notes — US-0154; `docs/product/acceptance.md` US-0133..US-0154 rows; `docs/product/standalone-its-magic-pi-masterplan.md` Phase 9; `handoffs/po_to_tl.md` discovery handoff; `.github/workflows/ci.yml` jobs `checks` and `standalone-test`; `docs/engineering/runbook.md` blank `LINT_COMMAND` / `TYPECHECK_COMMAND` and the "do not fold standalone npm test into kit TEST_COMMAND" rule; `standalone/package.json` scripts and `engines.node`; `standalone/package-lock.json` (`lockfileVersion` 3); `standalone/apps/cli/package.json` bin `itsm`; `standalone/apps/cli/src/index.ts`; `standalone/apps/daemon/package.json` bin `itsm-daemon`; `standalone/apps/tui/package.json` bin `itsm-tui`; `standalone/packages/runtime-host/src/index.ts` `createRuntimeHost`; `standalone/packages/browser-uat/src/browser-uat.ts` fake-driver default and `writeShot`; `# US-0150`, `# US-0151`, `# US-0152`, `# US-0153`. `template/docs/engineering/research.md` is a format stub, not a parity pair of this file, so this entry is not copied there. `template/.github/workflows/ci.yml` has no `standalone-test` job (BUG-0009 downstream-safe template CI).
+- **Linked**: US-0150, US-0151, US-0152, and US-0153 stay DONE (compose only). US-0149 stays DONE. US-0133..US-0148 stay completed library slices. Do not start US-0155. **R-0154** stays BUG-0022. Do not wipe **R-0163**.
+- **Confidence**: high
+- **Status**: current
+- **Approach**: **A1** locked. **Companion DEC**: **none**. Discovery D1–D6 already pick composing the existing CI job, the public bins, and the production seams. A new package or a new decision would not change those locks.
+
+### Context
+
+US-0154 (P1, OPEN, user_visible) requires installed `itsm` paths, not only hermetic package contracts, to be required in CI. A throwing kernel, an empty configuration, an ephemeral store, a discarded transport, a fake browser driver, a placeholder screenshot, a synthetic target success, or a no-op command response cannot satisfy production acceptance. Unit-test fake seams stay.
+
+Confirmed gap:
+
+- Root job `checks` reads `docs/engineering/runbook.md`. `TEST_COMMAND` is the kit harness. `LINT_COMMAND` and `TYPECHECK_COMMAND` are blank. Blank optional keys must not fail release (US-0039). The runbook also says not to fold standalone `npm test` into `TEST_COMMAND`.
+- `.github/workflows/ci.yml` job `standalone-test` runs on `windows-latest` only, with Node `22.19.0` and `npm ci`, then `npm run typecheck && npm test`. It does not run `npm run lint`.
+- `standalone/package.json` already defines `typecheck` (`tsc --noEmit`), `lint` (`biome check .`), and `test` (node contract and unit tests). `engines.node` is `>=22.19.0`. `standalone/package-lock.json` is lockfileVersion 3.
+- `standalone/apps/cli/package.json` bin `itsm` points at `./src/index.ts`. That file calls `createRuntimeHost({ projectRoot, lifetime: "direct-cli" })` with no factories, then `runCliArgv`. No file under `standalone/tests` spawns that bin.
+- `createRuntimeHost` persists the operational store at `.its-magic/runtime/ops.sqlite` unless a test factory replaces it. Production callers pass no `RuntimeHostFactories`.
+- `BrowserUAT` still defaults to `FakeBrowserDriver`. `writeShot` writes the text `screenshot-placeholder` only when `driver.kind === "fake"`. The production host is supposed to pass `PlaywrightIsolatedDriver` (US-0152). That class default stays for unit tests.
+- Daemon bin is `itsm-daemon` (`apps/daemon/src/index.ts`). TUI bin is `itsm-tui` (`apps/tui/src/index.ts`), a daemon client. CLI/TUI parity is attach and replay, not a second runtime.
+- Acceptance rows US-0133..US-0148 and US-0150..US-0153 are checked. US-0154 is unchecked. Phase 9 lists own indexer, stronger sandbox/micro-VM, VS Code, web/mobile/watch, distributed workers, and remote always-on Debian. Those stay deferred.
+
+### DQ1 — CI runs standalone typecheck, lint, and tests beside the kit (LOCKED, AC-1)
+
+Keep the root `checks` job on kit `TEST_COMMAND`. Leave `LINT_COMMAND` and `TYPECHECK_COMMAND` blank. Do not fold standalone npm scripts into those keys.
+
+Extend `standalone-test` to a matrix of `windows-latest` and `ubuntu-latest`. Each leg uses Node `22.19.0`, `npm ci` in `standalone/` against the committed lockfile, then `npm run typecheck && npm run lint && npm test`.
+
+Document that pin in `docs/engineering/runbook.md` and the existing template runbook twin. Do not add this job to `template/.github/workflows/ci.yml` (BUG-0009).
+
+### DQ2 — installed public bin, not a test facade (LOCKED, AC-2)
+
+The operator-path fixture launches a child process whose entry is the `bin.itsm` file `standalone/apps/cli/src/index.ts`, after the workspace install from DQ1. The child receives no `RuntimeHostFactories`. An in-process `createRuntimeHost({ factories })` call does not satisfy this AC. Observable proof is a real host result: persistent store path `.its-magic/runtime/ops.sqlite`, a non-empty resolved config, and a transport disposition. Empty config fails as `RUNTIME_CONFIG_UNAVAILABLE` before any `{ok:true}` print.
+
+### DQ3 — operator-path E2E on the public processes (LOCKED, AC-3)
+
+One contract file drives the CLI bin, the daemon bin, and the TUI bin through the seams US-0150..US-0153 already own. Coverage is fresh Pi session admission, policy allow and deny, validator-gate failure before work, restart/resume from `ops.sqlite`, daemon attach/replay, and CLI/TUI parity on the same run events. Do not add a second workflow engine. Do not reopen those stories.
+
+### DQ4 — production acceptance rejects fakes (LOCKED, AC-4)
+
+Operator-path fixtures fail when production acceptance would pass on `FakeBrowserDriver`, the text `screenshot-placeholder`, `artifact_sha: "fake-sha"`, or a no-op `{ok:true}` / `{scheduled:true}` with no execution. Unit tests may still construct the fake driver and the US-0145 dry-run stub. Those results are unit seams, not operator-path passes.
+
+### DQ5 — reports split seams and fail closed (LOCKED, AC-5)
+
+`standalone/tests/contract/us0154.contract.test.ts` asserts two buckets, `unit_seam` and `operator_path`. The operator-path bucket fails when the spawned entrypoint uses a throwing kernel, an empty configuration, a store of `:memory:`, or a discarded transport. Do not delete unit fake seams. Do not count them in the operator-path bucket.
+
+### DQ6 — acceptance classification (LOCKED, AC-6)
+
+Add a classification note to `docs/product/acceptance.md`: US-0133 through US-0148 are completed library/contract slices; US-0150 through US-0154 are their production-integration follow-up. Phase-9 deferrals are not missing v1 work. Do not uncheck completed rows. Do not check the US-0154 row in this story's execute tasks; closure owns that tick. `template/docs/product/acceptance.md` does not carry these rows, so it is not a twin to update.
+
+### DQ7 — sprint (LOCKED)
+
+Next free sprint on disk is **S0174** (`sprints/S0173/` exists; `sprints/S0174/` does not). Seven tasks (T-anch + T-001..T-006), under `SPRINT_MAX_TASKS=12`. `SPRINT_AUTO_SPLIT=1` does not fire. No companion DEC. Ultra-lean plan-verify is skipped and is not authored here.
+
+### DQ8 — compose boundaries (LOCKED)
+
+Do not expand product scope. Do not replace unit fake seams. Do not reopen US-0149 through US-0153. Do not start US-0155. Do not read `.env`. Do not add a README coverage row in this plan. Markers: `test_us0154_public_itsm_reaches_production_composition`, `test_us0154_operator_e2e_session_policy_validator_resume_replay_parity`, `test_us0154_production_rejects_fake_browser_and_synthetic_release`, `test_us0154_report_separates_seams_and_fails_closed`, `test_us0154_acceptance_records_library_slices_and_production_followup`.
+
+### Alternatives rejected
+
+| Option | Why rejected |
+|---|---|
+| A2 fill kit `LINT_COMMAND` / `TYPECHECK_COMMAND` with standalone npm scripts | Blank optional keys must not become release gates; the runbook forbids folding standalone `npm test` into `TEST_COMMAND` |
+| A3 Windows-only job plus lint | Discovery already records Windows-only as the gap |
+| A4 a new test-runner package | The existing node contract runner and CI job are enough |
+| A5 a companion DEC | D1–D6 already choose compose; no policy fork remains |
+| A6 in-process `createRuntimeHost({ factories })` as the AC-2 proof | That is the test facade D2 rejects |
+| A7 delete `FakeBrowserDriver` | Unit seams stay |
+
+### Risks
+
+| Risk | Mitigation |
+|---|---|
+| Kit release starts requiring lint because the runbook keys were filled | Leave those keys blank; standalone commands live only on `standalone-test` |
+| The npm bin shim omits `--experimental-strip-types` | The fixture's process entry is the bin file itself, launched with the flag the workspace tests already use |
+| Ubuntu lacks a browser binary | Operator-path proof asserts driver kind and fail-closed evidence; it does not open an external site |
+| Unit fake-driver tests are counted as production passes | The report's `operator_path` bucket excludes `unit_seam` |
+| Template CI gains a kit-only job | Do not edit `template/.github/workflows/ci.yml` |
+| Execute ticks US-0154 or starts US-0155 | Tasks forbid both |
+
+### Research isolation
+
+- Plan macro proof (one hash for research + architecture + sprint-plan): `fresh_context_marker=tl-US0154-plan-20261011T220313Z-fresh`; `runtime_proof_id=rp-auto-20261011-us0154-plan-techlead-20261011T220313Z`; `proof_hash=e6aff2058794baf624751427a8dbb96af9525f7cf98835921840a9f0aff77282`; `phase_id=sprint-plan`; `role=tech-lead`; `proof_issued_at=2026-10-11T22:03:13Z`; `proof_ttl_seconds=3600`. Marker had 0 prior hits. Hash matched `compute_strict_proof_hash` and independent `hashlib`.
+- `template/docs/engineering/research.md` is not a parity pair. This heading was not copied there.
+- US-0154 stays **OPEN**. AC-1..AC-6 stay unchecked. This plan child does not spawn execute.
+
+### Delivery closure (refresh-context curator, 2026-10-12)
+
+- **Status**: **delivered** — US-0154 backlog **DONE**, S0174 CLOSURE_PASS + REFRESH_CONTEXT_PASS; harness `tests/report.md` **2026-10-12T18:52:56Z** Pass=880 Fail=0; five `test_us0154_*` green. **Linked**: US-0155 (next OPEN; compose-only — no R-0165 wipe until PO discovery). Highest existing heading remains **R-0164**; next free id **R-0165**.
+
+## R-0165
+
+- **Date**: 2026-10-12
+- **Topic**: US-0155 — interactive standalone operator TUI as a daemon client.
+- **Query**: How can the existing TUI become an interactive operator client (commands, streaming events, approvals, bounded panels, keyboard, redaction, reconnect, non-interactive fallback) without a second runtime, a new protocol, or a Pi session outside runtime admission?
+- **Sources** (EARLY_RESEARCH=0; local only): `docs/product/backlog.md` ## US-0155; `docs/product/vision.md` Discovery Notes — US-0155; `docs/product/acceptance.md` US-0155 row; `docs/product/standalone-its-magic-pi-masterplan.md` §29.2; `handoffs/po_to_tl.md` discovery handoff; `standalone/apps/tui/package.json` (readline + ANSI; bin `itsm-tui`); `standalone/apps/tui/src/index.ts` `buildTuiModel`; `standalone/apps/tui/src/panels.ts` `TuiPanelId`; `standalone/packages/runtime-core/src/daemon-client/operator-transport.ts`; `standalone/packages/protocol/src/codes.ts` `DAEMON_RPC_METHODS`; `standalone/packages/protocol/src/redact.ts`; `standalone/apps/daemon/src/server.ts`; `standalone/packages/runtime-core/src/operator/operator-executor.ts`; `standalone/packages/runtime-core/src/workflow/workflow-engine.ts` `pauseRequested`; `standalone/packages/runtime-core/src/operator/types.ts` `OPERATOR_LOG_MAX_LINES` / `OPERATOR_LOG_MAX_BYTES` / `OPERATOR_INPUT_REQUIRED`; `# US-0146` DQ5; `# US-0151` protocol pin; `standalone/tests/contract/us0151.contract.test.ts` panel-source regex; `standalone/tests/contract/us0146.contract.test.ts` narrow layout; `standalone/package-lock.json` (`@earendil-works/pi-tui` is nested under `pi-coding-agent`, not a dependency of `@its-magic/tui`). `template/docs/engineering/research.md` is a format stub, not a parity pair, so this entry is not copied there.
+- **Linked**: US-0151 stays DONE (compose the operator transport). US-0146 stays the completed ANSI slice and is not rewritten. US-0149 through US-0154 stay DONE. US-0156 stays DONE. **R-0155** stays BUG-0031. Do not wipe **R-0164**.
+- **Confidence**: high
+- **Status**: **delivered** — US-0155 backlog **DONE**, S0175 CLOSURE_PASS + REFRESH_CONTEXT_PASS; harness `tests/report.md` **2026-10-12T20:39:38Z** Pass=880 Fail=0; five `test_us0155_*` green. Story drain terminated with **0 OPEN stories**; OPEN bugs BUG-0026, BUG-0028, BUG-0029 remain out of scope (`AUTO_BUG_QUEUE=0`).
+- **Approach**: **A1** locked. **Companion DEC**: **none**. D1 already allows Pi TUI components or compatible interactive primitives. The existing client, the US-0151 transport, and the version-1 RPC list meet D1–D5. A new protocol or a new decision would not change those locks.
+
+### Context
+
+US-0155 (P1, OPEN, user_visible, depends_on US-0151) wants an interactive terminal client: conversation, live events, approvals, phase/timeline, tools, changed files, app/browser evidence, and model/token/cost. A static ANSI snapshot is not this story. The TUI is not a second runtime.
+
+Confirmed gap:
+
+- `buildTuiModel` resolves `resolveOperatorTransport`, attaches as `observer`, subscribes, waits 200ms, unsubscribes, then `renderPanelLayout` prints once and the process exits.
+- `TuiPanelId` is only `phase | status | timeline | tools`. `tools.names` stays empty. There is no conversation, changed-files, app/log, browser, or model/token/cost panel.
+- `selectVisiblePanels` shows all four panels when `cols > 40` and only `phase` and `status` at `cols <= 40`.
+- No keyboard loop, no secret redaction on the render path, no reconnect/`after_seq` replay, and no distinct non-interactive fallback beyond the one-shot print.
+- `OperatorTransport` already exposes `submitCommand`, `statusSnapshot`, `subscribeEvents`, `attachRun`, `cancel`, and `respondApproval`. Those map to existing RPC methods. Protocol version is 1. `DAEMON_RPC_METHODS` has no pause method.
+- `approval.respond` on the daemon fails with `APPROVAL_NO_CONTROLLER` unless a client attached as `controller`.
+- `resume` is already a dedicated command: `executeOperatorCommand` calls `crashResume`. `run.cancel` is `transport.cancel`. Pause is `WorkflowEngine` `pauseRequested` or config `AUTO_PAUSE_REQUEST`, returning `pause_request` / `AUTO_PAUSE_REQUEST`. The executor does not yet map a `pause` argv onto that stop.
+- US-0151's contract reads `panels.ts` and requires the exact `TuiPanelId` union and `TUI_COLLAPSE_ORDER` of those four ids. US-0146 requires `selectVisiblePanels(40)` to equal `["phase", "status"]`.
+- `@its-magic/tui` does not depend on Pi. `pi-tui` is only a nested dependency of `pi-coding-agent`.
+
+### DQ1 — compatible primitives on the existing client (LOCKED, AC-1)
+
+Keep `@its-magic/tui` as the only terminal client. Interactive mode uses Node `readline` plus the existing ANSI renderer. It calls `resolveOperatorTransport` and never constructs `WorkflowEngine`, a second `RunsStore`, or a Pi coding-agent session. Do not add `@earendil-works/pi-tui`, `pi-coding-agent`, or `pi-ai` to the TUI package. `buildTuiModel` stays the non-interactive snapshot the US-0151 test already calls. A new `runInteractiveTui` owns the loop.
+
+### DQ2 — same admitted commands as the CLI (LOCKED, AC-2)
+
+Interactive and fallback paths call `submitCommand` for supported argv, `subscribeEvents` for agent and tool events (no 200ms unsubscribe on the interactive path), and print `execution_failure` / `gate_block` `reason_code` values. Approve calls `respondApproval` after `attachRun` with role `controller`. Cancel calls `cancel`. Resume submits argv `["resume"]`. Pause submits argv `["pause"]`, which the existing executor maps onto the workflow stop that already returns `pause_request` / `AUTO_PAUSE_REQUEST`. CLI and TUI share that argv. Do not add a JSON-RPC method. `DAEMON_RPC_METHODS` and protocol version stay as they are. A missing daemon stays `DAEMON_UNREACHABLE`. An approval with no controller stays `APPROVAL_NO_CONTROLLER`.
+
+### DQ3 — bounded panels beside the locked four (LOCKED, AC-3)
+
+Do not edit the `TuiPanelId` union or `TUI_COLLAPSE_ORDER` in `panels.ts`. Add `interactive-panels.ts` that composes `renderPanelLayout` and renders conversation, changed files, app/log health, browser evidence, and model/token/cost from the status snapshot, the event stream, and the existing read-only observability helpers. Phase/role, timeline, and tools stay the current renderer. Tool names fill from tool events. Bounds are the existing `OPERATOR_LOG_MAX_LINES` (200) and `OPERATOR_LOG_MAX_BYTES` (32 KiB), with an evidence footer when truncated. Extra panels hide before the locked four. At `cols <= 40`, `selectVisiblePanels` still returns only phase and status.
+
+### DQ4 — keyboard, resize, redaction, reconnect, fallback (LOCKED, AC-4)
+
+Readline keys submit a command, approve or deny, cancel, pause, and resume. A resize re-renders. Every painted payload passes through `redactEventPayload` first. Reconnect resubscribes with `after_seq` set to the last applied sequence and re-attaches when `EVENT_SEQ_GAP` is reported. When stdin is not a TTY, or `ITS_MAGIC_TUI_NONINTERACTIVE=1`, the process prints one layout and exits. An approval in that mode returns `OPERATOR_INPUT_REQUIRED` and does not block. The same behavior is required on Windows and Linux.
+
+### DQ5 — real daemon protocol, no outside Pi session (LOCKED, AC-5)
+
+`standalone/tests/contract/us0155.contract.test.ts` starts the daemon and speaks the existing JSON-RPC methods. It asserts event order, approval and cancel, pause and resume dispositions, reconnect replay, redaction, and the narrow versus wide panel sets. The TUI package and the test file must not import a Pi coding-agent session. Five markers: `test_us0155_tui_is_daemon_client_not_a_second_runtime`, `test_us0155_commands_stream_diagnostics_approve_cancel_pause_resume`, `test_us0155_bounded_panels_cover_operator_surfaces`, `test_us0155_keyboard_resize_redaction_reconnect_fallback`, `test_us0155_daemon_protocol_without_external_pi_session`.
+
+### DQ6 — sprint (LOCKED)
+
+Next free sprint on disk is **S0175** (`sprints/S0174/` exists; `sprints/S0175/` does not). Six tasks (T-anch + T-001..T-005), under `SPRINT_MAX_TASKS=12`. `SPRINT_AUTO_SPLIT=1` does not fire. No companion DEC. Ultra-lean plan-verify is skipped and is not authored here.
+
+### DQ7 — compose boundaries (LOCKED)
+
+Do not rewrite US-0146. Do not reopen US-0149 through US-0154. Do not start another client (web, mobile, IDE, remote worker). Mirror touched TUI files under `template/.its-magic/standalone/apps/tui`. Do not add a README coverage row in this plan. Do not read `.env`. US-0155 stays OPEN. Closure owns the DONE flip and the AC ticks.
+
+### Alternatives rejected
+
+| Option | Why rejected |
+|---|---|
+| A2 depend on `@earendil-works/pi-tui` | D1 allows compatible primitives; that package is not a TUI dependency and sits under the coding agent, which AC-5 forbids as an outside session |
+| A3 a second workflow engine inside the TUI | D1 forbids a second runtime |
+| A4 a new `run.pause` RPC | Protocol version stays 1; pause already exists as a workflow stop the CLI can share via argv |
+| A5 widen `TuiPanelId` in `panels.ts` | US-0151 locks that source text; US-0146 locks the narrow layout |
+| A6 a companion DEC | D1–D5 and the existing transport already choose compose |
+
+### Risks
+
+| Risk | Mitigation |
+|---|---|
+| Interactive attach as controller blocks a second controller (`DAEMON_CONTROLLER_BUSY`) | One controller per run; the non-interactive path stays an observer |
+| A `pause` argv is mistaken for a new protocol | It is `command.submit` into the existing executor; the RPC list does not grow |
+| Editing `panels.ts` breaks US-0146 or US-0151 | New panels live in a sibling module and compose the current renderer |
+| Rendered events leak secrets | Paint only after `redactEventPayload` |
+| Tests construct a Pi session to simulate the UI | The contract starts the daemon and forbids that import |
+| Execute ticks US-0155 or rewrites US-0146 | Tasks forbid both |
+
+### Research isolation
+
+- Plan macro proof (one hash for research + architecture + sprint-plan): `fresh_context_marker=tl-US0155-plan-20261012T191221Z-fresh`; `runtime_proof_id=rp-auto-20261012-us0155-plan-techlead-20261012T191221Z`; `proof_hash=8dc83c4163517a894a1d42c5856fb05f32418139b19ffefc4dc151f77d654534`; `phase_id=sprint-plan`; `role=tech-lead`; `proof_issued_at=2026-10-12T19:12:21Z`; `proof_ttl_seconds=3600`. Marker had 0 prior hits. Hash matched `compute_strict_proof_hash` and independent `hashlib`.
+- `template/docs/engineering/research.md` is not a parity pair. This heading was not copied there.
+- US-0155 stays **OPEN**. AC-1..AC-5 stay unchecked. This plan child does not spawn execute.
+

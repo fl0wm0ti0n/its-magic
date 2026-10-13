@@ -1,3 +1,1484 @@
+# Resume Brief — US-0155 refresh continuation pair (state-first, DEC-0153)
+
+- `record_key`: `auto-20261012-us0155-refresh|story|(none)|refresh-context|rp-auto-20261012-us0155-refresh-curator-20261012T204226Z`
+- `orchestrator_run_id`: **`auto-20261012-us0155-refresh`**
+- `work_item_kind`: **`story`**; `bug_id`: **`(none)`**; `completed_phase`: **`refresh-context`**; `writer_role`: **`curator`**
+- `phase_id`: **`refresh-context`**; `role`: **`curator`**; `verdict`: **`REFRESH_CONTEXT_PASS`**; `decision_gate`: **`false`**
+- `sprint_id`: **`S0175`**; `story_id`: **`US-0155`**; closure marker consumed: **`curator-US0155-closure-20261012T204030Z-fresh`**
+- `intended_resume_phase`: **`none`**; `next_scheduled_phase`: **`none`**; `next_scheduled_role`: **`none`**
+- `resolution_source`: **`phase_child:refresh-context`**; `effective_plan`: `[spec, plan, build+verify, ship]`; `skipped_phases`: `[intake, plan-verify]`; `completed_phases`: `[intake, discovery, research, architecture, sprint-plan, execute, qa, verify-work, release, closure, refresh-context]`; `phase_cursor`: **`ship/segment-complete`**
+- `budget_scope`: `no remaining OPEN stories; active_story_id=US-0155; stories_completed_this_drain=7; merged AUTO_BACKLOG_MAX_STORIES=10 from config.json; baseline scratchpad=3; backlog_drain_active=false; bug_queue_active=false`
+- `stop_reason`: **`completed`**; `stop_matrix_action`: **`STOP_STORY_DRAIN_COMPLETE; no_open_stories; bug_queue_inactive`**
+- `fresh_context_marker`: **`curator-US0155-refresh-20261012T204226Z-fresh`**; `child_isolation_ref`: `docs/engineering/state.md` refresh-context checkpoint for US-0155 / S0175
+- `runtime_proof_id`: **`rp-auto-20261012-us0155-refresh-curator-20261012T204226Z`**; `proof_hash`: **`85c8d64d9fb7cc6f4dedcc96a2b4171b0184800f23e71e60eb5b6b7e0c45b740`**; `proof_issued_at`: `2026-10-12T20:42:26Z`; `proof_ttl_seconds`: `3600`; `proof_ttl`: `2026-10-12T21:42:26Z`; `hash_recompute_confirmation=true` (lib `compute_strict_proof_hash` + independent hashlib SHA-256 over verbatim DEC-0038 6-tuple; identical hexdigest)
+- `backlog_scan`: **0 OPEN stories** (header `Status:` under `## US-*`); **US-0156 DONE**; OPEN bugs out of scope: **BUG-0026**, **BUG-0028**, **BUG-0029** (`AUTO_BUG_QUEUE=0`)
+- `story_status`: **US-0155 DONE** (AC-1..AC-5 `[x]`; flip kept); **US-0149 through US-0154 remain DONE**; **US-0156 DONE**; BUG-0033 not reopened
+- **Harness:** `tests/report.md` **2026-10-12T20:39:38Z** Pass **880** / Fail **0** (provenance; no re-run this refresh).
+- **Publish / push:** NOT PERFORMED.
+- **Pair validation / ordering:** Pre-append archive of **1** oldest non-protected terminal checkpoint to `docs/engineering/state-archive/state-pack-20261012-q.md` (US-0151 execute + execute-pair repair; `--rollover` not run — would archive protected BUG-0033 refresh first). Refresh checkpoint appended **BOTTOM** first (DEC-0040 / DEC-0153). Protected US-0155 refresh + US-0155 closure + US-0155 release + US-0155 discovery + US-0154 closure + BUG-0033 refresh retained. Architecture was not rolled. This brief prepend follows state-first. Triad `--check` exit **0** at **1192** lines. CROSS_MODEL_REVIEW=0 (model_id omitted).
+
+```json
+{"record_key":"auto-20261012-us0155-refresh|story|(none)|refresh-context|rp-auto-20261012-us0155-refresh-curator-20261012T204226Z","orchestrator_run_id":"auto-20261012-us0155-refresh","work_item_kind":"story","bug_id":"(none)","completed_phase":"refresh-context","writer_role":"curator","role":"curator","fresh_context_marker":"curator-US0155-refresh-20261012T204226Z-fresh","resolution_source":"phase_child:refresh-context","effective_plan":["spec","plan","build+verify","ship"],"skipped_phases":["intake","plan-verify"],"completed_phases":["intake","discovery","research","architecture","sprint-plan","execute","qa","verify-work","release","closure","refresh-context"],"next_scheduled_phase":"none","next_scheduled_role":"none","phase_cursor":"ship/segment-complete","budget_scope":"no remaining OPEN stories; active_story_id=US-0155; stories_completed_this_drain=7; merged AUTO_BACKLOG_MAX_STORIES=10 from config.json; baseline scratchpad=3; backlog_drain_active=false; bug_queue_active=false","stop_reason":"completed","runtime_proof_id":"rp-auto-20261012-us0155-refresh-curator-20261012T204226Z","proof_hash":"85c8d64d9fb7cc6f4dedcc96a2b4171b0184800f23e71e60eb5b6b7e0c45b740","proof_issued_at":"2026-10-12T20:42:26Z","proof_ttl_seconds":3600,"phase_id":"refresh-context","stop_matrix_action":"STOP_STORY_DRAIN_COMPLETE; no_open_stories; bug_queue_inactive"}
+```
+
+- **STOP:** `STOP_STORY_DRAIN_COMPLETE; no_open_stories; bug_queue_inactive`. Story drain complete. Do **not** spawn `/auto`, `/discovery`, or another story from this pair. Orchestrator owns any future manual `/intake`.
+
+---
+# Resume Brief — US-0155 closure continuation pair (state-first, DEC-0153)
+
+- `record_key`: `auto-20261012-us0155-closure|story|(none)|closure|rp-auto-20261012-us0155-closure-curator-20261012T204030Z`
+- `orchestrator_run_id`: **`auto-20261012-us0155-closure`**
+- `work_item_kind`: **`story`**; `bug_id`: **`(none)`**; `completed_phase`: **`closure`**; `writer_role`: **`curator`**
+- `phase_id`: **`closure`**; `role`: **`curator`**; `verdict`: **`CLOSURE_PASS`**; `decision_gate`: **`false`**
+- `sprint_id`: **`S0175`**; `story_id`: **`US-0155`**; release marker consumed: **`release-US0155-release-20261012T202301Z-fresh`**
+- `intended_resume_phase`: **`refresh-context`**; `next_scheduled_phase`: **`refresh-context`**; `next_scheduled_role`: **`curator`**
+- `resolution_source`: **`phase_child:closure`**; `effective_plan`: `[spec, plan, build+verify, ship]`; `skipped_phases`: `[intake, plan-verify]`; `completed_phases`: `[intake, discovery, research, architecture, sprint-plan, execute, qa, verify-work, release, closure]`; `phase_cursor`: **`ship/closure-pass`**
+- `budget_scope`: `story drain continues after US-0155 if another OPEN story remains; active_story_id=US-0155; stories_completed_this_drain=7; merged AUTO_BACKLOG_MAX_STORIES=10 from config.json; baseline scratchpad=3; backlog_drain_active=true; bug_queue_active=false`
+- `stop_reason`: **`closure_complete_phase_boundary`**; `stop_matrix_action`: **`STOP_AFTER_CLOSURE_PASS; validate_pair_then_parent_may_spawn_refresh_context`**
+- `fresh_context_marker`: **`curator-US0155-closure-20261012T204030Z-fresh`**; `child_isolation_ref`: `docs/engineering/state.md` closure checkpoint for US-0155 / S0175
+- `runtime_proof_id`: **`rp-auto-20261012-us0155-closure-curator-20261012T204030Z`**; `proof_hash`: **`6bbf9625b2c7972d67cae4abc0087752ceec36af08b630aece880d34837ba8dc`**; `proof_issued_at`: `2026-10-12T20:40:30Z`; `proof_ttl_seconds`: `3600`; `proof_ttl`: `2026-10-12T21:40:30Z`; `hash_recompute_confirmation=true` (lib `compute_strict_proof_hash` + independent hashlib SHA-256 over verbatim DEC-0038 6-tuple; identical hexdigest)
+- `story_status`: **US-0155 DONE** (AC-1..AC-5 `[x]`; flip kept); **US-0149 through US-0154 remain DONE**; **US-0156 DONE**; BUG-0033 not reopened
+- **Harness:** `tests/report.md` **2026-10-12T20:39:38Z** Pass **880** / Fail **0** (full harness re-run this closure). Post-flip coverage `coverage_missing=[]`, `coverage_total=51`, `coverage_present` includes **US-0155**.
+- **Publish / push:** NOT PERFORMED.
+- **Pair validation / ordering:** Pre-append archive of **1** oldest non-protected terminal checkpoint to `docs/engineering/state-archive/state-pack-20261012-p.md` (US-0151 plan; `--rollover` not run — would archive protected BUG-0033 refresh first). Closure checkpoint appended **BOTTOM** first (DEC-0040 / DEC-0153). Protected US-0155 closure + US-0155 release + US-0155 verify-pair + US-0155 plan + US-0155 discovery + US-0154 closure + BUG-0033 refresh retained. Architecture was not rolled. This brief prepend follows state-first. Triad `--check` exit **0** at **1195** lines. CROSS_MODEL_REVIEW=0 (model_id omitted).
+
+```json
+{"record_key":"auto-20261012-us0155-closure|story|(none)|closure|rp-auto-20261012-us0155-closure-curator-20261012T204030Z","orchestrator_run_id":"auto-20261012-us0155-closure","work_item_kind":"story","bug_id":"(none)","completed_phase":"closure","writer_role":"curator","role":"curator","fresh_context_marker":"curator-US0155-closure-20261012T204030Z-fresh","resolution_source":"phase_child:closure","effective_plan":["spec","plan","build+verify","ship"],"skipped_phases":["intake","plan-verify"],"completed_phases":["intake","discovery","research","architecture","sprint-plan","execute","qa","verify-work","release","closure"],"next_scheduled_phase":"refresh-context","next_scheduled_role":"curator","phase_cursor":"ship/closure-pass","budget_scope":"story drain continues after US-0155 if another OPEN story remains; active_story_id=US-0155; stories_completed_this_drain=7; merged AUTO_BACKLOG_MAX_STORIES=10 from config.json; baseline scratchpad=3; backlog_drain_active=true; bug_queue_active=false","stop_reason":"closure_complete_phase_boundary","runtime_proof_id":"rp-auto-20261012-us0155-closure-curator-20261012T204030Z","proof_hash":"6bbf9625b2c7972d67cae4abc0087752ceec36af08b630aece880d34837ba8dc","proof_issued_at":"2026-10-12T20:40:30Z","proof_ttl_seconds":3600,"phase_id":"closure","stop_matrix_action":"STOP_AFTER_CLOSURE_PASS; validate_pair_then_parent_may_spawn_refresh_context"}
+```
+
+- **STOP:** `STOP_AFTER_CLOSURE_PASS; validate_pair_then_parent_may_spawn_refresh_context`. Parent may spawn fresh `/refresh-context` (curator) for **US-0155/S0175** after validating this pair. This curator child did NOT spawn it.
+
+---
+# Resume Brief — US-0155 release continuation pair (state-first, DEC-0153)
+
+- `record_key`: `auto-20261012-us0155-release|story|(none)|release|rp-auto-20261012-us0155-release-release-20261012T202301Z`
+- `orchestrator_run_id`: **`auto-20261012-us0155-release`**
+- `work_item_kind`: **`story`**; `bug_id`: **`(none)`**; `completed_phase`: **`release`**; `writer_role`: **`release`**
+- `phase_id`: **`release`**; `role`: **`release`**; `verdict`: **`RELEASE_PASS`**; `decision_gate`: **`false`**
+- `sprint_id`: **`S0175`**; `story_id`: **`US-0155`**
+- `intended_resume_phase`: **`closure`**; `next_scheduled_phase`: **`closure`**; `next_scheduled_role`: **`curator`**
+- `resolution_source`: **`phase_child:release`**; `effective_plan`: `[spec, plan, build+verify, ship]`; `skipped_phases`: `[intake, plan-verify]`; `completed_phases`: `[intake, discovery, research, architecture, sprint-plan, execute, qa, verify-work, release]`; `phase_cursor`: **`ship/release-pass`**
+- `budget_scope`: `OPEN stories US-0155; active_story_id=US-0155; stories_completed_this_drain=6; merged AUTO_BACKLOG_MAX_STORIES=10 from config.json; baseline scratchpad=3; backlog_drain_active=true; bug_queue_active=false`
+- `stop_reason`: **`release_complete_phase_boundary`**; `stop_matrix_action`: **`STOP_AFTER_RELEASE_PASS; validate_pair_then_parent_may_spawn_closure`**
+- `fresh_context_marker`: **`release-US0155-release-20261012T202301Z-fresh`**; `child_isolation_ref`: `docs/engineering/state.md#release-checkpoint-us-0155-s0175-auto-20261012-us0155-release-rolerelease`
+- `runtime_proof_id`: **`rp-auto-20261012-us0155-release-release-20261012T202301Z`**; `proof_hash`: **`5d5d9b1123ed7d7bf98d42a9a8198981563d90a2916099678ed0a62170ba04a1`**; `proof_issued_at`: `2026-10-12T20:23:01Z`; `proof_ttl_seconds`: `3600`; `proof_ttl`: `2026-10-12T21:23:01Z`; `hash_recompute_confirmation=true` (lib `compute_strict_proof_hash` + independent hashlib SHA-256 over verbatim DEC-0038 6-tuple; identical hexdigest)
+- `consumed_verify_work_marker`: **`qa-US0155-vw-20261012T201451Z-fresh`** (provenance only; AC-1..AC-5 PASS; five `test_us0155_*` markers 5/0; UAT **6/6** with `UAT_PROBE_FORBIDDEN`)
+- `story_status`: **US-0155 OPEN** (AC-1..AC-5 unchecked); **US-0149 through US-0154 remain DONE**; **US-0156 DONE**; US-0146 not rewritten
+- **Harness (provenance):** `tests/report.md` **2026-10-12T20:13:03Z** Pass **880** / Fail **0** (five `test_us0155_*` markers re-run this release: 5/0, duration_ms 3276.3101; full harness not re-run).
+- **Publish / push:** NOT PERFORMED (`RELEASE_PUBLISH_MODE=confirm`; `SYNC_POLICY_MODE=disabled`; `npm_published=false`).
+- **Pair validation / ordering:** Pre-append archive of **1** oldest non-protected terminal checkpoint to `docs/engineering/state-archive/state-pack-20261012-o.md` (US-0151 discovery; `--rollover` not run — would archive protected BUG-0033 refresh first). Release checkpoint appended **BOTTOM** first (DEC-0040 / DEC-0153). Protected US-0155 release + US-0155 verify-pair + US-0155 verify-work + US-0155 qa-pair + US-0155 plan + US-0155 discovery + US-0154 closure + BUG-0033 refresh retained. Architecture was not rolled. This brief prepend follows state-first. Triad `--check` exit **0**. CROSS_MODEL_REVIEW=0 (model_id omitted).
+
+```json
+{"record_key":"auto-20261012-us0155-release|story|(none)|release|rp-auto-20261012-us0155-release-release-20261012T202301Z","orchestrator_run_id":"auto-20261012-us0155-release","work_item_kind":"story","bug_id":"(none)","completed_phase":"release","writer_role":"release","role":"release","fresh_context_marker":"release-US0155-release-20261012T202301Z-fresh","resolution_source":"phase_child:release","effective_plan":["spec","plan","build+verify","ship"],"skipped_phases":["intake","plan-verify"],"completed_phases":["intake","discovery","research","architecture","sprint-plan","execute","qa","verify-work","release"],"next_scheduled_phase":"closure","next_scheduled_role":"curator","phase_cursor":"ship/release-pass","budget_scope":"OPEN stories US-0155; active_story_id=US-0155; stories_completed_this_drain=6; merged AUTO_BACKLOG_MAX_STORIES=10 from config.json; baseline scratchpad=3; backlog_drain_active=true; bug_queue_active=false","stop_reason":"release_complete_phase_boundary","runtime_proof_id":"rp-auto-20261012-us0155-release-release-20261012T202301Z","proof_hash":"5d5d9b1123ed7d7bf98d42a9a8198981563d90a2916099678ed0a62170ba04a1","proof_issued_at":"2026-10-12T20:23:01Z","proof_ttl_seconds":3600,"phase_id":"release","stop_matrix_action":"STOP_AFTER_RELEASE_PASS; validate_pair_then_parent_may_spawn_closure"}
+```
+
+- **STOP:** `STOP_AFTER_RELEASE_PASS; validate_pair_then_parent_may_spawn_closure`. Parent may spawn fresh `/closure` (curator) for **US-0155/S0175** after validating this pair. This release child did NOT spawn it. US-0155 stays OPEN.
+
+---
+# Resume Brief — US-0155 verify-work continuation pair (state-first, DEC-0153)
+
+- `record_key`: `auto-20261012-us0155-verify-pair|story|(none)|verify-work|rp-auto-20261012-us0155-verify-pair-curator-20261012T201653Z`
+- `orchestrator_run_id`: **`auto-20261012-us0155-verify-pair`**
+- `work_item_kind`: **`story`**; `bug_id`: **`(none)`**; `completed_phase`: **`verify-work`**; `writer_role`: **`curator`**
+- `phase_id`: **`verify-work`**; `role`: **`curator`**; `verdict`: **`VERIFY_PASS`**; `decision_gate`: **`false`**
+- `sprint_id`: **`S0175`**; `story_id`: **`US-0155`**
+- `intended_resume_phase`: **`release`**; `next_scheduled_phase`: **`release`**; `next_scheduled_role`: **`release`**
+- `resolution_source`: **`operator:resume-pair-repair`**; `effective_plan`: `[spec, plan, build+verify, ship]`; `skipped_phases`: `[intake, plan-verify]`; `completed_phases`: `[intake, discovery, research, architecture, sprint-plan, execute, qa, verify-work]`; `phase_cursor`: **`ship/verify-pass`**
+- `budget_scope`: `OPEN stories US-0155; active_story_id=US-0155; stories_completed_this_drain=6; merged AUTO_BACKLOG_MAX_STORIES=10 from config.json; baseline scratchpad=3; backlog_drain_active=true; bug_queue_active=false`
+- `stop_reason`: **`verify_work_complete_phase_boundary`**; `stop_matrix_action`: **`STOP_AFTER_VERIFY_PASS_PAIR; validate_pair_then_parent_may_spawn_release`**
+- `fresh_context_marker`: **`curator-US0155-verifypair-20261012T201653Z-fresh`**; `child_isolation_ref`: `docs/engineering/state.md#verify-work-pair-repair-us-0155-s0175-auto-20261012-us0155-verify-pair-rolecurator`
+- `runtime_proof_id`: **`rp-auto-20261012-us0155-verify-pair-curator-20261012T201653Z`**; `proof_hash`: **`ea0ff997d9767dc90b09656703a5875adcd20f64df7a514de88a1ca8a45df5b8`**; `proof_issued_at`: `2026-10-12T20:16:53Z`; `proof_ttl_seconds`: `3600`; `proof_ttl`: `2026-10-12T21:16:53Z`; `hash_recompute_confirmation=true` (lib `compute_strict_proof_hash` + independent hashlib SHA-256 over verbatim DEC-0038 6-tuple; identical hexdigest)
+- `consumed_verify_work_marker`: **`qa-US0155-vw-20261012T201451Z-fresh`** (provenance only; AC-1..AC-5 PASS; five `test_us0155_*` markers 5/0; UAT **6/6** with `UAT_PROBE_FORBIDDEN`)
+- `story_status`: **US-0155 OPEN** (AC-1..AC-5 unchecked); **US-0149 through US-0154 remain DONE**; **US-0156 DONE**; US-0146 not rewritten
+- **Harness (provenance):** `tests/report.md` **2026-10-12T20:13:03Z** Pass **880** / Fail **0** (five `test_us0155_*` markers green; no re-run this child).
+- **Publish / push:** NOT PERFORMED.
+- **Pair validation / ordering:** Pre-append archive of **1** oldest non-protected terminal checkpoint to `docs/engineering/state-archive/state-pack-20261012-n.md` (US-0151 verify-pair; `--rollover` not run — would archive protected BUG-0033 refresh first). Verify-pair checkpoint appended **BOTTOM** first (DEC-0040 / DEC-0153). Protected US-0155 verify-pair + US-0155 verify-work + US-0155 qa-pair + US-0155 QA + US-0155 execute-pair + US-0155 plan + US-0155 discovery + US-0154 closure + BUG-0033 refresh retained. Architecture was not rolled. This brief prepend follows state-first. Triad `--check` exit **0**. CROSS_MODEL_REVIEW=0 (model_id omitted).
+
+```json
+{"record_key":"auto-20261012-us0155-verify-pair|story|(none)|verify-work|rp-auto-20261012-us0155-verify-pair-curator-20261012T201653Z","orchestrator_run_id":"auto-20261012-us0155-verify-pair","work_item_kind":"story","bug_id":"(none)","completed_phase":"verify-work","writer_role":"curator","role":"curator","fresh_context_marker":"curator-US0155-verifypair-20261012T201653Z-fresh","resolution_source":"operator:resume-pair-repair","effective_plan":["spec","plan","build+verify","ship"],"skipped_phases":["intake","plan-verify"],"completed_phases":["intake","discovery","research","architecture","sprint-plan","execute","qa","verify-work"],"next_scheduled_phase":"release","next_scheduled_role":"release","phase_cursor":"ship/verify-pass","budget_scope":"OPEN stories US-0155; active_story_id=US-0155; stories_completed_this_drain=6; merged AUTO_BACKLOG_MAX_STORIES=10 from config.json; baseline scratchpad=3; backlog_drain_active=true; bug_queue_active=false","stop_reason":"verify_work_complete_phase_boundary","runtime_proof_id":"rp-auto-20261012-us0155-verify-pair-curator-20261012T201653Z","proof_hash":"ea0ff997d9767dc90b09656703a5875adcd20f64df7a514de88a1ca8a45df5b8","proof_issued_at":"2026-10-12T20:16:53Z","proof_ttl_seconds":3600,"phase_id":"verify-work","stop_matrix_action":"STOP_AFTER_VERIFY_PASS_PAIR; validate_pair_then_parent_may_spawn_release"}
+```
+
+- **STOP:** `STOP_AFTER_VERIFY_PASS_PAIR; validate_pair_then_parent_may_spawn_release`. Parent may spawn fresh `/release` (release) for **US-0155/S0175** after validating this pair. This curator child did NOT spawn it. US-0155 stays OPEN.
+
+---
+# Resume Brief — US-0155 QA continuation pair (state-first, DEC-0153)
+
+- `record_key`: `auto-20261012-us0155-qa-pair|story|(none)|qa|rp-auto-20261012-us0155-qa-pair-curator-20261012T200311Z`
+- `orchestrator_run_id`: **`auto-20261012-us0155-qa-pair`**
+- `work_item_kind`: **`story`**; `bug_id`: **`(none)`**; `completed_phase`: **`qa`**; `writer_role`: **`curator`**
+- `phase_id`: **`qa`**; `role`: **`curator`**; `verdict`: **`QA_PASS`**; `decision_gate`: **`false`**
+- `sprint_id`: **`S0175`**; `story_id`: **`US-0155`**
+- `intended_resume_phase`: **`verify-work`**; `next_scheduled_phase`: **`verify-work`**; `next_scheduled_role`: **`qa`**
+- `resolution_source`: **`operator:resume-pair-repair`**; `effective_plan`: `[spec, plan, build+verify, ship]`; `skipped_phases`: `[intake, plan-verify]`; `completed_phases`: `[intake, discovery, research, architecture, sprint-plan, execute, qa]`; `phase_cursor`: **`build+verify/qa-pass`**
+- `budget_scope`: `OPEN stories US-0155; active_story_id=US-0155; stories_completed_this_drain=6; merged AUTO_BACKLOG_MAX_STORIES=10 from config.json; baseline scratchpad=3; backlog_drain_active=true; bug_queue_active=false`
+- `stop_reason`: **`qa_complete_phase_boundary`**; `stop_matrix_action`: **`STOP_AFTER_QA_PASS_PAIR; validate_pair_then_parent_may_spawn_verify_work`**
+- `fresh_context_marker`: **`curator-US0155-qapair-20261012T200311Z-fresh`**; `child_isolation_ref`: `docs/engineering/state.md#qa-pair-repair-us-0155-s0175-auto-20261012-us0155-qa-pair-rolecurator`
+- `runtime_proof_id`: **`rp-auto-20261012-us0155-qa-pair-curator-20261012T200311Z`**; `proof_hash`: **`ecad8d4e14358e9511f5a7a75818029d5a33fe722e7aab539aa86927c3db1b65`**; `proof_issued_at`: `2026-10-12T20:03:11Z`; `proof_ttl_seconds`: `3600`; `proof_ttl`: `2026-10-12T21:03:11Z`; `hash_recompute_confirmation=true` (lib `compute_strict_proof_hash` + independent hashlib SHA-256 over verbatim DEC-0038 6-tuple; identical hexdigest)
+- `consumed_qa_marker`: **`qa-US0155-qa-20261012T200043Z-fresh`** (provenance only; AC-1..AC-5 PASS; five `test_us0155_*` markers 5/0; UAT PASS with `UAT_PROBE_FORBIDDEN`)
+- `story_status`: **US-0155 OPEN** (AC-1..AC-5 unchecked); **US-0149 through US-0154 remain DONE**; **US-0156 DONE**; US-0146 not rewritten
+- **Harness (provenance):** `tests/report.md` **2026-10-12T20:00:16Z** Pass **880** / Fail **0** (five `test_us0155_*` markers green; no re-run this child).
+- **Publish / push:** NOT PERFORMED.
+- **Pair validation / ordering:** Pre-append archive of **1** oldest non-protected terminal checkpoint to `docs/engineering/state-archive/state-pack-20261012-l.md` (US-0150 qa-pair; `--rollover` not run — would archive protected BUG-0033 refresh first). QA-pair checkpoint appended **BOTTOM** first (DEC-0040 / DEC-0153). Protected US-0155 qa-pair + US-0155 QA + US-0155 execute-pair + US-0155 execute + US-0155 plan + US-0155 discovery + US-0154 closure + BUG-0033 refresh retained. Architecture was not rolled. This brief prepend follows state-first. Triad `--check` exit **0**. CROSS_MODEL_REVIEW=0 (model_id omitted).
+
+```json
+{"record_key":"auto-20261012-us0155-qa-pair|story|(none)|qa|rp-auto-20261012-us0155-qa-pair-curator-20261012T200311Z","orchestrator_run_id":"auto-20261012-us0155-qa-pair","work_item_kind":"story","bug_id":"(none)","completed_phase":"qa","writer_role":"curator","role":"curator","fresh_context_marker":"curator-US0155-qapair-20261012T200311Z-fresh","resolution_source":"operator:resume-pair-repair","effective_plan":["spec","plan","build+verify","ship"],"skipped_phases":["intake","plan-verify"],"completed_phases":["intake","discovery","research","architecture","sprint-plan","execute","qa"],"next_scheduled_phase":"verify-work","next_scheduled_role":"qa","phase_cursor":"build+verify/qa-pass","budget_scope":"OPEN stories US-0155; active_story_id=US-0155; stories_completed_this_drain=6; merged AUTO_BACKLOG_MAX_STORIES=10 from config.json; baseline scratchpad=3; backlog_drain_active=true; bug_queue_active=false","stop_reason":"qa_complete_phase_boundary","runtime_proof_id":"rp-auto-20261012-us0155-qa-pair-curator-20261012T200311Z","proof_hash":"ecad8d4e14358e9511f5a7a75818029d5a33fe722e7aab539aa86927c3db1b65","proof_issued_at":"2026-10-12T20:03:11Z","proof_ttl_seconds":3600,"phase_id":"qa","stop_matrix_action":"STOP_AFTER_QA_PASS_PAIR; validate_pair_then_parent_may_spawn_verify_work"}
+```
+
+- **STOP:** `STOP_AFTER_QA_PASS_PAIR; validate_pair_then_parent_may_spawn_verify_work`. Parent may spawn fresh `/verify-work` (qa) for **US-0155/S0175** after validating this pair. This curator child did NOT spawn it. US-0155 stays OPEN.
+
+---
+# Resume Brief — US-0155 execute continuation pair (state-first, DEC-0153)
+
+- `record_key`: `auto-20261012-us0155-execute-pair|story|(none)|execute|rp-auto-20261012-us0155-execute-pair-curator-20261012T194955Z`
+- `orchestrator_run_id`: **`auto-20261012-us0155-execute-pair`**
+- `work_item_kind`: **`story`**; `bug_id`: **`(none)`**; `completed_phase`: **`execute`**; `writer_role`: **`curator`**
+- `phase_id`: **`execute`**; `role`: **`curator`**; `verdict`: **`EXECUTE_PASS`**; `decision_gate`: **`false`**
+- `sprint_id`: **`S0175`**; `story_id`: **`US-0155`**
+- `intended_resume_phase`: **`qa`**; `next_scheduled_phase`: **`qa`**; `next_scheduled_role`: **`qa`**
+- `resolution_source`: **`operator:resume-pair-repair`**; `effective_plan`: `[spec, plan, build+verify, ship]`; `skipped_phases`: `[intake, plan-verify]`; `completed_phases`: `[intake, discovery, research, architecture, sprint-plan, execute]`; `phase_cursor`: **`build+verify/execute-pass`**
+- `budget_scope`: `OPEN stories US-0155; active_story_id=US-0155; stories_completed_this_drain=6; merged AUTO_BACKLOG_MAX_STORIES=10 from config.json; baseline scratchpad=3; backlog_drain_active=true; bug_queue_active=false`
+- `stop_reason`: **`execute_complete_phase_boundary`**; `stop_matrix_action`: **`STOP_AFTER_EXECUTE_PASS_PAIR; validate_pair_then_parent_may_spawn_qa`**
+- `fresh_context_marker`: **`curator-US0155-executepair-20261012T194955Z-fresh`**; `child_isolation_ref`: `docs/engineering/state.md#execute-pair-repair-us-0155-s0175-auto-20261012-us0155-execute-pair-rolecurator`
+- `runtime_proof_id`: **`rp-auto-20261012-us0155-execute-pair-curator-20261012T194955Z`**; `proof_hash`: **`37038faf443c38ec5a6a5d5713acdf40968652a8692ad864419367a6c112d63a`**; `proof_issued_at`: `2026-10-12T19:49:55Z`; `proof_ttl_seconds`: `3600`; `proof_ttl`: `2026-10-12T20:49:55Z`; `hash_recompute_confirmation=true` (lib `compute_strict_proof_hash` + independent hashlib SHA-256 over verbatim DEC-0038 6-tuple; identical hexdigest)
+- `consumed_execute_marker`: **`dev-US0155-execute-20261012T194605Z-fresh`** (provenance only; tasks T-anch + T-001..T-005 done; five `test_us0155_*` markers 5/0)
+- `story_status`: **US-0155 OPEN** (AC-1..AC-5 unchecked); **US-0149 through US-0154 remain DONE**; **US-0156 DONE**; US-0146 not rewritten
+- **Harness (provenance):** `tests/report.md` **2026-10-12T19:44:40Z** Pass **880** / Fail **0** (five `test_us0155_*` markers green; no re-run this child).
+- **Publish / push:** NOT PERFORMED.
+- **Pair validation / ordering:** Pre-append archive of **1** oldest non-protected terminal checkpoint to `docs/engineering/state-archive/state-pack-20261012-k.md` (US-0151 refresh; `--rollover` not run — would archive protected BUG-0033 refresh first). Execute-pair checkpoint appended **BOTTOM** first (DEC-0040 / DEC-0153). Protected US-0155 execute-pair + US-0155 execute + US-0155 plan + US-0155 discovery + US-0154 closure + US-0153 closure + BUG-0033 refresh retained. Architecture was not rolled. This brief prepend follows state-first. Triad `--check` exit **0**. CROSS_MODEL_REVIEW=0 (model_id omitted).
+
+```json
+{"record_key":"auto-20261012-us0155-execute-pair|story|(none)|execute|rp-auto-20261012-us0155-execute-pair-curator-20261012T194955Z","orchestrator_run_id":"auto-20261012-us0155-execute-pair","work_item_kind":"story","bug_id":"(none)","completed_phase":"execute","writer_role":"curator","role":"curator","fresh_context_marker":"curator-US0155-executepair-20261012T194955Z-fresh","resolution_source":"operator:resume-pair-repair","effective_plan":["spec","plan","build+verify","ship"],"skipped_phases":["intake","plan-verify"],"completed_phases":["intake","discovery","research","architecture","sprint-plan","execute"],"next_scheduled_phase":"qa","next_scheduled_role":"qa","phase_cursor":"build+verify/execute-pass","budget_scope":"OPEN stories US-0155; active_story_id=US-0155; stories_completed_this_drain=6; merged AUTO_BACKLOG_MAX_STORIES=10 from config.json; baseline scratchpad=3; backlog_drain_active=true; bug_queue_active=false","stop_reason":"execute_complete_phase_boundary","runtime_proof_id":"rp-auto-20261012-us0155-execute-pair-curator-20261012T194955Z","proof_hash":"37038faf443c38ec5a6a5d5713acdf40968652a8692ad864419367a6c112d63a","proof_issued_at":"2026-10-12T19:49:55Z","proof_ttl_seconds":3600,"phase_id":"execute","stop_matrix_action":"STOP_AFTER_EXECUTE_PASS_PAIR; validate_pair_then_parent_may_spawn_qa"}
+```
+
+- **STOP:** `STOP_AFTER_EXECUTE_PASS_PAIR; validate_pair_then_parent_may_spawn_qa`. Parent may spawn fresh `/qa` (qa) for **US-0155/S0175** after validating this pair. This curator child did NOT spawn it. US-0155 stays OPEN.
+
+---
+# Resume Brief — US-0155 plan (state-first, DEC-0153)
+
+- `record_key`: `auto-20261012-us0155-plan|story|(none)|sprint-plan|rp-auto-20261012-us0155-plan-techlead-20261012T191221Z`
+- `orchestrator_run_id`: **`auto-20261012-us0155-plan`**
+- `work_item_kind`: **`story`**; `bug_id`: **`(none)`**; `completed_phase`: **`sprint-plan`**; `writer_role`: **`tech-lead`**
+- `phase_id`: **`sprint-plan`**; `role`: **`tech-lead`**; `verdict`: **`SPRINT_PLAN_PASS`**; `decision_gate`: **`false`**
+- `sprint_id`: **`S0175`**; `story_id`: **`US-0155`**
+- `intended_resume_phase`: **`execute`**; `next_scheduled_phase`: **`execute`**; `next_scheduled_role`: **`dev`**
+- `resolution_source`: **`phase_child:plan`**; `effective_plan`: `[spec, plan, build+verify, ship]`; `skipped_phases`: `[intake, plan-verify]`; `completed_phases`: `[intake, discovery, research, architecture, sprint-plan]`; `phase_cursor`: **`plan/3-of-3`**
+- `budget_scope`: `OPEN stories US-0155; active_story_id=US-0155; stories_completed_this_drain=6; merged AUTO_BACKLOG_MAX_STORIES=10 from config.json; baseline scratchpad=3; backlog_drain_active=true; bug_queue_active=false`
+- `stop_reason`: **`sprint_plan_complete_phase_boundary`**; `stop_matrix_action`: **`STOP_AFTER_PLAN_MACRO; validate_pair_then_parent_may_spawn_execute`**
+- `fresh_context_marker`: **`tl-US0155-plan-20261012T191221Z-fresh`**; `child_isolation_ref`: `docs/engineering/state.md` plan checkpoint for US-0155 / S0175
+- `runtime_proof_id`: **`rp-auto-20261012-us0155-plan-techlead-20261012T191221Z`**; `proof_hash`: **`8dc83c4163517a894a1d42c5856fb05f32418139b19ffefc4dc151f77d654534`**; `proof_issued_at`: `2026-10-12T19:12:21Z`; `proof_ttl_seconds`: `3600`; `proof_ttl`: `2026-10-12T20:12:21Z`; `hash_recompute_confirmation=true` (lib `compute_strict_proof_hash` + independent hashlib SHA-256 over verbatim DEC-0038 6-tuple; identical hexdigest)
+- `story_status`: **US-0155 OPEN** (AC-1..AC-5 unchecked); **US-0149 through US-0154 remain DONE**; **US-0156 DONE**; US-0146 not rewritten
+- **Research / sprint:** **R-0165** authored. Architecture `# US-0155` inserted before the eleven linkage stubs. Sprint **S0175** (T-anch + T-001..T-005). Companion DEC: **none**.
+- **Publish / push:** NOT PERFORMED.
+- **Pair validation / ordering:** Pre-append archive of **1** oldest non-protected phase-terminal checkpoint to `docs/engineering/state-archive/state-pack-20261012-i.md` (US-0150 closure; the older US-0150 README execute side-note stays — it does not reschedule a phase; `--rollover` not run — would archive protected BUG-0033 refresh first). Plan checkpoint appended **BOTTOM** first (DEC-0040 / DEC-0153). Protected US-0155 plan + US-0155 discovery + US-0154 refresh + US-0154 closure + US-0153 closure + BUG-0033 refresh retained. Architecture was not rolled (2941 lines, cap 3000). This brief prepend follows state-first. CROSS_MODEL_REVIEW=0 (model_id omitted).
+
+```json
+{"record_key":"auto-20261012-us0155-plan|story|(none)|sprint-plan|rp-auto-20261012-us0155-plan-techlead-20261012T191221Z","orchestrator_run_id":"auto-20261012-us0155-plan","work_item_kind":"story","bug_id":"(none)","completed_phase":"sprint-plan","writer_role":"tech-lead","role":"tech-lead","fresh_context_marker":"tl-US0155-plan-20261012T191221Z-fresh","resolution_source":"phase_child:plan","effective_plan":["spec","plan","build+verify","ship"],"skipped_phases":["intake","plan-verify"],"completed_phases":["intake","discovery","research","architecture","sprint-plan"],"next_scheduled_phase":"execute","next_scheduled_role":"dev","phase_cursor":"plan/3-of-3","budget_scope":"OPEN stories US-0155; active_story_id=US-0155; stories_completed_this_drain=6; merged AUTO_BACKLOG_MAX_STORIES=10 from config.json; baseline scratchpad=3; backlog_drain_active=true; bug_queue_active=false","stop_reason":"sprint_plan_complete_phase_boundary","runtime_proof_id":"rp-auto-20261012-us0155-plan-techlead-20261012T191221Z","proof_hash":"8dc83c4163517a894a1d42c5856fb05f32418139b19ffefc4dc151f77d654534","proof_issued_at":"2026-10-12T19:12:21Z","proof_ttl_seconds":3600,"phase_id":"sprint-plan","stop_matrix_action":"STOP_AFTER_PLAN_MACRO; validate_pair_then_parent_may_spawn_execute"}
+```
+
+- **STOP:** `STOP_AFTER_PLAN_MACRO; validate_pair_then_parent_may_spawn_execute`. Parent may spawn fresh `/execute` (dev) for **US-0155/S0175** after validating this pair. This tech-lead child did NOT spawn it.
+
+---
+# Resume Brief — US-0155 discovery (state-first, DEC-0153)
+
+- `record_key`: `auto-20261012-us0155-discovery|story|(none)|discovery|rp-auto-20261012-us0155-discovery-po-20261012T185927Z`
+- `orchestrator_run_id`: **`auto-20261012-us0155-discovery`**
+- `work_item_kind`: **`story`**; `bug_id`: **`(none)`**; `completed_phase`: **`discovery`**; `writer_role`: **`po`**
+- `phase_id`: **`discovery`**; `role`: **`po`**; `verdict`: **`DISCOVERY_PASS`**; `decision_gate`: **`false`**
+- `sprint_id`: **`(none)`**; `story_id`: **`US-0155`**
+- `intended_resume_phase`: **`research`**; `next_scheduled_phase`: **`research`**; `next_scheduled_role`: **`tech-lead`**
+- `resolution_source`: **`phase_child:discovery`**; `effective_plan`: `[spec, plan, build+verify, ship]`; `skipped_phases`: `[intake]`; `completed_phases`: `[intake, discovery]`; `phase_cursor`: **`spec/discovery-pass`**
+- `budget_scope`: `OPEN stories US-0155; active_story_id=US-0155; stories_completed_this_drain=6; merged AUTO_BACKLOG_MAX_STORIES=10 from config.json; baseline scratchpad=3; backlog_drain_active=true; bug_queue_active=false`
+- `stop_reason`: **`discovery_complete_phase_boundary`**; `stop_matrix_action`: **`STOP_AFTER_DISCOVERY_PASS; validate_pair_then_parent_may_spawn_research`**
+- `fresh_context_marker`: **`po-US0155-discovery-20261012T185927Z-fresh`**; `child_isolation_ref`: `docs/engineering/state.md` discovery checkpoint for US-0155
+- `runtime_proof_id`: **`rp-auto-20261012-us0155-discovery-po-20261012T185927Z`**; `proof_hash`: **`7ffe8db872538e51cdb0989a31683d4787da498203d95d757be91553e3fd276c`**; `proof_issued_at`: `2026-10-12T18:59:27Z`; `proof_ttl_seconds`: `3600`; `proof_ttl`: `2026-10-12T19:59:27Z`; `hash_recompute_confirmation=true` (lib `compute_strict_proof_hash` + independent hashlib SHA-256 over verbatim DEC-0038 6-tuple; identical hexdigest)
+- `intake_evidence`: **`handoffs/intake_evidence/standalone-cli-ux-intake-20260923T213043Z.json`** present — intake **skipped** for US-0155
+- `story_status`: **US-0155 OPEN** (AC-1..AC-5 unchecked); **US-0154 DONE**; **US-0156 DONE**; US-0149 through US-0153 remain DONE and were not reopened
+- **D-locks:** **D1** daemon-client TUI, not a second runtime (AC-1). **D2** commands, streaming events, diagnostics, approve/cancel/pause/resume through the admitted runtime (AC-2). **D3** bounded panels (AC-3). **D4** keyboard, resize, redaction, reconnect, non-interactive fallback on Windows and Linux (AC-4). **D5** real daemon-protocol tests; no Pi session outside runtime admission (AC-5).
+- **Research stub:** **R-0165** not authored; highest heading **R-0164**; **R-0155** already used (BUG-0031).
+- **Publish / push:** NOT PERFORMED.
+- **Pair validation / ordering:** Pre-append archive of **1** oldest non-protected terminal checkpoint to `docs/engineering/state-archive/state-pack-20261012-h.md` (US-0150 release checkpoint; `--rollover` not run — would archive protected BUG-0033 refresh first). Discovery checkpoint appended **BOTTOM** first (DEC-0040 / DEC-0153). Protected US-0155 discovery + US-0154 refresh + US-0154 closure + US-0153 closure + BUG-0033 refresh retained. Architecture was not rolled. Oldest po_to_tl section (BUG-0031 intake) archived to `handoffs/archive/po-to-tl-pack-20261012.md`. This brief prepend follows state-first. Triad `--check` exit **0** at **1200** lines. CROSS_MODEL_REVIEW=0 (model_id omitted).
+
+```json
+{"record_key":"auto-20261012-us0155-discovery|story|(none)|discovery|rp-auto-20261012-us0155-discovery-po-20261012T185927Z","orchestrator_run_id":"auto-20261012-us0155-discovery","work_item_kind":"story","bug_id":"(none)","completed_phase":"discovery","writer_role":"po","role":"po","fresh_context_marker":"po-US0155-discovery-20261012T185927Z-fresh","resolution_source":"phase_child:discovery","effective_plan":["spec","plan","build+verify","ship"],"skipped_phases":["intake"],"completed_phases":["intake","discovery"],"next_scheduled_phase":"research","next_scheduled_role":"tech-lead","phase_cursor":"spec/discovery-pass","budget_scope":"OPEN stories US-0155; active_story_id=US-0155; stories_completed_this_drain=6; merged AUTO_BACKLOG_MAX_STORIES=10 from config.json; baseline scratchpad=3; backlog_drain_active=true; bug_queue_active=false","stop_reason":"discovery_complete_phase_boundary","runtime_proof_id":"rp-auto-20261012-us0155-discovery-po-20261012T185927Z","proof_hash":"7ffe8db872538e51cdb0989a31683d4787da498203d95d757be91553e3fd276c","proof_issued_at":"2026-10-12T18:59:27Z","proof_ttl_seconds":3600,"phase_id":"discovery","stop_matrix_action":"STOP_AFTER_DISCOVERY_PASS; validate_pair_then_parent_may_spawn_research"}
+```
+
+- **STOP:** `STOP_AFTER_DISCOVERY_PASS; validate_pair_then_parent_may_spawn_research`. Parent may spawn fresh `/research` (tech-lead) for **US-0155** after validating this pair. This PO child did NOT spawn it.
+
+---
+# Resume Brief — US-0154 refresh-context (state-first, DEC-0153)
+
+- `record_key`: `auto-20261012-us0154-refresh|story|(none)|refresh-context|rp-auto-20261012-us0154-refresh-curator-20261012T185524Z`
+- `orchestrator_run_id`: **`auto-20261012-us0154-refresh`**
+- `work_item_kind`: **`story`**; `bug_id`: **`(none)`**; `completed_phase`: **`refresh-context`**; `writer_role`: **`curator`**
+- `phase_id`: **`refresh-context`**; `role`: **`curator`**; `verdict`: **`REFRESH_CONTEXT_PASS`**; `decision_gate`: **`false`**
+- `sprint_id`: **`S0174`**; `story_id`: **`US-0154`** (segment closed); drain head **`US-0155`**; closure marker consumed: **`curator-US0154-closure-20261012T185301Z-fresh`**
+- `intended_resume_phase`: **`discovery`**; `next_scheduled_phase`: **`discovery`**; `next_scheduled_role`: **`po`**
+- `resolution_source`: **`phase_child:refresh-context`**; `effective_plan`: `[spec, plan, build+verify, ship]`; `skipped_phases`: `[intake]`; `completed_phases`: `[intake]`; `phase_cursor`: **`spec/discovery`**
+- `budget_scope`: `OPEN stories US-0155; active_story_id=US-0155; stories_completed_this_drain=6; merged AUTO_BACKLOG_MAX_STORIES=10 from config.json; baseline scratchpad=3; backlog_drain_active=true; bug_queue_active=false`
+- `stop_reason`: **`refresh_complete_drain_authorized`**; `stop_matrix_action`: **`STOP_AFTER_REFRESH_PASS; validate_pair_then_parent_may_spawn_next_story`**
+- `fresh_context_marker`: **`curator-US0154-refresh-20261012T185524Z-fresh`**; `child_isolation_ref`: `docs/engineering/state.md` refresh-context checkpoint for US-0154 / S0174
+- `runtime_proof_id`: **`rp-auto-20261012-us0154-refresh-curator-20261012T185524Z`**; `proof_hash`: **`595814e6219fe5caffaf559feb2a41fe9aa17f56445f7950e558a76501bb5c19`**; `proof_issued_at`: `2026-10-12T18:55:24Z`; `proof_ttl_seconds`: `3600`; `proof_ttl`: `2026-10-12T19:55:24Z`; `hash_recompute_confirmation=true` (lib `compute_strict_proof_hash` + independent hashlib SHA-256 over verbatim DEC-0038 6-tuple; identical hexdigest)
+- `intake_evidence`: **`handoffs/intake_evidence/standalone-cli-ux-intake-20260923T213043Z.json`** present — intake **skipped** for US-0155
+- `story_status`: **US-0154 DONE** (AC-1..AC-6 `[x]`; flip kept); **US-0155 OPEN** and not started; **US-0153 DONE**; bug queue not drained
+- **Harness (provenance):** closure-era `tests/report.md` **2026-10-12T18:52:56Z** Pass **880** / Fail **0**. Five `test_us0154_*` markers green. No harness re-run this refresh.
+- **Research KB:** **R-0164** delivered; highest heading **R-0164**; next free id **R-0165** (not authored here).
+- **Publish / push:** NOT PERFORMED.
+- **Pair validation / ordering:** Pre-append archive of **1** oldest non-protected terminal checkpoint to `docs/engineering/state-archive/state-pack-20261012-g.md` (US-0150 verify-work checkpoint; `--rollover` not run — would archive protected BUG-0033 refresh first). Refresh checkpoint appended **BOTTOM** first (DEC-0040 / DEC-0153). Protected US-0154 refresh + US-0154 closure + US-0154 release + US-0154 discovery + US-0153 closure + BUG-0033 refresh retained. Architecture was not rolled. This brief prepend follows state-first. Triad `--check` exit **0** at **1200** lines. CROSS_MODEL_REVIEW=0 (model_id omitted).
+
+```json
+{"record_key":"auto-20261012-us0154-refresh|story|(none)|refresh-context|rp-auto-20261012-us0154-refresh-curator-20261012T185524Z","orchestrator_run_id":"auto-20261012-us0154-refresh","work_item_kind":"story","bug_id":"(none)","completed_phase":"refresh-context","writer_role":"curator","role":"curator","fresh_context_marker":"curator-US0154-refresh-20261012T185524Z-fresh","resolution_source":"phase_child:refresh-context","effective_plan":["spec","plan","build+verify","ship"],"skipped_phases":["intake"],"completed_phases":["intake"],"next_scheduled_phase":"discovery","next_scheduled_role":"po","phase_cursor":"spec/discovery","budget_scope":"OPEN stories US-0155; active_story_id=US-0155; stories_completed_this_drain=6; merged AUTO_BACKLOG_MAX_STORIES=10 from config.json; baseline scratchpad=3; backlog_drain_active=true; bug_queue_active=false","stop_reason":"refresh_complete_drain_authorized","runtime_proof_id":"rp-auto-20261012-us0154-refresh-curator-20261012T185524Z","proof_hash":"595814e6219fe5caffaf559feb2a41fe9aa17f56445f7950e558a76501bb5c19","proof_issued_at":"2026-10-12T18:55:24Z","proof_ttl_seconds":3600,"phase_id":"refresh-context","stop_matrix_action":"STOP_AFTER_REFRESH_PASS; validate_pair_then_parent_may_spawn_next_story"}
+```
+
+- **STOP:** `STOP_AFTER_REFRESH_PASS; validate_pair_then_parent_may_spawn_next_story`. Parent may spawn fresh `/discovery` (po) for **US-0155** after validating this pair. This curator child did NOT spawn it.
+
+---
+
+# Resume Brief — US-0154 closure (state-first, DEC-0153)
+
+- `record_key`: `auto-20261012-us0154-closure|story|(none)|closure|rp-auto-20261012-us0154-closure-curator-20261012T185301Z`
+- `orchestrator_run_id`: **`auto-20261012-us0154-closure`**
+- `work_item_kind`: **`story`**; `bug_id`: **`(none)`**; `completed_phase`: **`closure`**; `writer_role`: **`curator`**
+- `phase_id`: **`closure`**; `role`: **`curator`**; `verdict`: **`CLOSURE_PASS`**; `decision_gate`: **`false`**
+- `sprint_id`: **`S0174`**; `story_id`: **`US-0154`**; release marker consumed: **`release-US0154-release-20261012T183850Z-fresh`**
+- `intended_resume_phase`: **`refresh-context`**; `next_scheduled_phase`: **`refresh-context`**; `next_scheduled_role`: **`curator`**
+- `resolution_source`: **`phase_child:closure`**; `effective_plan`: `[spec, plan, build+verify, ship]`; `skipped_phases`: `[intake, plan-verify]`; `completed_phases`: `[intake, discovery, research, architecture, sprint-plan, execute, qa, verify-work, release, closure]`; `phase_cursor`: **`ship/closure-pass`**
+- `budget_scope`: `OPEN stories after US-0154: US-0155; active_story_id=US-0154; stories_completed_this_drain=6; merged AUTO_BACKLOG_MAX_STORIES=10 from config.json; baseline scratchpad=3; backlog_drain_active=true; bug_queue_active=false`
+- `stop_reason`: **`closure_complete_phase_boundary`**; `stop_matrix_action`: **`STOP_AFTER_CLOSURE_PASS; validate_pair_then_parent_may_spawn_refresh_context`**
+- `fresh_context_marker`: **`curator-US0154-closure-20261012T185301Z-fresh`**; `child_isolation_ref`: `docs/engineering/state.md` closure checkpoint for US-0154 / S0174
+- `runtime_proof_id`: **`rp-auto-20261012-us0154-closure-curator-20261012T185301Z`**; `proof_hash`: **`51ea92bab34c3997451bc8a03b93ae567e319b75fc64122f580154bb5f49eafb`**; `proof_issued_at`: `2026-10-12T18:53:01Z`; `proof_ttl_seconds`: `3600`; `proof_ttl`: `2026-10-12T19:53:01Z`; `hash_recompute_confirmation=true` (lib `compute_strict_proof_hash` + independent hashlib SHA-256 over verbatim DEC-0038 6-tuple; identical hexdigest)
+- `story_status`: **US-0154 DONE** (AC-1..AC-6 `[x]`; flip kept); **US-0153 DONE**; **US-0152 DONE**; **US-0151 DONE**; **US-0150 DONE**; **US-0149 DONE**; **US-0155 OPEN** and not started
+- **Harness:** `tests/report.md` **2026-10-12T18:52:56Z** Pass **880** / Fail **0** (full harness re-run this closure). Post-flip coverage `coverage_missing=[]`, `coverage_total=50`, `coverage_present` includes **US-0154**.
+- **Publish / push:** NOT PERFORMED.
+- **Pair validation / ordering:** Pre-append archive of **1** oldest non-protected terminal checkpoint to `docs/engineering/state-archive/state-pack-20261012-f.md` (US-0150 QA checkpoint; `--rollover` not run — would archive protected BUG-0033 refresh first). Closure checkpoint appended **BOTTOM** first (DEC-0040 / DEC-0153). Protected US-0154 closure + US-0154 release + US-0154 verify-pair + US-0154 plan re-emit + US-0154 discovery + US-0153 closure + BUG-0033 refresh retained. Architecture was not rolled. This brief prepend follows state-first. Triad `--check` exit **0** at **1186** lines. CROSS_MODEL_REVIEW=0 (model_id omitted).
+
+```json
+{"record_key":"auto-20261012-us0154-closure|story|(none)|closure|rp-auto-20261012-us0154-closure-curator-20261012T185301Z","orchestrator_run_id":"auto-20261012-us0154-closure","work_item_kind":"story","bug_id":"(none)","completed_phase":"closure","writer_role":"curator","role":"curator","fresh_context_marker":"curator-US0154-closure-20261012T185301Z-fresh","resolution_source":"phase_child:closure","effective_plan":["spec","plan","build+verify","ship"],"skipped_phases":["intake","plan-verify"],"completed_phases":["intake","discovery","research","architecture","sprint-plan","execute","qa","verify-work","release","closure"],"next_scheduled_phase":"refresh-context","next_scheduled_role":"curator","phase_cursor":"ship/closure-pass","budget_scope":"OPEN stories after US-0154: US-0155; active_story_id=US-0154; stories_completed_this_drain=6; merged AUTO_BACKLOG_MAX_STORIES=10 from config.json; baseline scratchpad=3; backlog_drain_active=true; bug_queue_active=false","stop_reason":"closure_complete_phase_boundary","runtime_proof_id":"rp-auto-20261012-us0154-closure-curator-20261012T185301Z","proof_hash":"51ea92bab34c3997451bc8a03b93ae567e319b75fc64122f580154bb5f49eafb","proof_issued_at":"2026-10-12T18:53:01Z","proof_ttl_seconds":3600,"phase_id":"closure","stop_matrix_action":"STOP_AFTER_CLOSURE_PASS; validate_pair_then_parent_may_spawn_refresh_context"}
+```
+
+- **STOP:** `STOP_AFTER_CLOSURE_PASS; validate_pair_then_parent_may_spawn_refresh_context`. Parent may spawn fresh `/refresh-context` (curator) for **US-0154/S0174** after validating this pair. This curator child did NOT spawn it.
+
+---
+
+# Resume Brief — US-0154 release (state-first, DEC-0153)
+
+- `record_key`: `auto-20261012-us0154-release|story|(none)|release|rp-auto-20261012-us0154-release-release-20261012T183850Z`
+- `orchestrator_run_id`: **`auto-20261012-us0154-release`**
+- `work_item_kind`: **`story`**; `bug_id`: **`(none)`**; `completed_phase`: **`release`**; `writer_role`: **`release`**
+- `phase_id`: **`release`**; `role`: **`release`**; `verdict`: **`RELEASE_PASS`**; `decision_gate`: **`false`**
+- `sprint_id`: **`S0174`**; `story_id`: **`US-0154`**; verify-work marker consumed: **`qa-US0154-vw-20261012T183109Z-fresh`**
+- `intended_resume_phase`: **`closure`**; `next_scheduled_phase`: **`closure`**; `next_scheduled_role`: **`curator`**
+- `resolution_source`: **`phase_child:release`**; `effective_plan`: `[spec, plan, build+verify, ship]`; `skipped_phases`: `[intake, plan-verify]`; `completed_phases`: `[intake, discovery, research, architecture, sprint-plan, execute, qa, verify-work, release]`; `phase_cursor`: **`ship/release-pass`**
+- `budget_scope`: `OPEN stories US-0154 then US-0155; active_story_id=US-0154; stories_completed_this_drain=5; merged AUTO_BACKLOG_MAX_STORIES=10 from config.json; baseline scratchpad=3; backlog_drain_active=true; bug_queue_active=false`
+- `stop_reason`: **`release_complete_phase_boundary`**; `stop_matrix_action`: **`STOP_AFTER_RELEASE_PASS; validate_pair_then_parent_may_spawn_closure`**
+- `fresh_context_marker`: **`release-US0154-release-20261012T183850Z-fresh`**; `child_isolation_ref`: `docs/engineering/state.md` release checkpoint for US-0154 / S0174
+- `runtime_proof_id`: **`rp-auto-20261012-us0154-release-release-20261012T183850Z`**; `proof_hash`: **`1de4694752e897a0d0970508d5ad180e28bacfdae077f07d123fa2dac0c3be89`**; `proof_issued_at`: `2026-10-12T18:38:50Z`; `proof_ttl_seconds`: `3600`; `proof_ttl`: `2026-10-12T19:38:50Z`; `hash_recompute_confirmation=true` (lib `compute_strict_proof_hash` + independent hashlib SHA-256 over verbatim DEC-0038 6-tuple; identical hexdigest)
+- `story_status`: **US-0154 remains OPEN** (AC-1..AC-6 unchecked); **US-0153 DONE**; **US-0152 DONE**; **US-0151 DONE**; **US-0150 DONE**; **US-0149 DONE**; **US-0155 OPEN** and not started
+- **Harness (provenance):** verify-work-era `tests/report.md` **2026-10-12T18:29:11Z** Pass **880** / Fail **0**. Five `test_us0154_*` markers re-run this release: 5 passed / 0 failed, duration_ms 12459.941. UAT **7/7** with `UAT_PROBE_FORBIDDEN` for live external deploy. Full harness not re-run.
+- **Publish / push:** NOT PERFORMED (`RELEASE_PUBLISH_MODE=confirm`; `SYNC_POLICY_MODE=disabled`; `npm_published=false`).
+- **Pair validation / ordering:** Pre-append archive of **1** oldest non-protected terminal checkpoint to `docs/engineering/state-archive/state-pack-20261012-e.md` (US-0150 execute isolation; the execute-pair repair section travels with that unit; `--rollover` not run — would archive protected BUG-0033 refresh first). Release checkpoint appended **BOTTOM** first (DEC-0040 / DEC-0153). Protected US-0154 release + US-0154 verify-pair + US-0154 verify-work + US-0154 qa-pair + US-0154 plan re-emit + US-0154 discovery + US-0153 closure + BUG-0033 refresh retained. Architecture was not rolled. This brief prepend follows state-first. Triad `--check` exit **0** at **1173** lines. CROSS_MODEL_REVIEW=0 (model_id omitted).
+
+```json
+{"record_key":"auto-20261012-us0154-release|story|(none)|release|rp-auto-20261012-us0154-release-release-20261012T183850Z","orchestrator_run_id":"auto-20261012-us0154-release","work_item_kind":"story","bug_id":"(none)","completed_phase":"release","writer_role":"release","role":"release","fresh_context_marker":"release-US0154-release-20261012T183850Z-fresh","resolution_source":"phase_child:release","effective_plan":["spec","plan","build+verify","ship"],"skipped_phases":["intake","plan-verify"],"completed_phases":["intake","discovery","research","architecture","sprint-plan","execute","qa","verify-work","release"],"next_scheduled_phase":"closure","next_scheduled_role":"curator","phase_cursor":"ship/release-pass","budget_scope":"OPEN stories US-0154 then US-0155; active_story_id=US-0154; stories_completed_this_drain=5; merged AUTO_BACKLOG_MAX_STORIES=10 from config.json; baseline scratchpad=3; backlog_drain_active=true; bug_queue_active=false","stop_reason":"release_complete_phase_boundary","runtime_proof_id":"rp-auto-20261012-us0154-release-release-20261012T183850Z","proof_hash":"1de4694752e897a0d0970508d5ad180e28bacfdae077f07d123fa2dac0c3be89","proof_issued_at":"2026-10-12T18:38:50Z","proof_ttl_seconds":3600,"phase_id":"release","stop_matrix_action":"STOP_AFTER_RELEASE_PASS; validate_pair_then_parent_may_spawn_closure"}
+```
+
+- **STOP:** `STOP_AFTER_RELEASE_PASS; validate_pair_then_parent_may_spawn_closure`. Parent may spawn fresh `/closure` (curator) for **US-0154/S0174** after validating this pair. This release child did NOT spawn it. US-0154 stays OPEN.
+
+---
+
+# Resume Brief — US-0154 verify-work continuation pair (state-first, DEC-0153)
+
+- `record_key`: `auto-20261012-us0154-verify-pair|story|(none)|verify-work|rp-auto-20261012-us0154-verify-pair-curator-20261012T183407Z`
+- `orchestrator_run_id`: **`auto-20261012-us0154-verify-pair`**
+- `work_item_kind`: **`story`**; `bug_id`: **`(none)`**; `completed_phase`: **`verify-work`**; `writer_role`: **`curator`**
+- `phase_id`: **`verify-work`**; `role`: **`curator`**; `verdict`: **`VERIFY_PASS`** (provenance; upstream verify-work checkpoint); `decision_gate`: **`false`**
+- `sprint_id`: **`S0174`**; `story_id`: **`US-0154`**; verify-work marker consumed: **`qa-US0154-vw-20261012T183109Z-fresh`**
+- `intended_resume_phase`: **`release`**; `next_scheduled_phase`: **`release`**; `next_scheduled_role`: **`release`**
+- `resolution_source`: **`operator:resume-pair-repair`**; `effective_plan`: `[spec, plan, build+verify, ship]`; `skipped_phases`: `[intake, plan-verify]`; `completed_phases`: `[intake, discovery, research, architecture, sprint-plan, execute, qa, verify-work]`; `phase_cursor`: **`ship/verify-pass`**
+- `budget_scope`: `OPEN stories US-0154 then US-0155; active_story_id=US-0154; stories_completed_this_drain=5; merged AUTO_BACKLOG_MAX_STORIES=10 from config.json; baseline scratchpad=3; backlog_drain_active=true; bug_queue_active=false`
+- `stop_reason`: **`verify_work_complete_phase_boundary`**; `stop_matrix_action`: **`STOP_AFTER_VERIFY_PASS_PAIR; validate_pair_then_parent_may_spawn_release`**
+- `fresh_context_marker`: **`curator-US0154-verifypair-20261012T183407Z-fresh`**; `child_isolation_ref`: `docs/engineering/state.md#verify-work-pair-repair-us-0154-s0174-auto-20261012-us0154-verify-pair-rolecurator`
+- `runtime_proof_id`: **`rp-auto-20261012-us0154-verify-pair-curator-20261012T183407Z`**; `proof_hash`: **`ff920ba29582ed84158e227b6c7b94e8994a6917b7ed847a3a4017aa3aad707f`**; `proof_issued_at`: `2026-10-12T18:34:07Z`; `proof_ttl_seconds`: `3600`; `proof_ttl`: `2026-10-12T19:34:07Z`; `hash_recompute_confirmation=true` (lib `compute_strict_proof_hash` + independent hashlib SHA-256 over verbatim DEC-0038 6-tuple; identical hexdigest)
+- `story_status`: **US-0154 remains OPEN** (AC-1..AC-6 unchecked); **US-0153 DONE**; **US-0152 DONE**; **US-0151 DONE**; **US-0150 DONE**; **US-0149 DONE**; **US-0155 OPEN** and not started
+- **Harness (provenance):** verify-work-era `tests/report.md` **2026-10-12T18:29:11Z** Pass **880** / Fail **0**. Five `test_us0154_*` markers passed. UAT **7/7** with `UAT_PROBE_FORBIDDEN` for live external deploy.
+- **Publish / push:** NOT PERFORMED.
+- **Pair validation / ordering:** Pre-append archive of **1** oldest non-protected terminal checkpoint to `docs/engineering/state-archive/state-pack-20261012-d.md` (US-0150 plan; `--rollover` not run — would archive protected BUG-0033 refresh first). Verify-pair checkpoint appended **BOTTOM** first (DEC-0040 / DEC-0153). Protected US-0154 verify-pair + US-0154 verify-work + US-0154 qa-pair + US-0154 QA + US-0154 execute-pair + US-0154 plan re-emit + US-0154 discovery + US-0153 closure + BUG-0033 refresh retained. Architecture was not rolled. This brief prepend follows state-first. Triad `--check` exit **0** at **1191** lines. CROSS_MODEL_REVIEW=0 (model_id omitted).
+
+```json
+{"record_key":"auto-20261012-us0154-verify-pair|story|(none)|verify-work|rp-auto-20261012-us0154-verify-pair-curator-20261012T183407Z","orchestrator_run_id":"auto-20261012-us0154-verify-pair","work_item_kind":"story","bug_id":"(none)","completed_phase":"verify-work","writer_role":"curator","role":"curator","fresh_context_marker":"curator-US0154-verifypair-20261012T183407Z-fresh","resolution_source":"operator:resume-pair-repair","effective_plan":["spec","plan","build+verify","ship"],"skipped_phases":["intake","plan-verify"],"completed_phases":["intake","discovery","research","architecture","sprint-plan","execute","qa","verify-work"],"next_scheduled_phase":"release","next_scheduled_role":"release","phase_cursor":"ship/verify-pass","budget_scope":"OPEN stories US-0154 then US-0155; active_story_id=US-0154; stories_completed_this_drain=5; merged AUTO_BACKLOG_MAX_STORIES=10 from config.json; baseline scratchpad=3; backlog_drain_active=true; bug_queue_active=false","stop_reason":"verify_work_complete_phase_boundary","runtime_proof_id":"rp-auto-20261012-us0154-verify-pair-curator-20261012T183407Z","proof_hash":"ff920ba29582ed84158e227b6c7b94e8994a6917b7ed847a3a4017aa3aad707f","proof_issued_at":"2026-10-12T18:34:07Z","proof_ttl_seconds":3600,"phase_id":"verify-work","stop_matrix_action":"STOP_AFTER_VERIFY_PASS_PAIR; validate_pair_then_parent_may_spawn_release"}
+```
+
+- **STOP:** `STOP_AFTER_VERIFY_PASS_PAIR; validate_pair_then_parent_may_spawn_release`. Parent may spawn fresh `/release` (release) for **US-0154/S0174** after validating this pair. This curator child did NOT spawn it.
+
+---
+
+# Resume Brief — US-0154 QA continuation pair (state-first, DEC-0153)
+
+- `record_key`: `auto-20261012-us0154-qa-pair|story|(none)|qa|rp-auto-20261012-us0154-qa-pair-curator-20261012T181847Z`
+- `orchestrator_run_id`: **`auto-20261012-us0154-qa-pair`**
+- `work_item_kind`: **`story`**; `bug_id`: **`(none)`**; `completed_phase`: **`qa`**; `writer_role`: **`curator`**
+- `phase_id`: **`qa`**; `role`: **`curator`**; `verdict`: **`QA_PASS`** (provenance; upstream QA checkpoint); `decision_gate`: **`false`**
+- `sprint_id`: **`S0174`**; `story_id`: **`US-0154`**; QA marker consumed: **`qa-US0154-qa-20261012T181402Z-fresh`**
+- `intended_resume_phase`: **`verify-work`**; `next_scheduled_phase`: **`verify-work`**; `next_scheduled_role`: **`qa`**
+- `resolution_source`: **`operator:resume-pair-repair`**; `effective_plan`: `[spec, plan, build+verify, ship]`; `skipped_phases`: `[intake, plan-verify]`; `completed_phases`: `[intake, discovery, research, architecture, sprint-plan, execute, qa]`; `phase_cursor`: **`build+verify/qa-pass`**
+- `budget_scope`: `OPEN stories US-0154 then US-0155; active_story_id=US-0154; stories_completed_this_drain=5; merged AUTO_BACKLOG_MAX_STORIES=10 from config.json; baseline scratchpad=3; backlog_drain_active=true; bug_queue_active=false`
+- `stop_reason`: **`qa_complete_phase_boundary`**; `stop_matrix_action`: **`STOP_AFTER_QA_PASS_PAIR; validate_pair_then_parent_may_spawn_verify_work`**
+- `fresh_context_marker`: **`curator-US0154-qapair-20261012T181847Z-fresh`**; `child_isolation_ref`: `docs/engineering/state.md#qa-pair-repair-us-0154-s0174-auto-20261012-us0154-qa-pair-rolecurator`
+- `runtime_proof_id`: **`rp-auto-20261012-us0154-qa-pair-curator-20261012T181847Z`**; `proof_hash`: **`96a468f37aa7a80ad383a1801150d19f113d08c082d262352635d6eb6bfcb38b`**; `proof_issued_at`: `2026-10-12T18:18:47Z`; `proof_ttl_seconds`: `3600`; `proof_ttl`: `2026-10-12T19:18:47Z`; `hash_recompute_confirmation=true` (lib `compute_strict_proof_hash` + independent hashlib SHA-256 over verbatim DEC-0038 6-tuple; identical hexdigest)
+- `story_status`: **US-0154 remains OPEN** (AC-1..AC-6 unchecked); **US-0153 DONE**; **US-0152 DONE**; **US-0151 DONE**; **US-0150 DONE**; **US-0149 DONE**; **US-0155 OPEN** and not started
+- **Harness (provenance):** QA-era `tests/report.md` **2026-10-12T18:13:21Z** Pass **880** / Fail **0**. Five `test_us0154_*` markers passed. UAT PASS with `UAT_PROBE_FORBIDDEN` for live external deploy.
+- **Publish / push:** NOT PERFORMED.
+- **Pair validation / ordering:** Pre-append archive of **1** oldest non-protected terminal checkpoint to `docs/engineering/state-archive/state-pack-20261012-b.md` (US-0149 refresh; `--rollover` not run — would archive protected BUG-0033 refresh first). Qa-pair checkpoint appended **BOTTOM** first (DEC-0040 / DEC-0153). Protected US-0154 qa-pair + US-0154 QA + US-0154 execute-pair + US-0154 execute + US-0154 plan re-emit + US-0154 plan + US-0154 discovery + US-0153 closure + BUG-0033 refresh retained. Architecture was not rolled. This brief prepend follows state-first. Triad `--check` exit **0** at **1193** lines. CROSS_MODEL_REVIEW=0 (model_id omitted).
+
+```json
+{"record_key":"auto-20261012-us0154-qa-pair|story|(none)|qa|rp-auto-20261012-us0154-qa-pair-curator-20261012T181847Z","orchestrator_run_id":"auto-20261012-us0154-qa-pair","work_item_kind":"story","bug_id":"(none)","completed_phase":"qa","writer_role":"curator","role":"curator","fresh_context_marker":"curator-US0154-qapair-20261012T181847Z-fresh","resolution_source":"operator:resume-pair-repair","effective_plan":["spec","plan","build+verify","ship"],"skipped_phases":["intake","plan-verify"],"completed_phases":["intake","discovery","research","architecture","sprint-plan","execute","qa"],"next_scheduled_phase":"verify-work","next_scheduled_role":"qa","phase_cursor":"build+verify/qa-pass","budget_scope":"OPEN stories US-0154 then US-0155; active_story_id=US-0154; stories_completed_this_drain=5; merged AUTO_BACKLOG_MAX_STORIES=10 from config.json; baseline scratchpad=3; backlog_drain_active=true; bug_queue_active=false","stop_reason":"qa_complete_phase_boundary","runtime_proof_id":"rp-auto-20261012-us0154-qa-pair-curator-20261012T181847Z","proof_hash":"96a468f37aa7a80ad383a1801150d19f113d08c082d262352635d6eb6bfcb38b","proof_issued_at":"2026-10-12T18:18:47Z","proof_ttl_seconds":3600,"phase_id":"qa","stop_matrix_action":"STOP_AFTER_QA_PASS_PAIR; validate_pair_then_parent_may_spawn_verify_work"}
+```
+
+- **STOP:** `STOP_AFTER_QA_PASS_PAIR; validate_pair_then_parent_may_spawn_verify_work`. Parent may spawn fresh `/verify-work` (qa) for **US-0154/S0174** after validating this pair. This curator child did NOT spawn it.
+
+---
+
+# Resume Brief — US-0154 execute (state-first, DEC-0153)
+
+- `record_key`: `auto-20261012-us0154-execute-pair|story|(none)|execute|rp-auto-20261012-us0154-execute-pair-curator-20261012T180237Z`
+- `orchestrator_run_id`: **`auto-20261012-us0154-execute-pair`**
+- `work_item_kind`: **`story`**; `bug_id`: **`(none)`**; `completed_phase`: **`execute`**; `writer_role`: **`curator`**
+- `phase_id`: **`execute`**; `role`: **`curator`**; `verdict`: **`EXECUTE_PASS`**; `decision_gate`: **`false`**
+- `sprint_id`: **`S0174`**; `story_id`: **`US-0154`**
+- `intended_resume_phase`: **`qa`**; `next_scheduled_phase`: **`qa`**; `next_scheduled_role`: **`qa`**
+- `resolution_source`: **`operator:resume-pair-repair`**; `effective_plan`: `[spec, plan, build+verify, ship]`; `skipped_phases`: `[intake, plan-verify]`; `completed_phases`: `[intake, discovery, research, architecture, sprint-plan, execute]`; `phase_cursor`: **`build+verify/execute-pass`**
+- `budget_scope`: `OPEN stories US-0154 then US-0155; active_story_id=US-0154; stories_completed_this_drain=5; merged AUTO_BACKLOG_MAX_STORIES=10 from config.json; baseline scratchpad=3; backlog_drain_active=true; bug_queue_active=false`
+- `stop_reason`: **`execute_complete_phase_boundary`**; `stop_matrix_action`: **`STOP_AFTER_EXECUTE_PASS_PAIR; validate_pair_then_parent_may_spawn_qa`**
+- `fresh_context_marker`: **`curator-US0154-executepair-20261012T180237Z-fresh`**; `child_isolation_ref`: `docs/engineering/state.md#execute-pair-repair-us-0154-s0174-auto-20261012-us0154-execute-pair-rolecurator`
+- `runtime_proof_id`: **`rp-auto-20261012-us0154-execute-pair-curator-20261012T180237Z`**; `proof_hash`: **`6969c91457f1efc879847e91a9d8d266d6145faf0660ab91e2964805c22b16a2`**; `proof_issued_at`: `2026-10-12T18:02:37Z`; `proof_ttl_seconds`: `3600`; `proof_ttl`: `2026-10-12T19:02:37Z`; `hash_recompute_confirmation=true` (lib `compute_strict_proof_hash` + independent hashlib SHA-256 over verbatim DEC-0038 6-tuple; identical hexdigest)
+- `consumed_execute_marker`: **`dev-US0154-execute-20261012T175908Z-fresh`** (provenance only; tasks T-anch + T-001..T-006 done; five `test_us0154_*` markers 5/0)
+- `story_status`: **US-0154 OPEN** (AC-1..AC-6 unchecked); **US-0153 DONE**; **US-0152 DONE**; **US-0151 DONE**; **US-0150 DONE**; **US-0149 DONE**; **US-0155 OPEN** and not started
+- **Harness (provenance):** `tests/report.md` **2026-10-12T17:58:14Z** Pass **880** / Fail **0** (five `test_us0154_*` markers green; no re-run this child). US-0149 launcher row PASS after LF normalization of `standalone/packages/runtime-core/src/operator/operator-executor.ts`.
+- **Publish / push:** NOT PERFORMED.
+- **Pair validation / ordering:** Pre-append archive of **1** oldest non-protected checkpoint to `docs/engineering/state-archive/state-pack-20261012-a.md` (US-0149 closure; `--rollover` not run — would archive protected BUG-0033 refresh first). Execute-pair checkpoint appended **BOTTOM** first (DEC-0040 / DEC-0153). Protected US-0154 execute-pair + US-0154 execute + US-0154 plan re-emit + US-0154 plan + US-0154 discovery + US-0153 closure + US-0152 closure + BUG-0033 refresh retained. Architecture was not rolled. This brief prepend follows state-first. Triad `--check` exit **0** at **1179** lines. CROSS_MODEL_REVIEW=0 (model_id omitted).
+
+```json
+{"record_key":"auto-20261012-us0154-execute-pair|story|(none)|execute|rp-auto-20261012-us0154-execute-pair-curator-20261012T180237Z","orchestrator_run_id":"auto-20261012-us0154-execute-pair","work_item_kind":"story","bug_id":"(none)","completed_phase":"execute","writer_role":"curator","role":"curator","fresh_context_marker":"curator-US0154-executepair-20261012T180237Z-fresh","resolution_source":"operator:resume-pair-repair","effective_plan":["spec","plan","build+verify","ship"],"skipped_phases":["intake","plan-verify"],"completed_phases":["intake","discovery","research","architecture","sprint-plan","execute"],"next_scheduled_phase":"qa","next_scheduled_role":"qa","phase_cursor":"build+verify/execute-pass","budget_scope":"OPEN stories US-0154 then US-0155; active_story_id=US-0154; stories_completed_this_drain=5; merged AUTO_BACKLOG_MAX_STORIES=10 from config.json; baseline scratchpad=3; backlog_drain_active=true; bug_queue_active=false","stop_reason":"execute_complete_phase_boundary","runtime_proof_id":"rp-auto-20261012-us0154-execute-pair-curator-20261012T180237Z","proof_hash":"6969c91457f1efc879847e91a9d8d266d6145faf0660ab91e2964805c22b16a2","proof_issued_at":"2026-10-12T18:02:37Z","proof_ttl_seconds":3600,"phase_id":"execute","stop_matrix_action":"STOP_AFTER_EXECUTE_PASS_PAIR; validate_pair_then_parent_may_spawn_qa"}
+```
+
+- **STOP:** `STOP_AFTER_EXECUTE_PASS_PAIR; validate_pair_then_parent_may_spawn_qa`. Parent may spawn fresh `/qa` (qa) for **US-0154/S0174** after validating this pair. This curator child did NOT spawn it. US-0154 stays OPEN.
+
+---
+
+# Resume Brief — US-0154 plan re-emit (state-first, DEC-0153)
+
+- `record_key`: `auto-20261012-us0154-plan-reemit|story|(none)|sprint-plan|rp-auto-20261012-us0154-plan-reemit-techlead-20261012T174609Z`
+- `orchestrator_run_id`: **`auto-20261012-us0154-plan-reemit`**
+- `work_item_kind`: **`story`**; `bug_id`: **`(none)`**; `completed_phase`: **`sprint-plan`**; `writer_role`: **`tech-lead`**
+- `phase_id`: **`sprint-plan`**; `role`: **`tech-lead`**; `verdict`: **`SPRINT_PLAN_PASS`**; `decision_gate`: **`false`**
+- `sprint_id`: **`S0174`**; `story_id`: **`US-0154`**
+- `intended_resume_phase`: **`execute`**; `next_scheduled_phase`: **`execute`**; `next_scheduled_role`: **`dev`**
+- `resolution_source`: **`operator:resume-pair-repair`**; `effective_plan`: `[spec, plan, build+verify, ship]`; `skipped_phases`: `[intake, plan-verify]`; `completed_phases`: `[intake, discovery, research, architecture, sprint-plan]`; `phase_cursor`: **`plan/3-of-3`**
+- `budget_scope`: `OPEN stories US-0154 then US-0155; active_story_id=US-0154; stories_completed_this_drain=5; merged AUTO_BACKLOG_MAX_STORIES=10 from config.json; baseline scratchpad=3; backlog_drain_active=true; bug_queue_active=false`
+- `stop_reason`: **`sprint_plan_complete_phase_boundary`**; `stop_matrix_action`: **`STOP_AFTER_PLAN_MACRO; validate_pair_then_parent_may_spawn_execute`**
+- `fresh_context_marker`: **`tl-US0154-planreemit-20261012T174609Z-fresh`**; `child_isolation_ref`: `docs/engineering/state.md#plan-re-emit-checkpoint-us-0154-s0174-auto-20261012-us0154-plan-reemit-roletech-lead`
+- `runtime_proof_id`: **`rp-auto-20261012-us0154-plan-reemit-techlead-20261012T174609Z`**; `proof_hash`: **`eb7621ab8c60e03991facb19410f3cf04539c8b6a90725ba58fff700880c01e3`**; `proof_issued_at`: `2026-10-12T17:46:09Z`; `proof_ttl_seconds`: `3600`; `proof_ttl`: `2026-10-12T18:46:09Z`; `hash_recompute_confirmation=true` (lib `compute_strict_proof_hash` + independent hashlib SHA-256 over verbatim DEC-0038 6-tuple; identical hexdigest)
+- Expired pair provenance only: runtime proof rp-auto-20261011-us0154-plan-techlead-20261011T220313Z, hash e6aff2058794baf624751427a8dbb96af9525f7cf98835921840a9f0aff77282, issued 2026-10-11T22:03:13Z, ttl 2026-10-11T23:03:13Z. The hash still matches and the TTL has expired (RESUME_BRIEF_STALE).
+- `research`: **`R-0164`** already authored and was not re-authored. Highest heading remains **R-0164**. **R-0154** remains BUG-0022 and was not reused.
+- `architecture`: `# US-0154` already present before the eleven linkage stubs. No additional heading. Architecture was not rolled.
+- `sprint`: **S0174** already exists, 7 tasks (T-anch + T-001..T-006). Not recreated. Companion DEC: **none**. An interrupted execute checked those task boxes and wrote no execute isolation checkpoint and did not replace this brief. Those boxes are not an execute pair.
+- `story_status`: **US-0154 OPEN** (AC-1..AC-6 unchecked); **US-0153 DONE**; **US-0152 DONE**; **US-0151 DONE**; **US-0150 DONE**; **US-0149 DONE**; **US-0155 OPEN** and not started
+- **Harness (provenance):** `tests/report.md` **2026-10-11T22:44:18Z** Pass **879** / Fail **1** (`US-0149 global itsm launcher contract tests pass`). That failure is for the next execute child. This child does not fix it and does not record an execute result.
+- **Publish / push:** NOT PERFORMED.
+- **Pair validation / ordering:** Append fit the 1200-line cap without archive. `--rollover` not run. Plan re-emit checkpoint appended **BOTTOM** first (DEC-0040 / DEC-0153). Protected US-0154 plan re-emit + US-0154 plan + US-0154 discovery + US-0153 closure + US-0152 closure + BUG-0033 refresh retained. This brief prepend follows state-first. Triad `--check` exit **0** at **1200** lines. CROSS_MODEL_REVIEW=0 (model_id omitted).
+
+```json
+{"record_key":"auto-20261012-us0154-plan-reemit|story|(none)|sprint-plan|rp-auto-20261012-us0154-plan-reemit-techlead-20261012T174609Z","orchestrator_run_id":"auto-20261012-us0154-plan-reemit","work_item_kind":"story","bug_id":"(none)","completed_phase":"sprint-plan","writer_role":"tech-lead","role":"tech-lead","fresh_context_marker":"tl-US0154-planreemit-20261012T174609Z-fresh","resolution_source":"operator:resume-pair-repair","effective_plan":["spec","plan","build+verify","ship"],"skipped_phases":["intake","plan-verify"],"completed_phases":["intake","discovery","research","architecture","sprint-plan"],"next_scheduled_phase":"execute","next_scheduled_role":"dev","phase_cursor":"plan/3-of-3","budget_scope":"OPEN stories US-0154 then US-0155; active_story_id=US-0154; stories_completed_this_drain=5; merged AUTO_BACKLOG_MAX_STORIES=10 from config.json; baseline scratchpad=3; backlog_drain_active=true; bug_queue_active=false","stop_reason":"sprint_plan_complete_phase_boundary","runtime_proof_id":"rp-auto-20261012-us0154-plan-reemit-techlead-20261012T174609Z","proof_hash":"eb7621ab8c60e03991facb19410f3cf04539c8b6a90725ba58fff700880c01e3","proof_issued_at":"2026-10-12T17:46:09Z","proof_ttl_seconds":3600,"phase_id":"sprint-plan","stop_matrix_action":"STOP_AFTER_PLAN_MACRO; validate_pair_then_parent_may_spawn_execute"}
+```
+
+- **STOP:** `STOP_AFTER_PLAN_MACRO; validate_pair_then_parent_may_spawn_execute`. Parent may spawn fresh `/execute` (dev) for **US-0154/S0174** after validating this pair. This tech-lead child did NOT spawn it. US-0154 stays OPEN.
+
+---
+
+# Resume Brief — US-0154 plan (state-first, DEC-0153)
+
+- `record_key`: `auto-20261011-us0154-plan|story|(none)|sprint-plan|rp-auto-20261011-us0154-plan-techlead-20261011T220313Z`
+- `orchestrator_run_id`: **`auto-20261011-us0154-plan`**
+- `work_item_kind`: **`story`**; `bug_id`: **`(none)`**; `completed_phase`: **`sprint-plan`**; `writer_role`: **`tech-lead`**
+- `phase_id`: **`sprint-plan`**; `role`: **`tech-lead`**; `verdict`: **`SPRINT_PLAN_PASS`**; `decision_gate`: **`false`**
+- `sprint_id`: **`S0174`**; `story_id`: **`US-0154`**
+- `intended_resume_phase`: **`execute`**; `next_scheduled_phase`: **`execute`**; `next_scheduled_role`: **`dev`**
+- `resolution_source`: **`phase_child:plan`**; `effective_plan`: `[spec, plan, build+verify, ship]`; `skipped_phases`: `[intake, plan-verify]`; `completed_phases`: `[intake, discovery, research, architecture, sprint-plan]`; `phase_cursor`: **`plan/3-of-3`**
+- `budget_scope`: `OPEN stories US-0154 then US-0155; active_story_id=US-0154; stories_completed_this_drain=5; merged AUTO_BACKLOG_MAX_STORIES=10 from config.json; baseline scratchpad=3; backlog_drain_active=true; bug_queue_active=false`
+- `stop_reason`: **`sprint_plan_complete_phase_boundary`**; `stop_matrix_action`: **`STOP_AFTER_PLAN_MACRO; validate_pair_then_parent_may_spawn_execute`**
+- `fresh_context_marker`: **`tl-US0154-plan-20261011T220313Z-fresh`**; `child_isolation_ref`: `docs/engineering/state.md#plan-checkpoint-us-0154-s0174-auto-20261011-us0154-plan-roletech-lead`
+- `runtime_proof_id`: **`rp-auto-20261011-us0154-plan-techlead-20261011T220313Z`**; `proof_hash`: **`e6aff2058794baf624751427a8dbb96af9525f7cf98835921840a9f0aff77282`**; `proof_issued_at`: `2026-10-11T22:03:13Z`; `proof_ttl_seconds`: `3600`; `proof_ttl`: `2026-10-11T23:03:13Z`; `hash_recompute_confirmation=true` (lib `compute_strict_proof_hash` + independent hashlib SHA-256 over verbatim DEC-0038 6-tuple; identical hexdigest)
+- `research`: **`R-0164`** authored. Highest heading is now **R-0164**. **R-0154** remains BUG-0022 and was not reused. `template/docs/engineering/research.md` is a format stub, not a parity pair, and was not copied.
+- `architecture`: `# US-0154` inserted immediately before the eleven linkage stubs. Hot file **2910** lines (cap 3000). No architecture archive. Linkage pytest **8 passed**.
+- `sprint`: **S0174**, 7 tasks (T-anch + T-001..T-006). Companion DEC: **none**.
+- `story_status`: **US-0154 OPEN** (AC-1..AC-6 unchecked); **US-0153 DONE**; **US-0152 DONE**; **US-0151 DONE**; **US-0150 DONE**; **US-0149 DONE**; **US-0155 OPEN** and not started
+- **Publish / push:** NOT PERFORMED.
+- **Pair validation / ordering:** Pre-append archive of **1** oldest non-protected checkpoint to `docs/engineering/state-archive/state-pack-20261011-ai.md` (US-0149 verify-work checkpoint, including its embedded verify-work pair-repair section; `--rollover` not run — would archive protected BUG-0033 refresh first). Plan checkpoint appended **BOTTOM** first (DEC-0040 / DEC-0153). Protected US-0154 plan + US-0154 discovery + US-0153 refresh + US-0153 closure + US-0152 closure + BUG-0033 refresh retained. Architecture was not rolled. This brief prepend follows state-first. Triad `--check` exit **0** at **1169** lines. CROSS_MODEL_REVIEW=0 (model_id omitted).
+
+```json
+{"record_key":"auto-20261011-us0154-plan|story|(none)|sprint-plan|rp-auto-20261011-us0154-plan-techlead-20261011T220313Z","orchestrator_run_id":"auto-20261011-us0154-plan","work_item_kind":"story","bug_id":"(none)","completed_phase":"sprint-plan","writer_role":"tech-lead","role":"tech-lead","fresh_context_marker":"tl-US0154-plan-20261011T220313Z-fresh","resolution_source":"phase_child:plan","effective_plan":["spec","plan","build+verify","ship"],"skipped_phases":["intake","plan-verify"],"completed_phases":["intake","discovery","research","architecture","sprint-plan"],"next_scheduled_phase":"execute","next_scheduled_role":"dev","phase_cursor":"plan/3-of-3","budget_scope":"OPEN stories US-0154 then US-0155; active_story_id=US-0154; stories_completed_this_drain=5; merged AUTO_BACKLOG_MAX_STORIES=10 from config.json; baseline scratchpad=3; backlog_drain_active=true; bug_queue_active=false","stop_reason":"sprint_plan_complete_phase_boundary","runtime_proof_id":"rp-auto-20261011-us0154-plan-techlead-20261011T220313Z","proof_hash":"e6aff2058794baf624751427a8dbb96af9525f7cf98835921840a9f0aff77282","proof_issued_at":"2026-10-11T22:03:13Z","proof_ttl_seconds":3600,"phase_id":"sprint-plan","stop_matrix_action":"STOP_AFTER_PLAN_MACRO; validate_pair_then_parent_may_spawn_execute"}
+```
+
+- **STOP:** `STOP_AFTER_PLAN_MACRO; validate_pair_then_parent_may_spawn_execute`. Parent may spawn fresh `/execute` (dev) for **US-0154/S0174** after validating this pair. This tech-lead child did NOT spawn it.
+
+---
+
+# Resume Brief — US-0154 discovery (state-first, DEC-0153)
+
+- `record_key`: `auto-20261011-us0154-discovery|story|(none)|discovery|rp-auto-20261011-us0154-discovery-po-20261011T215414Z`
+- `orchestrator_run_id`: **`auto-20261011-us0154-discovery`**
+- `work_item_kind`: **`story`**; `bug_id`: **`(none)`**; `completed_phase`: **`discovery`**; `writer_role`: **`po`**
+- `phase_id`: **`discovery`**; `role`: **`po`**; `verdict`: **`DISCOVERY_PASS`**; `decision_gate`: **`false`**
+- `sprint_id`: **`(none)`**; `story_id`: **`US-0154`**
+- `intended_resume_phase`: **`research`**; `next_scheduled_phase`: **`research`**; `next_scheduled_role`: **`tech-lead`**
+- `resolution_source`: **`phase_child:discovery`**; `effective_plan`: `[spec, plan, build+verify, ship]`; `skipped_phases`: `[intake]`; `completed_phases`: `[intake, discovery]`; `phase_cursor`: **`spec/discovery-pass`**
+- `budget_scope`: `OPEN stories US-0154 then US-0155; active_story_id=US-0154; stories_completed_this_drain=5; merged AUTO_BACKLOG_MAX_STORIES=10 from config.json; baseline scratchpad=3; backlog_drain_active=true; bug_queue_active=false`
+- `stop_reason`: **`discovery_complete_phase_boundary`**; `stop_matrix_action`: **`STOP_AFTER_DISCOVERY_PASS; validate_pair_then_parent_may_spawn_research`**
+- `fresh_context_marker`: **`po-US0154-discovery-20261011T215414Z-fresh`**; `child_isolation_ref`: `docs/engineering/state.md#discovery-checkpoint-us-0154-auto-20261011-us0154-discovery-rolepo`
+- `runtime_proof_id`: **`rp-auto-20261011-us0154-discovery-po-20261011T215414Z`**; `proof_hash`: **`a8868284e75e826374011c8ef6ec6821a8746865106a46b2ce022d5c2b00ec5b`**; `proof_issued_at`: `2026-10-11T21:54:14Z`; `proof_ttl_seconds`: `3600`; `proof_ttl`: `2026-10-11T22:54:14Z`; `hash_recompute_confirmation=true` (lib `compute_strict_proof_hash` + independent hashlib SHA-256 over verbatim DEC-0038 6-tuple; identical hexdigest)
+- `intake_evidence`: **`handoffs/intake_evidence/US-0150-0154-standalone-integration-intake-20260919.json`** — present (intake skipped)
+- `research_stub`: **`R-0164`** not authored. Highest existing heading **R-0163**. **R-0154** remains BUG-0022 and was not reused.
+- `story_status`: **US-0154 OPEN** (AC-1..AC-6 unchecked); **US-0153 DONE**; **US-0152 DONE**; **US-0151 DONE**; **US-0150 DONE**; **US-0149 DONE**; **US-0155 OPEN** and not started
+- **Publish / push:** NOT PERFORMED.
+- **Pair validation / ordering:** Pre-append archive of **1** oldest non-protected checkpoint to `docs/engineering/state-archive/state-pack-20261011-ah.md` (US-0149 QA checkpoint, including its embedded QA pair-repair section; `--rollover` not run — would archive protected BUG-0033 refresh first). Discovery checkpoint appended **BOTTOM** first (DEC-0040 / DEC-0153). Protected US-0154 discovery + US-0153 refresh + US-0153 closure + US-0153 plan + US-0152 closure + BUG-0033 refresh retained. Architecture was not rolled. This brief prepend follows state-first. Triad `--check` exit **0** at **1185** lines.
+
+```json
+{"record_key":"auto-20261011-us0154-discovery|story|(none)|discovery|rp-auto-20261011-us0154-discovery-po-20261011T215414Z","orchestrator_run_id":"auto-20261011-us0154-discovery","work_item_kind":"story","bug_id":"(none)","completed_phase":"discovery","writer_role":"po","role":"po","fresh_context_marker":"po-US0154-discovery-20261011T215414Z-fresh","resolution_source":"phase_child:discovery","effective_plan":["spec","plan","build+verify","ship"],"skipped_phases":["intake"],"completed_phases":["intake","discovery"],"next_scheduled_phase":"research","next_scheduled_role":"tech-lead","phase_cursor":"spec/discovery-pass","budget_scope":"OPEN stories US-0154 then US-0155; active_story_id=US-0154; stories_completed_this_drain=5; merged AUTO_BACKLOG_MAX_STORIES=10 from config.json; baseline scratchpad=3; backlog_drain_active=true; bug_queue_active=false","stop_reason":"discovery_complete_phase_boundary","runtime_proof_id":"rp-auto-20261011-us0154-discovery-po-20261011T215414Z","proof_hash":"a8868284e75e826374011c8ef6ec6821a8746865106a46b2ce022d5c2b00ec5b","proof_issued_at":"2026-10-11T21:54:14Z","proof_ttl_seconds":3600,"phase_id":"discovery","stop_matrix_action":"STOP_AFTER_DISCOVERY_PASS; validate_pair_then_parent_may_spawn_research"}
+```
+
+- **STOP:** `STOP_AFTER_DISCOVERY_PASS; validate_pair_then_parent_may_spawn_research`. Parent may spawn fresh `/research` (tech-lead) for **US-0154** after validating this pair. This PO child did NOT spawn it.
+
+---
+
+# Resume Brief — US-0153 refresh-context (state-first, DEC-0153)
+
+- `record_key`: `auto-20261011-us0153-refresh|story|(none)|refresh-context|rp-auto-20261011-us0153-refresh-curator-20261011T214935Z`
+- `orchestrator_run_id`: **`auto-20261011-us0153-refresh`**
+- `work_item_kind`: **`story`**; `bug_id`: **`(none)`**; `completed_phase`: **`refresh-context`**; `writer_role`: **`curator`**
+- `phase_id`: **`refresh-context`**; `role`: **`curator`**; `verdict`: **`REFRESH_CONTEXT_PASS`**; `decision_gate`: **`false`**
+- `sprint_id`: **`S0173`**; `story_id`: **`US-0153`** (segment closed; drain head **US-0154**)
+- `intended_resume_phase`: **`discovery`**; `next_scheduled_phase`: **`discovery`**; `next_scheduled_role`: **`po`**
+- `resolution_source`: **`phase_child:refresh-context`**; `effective_plan`: `[spec, plan, build+verify, ship]`; `skipped_phases`: `[intake]`; `completed_phases`: `[intake]`; `phase_cursor`: **`spec/discovery`**
+- `budget_scope`: `OPEN stories US-0154 then US-0155; active_story_id=US-0154; stories_completed_this_drain=5; merged AUTO_BACKLOG_MAX_STORIES=10 from config.json; baseline scratchpad=3; backlog_drain_active=true; bug_queue_active=false`
+- `stop_reason`: **`refresh_complete_drain_authorized`**; `stop_matrix_action`: **`STOP_AFTER_REFRESH_PASS; validate_pair_then_parent_may_spawn_next_story`**
+- `fresh_context_marker`: **`curator-US0153-refresh-20261011T214935Z-fresh`**; `child_isolation_ref`: `docs/engineering/state.md#refresh-context-checkpoint-us-0153-s0173-auto-20261011-us0153-refresh-rolecurator`
+- `runtime_proof_id`: **`rp-auto-20261011-us0153-refresh-curator-20261011T214935Z`**; `proof_hash`: **`618efa997171e1922427aef8b99bee6a794f85cbdcce2cb2d966b5f95bc08459`**; `proof_issued_at`: `2026-10-11T21:49:35Z`; `proof_ttl_seconds`: `3600`; `proof_ttl`: `2026-10-11T22:49:35Z`; `hash_recompute_confirmation=true` (lib `compute_strict_proof_hash` + independent hashlib SHA-256 over verbatim DEC-0038 6-tuple; identical hexdigest)
+- `intake_evidence`: **`handoffs/intake_evidence/US-0150-0154-standalone-integration-intake-20260919.json`** — **present** (intake skipped for US-0154)
+- `story_status`: **US-0153 DONE** (AC-1..AC-5 checked); **US-0154 OPEN**; **US-0155 OPEN**; **US-0152 DONE**; **US-0151 DONE**; **US-0150 DONE**; **US-0149 DONE**
+- **Harness (provenance):** `tests/report.md` **2026-10-11T21:47:41Z** Pass **880** / Fail **0**. Five `test_us0153_*` markers green. README coverage `coverage_missing=[]`, `coverage_total=49`, `coverage_present` includes **US-0153**.
+- **Research KB:** **R-0163** delivered; highest heading **R-0163**; next free id **R-0164** (not authored this refresh).
+- **Publish / push:** NOT PERFORMED.
+- **Pair validation / ordering:** Pre-append archive of **1** oldest non-protected checkpoint to `docs/engineering/state-archive/state-pack-20261011-ag.md` (US-0149 plan; `--rollover` not run — would archive protected BUG-0033 refresh first). Refresh checkpoint appended **BOTTOM** first (DEC-0040 / DEC-0153). Protected US-0153 chain + US-0152 closure + BUG-0033 refresh retained. Architecture was not rolled. This brief prepend follows state-first. Triad `--check` exit **0** at **1198** lines.
+
+```json
+{"record_key":"auto-20261011-us0153-refresh|story|(none)|refresh-context|rp-auto-20261011-us0153-refresh-curator-20261011T214935Z","orchestrator_run_id":"auto-20261011-us0153-refresh","work_item_kind":"story","bug_id":"(none)","completed_phase":"refresh-context","writer_role":"curator","role":"curator","fresh_context_marker":"curator-US0153-refresh-20261011T214935Z-fresh","resolution_source":"phase_child:refresh-context","effective_plan":["spec","plan","build+verify","ship"],"skipped_phases":["intake"],"completed_phases":["intake"],"next_scheduled_phase":"discovery","next_scheduled_role":"po","phase_cursor":"spec/discovery","budget_scope":"OPEN stories US-0154 then US-0155; active_story_id=US-0154; stories_completed_this_drain=5; merged AUTO_BACKLOG_MAX_STORIES=10 from config.json; baseline scratchpad=3; backlog_drain_active=true; bug_queue_active=false","stop_reason":"refresh_complete_drain_authorized","runtime_proof_id":"rp-auto-20261011-us0153-refresh-curator-20261011T214935Z","proof_hash":"618efa997171e1922427aef8b99bee6a794f85cbdcce2cb2d966b5f95bc08459","proof_issued_at":"2026-10-11T21:49:35Z","proof_ttl_seconds":3600,"phase_id":"refresh-context","stop_matrix_action":"STOP_AFTER_REFRESH_PASS; validate_pair_then_parent_may_spawn_next_story"}
+```
+
+- **STOP:** `STOP_AFTER_REFRESH_PASS; validate_pair_then_parent_may_spawn_next_story`. Parent may spawn fresh `/discovery` (po) for **US-0154** after validating this pair. This curator child did NOT spawn it.
+
+---
+
+# Resume Brief — US-0153 closure (state-first, DEC-0153)
+
+- `record_key`: `auto-20261011-us0153-closure|story|(none)|closure|rp-auto-20261011-us0153-closure-curator-20261011T214756Z`
+- `orchestrator_run_id`: **`auto-20261011-us0153-closure`**
+- `work_item_kind`: **`story`**; `bug_id`: **`(none)`**; `completed_phase`: **`closure`**; `writer_role`: **`curator`**
+- `phase_id`: **`closure`**; `role`: **`curator`**; `verdict`: **`CLOSURE_PASS`**; `decision_gate`: **`false`**
+- `sprint_id`: **`S0173`**; `story_id`: **`US-0153`**
+- `intended_resume_phase`: **`refresh-context`**; `next_scheduled_phase`: **`refresh-context`**; `next_scheduled_role`: **`curator`**
+- `resolution_source`: **`phase_child:closure`**; `effective_plan`: `[spec, plan, build+verify, ship]`; `skipped_phases`: `[intake, plan-verify]`; `completed_phases`: `[intake, discovery, research, architecture, sprint-plan, execute, qa, verify-work, release, closure]`; `phase_cursor`: **`ship/closure-pass`**
+- `budget_scope`: `OPEN stories after US-0153: US-0154,US-0155; active_story_id=US-0153; stories_completed_this_drain=5; merged AUTO_BACKLOG_MAX_STORIES=10 from config.json; baseline scratchpad=3; backlog_drain_active=true; bug_queue_active=false`
+- `stop_reason`: **`closure_complete_phase_boundary`**; `stop_matrix_action`: **`STOP_AFTER_CLOSURE_PASS; validate_pair_then_parent_may_spawn_refresh_context`**
+- `fresh_context_marker`: **`curator-US0153-closure-20261011T214756Z-fresh`**; `child_isolation_ref`: `docs/engineering/state.md#closure-checkpoint-us-0153-s0173-auto-20261011-us0153-closure-rolecurator`
+- `runtime_proof_id`: **`rp-auto-20261011-us0153-closure-curator-20261011T214756Z`**; `proof_hash`: **`78c31f38c8b0195ba02142831dca910972a841f6dbf232dd6924e88c70b18d24`**; `proof_issued_at`: `2026-10-11T21:47:56Z`; `proof_ttl_seconds`: `3600`; `proof_ttl`: `2026-10-11T22:47:56Z`; `hash_recompute_confirmation=true` (lib `compute_strict_proof_hash` + independent hashlib SHA-256 over verbatim DEC-0038 6-tuple; identical hexdigest)
+- `story_status`: **US-0153 DONE** (AC-1..AC-5 checked); **US-0152 DONE**; **US-0151 DONE**; **US-0150 DONE**; **US-0149 DONE**
+- **Harness:** `tests/report.md` **2026-10-11T21:47:41Z** Pass **880** / Fail **0** (full harness re-run this closure). Five `test_us0153_*` markers green. Post-flip README coverage `coverage_missing=[]`, `coverage_total=49`, `coverage_present` includes **US-0153**.
+- **Publish / push:** NOT PERFORMED.
+- **Pair validation / ordering:** Closure checkpoint appended **BOTTOM** first (DEC-0040 / DEC-0153). Post-append archive of **1** oldest non-protected checkpoint to `docs/engineering/state-archive/state-pack-20261011-af.md` (US-0149 execute isolation; `--rollover` not run — would archive protected BUG-0033 refresh first). Protected checkpoints retained on hot surface. Architecture was not rolled. This brief prepend follows state-first. Triad `--check` exit **0** at **1190** lines.
+
+```json
+{"record_key":"auto-20261011-us0153-closure|story|(none)|closure|rp-auto-20261011-us0153-closure-curator-20261011T214756Z","orchestrator_run_id":"auto-20261011-us0153-closure","work_item_kind":"story","bug_id":"(none)","completed_phase":"closure","writer_role":"curator","role":"curator","fresh_context_marker":"curator-US0153-closure-20261011T214756Z-fresh","resolution_source":"phase_child:closure","effective_plan":["spec","plan","build+verify","ship"],"skipped_phases":["intake","plan-verify"],"completed_phases":["intake","discovery","research","architecture","sprint-plan","execute","qa","verify-work","release","closure"],"next_scheduled_phase":"refresh-context","next_scheduled_role":"curator","phase_cursor":"ship/closure-pass","budget_scope":"OPEN stories after US-0153: US-0154,US-0155; active_story_id=US-0153; stories_completed_this_drain=5; merged AUTO_BACKLOG_MAX_STORIES=10 from config.json; baseline scratchpad=3; backlog_drain_active=true; bug_queue_active=false","stop_reason":"closure_complete_phase_boundary","runtime_proof_id":"rp-auto-20261011-us0153-closure-curator-20261011T214756Z","proof_hash":"78c31f38c8b0195ba02142831dca910972a841f6dbf232dd6924e88c70b18d24","proof_issued_at":"2026-10-11T21:47:56Z","proof_ttl_seconds":3600,"phase_id":"closure","stop_matrix_action":"STOP_AFTER_CLOSURE_PASS; validate_pair_then_parent_may_spawn_refresh_context"}
+```
+
+- **STOP:** `STOP_AFTER_CLOSURE_PASS; validate_pair_then_parent_may_spawn_refresh_context`. Parent may spawn fresh `/refresh-context` (curator) for **US-0153/S0173** after validating this pair. This curator child did NOT spawn it.
+
+---
+
+# Resume Brief — US-0153 release continuation pair (state-first, DEC-0153)
+
+- `record_key`: `auto-20261011-us0153-release|story|(none)|release|rp-auto-20261011-us0153-release-release-20261011T213512Z`
+- `orchestrator_run_id`: **`auto-20261011-us0153-release`**
+- `work_item_kind`: **`story`**; `bug_id`: **`(none)`**; `completed_phase`: **`release`**; `writer_role`: **`release`**
+- `phase_id`: **`release`**; `role`: **`release`**; `verdict`: **`RELEASE_PASS`**; `decision_gate`: **`false`**
+- `sprint_id`: **`S0173`**; `story_id`: **`US-0153`**; verify-work marker consumed: **`qa-US0153-vw-20261011T212114Z-fresh`**
+- `intended_resume_phase`: **`closure`**; `next_scheduled_phase`: **`closure`**; `next_scheduled_role`: **`curator`**
+- `resolution_source`: **`phase_child:release`**; `effective_plan`: `[spec, plan, build+verify, ship]`; `skipped_phases`: `[intake, plan-verify]`; `completed_phases`: `[intake, discovery, research, architecture, sprint-plan, execute, qa, verify-work, release]`; `phase_cursor`: **`ship/release-pass`**
+- `budget_scope`: `OPEN stories US-0153 then US-0154,US-0155; active_story_id=US-0153; stories_completed_this_drain=4; merged AUTO_BACKLOG_MAX_STORIES=10 from config.json; baseline scratchpad=3; backlog_drain_active=true; bug_queue_active=false`
+- `stop_reason`: **`release_complete_phase_boundary`**; `stop_matrix_action`: **`STOP_AFTER_RELEASE_PASS; validate_pair_then_parent_may_spawn_closure`**
+- `fresh_context_marker`: **`release-US0153-release-20261011T213512Z-fresh`**; `child_isolation_ref`: `docs/engineering/state.md#release-checkpoint-us-0153-s0173-auto-20261011-us0153-release-rolerelease`
+- `runtime_proof_id`: **`rp-auto-20261011-us0153-release-release-20261011T213512Z`**; `proof_hash`: **`ce8455383a8978020eb1d1622141dabf9437f722c7c486bbd563404ce2ea8b28`**; `proof_issued_at`: `2026-10-11T21:35:12Z`; `proof_ttl_seconds`: `3600`; `proof_ttl`: `2026-10-11T22:35:12Z`; `hash_recompute_confirmation=true` (lib `compute_strict_proof_hash` + independent hashlib SHA-256 over verbatim DEC-0038 6-tuple; identical hexdigest)
+- `story_status`: **US-0153 remains OPEN** (AC-1..AC-5 unchecked); **US-0152 DONE**; **US-0151 DONE**; **US-0150 DONE**; **US-0149 DONE**
+- **Harness (provenance):** verify-work-era `tests/report.md` **2026-10-11T21:19:17Z** Pass **880** / Fail **0**. Five `test_us0153_*` markers re-run this release: 5 passed / 0 failed. UAT **6/6** with `UAT_PROBE_FORBIDDEN` for live remote deploy. Full harness not re-run.
+- **Publish / push:** NOT PERFORMED. `npm_published=false`. No git push. No commit.
+- **Pair validation / ordering:** Release checkpoint appended **BOTTOM** after archiving **1** oldest non-protected checkpoint (US-0149 discovery) to `docs/engineering/state-archive/state-pack-20261011-ae.md`. `--rollover` was not run: it would archive the protected BUG-0033 refresh first. The new release checkpoint, the US-0153 verify-pair checkpoint, the US-0153 verify-work checkpoint, the US-0153 qa-pair checkpoint, the US-0153 plan checkpoint, the US-0153 discovery checkpoint, the US-0152 closure checkpoint, and the BUG-0033 refresh checkpoint remain in `docs/engineering/state.md`. Architecture was not rolled. This brief prepend follows state-first. Hot file **1199** lines.
+
+```json
+{"record_key":"auto-20261011-us0153-release|story|(none)|release|rp-auto-20261011-us0153-release-release-20261011T213512Z","orchestrator_run_id":"auto-20261011-us0153-release","work_item_kind":"story","bug_id":"(none)","completed_phase":"release","writer_role":"release","role":"release","fresh_context_marker":"release-US0153-release-20261011T213512Z-fresh","resolution_source":"phase_child:release","effective_plan":["spec","plan","build+verify","ship"],"skipped_phases":["intake","plan-verify"],"completed_phases":["intake","discovery","research","architecture","sprint-plan","execute","qa","verify-work","release"],"next_scheduled_phase":"closure","next_scheduled_role":"curator","phase_cursor":"ship/release-pass","budget_scope":"OPEN stories US-0153 then US-0154,US-0155; active_story_id=US-0153; stories_completed_this_drain=4; merged AUTO_BACKLOG_MAX_STORIES=10 from config.json; baseline scratchpad=3; backlog_drain_active=true; bug_queue_active=false","stop_reason":"release_complete_phase_boundary","runtime_proof_id":"rp-auto-20261011-us0153-release-release-20261011T213512Z","proof_hash":"ce8455383a8978020eb1d1622141dabf9437f722c7c486bbd563404ce2ea8b28","proof_issued_at":"2026-10-11T21:35:12Z","proof_ttl_seconds":3600,"phase_id":"release","stop_matrix_action":"STOP_AFTER_RELEASE_PASS; validate_pair_then_parent_may_spawn_closure"}
+```
+
+- **STOP:** `STOP_AFTER_RELEASE_PASS; validate_pair_then_parent_may_spawn_closure`. Parent may spawn fresh `/closure` (curator) for **US-0153/S0173** after validating this pair. This release child did NOT spawn it. US-0153 stays OPEN.
+
+---
+
+# Resume Brief — US-0153 verify-work continuation pair (state-first, DEC-0153)
+
+- `record_key`: `auto-20261011-us0153-verify-pair|story|(none)|verify-work|rp-auto-20261011-us0153-verify-pair-curator-20261011T212423Z`
+- `orchestrator_run_id`: **`auto-20261011-us0153-verify-pair`**
+- `work_item_kind`: **`story`**; `bug_id`: **`(none)`**; `completed_phase`: **`verify-work`**; `writer_role`: **`curator`**
+- `phase_id`: **`verify-work`**; `role`: **`curator`**; `verdict`: **`VERIFY_PASS`** (provenance; upstream verify-work checkpoint); `decision_gate`: **`false`**
+- `sprint_id`: **`S0173`**; `story_id`: **`US-0153`**; verify-work marker consumed: **`qa-US0153-vw-20261011T212114Z-fresh`**
+- `intended_resume_phase`: **`release`**; `next_scheduled_phase`: **`release`**; `next_scheduled_role`: **`release`**
+- `resolution_source`: **`operator:resume-pair-repair`**; `effective_plan`: `[spec, plan, build+verify, ship]`; `skipped_phases`: `[intake, plan-verify]`; `completed_phases`: `[intake, discovery, research, architecture, sprint-plan, execute, qa, verify-work]`; `phase_cursor`: **`ship/verify-pass`**
+- `budget_scope`: `OPEN stories US-0153 then US-0154,US-0155; active_story_id=US-0153; stories_completed_this_drain=4; merged AUTO_BACKLOG_MAX_STORIES=10 from config.json; baseline scratchpad=3; backlog_drain_active=true; bug_queue_active=false`
+- `stop_reason`: **`verify_work_complete_phase_boundary`**; `stop_matrix_action`: **`STOP_AFTER_VERIFY_PASS_PAIR; validate_pair_then_parent_may_spawn_release`**
+- `fresh_context_marker`: **`curator-US0153-verifypair-20261011T212423Z-fresh`**; `child_isolation_ref`: `docs/engineering/state.md#verify-work-pair-repair-us-0153-s0173-auto-20261011-us0153-verify-pair-rolecurator`
+- `runtime_proof_id`: **`rp-auto-20261011-us0153-verify-pair-curator-20261011T212423Z`**; `proof_hash`: **`c9d12a329e23d64008ad445bc4e605b856db11d9d4276c97bb684ac86cecf930`**; `proof_issued_at`: `2026-10-11T21:24:23Z`; `proof_ttl_seconds`: `3600`; `proof_ttl`: `2026-10-11T22:24:23Z`; `hash_recompute_confirmation=true` (lib `compute_strict_proof_hash` + independent hashlib SHA-256 over verbatim DEC-0038 6-tuple; identical hexdigest)
+- `story_status`: **US-0153 remains OPEN** (AC-1..AC-5 unchecked); **US-0152 DONE**; **US-0151 DONE**; **US-0150 DONE**; **US-0149 DONE**
+- **Harness (provenance):** verify-work-era `tests/report.md` **2026-10-11T21:19:17Z** Pass **880** / Fail **0**. Five `test_us0153_*` markers passed. UAT **6/6** with `UAT_PROBE_FORBIDDEN` for live remote deploy.
+- **Publish / push:** NOT PERFORMED.
+- **Pair validation / ordering:** Pre-append `--rollover` archived **1** oldest terminal checkpoint to `docs/engineering/state-archive/state-pack-20261011-ad.md` (US-0149 drain-advance). Verify-pair checkpoint appended **BOTTOM** first (DEC-0040 / DEC-0153). Append fits the 1200-line cap without further rollover. The new US-0153 verify-pair checkpoint, the US-0153 verify-work checkpoint, the US-0153 qa-pair checkpoint, the US-0153 QA checkpoint, the US-0153 execute-pair checkpoint, the US-0153 plan checkpoint, the US-0153 discovery checkpoint, the US-0152 closure checkpoint, and the BUG-0033 refresh checkpoint remain in `docs/engineering/state.md`. Architecture was not rolled. This brief prepend follows state-first. Triad `--check` exit **0** at **1199** lines.
+
+```json
+{"record_key":"auto-20261011-us0153-verify-pair|story|(none)|verify-work|rp-auto-20261011-us0153-verify-pair-curator-20261011T212423Z","orchestrator_run_id":"auto-20261011-us0153-verify-pair","work_item_kind":"story","bug_id":"(none)","completed_phase":"verify-work","writer_role":"curator","role":"curator","fresh_context_marker":"curator-US0153-verifypair-20261011T212423Z-fresh","resolution_source":"operator:resume-pair-repair","effective_plan":["spec","plan","build+verify","ship"],"skipped_phases":["intake","plan-verify"],"completed_phases":["intake","discovery","research","architecture","sprint-plan","execute","qa","verify-work"],"next_scheduled_phase":"release","next_scheduled_role":"release","phase_cursor":"ship/verify-pass","budget_scope":"OPEN stories US-0153 then US-0154,US-0155; active_story_id=US-0153; stories_completed_this_drain=4; merged AUTO_BACKLOG_MAX_STORIES=10 from config.json; baseline scratchpad=3; backlog_drain_active=true; bug_queue_active=false","stop_reason":"verify_work_complete_phase_boundary","runtime_proof_id":"rp-auto-20261011-us0153-verify-pair-curator-20261011T212423Z","proof_hash":"c9d12a329e23d64008ad445bc4e605b856db11d9d4276c97bb684ac86cecf930","proof_issued_at":"2026-10-11T21:24:23Z","proof_ttl_seconds":3600,"phase_id":"verify-work","stop_matrix_action":"STOP_AFTER_VERIFY_PASS_PAIR; validate_pair_then_parent_may_spawn_release"}
+```
+
+- **STOP:** `STOP_AFTER_VERIFY_PASS_PAIR; validate_pair_then_parent_may_spawn_release`. Parent may spawn fresh `/release` (release) for **US-0153/S0173** after validating this pair. This curator child did NOT spawn it.
+
+---
+
+# Resume Brief — US-0153 QA continuation pair (state-first, DEC-0153)
+
+- `record_key`: `auto-20261011-us0153-qa-pair|story|(none)|qa|rp-auto-20261011-us0153-qa-pair-curator-20261011T210810Z`
+- `orchestrator_run_id`: **`auto-20261011-us0153-qa-pair`**
+- `work_item_kind`: **`story`**; `bug_id`: **`(none)`**; `completed_phase`: **`qa`**; `writer_role`: **`curator`**
+- `phase_id`: **`qa`**; `role`: **`curator`**; `verdict`: **`QA_PASS`** (provenance; upstream QA checkpoint); `decision_gate`: **`false`**
+- `sprint_id`: **`S0173`**; `story_id`: **`US-0153`**; QA marker consumed: **`qa-US0153-qa-20261011T210523Z-fresh`**
+- `intended_resume_phase`: **`verify-work`**; `next_scheduled_phase`: **`verify-work`**; `next_scheduled_role`: **`qa`**
+- `resolution_source`: **`operator:resume-pair-repair`**; `effective_plan`: `[spec, plan, build+verify, ship]`; `skipped_phases`: `[intake, plan-verify]`; `completed_phases`: `[intake, discovery, research, architecture, sprint-plan, execute, qa]`; `phase_cursor`: **`build+verify/qa-pass`**
+- `budget_scope`: `OPEN stories US-0153 then US-0154,US-0155; active_story_id=US-0153; stories_completed_this_drain=4; merged AUTO_BACKLOG_MAX_STORIES=10 from config.json; baseline scratchpad=3; backlog_drain_active=true; bug_queue_active=false`
+- `stop_reason`: **`qa_complete_phase_boundary`**; `stop_matrix_action`: **`STOP_AFTER_QA_PASS_PAIR; validate_pair_then_parent_may_spawn_verify_work`**
+- `fresh_context_marker`: **`curator-US0153-qapair-20261011T210810Z-fresh`**; `child_isolation_ref`: `docs/engineering/state.md#qa-pair-repair-us-0153-s0173-auto-20261011-us0153-qa-pair-rolecurator`
+- `runtime_proof_id`: **`rp-auto-20261011-us0153-qa-pair-curator-20261011T210810Z`**; `proof_hash`: **`f41829613b7b3f8eba6de272169e3432d7a253f04ae34e1b94bbc0c7207e8577`**; `proof_issued_at`: `2026-10-11T21:08:10Z`; `proof_ttl_seconds`: `3600`; `proof_ttl`: `2026-10-11T22:08:10Z`; `hash_recompute_confirmation=true` (lib `compute_strict_proof_hash` + independent hashlib SHA-256 over verbatim DEC-0038 6-tuple; identical hexdigest)
+- `story_status`: **US-0153 remains OPEN** (AC-1..AC-5 unchecked); **US-0152 DONE**; **US-0151 DONE**; **US-0150 DONE**; **US-0149 DONE**
+- **Harness (provenance):** QA-era `tests/report.md` **2026-10-11T21:03:37Z** Pass **880** / Fail **0**. Five `test_us0153_*` markers passed. UAT PASS with `UAT_PROBE_FORBIDDEN` for live remote deploy.
+- **Publish / push:** NOT PERFORMED.
+- **Pair validation / ordering:** Qa-pair checkpoint appended **BOTTOM** first (DEC-0040 / DEC-0153). Post-append sanctioned rollover archived **1** oldest terminal checkpoint unit to `docs/engineering/state-archive/state-pack-20261011-ac.md` so hot surface stays ≤1200 lines. The new US-0153 qa-pair checkpoint, the US-0153 QA checkpoint, the US-0153 execute-pair checkpoint, the US-0153 plan checkpoint, the US-0153 discovery checkpoint, the US-0152 closure checkpoint, and the BUG-0033 refresh checkpoint remain in `docs/engineering/state.md`. Architecture was not rolled. This brief prepend follows state-first. Triad `--check` exit **0** at **1184** lines.
+
+```json
+{"record_key":"auto-20261011-us0153-qa-pair|story|(none)|qa|rp-auto-20261011-us0153-qa-pair-curator-20261011T210810Z","orchestrator_run_id":"auto-20261011-us0153-qa-pair","work_item_kind":"story","bug_id":"(none)","completed_phase":"qa","writer_role":"curator","role":"curator","fresh_context_marker":"curator-US0153-qapair-20261011T210810Z-fresh","resolution_source":"operator:resume-pair-repair","effective_plan":["spec","plan","build+verify","ship"],"skipped_phases":["intake","plan-verify"],"completed_phases":["intake","discovery","research","architecture","sprint-plan","execute","qa"],"next_scheduled_phase":"verify-work","next_scheduled_role":"qa","phase_cursor":"build+verify/qa-pass","budget_scope":"OPEN stories US-0153 then US-0154,US-0155; active_story_id=US-0153; stories_completed_this_drain=4; merged AUTO_BACKLOG_MAX_STORIES=10 from config.json; baseline scratchpad=3; backlog_drain_active=true; bug_queue_active=false","stop_reason":"qa_complete_phase_boundary","runtime_proof_id":"rp-auto-20261011-us0153-qa-pair-curator-20261011T210810Z","proof_hash":"f41829613b7b3f8eba6de272169e3432d7a253f04ae34e1b94bbc0c7207e8577","proof_issued_at":"2026-10-11T21:08:10Z","proof_ttl_seconds":3600,"phase_id":"qa","stop_matrix_action":"STOP_AFTER_QA_PASS_PAIR; validate_pair_then_parent_may_spawn_verify_work"}
+```
+
+- **STOP:** `STOP_AFTER_QA_PASS_PAIR; validate_pair_then_parent_may_spawn_verify_work`. Parent may spawn fresh `/verify-work` (qa) for **US-0153/S0173** after validating this pair. This curator child did NOT spawn it.
+
+---
+
+# Resume Brief — US-0153 execute (state-first, DEC-0153)
+
+- `record_key`: `auto-20261011-us0153-execute-pair|story|(none)|execute|rp-auto-20261011-us0153-execute-pair-curator-20261011T205243Z`
+- `orchestrator_run_id`: **`auto-20261011-us0153-execute-pair`**
+- `work_item_kind`: **`story`**; `bug_id`: **`(none)`**; `completed_phase`: **`execute`**; `writer_role`: **`curator`**
+- `phase_id`: **`execute`**; `role`: **`curator`**; `verdict`: **`EXECUTE_PASS`**; `decision_gate`: **`false`**
+- `sprint_id`: **`S0173`**; `story_id`: **`US-0153`**
+- `intended_resume_phase`: **`qa`**; `next_scheduled_phase`: **`qa`**; `next_scheduled_role`: **`qa`**
+- `resolution_source`: **`operator:resume-pair-repair`**; `effective_plan`: `[spec, plan, build+verify, ship]`; `skipped_phases`: `[intake, plan-verify]`; `completed_phases`: `[intake, discovery, research, architecture, sprint-plan, execute]`; `phase_cursor`: **`build+verify/execute-pass`**
+- `budget_scope`: `OPEN stories US-0153 then US-0154,US-0155; active_story_id=US-0153; stories_completed_this_drain=4; merged AUTO_BACKLOG_MAX_STORIES=10 from config.json; baseline scratchpad=3; backlog_drain_active=true; bug_queue_active=false`
+- `stop_reason`: **`execute_complete_phase_boundary`**; `stop_matrix_action`: **`STOP_AFTER_EXECUTE_PASS_PAIR; validate_pair_then_parent_may_spawn_qa`**
+- `fresh_context_marker`: **`curator-US0153-executepair-20261011T205243Z-fresh`**; `child_isolation_ref`: `docs/engineering/state.md#execute-pair-repair-us-0153-s0173-auto-20261011-us0153-execute-pair-rolecurator`
+- `runtime_proof_id`: **`rp-auto-20261011-us0153-execute-pair-curator-20261011T205243Z`**; `proof_hash`: **`0dc505d6af3b399132f7355a946133a2baf0ae6a2c51d07ec313c0d58b8219a8`**; `proof_issued_at`: `2026-10-11T20:52:43Z`; `proof_ttl_seconds`: `3600`; `proof_ttl`: `2026-10-11T21:52:43Z`; `hash_recompute_confirmation=true` (lib `compute_strict_proof_hash` + independent hashlib SHA-256 over verbatim DEC-0038 6-tuple; identical hexdigest)
+- `consumed_execute_marker`: **`dev-US0153-execute-20261011T205022Z-fresh`** (provenance only; tasks T-anch + T-001..T-005 done)
+- `story_status`: **US-0153 OPEN** (AC-1..AC-5 unchecked); **US-0152 DONE**; **US-0151 DONE**; **US-0150 DONE**; **US-0149 DONE**
+- **Harness:** `tests/report.md` **2026-10-11T20:49:43Z** Pass **880** / Fail **0** (provenance; five `test_us0153_*` markers green; no re-run this child).
+- **Publish / push:** NOT PERFORMED.
+- **Pair validation / ordering:** execute-pair checkpoint appended **BOTTOM** first (DEC-0040 / DEC-0153). Append fits the 1200-line cap without rollover (**1193** lines). The new US-0153 execute-pair checkpoint, the US-0153 plan checkpoint, the US-0153 discovery checkpoint, the US-0152 closure checkpoint, and the BUG-0033 refresh checkpoint remain in `docs/engineering/state.md`. Architecture was not rolled. This brief prepend follows state-first. Triad `--check` exit **0** at **1193** lines.
+
+```json
+{"record_key":"auto-20261011-us0153-execute-pair|story|(none)|execute|rp-auto-20261011-us0153-execute-pair-curator-20261011T205243Z","orchestrator_run_id":"auto-20261011-us0153-execute-pair","work_item_kind":"story","bug_id":"(none)","completed_phase":"execute","writer_role":"curator","role":"curator","fresh_context_marker":"curator-US0153-executepair-20261011T205243Z-fresh","resolution_source":"operator:resume-pair-repair","effective_plan":["spec","plan","build+verify","ship"],"skipped_phases":["intake","plan-verify"],"completed_phases":["intake","discovery","research","architecture","sprint-plan","execute"],"next_scheduled_phase":"qa","next_scheduled_role":"qa","phase_cursor":"build+verify/execute-pass","budget_scope":"OPEN stories US-0153 then US-0154,US-0155; active_story_id=US-0153; stories_completed_this_drain=4; merged AUTO_BACKLOG_MAX_STORIES=10 from config.json; baseline scratchpad=3; backlog_drain_active=true; bug_queue_active=false","stop_reason":"execute_complete_phase_boundary","runtime_proof_id":"rp-auto-20261011-us0153-execute-pair-curator-20261011T205243Z","proof_hash":"0dc505d6af3b399132f7355a946133a2baf0ae6a2c51d07ec313c0d58b8219a8","proof_issued_at":"2026-10-11T20:52:43Z","proof_ttl_seconds":3600,"phase_id":"execute","stop_matrix_action":"STOP_AFTER_EXECUTE_PASS_PAIR; validate_pair_then_parent_may_spawn_qa"}
+```
+
+- **STOP:** `STOP_AFTER_EXECUTE_PASS_PAIR; validate_pair_then_parent_may_spawn_qa`. Parent may spawn fresh `/qa` (qa) for **US-0153/S0173** after validating this pair. This curator child did NOT spawn it.
+
+---
+
+# Resume Brief — US-0153 plan (state-first, DEC-0153)
+
+- `record_key`: `auto-20261011-us0153-plan|story|(none)|sprint-plan|rp-auto-20261011-us0153-plan-techlead-20261011T202311Z`
+- `orchestrator_run_id`: **`auto-20261011-us0153-plan`**
+- `work_item_kind`: **`story`**; `bug_id`: **`(none)`**; `completed_phase`: **`sprint-plan`**; `writer_role`: **`tech-lead`**
+- `phase_id`: **`sprint-plan`**; `role`: **`tech-lead`**; `verdict`: **`SPRINT_PLAN_PASS`**; `decision_gate`: **`false`**
+- `sprint_id`: **`S0173`**; `story_id`: **`US-0153`**
+- `intended_resume_phase`: **`execute`**; `next_scheduled_phase`: **`execute`**; `next_scheduled_role`: **`dev`**
+- `resolution_source`: **`phase_child:plan`**; `effective_plan`: `[spec, plan, build+verify, ship]`; `skipped_phases`: `[intake, plan-verify]`; `completed_phases`: `[intake, discovery, research, architecture, sprint-plan]`; `phase_cursor`: **`plan/3-of-3`**
+- `budget_scope`: `OPEN stories US-0153 then US-0154,US-0155; active_story_id=US-0153; stories_completed_this_drain=4; merged AUTO_BACKLOG_MAX_STORIES=10 from config.json; baseline scratchpad=3; backlog_drain_active=true; bug_queue_active=false`
+- `stop_reason`: **`sprint_plan_complete_phase_boundary`**; `stop_matrix_action`: **`STOP_AFTER_PLAN_MACRO; validate_pair_then_parent_may_spawn_execute`**
+- `fresh_context_marker`: **`tl-US0153-plan-20261011T202311Z-fresh`**; `child_isolation_ref`: `docs/engineering/state.md#plan-checkpoint-us-0153-s0173-auto-20261011-us0153-plan-roletech-lead`
+- `runtime_proof_id`: **`rp-auto-20261011-us0153-plan-techlead-20261011T202311Z`**; `proof_hash`: **`8e76ff0bac99740aea48e49b9d43026e787932573c4f1f13a852261a95b7d516`**; `proof_issued_at`: `2026-10-11T20:23:11Z`; `proof_ttl_seconds`: `3600`; `proof_ttl`: `2026-10-11T21:23:11Z`; `hash_recompute_confirmation=true` (lib `compute_strict_proof_hash` + independent hashlib SHA-256 over verbatim DEC-0038 6-tuple; identical hexdigest)
+- `research_anchor`: **R-0163**. Companion DEC: **none**. Tasks: 6 (T-anch + T-001..T-005). Sprint **S0173**.
+- `story_status`: **US-0153 OPEN** (AC-1..AC-5 unchecked); **US-0152 DONE**; **US-0151 DONE**; **US-0150 DONE**; **US-0149 DONE**
+- **Publish / push:** NOT PERFORMED.
+- **Pair validation / ordering:** plan checkpoint appended **BOTTOM** first (DEC-0040 / DEC-0153). Append fits the 1200-line cap without rollover (**1194** lines). The new US-0153 plan checkpoint, the US-0153 discovery checkpoint, the US-0152 closure checkpoint, and the BUG-0033 refresh checkpoint remain in `docs/engineering/state.md`. Architecture `# US-0153` was inserted before the eleven linkage stubs. Architecture was not rolled (**2878** lines, cap 3000). Those eleven headings remain. This brief prepend follows state-first. Triad `--check` exit **0**.
+
+```json
+{"record_key":"auto-20261011-us0153-plan|story|(none)|sprint-plan|rp-auto-20261011-us0153-plan-techlead-20261011T202311Z","orchestrator_run_id":"auto-20261011-us0153-plan","work_item_kind":"story","bug_id":"(none)","completed_phase":"sprint-plan","writer_role":"tech-lead","role":"tech-lead","fresh_context_marker":"tl-US0153-plan-20261011T202311Z-fresh","resolution_source":"phase_child:plan","effective_plan":["spec","plan","build+verify","ship"],"skipped_phases":["intake","plan-verify"],"completed_phases":["intake","discovery","research","architecture","sprint-plan"],"next_scheduled_phase":"execute","next_scheduled_role":"dev","phase_cursor":"plan/3-of-3","budget_scope":"OPEN stories US-0153 then US-0154,US-0155; active_story_id=US-0153; stories_completed_this_drain=4; merged AUTO_BACKLOG_MAX_STORIES=10 from config.json; baseline scratchpad=3; backlog_drain_active=true; bug_queue_active=false","stop_reason":"sprint_plan_complete_phase_boundary","runtime_proof_id":"rp-auto-20261011-us0153-plan-techlead-20261011T202311Z","proof_hash":"8e76ff0bac99740aea48e49b9d43026e787932573c4f1f13a852261a95b7d516","proof_issued_at":"2026-10-11T20:23:11Z","proof_ttl_seconds":3600,"phase_id":"sprint-plan","stop_matrix_action":"STOP_AFTER_PLAN_MACRO; validate_pair_then_parent_may_spawn_execute"}
+```
+
+- **STOP:** `STOP_AFTER_PLAN_MACRO; validate_pair_then_parent_may_spawn_execute`. Parent may spawn fresh `/execute` (dev) for **US-0153/S0173** after validating this pair. This tech-lead child did NOT spawn it.
+
+---
+
+# Resume Brief — US-0153 discovery (state-first, DEC-0153)
+
+- `record_key`: `auto-20261011-us0153-discovery|story|(none)|discovery|rp-auto-20261011-us0153-discovery-po-20261011T201457Z`
+- `orchestrator_run_id`: **`auto-20261011-us0153-discovery`**
+- `work_item_kind`: **`story`**; `bug_id`: **`(none)`**; `completed_phase`: **`discovery`**; `writer_role`: **`po`**
+- `phase_id`: **`discovery`**; `role`: **`po`**; `verdict`: **`DISCOVERY_PASS`**; `decision_gate`: **`false`**
+- `sprint_id`: **`(none)`**; `story_id`: **`US-0153`**
+- `intended_resume_phase`: **`research`**; `next_scheduled_phase`: **`research`**; `next_scheduled_role`: **`tech-lead`**
+- `resolution_source`: **`phase_child:discovery`**; `effective_plan`: `[spec, plan, build+verify, ship]`; `skipped_phases`: `[intake]`; `completed_phases`: `[intake, discovery]`; `phase_cursor`: **`spec/discovery-pass`**
+- `budget_scope`: `OPEN stories US-0153 then US-0154,US-0155; active_story_id=US-0153; stories_completed_this_drain=4; merged AUTO_BACKLOG_MAX_STORIES=10 from config.json; baseline scratchpad=3; backlog_drain_active=true; bug_queue_active=false`
+- `stop_reason`: **`discovery_complete_phase_boundary`**; `stop_matrix_action`: **`STOP_AFTER_DISCOVERY_PASS; validate_pair_then_parent_may_spawn_research`**
+- `fresh_context_marker`: **`po-US0153-discovery-20261011T201457Z-fresh`**; `child_isolation_ref`: `docs/engineering/state.md#discovery-checkpoint-us-0153-auto-20261011-us0153-discovery-rolepo`
+- `runtime_proof_id`: **`rp-auto-20261011-us0153-discovery-po-20261011T201457Z`**; `proof_hash`: **`05e1e3fcd29b8f165a3fdde3ebae9f96c52911183b969dfad689b774440a4ec1`**; `proof_issued_at`: `2026-10-11T20:14:57Z`; `proof_ttl_seconds`: `3600`; `proof_ttl`: `2026-10-11T21:14:57Z`; `hash_recompute_confirmation=true` (lib `compute_strict_proof_hash` + independent hashlib SHA-256 over verbatim DEC-0038 6-tuple; identical hexdigest)
+- `intake_evidence`: **`handoffs/intake_evidence/US-0150-0154-standalone-integration-intake-20260919.json`** — **present** (US-0153 `intake_evidence_ref` confirmed; intake skipped)
+- `research_stub`: **R-0163** (not authored). Highest existing heading is **R-0162**. **R-0153** is already used by US-0156.
+- `story_status`: **US-0153 OPEN** (AC-1..AC-5 unchecked); **US-0152 DONE**; **US-0151 DONE**; **US-0150 DONE**; **US-0149 DONE**
+- **Harness:** `tests/report.md` **2026-10-11T20:09:04Z** Pass **880** / Fail **0** (provenance; no re-run this child).
+- **Publish / push:** NOT PERFORMED.
+- **Pair validation / ordering:** discovery checkpoint appended **BOTTOM** first (DEC-0040 / DEC-0153). Append reached **1212** lines, so one oldest checkpoint unit was archived to `docs/engineering/state-archive/state-pack-20261011-z.md` (BUG-0033 qa3 heading; `moved=1`). The new US-0153 discovery checkpoint, the US-0152 refresh checkpoint, the US-0152 closure checkpoint, and the BUG-0033 refresh checkpoint remain in `docs/engineering/state.md`. Architecture was not rolled. This brief prepend follows state-first. Triad `--check` exit **0** at **1173** lines.
+
+```json
+{"record_key":"auto-20261011-us0153-discovery|story|(none)|discovery|rp-auto-20261011-us0153-discovery-po-20261011T201457Z","orchestrator_run_id":"auto-20261011-us0153-discovery","work_item_kind":"story","bug_id":"(none)","completed_phase":"discovery","writer_role":"po","role":"po","fresh_context_marker":"po-US0153-discovery-20261011T201457Z-fresh","resolution_source":"phase_child:discovery","effective_plan":["spec","plan","build+verify","ship"],"skipped_phases":["intake"],"completed_phases":["intake","discovery"],"next_scheduled_phase":"research","next_scheduled_role":"tech-lead","phase_cursor":"spec/discovery-pass","budget_scope":"OPEN stories US-0153 then US-0154,US-0155; active_story_id=US-0153; stories_completed_this_drain=4; merged AUTO_BACKLOG_MAX_STORIES=10 from config.json; baseline scratchpad=3; backlog_drain_active=true; bug_queue_active=false","stop_reason":"discovery_complete_phase_boundary","runtime_proof_id":"rp-auto-20261011-us0153-discovery-po-20261011T201457Z","proof_hash":"05e1e3fcd29b8f165a3fdde3ebae9f96c52911183b969dfad689b774440a4ec1","proof_issued_at":"2026-10-11T20:14:57Z","proof_ttl_seconds":3600,"phase_id":"discovery","stop_matrix_action":"STOP_AFTER_DISCOVERY_PASS; validate_pair_then_parent_may_spawn_research"}
+```
+
+- **STOP:** `STOP_AFTER_DISCOVERY_PASS; validate_pair_then_parent_may_spawn_research`. Parent may spawn fresh `/research` (tech-lead) for **US-0153** after validating this pair. This PO child did NOT spawn it.
+
+---
+
+# Resume Brief — US-0152 refresh-context (state-first, DEC-0153)
+
+- `record_key`: `auto-20261011-us0152-refresh|story|(none)|refresh-context|rp-auto-20261011-us0152-refresh-curator-20261011T201055Z`
+- `orchestrator_run_id`: **`auto-20261011-us0152-refresh`**
+- `work_item_kind`: **`story`**; `bug_id`: **`(none)`**; `completed_phase`: **`refresh-context`**; `writer_role`: **`curator`**
+- `phase_id`: **`refresh-context`**; `role`: **`curator`**; `verdict`: **`REFRESH_CONTEXT_PASS`**; `decision_gate`: **`false`**
+- `sprint_id`: **`S0172`**; `story_id`: **`US-0152`** (segment closed; drain head **US-0153**)
+- `intended_resume_phase`: **`discovery`**; `next_scheduled_phase`: **`discovery`**; `next_scheduled_role`: **`po`**
+- `resolution_source`: **`phase_child:refresh-context`**; `effective_plan`: `[spec, plan, build+verify, ship]`; `skipped_phases`: `[intake]`; `completed_phases`: `[intake]`; `phase_cursor`: **`spec/discovery`**
+- `budget_scope`: `OPEN stories US-0153 then US-0154,US-0155; active_story_id=US-0153; stories_completed_this_drain=4; merged AUTO_BACKLOG_MAX_STORIES=10 from config.json; baseline scratchpad=3; backlog_drain_active=true; bug_queue_active=false`
+- `stop_reason`: **`refresh_complete_drain_authorized`**; `stop_matrix_action`: **`STOP_AFTER_REFRESH_PASS; validate_pair_then_parent_may_spawn_next_story`**
+- `fresh_context_marker`: **`curator-US0152-refresh-20261011T201055Z-fresh`**; `child_isolation_ref`: `docs/engineering/state.md#refresh-context-checkpoint-us-0152-s0172-auto-20261011-us0152-refresh-rolecurator`
+- `runtime_proof_id`: **`rp-auto-20261011-us0152-refresh-curator-20261011T201055Z`**; `proof_hash`: **`b6ed4bd271ce90a3fc29c280e9eb77c54980212d1c41d54402ba508a87a81a43`**; `proof_issued_at`: `2026-10-11T20:10:55Z`; `proof_ttl_seconds`: `3600`; `proof_ttl`: `2026-10-11T21:10:55Z`; `hash_recompute_confirmation=true` (lib `compute_strict_proof_hash` + independent hashlib SHA-256 over verbatim DEC-0038 6-tuple; identical hexdigest)
+- `intake_evidence`: **`handoffs/intake_evidence/US-0150-0154-standalone-integration-intake-20260919.json`** — **present** (US-0153 `intake_evidence_ref` confirmed; intake skipped)
+- `story_status`: **US-0152 DONE** (unchanged); **US-0153 OPEN**; **US-0151 DONE**; **US-0150 DONE**; **US-0149 DONE**
+- **Harness:** `tests/report.md` **2026-10-11T20:09:04Z** Pass **880** / Fail **0** (provenance; no re-run this child).
+- **Publish / push:** NOT PERFORMED.
+- **Pair validation / ordering:** refresh checkpoint appended **BOTTOM** first (DEC-0040 / DEC-0153). Append fits hot cap without rollover. The new US-0152 refresh checkpoint, the US-0152 closure checkpoint, the US-0151 closure checkpoint, and the BUG-0033 refresh checkpoint remain in `docs/engineering/state.md`. Architecture was not rolled. This brief prepend follows state-first. Triad `--check` exit **0** at **1192** lines.
+
+```json
+{"record_key":"auto-20261011-us0152-refresh|story|(none)|refresh-context|rp-auto-20261011-us0152-refresh-curator-20261011T201055Z","orchestrator_run_id":"auto-20261011-us0152-refresh","work_item_kind":"story","bug_id":"(none)","completed_phase":"refresh-context","writer_role":"curator","role":"curator","fresh_context_marker":"curator-US0152-refresh-20261011T201055Z-fresh","resolution_source":"phase_child:refresh-context","effective_plan":["spec","plan","build+verify","ship"],"skipped_phases":["intake"],"completed_phases":["intake"],"next_scheduled_phase":"discovery","next_scheduled_role":"po","phase_cursor":"spec/discovery","budget_scope":"OPEN stories US-0153 then US-0154,US-0155; active_story_id=US-0153; stories_completed_this_drain=4; merged AUTO_BACKLOG_MAX_STORIES=10 from config.json; baseline scratchpad=3; backlog_drain_active=true; bug_queue_active=false","stop_reason":"refresh_complete_drain_authorized","runtime_proof_id":"rp-auto-20261011-us0152-refresh-curator-20261011T201055Z","proof_hash":"b6ed4bd271ce90a3fc29c280e9eb77c54980212d1c41d54402ba508a87a81a43","proof_issued_at":"2026-10-11T20:10:55Z","proof_ttl_seconds":3600,"phase_id":"refresh-context","stop_matrix_action":"STOP_AFTER_REFRESH_PASS; validate_pair_then_parent_may_spawn_next_story"}
+```
+
+- **STOP:** `STOP_AFTER_REFRESH_PASS; validate_pair_then_parent_may_spawn_next_story`. Parent may spawn fresh `/discovery` (po) for **US-0153** after validating this pair. This curator child did NOT spawn it.
+
+---
+
+# Resume Brief — US-0152 closure (state-first, DEC-0153)
+
+- `record_key`: `auto-20261011-us0152-closure|story|(none)|closure|rp-auto-20261011-us0152-closure-curator-20261011T200058Z`
+- `orchestrator_run_id`: **`auto-20261011-us0152-closure`**
+- `work_item_kind`: **`story`**; `bug_id`: **`(none)`**; `completed_phase`: **`closure`**; `writer_role`: **`curator`**
+- `phase_id`: **`closure`**; `role`: **`curator`**; `verdict`: **`CLOSURE_PASS`**; `decision_gate`: **`false`**
+- `sprint_id`: **`S0172`**; `story_id`: **`US-0152`**
+- `intended_resume_phase`: **`refresh-context`**; `next_scheduled_phase`: **`refresh-context`**; `next_scheduled_role`: **`curator`**
+- `resolution_source`: **`phase_child:closure`**; `effective_plan`: `[spec, plan, build+verify, ship]`; `skipped_phases`: `[intake, plan-verify]`; `completed_phases`: `[intake, discovery, research, architecture, sprint-plan, execute, qa, verify-work, release, closure]`; `phase_cursor`: **`ship/closure-pass`**
+- `budget_scope`: `OPEN stories after US-0152: US-0153,US-0154,US-0155; active_story_id=US-0152; stories_completed_this_drain=4; merged AUTO_BACKLOG_MAX_STORIES=10 from config.json; baseline scratchpad=3; backlog_drain_active=true; bug_queue_active=false`
+- `stop_reason`: **`closure_complete_phase_boundary`**; `stop_matrix_action`: **`STOP_AFTER_CLOSURE_PASS; validate_pair_then_parent_may_spawn_refresh_context`**
+- `fresh_context_marker`: **`curator-US0152-closure-20261011T200058Z-fresh`**; `child_isolation_ref`: `docs/engineering/state.md#closure-checkpoint-us-0152-s0172-auto-20261011-us0152-closure-rolecurator`
+- `runtime_proof_id`: **`rp-auto-20261011-us0152-closure-curator-20261011T200058Z`**; `proof_hash`: **`97b32313a1ecbaaf3592220d79675ed36717c26906695e7051d3fe70b904a206`**; `proof_issued_at`: `2026-10-11T20:00:58Z`; `proof_ttl_seconds`: `3600`; `proof_ttl`: `2026-10-11T21:00:58Z`; `hash_recompute_confirmation=true` (lib `compute_strict_proof_hash` + independent hashlib SHA-256 over verbatim DEC-0038 6-tuple; identical hexdigest)
+- `story_status`: **US-0152 DONE** (AC-1..AC-6 checked); **US-0151 DONE**; **US-0150 DONE**; **US-0149 DONE**
+- **Harness:** post-flip `tests/report.md` **2026-10-11T20:09:04Z** Pass **880** / Fail **0**. Six `test_us0152_*` markers green (full harness).
+- **Publish / push:** NOT PERFORMED.
+- **Pair validation / ordering:** closure checkpoint appended **BOTTOM** first (DEC-0040 / DEC-0153). Post-append sanctioned `--rollover` archived **1** oldest terminal checkpoint unit (`rollover_complete units=1`) so hot surface stays ≤1200 lines. The new US-0152 closure checkpoint, the US-0152 release checkpoint, the US-0152 discovery checkpoint, the US-0151 closure checkpoint, and the BUG-0033 refresh checkpoint remain in `docs/engineering/state.md`. Architecture was not rolled. This brief prepend follows state-first. Triad `--check` exit **0** at **1163** lines.
+
+```json
+{"record_key":"auto-20261011-us0152-closure|story|(none)|closure|rp-auto-20261011-us0152-closure-curator-20261011T200058Z","orchestrator_run_id":"auto-20261011-us0152-closure","work_item_kind":"story","bug_id":"(none)","completed_phase":"closure","writer_role":"curator","role":"curator","fresh_context_marker":"curator-US0152-closure-20261011T200058Z-fresh","resolution_source":"phase_child:closure","effective_plan":["spec","plan","build+verify","ship"],"skipped_phases":["intake","plan-verify"],"completed_phases":["intake","discovery","research","architecture","sprint-plan","execute","qa","verify-work","release","closure"],"next_scheduled_phase":"refresh-context","next_scheduled_role":"curator","phase_cursor":"ship/closure-pass","budget_scope":"OPEN stories after US-0152: US-0153,US-0154,US-0155; active_story_id=US-0152; stories_completed_this_drain=4; merged AUTO_BACKLOG_MAX_STORIES=10 from config.json; baseline scratchpad=3; backlog_drain_active=true; bug_queue_active=false","stop_reason":"closure_complete_phase_boundary","runtime_proof_id":"rp-auto-20261011-us0152-closure-curator-20261011T200058Z","proof_hash":"97b32313a1ecbaaf3592220d79675ed36717c26906695e7051d3fe70b904a206","proof_issued_at":"2026-10-11T20:00:58Z","proof_ttl_seconds":3600,"phase_id":"closure","stop_matrix_action":"STOP_AFTER_CLOSURE_PASS; validate_pair_then_parent_may_spawn_refresh_context"}
+```
+
+- **STOP:** `STOP_AFTER_CLOSURE_PASS; validate_pair_then_parent_may_spawn_refresh_context`. Parent may spawn fresh `/refresh-context` (curator) for **US-0152/S0172** after validating this pair. This curator child did NOT spawn it.
+
+---
+
+# Resume Brief — US-0152 release (state-first, DEC-0153)
+
+- `record_key`: `auto-20261011-us0152-release|story|(none)|release|rp-auto-20261011-us0152-release-release-20261011T194808Z`
+- `orchestrator_run_id`: **`auto-20261011-us0152-release`**
+- `work_item_kind`: **`story`**; `bug_id`: **`(none)`**; `completed_phase`: **`release`**; `writer_role`: **`release`**
+- `phase_id`: **`release`**; `role`: **`release`**; `verdict`: **`RELEASE_PASS`**; `decision_gate`: **`false`**
+- `sprint_id`: **`S0172`**; `story_id`: **`US-0152`**; verify-work marker consumed: **`qa-US0152-vw-20261011T194200Z-fresh`**
+- `intended_resume_phase`: **`closure`**; `next_scheduled_phase`: **`closure`**; `next_scheduled_role`: **`curator`**
+- `resolution_source`: **`phase_child:release`**; `effective_plan`: `[spec, plan, build+verify, ship]`; `skipped_phases`: `[intake, plan-verify]`; `completed_phases`: `[intake, discovery, research, architecture, sprint-plan, execute, qa, verify-work, release]`; `phase_cursor`: **`ship/release-pass`**
+- `budget_scope`: `OPEN stories US-0152 then US-0153,US-0154,US-0155; active_story_id=US-0152; stories_completed_this_drain=3; merged AUTO_BACKLOG_MAX_STORIES=10 from config.json; baseline scratchpad=3; backlog_drain_active=true; bug_queue_active=false`
+- `stop_reason`: **`release_complete_phase_boundary`**; `stop_matrix_action`: **`STOP_AFTER_RELEASE_PASS; validate_pair_then_parent_may_spawn_closure`**
+- `fresh_context_marker`: **`release-US0152-release-20261011T194808Z-fresh`**; `child_isolation_ref`: `docs/engineering/state.md#release-checkpoint-us-0152-s0172-auto-20261011-us0152-release-rolerelease`
+- `runtime_proof_id`: **`rp-auto-20261011-us0152-release-release-20261011T194808Z`**; `proof_hash`: **`d49f4d80ced498440b0155bddd22cc10260c1253c97e9c4ec1ffa999f5ac703f`**; `proof_issued_at`: `2026-10-11T19:48:08Z`; `proof_ttl_seconds`: `3600`; `proof_ttl`: `2026-10-11T20:48:08Z`; `hash_recompute_confirmation=true` (lib `compute_strict_proof_hash` + independent hashlib SHA-256 over verbatim DEC-0038 6-tuple; identical hexdigest)
+- `story_status`: **US-0152 remains OPEN** (AC-1..AC-6 unchecked); **US-0151 DONE**; **US-0150 DONE**; **US-0149 DONE**
+- **Harness:** `tests/report.md` **2026-10-11T19:38:28Z** Pass **880** / Fail **0**. Six `test_us0152_*` markers re-run this release: 6 passed / 0 failed, duration_ms 1686.1258. UAT PASS with `UAT_PROBE_FORBIDDEN` for a live external browser probe.
+- **Publish / push:** NOT PERFORMED (`RELEASE_PUBLISH_MODE=confirm`; `SYNC_POLICY_MODE=disabled`).
+- **Pair validation / ordering:** release checkpoint appended **BOTTOM** first (DEC-0040 / DEC-0153). Append reached 1216 lines, so one oldest checkpoint unit was archived to `docs/engineering/state-archive/state-pack-20261011-x.md` (BUG-0033 CLOSURE_BLOCKED heading). The new release checkpoint, the verify-work pair, the qa-pair, the execute-pair, the US-0152 plan checkpoint, the US-0152 discovery checkpoint, the US-0151 closure checkpoint, and the BUG-0033 refresh checkpoint remain in `docs/engineering/state.md`. Architecture was not rolled. This brief prepend follows state-first. Triad `--check` exit **0** at **1167** lines.
+
+```json
+{"record_key":"auto-20261011-us0152-release|story|(none)|release|rp-auto-20261011-us0152-release-release-20261011T194808Z","orchestrator_run_id":"auto-20261011-us0152-release","work_item_kind":"story","bug_id":"(none)","completed_phase":"release","writer_role":"release","role":"release","fresh_context_marker":"release-US0152-release-20261011T194808Z-fresh","resolution_source":"phase_child:release","effective_plan":["spec","plan","build+verify","ship"],"skipped_phases":["intake","plan-verify"],"completed_phases":["intake","discovery","research","architecture","sprint-plan","execute","qa","verify-work","release"],"next_scheduled_phase":"closure","next_scheduled_role":"curator","phase_cursor":"ship/release-pass","budget_scope":"OPEN stories US-0152 then US-0153,US-0154,US-0155; active_story_id=US-0152; stories_completed_this_drain=3; merged AUTO_BACKLOG_MAX_STORIES=10 from config.json; baseline scratchpad=3; backlog_drain_active=true; bug_queue_active=false","stop_reason":"release_complete_phase_boundary","runtime_proof_id":"rp-auto-20261011-us0152-release-release-20261011T194808Z","proof_hash":"d49f4d80ced498440b0155bddd22cc10260c1253c97e9c4ec1ffa999f5ac703f","proof_issued_at":"2026-10-11T19:48:08Z","proof_ttl_seconds":3600,"phase_id":"release","stop_matrix_action":"STOP_AFTER_RELEASE_PASS; validate_pair_then_parent_may_spawn_closure"}
+```
+
+- **STOP:** `STOP_AFTER_RELEASE_PASS; validate_pair_then_parent_may_spawn_closure`. Parent may spawn fresh `/closure` (curator) for **US-0152/S0172** after validating this pair. This release child did NOT spawn it.
+
+---
+
+# Resume Brief — US-0152 verify-work continuation pair (state-first, DEC-0153)
+
+- `record_key`: `auto-20261011-us0152-verify-pair|story|(none)|verify-work|rp-auto-20261011-us0152-verify-pair-curator-20261011T194405Z`
+- `orchestrator_run_id`: **`auto-20261011-us0152-verify-pair`**
+- `work_item_kind`: **`story`**; `bug_id`: **`(none)`**; `completed_phase`: **`verify-work`**; `writer_role`: **`curator`**
+- `phase_id`: **`verify-work`**; `role`: **`curator`**; `verdict`: **`VERIFY_PASS`** (provenance; upstream verify-work checkpoint); `decision_gate`: **`false`**
+- `sprint_id`: **`S0172`**; `story_id`: **`US-0152`**; verify-work marker consumed: **`qa-US0152-vw-20261011T194200Z-fresh`**
+- `intended_resume_phase`: **`release`**; `next_scheduled_phase`: **`release`**; `next_scheduled_role`: **`release`**
+- `resolution_source`: **`operator:resume-pair-repair`**; `effective_plan`: `[spec, plan, build+verify, ship]`; `skipped_phases`: `[intake, plan-verify]`; `completed_phases`: `[intake, discovery, research, architecture, sprint-plan, execute, qa, verify-work]`; `phase_cursor`: **`ship/verify-pass`**
+- `budget_scope`: `OPEN stories US-0152 then US-0153,US-0154,US-0155; active_story_id=US-0152; stories_completed_this_drain=3; merged AUTO_BACKLOG_MAX_STORIES=10 from config.json; baseline scratchpad=3; backlog_drain_active=true; bug_queue_active=false`
+- `stop_reason`: **`verify_work_complete_phase_boundary`**; `stop_matrix_action`: **`STOP_AFTER_VERIFY_PASS_PAIR; validate_pair_then_parent_may_spawn_release`**
+- `fresh_context_marker`: **`curator-US0152-verifypair-20261011T194405Z-fresh`**; `child_isolation_ref`: `docs/engineering/state.md#verify-work-pair-repair-us-0152-s0172-auto-20261011-us0152-verify-pair-rolecurator`
+- `runtime_proof_id`: **`rp-auto-20261011-us0152-verify-pair-curator-20261011T194405Z`**; `proof_hash`: **`4321de0d6555e630bc8462402db6c8d85035466d7cd7d84433afee1566c35f86`**; `proof_issued_at`: `2026-10-11T19:44:05Z`; `proof_ttl_seconds`: `3600`; `proof_ttl`: `2026-10-11T20:44:05Z`; `hash_recompute_confirmation=true` (lib `compute_strict_proof_hash` + independent hashlib SHA-256 over verbatim DEC-0038 6-tuple; identical hexdigest)
+- `story_status`: **US-0152 remains OPEN** (AC-1..AC-6 unchecked); **US-0151 DONE**; **US-0150 DONE**; **US-0149 DONE**
+- **Harness (provenance):** verify-work-era `tests/report.md` **2026-10-11T19:38:28Z** Pass **880** / Fail **0**. Six `test_us0152_*` markers passed. UAT PASS with `UAT_PROBE_FORBIDDEN` for a live external browser probe.
+- **Publish / push:** NOT PERFORMED.
+- **Pair validation / ordering:** Pre-append `--rollover` at **1200** lines archived **1** oldest terminal checkpoint to `docs/engineering/state-archive/state-pack-20261011-v.md`. Verify-pair checkpoint appended **BOTTOM** first (DEC-0040 / DEC-0153). Post-append sanctioned `--rollover` archived **2** oldest terminal checkpoint units to `docs/engineering/state-archive/state-pack-20261011-w.md` so hot surface stays ≤1200 lines. The new US-0152 verify-pair checkpoint, the US-0152 qa-pair checkpoint, the US-0152 execute-pair checkpoint, the US-0152 plan checkpoint, the US-0152 discovery checkpoint, the US-0151 closure checkpoint, and the BUG-0033 refresh checkpoint remain in `docs/engineering/state.md`. Architecture was not rolled. This brief prepend follows state-first. Triad `--check` exit **0** at **1191** lines.
+
+```json
+{"record_key":"auto-20261011-us0152-verify-pair|story|(none)|verify-work|rp-auto-20261011-us0152-verify-pair-curator-20261011T194405Z","orchestrator_run_id":"auto-20261011-us0152-verify-pair","work_item_kind":"story","bug_id":"(none)","completed_phase":"verify-work","writer_role":"curator","role":"curator","fresh_context_marker":"curator-US0152-verifypair-20261011T194405Z-fresh","resolution_source":"operator:resume-pair-repair","effective_plan":["spec","plan","build+verify","ship"],"skipped_phases":["intake","plan-verify"],"completed_phases":["intake","discovery","research","architecture","sprint-plan","execute","qa","verify-work"],"next_scheduled_phase":"release","next_scheduled_role":"release","phase_cursor":"ship/verify-pass","budget_scope":"OPEN stories US-0152 then US-0153,US-0154,US-0155; active_story_id=US-0152; stories_completed_this_drain=3; merged AUTO_BACKLOG_MAX_STORIES=10 from config.json; baseline scratchpad=3; backlog_drain_active=true; bug_queue_active=false","stop_reason":"verify_work_complete_phase_boundary","runtime_proof_id":"rp-auto-20261011-us0152-verify-pair-curator-20261011T194405Z","proof_hash":"4321de0d6555e630bc8462402db6c8d85035466d7cd7d84433afee1566c35f86","proof_issued_at":"2026-10-11T19:44:05Z","proof_ttl_seconds":3600,"phase_id":"verify-work","stop_matrix_action":"STOP_AFTER_VERIFY_PASS_PAIR; validate_pair_then_parent_may_spawn_release"}
+```
+
+- **STOP:** `STOP_AFTER_VERIFY_PASS_PAIR; validate_pair_then_parent_may_spawn_release`. Parent may spawn fresh `/release` (release) for **US-0152/S0172** after validating this pair. This curator child did NOT spawn it.
+
+---
+
+# Resume Brief — US-0152 QA continuation pair (state-first, DEC-0153)
+
+- `record_key`: `auto-20261011-us0152-qa-pair|story|(none)|qa|rp-auto-20261011-us0152-qa-pair-curator-20261011T192756Z`
+- `orchestrator_run_id`: **`auto-20261011-us0152-qa-pair`**
+- `work_item_kind`: **`story`**; `bug_id`: **`(none)`**; `completed_phase`: **`qa`**; `writer_role`: **`curator`**
+- `phase_id`: **`qa`**; `role`: **`curator`**; `verdict`: **`QA_PASS`** (provenance; upstream QA checkpoint); `decision_gate`: **`false`**
+- `sprint_id`: **`S0172`**; `story_id`: **`US-0152`**; QA marker consumed: **`qa-US0152-qa-20261011T192609Z-fresh`**
+- `intended_resume_phase`: **`verify-work`**; `next_scheduled_phase`: **`verify-work`**; `next_scheduled_role`: **`qa`**
+- `resolution_source`: **`operator:resume-pair-repair`**; `effective_plan`: `[spec, plan, build+verify, ship]`; `skipped_phases`: `[intake, plan-verify]`; `completed_phases`: `[intake, discovery, research, architecture, sprint-plan, execute, qa]`; `phase_cursor`: **`build+verify/qa-pass`**
+- `budget_scope`: `OPEN stories US-0152 then US-0153,US-0154,US-0155; active_story_id=US-0152; stories_completed_this_drain=3; merged AUTO_BACKLOG_MAX_STORIES=10 from config.json; baseline scratchpad=3; backlog_drain_active=true; bug_queue_active=false`
+- `stop_reason`: **`qa_complete_phase_boundary`**; `stop_matrix_action`: **`STOP_AFTER_QA_PASS_PAIR; validate_pair_then_parent_may_spawn_verify_work`**
+- `fresh_context_marker`: **`curator-US0152-qapair-20261011T192756Z-fresh`**; `child_isolation_ref`: `docs/engineering/state.md#qa-pair-repair-us-0152-s0172-auto-20261011-us0152-qa-pair-rolecurator`
+- `runtime_proof_id`: **`rp-auto-20261011-us0152-qa-pair-curator-20261011T192756Z`**; `proof_hash`: **`f79c4b0bcd14eebe4efaf3de0c0213e03b77b4c26e8fa1d93527c3fd36bf86a5`**; `proof_issued_at`: `2026-10-11T19:27:56Z`; `proof_ttl_seconds`: `3600`; `proof_ttl`: `2026-10-11T20:27:56Z`; `hash_recompute_confirmation=true` (lib `compute_strict_proof_hash` + independent hashlib SHA-256 over verbatim DEC-0038 6-tuple; identical hexdigest)
+- `story_status`: **US-0152 remains OPEN** (AC-1..AC-6 unchecked); **US-0151 DONE**; **US-0150 DONE**; **US-0149 DONE**
+- **Harness (provenance):** QA-era `tests/report.md` **2026-10-11T19:25:11Z** Pass **880** / Fail **0**. Six `test_us0152_*` markers passed. UAT PASS with `UAT_PROBE_FORBIDDEN` for a live external browser probe.
+- **Publish / push:** NOT PERFORMED.
+- **Pair validation / ordering:** Pre-append `--rollover` at **1198** lines (in-cap no-op). Qa-pair checkpoint appended **BOTTOM** first (DEC-0040 / DEC-0153). Post-append sanctioned rollover archived **2** oldest terminal checkpoint units to `docs/engineering/state-archive/state-pack-20261011-u.md` so hot surface stays ≤1200 lines. The new US-0152 qa-pair checkpoint, the US-0152 execute-pair checkpoint, the US-0152 plan checkpoint, the US-0152 discovery checkpoint, the US-0151 closure checkpoint, and the BUG-0033 refresh checkpoint remain in `docs/engineering/state.md`. Architecture was not rolled. This brief prepend follows state-first. Triad `--check` exit **0** at **1197** lines.
+
+```json
+{"record_key":"auto-20261011-us0152-qa-pair|story|(none)|qa|rp-auto-20261011-us0152-qa-pair-curator-20261011T192756Z","orchestrator_run_id":"auto-20261011-us0152-qa-pair","work_item_kind":"story","bug_id":"(none)","completed_phase":"qa","writer_role":"curator","role":"curator","fresh_context_marker":"curator-US0152-qapair-20261011T192756Z-fresh","resolution_source":"operator:resume-pair-repair","effective_plan":["spec","plan","build+verify","ship"],"skipped_phases":["intake","plan-verify"],"completed_phases":["intake","discovery","research","architecture","sprint-plan","execute","qa"],"next_scheduled_phase":"verify-work","next_scheduled_role":"qa","phase_cursor":"build+verify/qa-pass","budget_scope":"OPEN stories US-0152 then US-0153,US-0154,US-0155; active_story_id=US-0152; stories_completed_this_drain=3; merged AUTO_BACKLOG_MAX_STORIES=10 from config.json; baseline scratchpad=3; backlog_drain_active=true; bug_queue_active=false","stop_reason":"qa_complete_phase_boundary","runtime_proof_id":"rp-auto-20261011-us0152-qa-pair-curator-20261011T192756Z","proof_hash":"f79c4b0bcd14eebe4efaf3de0c0213e03b77b4c26e8fa1d93527c3fd36bf86a5","proof_issued_at":"2026-10-11T19:27:56Z","proof_ttl_seconds":3600,"phase_id":"qa","stop_matrix_action":"STOP_AFTER_QA_PASS_PAIR; validate_pair_then_parent_may_spawn_verify_work"}
+```
+
+- **STOP:** `STOP_AFTER_QA_PASS_PAIR; validate_pair_then_parent_may_spawn_verify_work`. Parent may spawn fresh `/verify-work` (qa) for **US-0152/S0172** after validating this pair. This curator child did NOT spawn it.
+
+---
+
+# Resume Brief — US-0152 execute (state-first, DEC-0153)
+
+- `record_key`: `auto-20261011-us0152-execute-pair|story|(none)|execute|rp-auto-20261011-us0152-execute-pair-curator-20261011T191408Z`
+- `orchestrator_run_id`: **`auto-20261011-us0152-execute-pair`**
+- `work_item_kind`: **`story`**; `bug_id`: **`(none)`**; `completed_phase`: **`execute`**; `writer_role`: **`curator`**
+- `phase_id`: **`execute`**; `role`: **`curator`**; `verdict`: **`EXECUTE_PASS`**; `decision_gate`: **`false`**
+- `sprint_id`: **`S0172`**; `story_id`: **`US-0152`**
+- `intended_resume_phase`: **`qa`**; `next_scheduled_phase`: **`qa`**; `next_scheduled_role`: **`qa`**
+- `resolution_source`: **`operator:resume-pair-repair`**; `effective_plan`: `[spec, plan, build+verify, ship]`; `skipped_phases`: `[intake, plan-verify]`; `completed_phases`: `[intake, discovery, research, architecture, sprint-plan, execute]`; `phase_cursor`: **`build+verify/execute-pass`**
+- `budget_scope`: `OPEN stories US-0152 then US-0153,US-0154,US-0155; active_story_id=US-0152; stories_completed_this_drain=3; merged AUTO_BACKLOG_MAX_STORIES=10 from config.json; baseline scratchpad=3; backlog_drain_active=true; bug_queue_active=false`
+- `stop_reason`: **`execute_complete_phase_boundary`**; `stop_matrix_action`: **`STOP_AFTER_EXECUTE_PASS_PAIR; validate_pair_then_parent_may_spawn_qa`**
+- `fresh_context_marker`: **`curator-US0152-executepair-20261011T191408Z-fresh`**; `child_isolation_ref`: `docs/engineering/state.md#execute-pair-repair-us-0152-s0172-auto-20261011-us0152-execute-pair-rolecurator`
+- `runtime_proof_id`: **`rp-auto-20261011-us0152-execute-pair-curator-20261011T191408Z`**; `proof_hash`: **`82bb742649fefb5ae5ef3332a594dad1ec611aaa7f5724872be7d3ec3f414219`**; `proof_issued_at`: `2026-10-11T19:14:08Z`; `proof_ttl_seconds`: `3600`; `proof_ttl`: `2026-10-11T20:14:08Z`; `hash_recompute_confirmation=true` (lib `compute_strict_proof_hash` + independent hashlib SHA-256 over verbatim DEC-0038 6-tuple; identical hexdigest)
+- `consumed_execute_marker`: **`dev-US0152-execute-20261011T191205Z-fresh`** (provenance only; tasks T-anch + T-001..T-006 done)
+- `story_status`: **US-0152 OPEN** (AC-1..AC-6 unchecked); **US-0151 DONE**; **US-0150 DONE**; **US-0149 DONE**
+- **Harness:** `tests/report.md` **2026-10-11T19:11:29Z** Pass **880** / Fail **0** (provenance; six `test_us0152_*` markers green; no re-run this child).
+- **Publish / push:** NOT PERFORMED.
+- **Pair validation / ordering:** execute-pair checkpoint appended **BOTTOM** first (DEC-0040 / DEC-0153). Post-append rollover archived **1** oldest terminal checkpoint to `docs/engineering/state-archive/state-pack-20261011-t.md`. The new US-0152 execute-pair checkpoint, the US-0152 plan checkpoint, the US-0152 discovery checkpoint, the US-0151 closure checkpoint, and the BUG-0033 refresh checkpoint remain in `docs/engineering/state.md`. Architecture was not rolled. This brief prepend follows state-first. Triad `--check` exit **0** at **1184** lines.
+
+```json
+{"record_key":"auto-20261011-us0152-execute-pair|story|(none)|execute|rp-auto-20261011-us0152-execute-pair-curator-20261011T191408Z","orchestrator_run_id":"auto-20261011-us0152-execute-pair","work_item_kind":"story","bug_id":"(none)","completed_phase":"execute","writer_role":"curator","role":"curator","fresh_context_marker":"curator-US0152-executepair-20261011T191408Z-fresh","resolution_source":"operator:resume-pair-repair","effective_plan":["spec","plan","build+verify","ship"],"skipped_phases":["intake","plan-verify"],"completed_phases":["intake","discovery","research","architecture","sprint-plan","execute"],"next_scheduled_phase":"qa","next_scheduled_role":"qa","phase_cursor":"build+verify/execute-pass","budget_scope":"OPEN stories US-0152 then US-0153,US-0154,US-0155; active_story_id=US-0152; stories_completed_this_drain=3; merged AUTO_BACKLOG_MAX_STORIES=10 from config.json; baseline scratchpad=3; backlog_drain_active=true; bug_queue_active=false","stop_reason":"execute_complete_phase_boundary","runtime_proof_id":"rp-auto-20261011-us0152-execute-pair-curator-20261011T191408Z","proof_hash":"82bb742649fefb5ae5ef3332a594dad1ec611aaa7f5724872be7d3ec3f414219","proof_issued_at":"2026-10-11T19:14:08Z","proof_ttl_seconds":3600,"phase_id":"execute","stop_matrix_action":"STOP_AFTER_EXECUTE_PASS_PAIR; validate_pair_then_parent_may_spawn_qa"}
+```
+
+- **STOP:** `STOP_AFTER_EXECUTE_PASS_PAIR; validate_pair_then_parent_may_spawn_qa`. Parent may spawn fresh `/qa` (qa) for **US-0152/S0172** after validating this pair. This curator child did NOT spawn it.
+
+---
+
+# Resume Brief — US-0152 plan (state-first, DEC-0153)
+
+- `record_key`: `auto-20261011-us0152-plan|story|(none)|sprint-plan|rp-auto-20261011-us0152-plan-techlead-20261011T183005Z`
+- `orchestrator_run_id`: **`auto-20261011-us0152-plan`**
+- `work_item_kind`: **`story`**; `bug_id`: **`(none)`**; `completed_phase`: **`sprint-plan`**; `writer_role`: **`tech-lead`**
+- `phase_id`: **`sprint-plan`**; `role`: **`tech-lead`**; `verdict`: **`SPRINT_PLAN_PASS`**; `decision_gate`: **`false`**
+- `sprint_id`: **`S0172`**; `story_id`: **`US-0152`**
+- `intended_resume_phase`: **`execute`**; `next_scheduled_phase`: **`execute`**; `next_scheduled_role`: **`dev`**
+- `resolution_source`: **`phase_child:plan`**; `effective_plan`: `[spec, plan, build+verify, ship]`; `skipped_phases`: `[intake, plan-verify]`; `completed_phases`: `[intake, discovery, research, architecture, sprint-plan]`; `phase_cursor`: **`plan/3-of-3`**
+- `budget_scope`: `OPEN stories US-0152 then US-0153,US-0154,US-0155; active_story_id=US-0152; stories_completed_this_drain=3; merged AUTO_BACKLOG_MAX_STORIES=10 from config.json; baseline scratchpad=3; backlog_drain_active=true; bug_queue_active=false`
+- `stop_reason`: **`sprint_plan_complete_phase_boundary`**; `stop_matrix_action`: **`STOP_AFTER_PLAN_MACRO; validate_pair_then_parent_may_spawn_execute`**
+- `fresh_context_marker`: **`tl-US0152-plan-20261011T183005Z-fresh`**; `child_isolation_ref`: `docs/engineering/state.md#plan-checkpoint-us-0152-s0172-auto-20261011-us0152-plan-roletech-lead`
+- `runtime_proof_id`: **`rp-auto-20261011-us0152-plan-techlead-20261011T183005Z`**; `proof_hash`: **`8e86f4dcb0753dcd06d6d94b06ad9060821370cf80fa3e6e044912c7b1a168ba`**; `proof_issued_at`: `2026-10-11T18:30:05Z`; `proof_ttl_seconds`: `3600`; `proof_ttl`: `2026-10-11T19:30:05Z`; `hash_recompute_confirmation=true` (lib `compute_strict_proof_hash` + independent hashlib SHA-256 over verbatim DEC-0038 6-tuple; identical hexdigest)
+- `research_anchor`: **R-0162**; architecture `# US-0152`; companion DEC: **none**; task_count: **7** (T-anch + T-001..T-006)
+- `story_status`: **US-0152 OPEN** (AC-1..AC-6 unchecked); **US-0151 DONE**; **US-0150 DONE**; **US-0149 DONE**
+- **Publish / push:** NOT PERFORMED.
+- **Pair validation / ordering:** plan checkpoint appended **BOTTOM** first (DEC-0040 / DEC-0153). Post-append state rollover archived **1** oldest checkpoint (BUG-0033 execute gate-blocked) to `docs/engineering/state-archive/state-pack-20261011-s.md`. Architecture rollover archived the oldest prefix `# US-0142` to `docs/engineering/architecture-archive/architecture-pack-20261011-a.md`. The new US-0152 plan checkpoint, the US-0152 discovery checkpoint, the US-0151 closure checkpoint, and the BUG-0033 refresh checkpoint remain in `docs/engineering/state.md`. The eleven linkage headings remain in the hot architecture file. This brief prepend follows state-first. Triad `--check` exit **0** at **1174** lines.
+
+```json
+{"record_key":"auto-20261011-us0152-plan|story|(none)|sprint-plan|rp-auto-20261011-us0152-plan-techlead-20261011T183005Z","orchestrator_run_id":"auto-20261011-us0152-plan","work_item_kind":"story","bug_id":"(none)","completed_phase":"sprint-plan","writer_role":"tech-lead","role":"tech-lead","fresh_context_marker":"tl-US0152-plan-20261011T183005Z-fresh","resolution_source":"phase_child:plan","effective_plan":["spec","plan","build+verify","ship"],"skipped_phases":["intake","plan-verify"],"completed_phases":["intake","discovery","research","architecture","sprint-plan"],"next_scheduled_phase":"execute","next_scheduled_role":"dev","phase_cursor":"plan/3-of-3","budget_scope":"OPEN stories US-0152 then US-0153,US-0154,US-0155; active_story_id=US-0152; stories_completed_this_drain=3; merged AUTO_BACKLOG_MAX_STORIES=10 from config.json; baseline scratchpad=3; backlog_drain_active=true; bug_queue_active=false","stop_reason":"sprint_plan_complete_phase_boundary","runtime_proof_id":"rp-auto-20261011-us0152-plan-techlead-20261011T183005Z","proof_hash":"8e86f4dcb0753dcd06d6d94b06ad9060821370cf80fa3e6e044912c7b1a168ba","proof_issued_at":"2026-10-11T18:30:05Z","proof_ttl_seconds":3600,"phase_id":"sprint-plan","stop_matrix_action":"STOP_AFTER_PLAN_MACRO; validate_pair_then_parent_may_spawn_execute"}
+```
+
+- **STOP:** `STOP_AFTER_PLAN_MACRO; validate_pair_then_parent_may_spawn_execute`. Parent may spawn fresh `/execute` (dev) for **US-0152/S0172** after validating this pair. This tech-lead child did NOT spawn it.
+
+---
+
+# Resume Brief — US-0152 discovery (state-first, DEC-0153)
+
+- `record_key`: `auto-20261011-us0152-discovery|story|(none)|discovery|rp-auto-20261011-us0152-discovery-po-20261011T182450Z`
+- `orchestrator_run_id`: **`auto-20261011-us0152-discovery`**
+- `work_item_kind`: **`story`**; `bug_id`: **`(none)`**; `completed_phase`: **`discovery`**; `writer_role`: **`po`**
+- `phase_id`: **`discovery`**; `role`: **`po`**; `verdict`: **`DISCOVERY_PASS`**; `decision_gate`: **`false`**
+- `sprint_id`: **`(none)`**; `story_id`: **`US-0152`**
+- `intended_resume_phase`: **`research`**; `next_scheduled_phase`: **`research`**; `next_scheduled_role`: **`tech-lead`**
+- `resolution_source`: **`phase_child:discovery`**; `effective_plan`: `[spec, plan, build+verify, ship]`; `skipped_phases`: `[intake]`; `completed_phases`: `[intake, discovery]`; `phase_cursor`: **`spec/discovery-pass`**
+- `budget_scope`: `OPEN stories US-0152 then US-0153,US-0154,US-0155; active_story_id=US-0152; stories_completed_this_drain=3; merged AUTO_BACKLOG_MAX_STORIES=10 from config.json; baseline scratchpad=3; backlog_drain_active=true; bug_queue_active=false`
+- `stop_reason`: **`discovery_complete_phase_boundary`**; `stop_matrix_action`: **`STOP_AFTER_DISCOVERY_PASS; validate_pair_then_parent_may_spawn_research`**
+- `fresh_context_marker`: **`po-US0152-discovery-20261011T182450Z-fresh`**; `child_isolation_ref`: `docs/engineering/state.md#discovery-checkpoint-us-0152-auto-20261011-us0152-discovery-rolepo`
+- `runtime_proof_id`: **`rp-auto-20261011-us0152-discovery-po-20261011T182450Z`**; `proof_hash`: **`2dc8118461fa20769e8b85ceb5c281fec2cfee6ed3dcb43507b1566ed03c64f9`**; `proof_issued_at`: `2026-10-11T18:24:50Z`; `proof_ttl_seconds`: `3600`; `proof_ttl`: `2026-10-11T19:24:50Z`; `hash_recompute_confirmation=true` (lib `compute_strict_proof_hash` + independent hashlib SHA-256 over verbatim DEC-0038 6-tuple; identical hexdigest)
+- `intake_evidence`: **`handoffs/intake_evidence/US-0150-0154-standalone-integration-intake-20260919.json`** — **present** (intake skipped)
+- `research_stub`: **R-0162** (not authored; highest existing heading **R-0161**; **R-0152** already used by BUG-0030)
+- `story_status`: **US-0152 OPEN** (AC-1..AC-6 unchecked); **US-0151 DONE** (unchanged); **US-0150 DONE**; **US-0149 DONE**
+- **Publish / push:** NOT PERFORMED.
+- **Pair validation / ordering:** discovery checkpoint appended **BOTTOM** first (DEC-0040 / DEC-0153). Post-append rollover archived **1** oldest terminal checkpoint (`BUG-0033` sprint-plan) to `docs/engineering/state-archive/state-pack-20261011-r.md`. The new US-0152 discovery checkpoint, the US-0151 refresh checkpoint, the US-0151 closure checkpoint, and the BUG-0033 refresh checkpoint remain in `docs/engineering/state.md`. Architecture was not rolled. This brief prepend follows state-first. Triad `--check` exit **0** at **1185** lines.
+
+```json
+{"record_key":"auto-20261011-us0152-discovery|story|(none)|discovery|rp-auto-20261011-us0152-discovery-po-20261011T182450Z","orchestrator_run_id":"auto-20261011-us0152-discovery","work_item_kind":"story","bug_id":"(none)","completed_phase":"discovery","writer_role":"po","role":"po","fresh_context_marker":"po-US0152-discovery-20261011T182450Z-fresh","resolution_source":"phase_child:discovery","effective_plan":["spec","plan","build+verify","ship"],"skipped_phases":["intake"],"completed_phases":["intake","discovery"],"next_scheduled_phase":"research","next_scheduled_role":"tech-lead","phase_cursor":"spec/discovery-pass","budget_scope":"OPEN stories US-0152 then US-0153,US-0154,US-0155; active_story_id=US-0152; stories_completed_this_drain=3; merged AUTO_BACKLOG_MAX_STORIES=10 from config.json; baseline scratchpad=3; backlog_drain_active=true; bug_queue_active=false","stop_reason":"discovery_complete_phase_boundary","runtime_proof_id":"rp-auto-20261011-us0152-discovery-po-20261011T182450Z","proof_hash":"2dc8118461fa20769e8b85ceb5c281fec2cfee6ed3dcb43507b1566ed03c64f9","proof_issued_at":"2026-10-11T18:24:50Z","proof_ttl_seconds":3600,"phase_id":"discovery","stop_matrix_action":"STOP_AFTER_DISCOVERY_PASS; validate_pair_then_parent_may_spawn_research"}
+```
+
+- **STOP:** `STOP_AFTER_DISCOVERY_PASS; validate_pair_then_parent_may_spawn_research`. Parent may spawn fresh `/research` (tech-lead) for **US-0152** after validating this pair. This PO child did NOT spawn it.
+
+---
+
+# Resume Brief — US-0151 refresh-context (state-first, DEC-0153)
+
+- `record_key`: `auto-20261011-us0151-refresh|story|(none)|refresh-context|rp-auto-20261011-us0151-refresh-curator-20261011T181953Z`
+- `orchestrator_run_id`: **`auto-20261011-us0151-refresh`**
+- `work_item_kind`: **`story`**; `bug_id`: **`(none)`**; `completed_phase`: **`refresh-context`**; `writer_role`: **`curator`**
+- `phase_id`: **`refresh-context`**; `role`: **`curator`**; `verdict`: **`REFRESH_CONTEXT_PASS`**; `decision_gate`: **`false`**
+- `sprint_id`: **`S0171`**; `story_id`: **`US-0151`** (segment closed; drain head **US-0152**)
+- `intended_resume_phase`: **`discovery`**; `next_scheduled_phase`: **`discovery`**; `next_scheduled_role`: **`po`**
+- `resolution_source`: **`phase_child:refresh-context`**; `effective_plan`: `[spec, plan, build+verify, ship]`; `skipped_phases`: `[intake]`; `completed_phases`: `[intake]`; `phase_cursor`: **`spec/discovery`**
+- `budget_scope`: `OPEN stories US-0152 then US-0153,US-0154,US-0155; active_story_id=US-0152; stories_completed_this_drain=3; merged AUTO_BACKLOG_MAX_STORIES=10 from config.json; baseline scratchpad=3; backlog_drain_active=true; bug_queue_active=false`
+- `stop_reason`: **`refresh_complete_drain_authorized`**; `stop_matrix_action`: **`STOP_AFTER_REFRESH_PASS; validate_pair_then_parent_may_spawn_next_story`**
+- `fresh_context_marker`: **`curator-US0151-refresh-20261011T181953Z-fresh`**; `child_isolation_ref`: `docs/engineering/state.md#refresh-context-checkpoint-us-0151-s0171-auto-20261011-us0151-refresh-rolecurator`
+- `runtime_proof_id`: **`rp-auto-20261011-us0151-refresh-curator-20261011T181953Z`**; `proof_hash`: **`9be8afdda50f2facb3b6427d39a987f4e2681b05f5e3dbd519a76b4eaf0065e4`**; `proof_issued_at`: `2026-10-11T18:19:53Z`; `proof_ttl_seconds`: `3600`; `proof_ttl`: `2026-10-11T19:19:53Z`; `hash_recompute_confirmation=true` (lib `compute_strict_proof_hash` + independent hashlib SHA-256 over verbatim DEC-0038 6-tuple; identical hexdigest)
+- `intake_evidence`: **`handoffs/intake_evidence/US-0150-0154-standalone-integration-intake-20260919.json`** — **present** (US-0152 `intake_evidence_ref` confirmed; intake skipped)
+- `story_status`: **US-0151 DONE** (unchanged); **US-0152 OPEN**; **US-0150 DONE**; **US-0149 DONE**
+- **Harness:** `tests/report.md` **2026-10-11T18:17:53Z** Pass **880** / Fail **0** (provenance; no re-run this child).
+- **Publish / push:** NOT PERFORMED.
+- **Pair validation / ordering:** refresh checkpoint appended **BOTTOM** first (DEC-0040 / DEC-0153). Post-append rollover archived **1** oldest terminal checkpoint unit to stay ≤1200 lines. US-0151 closure, US-0150 closure, US-0151 discovery, and BUG-0033 refresh checkpoints remain in `docs/engineering/state.md`. This brief prepend follows state-first. Triad `--check` exit **0** at **1189** lines.
+
+```json
+{"record_key":"auto-20261011-us0151-refresh|story|(none)|refresh-context|rp-auto-20261011-us0151-refresh-curator-20261011T181953Z","orchestrator_run_id":"auto-20261011-us0151-refresh","work_item_kind":"story","bug_id":"(none)","completed_phase":"refresh-context","writer_role":"curator","role":"curator","fresh_context_marker":"curator-US0151-refresh-20261011T181953Z-fresh","resolution_source":"phase_child:refresh-context","effective_plan":["spec","plan","build+verify","ship"],"skipped_phases":["intake"],"completed_phases":["intake"],"next_scheduled_phase":"discovery","next_scheduled_role":"po","phase_cursor":"spec/discovery","budget_scope":"OPEN stories US-0152 then US-0153,US-0154,US-0155; active_story_id=US-0152; stories_completed_this_drain=3; merged AUTO_BACKLOG_MAX_STORIES=10 from config.json; baseline scratchpad=3; backlog_drain_active=true; bug_queue_active=false","stop_reason":"refresh_complete_drain_authorized","runtime_proof_id":"rp-auto-20261011-us0151-refresh-curator-20261011T181953Z","proof_hash":"9be8afdda50f2facb3b6427d39a987f4e2681b05f5e3dbd519a76b4eaf0065e4","proof_issued_at":"2026-10-11T18:19:53Z","proof_ttl_seconds":3600,"phase_id":"refresh-context","stop_matrix_action":"STOP_AFTER_REFRESH_PASS; validate_pair_then_parent_may_spawn_next_story"}
+```
+
+- **STOP:** `STOP_AFTER_REFRESH_PASS; validate_pair_then_parent_may_spawn_next_story`. Parent may spawn fresh `/discovery` (po) for **US-0152** after validating this pair. This curator child did NOT spawn it.
+
+---
+
+# Resume Brief — US-0151 closure (state-first, DEC-0153)
+
+- `record_key`: `auto-20261011-us0151-closure|story|(none)|closure|rp-auto-20261011-us0151-closure-curator-20261011T181012Z`
+- `orchestrator_run_id`: **`auto-20261011-us0151-closure`**
+- `work_item_kind`: **`story`**; `bug_id`: **`(none)`**; `completed_phase`: **`closure`**; `writer_role`: **`curator`**
+- `phase_id`: **`closure`**; `role`: **`curator`**; `verdict`: **`CLOSURE_PASS`**; `decision_gate`: **`false`**
+- `sprint_id`: **`S0171`**; `story_id`: **`US-0151`**
+- `intended_resume_phase`: **`refresh-context`**; `next_scheduled_phase`: **`refresh-context`**; `next_scheduled_role`: **`curator`**
+- `resolution_source`: **`phase_child:closure`**; `effective_plan`: `[spec, plan, build+verify, ship]`; `skipped_phases`: `[intake, plan-verify]`; `completed_phases`: `[intake, discovery, research, architecture, sprint-plan, execute, qa, verify-work, release, closure]`; `phase_cursor`: **`ship/closure-pass`**
+- `budget_scope`: `OPEN stories after US-0151: US-0152,US-0153,US-0154,US-0155; active_story_id=US-0151; stories_completed_this_drain=3; merged AUTO_BACKLOG_MAX_STORIES=10 from config.json; baseline scratchpad=3; backlog_drain_active=true; bug_queue_active=false`
+- `stop_reason`: **`closure_complete_phase_boundary`**; `stop_matrix_action`: **`STOP_AFTER_CLOSURE_PASS; validate_pair_then_parent_may_spawn_refresh_context`**
+- `fresh_context_marker`: **`curator-US0151-closure-20261011T181012Z-fresh`**; `child_isolation_ref`: `docs/engineering/state.md#closure-checkpoint-us-0151-s0171-auto-20261011-us0151-closure-rolecurator`
+- `runtime_proof_id`: **`rp-auto-20261011-us0151-closure-curator-20261011T181012Z`**; `proof_hash`: **`0244c550113a975fa0b9cd780011cab6d30f3c2242f8867bfa26e2a25b0ac3fd`**; `proof_issued_at`: `2026-10-11T18:10:12Z`; `proof_ttl_seconds`: `3600`; `proof_ttl`: `2026-10-11T19:10:12Z`; `hash_recompute_confirmation=true` (lib `compute_strict_proof_hash` + independent hashlib SHA-256 over verbatim DEC-0038 6-tuple; identical hexdigest)
+- `story_status`: **US-0151 DONE** (AC-1..AC-6 checked); **US-0150 DONE** (unchanged); **US-0149 DONE** (unchanged)
+- **Harness:** `tests/report.md` **2026-10-11T18:17:53Z** Pass **880** / Fail **0** (post-flip full harness). Post-flip coverage: `coverage_present` includes **US-0151**, `coverage_missing=[]`, `coverage_total=47`.
+- **Publish / push:** NOT PERFORMED (unchanged from release).
+- **Pair validation / ordering:** closure checkpoint appended **BOTTOM** first (DEC-0040 / DEC-0153). Post-append rollover archived 2 oldest terminal checkpoint unit(s) to stay ≤1200 lines. US-0151 closure, US-0151 release, US-0151 discovery, US-0150 closure, and BUG-0033 refresh checkpoints remain in `docs/engineering/state.md`. This brief prepend follows state-first. Triad `--check` exit **0** at **1182** lines.
+
+```json
+{"record_key":"auto-20261011-us0151-closure|story|(none)|closure|rp-auto-20261011-us0151-closure-curator-20261011T181012Z","orchestrator_run_id":"auto-20261011-us0151-closure","work_item_kind":"story","bug_id":"(none)","completed_phase":"closure","writer_role":"curator","role":"curator","fresh_context_marker":"curator-US0151-closure-20261011T181012Z-fresh","resolution_source":"phase_child:closure","effective_plan":["spec","plan","build+verify","ship"],"skipped_phases":["intake","plan-verify"],"completed_phases":["intake","discovery","research","architecture","sprint-plan","execute","qa","verify-work","release","closure"],"next_scheduled_phase":"refresh-context","next_scheduled_role":"curator","phase_cursor":"ship/closure-pass","budget_scope":"OPEN stories after US-0151: US-0152,US-0153,US-0154,US-0155; active_story_id=US-0151; stories_completed_this_drain=3; merged AUTO_BACKLOG_MAX_STORIES=10 from config.json; baseline scratchpad=3; backlog_drain_active=true; bug_queue_active=false","stop_reason":"closure_complete_phase_boundary","runtime_proof_id":"rp-auto-20261011-us0151-closure-curator-20261011T181012Z","proof_hash":"0244c550113a975fa0b9cd780011cab6d30f3c2242f8867bfa26e2a25b0ac3fd","proof_issued_at":"2026-10-11T18:10:12Z","proof_ttl_seconds":3600,"phase_id":"closure","stop_matrix_action":"STOP_AFTER_CLOSURE_PASS; validate_pair_then_parent_may_spawn_refresh_context"}
+```
+
+- **STOP:** `STOP_AFTER_CLOSURE_PASS; validate_pair_then_parent_may_spawn_refresh_context`. Parent may spawn fresh `/refresh-context` (curator) after validating this pair. This curator child did NOT spawn it.
+
+---
+
+# Resume Brief — US-0151 release (state-first, DEC-0153)
+
+- `record_key`: `auto-20261011-us0151-release|story|(none)|release|rp-auto-20261011-us0151-release-release-20261011T175448Z`
+- `orchestrator_run_id`: **`auto-20261011-us0151-release`**
+- `work_item_kind`: **`story`**; `bug_id`: **`(none)`**; `completed_phase`: **`release`**; `writer_role`: **`release`**
+- `phase_id`: **`release`**; `role`: **`release`**; `verdict`: **`RELEASE_PASS`**; `decision_gate`: **`false`**
+- `sprint_id`: **`S0171`**; `story_id`: **`US-0151`**; verify-work marker consumed: **`qa-US0151-vw-20261011T174610Z-fresh`**
+- `intended_resume_phase`: **`closure`**; `next_scheduled_phase`: **`closure`**; `next_scheduled_role`: **`curator`**
+- `resolution_source`: **`phase_child:release`**; `effective_plan`: `[spec, plan, build+verify, ship]`; `skipped_phases`: `[intake, plan-verify]`; `completed_phases`: `[intake, discovery, research, architecture, sprint-plan, execute, qa, verify-work, release]`; `phase_cursor`: **`ship/release-pass`**
+- `budget_scope`: `OPEN stories US-0151 then US-0152,US-0153,US-0154,US-0155; active_story_id=US-0151; stories_completed_this_drain=2; merged AUTO_BACKLOG_MAX_STORIES=10 from config.json; baseline scratchpad=3; backlog_drain_active=true; bug_queue_active=false`
+- `stop_reason`: **`release_complete_phase_boundary`**; `stop_matrix_action`: **`STOP_AFTER_RELEASE_PASS; validate_pair_then_parent_may_spawn_closure`**
+- `fresh_context_marker`: **`release-US0151-release-20261011T175448Z-fresh`**; `child_isolation_ref`: `docs/engineering/state.md#release-checkpoint-us-0151-s0171-auto-20261011-us0151-release-rolerelease`
+- `runtime_proof_id`: **`rp-auto-20261011-us0151-release-release-20261011T175448Z`**; `proof_hash`: **`e43bfab2433c89345d56a2d2807dbc907b2b64da29d0ffe3963972f2163406e9`**; `proof_issued_at`: `2026-10-11T17:54:48Z`; `proof_ttl_seconds`: `3600`; `proof_ttl`: `2026-10-11T18:54:48Z`; `hash_recompute_confirmation=true` (lib `compute_strict_proof_hash` + independent hashlib SHA-256 over verbatim DEC-0038 6-tuple; identical hexdigest)
+- `story_status`: **US-0151 remains OPEN** (AC-1..AC-6 unchecked); **US-0150 DONE** (unchanged); **US-0149 DONE** (unchanged)
+- **Harness:** `tests/report.md` **2026-10-11T17:44:57Z** Pass **880** / Fail **0**. Six `test_us0151_*` markers re-run this release: 6 passed / 0 failed, duration_ms 3092.0535. UAT PASS with `UAT_PROBE_FORBIDDEN` for a live paid-model or network probe.
+- **Publish / push:** NOT PERFORMED (`RELEASE_PUBLISH_MODE=confirm`; `SYNC_POLICY_MODE=disabled`).
+- **Pair validation / ordering:** release checkpoint appended **BOTTOM** first (DEC-0040 / DEC-0153). Pre-append rollover archived 1 oldest checkpoint to `state-pack-20261011-n.md`. The new release checkpoint, the verify-work pair, the qa-pair, the execute-pair, the US-0151 plan checkpoint, the US-0151 discovery checkpoint, the US-0150 closure checkpoint, and the BUG-0033 refresh checkpoint remain in `docs/engineering/state.md`. This brief prepend follows state-first. Triad `--check` exit **0** at **1200** lines.
+
+```json
+{"record_key":"auto-20261011-us0151-release|story|(none)|release|rp-auto-20261011-us0151-release-release-20261011T175448Z","orchestrator_run_id":"auto-20261011-us0151-release","work_item_kind":"story","bug_id":"(none)","completed_phase":"release","writer_role":"release","role":"release","fresh_context_marker":"release-US0151-release-20261011T175448Z-fresh","resolution_source":"phase_child:release","effective_plan":["spec","plan","build+verify","ship"],"skipped_phases":["intake","plan-verify"],"completed_phases":["intake","discovery","research","architecture","sprint-plan","execute","qa","verify-work","release"],"next_scheduled_phase":"closure","next_scheduled_role":"curator","phase_cursor":"ship/release-pass","budget_scope":"OPEN stories US-0151 then US-0152,US-0153,US-0154,US-0155; active_story_id=US-0151; stories_completed_this_drain=2; merged AUTO_BACKLOG_MAX_STORIES=10 from config.json; baseline scratchpad=3; backlog_drain_active=true; bug_queue_active=false","stop_reason":"release_complete_phase_boundary","runtime_proof_id":"rp-auto-20261011-us0151-release-release-20261011T175448Z","proof_hash":"e43bfab2433c89345d56a2d2807dbc907b2b64da29d0ffe3963972f2163406e9","proof_issued_at":"2026-10-11T17:54:48Z","proof_ttl_seconds":3600,"phase_id":"release","stop_matrix_action":"STOP_AFTER_RELEASE_PASS; validate_pair_then_parent_may_spawn_closure"}
+```
+
+- **STOP:** `STOP_AFTER_RELEASE_PASS; validate_pair_then_parent_may_spawn_closure`. Parent may spawn fresh `/closure` (curator) for **US-0151/S0171** after validating this pair. This release child did NOT spawn it.
+
+---
+
+# Resume Brief — US-0151 verify-work continuation pair (state-first, DEC-0153)
+
+- `record_key`: `auto-20261011-us0151-verify-pair|story|(none)|verify-work|rp-auto-20261011-us0151-verify-pair-curator-20261011T175035Z`
+- `orchestrator_run_id`: **`auto-20261011-us0151-verify-pair`**
+- `work_item_kind`: **`story`**; `bug_id`: **`(none)`**; `completed_phase`: **`verify-work`**; `writer_role`: **`curator`**
+- `phase_id`: **`verify-work`**; `role`: **`curator`**; `verdict`: **`VERIFY_PASS`** (provenance; upstream verify-work checkpoint); `decision_gate`: **`false`**
+- `sprint_id`: **`S0171`**; `story_id`: **`US-0151`**; verify-work marker consumed: **`qa-US0151-vw-20261011T174610Z-fresh`**
+- `intended_resume_phase`: **`release`**; `next_scheduled_phase`: **`release`**; `next_scheduled_role`: **`release`**
+- `resolution_source`: **`operator:resume-pair-repair`**; `effective_plan`: `[spec, plan, build+verify, ship]`; `skipped_phases`: `[intake, plan-verify]`; `completed_phases`: `[intake, discovery, research, architecture, sprint-plan, execute, qa, verify-work]`; `phase_cursor`: **`ship/verify-pass`**
+- `budget_scope`: `OPEN stories US-0151 then US-0152,US-0153,US-0154,US-0155; active_story_id=US-0151; stories_completed_this_drain=2; merged AUTO_BACKLOG_MAX_STORIES=10 from config.json; baseline scratchpad=3; backlog_drain_active=true; bug_queue_active=false`
+- `stop_reason`: **`verify_work_complete_phase_boundary`**; `stop_matrix_action`: **`STOP_AFTER_VERIFY_PASS_PAIR; validate_pair_then_parent_may_spawn_release`**
+- `fresh_context_marker`: **`curator-US0151-verifypair-20261011T175035Z-fresh`**; `child_isolation_ref`: `docs/engineering/state.md#verify-work-pair-repair-us-0151-s0171-auto-20261011-us0151-verify-pair-rolecurator`
+- `runtime_proof_id`: **`rp-auto-20261011-us0151-verify-pair-curator-20261011T175035Z`**; `proof_hash`: **`39e905290c153705423d0a8e67c84b49787755f6b984e9cebec158e7f7d443cd`**; `proof_issued_at`: `2026-10-11T17:50:35Z`; `proof_ttl_seconds`: `3600`; `proof_ttl`: `2026-10-11T18:50:35Z`; `hash_recompute_confirmation=true` (lib `compute_strict_proof_hash` + independent hashlib SHA-256 over verbatim DEC-0038 6-tuple; identical hexdigest)
+- `story_status`: **US-0151 remains OPEN** (AC-1..AC-6 unchecked); **US-0150 DONE** (unchanged); **US-0149 DONE** (unchanged)
+- **Harness (provenance):** verify-work-era `tests/report.md` **2026-10-11T17:44:57Z** Pass **880** / Fail **0**. Six `test_us0151_*` markers passed. UAT PASS with `UAT_PROBE_FORBIDDEN` for live paid-model or network probe.
+- **Pair validation / ordering:** verify-pair checkpoint appended **BOTTOM** first (DEC-0040 / DEC-0153). Pre-append rollover archived 1 oldest terminal checkpoint to `state-pack-20261011-l.md`; post-append `--rollover` moved 2 additional oldest units. The verify-pair, qa-pair, execute-pair, US-0151 plan, US-0151 discovery, US-0150 closure, and BUG-0033 refresh checkpoints remain in `docs/engineering/state.md`. This brief prepend follows state-first. Triad `--check` exit **0** at **1190** lines.
+
+```json
+{"record_key":"auto-20261011-us0151-verify-pair|story|(none)|verify-work|rp-auto-20261011-us0151-verify-pair-curator-20261011T175035Z","orchestrator_run_id":"auto-20261011-us0151-verify-pair","work_item_kind":"story","bug_id":"(none)","completed_phase":"verify-work","writer_role":"curator","role":"curator","fresh_context_marker":"curator-US0151-verifypair-20261011T175035Z-fresh","resolution_source":"operator:resume-pair-repair","effective_plan":["spec","plan","build+verify","ship"],"skipped_phases":["intake","plan-verify"],"completed_phases":["intake","discovery","research","architecture","sprint-plan","execute","qa","verify-work"],"next_scheduled_phase":"release","next_scheduled_role":"release","phase_cursor":"ship/verify-pass","budget_scope":"OPEN stories US-0151 then US-0152,US-0153,US-0154,US-0155; active_story_id=US-0151; stories_completed_this_drain=2; merged AUTO_BACKLOG_MAX_STORIES=10 from config.json; baseline scratchpad=3; backlog_drain_active=true; bug_queue_active=false","stop_reason":"verify_work_complete_phase_boundary","runtime_proof_id":"rp-auto-20261011-us0151-verify-pair-curator-20261011T175035Z","proof_hash":"39e905290c153705423d0a8e67c84b49787755f6b984e9cebec158e7f7d443cd","proof_issued_at":"2026-10-11T17:50:35Z","proof_ttl_seconds":3600,"phase_id":"verify-work","stop_matrix_action":"STOP_AFTER_VERIFY_PASS_PAIR; validate_pair_then_parent_may_spawn_release"}
+```
+
+- **STOP:** `STOP_AFTER_VERIFY_PASS_PAIR; validate_pair_then_parent_may_spawn_release`. Parent may spawn fresh `/release` (release) for **US-0151/S0171** after validating this pair. This curator child did NOT spawn it.
+
+---
+
+# Resume Brief — US-0151 QA continuation pair (state-first, DEC-0153)
+
+- `record_key`: `auto-20261011-us0151-qa-pair|story|(none)|qa|rp-auto-20261011-us0151-qa-pair-curator-20261011T173338Z`
+- `orchestrator_run_id`: **`auto-20261011-us0151-qa-pair`**
+- `work_item_kind`: **`story`**; `bug_id`: **`(none)`**; `completed_phase`: **`qa`**; `writer_role`: **`curator`**
+- `phase_id`: **`qa`**; `role`: **`curator`**; `verdict`: **`QA_PASS`** (provenance; upstream QA checkpoint); `decision_gate`: **`false`**
+- `sprint_id`: **`S0171`**; `story_id`: **`US-0151`**; QA marker consumed: **`qa-US0151-qa-20261011T172729Z-fresh`**
+- `intended_resume_phase`: **`verify-work`**; `next_scheduled_phase`: **`verify-work`**; `next_scheduled_role`: **`qa`**
+- `resolution_source`: **`operator:resume-pair-repair`**; `effective_plan`: `[spec, plan, build+verify, ship]`; `skipped_phases`: `[intake, plan-verify]`; `completed_phases`: `[intake, discovery, research, architecture, sprint-plan, execute, qa]`; `phase_cursor`: **`build+verify/qa-pass`**
+- `budget_scope`: `OPEN stories US-0151 then US-0152,US-0153,US-0154,US-0155; active_story_id=US-0151; stories_completed_this_drain=2; merged AUTO_BACKLOG_MAX_STORIES=10 from config.json; baseline scratchpad=3; backlog_drain_active=true; bug_queue_active=false`
+- `stop_reason`: **`qa_complete_phase_boundary`**; `stop_matrix_action`: **`STOP_AFTER_QA_PASS_PAIR; validate_pair_then_parent_may_spawn_verify_work`**
+- `fresh_context_marker`: **`curator-US0151-qapair-20261011T173338Z-fresh`**; `child_isolation_ref`: `docs/engineering/state.md#qa-pair-repair-us-0151-s0171-auto-20261011-us0151-qa-pair-rolecurator`
+- `runtime_proof_id`: **`rp-auto-20261011-us0151-qa-pair-curator-20261011T173338Z`**; `proof_hash`: **`0396b9f9026130e2d4f7884102f69f2d36634b8d04e9c08301d7d9c24443057d`**; `proof_issued_at`: `2026-10-11T17:33:38Z`; `proof_ttl_seconds`: `3600`; `proof_ttl`: `2026-10-11T18:33:38Z`; `hash_recompute_confirmation=true` (lib `compute_strict_proof_hash` + independent hashlib SHA-256 over verbatim DEC-0038 6-tuple; identical hexdigest)
+- `story_status`: **US-0151 remains OPEN** (AC-1..AC-6 unchecked); **US-0150 DONE** (unchanged); **US-0149 DONE** (unchanged)
+- **Harness (provenance):** QA-era `tests/report.md` **2026-10-11T17:26:25Z** Pass **880** / Fail **0**. Six `test_us0151_*` markers passed. UAT PASS with `UAT_PROBE_FORBIDDEN` for live paid-model or network probe.
+- **Pair validation / ordering:** qa-pair checkpoint appended **BOTTOM** first (DEC-0040 / DEC-0153). One oldest terminal checkpoint rolled over to stay ≤1200 lines. The execute-pair checkpoint, the US-0151 plan checkpoint, the US-0151 discovery checkpoint, the US-0150 closure checkpoint, and the BUG-0033 refresh checkpoint remain in `docs/engineering/state.md`. This brief prepend follows state-first. Triad `--check` exit **0** at **1197** lines.
+
+```json
+{"record_key":"auto-20261011-us0151-qa-pair|story|(none)|qa|rp-auto-20261011-us0151-qa-pair-curator-20261011T173338Z","orchestrator_run_id":"auto-20261011-us0151-qa-pair","work_item_kind":"story","bug_id":"(none)","completed_phase":"qa","writer_role":"curator","role":"curator","fresh_context_marker":"curator-US0151-qapair-20261011T173338Z-fresh","resolution_source":"operator:resume-pair-repair","effective_plan":["spec","plan","build+verify","ship"],"skipped_phases":["intake","plan-verify"],"completed_phases":["intake","discovery","research","architecture","sprint-plan","execute","qa"],"next_scheduled_phase":"verify-work","next_scheduled_role":"qa","phase_cursor":"build+verify/qa-pass","budget_scope":"OPEN stories US-0151 then US-0152,US-0153,US-0154,US-0155; active_story_id=US-0151; stories_completed_this_drain=2; merged AUTO_BACKLOG_MAX_STORIES=10 from config.json; baseline scratchpad=3; backlog_drain_active=true; bug_queue_active=false","stop_reason":"qa_complete_phase_boundary","runtime_proof_id":"rp-auto-20261011-us0151-qa-pair-curator-20261011T173338Z","proof_hash":"0396b9f9026130e2d4f7884102f69f2d36634b8d04e9c08301d7d9c24443057d","proof_issued_at":"2026-10-11T17:33:38Z","proof_ttl_seconds":3600,"phase_id":"qa","stop_matrix_action":"STOP_AFTER_QA_PASS_PAIR; validate_pair_then_parent_may_spawn_verify_work"}
+```
+
+- **STOP:** `STOP_AFTER_QA_PASS_PAIR; validate_pair_then_parent_may_spawn_verify_work`. Parent may spawn fresh `/verify-work` (qa) for **US-0151/S0171** after validating this pair. This curator child did NOT spawn it.
+
+---
+
+# Resume Brief — US-0151 execute continuation pair (state-first, DEC-0153)
+
+- `record_key`: `auto-20261011-us0151-execute-pair|story|(none)|execute|rp-auto-20261011-us0151-execute-pair-curator-20261011T191502Z`
+- `orchestrator_run_id`: **`auto-20261011-us0151-execute-pair`**
+- `work_item_kind`: **`story`**; `bug_id`: **`(none)`**; `completed_phase`: **`execute`**; `writer_role`: **`curator`**
+- `phase_id`: **`execute`**; `role`: **`curator`**; `verdict`: **`EXECUTE_PASS`** (provenance; dev isolation checkpoint); `decision_gate`: **`false`**
+- `sprint_id`: **`S0171`**; `story_id`: **`US-0151`**; dev marker consumed: **`dev-US0151-execute-20261011T165840Z-fresh`**
+- `intended_resume_phase`: **`qa`**; `next_scheduled_phase`: **`qa`**; `next_scheduled_role`: **`qa`**
+- `resolution_source`: **`operator:resume-pair-repair`**; `effective_plan`: `[spec, plan, build+verify, ship]`; `skipped_phases`: `[intake, plan-verify]`; `completed_phases`: `[intake, discovery, research, architecture, sprint-plan, execute]`; `phase_cursor`: **`build+verify/execute-pass`**
+- `budget_scope`: `OPEN stories US-0151 then US-0152,US-0153,US-0154,US-0155; active_story_id=US-0151; stories_completed_this_drain=2; merged AUTO_BACKLOG_MAX_STORIES=10 from config.json; baseline scratchpad=3; backlog_drain_active=true; bug_queue_active=false`
+- `stop_reason`: **`execute_complete_phase_boundary`**; `stop_matrix_action`: **`STOP_AFTER_EXECUTE_PASS_PAIR; validate_pair_then_parent_may_spawn_qa`**
+- `fresh_context_marker`: **`curator-US0151-executepair-20261011T191502Z-fresh`**; `child_isolation_ref`: `docs/engineering/state.md#execute-pair-repair-us-0151-s0171-auto-20261011-us0151-execute-pair-rolecurator`
+- `runtime_proof_id`: **`rp-auto-20261011-us0151-execute-pair-curator-20261011T191502Z`**; `proof_hash`: **`2162f5c3338e966c718ca9646123961251b766310657f2f5bfc4a7bbe20ff0fa`**; `proof_issued_at`: `2026-10-11T19:15:02Z`; `proof_ttl_seconds`: `3600`; `proof_ttl`: `2026-10-11T20:15:02Z`; `hash_recompute_confirmation=true` (lib `compute_strict_proof_hash` + independent hashlib SHA-256 over verbatim DEC-0038 6-tuple; identical hexdigest)
+- `story_status`: **US-0151 remains OPEN** (AC-1..AC-6 unchecked); **US-0150 DONE** (unchanged); **US-0149 DONE** (unchanged)
+- **Harness (provenance):** dev-era `tests/report.md` **2026-10-11T16:57:16Z** Pass **873** / Fail **7** (triad heading gap). Post-execute triad `--check` exit **0**; contract fixture battery **154 passed** (operator provenance). Six `test_us0151_*` markers passed per dev checkpoint.
+- **Pair validation / ordering:** execute-pair checkpoint appended **BOTTOM** first (DEC-0040 / DEC-0153). One oldest terminal checkpoint rolled over to stay ≤1200 lines. The US-0151 plan checkpoint, the US-0151 discovery checkpoint, the US-0150 closure checkpoint, and the BUG-0033 refresh checkpoint remain in `docs/engineering/state.md`. This brief prepend follows state-first. Triad `--check` exit **0** at **1192** lines.
+
+```json
+{"record_key":"auto-20261011-us0151-execute-pair|story|(none)|execute|rp-auto-20261011-us0151-execute-pair-curator-20261011T191502Z","orchestrator_run_id":"auto-20261011-us0151-execute-pair","work_item_kind":"story","bug_id":"(none)","completed_phase":"execute","writer_role":"curator","role":"curator","fresh_context_marker":"curator-US0151-executepair-20261011T191502Z-fresh","resolution_source":"operator:resume-pair-repair","effective_plan":["spec","plan","build+verify","ship"],"skipped_phases":["intake","plan-verify"],"completed_phases":["intake","discovery","research","architecture","sprint-plan","execute"],"next_scheduled_phase":"qa","next_scheduled_role":"qa","phase_cursor":"build+verify/execute-pass","budget_scope":"OPEN stories US-0151 then US-0152,US-0153,US-0154,US-0155; active_story_id=US-0151; stories_completed_this_drain=2; merged AUTO_BACKLOG_MAX_STORIES=10 from config.json; baseline scratchpad=3; backlog_drain_active=true; bug_queue_active=false","stop_reason":"execute_complete_phase_boundary","runtime_proof_id":"rp-auto-20261011-us0151-execute-pair-curator-20261011T191502Z","proof_hash":"2162f5c3338e966c718ca9646123961251b766310657f2f5bfc4a7bbe20ff0fa","proof_issued_at":"2026-10-11T19:15:02Z","proof_ttl_seconds":3600,"phase_id":"execute","stop_matrix_action":"STOP_AFTER_EXECUTE_PASS_PAIR; validate_pair_then_parent_may_spawn_qa"}
+```
+
+- **STOP:** `STOP_AFTER_EXECUTE_PASS_PAIR; validate_pair_then_parent_may_spawn_qa`. Parent may spawn fresh `/qa` (qa) for **US-0151/S0171** after validating this pair. This curator child did NOT spawn it.
+
+---
+
+# Resume Brief — US-0151 plan continuation pair (state-first, DEC-0153)
+
+- `record_key`: `auto-20261011-us0151-plan|story|(none)|sprint-plan|rp-auto-20261011-us0151-plan-techlead-20261011T162642Z`
+- `orchestrator_run_id`: **`auto-20261011-us0151-plan`**
+- `work_item_kind`: **`story`**; `bug_id`: **`(none)`**; `completed_phase`: **`sprint-plan`**; `writer_role`: **`tech-lead`**
+- `phase_id`: **`sprint-plan`**; `role`: **`tech-lead`**; `verdict`: **`SPRINT_PLAN_PASS`**; `decision_gate`: **`false`**
+- `sprint_id`: **`S0171`**; `story_id`: **`US-0151`**
+- `intended_resume_phase`: **`execute`**; `next_scheduled_phase`: **`execute`**; `next_scheduled_role`: **`dev`**
+- `resolution_source`: **`phase_child:plan`**; `effective_plan`: `[spec, plan, build+verify, ship]`; `skipped_phases`: `[intake, plan-verify]`; `completed_phases`: `[intake, discovery, research, architecture, sprint-plan]`; `phase_cursor`: **`plan/3-of-3`**
+- `budget_scope`: `OPEN stories US-0151 then US-0152,US-0153,US-0154,US-0155; active_story_id=US-0151; stories_completed_this_drain=2; merged AUTO_BACKLOG_MAX_STORIES=10 from config.json; baseline scratchpad=3; backlog_drain_active=true; bug_queue_active=false`
+- `stop_reason`: **`sprint_plan_complete_phase_boundary`**; `stop_matrix_action`: **`STOP_AFTER_PLAN_MACRO; validate_pair_then_parent_may_spawn_execute`**
+- `fresh_context_marker`: **`tl-US0151-plan-20261011T162642Z-fresh`**; `child_isolation_ref`: `docs/engineering/state.md#plan-checkpoint-us-0151-s0171-auto-20261011-us0151-plan-roletech-lead`
+- `runtime_proof_id`: **`rp-auto-20261011-us0151-plan-techlead-20261011T162642Z`**; `proof_hash`: **`756c68acb9e8264e46cf871bd9072d8b0f3fbe71c1a70a5ab430ef04183015ac`**; `proof_issued_at`: `2026-10-11T16:26:42Z`; `proof_ttl_seconds`: `3600`; `proof_ttl`: `2026-10-11T17:26:42Z`; `hash_recompute_confirmation=true` (lib `compute_strict_proof_hash` + independent hashlib SHA-256 over verbatim DEC-0038 6-tuple; identical hexdigest)
+- `story_status`: **US-0151 OPEN** (AC-1..AC-6 unchecked); **US-0150 DONE** (unchanged); **US-0149 DONE** (unchanged)
+- **Research:** **R-0161**. **Architecture:** `# US-0151`. **Sprint:** **S0171**. **Companion DEC:** none. Tasks: 7.
+- **Pair validation / ordering:** plan checkpoint appended **BOTTOM** first (DEC-0040 / DEC-0153). The US-0151 discovery checkpoint, the US-0150 closure checkpoint, and the BUG-0033 refresh checkpoint remain in `docs/engineering/state.md`. This brief prepend follows state-first.
+
+```json
+{"record_key":"auto-20261011-us0151-plan|story|(none)|sprint-plan|rp-auto-20261011-us0151-plan-techlead-20261011T162642Z","orchestrator_run_id":"auto-20261011-us0151-plan","work_item_kind":"story","bug_id":"(none)","completed_phase":"sprint-plan","writer_role":"tech-lead","role":"tech-lead","fresh_context_marker":"tl-US0151-plan-20261011T162642Z-fresh","resolution_source":"phase_child:plan","effective_plan":["spec","plan","build+verify","ship"],"skipped_phases":["intake","plan-verify"],"completed_phases":["intake","discovery","research","architecture","sprint-plan"],"next_scheduled_phase":"execute","next_scheduled_role":"dev","phase_cursor":"plan/3-of-3","budget_scope":"OPEN stories US-0151 then US-0152,US-0153,US-0154,US-0155; active_story_id=US-0151; stories_completed_this_drain=2; merged AUTO_BACKLOG_MAX_STORIES=10 from config.json; baseline scratchpad=3; backlog_drain_active=true; bug_queue_active=false","stop_reason":"sprint_plan_complete_phase_boundary","runtime_proof_id":"rp-auto-20261011-us0151-plan-techlead-20261011T162642Z","proof_hash":"756c68acb9e8264e46cf871bd9072d8b0f3fbe71c1a70a5ab430ef04183015ac","proof_issued_at":"2026-10-11T16:26:42Z","proof_ttl_seconds":3600,"phase_id":"sprint-plan","stop_matrix_action":"STOP_AFTER_PLAN_MACRO; validate_pair_then_parent_may_spawn_execute"}
+```
+
+- **STOP:** `STOP_AFTER_PLAN_MACRO; validate_pair_then_parent_may_spawn_execute`. Parent may spawn fresh `/execute` (dev) for **US-0151/S0171** after validating this pair. This tech-lead child did NOT spawn it.
+
+---
+
+# Resume Brief — US-0151 discovery continuation pair (state-first, DEC-0153)
+
+- `record_key`: `auto-20261011-us0151-discovery|story|(none)|discovery|rp-auto-20261011-us0151-discovery-po-20261011T161851Z`
+- `orchestrator_run_id`: **`auto-20261011-us0151-discovery`**
+- `work_item_kind`: **`story`**; `bug_id`: **`(none)`**; `completed_phase`: **`discovery`**; `writer_role`: **`po`**
+- `phase_id`: **`discovery`**; `role`: **`po`**; `verdict`: **`DISCOVERY_PASS`**; `decision_gate`: **`false`**
+- `sprint_id`: **`(none)`**; `story_id`: **`US-0151`**
+- `intended_resume_phase`: **`research`**; `next_scheduled_phase`: **`research`**; `next_scheduled_role`: **`tech-lead`**
+- `resolution_source`: **`phase_child:discovery`**; `effective_plan`: `[spec, plan, build+verify, ship]`; `skipped_phases`: `[intake]`; `completed_phases`: `[intake, discovery]`; `phase_cursor`: **`spec/discovery-pass`**
+- `budget_scope`: `OPEN stories US-0151 then US-0152,US-0153,US-0154,US-0155; active_story_id=US-0151; stories_completed_this_drain=2; merged AUTO_BACKLOG_MAX_STORIES=10 from config.json; baseline scratchpad=3; backlog_drain_active=true; bug_queue_active=false`
+- `stop_reason`: **`discovery_complete_phase_boundary`**; `stop_matrix_action`: **`STOP_AFTER_DISCOVERY_PASS; validate_pair_then_parent_may_spawn_research`**
+- `fresh_context_marker`: **`po-US0151-discovery-20261011T161851Z-fresh`**; `child_isolation_ref`: `docs/engineering/state.md#discovery-checkpoint-us-0151-auto-20261011-us0151-discovery-rolepo`
+- `runtime_proof_id`: **`rp-auto-20261011-us0151-discovery-po-20261011T161851Z`**; `proof_hash`: **`f924ce9e87257634dfe68adb230813ceb3e4df6b7f7983df264a56ebefc6d2ec`**; `proof_issued_at`: `2026-10-11T16:18:51Z`; `proof_ttl_seconds`: `3600`; `proof_ttl`: `2026-10-11T17:18:51Z`; `hash_recompute_confirmation=true` (lib `compute_strict_proof_hash` + independent hashlib SHA-256 over verbatim DEC-0038 6-tuple; identical hexdigest)
+- `story_status`: **US-0151 OPEN** (AC-1..AC-6 unchecked); **US-0150 DONE** (unchanged); **US-0149 DONE** (unchanged)
+- **Research stub:** **R-0161** expected; highest existing heading **R-0160**; **R-0151** already used; heading not authored.
+- **Pair validation / ordering:** discovery checkpoint appended **BOTTOM** first (DEC-0040 / DEC-0153). The US-0150 refresh checkpoint, the US-0150 closure checkpoint, and the BUG-0033 refresh checkpoint remain in `docs/engineering/state.md`. This brief prepend follows state-first.
+
+```json
+{"record_key":"auto-20261011-us0151-discovery|story|(none)|discovery|rp-auto-20261011-us0151-discovery-po-20261011T161851Z","orchestrator_run_id":"auto-20261011-us0151-discovery","work_item_kind":"story","bug_id":"(none)","completed_phase":"discovery","writer_role":"po","role":"po","fresh_context_marker":"po-US0151-discovery-20261011T161851Z-fresh","resolution_source":"phase_child:discovery","effective_plan":["spec","plan","build+verify","ship"],"skipped_phases":["intake"],"completed_phases":["intake","discovery"],"next_scheduled_phase":"research","next_scheduled_role":"tech-lead","phase_cursor":"spec/discovery-pass","budget_scope":"OPEN stories US-0151 then US-0152,US-0153,US-0154,US-0155; active_story_id=US-0151; stories_completed_this_drain=2; merged AUTO_BACKLOG_MAX_STORIES=10 from config.json; baseline scratchpad=3; backlog_drain_active=true; bug_queue_active=false","stop_reason":"discovery_complete_phase_boundary","runtime_proof_id":"rp-auto-20261011-us0151-discovery-po-20261011T161851Z","proof_hash":"f924ce9e87257634dfe68adb230813ceb3e4df6b7f7983df264a56ebefc6d2ec","proof_issued_at":"2026-10-11T16:18:51Z","proof_ttl_seconds":3600,"phase_id":"discovery","stop_matrix_action":"STOP_AFTER_DISCOVERY_PASS; validate_pair_then_parent_may_spawn_research"}
+```
+
+- **STOP:** `STOP_AFTER_DISCOVERY_PASS; validate_pair_then_parent_may_spawn_research`. Parent may spawn fresh `/research` (tech-lead) for **US-0151** after validating this pair. This PO child did NOT spawn it.
+
+---
+
+# Resume Brief — US-0150 refresh-context continuation pair (state-first, DEC-0153)
+
+- `record_key`: `auto-20261011-us0150-refresh|story|(none)|refresh-context|rp-auto-20261011-us0150-refresh-curator-20261011T160800Z`
+- `orchestrator_run_id`: **`auto-20261011-us0150-refresh`**
+- `work_item_kind`: **`story`**; `bug_id`: **`(none)`**; `completed_phase`: **`refresh-context`**; `writer_role`: **`curator`**
+- `phase_id`: **`refresh-context`**; `role`: **`curator`**; `verdict`: **`REFRESH_CONTEXT_PASS`**; `decision_gate`: **`false`**
+- `sprint_id`: **`S0170`**; `story_id`: **`US-0150`** (segment closed **DONE**); closure marker consumed: **`curator-US0150-closure-20261011T155800Z-fresh`**
+- `intended_resume_phase`: **`discovery`**; `next_scheduled_phase`: **`discovery`**; `next_scheduled_role`: **`po`**
+- `resolution_source`: **`phase_child:refresh-context`**; `effective_plan`: `[spec, plan, build+verify, ship]`; `skipped_phases`: `[intake]`; `completed_phases`: `[intake]`; `phase_cursor`: **`spec/discovery`**
+- `budget_scope`: `OPEN stories US-0151 then US-0152,US-0153,US-0154,US-0155; active_story_id=US-0151; stories_completed_this_drain=2; merged AUTO_BACKLOG_MAX_STORIES=10 from config.json; baseline scratchpad=3; backlog_drain_active=true; bug_queue_active=false`
+- `stop_reason`: **`refresh_complete_drain_authorized`**; `stop_matrix_action`: **`STOP_AFTER_REFRESH_PASS; validate_pair_then_parent_may_spawn_next_story`**
+- `fresh_context_marker`: **`curator-US0150-refresh-20261011T160800Z-fresh`**; `child_isolation_ref`: `docs/engineering/state.md#refresh-context-checkpoint-us-0150-s0170-auto-20261011-us0150-refresh-rolecurator`
+- `runtime_proof_id`: **`rp-auto-20261011-us0150-refresh-curator-20261011T160800Z`**; `proof_hash`: **`337c53787f722a0a1f6f26f3f9900992455da8f3e2dff7e0fe2671eb615b2d2b`**; `proof_issued_at`: `2026-10-11T16:08:00Z`; `proof_ttl_seconds`: `3600`; `proof_ttl`: `2026-10-11T17:08:00Z`; `hash_recompute_confirmation=true` (lib `compute_strict_proof_hash` + independent hashlib SHA-256 over verbatim DEC-0038 6-tuple; identical hexdigest)
+- `story_status`: **US-0150 DONE** (unchanged); **US-0151 OPEN** (next drain target); US-0151 intake evidence **present** — intake skipped
+- **Harness (provenance):** `tests/report.md` **2026-10-11T16:04:45Z** Pass **880** / Fail **0**; six `test_us0150_*` markers passed.
+- **Pair validation / ordering:** refresh checkpoint appended **BOTTOM** first (DEC-0040 / DEC-0153). The US-0150 closure checkpoint, the US-0150 release checkpoint, the US-0149 closure checkpoint, and the BUG-0033 refresh checkpoint remain in `docs/engineering/state.md`. This brief prepend follows state-first. Triad `--check` exit 0 at append line budget (no rollover required).
+
+```json
+{"record_key":"auto-20261011-us0150-refresh|story|(none)|refresh-context|rp-auto-20261011-us0150-refresh-curator-20261011T160800Z","orchestrator_run_id":"auto-20261011-us0150-refresh","work_item_kind":"story","bug_id":"(none)","completed_phase":"refresh-context","writer_role":"curator","role":"curator","fresh_context_marker":"curator-US0150-refresh-20261011T160800Z-fresh","resolution_source":"phase_child:refresh-context","effective_plan":["spec","plan","build+verify","ship"],"skipped_phases":["intake"],"completed_phases":["intake"],"next_scheduled_phase":"discovery","next_scheduled_role":"po","phase_cursor":"spec/discovery","budget_scope":"OPEN stories US-0151 then US-0152,US-0153,US-0154,US-0155; active_story_id=US-0151; stories_completed_this_drain=2; merged AUTO_BACKLOG_MAX_STORIES=10 from config.json; baseline scratchpad=3; backlog_drain_active=true; bug_queue_active=false","stop_reason":"refresh_complete_drain_authorized","runtime_proof_id":"rp-auto-20261011-us0150-refresh-curator-20261011T160800Z","proof_hash":"337c53787f722a0a1f6f26f3f9900992455da8f3e2dff7e0fe2671eb615b2d2b","proof_issued_at":"2026-10-11T16:08:00Z","proof_ttl_seconds":3600,"phase_id":"refresh-context","stop_matrix_action":"STOP_AFTER_REFRESH_PASS; validate_pair_then_parent_may_spawn_next_story"}
+```
+
+- **STOP:** `STOP_AFTER_REFRESH_PASS; validate_pair_then_parent_may_spawn_next_story`. Parent may spawn fresh `/discovery` (po) for **US-0151** after validating this pair. This curator child did NOT spawn it.
+
+---
+
+# Resume Brief — US-0150 closure continuation pair (state-first, DEC-0153)
+
+- `record_key`: `auto-20261011-us0150-closure|story|(none)|closure|rp-auto-20261011-us0150-closure-curator-20261011T155800Z`
+- `orchestrator_run_id`: **`auto-20261011-us0150-closure`**
+- `work_item_kind`: **`story`**; `bug_id`: **`(none)`**; `completed_phase`: **`closure`**; `writer_role`: **`curator`**
+- `phase_id`: **`closure`**; `role`: **`curator`**; `verdict`: **`CLOSURE_PASS`**; `decision_gate`: **`false`**
+- `sprint_id`: **`S0170`**; `story_id`: **`US-0150`**
+- `intended_resume_phase`: **`refresh-context`**; `next_scheduled_phase`: **`refresh-context`**; `next_scheduled_role`: **`curator`**
+- `resolution_source`: **`phase_child:closure`**; `effective_plan`: `[spec, plan, build+verify, ship]`; `skipped_phases`: `[intake, plan-verify]`; `completed_phases`: `[intake, discovery, research, architecture, sprint-plan, execute, qa, verify-work, release, closure]`; `phase_cursor`: **`ship/closure-pass`**
+- `budget_scope`: `OPEN stories after US-0150: US-0151,US-0152,US-0153,US-0154,US-0155; active_story_id=US-0150; stories_completed_this_drain=2; merged AUTO_BACKLOG_MAX_STORIES=10 from config.json; baseline scratchpad=3; backlog_drain_active=true; bug_queue_active=false`
+- `stop_reason`: **`closure_complete_phase_boundary`**; `stop_matrix_action`: **`STOP_AFTER_CLOSURE_PASS; validate_pair_then_parent_may_spawn_refresh_context`**
+- `fresh_context_marker`: **`curator-US0150-closure-20261011T155800Z-fresh`**; `child_isolation_ref`: `docs/engineering/state.md#closure-checkpoint-us-0150-s0170-auto-20261011-us0150-closure-rolecurator`
+- `runtime_proof_id`: **`rp-auto-20261011-us0150-closure-curator-20261011T155800Z`**; `proof_hash`: **`32db4871f4328aaa3fd37668ec8ee087c40898c1e6ef8422c935fbf70fdb3f23`**; `proof_issued_at`: `2026-10-11T15:58:00Z`; `proof_ttl_seconds`: `3600`; `proof_ttl`: `2026-10-11T16:58:00Z`; `hash_recompute_confirmation=true` (lib `compute_strict_proof_hash` + independent hashlib SHA-256 over verbatim DEC-0038 6-tuple; identical hexdigest)
+- `story_status`: **US-0150 DONE**; AC-1..AC-6 checked; **US-0149 DONE** (unchanged)
+- **Harness (post-flip):** `tests/report.md` **2026-10-11T16:04:45Z** Pass **880** / Fail **0**; six `test_us0150_*` markers passed.
+- **Coverage (post-flip):** `validate_readme_feature_coverage.py --report` — `coverage_present` includes **US-0150**; `coverage_missing=[]`; `coverage_total=46`.
+- **Pair validation / ordering:** closure checkpoint appended **BOTTOM** first (DEC-0040 / DEC-0153). The US-0150 release checkpoint, the US-0150 discovery checkpoint, the US-0149 closure checkpoint, and the BUG-0033 refresh checkpoint remain in `docs/engineering/state.md`. This brief prepend follows state-first. Triad `--check` exit 0 at append line budget (no rollover required).
+
+```json
+{"record_key":"auto-20261011-us0150-closure|story|(none)|closure|rp-auto-20261011-us0150-closure-curator-20261011T155800Z","orchestrator_run_id":"auto-20261011-us0150-closure","work_item_kind":"story","bug_id":"(none)","completed_phase":"closure","writer_role":"curator","role":"curator","fresh_context_marker":"curator-US0150-closure-20261011T155800Z-fresh","resolution_source":"phase_child:closure","effective_plan":["spec","plan","build+verify","ship"],"skipped_phases":["intake","plan-verify"],"completed_phases":["intake","discovery","research","architecture","sprint-plan","execute","qa","verify-work","release","closure"],"next_scheduled_phase":"refresh-context","next_scheduled_role":"curator","phase_cursor":"ship/closure-pass","budget_scope":"OPEN stories after US-0150: US-0151,US-0152,US-0153,US-0154,US-0155; active_story_id=US-0150; stories_completed_this_drain=2; merged AUTO_BACKLOG_MAX_STORIES=10 from config.json; baseline scratchpad=3; backlog_drain_active=true; bug_queue_active=false","stop_reason":"closure_complete_phase_boundary","runtime_proof_id":"rp-auto-20261011-us0150-closure-curator-20261011T155800Z","proof_hash":"32db4871f4328aaa3fd37668ec8ee087c40898c1e6ef8422c935fbf70fdb3f23","proof_issued_at":"2026-10-11T15:58:00Z","proof_ttl_seconds":3600,"phase_id":"closure","stop_matrix_action":"STOP_AFTER_CLOSURE_PASS; validate_pair_then_parent_may_spawn_refresh_context"}
+```
+
+- **STOP:** `STOP_AFTER_CLOSURE_PASS; validate_pair_then_parent_may_spawn_refresh_context`. Parent may spawn fresh `/refresh-context` (curator) for **US-0150/S0170** after validating this pair. This curator child did NOT spawn it.
+
+---
+
+# Resume Brief — US-0150 release continuation pair (state-first, DEC-0153)
+
+- `record_key`: `auto-20261011-us0150-release|story|(none)|release|rp-auto-20261011-us0150-release-release-20261011T154635Z`
+- `orchestrator_run_id`: **`auto-20261011-us0150-release`**
+- `work_item_kind`: **`story`**; `bug_id`: **`(none)`**; `completed_phase`: **`release`**; `writer_role`: **`release`**
+- `phase_id`: **`release`**; `role`: **`release`**; `verdict`: **`RELEASE_PASS`**; `decision_gate`: **`false`**
+- `sprint_id`: **`S0170`**; `story_id`: **`US-0150`**; verify-work marker consumed: **`qa-US0150-vw-20261011T153950Z-fresh`**
+- `intended_resume_phase`: **`closure`**; `next_scheduled_phase`: **`closure`**; `next_scheduled_role`: **`curator`**
+- `resolution_source`: **`phase_child:release`**; `effective_plan`: `[spec, plan, build+verify, ship]`; `skipped_phases`: `[intake, plan-verify]`; `completed_phases`: `[intake, discovery, research, architecture, sprint-plan, execute, qa, verify-work, release]`; `phase_cursor`: **`ship/release-pass`**
+- `budget_scope`: `OPEN stories US-0150 then US-0151,US-0152,US-0153,US-0154,US-0155; active_story_id=US-0150; stories_completed_this_drain=1; merged AUTO_BACKLOG_MAX_STORIES=10 from config.json; baseline scratchpad=3; backlog_drain_active=true; bug_queue_active=false`
+- `stop_reason`: **`release_complete_phase_boundary`**; `stop_matrix_action`: **`STOP_AFTER_RELEASE_PASS; validate_pair_then_parent_may_spawn_closure`**
+- `fresh_context_marker`: **`release-US0150-release-20261011T154635Z-fresh`**; `child_isolation_ref`: `docs/engineering/state.md#release-checkpoint-us-0150-s0170-auto-20261011-us0150-release-rolerelease`
+- `runtime_proof_id`: **`rp-auto-20261011-us0150-release-release-20261011T154635Z`**; `proof_hash`: **`de5d239fc42e58fdef3bda981021b44867f82f95bdb3a1a899e51977daf511cd`**; `proof_issued_at`: `2026-10-11T15:46:35Z`; `proof_ttl_seconds`: `3600`; `proof_ttl`: `2026-10-11T16:46:35Z`; `hash_recompute_confirmation=true` (lib `compute_strict_proof_hash` + independent hashlib SHA-256 over verbatim DEC-0038 6-tuple; identical hexdigest)
+- `story_status`: **US-0150 remains OPEN**; AC-1..AC-6 unchecked
+- **Publish: NOT PERFORMED** (`npm_published=false`). **Push: NOT PERFORMED** (`SYNC_POLICY_MODE=disabled`).
+- **Harness (provenance):** `tests/report.md` **2026-10-11T15:39:14Z** Pass **880** / Fail **0**; six `test_us0150_*` markers re-run this release: 6 passed / 0 failed.
+- **Pair validation / ordering:** release checkpoint appended **BOTTOM** first (DEC-0040 / DEC-0153). The verify-work pair, the qa-pair, the execute-pair, the US-0150 plan checkpoint, the US-0150 discovery checkpoint, the US-0149 closure checkpoint, and the BUG-0033 refresh checkpoint remain in `docs/engineering/state.md`. This brief prepend follows state-first. Triad `--check` exit 0 at **1116** lines (one oldest-checkpoint rollover to `docs/engineering/state-archive/state-pack-20261011-e.md`).
+
+```json
+{"record_key":"auto-20261011-us0150-release|story|(none)|release|rp-auto-20261011-us0150-release-release-20261011T154635Z","orchestrator_run_id":"auto-20261011-us0150-release","work_item_kind":"story","bug_id":"(none)","completed_phase":"release","writer_role":"release","role":"release","fresh_context_marker":"release-US0150-release-20261011T154635Z-fresh","resolution_source":"phase_child:release","effective_plan":["spec","plan","build+verify","ship"],"skipped_phases":["intake","plan-verify"],"completed_phases":["intake","discovery","research","architecture","sprint-plan","execute","qa","verify-work","release"],"next_scheduled_phase":"closure","next_scheduled_role":"curator","phase_cursor":"ship/release-pass","budget_scope":"OPEN stories US-0150 then US-0151,US-0152,US-0153,US-0154,US-0155; active_story_id=US-0150; stories_completed_this_drain=1; merged AUTO_BACKLOG_MAX_STORIES=10 from config.json; baseline scratchpad=3; backlog_drain_active=true; bug_queue_active=false","stop_reason":"release_complete_phase_boundary","runtime_proof_id":"rp-auto-20261011-us0150-release-release-20261011T154635Z","proof_hash":"de5d239fc42e58fdef3bda981021b44867f82f95bdb3a1a899e51977daf511cd","proof_issued_at":"2026-10-11T15:46:35Z","proof_ttl_seconds":3600,"phase_id":"release","stop_matrix_action":"STOP_AFTER_RELEASE_PASS; validate_pair_then_parent_may_spawn_closure"}
+```
+
+- **STOP:** `STOP_AFTER_RELEASE_PASS; validate_pair_then_parent_may_spawn_closure`. Parent may spawn fresh `/closure` (curator) for US-0150/S0170 after validating this pair. This release child did NOT spawn it. US-0150 stays OPEN.
+
+---
+
+# Resume Brief — US-0150 verify-work continuation pair (state-first, DEC-0153)
+
+- `record_key`: `auto-20261011-us0150-verify-pair|story|(none)|verify-work|rp-auto-20261011-us0150-verify-pair-curator-20261011T154240Z`
+- `orchestrator_run_id`: **`auto-20261011-us0150-verify-pair`**
+- `work_item_kind`: **`story`**; `bug_id`: **`(none)`**; `completed_phase`: **`verify-work`**; `writer_role`: **`curator`**
+- `phase_id`: **`verify-work`**; `role`: **`curator`**; `verdict`: **`VERIFY_PASS`** (provenance; verify-work isolation checkpoint); `decision_gate`: **`false`**
+- `sprint_id`: **`S0170`**; `story_id`: **`US-0150`**; verify-work marker consumed: **`qa-US0150-vw-20261011T153950Z-fresh`**
+- `intended_resume_phase`: **`release`**; `next_scheduled_phase`: **`release`**; `next_scheduled_role`: **`release`**
+- `resolution_source`: **`operator:resume-pair-repair`**; `effective_plan`: `[spec, plan, build+verify, ship]`; `skipped_phases`: `[intake, plan-verify]`; `completed_phases`: `[intake, discovery, research, architecture, sprint-plan, execute, qa, verify-work]`; `phase_cursor`: **`ship/verify-pass`**
+- `budget_scope`: `OPEN stories US-0150 then US-0151,US-0152,US-0153,US-0154,US-0155; active_story_id=US-0150; stories_completed_this_drain=1; merged AUTO_BACKLOG_MAX_STORIES=10 from config.json; baseline scratchpad=3; backlog_drain_active=true; bug_queue_active=false`
+- `stop_reason`: **`verify_work_complete_phase_boundary`**; `stop_matrix_action`: **`STOP_AFTER_VERIFY_PASS_PAIR; validate_pair_then_parent_may_spawn_release`**
+- `fresh_context_marker`: **`curator-US0150-verifypair-20261011T154240Z-fresh`**; `child_isolation_ref`: `docs/engineering/state.md#verify-work-pair-repair-us-0150-s0170-auto-20261011-us0150-verify-pair-rolecurator`
+- `runtime_proof_id`: **`rp-auto-20261011-us0150-verify-pair-curator-20261011T154240Z`**; `proof_hash`: **`91f1270fc599bea9635be7af1b844da79cbf7d8a6f4ec98cb2361c39c3762914`**; `proof_issued_at`: `2026-10-11T15:42:40Z`; `proof_ttl_seconds`: `3600`; `proof_ttl`: `2026-10-11T16:42:40Z`; `hash_recompute_confirmation=true` (lib `compute_strict_proof_hash` + independent hashlib SHA-256 over verbatim DEC-0038 6-tuple; identical hexdigest)
+- `story_status`: **US-0150 remains OPEN**; AC-1..AC-6 unchecked; **US-0149 DONE** (unchanged)
+- **Harness (provenance):** `tests/report.md` **2026-10-11T15:39:14Z** Pass **880** / Fail **0**; six `test_us0150_*` markers passed. **UAT:** PASS (prior QA cycle); live daemon/paid-model probe **`UAT_PROBE_FORBIDDEN`**.
+- **Pair validation / ordering:** verify-work-pair checkpoint appended **BOTTOM** first (DEC-0040 / DEC-0153). The qa-pair checkpoint, the execute-pair checkpoint, the US-0150 plan checkpoint, the US-0150 discovery checkpoint, the US-0149 closure checkpoint, and the BUG-0033 refresh checkpoint remain in `docs/engineering/state.md`. This brief prepend follows state-first.
+
+```json
+{"record_key":"auto-20261011-us0150-verify-pair|story|(none)|verify-work|rp-auto-20261011-us0150-verify-pair-curator-20261011T154240Z","orchestrator_run_id":"auto-20261011-us0150-verify-pair","work_item_kind":"story","bug_id":"(none)","completed_phase":"verify-work","writer_role":"curator","role":"curator","fresh_context_marker":"curator-US0150-verifypair-20261011T154240Z-fresh","resolution_source":"operator:resume-pair-repair","effective_plan":["spec","plan","build+verify","ship"],"skipped_phases":["intake","plan-verify"],"completed_phases":["intake","discovery","research","architecture","sprint-plan","execute","qa","verify-work"],"next_scheduled_phase":"release","next_scheduled_role":"release","phase_cursor":"ship/verify-pass","budget_scope":"OPEN stories US-0150 then US-0151,US-0152,US-0153,US-0154,US-0155; active_story_id=US-0150; stories_completed_this_drain=1; merged AUTO_BACKLOG_MAX_STORIES=10 from config.json; baseline scratchpad=3; backlog_drain_active=true; bug_queue_active=false","stop_reason":"verify_work_complete_phase_boundary","runtime_proof_id":"rp-auto-20261011-us0150-verify-pair-curator-20261011T154240Z","proof_hash":"91f1270fc599bea9635be7af1b844da79cbf7d8a6f4ec98cb2361c39c3762914","proof_issued_at":"2026-10-11T15:42:40Z","proof_ttl_seconds":3600,"phase_id":"verify-work","stop_matrix_action":"STOP_AFTER_VERIFY_PASS_PAIR; validate_pair_then_parent_may_spawn_release"}
+```
+
+- **STOP:** `STOP_AFTER_VERIFY_PASS_PAIR; validate_pair_then_parent_may_spawn_release`. Parent may spawn fresh `/release` (release) for **US-0150/S0170** after validating this pair. This curator child did NOT spawn it.
+
+---
+
+# Resume Brief — US-0150 QA continuation pair (state-first, DEC-0153)
+
+- `record_key`: `auto-20261011-us0150-qa-pair|story|(none)|qa|rp-auto-20261011-us0150-qa-pair-curator-20261011T152957Z`
+- `orchestrator_run_id`: **`auto-20261011-us0150-qa-pair`**
+- `work_item_kind`: **`story`**; `bug_id`: **`(none)`**; `completed_phase`: **`qa`**; `writer_role`: **`curator`**
+- `phase_id`: **`qa`**; `role`: **`curator`**; `verdict`: **`QA_PASS`** (provenance; QA isolation checkpoint); `decision_gate`: **`false`**
+- `sprint_id`: **`S0170`**; `story_id`: **`US-0150`**; QA marker consumed: **`qa-US0150-qa-20261011T152710Z-fresh`**
+- `intended_resume_phase`: **`verify-work`**; `next_scheduled_phase`: **`verify-work`**; `next_scheduled_role`: **`qa`**
+- `resolution_source`: **`operator:resume-pair-repair`**; `effective_plan`: `[spec, plan, build+verify, ship]`; `skipped_phases`: `[intake, plan-verify]`; `completed_phases`: `[intake, discovery, research, architecture, sprint-plan, execute, qa]`; `phase_cursor`: **`build+verify/qa-pass`**
+- `budget_scope`: `OPEN stories US-0150 then US-0151,US-0152,US-0153,US-0154,US-0155; active_story_id=US-0150; stories_completed_this_drain=1; merged AUTO_BACKLOG_MAX_STORIES=10 from config.json; baseline scratchpad=3; backlog_drain_active=true; bug_queue_active=false`
+- `stop_reason`: **`qa_complete_phase_boundary`**; `stop_matrix_action`: **`STOP_AFTER_QA_PASS_PAIR; validate_pair_then_parent_may_spawn_verify_work`**
+- `fresh_context_marker`: **`curator-US0150-qapair-20261011T152957Z-fresh`**; `child_isolation_ref`: `docs/engineering/state.md#qa-pair-repair-us-0150-s0170-auto-20261011-us0150-qa-pair-rolecurator`
+- `runtime_proof_id`: **`rp-auto-20261011-us0150-qa-pair-curator-20261011T152957Z`**; `proof_hash`: **`d56a0bf60cf6a3779c738b1fddd5090b3883988cb8f374e65f77073136454137`**; `proof_issued_at`: `2026-10-11T15:29:57Z`; `proof_ttl_seconds`: `3600`; `proof_ttl`: `2026-10-11T16:29:57Z`; `hash_recompute_confirmation=true` (lib `compute_strict_proof_hash` + independent hashlib SHA-256 over verbatim DEC-0038 6-tuple; identical hexdigest)
+- `story_status`: **US-0150 remains OPEN**; AC-1..AC-6 unchecked; **US-0149 DONE** (unchanged)
+- **Harness (provenance):** `tests/report.md` **2026-10-11T15:26:11Z** Pass **880** / Fail **0**; six `test_us0150_*` markers passed. **UAT:** PASS; live daemon/paid-model probe **`UAT_PROBE_FORBIDDEN`**.
+- **Pair validation / ordering:** QA-pair checkpoint appended **BOTTOM** first (DEC-0040 / DEC-0153). The execute-pair checkpoint, the US-0150 plan checkpoint, the US-0150 discovery checkpoint, the US-0149 closure checkpoint, and the BUG-0033 refresh checkpoint remain in `docs/engineering/state.md`. This brief prepend follows state-first.
+
+```json
+{"record_key":"auto-20261011-us0150-qa-pair|story|(none)|qa|rp-auto-20261011-us0150-qa-pair-curator-20261011T152957Z","orchestrator_run_id":"auto-20261011-us0150-qa-pair","work_item_kind":"story","bug_id":"(none)","completed_phase":"qa","writer_role":"curator","role":"curator","fresh_context_marker":"curator-US0150-qapair-20261011T152957Z-fresh","resolution_source":"operator:resume-pair-repair","effective_plan":["spec","plan","build+verify","ship"],"skipped_phases":["intake","plan-verify"],"completed_phases":["intake","discovery","research","architecture","sprint-plan","execute","qa"],"next_scheduled_phase":"verify-work","next_scheduled_role":"qa","phase_cursor":"build+verify/qa-pass","budget_scope":"OPEN stories US-0150 then US-0151,US-0152,US-0153,US-0154,US-0155; active_story_id=US-0150; stories_completed_this_drain=1; merged AUTO_BACKLOG_MAX_STORIES=10 from config.json; baseline scratchpad=3; backlog_drain_active=true; bug_queue_active=false","stop_reason":"qa_complete_phase_boundary","runtime_proof_id":"rp-auto-20261011-us0150-qa-pair-curator-20261011T152957Z","proof_hash":"d56a0bf60cf6a3779c738b1fddd5090b3883988cb8f374e65f77073136454137","proof_issued_at":"2026-10-11T15:29:57Z","proof_ttl_seconds":3600,"phase_id":"qa","stop_matrix_action":"STOP_AFTER_QA_PASS_PAIR; validate_pair_then_parent_may_spawn_verify_work"}
+```
+
+- **STOP:** `STOP_AFTER_QA_PASS_PAIR; validate_pair_then_parent_may_spawn_verify_work`. Parent may spawn fresh `/verify-work` (qa) for **US-0150/S0170** after validating this pair. This curator child did NOT spawn it.
+
+---
+
+# Resume Brief — US-0150 execute continuation pair (state-first, DEC-0153)
+
+- `record_key`: `auto-20261011-us0150-execute-pair|story|(none)|execute|rp-auto-20261011-us0150-execute-pair-curator-20261011T151551Z`
+- `orchestrator_run_id`: **`auto-20261011-us0150-execute-pair`**
+- `work_item_kind`: **`story`**; `bug_id`: **`(none)`**; `completed_phase`: **`execute`**; `writer_role`: **`curator`**
+- `phase_id`: **`execute`**; `role`: **`curator`**; `verdict`: **`EXECUTE_PASS`** (provenance; dev isolation checkpoint); `decision_gate`: **`false`**
+- `sprint_id`: **`S0170`**; `story_id`: **`US-0150`**; dev marker consumed: **`dev-US0150-execute-20261011T151310Z-fresh`**
+- `intended_resume_phase`: **`qa`**; `next_scheduled_phase`: **`qa`**; `next_scheduled_role`: **`qa`**
+- `resolution_source`: **`operator:resume-pair-repair`**; `effective_plan`: `[spec, plan, build+verify, ship]`; `skipped_phases`: `[intake, plan-verify]`; `completed_phases`: `[intake, discovery, research, architecture, sprint-plan, execute]`; `phase_cursor`: **`build+verify/execute-pass`**
+- `budget_scope`: `OPEN stories US-0150 then US-0151,US-0152,US-0153,US-0154,US-0155; active_story_id=US-0150; stories_completed_this_drain=1; merged AUTO_BACKLOG_MAX_STORIES=10 from config.json; baseline scratchpad=3; backlog_drain_active=true; bug_queue_active=false`
+- `stop_reason`: **`execute_complete_phase_boundary`**; `stop_matrix_action`: **`STOP_AFTER_EXECUTE_PASS_PAIR; validate_pair_then_parent_may_spawn_qa`**
+- `fresh_context_marker`: **`curator-US0150-executepair-20261011T151551Z-fresh`**; `child_isolation_ref`: `docs/engineering/state.md#execute-pair-repair-us-0150-s0170-auto-20261011-us0150-execute-pair-rolecurator`
+- `runtime_proof_id`: **`rp-auto-20261011-us0150-execute-pair-curator-20261011T151551Z`**; `proof_hash`: **`2c7c0e2becbdbcdb838e3525fd7157563f32d619812d88040e5fd2c50ccaa6a3`**; `proof_issued_at`: `2026-10-11T15:15:51Z`; `proof_ttl_seconds`: `3600`; `proof_ttl`: `2026-10-11T16:15:51Z`; `hash_recompute_confirmation=true` (lib `compute_strict_proof_hash` + independent hashlib SHA-256 over verbatim DEC-0038 6-tuple; identical hexdigest)
+- `story_status`: **US-0150 remains OPEN**; AC-1..AC-6 unchecked; **US-0149 DONE** (unchanged)
+- **Harness (provenance):** `tests/report.md` **2026-10-11T15:13:10Z** Pass **880** / Fail **0**; six `test_us0150_*` markers passed.
+- **Pair validation / ordering:** execute-pair checkpoint appended **BOTTOM** first (DEC-0040 / DEC-0153). The US-0150 plan checkpoint, the US-0150 discovery checkpoint, the US-0149 closure checkpoint, and the BUG-0033 refresh checkpoint remain in `docs/engineering/state.md`. This brief prepend follows state-first.
+
+```json
+{"record_key":"auto-20261011-us0150-execute-pair|story|(none)|execute|rp-auto-20261011-us0150-execute-pair-curator-20261011T151551Z","orchestrator_run_id":"auto-20261011-us0150-execute-pair","work_item_kind":"story","bug_id":"(none)","completed_phase":"execute","writer_role":"curator","role":"curator","fresh_context_marker":"curator-US0150-executepair-20261011T151551Z-fresh","resolution_source":"operator:resume-pair-repair","effective_plan":["spec","plan","build+verify","ship"],"skipped_phases":["intake","plan-verify"],"completed_phases":["intake","discovery","research","architecture","sprint-plan","execute"],"next_scheduled_phase":"qa","next_scheduled_role":"qa","phase_cursor":"build+verify/execute-pass","budget_scope":"OPEN stories US-0150 then US-0151,US-0152,US-0153,US-0154,US-0155; active_story_id=US-0150; stories_completed_this_drain=1; merged AUTO_BACKLOG_MAX_STORIES=10 from config.json; baseline scratchpad=3; backlog_drain_active=true; bug_queue_active=false","stop_reason":"execute_complete_phase_boundary","runtime_proof_id":"rp-auto-20261011-us0150-execute-pair-curator-20261011T151551Z","proof_hash":"2c7c0e2becbdbcdb838e3525fd7157563f32d619812d88040e5fd2c50ccaa6a3","proof_issued_at":"2026-10-11T15:15:51Z","proof_ttl_seconds":3600,"phase_id":"execute","stop_matrix_action":"STOP_AFTER_EXECUTE_PASS_PAIR; validate_pair_then_parent_may_spawn_qa"}
+```
+
+- **STOP:** `STOP_AFTER_EXECUTE_PASS_PAIR; validate_pair_then_parent_may_spawn_qa`. Parent may spawn fresh `/qa` (qa) for **US-0150/S0170** after validating this pair. This curator child did NOT spawn it.
+
+---
+
+# Resume Brief — US-0150 plan continuation pair (state-first, DEC-0153)
+
+- `record_key`: `auto-20261011-us0150-plan|story|(none)|sprint-plan|rp-auto-20261011-us0150-plan-techlead-20261011T144420Z`
+- `orchestrator_run_id`: **`auto-20261011-us0150-plan`**
+- `work_item_kind`: **`story`**; `bug_id`: **`(none)`**; `completed_phase`: **`sprint-plan`**; `writer_role`: **`tech-lead`**
+- `phase_id`: **`sprint-plan`**; `role`: **`tech-lead`**; `verdict`: **`SPRINT_PLAN_PASS`**; `decision_gate`: **`false`**
+- `sprint_id`: **`S0170`**; `story_id`: **`US-0150`**
+- `intended_resume_phase`: **`execute`**; `next_scheduled_phase`: **`execute`**; `next_scheduled_role`: **`dev`**
+- `resolution_source`: **`phase_child:plan`**; `effective_plan`: `[spec, plan, build+verify, ship]`; `skipped_phases`: `[intake, plan-verify]`; `completed_phases`: `[intake, discovery, research, architecture, sprint-plan]`; `phase_cursor`: **`plan/3-of-3`**
+- `budget_scope`: `OPEN stories US-0150 then US-0151,US-0152,US-0153,US-0154,US-0155; active_story_id=US-0150; stories_completed_this_drain=1; merged AUTO_BACKLOG_MAX_STORIES=10 from config.json; baseline scratchpad=3; backlog_drain_active=true; bug_queue_active=false`
+- `stop_reason`: **`sprint_plan_complete_phase_boundary`**; `stop_matrix_action`: **`STOP_AFTER_PLAN_MACRO; validate_pair_then_parent_may_spawn_execute`**
+- `fresh_context_marker`: **`tl-US0150-plan-20261011T144420Z-fresh`**; `child_isolation_ref`: `docs/engineering/state.md#plan-checkpoint-us-0150-s0170-auto-20261011-us0150-plan-roletech-lead`
+- `runtime_proof_id`: **`rp-auto-20261011-us0150-plan-techlead-20261011T144420Z`**; `proof_hash`: **`4b5ac7319cd7651cd0b3fca50110cfe5f516571c6cedb238be041df0b86fadf6`**; `proof_issued_at`: `2026-10-11T14:44:20Z`; `proof_ttl_seconds`: `3600`; `proof_ttl`: `2026-10-11T15:44:20Z`; `hash_recompute_confirmation=true` (lib `compute_strict_proof_hash` + independent hashlib SHA-256 over verbatim DEC-0038 6-tuple; identical hexdigest)
+- `story_status`: **US-0150 OPEN** (unchanged; AC-1..AC-6 unchecked); **US-0149 DONE** (unchanged)
+- **R-0150**: extended in place; heading unchanged. **DEC**: none created (`DEC-0150` already Accepted). Sprint **S0170**, 7 tasks.
+- **Pair validation / ordering:** plan checkpoint appended **BOTTOM** first (DEC-0040 / DEC-0153). The US-0150 discovery checkpoint, the US-0149 refresh checkpoint, the US-0149 closure checkpoint, and the BUG-0033 refresh checkpoint remain in `docs/engineering/state.md`. This brief prepend follows state-first.
+
+```json
+{"record_key":"auto-20261011-us0150-plan|story|(none)|sprint-plan|rp-auto-20261011-us0150-plan-techlead-20261011T144420Z","orchestrator_run_id":"auto-20261011-us0150-plan","work_item_kind":"story","bug_id":"(none)","completed_phase":"sprint-plan","writer_role":"tech-lead","role":"tech-lead","fresh_context_marker":"tl-US0150-plan-20261011T144420Z-fresh","resolution_source":"phase_child:plan","effective_plan":["spec","plan","build+verify","ship"],"skipped_phases":["intake","plan-verify"],"completed_phases":["intake","discovery","research","architecture","sprint-plan"],"next_scheduled_phase":"execute","next_scheduled_role":"dev","phase_cursor":"plan/3-of-3","budget_scope":"OPEN stories US-0150 then US-0151,US-0152,US-0153,US-0154,US-0155; active_story_id=US-0150; stories_completed_this_drain=1; merged AUTO_BACKLOG_MAX_STORIES=10 from config.json; baseline scratchpad=3; backlog_drain_active=true; bug_queue_active=false","stop_reason":"sprint_plan_complete_phase_boundary","runtime_proof_id":"rp-auto-20261011-us0150-plan-techlead-20261011T144420Z","proof_hash":"4b5ac7319cd7651cd0b3fca50110cfe5f516571c6cedb238be041df0b86fadf6","proof_issued_at":"2026-10-11T14:44:20Z","proof_ttl_seconds":3600,"phase_id":"sprint-plan","stop_matrix_action":"STOP_AFTER_PLAN_MACRO; validate_pair_then_parent_may_spawn_execute"}
+```
+
+- **STOP:** `STOP_AFTER_PLAN_MACRO; validate_pair_then_parent_may_spawn_execute`. Parent may spawn fresh `/execute` (dev) for **US-0150/S0170** after validating this pair. This tech-lead child did NOT spawn it.
+
+---
+
+# Resume Brief — US-0150 discovery continuation pair (state-first, DEC-0153)
+
+- `record_key`: `auto-20261011-us0150-discovery|story|(none)|discovery|rp-auto-20261011-us0150-discovery-po-20261011T143633Z`
+- `orchestrator_run_id`: **`auto-20261011-us0150-discovery`**
+- `work_item_kind`: **`story`**; `bug_id`: **`(none)`**; `completed_phase`: **`discovery`**; `writer_role`: **`po`**
+- `phase_id`: **`discovery`**; `role`: **`po`**; `verdict`: **`DISCOVERY_PASS`**; `decision_gate`: **`false`**
+- `sprint_id`: **`(none)`**; `story_id`: **`US-0150`**
+- `intended_resume_phase`: **`research`**; `next_scheduled_phase`: **`research`**; `next_scheduled_role`: **`tech-lead`**
+- `resolution_source`: **`phase_child:discovery`**; `effective_plan`: `[spec, plan, build+verify, ship]`; `skipped_phases`: `[intake]`; `completed_phases`: `[intake, discovery]`; `phase_cursor`: **`spec/discovery-pass`**
+- `budget_scope`: `OPEN stories US-0150 then US-0151,US-0152,US-0153,US-0154,US-0155; active_story_id=US-0150; stories_completed_this_drain=1; merged AUTO_BACKLOG_MAX_STORIES=10 from config.json; baseline scratchpad=3; backlog_drain_active=true; bug_queue_active=false`
+- `stop_reason`: **`discovery_complete_phase_boundary`**; `stop_matrix_action`: **`STOP_AFTER_DISCOVERY_PASS; validate_pair_then_parent_may_spawn_research`**
+- `fresh_context_marker`: **`po-US0150-discovery-20261011T143633Z-fresh`**; `child_isolation_ref`: `docs/engineering/state.md#discovery-checkpoint-us-0150-auto-20261011-us0150-discovery-rolepo`
+- `runtime_proof_id`: **`rp-auto-20261011-us0150-discovery-po-20261011T143633Z`**; `proof_hash`: **`0a5c194fad7318008d133aa3658fc739d762e029fab7c80dbd758e5586e71dff`**; `proof_issued_at`: `2026-10-11T14:36:33Z`; `proof_ttl_seconds`: `3600`; `proof_ttl`: `2026-10-11T15:36:33Z`; `hash_recompute_confirmation=true` (lib `compute_strict_proof_hash` + independent hashlib SHA-256 over verbatim DEC-0038 6-tuple; identical hexdigest)
+- `story_status`: **US-0150 OPEN** (unchanged; AC-1..AC-6 unchecked); **US-0149 DONE** (unchanged)
+- **D1..D10**: still hold (2026-09-19 pass reconfirmed 2026-10-11; no lock change). Research stub **R-0150** already headed — not authored this phase.
+- **Pair validation / ordering:** discovery checkpoint appended **BOTTOM** first (DEC-0040 / DEC-0153). US-0149 refresh checkpoint, US-0149 closure checkpoint, and BUG-0033 refresh checkpoint remain in `docs/engineering/state.md`. This brief prepend follows state-first.
+
+```json
+{"record_key":"auto-20261011-us0150-discovery|story|(none)|discovery|rp-auto-20261011-us0150-discovery-po-20261011T143633Z","orchestrator_run_id":"auto-20261011-us0150-discovery","work_item_kind":"story","bug_id":"(none)","completed_phase":"discovery","writer_role":"po","role":"po","fresh_context_marker":"po-US0150-discovery-20261011T143633Z-fresh","resolution_source":"phase_child:discovery","effective_plan":["spec","plan","build+verify","ship"],"skipped_phases":["intake"],"completed_phases":["intake","discovery"],"next_scheduled_phase":"research","next_scheduled_role":"tech-lead","phase_cursor":"spec/discovery-pass","budget_scope":"OPEN stories US-0150 then US-0151,US-0152,US-0153,US-0154,US-0155; active_story_id=US-0150; stories_completed_this_drain=1; merged AUTO_BACKLOG_MAX_STORIES=10 from config.json; baseline scratchpad=3; backlog_drain_active=true; bug_queue_active=false","stop_reason":"discovery_complete_phase_boundary","runtime_proof_id":"rp-auto-20261011-us0150-discovery-po-20261011T143633Z","proof_hash":"0a5c194fad7318008d133aa3658fc739d762e029fab7c80dbd758e5586e71dff","proof_issued_at":"2026-10-11T14:36:33Z","proof_ttl_seconds":3600,"phase_id":"discovery","stop_matrix_action":"STOP_AFTER_DISCOVERY_PASS; validate_pair_then_parent_may_spawn_research"}
+```
+
+- **STOP:** `STOP_AFTER_DISCOVERY_PASS; validate_pair_then_parent_may_spawn_research`. Parent may spawn fresh `/research` (tech-lead) for **US-0150** after validating this pair. This PO child did NOT spawn it.
+
+---
+
+# Resume Brief — US-0149 refresh-context continuation pair (state-first, DEC-0153)
+
+- `record_key`: `auto-20261011-us0149-refresh|story|(none)|refresh-context|rp-auto-20261011-us0149-refresh-curator-20261011T143245Z`
+- `orchestrator_run_id`: **`auto-20261011-us0149-refresh`**
+- `work_item_kind`: **`story`**; `bug_id`: **`(none)`**; `completed_phase`: **`refresh-context`**; `writer_role`: **`curator`**
+- `phase_id`: **`refresh-context`**; `role`: **`curator`**; `verdict`: **`REFRESH_CONTEXT_PASS`**; `decision_gate`: **`false`**
+- `sprint_id`: **`S0169`**; `story_id`: **`US-0149`** (segment closed **DONE**); closure marker consumed: **`curator-US0149-closure-20261011T142400Z-fresh`**
+- `intended_resume_phase`: **`discovery`**; `next_scheduled_phase`: **`discovery`**; `next_scheduled_role`: **`po`**
+- `resolution_source`: **`phase_child:refresh-context`**; `effective_plan`: `[spec, plan, build+verify, ship]`; `skipped_phases`: `[intake]`; `completed_phases`: `[intake]`; `phase_cursor`: **`spec/discovery`**
+- `budget_scope`: `OPEN stories US-0150 then US-0151,US-0152,US-0153,US-0154,US-0155; active_story_id=US-0150; stories_completed_this_drain=1; merged AUTO_BACKLOG_MAX_STORIES=10 from config.json; baseline scratchpad=3; backlog_drain_active=true; bug_queue_active=false`
+- `stop_reason`: **`refresh_complete_drain_authorized`**; `stop_matrix_action`: **`STOP_AFTER_REFRESH_PASS; validate_pair_then_parent_may_spawn_next_story`**
+- `fresh_context_marker`: **`curator-US0149-refresh-20261011T143245Z-fresh`**; `child_isolation_ref`: `docs/engineering/state.md#refresh-context-checkpoint-us-0149-s0169-auto-20261011-us0149-refresh-rolecurator`
+- `runtime_proof_id`: **`rp-auto-20261011-us0149-refresh-curator-20261011T143245Z`**; `proof_hash`: **`37a0565b1d7ffbc45aefac8d3feaae178c138b4de07b3abff302043eaa77d13f`**; `proof_issued_at`: `2026-10-11T14:32:45Z`; `proof_ttl_seconds`: `3600`; `proof_ttl`: `2026-10-11T15:32:45Z`; `hash_recompute_confirmation=true` (lib `compute_strict_proof_hash` + independent hashlib SHA-256 over verbatim DEC-0038 6-tuple; identical hexdigest)
+- `story_status`: **US-0149 DONE** (unchanged); **US-0150 OPEN** (next drain target); US-0150 intake evidence **present** — intake skipped
+- **Pair validation / ordering:** refresh checkpoint appended **BOTTOM** first (DEC-0040 / DEC-0153). Prior US-0149 closure checkpoint, release checkpoint, verify-work pair, qa-pair, execute-pair, plan checkpoint, discovery checkpoint, drain-advance pair, and BUG-0033 refresh checkpoint remain in `docs/engineering/state.md`. This brief prepend follows state-first.
+
+```json
+{"record_key":"auto-20261011-us0149-refresh|story|(none)|refresh-context|rp-auto-20261011-us0149-refresh-curator-20261011T143245Z","orchestrator_run_id":"auto-20261011-us0149-refresh","work_item_kind":"story","bug_id":"(none)","completed_phase":"refresh-context","writer_role":"curator","role":"curator","fresh_context_marker":"curator-US0149-refresh-20261011T143245Z-fresh","resolution_source":"phase_child:refresh-context","effective_plan":["spec","plan","build+verify","ship"],"skipped_phases":["intake"],"completed_phases":["intake"],"next_scheduled_phase":"discovery","next_scheduled_role":"po","phase_cursor":"spec/discovery","budget_scope":"OPEN stories US-0150 then US-0151,US-0152,US-0153,US-0154,US-0155; active_story_id=US-0150; stories_completed_this_drain=1; merged AUTO_BACKLOG_MAX_STORIES=10 from config.json; baseline scratchpad=3; backlog_drain_active=true; bug_queue_active=false","stop_reason":"refresh_complete_drain_authorized","runtime_proof_id":"rp-auto-20261011-us0149-refresh-curator-20261011T143245Z","proof_hash":"37a0565b1d7ffbc45aefac8d3feaae178c138b4de07b3abff302043eaa77d13f","proof_issued_at":"2026-10-11T14:32:45Z","proof_ttl_seconds":3600,"phase_id":"refresh-context","stop_matrix_action":"STOP_AFTER_REFRESH_PASS; validate_pair_then_parent_may_spawn_next_story"}
+```
+
+- **STOP:** `STOP_AFTER_REFRESH_PASS; validate_pair_then_parent_may_spawn_next_story`. Parent may spawn fresh `/discovery` (po) for **US-0150** after validating this pair. This curator child did NOT spawn it.
+
+---
+
+# Resume Brief — US-0149 closure continuation pair (state-first, DEC-0153)
+
+- `record_key`: `auto-20261011-us0149-closure|story|(none)|closure|rp-auto-20261011-us0149-closure-curator-20261011T142400Z`
+- `orchestrator_run_id`: **`auto-20261011-us0149-closure`**
+- `work_item_kind`: **`story`**; `bug_id`: **`(none)`**; `completed_phase`: **`closure`**; `writer_role`: **`curator`**
+- `phase_id`: **`closure`**; `role`: **`curator`**; `verdict`: **`CLOSURE_PASS`**; `decision_gate`: **`false`**
+- `sprint_id`: **`S0169`**; `story_id`: **`US-0149`**; release marker consumed: **`release-US0149-release-20261011T141322Z-fresh`**
+- `intended_resume_phase`: **`refresh-context`**; `next_scheduled_phase`: **`refresh-context`**; `next_scheduled_role`: **`curator`**
+- `resolution_source`: **`phase_child:closure`**; `effective_plan`: `[spec, plan, build+verify, ship]`; `skipped_phases`: `[intake, plan-verify]`; `completed_phases`: `[intake, discovery, research, architecture, sprint-plan, execute, qa, verify-work, release, closure]`; `phase_cursor`: **`ship/closure-pass`**
+- `budget_scope`: `OPEN stories after US-0149: US-0150,US-0151,US-0152,US-0153,US-0154,US-0155; active_story_id=US-0149; merged AUTO_BACKLOG_MAX_STORIES=10 from config.json; baseline scratchpad=3; backlog_drain_active=true; bug_queue_active=false`
+- `stop_reason`: **`closure_complete_phase_boundary`**; `stop_matrix_action`: **`STOP_AFTER_CLOSURE_PASS; validate_pair_then_parent_may_spawn_refresh_context`**
+- `fresh_context_marker`: **`curator-US0149-closure-20261011T142400Z-fresh`**; `child_isolation_ref`: `docs/engineering/state.md#closure-checkpoint-us-0149-s0169-auto-20261011-us0149-closure-rolecurator`
+- `runtime_proof_id`: **`rp-auto-20261011-us0149-closure-curator-20261011T142400Z`**; `proof_hash`: **`bd07ecfec5e10b1433332a558ec09f3fe74fdf156667b6ab8d2932163cb0e1f0`**; `proof_issued_at`: `2026-10-11T14:24:00Z`; `proof_ttl_seconds`: `3600`; `proof_ttl`: `2026-10-11T15:24:00Z`; `hash_recompute_confirmation=true` (lib `compute_strict_proof_hash` + independent hashlib SHA-256 over verbatim DEC-0038 6-tuple; identical hexdigest)
+- `story_status`: **US-0149 DONE**; AC-1..AC-6 checked
+- **Pair validation / ordering:** closure checkpoint appended **BOTTOM** first (DEC-0040 / DEC-0153). Prior release checkpoint, verify-work pair, qa-pair, execute-pair, plan checkpoint, discovery checkpoint, drain-advance pair, and BUG-0033 refresh checkpoint remain in `docs/engineering/state.md`. This brief prepend follows state-first. Triad `--check` exit 0 at **1108** lines (one oldest-checkpoint rollover).
+
+```json
+{"record_key":"auto-20261011-us0149-closure|story|(none)|closure|rp-auto-20261011-us0149-closure-curator-20261011T142400Z","orchestrator_run_id":"auto-20261011-us0149-closure","work_item_kind":"story","bug_id":"(none)","completed_phase":"closure","writer_role":"curator","role":"curator","fresh_context_marker":"curator-US0149-closure-20261011T142400Z-fresh","resolution_source":"phase_child:closure","effective_plan":["spec","plan","build+verify","ship"],"skipped_phases":["intake","plan-verify"],"completed_phases":["intake","discovery","research","architecture","sprint-plan","execute","qa","verify-work","release","closure"],"next_scheduled_phase":"refresh-context","next_scheduled_role":"curator","phase_cursor":"ship/closure-pass","budget_scope":"OPEN stories after US-0149: US-0150,US-0151,US-0152,US-0153,US-0154,US-0155; active_story_id=US-0149; merged AUTO_BACKLOG_MAX_STORIES=10 from config.json; baseline scratchpad=3; backlog_drain_active=true; bug_queue_active=false","stop_reason":"closure_complete_phase_boundary","runtime_proof_id":"rp-auto-20261011-us0149-closure-curator-20261011T142400Z","proof_hash":"bd07ecfec5e10b1433332a558ec09f3fe74fdf156667b6ab8d2932163cb0e1f0","proof_issued_at":"2026-10-11T14:24:00Z","proof_ttl_seconds":3600,"phase_id":"closure","stop_matrix_action":"STOP_AFTER_CLOSURE_PASS; validate_pair_then_parent_may_spawn_refresh_context"}
+```
+
+- **STOP:** `STOP_AFTER_CLOSURE_PASS; validate_pair_then_parent_may_spawn_refresh_context`. Parent may spawn fresh `/refresh-context` (curator) after validating this pair. This curator child did NOT spawn it.
+
+---
+
+# Resume Brief — US-0149 release continuation pair (state-first, DEC-0153)
+
+- `record_key`: `auto-20261011-us0149-release|story|(none)|release|rp-auto-20261011-us0149-release-release-20261011T141322Z`
+- `orchestrator_run_id`: **`auto-20261011-us0149-release`**
+- `work_item_kind`: **`story`**; `bug_id`: **`(none)`**; `completed_phase`: **`release`**; `writer_role`: **`release`**
+- `phase_id`: **`release`**; `role`: **`release`**; `verdict`: **`RELEASE_PASS`**; `decision_gate`: **`false`**
+- `sprint_id`: **`S0169`**; `story_id`: **`US-0149`**; verify-work marker consumed: **`qa-US0149-vw-20261011T140238Z-fresh`**
+- `intended_resume_phase`: **`closure`**; `next_scheduled_phase`: **`closure`**; `next_scheduled_role`: **`curator`**
+- `resolution_source`: **`phase_child:release`**; `effective_plan`: `[spec, plan, build+verify, ship]`; `skipped_phases`: `[intake, plan-verify]`; `completed_phases`: `[intake, discovery, research, architecture, sprint-plan, execute, qa, verify-work, release]`; `phase_cursor`: **`ship/release-pass`**
+- `budget_scope`: `OPEN stories US-0149 then US-0150,US-0151,US-0152,US-0153,US-0154,US-0155; active_story_id=US-0149; merged AUTO_BACKLOG_MAX_STORIES=10 from config.json; baseline scratchpad=3; backlog_drain_active=true; bug_queue_active=false`
+- `stop_reason`: **`release_complete_phase_boundary`**; `stop_matrix_action`: **`STOP_AFTER_RELEASE_PASS; validate_pair_then_parent_may_spawn_closure`**
+- `fresh_context_marker`: **`release-US0149-release-20261011T141322Z-fresh`**; `child_isolation_ref`: `docs/engineering/state.md#release-checkpoint-us-0149-s0169-auto-20261011-us0149-release-rolerelease`
+- `runtime_proof_id`: **`rp-auto-20261011-us0149-release-release-20261011T141322Z`**; `proof_hash`: **`ae9f5cbf0b26abd4994c21165f71db157d4dc18b2127456294ddcc6bb216e6d3`**; `proof_issued_at`: `2026-10-11T14:13:22Z`; `proof_ttl_seconds`: `3600`; `proof_ttl`: `2026-10-11T15:13:22Z`; `hash_recompute_confirmation=true` (lib `compute_strict_proof_hash` + independent hashlib SHA-256 over verbatim DEC-0038 6-tuple; identical hexdigest)
+- `story_status`: **US-0149 remains OPEN**; AC-1..AC-6 unchecked
+- **Publish: NOT PERFORMED** (`npm_published=false`). **Push: NOT PERFORMED** (`SYNC_POLICY_MODE=disabled`).
+- **Pair validation / ordering:** release checkpoint appended **BOTTOM** first (DEC-0040 / DEC-0153). Prior verify-work pair, qa-pair, execute-pair, plan checkpoint, discovery checkpoint, drain-advance pair, and BUG-0033 refresh checkpoint remain in `docs/engineering/state.md`. This brief prepend follows state-first. Triad `--check` exit 0 at 1173 lines; no rollover.
+
+```json
+{"record_key":"auto-20261011-us0149-release|story|(none)|release|rp-auto-20261011-us0149-release-release-20261011T141322Z","orchestrator_run_id":"auto-20261011-us0149-release","work_item_kind":"story","bug_id":"(none)","completed_phase":"release","writer_role":"release","role":"release","fresh_context_marker":"release-US0149-release-20261011T141322Z-fresh","resolution_source":"phase_child:release","effective_plan":["spec","plan","build+verify","ship"],"skipped_phases":["intake","plan-verify"],"completed_phases":["intake","discovery","research","architecture","sprint-plan","execute","qa","verify-work","release"],"next_scheduled_phase":"closure","next_scheduled_role":"curator","phase_cursor":"ship/release-pass","budget_scope":"OPEN stories US-0149 then US-0150,US-0151,US-0152,US-0153,US-0154,US-0155; active_story_id=US-0149; merged AUTO_BACKLOG_MAX_STORIES=10 from config.json; baseline scratchpad=3; backlog_drain_active=true; bug_queue_active=false","stop_reason":"release_complete_phase_boundary","runtime_proof_id":"rp-auto-20261011-us0149-release-release-20261011T141322Z","proof_hash":"ae9f5cbf0b26abd4994c21165f71db157d4dc18b2127456294ddcc6bb216e6d3","proof_issued_at":"2026-10-11T14:13:22Z","proof_ttl_seconds":3600,"phase_id":"release","stop_matrix_action":"STOP_AFTER_RELEASE_PASS; validate_pair_then_parent_may_spawn_closure"}
+```
+
+- **STOP:** `STOP_AFTER_RELEASE_PASS; validate_pair_then_parent_may_spawn_closure`. Parent may spawn fresh `/closure` (curator) for US-0149/S0169 after validating this pair. This release child did NOT spawn it. US-0149 stays OPEN.
+
+---
+
+# Resume Brief — US-0149 verify-work continuation pair (state-first, DEC-0153)
+
+- `record_key`: `auto-20261011-us0149-verify-pair|story|(none)|verify-work|rp-auto-20261011-us0149-verify-pair-curator-20261011T140623Z`
+- `orchestrator_run_id`: **`auto-20261011-us0149-verify-pair`**
+- `work_item_kind`: **`story`**; `bug_id`: **`(none)`**; `completed_phase`: **`verify-work`**; `writer_role`: **`curator`**
+- `phase_id`: **`verify-work`**; `role`: **`curator`**; `verdict`: **`VERIFY_PASS`** (provenance; verify-work isolation checkpoint); `decision_gate`: **`false`**
+- `sprint_id`: **`S0169`**; `story_id`: **`US-0149`**; verify-work marker consumed: **`qa-US0149-vw-20261011T140238Z-fresh`**
+- `intended_resume_phase`: **`release`**; `next_scheduled_phase`: **`release`**; `next_scheduled_role`: **`release`**
+- `resolution_source`: **`operator:resume-pair-repair`**; `effective_plan`: `[spec, plan, build+verify, ship]`; `skipped_phases`: `[intake, plan-verify]`; `completed_phases`: `[intake, discovery, research, architecture, sprint-plan, execute, qa, verify-work]`; `phase_cursor`: **`ship/verify-pass`**
+- `budget_scope`: `OPEN stories US-0149 then US-0150,US-0151,US-0152,US-0153,US-0154,US-0155; active_story_id=US-0149; merged AUTO_BACKLOG_MAX_STORIES=10 from config.json; baseline scratchpad=3; backlog_drain_active=true; bug_queue_active=false`
+- `stop_reason`: **`verify_work_complete_phase_boundary`**; `stop_matrix_action`: **`STOP_AFTER_VERIFY_PASS_PAIR; validate_pair_then_parent_may_spawn_release`**
+- `fresh_context_marker`: **`curator-US0149-verifypair-20261011T140623Z-fresh`**; `child_isolation_ref`: `docs/engineering/state.md#verify-work-pair-repair-us-0149-s0169-auto-20261011-us0149-verify-pair-rolecurator`
+- `runtime_proof_id`: **`rp-auto-20261011-us0149-verify-pair-curator-20261011T140623Z`**; `proof_hash`: **`ca4503dcb8ebbc13c58cd1b7f744d408bbc801f7357cb5542ad22ac844ecdba5`**; `proof_issued_at`: `2026-10-11T14:06:23Z`; `proof_ttl_seconds`: `3600`; `proof_ttl`: `2026-10-11T15:06:23Z`; `hash_recompute_confirmation=true` (lib `compute_strict_proof_hash` + independent hashlib SHA-256 over verbatim DEC-0038 6-tuple; identical hexdigest)
+- `story_status`: **US-0149 remains OPEN**; AC-1..AC-6 unchecked
+- **Pair validation / ordering:** verify-work-pair checkpoint appended **BOTTOM** first (DEC-0040 / DEC-0153), including this pair record. Prior verify-work checkpoint, qa-pair checkpoint, execute-pair checkpoint, execute isolation checkpoint, plan checkpoint, discovery checkpoint, drain-advance pair, and BUG-0033 refresh checkpoint remain in `docs/engineering/state.md`. This brief prepend follows state-first.
+
+```json
+{"record_key":"auto-20261011-us0149-verify-pair|story|(none)|verify-work|rp-auto-20261011-us0149-verify-pair-curator-20261011T140623Z","orchestrator_run_id":"auto-20261011-us0149-verify-pair","work_item_kind":"story","bug_id":"(none)","completed_phase":"verify-work","writer_role":"curator","role":"curator","fresh_context_marker":"curator-US0149-verifypair-20261011T140623Z-fresh","resolution_source":"operator:resume-pair-repair","effective_plan":["spec","plan","build+verify","ship"],"skipped_phases":["intake","plan-verify"],"completed_phases":["intake","discovery","research","architecture","sprint-plan","execute","qa","verify-work"],"next_scheduled_phase":"release","next_scheduled_role":"release","phase_cursor":"ship/verify-pass","budget_scope":"OPEN stories US-0149 then US-0150,US-0151,US-0152,US-0153,US-0154,US-0155; active_story_id=US-0149; merged AUTO_BACKLOG_MAX_STORIES=10 from config.json; baseline scratchpad=3; backlog_drain_active=true; bug_queue_active=false","stop_reason":"verify_work_complete_phase_boundary","runtime_proof_id":"rp-auto-20261011-us0149-verify-pair-curator-20261011T140623Z","proof_hash":"ca4503dcb8ebbc13c58cd1b7f744d408bbc801f7357cb5542ad22ac844ecdba5","proof_issued_at":"2026-10-11T14:06:23Z","proof_ttl_seconds":3600,"phase_id":"verify-work","stop_matrix_action":"STOP_AFTER_VERIFY_PASS_PAIR; validate_pair_then_parent_may_spawn_release"}
+```
+
+- **STOP:** `STOP_AFTER_VERIFY_PASS_PAIR; validate_pair_then_parent_may_spawn_release`. Parent may spawn fresh `/release` (release) for US-0149/S0169 after validating this pair. This curator child did NOT spawn it.
+
+---
+
+# Resume Brief — US-0149 QA continuation pair (state-first, DEC-0153)
+
+- `record_key`: `auto-20261011-us0149-qa-pair|story|(none)|qa|rp-auto-20261011-us0149-qa-pair-curator-20261011T135129Z`
+- `orchestrator_run_id`: **`auto-20261011-us0149-qa-pair`**
+- `work_item_kind`: **`story`**; `bug_id`: **`(none)`**; `completed_phase`: **`qa`**; `writer_role`: **`curator`**
+- `phase_id`: **`qa`**; `role`: **`curator`**; `verdict`: **`QA_PASS`** (provenance; QA isolation checkpoint); `decision_gate`: **`false`**
+- `sprint_id`: **`S0169`**; `story_id`: **`US-0149`**; qa marker consumed: **`qa-US0149-qa-20261011T134545Z-fresh`**
+- `intended_resume_phase`: **`verify-work`**; `next_scheduled_phase`: **`verify-work`**; `next_scheduled_role`: **`qa`**
+- `resolution_source`: **`operator:resume-pair-repair`**; `effective_plan`: `[spec, plan, build+verify, ship]`; `skipped_phases`: `[intake, plan-verify]`; `completed_phases`: `[intake, discovery, research, architecture, sprint-plan, execute, qa]`; `phase_cursor`: **`build+verify/qa-pass`**
+- `budget_scope`: `OPEN stories US-0149 then US-0150,US-0151,US-0152,US-0153,US-0154,US-0155; active_story_id=US-0149; merged AUTO_BACKLOG_MAX_STORIES=10 from config.json; baseline scratchpad=3; backlog_drain_active=true; bug_queue_active=false`
+- `stop_reason`: **`qa_complete_phase_boundary`**; `stop_matrix_action`: **`STOP_AFTER_QA_PASS_PAIR; validate_pair_then_parent_may_spawn_verify_work`**
+- `fresh_context_marker`: **`curator-US0149-qapair-20261011T135129Z-fresh`**; `child_isolation_ref`: `docs/engineering/state.md#qa-pair-repair-us-0149-s0169-auto-20261011-us0149-qa-pair-rolecurator`
+- `runtime_proof_id`: **`rp-auto-20261011-us0149-qa-pair-curator-20261011T135129Z`**; `proof_hash`: **`c7cd03b241c66aa47ca6b0632f0b52fc5723702831012b08e4714241e50b3f92`**; `proof_issued_at`: `2026-10-11T13:51:29Z`; `proof_ttl_seconds`: `3600`; `proof_ttl`: `2026-10-11T14:51:29Z`; `hash_recompute_confirmation=true` (lib `compute_strict_proof_hash` + independent hashlib SHA-256 over verbatim DEC-0038 6-tuple; identical hexdigest)
+- `story_status`: **US-0149 remains OPEN**; AC-1..AC-6 unchecked
+- **Pair validation / ordering:** qa-pair checkpoint appended **BOTTOM** first (DEC-0040 / DEC-0153), including this pair record. Prior QA checkpoint, execute-pair checkpoint, execute isolation checkpoint, plan checkpoint, discovery checkpoint, drain-advance pair, and BUG-0033 refresh checkpoint remain in `docs/engineering/state.md`. This brief prepend follows state-first.
+
+```json
+{"record_key":"auto-20261011-us0149-qa-pair|story|(none)|qa|rp-auto-20261011-us0149-qa-pair-curator-20261011T135129Z","orchestrator_run_id":"auto-20261011-us0149-qa-pair","work_item_kind":"story","bug_id":"(none)","completed_phase":"qa","writer_role":"curator","role":"curator","fresh_context_marker":"curator-US0149-qapair-20261011T135129Z-fresh","resolution_source":"operator:resume-pair-repair","effective_plan":["spec","plan","build+verify","ship"],"skipped_phases":["intake","plan-verify"],"completed_phases":["intake","discovery","research","architecture","sprint-plan","execute","qa"],"next_scheduled_phase":"verify-work","next_scheduled_role":"qa","phase_cursor":"build+verify/qa-pass","budget_scope":"OPEN stories US-0149 then US-0150,US-0151,US-0152,US-0153,US-0154,US-0155; active_story_id=US-0149; merged AUTO_BACKLOG_MAX_STORIES=10 from config.json; baseline scratchpad=3; backlog_drain_active=true; bug_queue_active=false","stop_reason":"qa_complete_phase_boundary","runtime_proof_id":"rp-auto-20261011-us0149-qa-pair-curator-20261011T135129Z","proof_hash":"c7cd03b241c66aa47ca6b0632f0b52fc5723702831012b08e4714241e50b3f92","proof_issued_at":"2026-10-11T13:51:29Z","proof_ttl_seconds":3600,"phase_id":"qa","stop_matrix_action":"STOP_AFTER_QA_PASS_PAIR; validate_pair_then_parent_may_spawn_verify_work"}
+```
+
+- **STOP:** `STOP_AFTER_QA_PASS_PAIR; validate_pair_then_parent_may_spawn_verify_work`. Parent may spawn fresh `/verify-work` (qa) for US-0149/S0169 after validating this pair. This curator child did NOT spawn it.
+
+---
+
+# Resume Brief — US-0149 execute continuation pair (state-first, DEC-0153)
+
+- `record_key`: `auto-20261011-us0149-execute-pair|story|(none)|execute|rp-auto-20261011-us0149-execute-pair-curator-20261011T133218Z`
+- `orchestrator_run_id`: **`auto-20261011-us0149-execute-pair`**
+- `work_item_kind`: **`story`**; `bug_id`: **`(none)`**; `completed_phase`: **`execute`**; `writer_role`: **`curator`**
+- `phase_id`: **`execute`**; `role`: **`curator`**; `verdict`: **`EXECUTE_PASS`** (provenance; dev isolation checkpoint); `decision_gate`: **`false`**
+- `sprint_id`: **`S0169`**; `story_id`: **`US-0149`**; dev marker consumed: **`dev-US0149-execute-20261011T132649Z-fresh`**
+- `intended_resume_phase`: **`qa`**; `next_scheduled_phase`: **`qa`**; `next_scheduled_role`: **`qa`**
+- `resolution_source`: **`operator:resume-pair-repair`**; `effective_plan`: `[spec, plan, build+verify, ship]`; `skipped_phases`: `[intake, plan-verify]`; `completed_phases`: `[intake, discovery, research, architecture, sprint-plan, execute]`; `phase_cursor`: **`build+verify/execute-pass`**
+- `budget_scope`: `OPEN stories US-0149 then US-0150,US-0151,US-0152,US-0153,US-0154,US-0155; active_story_id=US-0149; merged AUTO_BACKLOG_MAX_STORIES=10 from config.json; baseline scratchpad=3; backlog_drain_active=true; bug_queue_active=false`
+- `stop_reason`: **`execute_complete_phase_boundary`**; `stop_matrix_action`: **`STOP_AFTER_EXECUTE_PASS_PAIR; validate_pair_then_parent_may_spawn_qa`**
+- `fresh_context_marker`: **`curator-US0149-executepair-20261011T133218Z-fresh`**; `child_isolation_ref`: `docs/engineering/state.md#execute-pair-repair-us-0149-s0169-auto-20261011-us0149-execute-pair-rolecurator`
+- `runtime_proof_id`: **`rp-auto-20261011-us0149-execute-pair-curator-20261011T133218Z`**; `proof_hash`: **`f9f199aa4c197edbed4d0b40e59d841cd41046e3136133c6497e7a7e496ec33a`**; `proof_issued_at`: `2026-10-11T13:32:18Z`; `proof_ttl_seconds`: `3600`; `proof_ttl`: `2026-10-11T14:32:18Z`; `hash_recompute_confirmation=true` (lib `compute_strict_proof_hash` + independent hashlib SHA-256 over verbatim DEC-0038 6-tuple; identical hexdigest)
+- `story_status`: **US-0149 remains OPEN**; AC-1..AC-6 unchecked
+- **Pair validation / ordering:** execute-pair checkpoint appended **BOTTOM** first (DEC-0040 / DEC-0153), including this pair record. Prior execute isolation checkpoint, plan checkpoint, discovery checkpoint, drain-advance pair, and BUG-0033 refresh checkpoint remain in `docs/engineering/state.md`. This brief prepend follows state-first.
+
+```json
+{"record_key":"auto-20261011-us0149-execute-pair|story|(none)|execute|rp-auto-20261011-us0149-execute-pair-curator-20261011T133218Z","orchestrator_run_id":"auto-20261011-us0149-execute-pair","work_item_kind":"story","bug_id":"(none)","completed_phase":"execute","writer_role":"curator","role":"curator","fresh_context_marker":"curator-US0149-executepair-20261011T133218Z-fresh","resolution_source":"operator:resume-pair-repair","effective_plan":["spec","plan","build+verify","ship"],"skipped_phases":["intake","plan-verify"],"completed_phases":["intake","discovery","research","architecture","sprint-plan","execute"],"next_scheduled_phase":"qa","next_scheduled_role":"qa","phase_cursor":"build+verify/execute-pass","budget_scope":"OPEN stories US-0149 then US-0150,US-0151,US-0152,US-0153,US-0154,US-0155; active_story_id=US-0149; merged AUTO_BACKLOG_MAX_STORIES=10 from config.json; baseline scratchpad=3; backlog_drain_active=true; bug_queue_active=false","stop_reason":"execute_complete_phase_boundary","runtime_proof_id":"rp-auto-20261011-us0149-execute-pair-curator-20261011T133218Z","proof_hash":"f9f199aa4c197edbed4d0b40e59d841cd41046e3136133c6497e7a7e496ec33a","proof_issued_at":"2026-10-11T13:32:18Z","proof_ttl_seconds":3600,"phase_id":"execute","stop_matrix_action":"STOP_AFTER_EXECUTE_PASS_PAIR; validate_pair_then_parent_may_spawn_qa"}
+```
+
+- **STOP:** `STOP_AFTER_EXECUTE_PASS_PAIR; validate_pair_then_parent_may_spawn_qa`. Parent may spawn fresh `/qa` (qa) for US-0149/S0169 after validating this pair. This curator child did NOT spawn it.
+
+---
+
+# Resume Brief — US-0149 plan continuation pair (state-first, DEC-0153)
+
+- `record_key`: `auto-20261011-us0149-plan|story|(none)|sprint-plan|rp-auto-20261011-us0149-plan-techlead-20261011T125459Z`
+- `orchestrator_run_id`: **`auto-20261011-us0149-plan`**
+- `work_item_kind`: **`story`**; `bug_id`: **`(none)`**; `completed_phase`: **`sprint-plan`**; `writer_role`: **`tech-lead`**
+- `phase_id`: **`sprint-plan`**; `role`: **`tech-lead`**; `verdict`: **`SPRINT_PLAN_PASS`**; `decision_gate`: **`false`**
+- `sprint_id`: **`S0169`**; `research_anchor`: **`R-0160`**; `companion_DEC`: **`none`**; `task_count`: **`7`**
+- `intended_resume_phase`: **`execute`**; `next_scheduled_phase`: **`execute`**; `next_scheduled_role`: **`dev`**
+- `resolution_source`: **`phase_child:plan`**; `effective_plan`: `[spec, plan, build+verify, ship]`; `skipped_phases`: `[intake, plan-verify]`; `completed_phases`: `[intake, discovery, research, architecture, sprint-plan]`; `phase_cursor`: **`plan/3-of-3`**
+- `budget_scope`: `OPEN stories US-0149 then US-0150,US-0151,US-0152,US-0153,US-0154,US-0155; active_story_id=US-0149; AUTO_BACKLOG_MAX_STORIES=7; backlog_drain_active=true; bug_queue_active=false`
+- `stop_reason`: **`sprint_plan_complete_phase_boundary`**; `stop_matrix_action`: **`STOP_AFTER_PLAN_MACRO; validate_pair_then_parent_may_spawn_execute`**
+- `fresh_context_marker`: **`tl-US0149-plan-20261011T125459Z-fresh`**; `child_isolation_ref`: `docs/engineering/state.md`
+- `runtime_proof_id`: **`rp-auto-20261011-us0149-plan-techlead-20261011T125459Z`**; `proof_hash`: **`604facda30531a9cbe890329ce2346408fad2dbb3f4e08ebc4731a84829c08dc`**; `proof_issued_at`: `2026-10-11T12:54:59Z`; `proof_ttl_seconds`: `3600`; `proof_ttl`: `2026-10-11T13:54:59Z`; `hash_recompute_confirmation=true` (lib `compute_strict_proof_hash` + independent hashlib SHA-256 over verbatim DEC-0038 6-tuple; identical hexdigest)
+- `story_status`: **US-0149 remains OPEN**; AC-1..AC-6 unchecked
+- **Pair validation / ordering:** plan checkpoint appended **BOTTOM** first (DEC-0040 / DEC-0153), including this pair record. This brief prepend follows state-first.
+
+```json
+{"record_key":"auto-20261011-us0149-plan|story|(none)|sprint-plan|rp-auto-20261011-us0149-plan-techlead-20261011T125459Z","orchestrator_run_id":"auto-20261011-us0149-plan","work_item_kind":"story","bug_id":"(none)","completed_phase":"sprint-plan","writer_role":"tech-lead","role":"tech-lead","fresh_context_marker":"tl-US0149-plan-20261011T125459Z-fresh","resolution_source":"phase_child:plan","effective_plan":["spec","plan","build+verify","ship"],"skipped_phases":["intake","plan-verify"],"completed_phases":["intake","discovery","research","architecture","sprint-plan"],"next_scheduled_phase":"execute","next_scheduled_role":"dev","phase_cursor":"plan/3-of-3","budget_scope":"OPEN stories US-0149 then US-0150,US-0151,US-0152,US-0153,US-0154,US-0155; active_story_id=US-0149; AUTO_BACKLOG_MAX_STORIES=7; backlog_drain_active=true; bug_queue_active=false","stop_reason":"sprint_plan_complete_phase_boundary","runtime_proof_id":"rp-auto-20261011-us0149-plan-techlead-20261011T125459Z","proof_hash":"604facda30531a9cbe890329ce2346408fad2dbb3f4e08ebc4731a84829c08dc","proof_issued_at":"2026-10-11T12:54:59Z","proof_ttl_seconds":3600,"phase_id":"sprint-plan","stop_matrix_action":"STOP_AFTER_PLAN_MACRO; validate_pair_then_parent_may_spawn_execute"}
+```
+
+- **STOP:** `STOP_AFTER_PLAN_MACRO; validate_pair_then_parent_may_spawn_execute`. Parent may spawn fresh `/execute` (dev) for US-0149/S0169 after validating this pair. This tech-lead child did NOT spawn it.
+
+---
+
+# Resume Brief — US-0149 discovery continuation pair (state-first, DEC-0153)
+
+- `record_key`: `auto-20261011-us0149-discovery|story|(none)|discovery|rp-auto-20261011-us0149-discovery-po-20261011T124740Z`
+- `orchestrator_run_id`: **`auto-20261011-us0149-discovery`**
+- `work_item_kind`: **`story`**; `bug_id`: **`(none)`**; `completed_phase`: **`discovery`**; `writer_role`: **`po`**
+- `phase_id`: **`discovery`**; `role`: **`po`**; `verdict`: **`DISCOVERY_PASS`**; `decision_gate`: **`false`**
+- `intended_resume_phase`: **`research`**; `next_scheduled_phase`: **`research`**; `next_scheduled_role`: **`tech-lead`**
+- `resolution_source`: **`phase_child:discovery`**; `effective_plan`: `[spec, plan, build+verify, ship]`; `skipped_phases`: `[intake]`; `completed_phases`: `[intake,discovery]`; `phase_cursor`: **`spec/discovery-pass`**
+- `budget_scope`: `OPEN stories US-0149 then US-0150,US-0151,US-0152,US-0153,US-0154,US-0155; active_story_id=US-0149; AUTO_BACKLOG_MAX_STORIES=7; backlog_drain_active=true; bug_queue_active=false`
+- `stop_reason`: **`discovery_complete_phase_boundary`**; `stop_matrix_action`: **`STOP_AFTER_DISCOVERY_PASS; validate_pair_then_parent_may_spawn_research`**
+- `fresh_context_marker`: **`po-US0149-discovery-20261011T124740Z-fresh`**; `child_isolation_ref`: `docs/engineering/state.md#discovery-checkpoint-us-0149-auto-20261011-us0149-discovery-rolepo`
+- `runtime_proof_id`: **`rp-auto-20261011-us0149-discovery-po-20261011T124740Z`**; `proof_hash`: **`217008e3713b01f93e43747f9559ec3735ffccd44d07e1ab40c1bacdfdc12bc6`**; `proof_issued_at`: `2026-10-11T12:47:40Z`; `proof_ttl_seconds`: `3600`; `proof_ttl`: `2026-10-11T13:47:40Z`; `hash_recompute_confirmation=true` (lib `compute_strict_proof_hash` + independent hashlib SHA-256 over verbatim DEC-0038 6-tuple; identical hexdigest)
+- `story_status`: **US-0149 remains OPEN**; AC-1..AC-6 unchecked
+- **Pair validation / ordering:** discovery checkpoint appended **BOTTOM** first (DEC-0040 / DEC-0153), including this pair record. Triad rollover archived oldest prefix only (`units=1`); this checkpoint, the drain-advance pair, and the BUG-0033 REFRESH_CONTEXT_PASS checkpoint stayed in `docs/engineering/state.md`. This brief prepend follows state-first.
+
+```json
+{"record_key":"auto-20261011-us0149-discovery|story|(none)|discovery|rp-auto-20261011-us0149-discovery-po-20261011T124740Z","orchestrator_run_id":"auto-20261011-us0149-discovery","work_item_kind":"story","bug_id":"(none)","completed_phase":"discovery","writer_role":"po","role":"po","fresh_context_marker":"po-US0149-discovery-20261011T124740Z-fresh","resolution_source":"phase_child:discovery","effective_plan":["spec","plan","build+verify","ship"],"skipped_phases":["intake"],"completed_phases":["intake","discovery"],"next_scheduled_phase":"research","next_scheduled_role":"tech-lead","phase_cursor":"spec/discovery-pass","budget_scope":"OPEN stories US-0149 then US-0150,US-0151,US-0152,US-0153,US-0154,US-0155; active_story_id=US-0149; AUTO_BACKLOG_MAX_STORIES=7; backlog_drain_active=true; bug_queue_active=false","stop_reason":"discovery_complete_phase_boundary","runtime_proof_id":"rp-auto-20261011-us0149-discovery-po-20261011T124740Z","proof_hash":"217008e3713b01f93e43747f9559ec3735ffccd44d07e1ab40c1bacdfdc12bc6","proof_issued_at":"2026-10-11T12:47:40Z","proof_ttl_seconds":3600,"phase_id":"discovery","stop_matrix_action":"STOP_AFTER_DISCOVERY_PASS; validate_pair_then_parent_may_spawn_research"}
+```
+
+- **STOP:** `STOP_AFTER_DISCOVERY_PASS; validate_pair_then_parent_may_spawn_research`. Parent may spawn fresh `/research` (tech-lead) for US-0149 after validating this pair. This PO child did NOT spawn it.
+
+---
+
+# Resume Brief — US-0149 drain-advance continuation pair (state-first, DEC-0153)
+
+```json
+{"record_key":"auto-20261011-drain-us0149|story|(none)|refresh-context|rp-auto-20261011-drain-us0149-curator-20261011T124328Z","orchestrator_run_id":"auto-20261011-drain-us0149","work_item_kind":"story","bug_id":"(none)","completed_phase":"refresh-context","writer_role":"curator","role":"curator","fresh_context_marker":"curator-drain-US0149-20261011T124328Z-fresh","resolution_source":"operator:story-drain-all-open","effective_plan":["spec","plan","build+verify","ship"],"skipped_phases":["intake"],"completed_phases":["intake"],"next_scheduled_phase":"discovery","next_scheduled_role":"po","phase_cursor":"spec/discovery","budget_scope":"OPEN stories US-0149 then US-0150,US-0151,US-0152,US-0153,US-0154,US-0155; active_story_id=US-0149; AUTO_BACKLOG_MAX_STORIES=7; backlog_drain_active=true; bug_queue_active=false","stop_reason":"refresh_complete_drain_authorized","runtime_proof_id":"rp-auto-20261011-drain-us0149-curator-20261011T124328Z","proof_hash":"4c50ca4bdb6a47849e5598dd1a181c9d91d620f158572750a3b126d1c6fcb04d","proof_issued_at":"2026-10-11T12:43:28Z","proof_ttl_seconds":3600,"phase_id":"refresh-context","stop_matrix_action":"DRAIN_ADVANCE; validate_pair_then_parent_may_spawn_discovery"}
+```
+
+---
+
 # Resume Brief — BUG-0033 REFRESH_CONTEXT_PASS continuation pair (state-first, DEC-0153)
 
 - `record_key`: `auto-20261010-bug0033-refresh|bug|BUG-0033|refresh-context|rp-auto-20261010-bug0033-refresh-curator-20261010T215656Z-BUG-0033`

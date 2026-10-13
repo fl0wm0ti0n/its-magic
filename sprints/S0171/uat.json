@@ -1,0 +1,185 @@
+{
+  "sprint": "S0171",
+  "sprint_id": "S0171",
+  "story_id": "US-0151",
+  "bug_id": null,
+  "status": "PASS",
+  "verdict": "PASS",
+  "uat_lifecycle": "populated",
+  "placeholder_only": false,
+  "delivery_mode": "ultra_lean",
+  "macro_phase": "build+verify",
+  "phase_id": "qa",
+  "role": "qa",
+  "timestamp": "2026-10-11T17:27:29Z",
+  "fresh_context_marker": "qa-US0151-qa-20261011T172729Z-fresh",
+  "cross_model_review": 0,
+  "story_status": "OPEN",
+  "acceptance_boxes_checked": false,
+  "total": 7,
+  "passed": 7,
+  "failed": 0,
+  "steps": [
+    {
+      "id": "UAT-1",
+      "ac": "AC-1",
+      "description": "CLI, TUI, and daemon use the resolved transport and do not open an isolated memory store",
+      "result": "pass",
+      "marker": "test_us0151_cli_tui_daemon_share_resolved_transport",
+      "probe_kind": "contract_tests_primary"
+    },
+    {
+      "id": "UAT-2",
+      "ac": "AC-2",
+      "description": "Lifecycle commands persist events and return success, gate block, or execution failure",
+      "result": "pass",
+      "marker": "test_us0151_lifecycle_persists_success_gate_or_failure",
+      "probe_kind": "contract_tests_primary"
+    },
+    {
+      "id": "UAT-3",
+      "ac": "AC-3",
+      "description": "Auto, quick, resume, and crash recovery use the existing workflow and host store",
+      "result": "pass",
+      "marker": "test_us0151_auto_resume_crash_uses_workflow_and_store",
+      "probe_kind": "contract_tests_primary"
+    },
+    {
+      "id": "UAT-4",
+      "ac": "AC-4",
+      "description": "Ask and index call admitted intel or fail closed; app and browser fail closed",
+      "result": "pass",
+      "marker": "test_us0151_ask_index_app_browser_admit_or_fail_closed",
+      "probe_kind": "contract_tests_primary"
+    },
+    {
+      "id": "UAT-5",
+      "ac": "AC-5",
+      "description": "Attach and TUI timeline show daemon replay",
+      "result": "pass",
+      "marker": "test_us0151_attach_and_tui_replay_daemon_events",
+      "probe_kind": "contract_tests_primary"
+    },
+    {
+      "id": "UAT-6",
+      "ac": "AC-6",
+      "description": "Entry-function tests cover execute, gate failure, restart/resume, replay, and attach",
+      "result": "pass",
+      "marker": "test_us0151_e2e_execute_gate_restart_replay_attach",
+      "probe_kind": "contract_tests_primary"
+    },
+    {
+      "id": "convergence_smoke",
+      "description": "Waived live probes plus the green contract file",
+      "result": "pass",
+      "marker": "test_us0151_e2e_execute_gate_restart_replay_attach",
+      "probe_kind": "contract_tests_primary"
+    }
+  ],
+  "contract_test_markers": [
+    "test_us0151_cli_tui_daemon_share_resolved_transport",
+    "test_us0151_lifecycle_persists_success_gate_or_failure",
+    "test_us0151_auto_resume_crash_uses_workflow_and_store",
+    "test_us0151_ask_index_app_browser_admit_or_fail_closed",
+    "test_us0151_attach_and_tui_replay_daemon_events",
+    "test_us0151_e2e_execute_gate_restart_replay_attach"
+  ],
+  "contract_test_passed": 6,
+  "contract_test_failed": 0,
+  "contract_test_command": "node --experimental-strip-types --test --test-name-pattern test_us0151_ tests/contract/us0151.contract.test.ts",
+  "contract_test_output": "6 pass / 0 fail; duration_ms 37058.5339",
+  "harness": {
+    "command": "powershell -NoProfile -ExecutionPolicy Bypass -File tests/run-tests.ps1",
+    "report": "tests/report.md",
+    "timestamp": "2026-10-11T17:26:25Z",
+    "pass": 880,
+    "fail": 0,
+    "exit_code": 0,
+    "fail_zero_claimed": true
+  },
+  "blocking_findings": [],
+  "probe_results": [
+    {
+      "step_id": "UAT-1",
+      "probe_class": "contract_tests_primary",
+      "passed": true,
+      "reason_code": "UAT_PROBE_PASS",
+      "evidence_ref": "test_us0151_cli_tui_daemon_share_resolved_transport"
+    },
+    {
+      "step_id": "UAT-2",
+      "probe_class": "contract_tests_primary",
+      "passed": true,
+      "reason_code": "UAT_PROBE_PASS",
+      "evidence_ref": "test_us0151_lifecycle_persists_success_gate_or_failure"
+    },
+    {
+      "step_id": "UAT-3",
+      "probe_class": "contract_tests_primary",
+      "passed": true,
+      "reason_code": "UAT_PROBE_PASS",
+      "evidence_ref": "test_us0151_auto_resume_crash_uses_workflow_and_store"
+    },
+    {
+      "step_id": "UAT-4",
+      "probe_class": "contract_tests_primary",
+      "passed": true,
+      "reason_code": "UAT_PROBE_PASS",
+      "evidence_ref": "test_us0151_ask_index_app_browser_admit_or_fail_closed"
+    },
+    {
+      "step_id": "UAT-5",
+      "probe_class": "contract_tests_primary",
+      "passed": true,
+      "reason_code": "UAT_PROBE_PASS",
+      "evidence_ref": "test_us0151_attach_and_tui_replay_daemon_events"
+    },
+    {
+      "step_id": "UAT-6",
+      "probe_class": "contract_tests_primary",
+      "passed": true,
+      "reason_code": "UAT_PROBE_PASS",
+      "evidence_ref": "test_us0151_e2e_execute_gate_restart_replay_attach"
+    },
+    {
+      "step_id": "convergence_smoke",
+      "probe_class": "contract_tests_primary",
+      "passed": true,
+      "reason_code": "UAT_PROBE_PASS",
+      "evidence_ref": "contract_test_failed=0; 6 waived_probes UAT_PROBE_FORBIDDEN; six markers pass; harness Fail 0"
+    }
+  ],
+  "probe_class_note": "US-0151 UAT is contract behavior on the deterministic local model seam. A live paid-model or network probe is UAT_PROBE_FORBIDDEN. No .env read. US-0151 stays OPEN.",
+  "waived_probes": [
+    {
+      "probe_class": "browser_smoke",
+      "reason": "No browser driver in US-0151. Browser returns BROWSER_UNAVAILABLE. Production browser UAT is US-0152.",
+      "reason_code": "UAT_PROBE_FORBIDDEN"
+    },
+    {
+      "probe_class": "api_health",
+      "reason": "No new HTTP API. App returns APP_HEALTH_UNAVAILABLE. Application health is US-0152.",
+      "reason_code": "UAT_PROBE_FORBIDDEN"
+    },
+    {
+      "probe_class": "process_health",
+      "reason": "No app-server process. App runtime is US-0152.",
+      "reason_code": "UAT_PROBE_FORBIDDEN"
+    },
+    {
+      "probe_class": "cli_smoke",
+      "reason": "A live paid-model or network probe is forbidden. The suite uses a deterministic local model seam.",
+      "reason_code": "UAT_PROBE_FORBIDDEN"
+    },
+    {
+      "probe_class": "build",
+      "reason": "No publish or package build. The standalone contract file is the build evidence.",
+      "reason_code": "UAT_PROBE_FORBIDDEN"
+    },
+    {
+      "probe_class": "manual_operator",
+      "reason": "No manual operator session and no paid-model or network probe.",
+      "reason_code": "UAT_PROBE_FORBIDDEN"
+    }
+  ]
+}

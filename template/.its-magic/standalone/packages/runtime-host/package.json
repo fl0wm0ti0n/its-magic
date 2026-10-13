@@ -8,6 +8,8 @@
 		".": "./src/index.ts"
 	},
 	"dependencies": {
+		"@its-magic/app-runtime": "*",
+		"@its-magic/browser-uat": "*",
 		"@its-magic/code-intelligence": "*",
 		"@its-magic/config": "*",
 		"@its-magic/context-engine": "*",

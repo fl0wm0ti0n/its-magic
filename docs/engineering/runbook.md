@@ -24,6 +24,14 @@ TEST_TIMEOUT_SECONDS: 120
   GitHub Actions. When `false` (default), CI reports failures but does not
   attempt auto-fix commits.
 
+## Standalone workspace CI pin (US-0154)
+
+Job `standalone-test` runs on `windows-latest` and `ubuntu-latest`. Each leg pins Node `22.19.0`, runs `npm ci` in `standalone/`, then `npm run typecheck && npm run lint && npm test`. Root job `checks` stays on kit `TEST_COMMAND`. `LINT_COMMAND` and `TYPECHECK_COMMAND` stay blank. Do not fold standalone npm scripts into `TEST_COMMAND`. Do not add this job to `template/.github/workflows/ci.yml` (BUG-0009).
+
+## Interactive operator TUI (US-0155)
+
+`runInteractiveTui` is the interactive client of the admitted daemon/operator transport. Pause submits argv `["pause"]` on that executor. Set `ITS_MAGIC_TUI_NONINTERACTIVE=1`, or run without a TTY, to paint one layout and return without waiting for a key. A pending approval then returns `OPERATOR_INPUT_REQUIRED`. Protocol version stays 1.
+
 ## Intentional empty commands (US-0015)
 
 For this template/installer repository, the following command keys may be
@@ -4914,6 +4922,20 @@ Deliver the standalone operator product (`itsm`, US-0146 CLI/TUI) into consumer 
 - **`its-magic --mode uninstall-standalone`**: removes standalone tree, shims, staging, runtime-metadata; preserves hosts + `its_magic/` framework copy.
 - Version mismatch advisory: **`KIT_VERSION_COEXISTENCE`**.
 
+### Global itsm PATH registration (US-0149)
+
+Opt-in only. A normal install does not change PATH and does not prompt.
+
+- Flag: `--register-itsm-path` with an optional directory, or the value `prompt`. `installer.ps1` and `installer.sh` forward that flag to `installer.py` and do not edit PATH themselves.
+- Env: `ITS_MAGIC_REGISTER_ITSM_PATH=1` opts in with no prompt. `ITS_MAGIC_ITSM_PATH_DIR` overrides the directory.
+- `prompt` asks only when stdin is a TTY. A non-TTY `prompt` fail-closes with `ITSM_PATH_REGISTER_FAILED` and does not hang.
+- Defaults: `%LOCALAPPDATA%\its-magic\bin` on Windows and `$HOME/.local/bin` on Linux and macOS. These are installer link directories, not the npm `--prefix` root.
+- Windows copies `itsm` and `itsm.cmd` into the chosen directory and appends that directory to `HKCU\Environment` `Path` only when it is absent. Existing entries stay in order. `setx` is not used.
+- Linux and macOS symlink `itsm` to the materialized `.its-magic/bin/itsm` (copy fallback, mode `0755`) and write a marked block in `$HOME/.config/its-magic/itsm-path.sh`, sourced from `~/.profile` and `~/.bashrc` when those files exist.
+- Remove with `--unregister-itsm-path`. That always reverses the ledger: it deletes only the recorded links and removes the PATH directory only when `path_entry_added` is true. `its-magic --mode uninstall-standalone` does the same only when `link_target` is inside that repo.
+- `ITSM_PATH_SHIM_MISSING` means `.its-magic/bin/itsm` is absent (and `itsm.cmd` on Windows). Nothing is written. That residual is **BUG-0026**. Run `its-magic --mode upgrade` after upgrading the package.
+- Success tokens: `ITSM_PATH_REGISTER_OK`, `ITSM_PATH_UNREGISTER_OK`. A failed directory create or PATH write rolls back the link and leaves no new PATH entry (`ITSM_PATH_REGISTER_FAILED`).
+
 ### Troubleshooting
 
 | Code | Meaning |
@@ -4947,3 +4969,8 @@ Verify in a configured project with an authenticated provider: start `opencode`,
 
 For the automated admission proof, set `ITS_MAGIC_OPENCODE_SESSION_SMOKE=1` and `ITS_MAGIC_OPENCODE_SMOKE_MODEL` to a configured provider/model, then run `python -m pytest tests/bug0030_opencode_auto_command_test.py -q`. It creates a local session, calls `session.command(..., "auto")`, and checks that the selected agent and canonical prompt are stored. It does not claim model completion.
 
+### Parallel arbitration and configured release targets (US-0153)
+
+`SOVEREIGN_PARALLEL_DEV=1` keeps the worktree result and writes `handoffs/parallel_dev_pick.json` (`winner_selected`, or `reject_all` with `PARALLEL_DEV_SELECTION_NO_PASS`). A skipped hook or a hook `reason_code` fails closed. `SOVEREIGN_PARALLEL_DEV=0` leaves the no-op path.
+
+A release target needs `kind`, `target_id`, and `endpoint`. A missing target returns `RELEASE_TARGET_UNCONFIGURED` and `deploy_targets_pass: false`. An `artifact_sha` of `fake-sha` cannot set `deploy_targets_pass`. Live remote deploy stays `UAT_PROBE_FORBIDDEN`. Staging and production commands remain the echo lines under Commands.

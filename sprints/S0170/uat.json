@@ -1,0 +1,185 @@
+{
+  "sprint": "S0170",
+  "sprint_id": "S0170",
+  "story_id": "US-0150",
+  "bug_id": null,
+  "status": "PASS",
+  "verdict": "PASS",
+  "uat_lifecycle": "populated",
+  "placeholder_only": false,
+  "delivery_mode": "ultra_lean",
+  "macro_phase": "build+verify",
+  "phase_id": "qa",
+  "role": "qa",
+  "timestamp": "2026-10-11T15:27:10Z",
+  "fresh_context_marker": "qa-US0150-qa-20261011T152710Z-fresh",
+  "cross_model_review": 0,
+  "story_status": "OPEN",
+  "acceptance_boxes_checked": false,
+  "total": 7,
+  "passed": 7,
+  "failed": 0,
+  "steps": [
+    {
+      "id": "UAT-1",
+      "ac": "AC-1",
+      "description": "One host resolves config and exposes a hashed codeContext pack",
+      "result": "pass",
+      "marker": "test_us0150_runtime_host_resolves_one_config_and_builds_graph",
+      "probe_kind": "contract_tests_primary"
+    },
+    {
+      "id": "UAT-2",
+      "ac": "AC-2",
+      "description": "CLI and daemon entrypoints use the host; host-present reconcile uses host config",
+      "result": "pass",
+      "marker": "test_us0150_cli_and_daemon_use_runtime_host_not_throwing_kernel",
+      "probe_kind": "contract_tests_primary"
+    },
+    {
+      "id": "UAT-3",
+      "ac": "AC-3",
+      "description": "Production session is fresh, attested, custom-tool only, and deny-by-default",
+      "result": "pass",
+      "marker": "test_us0150_host_creates_fresh_attested_custom_tool_session",
+      "probe_kind": "contract_tests_primary"
+    },
+    {
+      "id": "UAT-4",
+      "ac": "AC-4",
+      "description": "An admitted tool executes or denies, with no ok: success text",
+      "result": "pass",
+      "marker": "test_us0150_admitted_tool_executes_or_denies_without_placeholder_success",
+      "probe_kind": "contract_tests_primary"
+    },
+    {
+      "id": "UAT-5",
+      "ac": "AC-5",
+      "description": "Bridge failure blocks work; SQLite stays operational; dispose keeps repository files",
+      "result": "pass",
+      "marker": "test_us0150_bridge_validator_and_operational_store_preserve_artifact_authority",
+      "probe_kind": "contract_tests_primary"
+    },
+    {
+      "id": "UAT-6",
+      "ac": "AC-6",
+      "description": "Six test_us0150_* markers pass, including a no-factory production session",
+      "result": "pass",
+      "marker": "test_us0150_production_composition_unavailable_services_and_disposal",
+      "probe_kind": "contract_tests_primary"
+    },
+    {
+      "id": "convergence_smoke",
+      "description": "Waived live probes plus the green contract file",
+      "result": "pass",
+      "marker": "test_us0150_production_composition_unavailable_services_and_disposal",
+      "probe_kind": "contract_tests_primary"
+    }
+  ],
+  "contract_test_markers": [
+    "test_us0150_runtime_host_resolves_one_config_and_builds_graph",
+    "test_us0150_cli_and_daemon_use_runtime_host_not_throwing_kernel",
+    "test_us0150_host_creates_fresh_attested_custom_tool_session",
+    "test_us0150_admitted_tool_executes_or_denies_without_placeholder_success",
+    "test_us0150_bridge_validator_and_operational_store_preserve_artifact_authority",
+    "test_us0150_production_composition_unavailable_services_and_disposal"
+  ],
+  "contract_test_passed": 6,
+  "contract_test_failed": 0,
+  "contract_test_command": "node --experimental-strip-types --test --test-name-pattern test_us0150_ tests/contract/us0150.contract.test.ts",
+  "contract_test_output": "6 pass / 0 fail; duration_ms 1933.826",
+  "harness": {
+    "command": "powershell -NoProfile -ExecutionPolicy Bypass -File tests/run-tests.ps1",
+    "report": "tests/report.md",
+    "timestamp": "2026-10-11T15:26:11Z",
+    "pass": 880,
+    "fail": 0,
+    "exit_code": 0,
+    "fail_zero_claimed": true
+  },
+  "blocking_findings": [],
+  "probe_results": [
+    {
+      "step_id": "UAT-1",
+      "probe_class": "contract_tests_primary",
+      "passed": true,
+      "reason_code": "UAT_PROBE_PASS",
+      "evidence_ref": "test_us0150_runtime_host_resolves_one_config_and_builds_graph"
+    },
+    {
+      "step_id": "UAT-2",
+      "probe_class": "contract_tests_primary",
+      "passed": true,
+      "reason_code": "UAT_PROBE_PASS",
+      "evidence_ref": "test_us0150_cli_and_daemon_use_runtime_host_not_throwing_kernel"
+    },
+    {
+      "step_id": "UAT-3",
+      "probe_class": "contract_tests_primary",
+      "passed": true,
+      "reason_code": "UAT_PROBE_PASS",
+      "evidence_ref": "test_us0150_host_creates_fresh_attested_custom_tool_session"
+    },
+    {
+      "step_id": "UAT-4",
+      "probe_class": "contract_tests_primary",
+      "passed": true,
+      "reason_code": "UAT_PROBE_PASS",
+      "evidence_ref": "test_us0150_admitted_tool_executes_or_denies_without_placeholder_success"
+    },
+    {
+      "step_id": "UAT-5",
+      "probe_class": "contract_tests_primary",
+      "passed": true,
+      "reason_code": "UAT_PROBE_PASS",
+      "evidence_ref": "test_us0150_bridge_validator_and_operational_store_preserve_artifact_authority"
+    },
+    {
+      "step_id": "UAT-6",
+      "probe_class": "contract_tests_primary",
+      "passed": true,
+      "reason_code": "UAT_PROBE_PASS",
+      "evidence_ref": "test_us0150_production_composition_unavailable_services_and_disposal"
+    },
+    {
+      "step_id": "convergence_smoke",
+      "probe_class": "contract_tests_primary",
+      "passed": true,
+      "reason_code": "UAT_PROBE_PASS",
+      "evidence_ref": "contract_test_failed=0; 6 waived_probes UAT_PROBE_FORBIDDEN; six markers pass; harness Fail 0"
+    }
+  ],
+  "probe_class_note": "US-0150 UAT is contract behavior on the deterministic local model seam. A live daemon or paid-model probe is UAT_PROBE_FORBIDDEN. No .env read. US-0150 stays OPEN.",
+  "waived_probes": [
+    {
+      "probe_class": "browser_smoke",
+      "reason": "No web UI in US-0150. Browser UAT is US-0152.",
+      "reason_code": "UAT_PROBE_FORBIDDEN"
+    },
+    {
+      "probe_class": "api_health",
+      "reason": "No new HTTP API. Daemon routes beyond composition stay with US-0151.",
+      "reason_code": "UAT_PROBE_FORBIDDEN"
+    },
+    {
+      "probe_class": "process_health",
+      "reason": "No app-server process. App runtime is US-0152.",
+      "reason_code": "UAT_PROBE_FORBIDDEN"
+    },
+    {
+      "probe_class": "cli_smoke",
+      "reason": "A live daemon or paid-model probe is forbidden. The suite uses a deterministic local model seam.",
+      "reason_code": "UAT_PROBE_FORBIDDEN"
+    },
+    {
+      "probe_class": "build",
+      "reason": "No publish or package build. The standalone contract file is the build evidence.",
+      "reason_code": "UAT_PROBE_FORBIDDEN"
+    },
+    {
+      "probe_class": "manual_operator",
+      "reason": "No manual operator session and no paid-model probe.",
+      "reason_code": "UAT_PROBE_FORBIDDEN"
+    }
+  ]
+}

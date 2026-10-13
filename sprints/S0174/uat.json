@@ -1,0 +1,185 @@
+{
+  "sprint": "S0174",
+  "sprint_id": "S0174",
+  "story_id": "US-0154",
+  "bug_id": null,
+  "status": "PASS",
+  "verdict": "PASS",
+  "uat_lifecycle": "populated",
+  "placeholder_only": false,
+  "delivery_mode": "ultra_lean",
+  "macro_phase": "build+verify",
+  "phase_id": "qa",
+  "role": "qa",
+  "timestamp": "2026-10-12T18:14:02Z",
+  "fresh_context_marker": "qa-US0154-qa-20261012T181402Z-fresh",
+  "cross_model_review": 0,
+  "story_status": "OPEN",
+  "acceptance_boxes_checked": false,
+  "total": 7,
+  "passed": 7,
+  "failed": 0,
+  "steps": [
+    {
+      "id": "UAT-1",
+      "ac": "AC-1",
+      "description": "Standalone CI typecheck, lint, and tests sit beside the kit, with Node 22.19.0 and npm ci",
+      "result": "pass",
+      "evidence_ref": ".github/workflows/ci.yml standalone-test; docs/engineering/runbook.md Standalone workspace CI pin",
+      "probe_kind": "source_inspection"
+    },
+    {
+      "id": "UAT-2",
+      "ac": "AC-2",
+      "description": "A spawned public itsm bin reaches production composition",
+      "result": "pass",
+      "marker": "test_us0154_public_itsm_reaches_production_composition",
+      "probe_kind": "contract_tests_primary"
+    },
+    {
+      "id": "UAT-3",
+      "ac": "AC-3",
+      "description": "Operator-path E2E covers session admission, policy, validator failure, restart/resume, daemon replay, and CLI/TUI parity",
+      "result": "pass",
+      "marker": "test_us0154_operator_e2e_session_policy_validator_resume_replay_parity",
+      "probe_kind": "contract_tests_primary"
+    },
+    {
+      "id": "UAT-4",
+      "ac": "AC-4",
+      "description": "Fake drivers, placeholder screenshots, synthetic target success, and no-op responses do not pass production acceptance",
+      "result": "pass",
+      "marker": "test_us0154_production_rejects_fake_browser_and_synthetic_release",
+      "probe_kind": "contract_tests_primary"
+    },
+    {
+      "id": "UAT-5",
+      "ac": "AC-5",
+      "description": "Reports separate unit seams from operator-path evidence and fail closed",
+      "result": "pass",
+      "marker": "test_us0154_report_separates_seams_and_fails_closed",
+      "probe_kind": "contract_tests_primary"
+    },
+    {
+      "id": "UAT-6",
+      "ac": "AC-6",
+      "description": "Acceptance docs record library slices versus the production follow-up, and phase-9 deferrals are not missing v1 work",
+      "result": "pass",
+      "marker": "test_us0154_acceptance_records_library_slices_and_production_followup",
+      "probe_kind": "contract_tests_primary"
+    },
+    {
+      "id": "convergence_smoke",
+      "description": "Convergence smoke surrogate — waived-probe slice with green contract-test harness",
+      "result": "pass",
+      "marker": "test_us0128_convergence_smoke_surrogate",
+      "evidence_ref": "tests/report.md Fail:0 + uat.json waived_probes[] (6 classes, UAT_PROBE_FORBIDDEN)",
+      "probe_kind": "contract_tests_primary"
+    }
+  ],
+  "contract_test_markers": [
+    "test_us0154_public_itsm_reaches_production_composition",
+    "test_us0154_operator_e2e_session_policy_validator_resume_replay_parity",
+    "test_us0154_production_rejects_fake_browser_and_synthetic_release",
+    "test_us0154_report_separates_seams_and_fails_closed",
+    "test_us0154_acceptance_records_library_slices_and_production_followup"
+  ],
+  "contract_test_passed": 5,
+  "contract_test_failed": 0,
+  "contract_test_command": "node --experimental-strip-types --test --test-name-pattern test_us0154_ tests/contract/us0154.contract.test.ts",
+  "contract_test_output": "5 pass / 0 fail; duration_ms 12338.3508",
+  "harness": {
+    "command": "powershell -NoProfile -ExecutionPolicy Bypass -File tests/run-tests.ps1",
+    "report": "tests/report.md",
+    "timestamp": "2026-10-12T18:13:21Z",
+    "pass": 880,
+    "fail": 0,
+    "exit_code": 0,
+    "fail_zero_claimed": true
+  },
+  "blocking_findings": [],
+  "probe_results": [
+    {
+      "step_id": "UAT-1",
+      "probe_class": "source_inspection",
+      "passed": true,
+      "reason_code": "UAT_PROBE_PASS",
+      "evidence_ref": ".github/workflows/ci.yml standalone-test"
+    },
+    {
+      "step_id": "UAT-2",
+      "probe_class": "contract_tests_primary",
+      "passed": true,
+      "reason_code": "UAT_PROBE_PASS",
+      "evidence_ref": "test_us0154_public_itsm_reaches_production_composition"
+    },
+    {
+      "step_id": "UAT-3",
+      "probe_class": "contract_tests_primary",
+      "passed": true,
+      "reason_code": "UAT_PROBE_PASS",
+      "evidence_ref": "test_us0154_operator_e2e_session_policy_validator_resume_replay_parity"
+    },
+    {
+      "step_id": "UAT-4",
+      "probe_class": "contract_tests_primary",
+      "passed": true,
+      "reason_code": "UAT_PROBE_PASS",
+      "evidence_ref": "test_us0154_production_rejects_fake_browser_and_synthetic_release"
+    },
+    {
+      "step_id": "UAT-5",
+      "probe_class": "contract_tests_primary",
+      "passed": true,
+      "reason_code": "UAT_PROBE_PASS",
+      "evidence_ref": "test_us0154_report_separates_seams_and_fails_closed"
+    },
+    {
+      "step_id": "UAT-6",
+      "probe_class": "contract_tests_primary",
+      "passed": true,
+      "reason_code": "UAT_PROBE_PASS",
+      "evidence_ref": "test_us0154_acceptance_records_library_slices_and_production_followup"
+    },
+    {
+      "step_id": "convergence_smoke",
+      "probe_class": "contract_tests_primary",
+      "passed": true,
+      "reason_code": "UAT_PROBE_PASS",
+      "evidence_ref": "tests/report.md 2026-10-12T18:13:21Z Pass 880 Fail 0"
+    }
+  ],
+  "probe_class_note": "A live external deploy or paid model call is UAT_PROBE_FORBIDDEN. Fixture tests cover the operator path. No paid credentials and no .env read. US-0154 stays OPEN.",
+  "waived_probes": [
+    {
+      "probe_class": "browser_smoke",
+      "reason": "No live external browser. Fake browser evidence is rejected by the contract fixture.",
+      "reason_code": "UAT_PROBE_FORBIDDEN"
+    },
+    {
+      "probe_class": "api_health",
+      "reason": "No live external API. A live external deploy is forbidden.",
+      "reason_code": "UAT_PROBE_FORBIDDEN"
+    },
+    {
+      "probe_class": "process_health",
+      "reason": "No live external process. Local spawned bins are the contract fixture.",
+      "reason_code": "UAT_PROBE_FORBIDDEN"
+    },
+    {
+      "probe_class": "cli_smoke",
+      "reason": "No live external CLI deploy. The public itsm bin is exercised by the local contract fixture.",
+      "reason_code": "UAT_PROBE_FORBIDDEN"
+    },
+    {
+      "probe_class": "build",
+      "reason": "No product build or publish. A live external deploy is forbidden.",
+      "reason_code": "UAT_PROBE_FORBIDDEN"
+    },
+    {
+      "probe_class": "manual_operator",
+      "reason": "A paid model call is UAT_PROBE_FORBIDDEN.",
+      "reason_code": "UAT_PROBE_FORBIDDEN"
+    }
+  ]
+}

@@ -79,6 +79,7 @@ setup stays in the root `README.md` (user channel).
 - **BUG-0032** — `AUTONOMY_FLAGS_DRIFT` drift-detect + live-wins sync (`--scope=autonomy-flags`); traceability:
   runbook `## AUTONOMY_FLAGS_DRIFT`, architecture `# BUG-0032`.
 - **BUG-0033** — OpenCode thin command surfaces (closure, ask, auto, refresh-context, execute) carry Stop conditions and Fail-safe reason codes, byte-identical to template, with a bug-0033 parity scope; traceability: architecture `# BUG-0033`, `decisions/DEC-0154.md`.
+- **US-0155** — Interactive operator TUI on the admitted daemon transport; traceability: architecture `# US-0155`.
 
 ## Architecture notes
 
@@ -99,6 +100,12 @@ setup stays in the root `README.md` (user channel).
 - **US-0146** — CLI/TUI operational observability; traceability: architecture `# US-0146`, `decisions/DEC-0146.md`.
 - **US-0147** — Installation, update, and existing-project adoption; traceability: architecture `# US-0147`, `decisions/DEC-0147.md`.
 - **US-0148** — Recoverable daemon control protocol and lifecycle; traceability: architecture `# US-0148`, `decisions/DEC-0148.md`.
+- **US-0149** — Opt-in user PATH registration of the project shim; traceability: runbook `### Global itsm PATH registration (US-0149)`, architecture `# US-0149`.
+- **US-0150** — Production runtime composition; traceability: architecture `# US-0150`, `decisions/DEC-0150.md`.
+- **US-0151** — Executable lifecycle transport; traceability: architecture `# US-0151`.
+- **US-0152** — Production application and browser UAT; traceability: architecture `# US-0152`.
+- **US-0153** — Parallel arbitration and configured release targets; traceability: architecture `# US-0153`.
+- **US-0154** — Standalone operator-path quality gate; traceability: architecture `# US-0154`.
 - **US-0156** — OpenCode `/auto` parity: continuous lifecycle, drain, resume, and phase selection; traceability: architecture `# US-0156`.
 - **BUG-0022** — `/auto` Task-spawns resolve phase models from role_catalog (no parent-chat inherit); traceability: architecture `# BUG-0022`.
 - **BUG-0027** — OpenCode manual phase commands persist canonical workflow evidence; traceability: architecture `# BUG-0027`.

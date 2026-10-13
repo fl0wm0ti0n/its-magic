@@ -16,6 +16,7 @@ const DEDICATED_COMMANDS: readonly OperatorDedicatedCommand[] = [
 	"ask",
 	"status",
 	"resume",
+	"pause",
 	"index",
 	"app",
 	"browser",

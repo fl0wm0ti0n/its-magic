@@ -1,0 +1,184 @@
+{
+  "sprint": "S0169",
+  "sprint_id": "S0169",
+  "story_id": "US-0149",
+  "bug_id": null,
+  "status": "PASS",
+  "verdict": "PASS",
+  "uat_lifecycle": "populated",
+  "placeholder_only": false,
+  "delivery_mode": "ultra_lean",
+  "macro_phase": "build+verify",
+  "phase_id": "qa",
+  "role": "qa",
+  "timestamp": "2026-10-11T13:45:45Z",
+  "fresh_context_marker": "qa-US0149-qa-20261011T134545Z-fresh",
+  "cross_model_review": 0,
+  "story_status": "OPEN",
+  "acceptance_boxes_checked": false,
+  "total": 8,
+  "passed": 8,
+  "failed": 0,
+  "steps": [
+    {
+      "id": "UAT-1",
+      "ac": "AC-1",
+      "description": "Missing shim returns ITSM_PATH_SHIM_MISSING and writes no ledger and no PATH entry",
+      "result": "pass",
+      "marker": "test_us0149_register_refuses_when_shim_missing",
+      "probe_kind": "contract_tests_primary"
+    },
+    {
+      "id": "UAT-2",
+      "ac": "AC-2",
+      "description": "A normal install without the flag or env leaves PATH untouched; non-TTY prompt fail-closes",
+      "result": "pass",
+      "marker": "test_us0149_register_opt_in_default_off",
+      "probe_kind": "contract_tests_primary"
+    },
+    {
+      "id": "UAT-3",
+      "ac": "AC-2",
+      "description": "User-chosen directory receives the link; documented defaults match R-0160",
+      "result": "pass",
+      "marker": "test_us0149_register_user_chosen_dir",
+      "probe_kind": "contract_tests_primary"
+    },
+    {
+      "id": "UAT-4",
+      "ac": "AC-3",
+      "description": "Fake Windows PATH store appends the directory only when it was absent",
+      "result": "pass",
+      "marker": "test_us0149_register_windows_user_path",
+      "probe_kind": "contract_tests_primary"
+    },
+    {
+      "id": "UAT-5",
+      "ac": "AC-3",
+      "description": "Fake POSIX home gets the marked snippet and a second call is idempotent",
+      "result": "pass",
+      "marker": "test_us0149_register_posix_profile_snippet",
+      "probe_kind": "contract_tests_primary"
+    },
+    {
+      "id": "UAT-6",
+      "ac": "AC-4",
+      "description": "Unregister removes only recorded links and the PATH directory only when path_entry_added is true; a failed write leaves no partial entry",
+      "result": "pass",
+      "marker": "test_us0149_unregister_removes_only_owned_entry",
+      "probe_kind": "contract_tests_primary"
+    },
+    {
+      "id": "UAT-7",
+      "ac": "AC-5",
+      "description": "Active and template runbook PATH sections match and name the tokens",
+      "result": "pass",
+      "marker": "test_us0149_runbook_path_section_parity",
+      "probe_kind": "contract_tests_primary"
+    },
+    {
+      "id": "convergence_smoke",
+      "description": "Convergence smoke surrogate — waived-probe slice with green US-0149 contract tests",
+      "result": "pass",
+      "marker": "test_us0128_convergence_smoke_surrogate",
+      "evidence_ref": "tests/us0149_path_registration_test.py 8 passed; tests/report.md 2026-10-11T13:42:10Z Pass 875 Fail 5 (scratchpad CR drift, not this story); uat.json waived_probes[] (6 classes, UAT_PROBE_FORBIDDEN)",
+      "probe_kind": "contract_tests_primary"
+    }
+  ],
+  "contract_test_markers": [
+    "test_us0149_register_refuses_when_shim_missing",
+    "test_us0149_register_opt_in_default_off",
+    "test_us0149_register_user_chosen_dir",
+    "test_us0149_register_windows_user_path",
+    "test_us0149_register_posix_profile_snippet",
+    "test_us0149_unregister_removes_only_owned_entry",
+    "test_us0149_register_fail_closed_on_write_error",
+    "test_us0149_runbook_path_section_parity"
+  ],
+  "contract_test_total": 8,
+  "contract_test_passed": 8,
+  "contract_test_failed": 0,
+  "contract_test_command": "python -m pytest tests/us0149_path_registration_test.py -q",
+  "contract_test_output": "8 passed in 0.37s",
+  "harness": {
+    "command": "powershell -NoProfile -ExecutionPolicy Bypass -File tests/run-tests.ps1",
+    "report": "tests/report.md",
+    "timestamp": "2026-10-11T13:42:10Z",
+    "pass": 875,
+    "fail": 5,
+    "us0149_path_row": "PASS",
+    "fail_zero_claimed": false,
+    "fail_note": "Five fails are .cursor/scratchpad.md vs template/.cursor/scratchpad.md (one CR after TOKEN_PROFILE=balanced). AUTO_BACKLOG_MAX_STORIES=3 was not changed."
+  },
+  "blocking_findings": [],
+  "probe_results": [
+    {
+      "step_id": "UAT-1",
+      "probe_class": "contract_tests_primary",
+      "passed": true,
+      "reason_code": "UAT_PROBE_PASS",
+      "evidence_ref": "test_us0149_register_refuses_when_shim_missing"
+    },
+    {
+      "step_id": "UAT-2",
+      "probe_class": "contract_tests_primary",
+      "passed": true,
+      "reason_code": "UAT_PROBE_PASS",
+      "evidence_ref": "test_us0149_register_opt_in_default_off"
+    },
+    {
+      "step_id": "UAT-4",
+      "probe_class": "contract_tests_primary",
+      "passed": true,
+      "reason_code": "UAT_PROBE_PASS",
+      "evidence_ref": "test_us0149_register_windows_user_path"
+    },
+    {
+      "step_id": "UAT-6",
+      "probe_class": "contract_tests_primary",
+      "passed": true,
+      "reason_code": "UAT_PROBE_PASS",
+      "evidence_ref": "test_us0149_unregister_removes_only_owned_entry"
+    },
+    {
+      "step_id": "convergence_smoke",
+      "probe_class": "contract_tests_primary",
+      "passed": true,
+      "reason_code": "UAT_PROBE_PASS",
+      "evidence_ref": "contract_test_failed=0; 6 waived_probes UAT_PROBE_FORBIDDEN; pytest 8/8; harness Fail 5 is scratchpad drift"
+    }
+  ],
+  "probe_class_note": "US-0149 UAT is contract/install behavior, not a browser UI. A live PATH or HKCU probe would mutate the operator machine, so it is UAT_PROBE_FORBIDDEN. Fake-home and fake PATH-store tests cover AC-1..AC-6. No .env read. No intake mutation. US-0149 stays OPEN.",
+  "waived_probes": [
+    {
+      "probe_class": "browser_smoke",
+      "reason": "No web UI. PATH registration is installer contract behavior.",
+      "reason_code": "UAT_PROBE_FORBIDDEN"
+    },
+    {
+      "probe_class": "api_health",
+      "reason": "No runtime HTTP API introduced by US-0149.",
+      "reason_code": "UAT_PROBE_FORBIDDEN"
+    },
+    {
+      "probe_class": "process_health",
+      "reason": "No runtime process or app server introduced by US-0149.",
+      "reason_code": "UAT_PROBE_FORBIDDEN"
+    },
+    {
+      "probe_class": "cli_smoke",
+      "reason": "A live installer PATH probe would write HKCU or the user profile. Covered by fake-home tests instead.",
+      "reason_code": "UAT_PROBE_FORBIDDEN"
+    },
+    {
+      "probe_class": "build",
+      "reason": "No product build step for US-0149.",
+      "reason_code": "UAT_PROBE_FORBIDDEN"
+    },
+    {
+      "probe_class": "manual_operator",
+      "reason": "A manual PATH registration on this machine would mutate the operator PATH. Not performed.",
+      "reason_code": "UAT_PROBE_FORBIDDEN"
+    }
+  ]
+}

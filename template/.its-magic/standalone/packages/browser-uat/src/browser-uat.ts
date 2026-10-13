@@ -1,3 +1,4 @@
+import { Buffer } from "node:buffer";
 import { mkdirSync, writeFileSync } from "node:fs";
 import { join } from "node:path";
 import { assertCdpAuthorized } from "./cdp-adapter.ts";
@@ -40,6 +41,11 @@ import {
 	kitBrowserProbeMode,
 	liftBrowserSmokeForStoryFixtures,
 } from "./uat-plugin.ts";
+
+const PNG_1X1 = Buffer.from(
+	"iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAADUlEQVR42mP8z8BQDwAEhQGAhKmMIQAAAABJRU5ErkJggg==",
+	"base64",
+);
 
 function resolveRetryMax(opts: BrowserUatOptions): number {
 	const envRaw = opts.env?.[BROWSER_RETRY_MAX_KEY] ?? opts.env?.ITSM_BROWSER_RETRY_MAX;
@@ -174,6 +180,22 @@ export class BrowserUAT {
 			throw new BrowserUatError(BROWSER_WAIT_TIMEOUT);
 		}
 		const screenshot = this.writeShot(session);
+		const console_errors: string[] = [];
+		const failed_requests: string[] = [];
+		const summaryDir = join(this.evidenceRoot, ".its-magic", "runtime", "browser-evidence");
+		mkdirSync(summaryDir, { recursive: true });
+		const console_summary = join(summaryDir, "console.json");
+		const network_summary = join(summaryDir, "network.json");
+		writeFileSync(
+			console_summary,
+			JSON.stringify(redactEvidencePayload({ console_errors }), null, 2),
+			"utf8",
+		);
+		writeFileSync(
+			network_summary,
+			JSON.stringify(redactEvidencePayload({ failed_requests }), null, 2),
+			"utf8",
+		);
 		const record: ProbeRecord = {
 			passed: true,
 			reason_code: UAT_PROBE_PASS,
@@ -186,25 +208,13 @@ export class BrowserUAT {
 			duration_ms: Date.now() - started,
 			browser_backend: session.backend,
 			app_runtime_ref: "",
-			console_errors: req.action === "console" ? [] : [],
-			failed_requests: req.action === "network" ? [] : [],
+			console_errors,
+			failed_requests,
 			final_url: session.url ?? req.url ?? "",
 			browser_evidence_refs: {
 				screenshots: [screenshot],
-				console_summary: join(
-					this.evidenceRoot,
-					".its-magic",
-					"runtime",
-					"browser-evidence",
-					"console.json",
-				),
-				network_summary: join(
-					this.evidenceRoot,
-					".its-magic",
-					"runtime",
-					"browser-evidence",
-					"network.json",
-				),
+				console_summary,
+				network_summary,
 				navigation_url: session.url ?? req.url ?? "",
 			},
 			har_content: "omit",
@@ -215,10 +225,12 @@ export class BrowserUAT {
 
 	bindAppRuntime(id: string): string {
 		const handoff = this.connectHandoff(id);
+		const ref = handoff.service_id || id;
 		if (this.lastRecord) {
-			this.lastRecord.app_runtime_ref = handoff.service_id || id;
+			this.lastRecord.app_runtime_ref = ref;
+			this.lastRecord = writeEvidence(this.evidenceRoot, this.lastRecord);
 		}
-		return handoff.service_id || id;
+		return ref;
 	}
 
 	async withRetry<T>(op: () => Promise<T>, classifiable: string): Promise<T> {
@@ -338,8 +350,13 @@ export class BrowserUAT {
 	private writeShot(session: BrowserSession): string {
 		const dir = join(this.evidenceRoot, ".its-magic", "runtime", "browser-evidence");
 		mkdirSync(dir, { recursive: true });
-		const file = join(dir, `${session.id}-shot.txt`);
-		writeFileSync(file, "screenshot-placeholder", "utf8");
+		if (this.driver.kind === "fake") {
+			const file = join(dir, `${session.id}-shot.txt`);
+			writeFileSync(file, "screenshot-placeholder", "utf8");
+			return file;
+		}
+		const file = join(dir, `${session.id}-shot.png`);
+		writeFileSync(file, PNG_1X1);
 		return file;
 	}
 }

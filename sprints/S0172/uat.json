@@ -1,0 +1,164 @@
+{
+  "sprint": "S0172",
+  "sprint_id": "S0172",
+  "story_id": "US-0152",
+  "bug_id": null,
+  "status": "PASS",
+  "verdict": "PASS",
+  "uat_lifecycle": "populated",
+  "placeholder_only": false,
+  "delivery_mode": "ultra_lean",
+  "macro_phase": "build+verify",
+  "phase_id": "qa",
+  "role": "qa",
+  "timestamp": "2026-10-11T19:26:09Z",
+  "fresh_context_marker": "qa-US0152-qa-20261011T192609Z-fresh",
+  "cross_model_review": 0,
+  "story_status": "OPEN",
+  "acceptance_boxes_checked": false,
+  "total": 7,
+  "passed": 7,
+  "failed": 0,
+  "steps": [
+    {
+      "id": "UAT-1",
+      "ac": "AC-1",
+      "description": "Host owns AppRuntime and BrowserUAT",
+      "result": "pass",
+      "marker": "test_us0152_host_owns_app_runtime_and_browser_uat",
+      "probe_kind": "contract_tests_primary"
+    },
+    {
+      "id": "UAT-2",
+      "ac": "AC-2",
+      "description": "Production driver is isolated Playwright or BROWSER_UNAVAILABLE",
+      "result": "pass",
+      "marker": "test_us0152_production_driver_is_isolated_or_unavailable",
+      "probe_kind": "contract_tests_primary"
+    },
+    {
+      "id": "UAT-3",
+      "ac": "AC-3",
+      "description": "Gates use app health, browser probes, and bounded retry",
+      "result": "pass",
+      "marker": "test_us0152_gates_use_app_health_browser_probe_and_retry",
+      "probe_kind": "contract_tests_primary"
+    },
+    {
+      "id": "UAT-4",
+      "ac": "AC-4",
+      "description": "Incomplete redacted evidence blocks UAT",
+      "result": "pass",
+      "marker": "test_us0152_incomplete_evidence_blocks_uat",
+      "probe_kind": "contract_tests_primary"
+    },
+    {
+      "id": "UAT-5",
+      "ac": "AC-5",
+      "description": "itsm app and itsm browser share those services",
+      "result": "pass",
+      "marker": "test_us0152_app_and_browser_commands_share_services",
+      "probe_kind": "contract_tests_primary"
+    },
+    {
+      "id": "UAT-6",
+      "ac": "AC-6",
+      "description": "Fixture covers launch-through-gate plus crash, assertion, authorization, and evidence-gap failures",
+      "result": "pass",
+      "marker": "test_us0152_e2e_launch_gate_and_failure_fixtures",
+      "probe_kind": "contract_tests_primary"
+    },
+    {
+      "id": "convergence_smoke",
+      "description": "Waived external-browser probe plus the green contract file",
+      "result": "pass",
+      "marker": "test_us0152_e2e_launch_gate_and_failure_fixtures",
+      "probe_kind": "contract_tests_primary"
+    }
+  ],
+  "contract_test_markers": [
+    "test_us0152_host_owns_app_runtime_and_browser_uat",
+    "test_us0152_production_driver_is_isolated_or_unavailable",
+    "test_us0152_gates_use_app_health_browser_probe_and_retry",
+    "test_us0152_incomplete_evidence_blocks_uat",
+    "test_us0152_app_and_browser_commands_share_services",
+    "test_us0152_e2e_launch_gate_and_failure_fixtures"
+  ],
+  "contract_test_passed": 6,
+  "contract_test_failed": 0,
+  "contract_test_command": "node --experimental-strip-types --test --test-name-pattern test_us0152_ tests/contract/us0152.contract.test.ts",
+  "contract_test_output": "6 pass / 0 fail; duration_ms 1659.9379",
+  "harness": {
+    "command": "powershell -NoProfile -ExecutionPolicy Bypass -File tests/run-tests.ps1",
+    "report": "tests/report.md",
+    "timestamp": "2026-10-11T19:25:11Z",
+    "pass": 880,
+    "fail": 0,
+    "exit_code": 0,
+    "fail_zero_claimed": true
+  },
+  "blocking_findings": [],
+  "probe_results": [
+    {
+      "step_id": "UAT-1",
+      "probe_class": "contract_tests_primary",
+      "passed": true,
+      "reason_code": "UAT_PROBE_PASS",
+      "evidence_ref": "test_us0152_host_owns_app_runtime_and_browser_uat"
+    },
+    {
+      "step_id": "UAT-2",
+      "probe_class": "contract_tests_primary",
+      "passed": true,
+      "reason_code": "UAT_PROBE_PASS",
+      "evidence_ref": "test_us0152_production_driver_is_isolated_or_unavailable"
+    },
+    {
+      "step_id": "UAT-3",
+      "probe_class": "contract_tests_primary",
+      "passed": true,
+      "reason_code": "UAT_PROBE_PASS",
+      "evidence_ref": "test_us0152_gates_use_app_health_browser_probe_and_retry"
+    },
+    {
+      "step_id": "UAT-4",
+      "probe_class": "contract_tests_primary",
+      "passed": true,
+      "reason_code": "UAT_PROBE_PASS",
+      "evidence_ref": "test_us0152_incomplete_evidence_blocks_uat"
+    },
+    {
+      "step_id": "UAT-5",
+      "probe_class": "contract_tests_primary",
+      "passed": true,
+      "reason_code": "UAT_PROBE_PASS",
+      "evidence_ref": "test_us0152_app_and_browser_commands_share_services"
+    },
+    {
+      "step_id": "UAT-6",
+      "probe_class": "contract_tests_primary",
+      "passed": true,
+      "reason_code": "UAT_PROBE_PASS",
+      "evidence_ref": "test_us0152_e2e_launch_gate_and_failure_fixtures"
+    },
+    {
+      "step_id": "convergence_smoke",
+      "probe_class": "contract_tests_primary",
+      "passed": true,
+      "reason_code": "UAT_PROBE_PASS",
+      "evidence_ref": "test_us0152_e2e_launch_gate_and_failure_fixtures"
+    }
+  ],
+  "waived_live_probes": [
+    {
+      "probe_class": "external_browser",
+      "reason": "A live browser against an external site is forbidden. Contract fixtures cover launch and evidence on 127.0.0.1 without an external network probe.",
+      "reason_code": "UAT_PROBE_FORBIDDEN"
+    },
+    {
+      "probe_class": "paid_model",
+      "reason": "No paid credentials and no .env read.",
+      "reason_code": "UAT_PROBE_FORBIDDEN"
+    }
+  ]
+}

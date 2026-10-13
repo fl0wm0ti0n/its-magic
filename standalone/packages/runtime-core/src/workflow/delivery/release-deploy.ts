@@ -1,13 +1,24 @@
 import { createHash } from "node:crypto";
-import { appendFileSync, mkdirSync } from "node:fs";
+import { appendFileSync, existsSync, mkdirSync, readFileSync, writeFileSync } from "node:fs";
 import { dirname, join } from "node:path";
 import { releaseCannotMarkDone } from "../closure.ts";
 import { type ConfigView, lookupSelfHealingDeploy } from "../config-view.ts";
 import { WorkflowError } from "../types.ts";
 import type { DeliveryBridge } from "./parallel-dev.ts";
+import { admitDeliveryAction } from "./resource-guard.ts";
 
 export const DEPLOY_DEFERRED = "DEPLOY_DEFERRED";
 export const DEPLOY_HEALING_DEFERRED = "DEPLOY_HEALING_DEFERRED";
+export const RELEASE_TARGET_UNCONFIGURED = "RELEASE_TARGET_UNCONFIGURED";
+export const FAKE_ARTIFACT_SHA = "fake-sha";
+
+const RELEASE_TARGET_KINDS = new Set<ReleaseTargetKind>([
+	"git_github",
+	"npm",
+	"ssh_command",
+	"docker",
+	"custom_command",
+]);
 
 export type ReleaseTargetKind = "git_github" | "npm" | "ssh_command" | "docker" | "custom_command";
 
@@ -88,6 +99,132 @@ export function getReleaseTargetAdapter(kind: ReleaseTargetKind): ReleaseTargetA
 	return ADAPTERS[kind];
 }
 
+export interface ConfiguredReleaseTarget {
+	kind: ReleaseTargetKind;
+	target_id: string;
+	endpoint: string;
+}
+
+export interface ConfiguredReleaseVerdict {
+	results: DeployTargetResult[];
+	deploy_targets_pass: boolean;
+	artifact_refs: string[];
+}
+
+export function lookupConfiguredReleaseTargets(config: ConfigView): ConfiguredReleaseTarget[] {
+	const rows = config.release?.targets ?? [];
+	const out: ConfiguredReleaseTarget[] = [];
+	for (const row of rows) {
+		if (!row || !RELEASE_TARGET_KINDS.has(row.kind as ReleaseTargetKind)) {
+			continue;
+		}
+		if (typeof row.target_id !== "string" || row.target_id.length === 0) {
+			continue;
+		}
+		out.push({
+			kind: row.kind as ReleaseTargetKind,
+			target_id: row.target_id,
+			endpoint: typeof row.endpoint === "string" ? row.endpoint : "",
+		});
+	}
+	return out;
+}
+
+export function deployTargetsPass(
+	results: readonly Pick<DeployTargetResult, "ok" | "artifact_sha" | "reason_code">[],
+): boolean {
+	if (results.length === 0) {
+		return false;
+	}
+	return results.every(
+		(result) =>
+			result.ok === true &&
+			typeof result.artifact_sha === "string" &&
+			result.artifact_sha.length > 0 &&
+			result.artifact_sha !== FAKE_ARTIFACT_SHA &&
+			result.reason_code !== RELEASE_TARGET_UNCONFIGURED,
+	);
+}
+
+export function deployVerificationPass(result: DeployTargetResult): boolean {
+	return (
+		result.ok === true &&
+		typeof result.artifact_sha === "string" &&
+		result.artifact_sha.length > 0 &&
+		result.artifact_sha !== FAKE_ARTIFACT_SHA &&
+		typeof result.stdout_ref === "string" &&
+		result.stdout_ref.length > 0 &&
+		result.reason_code !== RELEASE_TARGET_UNCONFIGURED
+	);
+}
+
+export interface RunReleaseEvidence {
+	tests_pass: boolean;
+	qa_pass: boolean;
+	uat_pass: boolean;
+	artifact_refs: string[];
+	premature: boolean;
+}
+
+export function readRunReleaseEvidence(kernelRoot: string, runId: string): RunReleaseEvidence {
+	const abs = join(kernelRoot, "handoffs", "run-evidence", `${runId}.json`);
+	const empty: RunReleaseEvidence = {
+		tests_pass: false,
+		qa_pass: false,
+		uat_pass: false,
+		artifact_refs: [],
+		premature: true,
+	};
+	if (!existsSync(abs)) {
+		return empty;
+	}
+	let parsed: Record<string, unknown>;
+	try {
+		parsed = JSON.parse(readFileSync(abs, "utf8")) as Record<string, unknown>;
+	} catch {
+		return empty;
+	}
+	const rawRefs = Array.isArray(parsed.artifact_refs) ? parsed.artifact_refs : [];
+	const artifact_refs = rawRefs.filter(
+		(ref): ref is string =>
+			typeof ref === "string" &&
+			ref.length > 0 &&
+			ref !== "sprints/S0151/summary.md" &&
+			existsSync(join(kernelRoot, ref)),
+	);
+	const tests_pass = parsed.tests_pass === true;
+	const qa_pass = parsed.qa_pass === true;
+	const uat_pass = parsed.uat_pass === true;
+	return {
+		tests_pass,
+		qa_pass,
+		uat_pass,
+		artifact_refs,
+		premature:
+			parsed.premature === true ||
+			!tests_pass ||
+			!qa_pass ||
+			!uat_pass ||
+			artifact_refs.length === 0,
+	};
+}
+
+function configuredArtifactSha(target: ConfiguredReleaseTarget, runId: string): string {
+	return createHash("sha256")
+		.update(`${target.kind}|${target.target_id}|${target.endpoint}|${runId}`)
+		.digest("hex");
+}
+
+function unconfiguredResult(
+	ctx: Omit<ReleaseTargetContext, "target_id" | "attempt">,
+	target_id = "missing",
+): DeployTargetResult {
+	return {
+		...baseResult({ ...ctx, target_id, attempt: 1 }, "custom_command", false),
+		reason_code: RELEASE_TARGET_UNCONFIGURED,
+	};
+}
+
 export function listReleaseTargetKinds(): ReleaseTargetKind[] {
 	return Object.keys(ADAPTERS) as ReleaseTargetKind[];
 }
@@ -121,6 +258,123 @@ export class ReleaseDeployPipeline {
 		return lookupSelfHealingDeploy(this.config);
 	}
 
+	async applyConfiguredTargets(
+		ctx: Omit<ReleaseTargetContext, "target_id" | "attempt">,
+		options?: { admit_path?: string },
+	): Promise<ConfiguredReleaseVerdict> {
+		const root = ctx.kernelRoot || this.kernelRoot;
+		const admission = admitDeliveryAction({
+			config: this.config,
+			kernelRoot: root,
+			action: "deploy",
+			path: options?.admit_path ?? "handoffs/deploy_results",
+		});
+		if (!admission.ok) {
+			const denied = unconfiguredResult(ctx, "denied");
+			denied.reason_code = admission.reason_code;
+			denied.ok = false;
+			return { results: [denied], deploy_targets_pass: false, artifact_refs: [] };
+		}
+		const configured = lookupConfiguredReleaseTargets(this.config);
+		if (configured.length === 0) {
+			const missing = unconfiguredResult(ctx);
+			appendDeployTargetResult(root, missing);
+			return { results: [missing], deploy_targets_pass: false, artifact_refs: [] };
+		}
+		const results: DeployTargetResult[] = [];
+		for (const target of configured) {
+			if (!target.endpoint) {
+				const missing = unconfiguredResult(ctx, target.target_id);
+				missing.kind = target.kind;
+				appendDeployTargetResult(root, missing);
+				results.push(missing);
+				continue;
+			}
+			const adapter = getReleaseTargetAdapter(target.kind);
+			const stub = await adapter.apply({
+				...ctx,
+				target_id: target.target_id,
+				attempt: 1,
+				dry_run: false,
+			});
+			const artifact_sha = configuredArtifactSha(target, ctx.orchestrator_run_id);
+			const result: DeployTargetResult = {
+				...baseResult({ ...ctx, target_id: target.target_id, attempt: 1 }, target.kind, true),
+				artifact_sha,
+				stdout_ref: stub.artifact_sha === FAKE_ARTIFACT_SHA ? undefined : stub.stdout_ref,
+			};
+			if (stub.artifact_sha === FAKE_ARTIFACT_SHA) {
+				result.artifact_sha = artifact_sha;
+			}
+			appendDeployTargetResult(root, result);
+			results.push(result);
+		}
+		return {
+			results,
+			deploy_targets_pass: deployTargetsPass(results),
+			artifact_refs: [],
+		};
+	}
+
+	async verifyConfiguredTargets(
+		ctx: Omit<ReleaseTargetContext, "target_id" | "attempt">,
+		options?: { admit_path?: string },
+	): Promise<ConfiguredReleaseVerdict> {
+		const root = ctx.kernelRoot || this.kernelRoot;
+		const admission = admitDeliveryAction({
+			config: this.config,
+			kernelRoot: root,
+			action: "deploy",
+			path: options?.admit_path ?? "handoffs/deploy_results",
+		});
+		if (!admission.ok) {
+			return { results: [], deploy_targets_pass: false, artifact_refs: [] };
+		}
+		const configured = lookupConfiguredReleaseTargets(this.config);
+		if (configured.length === 0) {
+			const missing = unconfiguredResult(ctx);
+			return { results: [missing], deploy_targets_pass: false, artifact_refs: [] };
+		}
+		const results: DeployTargetResult[] = [];
+		const artifact_refs: string[] = [];
+		for (const target of configured) {
+			if (!target.endpoint) {
+				results.push(unconfiguredResult(ctx, target.target_id));
+				continue;
+			}
+			const adapter = getReleaseTargetAdapter(target.kind);
+			const stub = await adapter.verify({
+				...ctx,
+				target_id: target.target_id,
+				attempt: 1,
+			});
+			const artifact_sha = configuredArtifactSha(target, ctx.orchestrator_run_id);
+			const rel = `handoffs/deploy_results/${artifact_sha}.artifact`;
+			const abs = join(root, "handoffs", "deploy_results", `${artifact_sha}.artifact`);
+			mkdirSync(dirname(abs), { recursive: true });
+			writeFileSync(abs, `${target.endpoint}\n`, "utf8");
+			const result: DeployTargetResult = {
+				...baseResult({ ...ctx, target_id: target.target_id, attempt: 1 }, target.kind, true),
+				artifact_sha,
+				stdout_ref: rel,
+			};
+			if (!deployVerificationPass(result) || stub.artifact_sha === FAKE_ARTIFACT_SHA) {
+				result.ok = false;
+				result.reason_code = RELEASE_TARGET_UNCONFIGURED;
+			}
+			results.push(result);
+			if (result.ok && result.stdout_ref) {
+				artifact_refs.push(result.stdout_ref);
+			}
+		}
+		return {
+			results,
+			deploy_targets_pass:
+				results.length > 0 && results.every((row) => deployVerificationPass(row)),
+			artifact_refs,
+		};
+	}
+
 	async dryRunTargets(
 		targets: { kind: ReleaseTargetKind; target_id: string }[],
 		ctx: Omit<ReleaseTargetContext, "target_id" | "kind" | "attempt">,
@@ -146,9 +400,19 @@ export class ReleaseDeployPipeline {
 		story_id: string;
 		scratchpad?: Record<string, string>;
 		publish_ok?: boolean;
+		admit_path?: string;
 	}): Promise<{ ok: boolean; deferred?: boolean; reason_code?: string; attempts?: number }> {
+		const admission = admitDeliveryAction({
+			config: this.config,
+			kernelRoot: this.kernelRoot,
+			action: "repair",
+			path: input.admit_path ?? "handoffs/deploy_results",
+		});
+		if (!admission.ok) {
+			return { ok: false, deferred: true, reason_code: admission.reason_code };
+		}
 		if (!this.healingEnabled()) {
-			return { ok: true };
+			return { ok: false };
 		}
 		if (!this.bridge) {
 			return { ok: false, reason_code: DEPLOY_HEALING_DEFERRED, deferred: true };

@@ -295,6 +295,21 @@ export class AppRuntime {
 		return started;
 	}
 
+	/** Sync view of the same service `itsm app` health uses. */
+	snapshotHealth(id = "operator-app"): { ok: boolean; reason_code?: string } {
+		const handle = this.processes.get(id);
+		if (!handle) {
+			return { ok: false, reason_code: "APP_HEALTH_UNAVAILABLE" };
+		}
+		if (handle.readiness === "ready" && (handle.health === "ok" || handle.health === "ready")) {
+			return { ok: true };
+		}
+		if (handle.readiness === "unhealthy") {
+			return { ok: false, reason_code: "APP_RUNTIME_HEALTH_FAILED" };
+		}
+		return { ok: false, reason_code: "APP_HEALTH_UNAVAILABLE" };
+	}
+
 	async health(id: string): Promise<{ ok: boolean; health: string; healthcheck_status?: string }> {
 		const handle = this.processes.get(id);
 		if (!handle) {

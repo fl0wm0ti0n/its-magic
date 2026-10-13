@@ -174,14 +174,16 @@
 - [x] US-0146: CLI, TUI, and operational observability — operator commands, status/timeline, panels, metrics, responsive logs, and cross-platform integration tests (8 ACs)
 - [x] US-0147: Installation, update, and existing-project adoption — fresh setup, non-destructive migration, host coexistence, docs, preservation, and lifecycle tests (8 ACs)
 - [x] US-0148: Stable control protocol and recoverable daemon — versioned commands/events, reconnect, local security, reconciliation, protocol tests, and future-client boundary (8 ACs)
-- [ ] US-0149: Global `itsm` PATH registration with user-chosen install location (cross-platform) — materialize itsm on published-kit bootstrap residual, opt-in PATH, Win/Linux, docs, PATH remove, `test_us0149_*` (6 ACs)
-- [ ] US-0150: Production standalone runtime composition — real Pi kernel, bridge, config, policy/tools, context, persistent state, and entrypoint injection (6 ACs)
-- [ ] US-0151: Executable lifecycle and operator transport — CLI/daemon/TUI use one runtime, execute work, persist/replay state, and reject no-op routes (6 ACs)
-- [ ] US-0152: Production application and browser UAT integration — real app/browser services, fail-closed evidence, workflow gates, and E2E fixtures (6 ACs)
-- [ ] US-0153: Real parallel delivery and release execution — QA arbitration, configured target adapters, deploy verification, bounded repair, and closure evidence (5 ACs)
-- [ ] US-0154: Standalone operator-path quality gate — installed-entrypoint E2E tests and authoritative standalone CI (6 ACs)
+- [x] US-0149: Global `itsm` PATH registration with user-chosen install location (cross-platform) — materialize itsm on published-kit bootstrap residual, opt-in PATH, Win/Linux, docs, PATH remove, `test_us0149_*` (6 ACs)
+- [x] US-0150: Production standalone runtime composition — real Pi kernel, bridge, config, policy/tools, context, persistent state, and entrypoint injection (6 ACs)
+- [x] US-0151: Executable lifecycle and operator transport — CLI/daemon/TUI use one runtime, execute work, persist/replay state, and reject no-op routes (6 ACs)
+- [x] US-0152: Production application and browser UAT integration — real app/browser services, fail-closed evidence, workflow gates, and E2E fixtures (6 ACs)
+- [x] US-0153: Real parallel delivery and release execution — QA arbitration, configured target adapters, deploy verification, bounded repair, and closure evidence (5 ACs)
+US-0133 through US-0148 are completed library/contract slices. US-0150 through US-0154 are their production-integration follow-up. Phase-9 deferrals (own indexer, stronger sandbox/micro-VM, IDE, web/mobile/watch, distributed workers, remote always-on Debian) are not missing v1 work.
 
-- [ ] US-0155: Interactive Pi-style standalone operator TUI — daemon-client terminal UI with live events, approvals, bounded panels, reconnect, and cross-platform integration tests (5 ACs)
+- [x] US-0154: Standalone operator-path quality gate — installed-entrypoint E2E tests and authoritative standalone CI (6 ACs)
+
+- [x] US-0155: Interactive Pi-style standalone operator TUI — daemon-client terminal UI with live events, approvals, bounded panels, reconnect, and cross-platform integration tests (5 ACs)
 - [x] US-0156: OpenCode `/auto` parity — complete the half-finished /auto concept to parity with Cursor /auto full-automation semantics: native in-chat auto-chain, continuous multi-phase, backlog drain, bug-queue targeting, start-from/resume, phase-selection policy (10 ACs; DoD = BUG-0022 + BUG-0027 DONE, BUG-0028/0029 triaged as prerequisite slices; default full_autonomy) — canonical flip at S0162 closure (curator, `sprints/S0162/closure-verification.md`; backlog `## US-0156` L5784 `Status: DONE` + AC-1..10 `[x]`; release **RELEASE_PASS** RETRY #3 `handoffs/releases/S0162-release-notes.md`, release proof `1CB6DF6E…56FD` independently recompute-confirmed; chain execute/initial-qa/verify-work recompute-MATCH; UAT `VERIFY_PASS` 10/10; DoD gate MET; publish deferred `npm_published=false`)
 
 ## Bug acceptance (canonical)

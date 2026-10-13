@@ -1,3 +1,94 @@
+## Execute handoff — US-0155 / S0175 — `/execute` next (fresh dev)
+
+- **Completed**: plan macro (research + architecture + sprint-plan). **Verdict**: `SPRINT_PLAN_PASS`; `decision_gate=false`. US-0155 remains **OPEN**. AC-1..AC-5 remain unchecked.
+- **Sprint**: **S0175**. Research **R-0165**. Architecture `# US-0155`. Companion DEC: **none**. Tasks: 6 (T-anch + T-001..T-005).
+- **Locked delivery**: `@its-magic/tui` stays a client of `resolveOperatorTransport`. Interactive mode uses readline and the existing ANSI renderer. No second runtime and no Pi session. `submitCommand`, `subscribeEvents`, `respondApproval` (attach as controller), `cancel`, resume argv `["resume"]`, and pause argv `["pause"]` share the CLI path. Pause maps onto the existing workflow stop. Protocol version stays 1. New panels compose `renderPanelLayout` without changing `TuiPanelId` or `TUI_COLLAPSE_ORDER`. Paint uses `redactEventPayload`. Non-interactive mode prints once.
+- **Compose**: US-0146 stays the completed ANSI slice. US-0149 through US-0154 stay DONE. US-0156 stays DONE. No web, mobile, IDE, or remote-worker client. Mirror touched files under `template/.its-magic/standalone/apps/tui`. Do not add a README coverage row. Do not tick AC boxes.
+- **Tests**: add five `test_us0155_*` markers in `standalone/tests/contract/us0155.contract.test.ts`. The suite starts the real daemon and must not create a Pi session outside runtime admission.
+- **Continuation**: `record_key=auto-20261012-us0155-plan|story|(none)|sprint-plan|rp-auto-20261012-us0155-plan-techlead-20261012T191221Z`; skipped=`[intake, plan-verify]`; completed=`[intake, discovery, research, architecture, sprint-plan]`; next=`execute` / `dev`; cursor=`plan/3-of-3`; stop=`sprint_plan_complete_phase_boundary`.
+- **Fresh proof**: marker=`tl-US0155-plan-20261012T191221Z-fresh`; proof=`rp-auto-20261012-us0155-plan-techlead-20261012T191221Z` / `8dc83c4163517a894a1d42c5856fb05f32418139b19ffefc4dc151f77d654534`.
+- **Next**: parent validates this pair, then may spawn fresh `/execute` (dev) for US-0155/S0175. This child does not spawn it. **STOP.**
+
+---
+
+## Execute handoff — US-0154 / S0174 — `/execute` next (fresh dev)
+
+- **Completed**: plan macro (research + architecture + sprint-plan). **Verdict**: `SPRINT_PLAN_PASS`; `decision_gate=false`. US-0154 remains **OPEN**. AC-1..AC-6 remain unchecked.
+- **Sprint**: **S0174**. Research **R-0164**. Architecture `# US-0154`. Companion DEC: **none**. Tasks: 7 (T-anch + T-001..T-006).
+- **Locked delivery**: root `checks` stays on kit `TEST_COMMAND`. `LINT_COMMAND` and `TYPECHECK_COMMAND` stay blank. `standalone-test` runs on Windows and Ubuntu with Node `22.19.0`, `npm ci`, then `npm run typecheck && npm run lint && npm test`. Operator-path tests spawn the public `itsm` bin (`standalone/apps/cli/src/index.ts`) plus `itsm-daemon` and `itsm-tui`. No `RuntimeHostFactories`. Store path is `.its-magic/runtime/ops.sqlite`. Fake drivers, placeholder screenshots, `fake-sha`, and no-op command responses fail the operator-path bucket. Reports split `unit_seam` from `operator_path` and fail on a throwing kernel, empty configuration, `:memory:`, or a discarded transport.
+- **Compose**: US-0149 through US-0153 stay DONE. Do not start US-0155. Do not edit `template/.github/workflows/ci.yml` (BUG-0009). Mirror the runbook pin into `template/docs/engineering/runbook.md`. Do not treat phase-9 deferrals as missing v1 work. Do not add a README coverage row. Do not tick AC boxes.
+- **Tests**: add five `test_us0154_*` markers in `standalone/tests/contract/us0154.contract.test.ts`.
+- **Continuation**: `record_key=auto-20261011-us0154-plan|story|(none)|sprint-plan|rp-auto-20261011-us0154-plan-techlead-20261011T220313Z`; skipped=`[intake, plan-verify]`; completed=`[intake, discovery, research, architecture, sprint-plan]`; next=`execute` / `dev`; cursor=`plan/3-of-3`; stop=`sprint_plan_complete_phase_boundary`.
+- **Fresh proof**: marker=`tl-US0154-plan-20261011T220313Z-fresh`; proof=`rp-auto-20261011-us0154-plan-techlead-20261011T220313Z` / `e6aff2058794baf624751427a8dbb96af9525f7cf98835921840a9f0aff77282`.
+- **Next**: parent validates this pair, then may spawn fresh `/execute` (dev) for US-0154/S0174. This child does not spawn it. **STOP.**
+
+---
+
+## Execute handoff — US-0153 / S0173 — `/execute` next (fresh dev)
+
+- **Completed**: plan macro (research + architecture + sprint-plan). **Verdict**: `SPRINT_PLAN_PASS`; `decision_gate=false`. US-0153 remains **OPEN**. AC-1..AC-5 remain unchecked.
+- **Sprint**: **S0173**. Research **R-0163**. Architecture `# US-0153`. Companion DEC: **none**. Tasks: 6 (T-anch + T-001..T-005).
+- **Locked delivery**: when `SOVEREIGN_PARALLEL_DEV=1`, `runExecuteQaLoop` keeps `afterExecutePass`, calls `runQaArbiter`, and writes `handoffs/parallel_dev_pick.json`. Default-off stays the US-0145 noop. Release apply/verify uses configured targets. `RELEASE_TARGET_UNCONFIGURED` and `artifact_sha: "fake-sha"` cannot pass. Smoke, verify, repair, and closure read real run, UAT, and artifact evidence. Guard and policy checks are audited before worktree create, deploy, and repair.
+- **Compose**: US-0145 stays DONE. US-0149 through US-0152 stay DONE. Do not start US-0154 or US-0155. Keep `RELEASE_GATE_ORDER` and the US-0145 dry-run matrix. No distributed workers. No remote Debian. Mirror template twins of touched files.
+- **Tests**: add five `test_us0153_*` markers in `standalone/tests/contract/us0153.contract.test.ts`. The failure matrix covers unavailable target, rejected candidate, failed verification, exhausted repair, and premature closure.
+- **Continuation**: `record_key=auto-20261011-us0153-plan|story|(none)|sprint-plan|rp-auto-20261011-us0153-plan-techlead-20261011T202311Z`; skipped=`[intake, plan-verify]`; completed=`[intake, discovery, research, architecture, sprint-plan]`; next=`execute` / `dev`; cursor=`plan/3-of-3`; stop=`sprint_plan_complete_phase_boundary`.
+- **Fresh proof**: marker=`tl-US0153-plan-20261011T202311Z-fresh`; proof=`rp-auto-20261011-us0153-plan-techlead-20261011T202311Z` / `8e76ff0bac99740aea48e49b9d43026e787932573c4f1f13a852261a95b7d516`.
+- **Next**: parent validates this pair, then may spawn fresh `/execute` (dev) for US-0153/S0173. This child does not spawn it. **STOP.**
+
+---
+
+## Execute handoff — US-0152 / S0172 — `/execute` next (fresh dev)
+
+- **Completed**: plan macro (research + architecture + sprint-plan). **Verdict**: `SPRINT_PLAN_PASS`; `decision_gate=false`. US-0152 remains **OPEN**. AC-1..AC-6 remain unchecked.
+- **Sprint**: **S0172**. Research **R-0162**. Architecture `# US-0152`. Companion DEC: **none**. Tasks: 7 (T-anch + T-001..T-006).
+- **Locked delivery**: `createRuntimeHost` owns `AppRuntime` and `BrowserUAT` with `PlaywrightIsolatedDriver`. `dispose` cleans both. `itsm app` and `itsm browser` call those services or return existing unavailable, authorization, and cleanup codes. Non-fake screenshots are image bytes. Gates set `uat_pass` from repository evidence. `GateEngine` order stays.
+- **Compose**: US-0141 and US-0142 stay DONE. US-0149, US-0150, and US-0151 stay DONE. Do not start US-0153. Pixel baselines and micro-VM isolation stay deferred. The `BrowserUAT` class default may stay fake for unit tests; the host must not use it. Mirror template twins of touched files.
+- **Tests**: add six `test_us0152_*` markers in `standalone/tests/contract/us0152.contract.test.ts`. Success must not use `FakeBrowserDriver` or `screenshot-placeholder`.
+- **Continuation**: `record_key=auto-20261011-us0152-plan|story|(none)|sprint-plan|rp-auto-20261011-us0152-plan-techlead-20261011T183005Z`; skipped=`[intake, plan-verify]`; completed=`[intake, discovery, research, architecture, sprint-plan]`; next=`execute` / `dev`; cursor=`plan/3-of-3`; stop=`sprint_plan_complete_phase_boundary`.
+- **Fresh proof**: marker=`tl-US0152-plan-20261011T183005Z-fresh`; proof=`rp-auto-20261011-us0152-plan-techlead-20261011T183005Z` / `8e86f4dcb0753dcd06d6d94b06ad9060821370cf80fa3e6e044912c7b1a168ba`.
+- **Next**: parent validates this pair, then may spawn fresh `/execute` (dev) for US-0152/S0172. This child does not spawn it. **STOP.**
+
+---
+
+## Execute handoff — US-0151 / S0171 — `/execute` next (fresh dev)
+
+- **Completed**: plan macro (research + architecture + sprint-plan). **Verdict**: `SPRINT_PLAN_PASS`; `decision_gate=false`. US-0151 remains **OPEN**. AC-1..AC-6 remain unchecked.
+- **Sprint**: **S0171**. Research **R-0161**. Architecture `# US-0151`. Companion DEC: **none**. Tasks: 7 (T-anch + T-001..T-006).
+- **Locked delivery**: keep the `OperatorTransport` from `resolveOperatorTransport`. Production paths do not open `:memory:`. One executor on the US-0150 host runs `WorkflowEngine` for lifecycle commands, `crashResume` for resume, and `host.intel` for ask/index. App and browser return existing unavailable codes. TUI reads daemon attach, event replay, and `status.snapshot`. Protocol version stays 1. Panel ids stay.
+- **Compose**: US-0146, US-0148, US-0149, and US-0150 stay DONE. Do not start US-0152. Do not reopen US-0149 or US-0150. Keep US-0146 `run.ts` identifiers and US-0148 event sequencing. Mirror template twins of touched files.
+- **Tests**: add six `test_us0151_*` markers in `standalone/tests/contract/us0151.contract.test.ts`. Use the deterministic local model seam.
+- **Continuation**: `record_key=auto-20261011-us0151-plan|story|(none)|sprint-plan|rp-auto-20261011-us0151-plan-techlead-20261011T162642Z`; skipped=`[intake, plan-verify]`; completed=`[intake, discovery, research, architecture, sprint-plan]`; next=`execute` / `dev`; cursor=`plan/3-of-3`; stop=`sprint_plan_complete_phase_boundary`.
+- **Fresh proof**: marker=`tl-US0151-plan-20261011T162642Z-fresh`; proof=`rp-auto-20261011-us0151-plan-techlead-20261011T162642Z` / `756c68acb9e8264e46cf871bd9072d8b0f3fbe71c1a70a5ab430ef04183015ac`.
+- **Next**: parent validates this pair, then may spawn fresh `/execute` (dev) for US-0151/S0171. This child does not spawn it. **STOP.**
+
+---
+
+## Execute handoff — US-0150 / S0170 — `/execute` next (fresh dev)
+
+- **Completed**: plan macro (research + architecture + sprint-plan). **Verdict**: `SPRINT_PLAN_PASS`; `decision_gate=false`. US-0150 remains **OPEN**. AC-1..AC-6 remain unchecked.
+- **Sprint**: **S0170**. Research **R-0150** extended in place (heading unchanged). Architecture `# US-0150`. Companion DEC: **none created** (`DEC-0150` already Accepted). Tasks: 7 (T-anch + T-001..T-006).
+- **Locked delivery**: keep `@its-magic/runtime-host` as the only production composition root. CLI and daemon `index.ts` already call `createRuntimeHost`; keep that. On the host-present daemon path, `crashResume` must receive the host's resolved config. The host must build one hashed context pack through existing `codeContext`, or fail with `RUNTIME_SERVICE_UNAVAILABLE`. The supervisor-only empty-config branch stays the US-0148 test seam and must stay unreachable from those `index.ts` entrypoints.
+- **Compose**: US-0133 through US-0140 stay DONE package contracts. US-0149 stays DONE. Do not start US-0151. Do not implement BUG-0026 or phase-9 clients. Do not reopen S0158.
+- **Tests**: keep the six `test_us0150_*` markers in `standalone/tests/contract/us0150.contract.test.ts`. The production-composition case calls `createRuntimeHost` with no factories and a deterministic local model seam.
+- **Continuation**: `record_key=auto-20261011-us0150-plan|story|(none)|sprint-plan|rp-auto-20261011-us0150-plan-techlead-20261011T144420Z`; skipped=`[intake, plan-verify]`; completed=`[intake, discovery, research, architecture, sprint-plan]`; next=`execute` / `dev`; cursor=`plan/3-of-3`; stop=`sprint_plan_complete_phase_boundary`.
+- **Fresh proof**: marker=`tl-US0150-plan-20261011T144420Z-fresh`; proof=`rp-auto-20261011-us0150-plan-techlead-20261011T144420Z` / `4b5ac7319cd7651cd0b3fca50110cfe5f516571c6cedb238be041df0b86fadf6`.
+- **Next**: parent validates this pair, then may spawn fresh `/execute` (dev) for US-0150/S0170. This child does not spawn it. **STOP.**
+
+---
+
+## Execute handoff — US-0149 / S0169 — `/execute` next (fresh dev)
+
+- **Completed**: plan macro (research + architecture + sprint-plan). **Verdict**: `SPRINT_PLAN_PASS`; `decision_gate=false`. US-0149 remains **OPEN**. AC-1..AC-6 remain unchecked.
+- **Sprint**: **S0169**. Research **R-0160**. Architecture `# US-0149`. Companion DEC: **none**. Tasks: 7 (T-anch + T-001..T-006).
+- **Locked delivery**: opt-in registration of the materialized `.its-magic/bin/itsm` into a user-chosen directory, then append that directory to the user PATH. Windows uses `HKCU\Environment` and copies the shim files. Linux and macOS use a marked profile snippet and a symlink (copy fallback). A missing shim prints `ITSM_PATH_SHIM_MISSING` and writes nothing. Unregister removes only the recorded links, and removes the PATH directory only when this story appended it.
+- **Compose**: BUG-0026 owns published-kit materialize. Do not edit it or its ACs. Do not reopen BUG-0025, US-0146, US-0147 shim generation, US-0148, or BUG-0033. Keep `bin/itsm.js` and `tests/us0149_global_itsm_launcher_test.py`.
+- **Tests**: `tests/us0149_path_registration_test.py` with a fake home and a fake PATH store. Active and template runbook sections for AC-5.
+- **Continuation**: `record_key=auto-20261011-us0149-plan|story|(none)|sprint-plan|rp-auto-20261011-us0149-plan-techlead-20261011T125459Z`; skipped=`[intake, plan-verify]`; completed=`[intake, discovery, research, architecture, sprint-plan]`; next=`execute` / `dev`; cursor=`plan/3-of-3`; stop=`sprint_plan_complete_phase_boundary`.
+- **Fresh proof**: marker=`tl-US0149-plan-20261011T125459Z-fresh`; proof=`rp-auto-20261011-us0149-plan-techlead-20261011T125459Z` / `604facda30531a9cbe890329ce2346408fad2dbb3f4e08ebc4731a84829c08dc`.
+- **Next**: parent validates this pair, then may spawn fresh `/execute` (dev) for US-0149/S0169. This child does not spawn it. **STOP.**
+
+---
+
 ## Sprint-plan handoff — BUG-0034 / S0167 — `/execute` next (fresh dev)
 
 - **Completed**: sprint-plan only. **Verdict**: `SPRINT_PLAN_PASS`; `decision_gate=false`. BUG-0034 remains **OPEN** and all backlog/acceptance ACs remain unchecked.

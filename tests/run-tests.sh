@@ -1692,6 +1692,13 @@ US0149_CONTRACT_PY=$?
 set -e
 assert_true "US-0149 global itsm launcher contract tests pass" "[ \"$US0149_CONTRACT_PY\" -eq 0 ]"
 
+# 26AU2) US-0149 — opt-in user PATH registration (fake home + fake PATH store)
+set +e
+"$PY" -m pytest tests/us0149_path_registration_test.py -q >/dev/null 2>&1
+US0149_PATH_PY=$?
+set -e
+assert_true "US-0149 path registration contract tests pass" "[ \"$US0149_PATH_PY\" -eq 0 ]"
+
 # 26AV) BUG-0027 — OpenCode manual phase persist (IsolationEvidence + validator packs)
 set +e
 "$PY" scripts/check_intake_template_parity.py --scope=bug-0027 >/dev/null 2>&1

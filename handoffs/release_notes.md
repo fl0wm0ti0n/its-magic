@@ -1,4 +1,136 @@
-﻿## Release re-attestation note (S0168 / release2) -- 2026-10-10T21:17:39Z
+## Release finalized note (S0175) -- 2026-10-12T20:23:01Z
+
+- Sprint: `S0175`
+- Story: `US-0155` remains **OPEN**. Interactive operator TUI is recorded. Closure owns the DONE flip. AC-1..AC-5 stay unchecked.
+- Release: **finalized / PASS**
+  - `fresh_context_marker=release-US0155-release-20261012T202301Z-fresh`
+  - `orchestrator_run_id=auto-20261012-us0155-release`
+  - `runtime_proof_id=rp-auto-20261012-us0155-release-release-20261012T202301Z`
+  - `proof_hash=5d5d9b1123ed7d7bf98d42a9a8198981563d90a2916099678ed0a62170ba04a1`
+  - `proof_issued_at=2026-10-12T20:23:01Z`, `ttl_seconds=3600`, `proof_ttl=2026-10-12T21:23:01Z`
+- Harness: `tests/report.md` **2026-10-12T20:13:03Z**, **Pass=880**, **Fail=0**. Five `test_us0155_*` markers re-run this release: 5 passed / 0 failed.
+- Start: `node --experimental-strip-types --test --test-name-pattern "test_us0155_" tests/contract/us0155.contract.test.ts` (cwd `standalone`). Endpoint: n/a (local). Verify: `handoffs/releases/S0175-release-notes.md`.
+- Coverage: `status=PASS`, `coverage_missing=[]`, `coverage_total=50`. US-0155 stays out of `coverage_present` while OPEN. Literal `US-0155` is absent from the Features catalog. `**US-0155**` is absent under Architecture notes.
+- Publish: **NOT PERFORMED** (`RELEASE_PUBLISH_MODE=confirm`, `npm_published=false`, no registry write, no kit semver bump)
+- Push: **NOT PERFORMED** (`SYNC_POLICY_MODE=disabled`, no git push)
+- CHANGELOG: `[Unreleased]` `### Added` US-0155 bullet. `template/CHANGELOG.md` untouched.
+- Next: `/closure` (fresh curator). `stop_reason=release_complete_phase_boundary`.
+- Canonical notes: `handoffs/releases/S0175-release-notes.md`
+
+## Release finalized note (S0174) -- 2026-10-12T18:38:50Z
+
+- Sprint: `S0174`
+- Story: `US-0154` remains **OPEN**. Standalone operator-path quality gate is recorded. Closure owns the DONE flip. AC-1..AC-6 stay unchecked.
+- Release: **finalized / PASS**
+  - `fresh_context_marker=release-US0154-release-20261012T183850Z-fresh`
+  - `orchestrator_run_id=auto-20261012-us0154-release`
+  - `runtime_proof_id=rp-auto-20261012-us0154-release-release-20261012T183850Z`
+  - `proof_hash=1de4694752e897a0d0970508d5ad180e28bacfdae077f07d123fa2dac0c3be89`
+  - `proof_issued_at=2026-10-12T18:38:50Z`, `ttl_seconds=3600`, `proof_ttl=2026-10-12T19:38:50Z`
+- Harness: `tests/report.md` **2026-10-12T18:29:11Z**, **Pass=880**, **Fail=0**. Five `test_us0154_*` markers re-run this release: 5 passed / 0 failed.
+- Start: `node --experimental-strip-types --test --test-name-pattern "test_us0154_" tests/contract/us0154.contract.test.ts` (cwd `standalone`). Endpoint: n/a (local). Verify: `handoffs/releases/S0174-release-notes.md`.
+- Coverage: `status=PASS`, `coverage_missing=[]`, `coverage_total=49`. US-0154 stays out of `coverage_present` while OPEN. Literal `US-0154` is absent from the Features catalog. `**US-0154**` is absent under Architecture notes.
+- Publish: **NOT PERFORMED** (`RELEASE_PUBLISH_MODE=confirm`, `npm_published=false`, no registry write, no kit semver bump)
+- Push: **NOT PERFORMED** (`SYNC_POLICY_MODE=disabled`, no git push)
+- CHANGELOG: `[Unreleased]` `### Added` US-0154 bullet. `template/CHANGELOG.md` untouched.
+- Next: `/closure` (fresh curator). `stop_reason=release_complete_phase_boundary`.
+- Canonical notes: `handoffs/releases/S0174-release-notes.md`
+
+## Release finalized note (S0173) -- 2026-10-11T21:35:12Z
+
+- Sprint: `S0173`
+- Story: `US-0153` remains **OPEN**. Parallel arbitration and configured release targets are recorded. Closure owns the DONE flip. AC-1..AC-5 stay unchecked.
+- Release: **finalized / PASS**
+  - `fresh_context_marker=release-US0153-release-20261011T213512Z-fresh`
+  - `orchestrator_run_id=auto-20261011-us0153-release`
+  - `runtime_proof_id=rp-auto-20261011-us0153-release-release-20261011T213512Z`
+  - `proof_hash=ce8455383a8978020eb1d1622141dabf9437f722c7c486bbd563404ce2ea8b28`
+  - `proof_issued_at=2026-10-11T21:35:12Z`, `ttl_seconds=3600`, `proof_ttl=2026-10-11T22:35:12Z`
+- Harness: `tests/report.md` **2026-10-11T21:19:17Z**, **Pass=880**, **Fail=0**. Five `test_us0153_*` markers re-run this release: 5 passed / 0 failed.
+- Start: `node --experimental-strip-types --test --test-name-pattern "test_us0153_" tests/contract/us0153.contract.test.ts` (cwd `standalone`). Endpoint: n/a (local). Verify: `handoffs/releases/S0173-release-notes.md`.
+- Coverage: `status=PASS`, `coverage_missing=[]`, `coverage_total=48`. US-0153 stays out of `coverage_present` while OPEN. Literal `US-0153` is absent from the Features catalog. `**US-0153**` is absent under Architecture notes.
+- Publish: **NOT PERFORMED** (`RELEASE_PUBLISH_MODE=confirm`, `npm_published=false`, no registry write, no kit semver bump)
+- Push: **NOT PERFORMED** (`SYNC_POLICY_MODE=disabled`, no git push)
+- CHANGELOG: `[Unreleased]` `### Added` US-0153 bullet. `template/CHANGELOG.md` untouched.
+- Next: `/closure` (fresh curator). `stop_reason=release_complete_phase_boundary`.
+- Canonical notes: `handoffs/releases/S0173-release-notes.md`
+
+## Release finalized note (S0172) -- 2026-10-11T19:48:08Z
+
+- Sprint: `S0172`
+- Story: `US-0152` remains **OPEN**. Production application and browser UAT integration is recorded. Closure owns the DONE flip. AC-1..AC-6 stay unchecked.
+- Release: **finalized / PASS**
+  - `fresh_context_marker=release-US0152-release-20261011T194808Z-fresh`
+  - `orchestrator_run_id=auto-20261011-us0152-release`
+  - `runtime_proof_id=rp-auto-20261011-us0152-release-release-20261011T194808Z`
+  - `proof_hash=d49f4d80ced498440b0155bddd22cc10260c1253c97e9c4ec1ffa999f5ac703f`
+  - `proof_issued_at=2026-10-11T19:48:08Z`, `ttl_seconds=3600`, `proof_ttl=2026-10-11T20:48:08Z`
+- Harness: `tests/report.md` **2026-10-11T19:38:28Z**, **Pass=880**, **Fail=0**. Six `test_us0152_*` markers re-run this release: 6 passed / 0 failed.
+- Start: `node --experimental-strip-types --test --test-name-pattern "test_us0152_" tests/contract/us0152.contract.test.ts` (cwd `standalone`). Endpoint: n/a (local). Verify: `handoffs/releases/S0172-release-notes.md`.
+- Coverage: `status=PASS`, `coverage_missing=[]`, `coverage_total=47`. US-0152 stays out of `coverage_present` while OPEN.
+- Publish: **NOT PERFORMED** (`RELEASE_PUBLISH_MODE=confirm`, `npm_published=false`, no registry write, no kit semver bump)
+- Push: **NOT PERFORMED** (`SYNC_POLICY_MODE=disabled`, no git push)
+- CHANGELOG: `[Unreleased]` `### Added` US-0152 bullet. `template/CHANGELOG.md` untouched.
+- Next: `/closure` (fresh curator). `stop_reason=release_complete_phase_boundary`.
+- Canonical notes: `handoffs/releases/S0172-release-notes.md`
+
+## Release finalized note (S0171) -- 2026-10-11T17:54:48Z
+
+- Sprint: `S0171`
+- Story: `US-0151` remains **OPEN**. Executable lifecycle on the resolved operator transport is recorded. Closure owns the DONE flip. AC-1..AC-6 stay unchecked.
+- Release: **finalized / PASS**
+  - `fresh_context_marker=release-US0151-release-20261011T175448Z-fresh`
+  - `orchestrator_run_id=auto-20261011-us0151-release`
+  - `runtime_proof_id=rp-auto-20261011-us0151-release-release-20261011T175448Z`
+  - `proof_hash=e43bfab2433c89345d56a2d2807dbc907b2b64da29d0ffe3963972f2163406e9`
+  - `proof_issued_at=2026-10-11T17:54:48Z`, `ttl_seconds=3600`, `proof_ttl=2026-10-11T18:54:48Z`
+- Harness: `tests/report.md` **2026-10-11T17:44:57Z**, **Pass=880**, **Fail=0**. Six `test_us0151_*` markers re-run this release: 6 passed / 0 failed.
+- Start: `node --experimental-strip-types --test --test-name-pattern "test_us0151_" tests/contract/us0151.contract.test.ts` (cwd `standalone`). Endpoint: n/a (local). Verify: `handoffs/releases/S0171-release-notes.md`.
+- Coverage: `status=PASS`, `coverage_missing=[]`, `coverage_total=46`. US-0151 stays out of `coverage_present` while OPEN.
+- Publish: **NOT PERFORMED** (`RELEASE_PUBLISH_MODE=confirm`, `npm_published=false`, no registry write, no kit semver bump)
+- Push: **NOT PERFORMED** (`SYNC_POLICY_MODE=disabled`, no git push)
+- CHANGELOG: `[Unreleased]` `### Added` US-0151 bullet. `template/CHANGELOG.md` untouched.
+- Next: `/closure` (fresh curator). `stop_reason=release_complete_phase_boundary`.
+- Canonical notes: `handoffs/releases/S0171-release-notes.md`
+
+﻿## Release finalized note (S0170) -- 2026-10-11T15:46:35Z
+
+- Sprint: `S0170`
+- Story: `US-0150` remains **OPEN**. Production standalone runtime composition is recorded. Closure owns the DONE flip. AC-1..AC-6 stay unchecked.
+- Release: **finalized / PASS**
+  - `fresh_context_marker=release-US0150-release-20261011T154635Z-fresh`
+  - `orchestrator_run_id=auto-20261011-us0150-release`
+  - `runtime_proof_id=rp-auto-20261011-us0150-release-release-20261011T154635Z`
+  - `proof_hash=de5d239fc42e58fdef3bda981021b44867f82f95bdb3a1a899e51977daf511cd`
+  - `proof_issued_at=2026-10-11T15:46:35Z`, `ttl_seconds=3600`, `proof_ttl=2026-10-11T16:46:35Z`
+- Harness: `tests/report.md` **2026-10-11T15:39:14Z**, **Pass=880**, **Fail=0**. Six `test_us0150_*` markers re-run this release: 6 passed / 0 failed.
+- Start: `node --experimental-strip-types --test --test-name-pattern "test_us0150_" tests/contract/us0150.contract.test.ts` (cwd `standalone`). Endpoint: n/a (local). Verify: `handoffs/releases/S0170-release-notes.md`.
+- Coverage: `status=PASS`, `coverage_missing=[]`, `coverage_total=45`. US-0150 stays out of `coverage_present` while OPEN.
+- Publish: **NOT PERFORMED** (`RELEASE_PUBLISH_MODE=confirm`, `npm_published=false`, no registry write, no kit semver bump)
+- Push: **NOT PERFORMED** (`SYNC_POLICY_MODE=disabled`, no git push)
+- CHANGELOG: `[Unreleased]` `### Added` US-0150 bullet. `template/CHANGELOG.md` untouched.
+- Next: `/closure` (fresh curator). `stop_reason=release_complete_phase_boundary`.
+- Canonical notes: `handoffs/releases/S0170-release-notes.md`
+
+## Release finalized note (S0169) -- 2026-10-11T14:13:22Z
+
+- Sprint: `S0169`
+- Story: `US-0149` remains **OPEN**. Opt-in global `itsm` PATH registration is recorded. Closure owns the DONE flip. AC-1..AC-6 stay unchecked.
+- Release: **finalized / PASS**
+  - `fresh_context_marker=release-US0149-release-20261011T141322Z-fresh`
+  - `orchestrator_run_id=auto-20261011-us0149-release`
+  - `runtime_proof_id=rp-auto-20261011-us0149-release-release-20261011T141322Z`
+  - `proof_hash=ae9f5cbf0b26abd4994c21165f71db157d4dc18b2127456294ddcc6bb216e6d3`
+  - `proof_issued_at=2026-10-11T14:13:22Z`, `ttl_seconds=3600`, `proof_ttl=2026-10-11T15:13:22Z`
+- Harness: `tests/report.md` **2026-10-11T14:01:36Z**, **Pass=880**, **Fail=0**. Eight `test_us0149_*` markers re-run this release: 8 passed.
+- Coverage: `status=PASS`, `coverage_missing=[]`, `coverage_total=44`. US-0149 stays out of `coverage_present` while OPEN.
+- Publish: **NOT PERFORMED** (`RELEASE_PUBLISH_MODE=confirm`, `npm_published=false`, no registry write, no kit semver bump)
+- Push: **NOT PERFORMED** (`SYNC_POLICY_MODE=disabled`, no git push)
+- CHANGELOG: `[Unreleased]` `### Added` US-0149 bullet. `template/CHANGELOG.md` untouched.
+- Next: `/closure` (fresh curator). `stop_reason=release_complete_phase_boundary`.
+- Canonical notes: `handoffs/releases/S0169-release-notes.md`
+
+## Release re-attestation note (S0168 / release2) -- 2026-10-10T21:17:39Z
 
 - Sprint: `S0168`
 - Bug: `BUG-0033` remains **OPEN**. The README feature-coverage row is shipped (`**BUG-0033**` under `## Commands and workflow` in `its_magic/README.md`, byte-identical to the template twin, and under `## Quality gates` in `docs/developer/README.md`). Closure owns the DONE flip.

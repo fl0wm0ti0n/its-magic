@@ -113,6 +113,12 @@ unavailable). Guided and decision-gated modes remain the default.
 - CLI/TUI polish — Operational observability with status, logs, run tracking, and TUI mode for interactive sessions (`US-0146`).
 - `its-magic --target` — Installation, update, and existing-project adoption with fresh/upgrade/overwrite/clean-repo modes and lifecycle QA matrix (`US-0147`).
 - Recoverable daemon — Stable control protocol with boot UUID, process tracking, session recovery, and graceful shutdown (`US-0148`).
+- Opt-in user PATH — Register the project shim `.its-magic/bin/itsm` on a chosen user PATH directory, Windows and POSIX, and remove only that registration (`US-0149`).
+- Production runtime composition — One shared runtime host for CLI and daemon, with a real context pack, attested custom-tool sessions, and no placeholder tool success (`US-0150`).
+- Executable lifecycle transport — CLI, daemon, and TUI submit admitted work to one persistent runtime and persist success, gate block, or execution failure (`US-0151`).
+- Application and browser UAT — The production host owns app runtime and isolated browser evidence, and incomplete evidence fails the release gate (`US-0152`).
+- Parallel arbitration and release targets — Parallel DEV candidates and configured deploy targets fail closed when arbitration is skipped or a stub adapter reports success (`US-0153`).
+- Operator-path quality gate — Standalone CI typecheck, lint, and tests sit beside the kit checks, and a public itsm entrypoint must reach production composition (`US-0154`).
 - OpenCode `/auto` parity — Spawn-only command-owned lifecycle orchestration with phase-plan and Stop-Matrix gates (`US-0156`).
 
 ## Setup
@@ -1563,6 +1569,7 @@ Reliable pattern:
 - `US-0012` scratchpad flag — Benchmark Suite (`US-0012`).
 - `US-0014` scratchpad flag — Quality Chain (3-Layer) (`US-0014`).
 - `US-0017` scratchpad flag — Template Drift Guard (`US-0017`).
+- Interactive operator TUI — A readline client of the admitted daemon transport, with bounded panels, redaction, and a non-interactive fallback (`US-0155`).
 
 ## Developer and release deep-dive
 

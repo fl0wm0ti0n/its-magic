@@ -1,0 +1,174 @@
+{
+  "sprint": "S0175",
+  "sprint_id": "S0175",
+  "story_id": "US-0155",
+  "bug_id": null,
+  "status": "PASS",
+  "verdict": "PASS",
+  "uat_lifecycle": "populated",
+  "placeholder_only": false,
+  "delivery_mode": "ultra_lean",
+  "macro_phase": "build+verify",
+  "phase_id": "qa",
+  "role": "qa",
+  "timestamp": "2026-10-12T20:00:43Z",
+  "fresh_context_marker": "qa-US0155-qa-20261012T200043Z-fresh",
+  "cross_model_review": 0,
+  "story_status": "OPEN",
+  "acceptance_boxes_checked": false,
+  "total": 6,
+  "passed": 6,
+  "failed": 0,
+  "steps": [
+    {
+      "id": "UAT-1",
+      "ac": "AC-1",
+      "description": "TUI is an interactive daemon client and not a second runtime",
+      "result": "pass",
+      "marker": "test_us0155_tui_is_daemon_client_not_a_second_runtime",
+      "probe_kind": "contract_tests_primary"
+    },
+    {
+      "id": "UAT-2",
+      "ac": "AC-2",
+      "description": "Commands, streaming events, diagnostics, approve, cancel, pause, and resume use the admitted runtime",
+      "result": "pass",
+      "marker": "test_us0155_commands_stream_diagnostics_approve_cancel_pause_resume",
+      "probe_kind": "contract_tests_primary"
+    },
+    {
+      "id": "UAT-3",
+      "ac": "AC-3",
+      "description": "Bounded panels cover the operator surfaces and the US-0146 narrow layout stays phase and status",
+      "result": "pass",
+      "marker": "test_us0155_bounded_panels_cover_operator_surfaces",
+      "probe_kind": "contract_tests_primary"
+    },
+    {
+      "id": "UAT-4",
+      "ac": "AC-4",
+      "description": "Keyboard, resize, redaction, reconnect, and non-interactive fallback",
+      "result": "pass",
+      "marker": "test_us0155_keyboard_resize_redaction_reconnect_fallback",
+      "probe_kind": "contract_tests_primary"
+    },
+    {
+      "id": "UAT-5",
+      "ac": "AC-5",
+      "description": "Real daemon protocol without a Pi session outside runtime admission",
+      "result": "pass",
+      "marker": "test_us0155_daemon_protocol_without_external_pi_session",
+      "probe_kind": "contract_tests_primary"
+    },
+    {
+      "id": "convergence_smoke",
+      "description": "Convergence smoke surrogate — waived-probe slice with green contract-test harness",
+      "result": "pass",
+      "marker": "test_us0128_convergence_smoke_surrogate",
+      "evidence_ref": "tests/report.md Fail:0 + uat.json waived_probes[] (6 classes, UAT_PROBE_FORBIDDEN)",
+      "probe_kind": "contract_tests_primary"
+    }
+  ],
+  "summary": {
+    "passed": 6,
+    "failed": 0
+  },
+  "contract_test_markers": [
+    "test_us0155_tui_is_daemon_client_not_a_second_runtime",
+    "test_us0155_commands_stream_diagnostics_approve_cancel_pause_resume",
+    "test_us0155_bounded_panels_cover_operator_surfaces",
+    "test_us0155_keyboard_resize_redaction_reconnect_fallback",
+    "test_us0155_daemon_protocol_without_external_pi_session"
+  ],
+  "contract_test_passed": 5,
+  "contract_test_failed": 0,
+  "contract_test_command": "node --experimental-strip-types --test --test-name-pattern test_us0155_ tests/contract/us0155.contract.test.ts",
+  "contract_test_output": "5 pass / 0 fail; duration_ms 3342.1246",
+  "harness": {
+    "command": "powershell -NoProfile -ExecutionPolicy Bypass -File tests/run-tests.ps1",
+    "report": "tests/report.md",
+    "timestamp": "2026-10-12T20:00:16Z",
+    "pass": 880,
+    "fail": 0,
+    "exit_code": 0,
+    "fail_zero_claimed": true
+  },
+  "blocking_findings": [],
+  "probe_results": [
+    {
+      "step_id": "UAT-1",
+      "probe_class": "contract_tests_primary",
+      "passed": true,
+      "reason_code": "UAT_PROBE_PASS",
+      "evidence_ref": "test_us0155_tui_is_daemon_client_not_a_second_runtime"
+    },
+    {
+      "step_id": "UAT-2",
+      "probe_class": "contract_tests_primary",
+      "passed": true,
+      "reason_code": "UAT_PROBE_PASS",
+      "evidence_ref": "test_us0155_commands_stream_diagnostics_approve_cancel_pause_resume"
+    },
+    {
+      "step_id": "UAT-3",
+      "probe_class": "contract_tests_primary",
+      "passed": true,
+      "reason_code": "UAT_PROBE_PASS",
+      "evidence_ref": "test_us0155_bounded_panels_cover_operator_surfaces"
+    },
+    {
+      "step_id": "UAT-4",
+      "probe_class": "contract_tests_primary",
+      "passed": true,
+      "reason_code": "UAT_PROBE_PASS",
+      "evidence_ref": "test_us0155_keyboard_resize_redaction_reconnect_fallback"
+    },
+    {
+      "step_id": "UAT-5",
+      "probe_class": "contract_tests_primary",
+      "passed": true,
+      "reason_code": "UAT_PROBE_PASS",
+      "evidence_ref": "test_us0155_daemon_protocol_without_external_pi_session"
+    },
+    {
+      "step_id": "convergence_smoke",
+      "probe_class": "contract_tests_primary",
+      "passed": true,
+      "reason_code": "UAT_PROBE_PASS",
+      "evidence_ref": "tests/report.md 2026-10-12T20:00:16Z Pass 880 Fail 0"
+    }
+  ],
+  "probe_class_note": "A live external terminal or paid model call is UAT_PROBE_FORBIDDEN. Fixture tests cover the operator TUI. No paid credentials and no .env read. US-0155 stays OPEN.",
+  "waived_probes": [
+    {
+      "probe_class": "browser_smoke",
+      "reason": "No live external browser. Browser evidence is rendered from the contract fixture.",
+      "reason_code": "UAT_PROBE_FORBIDDEN"
+    },
+    {
+      "probe_class": "api_health",
+      "reason": "No live external API. A live external terminal is forbidden.",
+      "reason_code": "UAT_PROBE_FORBIDDEN"
+    },
+    {
+      "probe_class": "process_health",
+      "reason": "No live external process. The local daemon fixture is the contract path.",
+      "reason_code": "UAT_PROBE_FORBIDDEN"
+    },
+    {
+      "probe_class": "cli_smoke",
+      "reason": "No live external terminal. The non-interactive fixture exits without waiting for a key.",
+      "reason_code": "UAT_PROBE_FORBIDDEN"
+    },
+    {
+      "probe_class": "build",
+      "reason": "No product build or publish. A live external terminal is forbidden.",
+      "reason_code": "UAT_PROBE_FORBIDDEN"
+    },
+    {
+      "probe_class": "manual_operator",
+      "reason": "A paid model call is UAT_PROBE_FORBIDDEN.",
+      "reason_code": "UAT_PROBE_FORBIDDEN"
+    }
+  ]
+}

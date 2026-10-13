@@ -1,3 +1,10 @@
+import { appendFileSync, mkdirSync } from "node:fs";
+import { dirname, join } from "node:path";
+import {
+	canonicalizeAgainstWorktree,
+	POLICY_DEFAULT_DENY,
+	POLICY_TRAVERSAL_DENIED,
+} from "@its-magic/policy-engine";
 import type { ConfigView } from "../config-view.ts";
 
 export const PARALLEL_DEV_RESOURCE_CAP_EXHAUSTED = "PARALLEL_DEV_RESOURCE_CAP_EXHAUSTED";
@@ -66,4 +73,82 @@ export function defaultLimits(config: ConfigView): DeliveryResourceLimits {
 
 export function createDeliveryResourceGuard(config: ConfigView): DeliveryResourceGuard {
 	return new DeliveryResourceGuard(config);
+}
+
+export type DeliveryLimitAction = "worktree_create" | "deploy" | "repair";
+
+export interface DeliveryAuditLine {
+	audit: "delivery_limit";
+	action: DeliveryLimitAction;
+	ok: boolean;
+	reason_code?: string;
+	path: string;
+}
+
+export type DeliveryAdmission =
+	| { ok: true; audit_ref: string }
+	| { ok: false; reason_code: string; audit_ref: string };
+
+function admitPath(
+	path: string | undefined,
+	worktreeRoot: string,
+): { ok: true } | { ok: false; reason_code: string } {
+	if (!path || !worktreeRoot) {
+		return { ok: false, reason_code: POLICY_DEFAULT_DENY };
+	}
+	const canon = canonicalizeAgainstWorktree(path, worktreeRoot, worktreeRoot);
+	if (!canon.ok) {
+		return {
+			ok: false,
+			reason_code:
+				canon.reason_code === POLICY_TRAVERSAL_DENIED
+					? POLICY_TRAVERSAL_DENIED
+					: POLICY_DEFAULT_DENY,
+		};
+	}
+	return { ok: true };
+}
+
+export function appendDeliveryAudit(kernelRoot: string, line: DeliveryAuditLine): string {
+	const rel = join("handoffs", "deploy_results", "deploy_results.jsonl");
+	const abs = join(kernelRoot, rel);
+	mkdirSync(dirname(abs), { recursive: true });
+	appendFileSync(abs, `${JSON.stringify(line)}\n`, "utf8");
+	return rel.replace(/\\/g, "/");
+}
+
+/** Guard and path policy before worktree create, deploy, or repair. One audit line per check. */
+export function admitDeliveryAction(input: {
+	config: ConfigView;
+	kernelRoot: string;
+	action: DeliveryLimitAction;
+	path?: string;
+	snapshot?: DeliveryResourceSnapshot;
+}): DeliveryAdmission {
+	if (!input.kernelRoot) {
+		return { ok: false, reason_code: POLICY_DEFAULT_DENY, audit_ref: "" };
+	}
+	const guard = createDeliveryResourceGuard(input.config);
+	const cap = guard.check(
+		input.snapshot ?? {
+			active_worktrees: 0,
+			concurrent_tests: 0,
+			wall_clock_ms: 0,
+			token_spend: 0,
+		},
+	);
+	const policy = admitPath(input.path, input.kernelRoot);
+	const ok = cap.ok && policy.ok;
+	const reason_code = !cap.ok ? cap.reason_code : !policy.ok ? policy.reason_code : undefined;
+	const audit_ref = appendDeliveryAudit(input.kernelRoot, {
+		audit: "delivery_limit",
+		action: input.action,
+		ok,
+		reason_code,
+		path: input.path ?? "",
+	});
+	if (!ok) {
+		return { ok: false, reason_code: reason_code || POLICY_DEFAULT_DENY, audit_ref };
+	}
+	return { ok: true, audit_ref };
 }

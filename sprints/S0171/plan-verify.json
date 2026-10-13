@@ -1,0 +1,33 @@
+{
+  "schema_version": 1,
+  "story_id": "US-0151",
+  "bug_id": null,
+  "sprint_id": "S0171",
+  "phase_id": "plan-verify",
+  "role": "qa",
+  "orchestrator_run_id": "auto-20261011-us0151-plan",
+  "delivery_mode": "ultra_lean",
+  "macro_phase": "plan",
+  "status": "PENDING",
+  "verdict": "PENDING",
+  "skipped": true,
+  "deferred": true,
+  "reason_code": "ULTRA_LEAN_PLAN_VERIFY_DEFERRED",
+  "note": "Ultra-lean skips plan-verify at plan time. QA overwrites this stub inside build+verify. AC-1..AC-6 stay unchecked. US-0151 stays OPEN.",
+  "fresh_context_marker": "tl-US0151-plan-20261011T162642Z-fresh",
+  "task_count": 7,
+  "acceptance_criteria": 6,
+  "ac_coverage_surjective": true,
+  "coverage_complete": true,
+  "uncovered_acs": [],
+  "gaps": [],
+  "ac_surjection": {
+    "AC-1": ["T-001", "T-006"],
+    "AC-2": ["T-002", "T-006"],
+    "AC-3": ["T-003", "T-006"],
+    "AC-4": ["T-004", "T-006"],
+    "AC-5": ["T-005", "T-006"],
+    "AC-6": ["T-006"]
+  },
+  "next_phase_after_plan_verify": "execute"
+}

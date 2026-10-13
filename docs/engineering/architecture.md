@@ -1,372 +1,4 @@
 
-# BUG-0009: Downstream-safe template CI vs kit-internal active CI
-Archived body in pack_ref: docs/engineering/architecture-archive/architecture-pack-20260913-j.md
-
-# US-0091 — README ↔ backlog feature coverage backfill + blocking drift gate
-Archived body in pack_ref: docs/engineering/architecture-archive/architecture-pack-20260913-i.md
-
-# US-0093 — Cursor browser-integrated UAT self-test
-Archived body in pack_ref: docs/engineering/architecture-archive/architecture-pack-20260913-i.md
-
-# US-0109 — Self-Healing Deploy Loop (post-deploy smoke probe + bounded retry + DEPLOY_DEFERRED)
-Archived body in pack_ref: docs/engineering/architecture-archive/architecture-pack-20260824.md
-
-# BUG-0010 — Dual-level architecture story headings and diff-gated H1 enforcement
-Archived body in pack_ref: docs/engineering/architecture-archive/architecture-pack-20260628.md
-
-# BUG-0011 — Caveman voice-compression rules missing from caveman.mdc
-Archived body in pack_ref: docs/engineering/architecture-archive/architecture-pack-20260628-a.md
-
-# BUG-0012 — Native-chain orchestrator compliance regression (post-US-0095)
-Archived body in pack_ref: docs/engineering/architecture-archive/architecture-pack-20260628-d.md
-
-# US-0042 — Post-QA release findings workflow
-Archived body in pack_ref: docs/engineering/architecture-archive/architecture-pack-20260612-a.md
-
-# US-0089: Cursor Caveman mode (scratchpad-configurable terse responses)
-Archived body in pack_ref: docs/engineering/architecture-archive/architecture-pack-20260913-i.md
-
-# US-0090: Caveman input compression
-
-**`US-0090`** adds an optional **input-side** Caveman file-scope compression layer,
-orthogonal to the response-side voice owned by `# US-0089` (DEC-0072 §1 three-axis
-non-substitution). Binding: **`DEC-0073`**; research **`R-0073`**. Composes on `# US-0089`,
-**`US-0053`**, **`US-0085`** (See `# US-0085` for context fresh-context markers), and
-**`US-0078`** / **`DEC-0060`** (compressed input must not bypass the intake evidence gate).
-2 net-new keys: `CAVEMAN_COMPRESS_INPUT` / `CAVEMAN_FILE_SCOPE` + `CAVEMAN_COMPRESS_SCOPE_EMPTY`.
-
-- Decision: **`DEC-0073`** — Amends: **`DEC-0072`** — Research: **`R-0073`** — Composed: `# US-0089`, **`US-0053`**, **`US-0085`**, **`US-0078`**, **`DEC-0060`**
-
-# US-0141 — Application runtime and pluggable execution backends
-
-## Overview
-
-**US-0141** adds one owned application runtime so operators can discover, start, observe, repair, and clean up real applications across local and Docker (core v1) plus typed WSL/SSH/remote-Docker adapters. New package `@its-magic/app-runtime` never imports Pi. Compose US-0140 `RunsStore.process_handles` **additively** (ProcessManager writes; workflow `reserveProcessHandle` remains a claim token). Do **not** nest AppRuntime inside CommandRouter/GateEngine. AppRuntime **owns** restart; Docker HEALTHCHECK is **status-only**. Browser UAT is **US-0142 OUT**. `/auto`/`/quick` drain is **US-0143 OUT**. OS micro-VM is future (`BACKEND_UNSUPPORTED`). Role-runtime / PolicyEngine / config / KernelBridge / isolation loader stay **unamended**. DEC-0038 `compute_strict_proof_hash` tuple stays **UNAMENDED**. Execute owns package files.
-
-**Research anchor**: **R-0138** (DQ1–DQ10 LOCKED). **Companion DEC**: **DEC-0141** (Accepted — THIS phase). **EARLY_RESEARCH**: consumed from R-0138 (HEALTHCHECK status-only analog; dockerode later-swap only; WSL/`ssh`/`DOCKER_HOST`; Chump backend trait analog — reject unknown→local; `child_process.spawn` AbortSignal) — **no new R-id**. Do not wipe R-0120..R-0138. **R-0137 remains BUG-0023.**
-
-**Fresh context marker**: `tl-US0141-architecture-20260914T003000Z-fresh`
-**Orchestrator run id**: `auto-20260913-us0141`
-**Timestamp**: 2026-09-14T00:30:00Z (UTC)
-**Verdict**: PASS
-**Next**: sovereign-critic (architecture), then `/sprint-plan` **S0149** (orchestrator hint S0148 ineligible — BUG-0023 occupies `sprints/S0148/`; S0146=BUG-0021; S0147=US-0140; orchestrator-owned). ultra_lean: plan-verify is **not** in `resolved_phase_plan`. Do **not** spawn sprint-plan or critic from this subagent (BUG-0006).
-
-**baseline_h2_count (pre-mutate)**: `0`
-
-## Approach locked (A1 — from R-0138)
-
-| Option | Summary | Verdict |
-|--------|---------|---------|
-| **A1** | Sibling `@its-magic/app-runtime` (no Pi) composing `runtime-core` RunsStore; AppRuntime + ProcessManager + CLI-first Docker + WSL/SSH adapters; AppRuntime-owned restart; 12 `test_us0141_*` | **Preferred / LOCKED** — AC-1..AC-8 |
-| A2 | Nested `runtime-core/src/runtime/` | **Rejected** — DQ1 / §30 sibling |
-| A3 | Two packages `execution-runtime` + `dev-environment` | **Rejected** — YAGNI v1 |
-| A4 | dockerode **is** AppRuntime | **Rejected** — adapter, not facade |
-| A5 | Kit Python only as the runtime | **Rejected** — standalone TS owns execution |
-| A6 | PM2 / forever / systemd as ProcessManager | **Rejected** — extra dep |
-| A7 | Docker HEALTHCHECK / `--restart` as remediation owner | **Rejected** — status-only / exit-only |
-| A8 | Implement browser UAT here | **Rejected** — US-0142 |
-| A9 | Micro-VM / Firecracker v1 | **Rejected** — D9 future |
-| A10 | Rewrite workflow / GateEngine / PolicyEngine / config / KernelBridge / `noTools` | **Rejected** — D2/D9 compose |
-| A11 | Require live Docker/WSL/SSH in CI | **Rejected** — fake backends |
-| A12 | Fold into `tool-broker` | **Rejected** — Layer A ≠ Layer B |
-| A13 | Unknown backend → silent local | **Rejected** — AC-8 fail-closed |
-| A14 | Second SQLite or better-sqlite3 for processes | **Rejected** — compose DEC-0140 `node:sqlite` |
-
-**Can this be simpler?** Nested runtime-core looks smaller and couples process lifecycle to the workflow engine. Two §30 packages double npm/test surface. dockerode adds a socket client we can avoid by spawning `docker`. A1 is the simplest design that meets AC-1..AC-8.
-
-### Locked surfaces (DEC-0141)
-
-1. **Package**: `@its-magic/app-runtime` (`standalone/packages/app-runtime`). npm name **LOCKED** `app-runtime` (not `execution-runtime`). `private: true`, `version: 0.0.0`, `type: module`, `engines.node >=22.19.0`, export `./src/index.ts`. **No Pi dependency.** Type-only / public-API imports from `@its-magic/runtime-core`, `@its-magic/role-runtime`, `@its-magic/policy-engine`, `@its-magic/config` allowed. Those packages **do not** import app-runtime internals. Extend US-0133..0140 Pi-import grep to this package. No Biome override. Kit `files` omit `standalone/`. Do not add standalone to kit workspaces. **Execute owns package creation.**
-2. **Compose, do not reimplement**: depend on `RunsStore` public API. Do **not** put AppRuntime inside `runtime-core/workflow/` or GateEngine. Do **not** rewrite CommandRouter, WorkflowEngine, GateEngine, or crash-resume DONE authority.
-3. **`process_handles` additive** (AC-2): keep `id`, `run_id`, `reserved`. Add **LOCKED** columns: `phase_id`, `backend`, `identity_kind` (`process`\|`container`\|`service`), `identity`, `command`, `cwd`, `ports_json`, `url`, `readiness`, `started_at`, `crash_count`, `restart_count`, `log_ring_ref`. ProcessManager writes via `upsertProcessHandle` / `listProcessHandlesForRun`. Log files under `.its-magic/runtime/logs/` + in-memory ring **256** lines; SQLite stores refs.
-4. **ExecutionBackend** (AC-3): `name()` / `execute()` / `health_check()`. Core v1: `local` + `docker` (`docker-local`) via `child_process.spawn` + CLI-first `docker`/`docker compose`. Thin `DockerClient` (dockerode later-swap, not required). Typed adapters: `wsl` (`wsl.exe -d <distro> [--cd <linuxCwd>] -- <cmd>` + `wslpath`) and `ssh`/`remote-docker` (`ssh -o BatchMode=yes -o ConnectTimeout=5` and/or `docker --context` / `DOCKER_HOST=ssh://`; key auth; password SSH unsupported). Micro-VM stub → `BACKEND_UNSUPPORTED`. `health_check` before execute. Missing binary/daemon/distro/SSH → fail-closed, not local fallback.
-5. **Reason codes LOCKED**: `APP_RUNTIME_PROFILE_UNKNOWN`, `APP_RUNTIME_START_FAILED`, `APP_RUNTIME_HEALTH_FAILED`, `APP_RUNTIME_RESTART_CAP_EXHAUSTED`, `APP_RUNTIME_UNSUPPORTED_STACK`, `APP_RUNTIME_CLEANUP_FAILED`; `BACKEND_UNKNOWN`, `BACKEND_UNAVAILABLE`, `BACKEND_DOCKER_UNAVAILABLE`, `BACKEND_WSL_UNAVAILABLE`, `BACKEND_SSH_UNAVAILABLE`, `BACKEND_UNSUPPORTED`, `BACKEND_CONNECTIVITY_FAILED`, `BACKEND_TIMEOUT`; `PROCESS_CRASHED`, `PROCESS_ORPHAN_REAPED`. Do not overload `REMOTE_*` / `RELEASE_*` / `WORKFLOW_*` / `DEV_ENV_*` as the primary family.
-6. **Stack profiles** (AC-4): port `detect_stack_profile` into TS (do not spawn Python). Order: `package.json`→`node`; `pyproject.toml`/`setup.py`→`python`; `go.mod`→`go`; `*.csproj`→`dotnet`; `pom.xml`→`java`. Unknown → `APP_RUNTIME_UNSUPPORTED_STACK` unless `DEV_SERVER_COMMAND` / `start_command` override.
-7. **Bounded self-debug** (AC-5): capture → classify (`start_failed`\|`health_failed`\|`crash`\|`timeout`\|`connectivity`\|`unsupported_stack`\|`unsupported_backend`) → optional fresh DEV (`SessionSupervisor.spawn`) → rebuild/restart → cap. Cap **`APP_RUNTIME_RESTART_MAX` default 3** from resolved config/scratchpad if present. **No new RuntimeConfig domain.** Orthogonal to `AUTO_IMPLEMENTATION_LOOP`. HEALTHCHECK is status-only; AppRuntime owns restart.
-8. **Evidence** (AC-6): `{ command, backend, exit_code, duration_ms, stdout_ref, stderr_ref, reason_code? }`. Summarize large logs (head/tail + error lines, **8 KiB** model budget).
-9. **Connect + cleanup** (AC-7): expose `url`/`ports`/`health`/`health_path` using US-0098 names (`connect_endpoint`, `health_path`, `service_id`, `container_id`, `env_refs` names-only). US-0142 consumes; **no Playwright/CDP**. Never read `.env`. Redact Authorization/Cookie. `ProcessManager.stop` after success/failure/cancellation/runtime restart. AppRuntime reaps process/container orphans (`PROCESS_ORPHAN_REAPED`); workflow `discardOrphans` remains sessions-only. Health: TCP listen and/or HTTP GET `health_path`; process-alive is insufficient.
-10. **Layer B profiles**: `trusted_local`→`local`, `isolated_dev`→`docker`. `untrusted_repo` sandbox → `BACKEND_UNSUPPORTED`. Optional ToolBroker `itsm_app_*` unstub is a **seed**.
-11. **OUT**: US-0142 browser; US-0143 drain; micro-VM; restore `.opencode/commands/auto.md`; kit `cli.json`; plugin-local `its-magic-auto/tui.json`; npm-publish; git push; rewrite of US-0136..0140 packages.
-12. **Tests**: 12 `test_us0141_*`; Win+Linux; fake-model CI; in-memory SQLite; fake backends. Count stays 12.
-
-### Critic NB closures (research us0141res-* — informational)
-
-| NB | Closure |
-|----|---------|
-| NB1 proof MATCH; R-0138 not R-0137; Status OPEN; R-0137 BUG-0023 not wiped (`us0141res-challenger-001`) | LOCKED this H1 + DEC-0141; Status OPEN; ACs unchecked |
-| NB2 `/architecture` owns `# US-0141` + DEC-0141 Accepted; A1 compose `process_handles`; US-0142 browser OUT; US-0143 drain OUT (`us0141res-architect-002`) | LOCKED this H1 + DEC-0141; T-001..T-008 |
-| NB3 no app-runtime code; no DONE; 11 tasks ≤ 12; no `/architecture` spawn from critic (`us0141res-subtractor-003`) | Held — T-anch; Status OPEN; execute owns package; do not spawn `/sprint-plan` from this subagent |
-
-## Components
-
-### `app-runtime` package (AC-1..AC-8)
-
-- Facade `AppRuntime` + `ProcessManager` + `ExecutionBackend` adapters + stack profiles + bounded self-debug
-- Grep denies `@earendil-works/pi-` inside the package
-
-### ProcessManager + RunsStore compose (AC-2)
-
-- Additive `process_handles`; claim token vs filled row; log ring refs
-
-### ExecutionBackend (AC-3)
-
-- local + docker CLI-first core; WSL + SSH/remote-Docker typed adapters; fail-closed `BACKEND_*`
-
-### Stack profiles (AC-4)
-
-- Node/Python/Go/Java/.NET; unknown fail/fallback
-
-### Bounded remediation (AC-5)
-
-- AppRuntime-owned restart; `APP_RUNTIME_RESTART_MAX` default 3; HEALTHCHECK status-only
-
-### Evidence + Connect (AC-6, AC-7)
-
-- Structured test/build JSON + 8 KiB summarize; Connect handoff names; no browser; orphan reap
-
-### Contract tests (AC-1..AC-8)
-
-- Twelve markers (DEC-0141 §12). Kernel tests: `standalone/tests/contract`. Matrix Windows + Linux.
-
-## Companion DEC = DEC-0141 (Required → Accepted)
-
-Authored Accepted in THIS phase at `decisions/DEC-0141.md`. Locks A1, package, schema, backends, reason codes, cap, markers, seeds.
-
-## Risks finalized (R1–R6 from R-0138)
-
-- **R1 (MEDIUM)** Live Docker/WSL/SSH absent on CI hosts → DQ8 fake backends; unavailable codes asserted, not skipped
-- **R2 (MEDIUM)** Operators treat US-0098 JSON or HEALTHCHECK as the owner → D3/DQ5; runtime owns execution; tests 3/6
-- **R3 (LOW)** Log files leak secrets → names-only env; redact compose US-0135/0137; never read `.env`
-- **R4 (MEDIUM)** Orphan processes after runtime crash → DQ7 reap + test 9; compose `discardOrphans` for sessions only
-- **R5 (LOW)** npm name bikeshed `app-runtime` vs `execution-runtime` → this H1 pins `app-runtime`
-- **R6 (LOW)** ToolBroker `itsm_app_*` scope creep → optional seed; PolicyEngine tables unamended
-
-## Compose, do not amend (verified)
-
-| Story / DEC | Surface | Verification |
-|-------------|---------|--------------|
-| US-0140 / DEC-0140 / R-0135 | `RunsStore.process_handles` + workflow/GateEngine | ✓ additive schema; workflow not rewritten |
-| US-0138 / DEC-0138 / R-0130 | resolved config/scratchpad | ✓ consume `APP_RUNTIME_RESTART_MAX`; no new domain |
-| US-0137 / DEC-0137 / R-0129 | PolicyEngine Layer A | ✓ consume path/shell; Layer B profiles only |
-| US-0136 / DEC-0136 / R-0128 | SessionSupervisor `spawn` | ✓ fresh DEV slot; internals unamended |
-| US-0135 / DEC-0135 / R-0127 | `redact.ts` / credentials | ✓ never read `.env`; redact logs |
-| US-0098 / R-0085 | Connect field names | ✓ input; AppRuntime owns execution |
-| US-0086 / R-0068 / DEC-0070 | `remote.json` / `REMOTE_*` | ✓ input routing, not AppRuntime codes |
-| US-0065 | `detect_stack_profile` | ✓ port semantics; Python lib unamended |
-| US-0085 | `.env` deny | ✓ never read |
-| US-0056 / DEC-0038 | `compute_strict_proof_hash` tuple | ✓ UNAMENDED |
-| Kit npm `its-magic` / DEC-0120 | `files` whitelist | ✓ omit `standalone/` |
-| US-0142..US-0148 | later capabilities | ✓ OUT OF SCOPE (US-0142 browser; US-0143 drain) |
-| BUG-0021 / R-0134 | OpenCode CLI TUI `/auto` listing | ✓ DONE; not mutated (`sprints/S0146/`) |
-| BUG-0022 / R-0133 | (open bug) | ✓ OPEN; not mutated |
-| BUG-0023 / R-0137 | OpenCode CLI TUI dispatch | ✓ OPEN; not mutated (`sprints/S0148/` occupied) |
-| R-0120..R-0138 | prior research | ✓ not wiped (R-0136/R-0137 intact) |
-
-## Sprint seeds (11 tasks within SPRINT_MAX_TASKS=12 — for `/sprint-plan` expected S0149)
-
-- **T-anch** (`# US-0141` H1 + DEC-0141 Accepted — RESOLVED in THIS phase; NO-OP / verification)
-- **T-001** (AC-1 — `packages/app-runtime` + Pi-import grep + runtime-core compose)
-- **T-002** (AC-2 — `process_handles` additive schema + ProcessManager)
-- **T-003** (AC-3 — `ExecutionBackend` local+docker CLI-first + `health_check`)
-- **T-004** (AC-3 — WSL + SSH/remote-docker adapters + connectivity diagnostics)
-- **T-005** (AC-4 — stack profiles Node/Python/Go/Java/.NET + unknown fail/fallback)
-- **T-006** (AC-5 — bounded self-debug + `APP_RUNTIME_RESTART_MAX` + fresh DEV slot)
-- **T-007** (AC-6 — test/build evidence + log summarize)
-- **T-008** (AC-7 — Connect handoff no browser + cleanup/orphan reap)
-- **T-009** (AC-8 — chaos fixtures fake backends)
-- **T-010** (AC-1..AC-8 — 12 `test_us0141_*` Win/Linux fake-model)
-
-AC surjection: AC-1→T-001 (T-010 m1); AC-2→T-002 (T-010 m2); AC-3→T-003,T-004 (T-010 m3,m4); AC-4→T-005 (T-010 m5); AC-5→T-006 (T-010 m6); AC-6→T-007 (T-010 m7); AC-7→T-008 (T-010 m8,m9); AC-8→T-009,T-010 m10–m12. Order: T-anch → T-001 → T-002 → T-003 → T-004 → T-005 → T-006 → T-007 → T-008 → T-009 → T-010. No split (11 ≤ 12). Not `/quick`. Orchestrator hint **S0148 ineligible** (BUG-0023). S0146=BUG-0021, S0147=US-0140. Expected **S0149**. Do **not** write `sprints/S0148/` or `sprints/S0149/` this phase.
-
-## Isolation evidence (US-0048 / DEC-0029)
-
-- `phase_id=architecture`, `role=tech-lead`, `story_id=US-0141`, `sprint_id=none` (pending — sprint-plan owns next unused id), `orchestrator_run_id=auto-20260913-us0141`
-- `delivery_mode=ultra_lean`, `macro_phase=plan` (architecture — second canonical phase of `plan` macro)
-- `model_id=cursor-grok-4.6-high` (CROSS_MODEL_REVIEW=1 — required on isolation)
-- `fresh_context_marker=tl-US0141-architecture-20260914T003000Z-fresh`, `timestamp=2026-09-14T00:30:00Z` (UTC)
-- `evidence_ref=docs/engineering/research.md ## R-0138; docs/product/backlog.md ## US-0141; docs/engineering/architecture.md (this # US-0141); decisions/DEC-0141.md; handoffs/resume_brief.md`
-- Fresh tech-lead subagent per BUG-0006 / US-0048; no prior chat history. Narrow-read only. No `.env` reads. Status remains OPEN. US-0133..US-0140 DONE compose-only not reopened. BUG-0021 DONE not mutated. BUG-0022/BUG-0023 OPEN not mutated. No US-0142+ authoring. No `/sprint-plan` spawn from this subagent. No `standalone/packages/app-runtime` this phase.
-- Prior phase strict proof consumed: `rp-auto-20260913-us0141-research-techlead-20260914T001000Z-US-0141` / `A69F1FF95B60E566C03355AD24DDB7144B005BD78CD3701C1C8D2EBF2DAFAC45` — RUNTIME_PROOF_VALID (independent `compute_strict_proof_hash` MATCH; consume-before-TTL `2026-09-14T00:30:00Z` < `2026-09-14T01:10:00Z`; immutable R-0138). Critic findings us0141res-* informational only (`rp-auto-20260913-us0141-sovereign-critic-techlead-20260914T002000Z-US-0141` / `727DABC442D42CD32D3B216AF014C3797BE09F552688BECA429C2A215E6EF53E`; anti_slop=10; 0 blocking; degraded_mode=false; MATCH before TTL `2026-09-14T01:20:00Z`).
-- Sovereign memory: `SOVEREIGN_MEMORY=1`; `build_injection_digest_block` returned `(no sovereign memory entries)` (read-only). No `mistakes.jsonl` write.
-
-## Strict runtime proof (mirror)
-
-- `runtime_proof_id=rp-auto-20260913-us0141-architecture-techlead-20260914T003000Z-US-0141`
-- Canonical hashed payload (DEC-0038, `compute_strict_proof_hash` positional): `{"orchestrator_run_id":"auto-20260913-us0141","phase_id":"architecture","proof_issued_at":"2026-09-14T00:30:00Z","proof_ttl_seconds":3600,"role":"tech-lead","runtime_proof_id":"rp-auto-20260913-us0141-architecture-techlead-20260914T003000Z-US-0141"}`
-- Isolation extras (not hashed): `delivery_mode=ultra_lean`, `macro_phase=plan`, `model_id=cursor-grok-4.6-high`, `sprint_id=none`, `story_id=US-0141`
-- `proof_hash=4B5EBD9D8FF00C4C7CC5CF114B946AFBA684E11998C4C553C59AE5080326A3BF`
-- `proof_ttl=2026-09-14T01:30:00Z`
-- `hash_recompute_confirmation=true` (compute_strict_proof_hash → 4B5EBD9D8FF00C4C7CC5CF114B946AFBA684E11998C4C553C59AE5080326A3BF; **64 hex** verified)
-- Consumed research proof: `rp-auto-20260913-us0141-research-techlead-20260914T001000Z-US-0141` / `A69F1FF95B60E566C03355AD24DDB7144B005BD78CD3701C1C8D2EBF2DAFAC45` — RUNTIME_PROOF_VALID MATCH before TTL `2026-09-14T01:10:00Z`
-- Consumed critic proof: `rp-auto-20260913-us0141-sovereign-critic-techlead-20260914T002000Z-US-0141` / `727DABC442D42CD32D3B216AF014C3797BE09F552688BECA429C2A215E6EF53E` — RUNTIME_PROOF_VALID MATCH before TTL `2026-09-14T01:20:00Z`
-
-# US-0142 — Owned browser UAT and evidence runtime
-
-## Overview
-
-**US-0142** adds one owned browser UAT and evidence runtime so QA can execute UI acceptance in isolated Playwright contexts and operator-authorized CDP sessions connected to US-0141 AppRuntime. New package `@its-magic/browser-uat` never imports Pi. Compose US-0141 `ConnectHandoff` / `connectHandoff` **only** (navigate `connect_endpoint`/`url`; probe `health_path`; record `app_runtime_ref`). Do **not** reimplement AppRuntime / ProcessManager / ExecutionBackend. Do **not** nest BrowserUAT inside CommandRouter/GateEngine. Playwright **owns** isolated launch; CDP **disconnects** (does not kill) the operator browser. Default Chrome User Data is **forbidden**. Pixel visual baseline is **OUT**. `/auto`/`/quick` drain is **US-0143 OUT**. Role-runtime / PolicyEngine path-shell tables / config / KernelBridge / isolation loader stay **unamended** except promoting `itsm_browser` from `STUB_TOOLS`. DEC-0038 `compute_strict_proof_hash` tuple stays **UNAMENDED**. Execute owns package files.
-
-**Research anchor**: **R-0139** (DQ1–DQ10 LOCKED). **Companion DEC**: **DEC-0142** (Accepted — THIS phase). **EARLY_RESEARCH**: consumed from R-0139 (Playwright isolation vs CDP attach; Chrome 136+ default-profile CDP block; trace/HAR secret leakage; playwright vs playwright-core; fake driver analog) — **no new R-id**. Do not wipe R-0120..R-0139. **R-0138 remains US-0141. R-0136/R-0137 remain BUG-0023.**
-
-**Fresh context marker**: `tl-US0142-architecture-20260914T035000Z-fresh`
-**Orchestrator run id**: `auto-20260913-us0142`
-**Timestamp**: 2026-09-14T03:50:00Z (UTC)
-**Verdict**: PASS
-**Next**: sovereign-critic (architecture), then `/sprint-plan` **S0150** (S0149=US-0141; S0148=BUG-0023; S0147=US-0140; S0146=BUG-0021; live-inventory S0150 unused; orchestrator-owned). ultra_lean: plan-verify is **not** in `resolved_phase_plan`. Do **not** spawn sprint-plan or critic from this subagent (BUG-0006).
-
-**baseline_h2_count (pre-mutate)**: `0`
-
-## Approach locked (A1 — from R-0139)
-
-| Option | Summary | Verdict |
-|--------|---------|---------|
-| **A1** | Sibling `@its-magic/browser-uat` (no Pi) composing US-0141 `ConnectHandoff`; Playwright isolated core + typed CDP adapter; fail-closed `BROWSER_*` / `UAT_*`; 12 `test_us0142_*` | **Preferred / LOCKED** — AC-1..AC-8 |
-| A2 | Nested under `app-runtime` | **Rejected** — DQ1 / §30 sibling |
-| A3 | Fold into `tool-broker` | **Rejected** — Layer A ≠ Layer B |
-| A4 | Cursor MCP remains v1 authority | **Rejected** — D3 REPLACE backend |
-| A5 | Puppeteer as driver | **Rejected** — extra stack |
-| A6 | Selenium / WebDriver | **Rejected** — heavier |
-| A7 | `launchPersistentContext` on default Chrome User Data | **Rejected** — Chrome 136+ |
-| A8 | Pixel visual baseline / `toHaveScreenshot` v1 | **Rejected** — D9 / §20.7 |
-| A9 | Implement US-0143 `/auto` drain | **Rejected** — D9 |
-| A10 | Rewrite GateEngine / workflow | **Rejected** — D1/DQ9 compose |
-| A11 | Require live Chrome in CI | **Rejected** — fake driver |
-| A12 | Replace kit `UAT_BROWSER_PROBE_MODE` default `cursor` | **Rejected** — KEEP; add `owned` |
-| A13 | Silent / fake browser PASS | **Rejected** — US-0128 |
-| A14 | Kit Python Playwright as standalone runtime | **Rejected** — standalone TS owns execution |
-| A15 | `browser.close()` after CDP as default teardown | **Rejected** — kills operator session |
-
-**Can this be simpler?** Nesting in app-runtime looks smaller and couples UAT to process lifecycle. Tool-broker fold mixes policy with Playwright. Cursor-MCP-only fails isolated CI and “without Cursor plugins.” A1 is the simplest design that meets AC-1..AC-8.
-
-### Locked surfaces (DEC-0142)
-
-1. **Package**: `@its-magic/browser-uat` (`standalone/packages/browser-uat`). npm name **LOCKED** `browser-uat`. `private: true`, `version: 0.0.0`, `type: module`, `engines.node >=22.19.0`, export `./src/index.ts`. **No Pi dependency.** Type-only / public-API imports from `@its-magic/app-runtime` (`ConnectHandoff`), `@its-magic/policy-engine`, `@its-magic/tool-broker`, `@its-magic/config` allowed. Those packages **do not** import browser-uat internals. Extend US-0133..0141 Pi-import grep to this package. No Biome override. Kit `files` omit `standalone/`. Do not add standalone to kit workspaces. **Execute owns package creation.**
-2. **Compose, do not reimplement AppRuntime**: call `AppRuntime.connectHandoff(id)` (or injected port). Consume **LOCKED** Connect fields: `connect_endpoint`, `health_path`, `service_id`, `container_id`, `env_refs` (names-only), `url`, `ports`, `health`. Do **not** import ProcessManager/ExecutionBackend internals. Do **not** put BrowserUAT inside `app-runtime` or GateEngine. Do **not** rewrite CommandRouter, WorkflowEngine, GateEngine, or crash-resume DONE authority.
-3. **Two-mode matrix** (AC-1): **isolated** = `chromium.launch({ headless })` + `browser.newContext()` (close OK). **authorized CDP** = dedicated `--user-data-dir` + `--remote-debugging-port` + `connectOverCDP` + **`disconnect()`** (browser stays alive). Default Chrome User Data → `BROWSER_CDP_DEFAULT_PROFILE_FORBIDDEN`. Missing approval/port/profile → `BROWSER_CDP_UNAUTHORIZED` (no silent isolated fallback). Optional `launchPersistentContext(dedicatedDir)` is helper-only, never default User Data.
-4. **Typed tool** (AC-2): single `itsm_browser` `action` enum **LOCKED**: `open`, `navigate`, `snapshot`, `click`, `type`, `select`, `wait`, `screenshot`, `console`, `network`, `download`, `upload`, `accessibility`. Promote off PolicyEngine `STUB_TOOLS`. ToolBroker handler delegates to `BrowserUAT` (no Playwright import in broker). QA primary allowlist; CDP needs operator approval. Snapshot = a11y/DOM summary, **not** pixel.
-5. **UAT planner** (AC-3): reuse `classify_step`. Additive **`UAT_BROWSER_PROBE_MODE=owned`**. Kit default **`cursor` held**. Kit-slice `UAT_PROBE_FORBIDDEN` **unweakened**. This story lifts `browser_smoke` for **its** fixtures only.
-6. **Evidence** (AC-4/AC-7): compatible `uat.json` + `browser_evidence_refs`. Additive **LOCKED**: `snapshot_summary`, `trace_ref`, `duration_ms`, `browser_backend` (`isolated`\|`cdp`), `app_runtime_ref`. Redact Authorization/Cookie/Set-Cookie/tokens/form secrets via US-0135 before persist. HAR `content: "omit"`. Traces gitignored under `.its-magic/runtime/browser-evidence/`. Evidence-gap → `UAT_BROWSER_PROBE_FAILED` / `BROWSER_EVIDENCE_GAP`.
-7. **Credentials** (AC-6): dedicated CDP profile, then opaque injected test account (names-only), then explicit operator ASK. **Never read `.env`**. Repo-file passwords → `UAT_PROBE_FORBIDDEN` / `BROWSER_CREDENTIAL_FORBIDDEN`. No live storageState in git.
-8. **Reason codes LOCKED**: `BROWSER_UNAVAILABLE`, `BROWSER_CDP_UNAUTHORIZED`, `BROWSER_CDP_DEFAULT_PROFILE_FORBIDDEN`, `BROWSER_CRASHED`, `BROWSER_WAIT_TIMEOUT`, `BROWSER_ASSERTION_FAILED`, `BROWSER_CONSOLE_ERROR`, `BROWSER_NETWORK_FAILED`, `BROWSER_EVIDENCE_GAP`, `BROWSER_CREDENTIAL_FORBIDDEN`, `BROWSER_RETRY_CAP_EXHAUSTED`. Keep `UAT_PROBE_PASS`, `UAT_PROBE_FAILED`, `UAT_PROBE_TIMEOUT`, `UAT_PROBE_UNRESOLVED`, `UAT_PROBE_FORBIDDEN`, `UAT_BROWSER_UNAVAILABLE`, `UAT_BROWSER_PROBE_FAILED`, `UAT_BROWSER_PROBE_TIMEOUT`. Do not overload `APP_RUNTIME_*` / `BACKEND_*` / `REMOTE_*` / `WORKFLOW_*`.
-9. **Retry** (AC-5): **`BROWSER_RETRY_MAX` default 2** from resolved config/scratchpad if present. Orthogonal to `APP_RUNTIME_RESTART_MAX`. Missing CDP auth is not retried into isolated. No fake browser PASS.
-10. **OUT**: US-0143 drain; pixel visual baseline; micro-VM; restore `.opencode/commands/auto.md`; kit `cli.json`; plugin-local `its-magic-auto/tui.json`; npm-publish; git push; rewrite of US-0136..0141 packages.
-11. **Tests**: 12 `test_us0142_*`; Win+Linux; fake-model CI; fake driver; in-process HTTP fixture. Count stays 12.
-
-### Critic NB closures (research us0142rsc-* — informational)
-
-| NB | Closure |
-|----|---------|
-| NB1 proof MATCH; Status OPEN; ACs unchecked; Chrome 136+ default profile forbidden; traces/HAR redact; CDP disconnect not close; `BROWSER_RETRY_MAX` orthogonal (`us0142rsc-challenger-001`) | LOCKED this H1 + DEC-0142; Status OPEN; ACs unchecked |
-| NB2 sibling browser-uat composes `connectHandoff`; architecture owns DEC-0142 + `# US-0142`; ToolBroker→BrowserUAT; US-0143 drain OUT; pixel baseline OUT (`us0142rsc-architect-002`) | LOCKED this H1 + DEC-0142; T-001..T-009 |
-| NB3 no browser-uat code; no DONE; 11 tasks ≤ 12; no `/architecture` spawn from critic (`us0142rsc-subtractor-003`) | Held — T-anch; Status OPEN; execute owns package; do not spawn `/sprint-plan` from this subagent |
-
-## Components
-
-### `browser-uat` package (AC-1..AC-8)
-
-- Facade `BrowserUAT` + isolated Playwright driver + typed CDP adapter + evidence writer + UAT executor plug-in
-- Grep denies `@earendil-works/pi-` inside the package
-
-### AppRuntime Connect compose (AC-1, AC-4)
-
-- Consume `connectHandoff`; do not start/stop processes here
-
-### Isolated Playwright + CDP adapter (AC-1)
-
-- `launch`+`newContext` default; `connectOverCDP`+`disconnect` authorized; dedicated profile only
-
-### Typed `itsm_browser` (AC-2)
-
-- Action enum; promote from STUB; QA primary; snapshot ≠ pixel
-
-### UAT planner plug-in (AC-3)
-
-- Reuse `classify_step`; additive `owned`; kit `cursor` + `UAT_PROBE_FORBIDDEN` held
-
-### Evidence + redaction + credentials (AC-4, AC-6, AC-7)
-
-- Compatible `uat.json`; redact before persist; never read `.env`
-
-### Fail-closed retry (AC-5)
-
-- Locked `BROWSER_*` / `UAT_*`; `BROWSER_RETRY_MAX` default 2
-
-### Contract tests (AC-1..AC-8)
-
-- Twelve markers (DEC-0142 §9). Kernel tests: `standalone/tests/contract`. Matrix Windows + Linux.
-
-## Companion DEC = DEC-0142 (Required → Accepted)
-
-Authored Accepted in THIS phase at `decisions/DEC-0142.md`. Locks A1, package, modes, tool enum, UAT mode, evidence, credentials, reason codes, cap, markers, seeds.
-
-## Risks finalized (R1–R7 from R-0139)
-
-- **R1 (HIGH)** Playwright traces/HAR leak cookies and Authorization → DQ5 omit+redact; gitignore traces; AC-7 tests
-- **R2 (HIGH)** Operators CDP-attach the daily Chrome profile (Chrome 136+ ignores debug port) → dedicated `--user-data-dir`; `BROWSER_CDP_DEFAULT_PROFILE_FORBIDDEN`
-- **R3 (MEDIUM)** Live Chromium absent on CI → DQ8 fake driver; `BROWSER_UNAVAILABLE` asserted, not skipped
-- **R4 (MEDIUM)** `browser.close()` after CDP kills a logged-in session → DQ2 `disconnect()`
-- **R5 (MEDIUM)** Weakening kit `UAT_PROBE_FORBIDDEN` to make US-0142 green → DQ4/DQ9; test 6
-- **R6 (LOW)** Credential injection visible to the model → DQ6 names-only; PolicyEngine secret deny; never read `.env`
-- **R7 (LOW)** npm name bikeshed vs §30 → this H1 pins `browser-uat`
-
-## Compose, do not amend (verified)
-
-| Story / DEC | Surface | Verification |
-|-------------|---------|--------------|
-| US-0141 / DEC-0141 / R-0138 | `ConnectHandoff` / `connectHandoff` | ✓ consume; AppRuntime not rewritten |
-| US-0093 / R-0079 | `classify_step` / `uat.json` / `browser_evidence_refs` | ✓ KEEP contract; REPLACE backend; add `owned` |
-| US-0065 | probe catalog kinds | ✓ unchanged |
-| US-0128 / R-0111 | no fake browser PASS | ✓ kit waives stay `UAT_PROBE_FORBIDDEN` |
-| US-0135 / DEC-0135 | `redact.ts` | ✓ headers/cookies/tokens before persist |
-| US-0137 / DEC-0137 / R-0129 | PolicyEngine `itsm_browser` STUB | ✓ promote only; tables unamended |
-| US-0140 / DEC-0140 / R-0135 | GateEngine / workflow | ✓ consume-not-rewrite |
-| US-0085 | `.env` deny | ✓ never read |
-| US-0056 / DEC-0038 | `compute_strict_proof_hash` tuple | ✓ UNAMENDED |
-| Kit npm `its-magic` / DEC-0120 | `files` whitelist | ✓ omit `standalone/` |
-| US-0143..US-0148 | later capabilities | ✓ OUT OF SCOPE (US-0143 drain) |
-| BUG-0021 / R-0134 | OpenCode CLI TUI `/auto` listing | ✓ DONE; not mutated (`sprints/S0146/`) |
-| BUG-0022 / R-0133 | (open bug) | ✓ OPEN; not mutated |
-| BUG-0023 / R-0137 | OpenCode CLI TUI dispatch | ✓ DONE; not mutated (`sprints/S0148/`) |
-| R-0120..R-0139 | prior research | ✓ not wiped (R-0138/R-0136/R-0137 intact) |
-
-## Sprint seeds (11 tasks within SPRINT_MAX_TASKS=12 — for `/sprint-plan` expected S0150)
-
-- **T-anch** (`# US-0142` H1 + DEC-0142 Accepted — RESOLVED in THIS phase; NO-OP / verification)
-- **T-001** (AC-1 — `packages/browser-uat` + Pi-import grep + consume `connectHandoff`)
-- **T-002** (AC-1 — isolated Playwright `launch`+`newContext`)
-- **T-003** (AC-1 — CDP adapter `connectOverCDP`+`disconnect`+dedicated profile)
-- **T-004** (AC-2 — promote `itsm_browser` typed actions)
-- **T-005** (AC-3 — UAT planner plug-in + additive `owned` + kit `UAT_PROBE_FORBIDDEN` held)
-- **T-006** (AC-4/AC-7 — evidence schema + redaction + gitignored traces)
-- **T-007** (AC-6 — credential deny + opaque injection / operator approval)
-- **T-008** (AC-5 — fail-closed `BROWSER_*`/`UAT_*` + `BROWSER_RETRY_MAX`)
-- **T-009** (AC-8 — E2E happy+failure fixtures; no visual baseline)
-- **T-010** (AC-1..AC-8 — 12 `test_us0142_*` Win/Linux fake-driver)
-
-AC surjection: AC-1→T-001,T-002,T-003 (T-010 m1–m3); AC-2→T-004 (T-010 m4); AC-3→T-005 (T-010 m5,m6); AC-4→T-006 (T-010 m7); AC-5→T-008 (T-010 m3,m10); AC-6→T-007 (T-010 m9); AC-7→T-006 (T-010 m8); AC-8→T-009 (T-010 m11,m12). Order: T-anch → T-001 → T-002 → T-003 → T-004 → T-005 → T-006 → T-007 → T-008 → T-009 → T-010. No split (11 ≤ 12). Not `/quick`. Live-inventory S0146=BUG-0021, S0147=US-0140, S0148=BUG-0023, S0149=US-0141. Expected **S0150**. Do **not** write `sprints/S0150/` this phase.
-
-## Isolation evidence (US-0048 / DEC-0029)
-
-- `phase_id=architecture`, `role=tech-lead`, `story_id=US-0142`, `sprint_id=none` (pending — sprint-plan owns next unused id), `orchestrator_run_id=auto-20260913-us0142`
-- `delivery_mode=ultra_lean`, `macro_phase=plan` (architecture — second canonical phase of `plan` macro)
-- `model_id=cursor-grok-4.6-high` (CROSS_MODEL_REVIEW=1 — required on isolation)
-- `fresh_context_marker=tl-US0142-architecture-20260914T035000Z-fresh`, `timestamp=2026-09-14T03:50:00Z` (UTC)
-- `evidence_ref=docs/engineering/research.md ## R-0139; docs/product/backlog.md ## US-0142; docs/engineering/architecture.md (this # US-0142); decisions/DEC-0142.md; handoffs/resume_brief.md`
-- Fresh tech-lead subagent per BUG-0006 / US-0048; no prior chat history. Narrow-read only. No `.env` reads. Status remains OPEN. US-0133..US-0141 DONE compose-only not reopened. BUG-0021 DONE not mutated. BUG-0022 OPEN not mutated. BUG-0023 DONE not mutated. No US-0143+ authoring. No `/sprint-plan` spawn from this subagent. No `standalone/packages/browser-uat` this phase.
-- Prior phase strict proof consumed: `rp-auto-20260913-us0142-research-techlead-20260914T033000Z-US-0142` / `3C8C3226AB88276C2595CCE79742589FF464C3ED8444D6425CC99183D390655A` — RUNTIME_PROOF_VALID (independent `compute_strict_proof_hash` MATCH; consume-before-TTL `2026-09-14T03:50:00Z` < `2026-09-14T04:30:00Z`; immutable R-0139). Critic findings us0142rsc-* informational only (`rp-auto-20260913-us0142-sovereign-critic-techlead-20260914T034000Z-US-0142` / `18F5B1E72CDA4EFAB0F9A8F4588A151E4B84DD7391467BFD4A1D05EF81212621`; anti_slop=10; 0 blocking; degraded_mode=false; MATCH before TTL `2026-09-14T04:40:00Z`).
-- Sovereign memory: `SOVEREIGN_MEMORY=1`; `build_injection_digest_block` returned `(no sovereign memory entries)` (read-only). No `mistakes.jsonl` write.
-
-## Strict runtime proof (mirror)
-
-- `runtime_proof_id=rp-auto-20260913-us0142-architecture-techlead-20260914T035000Z-US-0142`
-- Canonical hashed payload (DEC-0038, `compute_strict_proof_hash` positional): `{"orchestrator_run_id":"auto-20260913-us0142","phase_id":"architecture","proof_issued_at":"2026-09-14T03:50:00Z","proof_ttl_seconds":3600,"role":"tech-lead","runtime_proof_id":"rp-auto-20260913-us0142-architecture-techlead-20260914T035000Z-US-0142"}`
-- Isolation extras (not hashed): `delivery_mode=ultra_lean`, `macro_phase=plan`, `model_id=cursor-grok-4.6-high`, `sprint_id=none`, `story_id=US-0142`
-- `proof_hash=52A720174CB9E0D35507ED9683ED70D22D72A5D9E757A5CF1170B2AC304B3175`
-- `proof_ttl=2026-09-14T04:50:00Z`
-- `hash_recompute_confirmation=true` (compute_strict_proof_hash → 52A720174CB9E0D35507ED9683ED70D22D72A5D9E757A5CF1170B2AC304B3175; **64 hex** verified)
-- Consumed research proof: `rp-auto-20260913-us0142-research-techlead-20260914T033000Z-US-0142` / `3C8C3226AB88276C2595CCE79742589FF464C3ED8444D6425CC99183D390655A` — RUNTIME_PROOF_VALID MATCH before TTL `2026-09-14T04:30:00Z`
-- Consumed critic proof: `rp-auto-20260913-us0142-sovereign-critic-techlead-20260914T034000Z-US-0142` / `18F5B1E72CDA4EFAB0F9A8F4588A151E4B84DD7391467BFD4A1D05EF81212621` — RUNTIME_PROOF_VALID MATCH before TTL `2026-09-14T04:40:00Z`
-
 # US-0143 — Delivery routing and full-autonomy scheduler
 
 ## Overview
@@ -1418,6 +1050,10 @@ The suite creates an actual Pi SDK session with a deterministic local test-model
 - US-0151 owns lifecycle execution, operator transport, and TUI state; US-0152 owns AppRuntime/BrowserUAT; US-0153 owns parallel/release execution; US-0154 owns installed-path CI proof.
 - Out: US-0149, BUG-0026, phase-9 clients, root-kit publish work, `.env` reads, and git push.
 - `/sprint-plan` owns sprint materialization. This architecture phase creates no application code and no sprint directory.
+
+## S0170 residual lock (2026-10-11 plan macro)
+
+A1 and `DEC-0150` stay locked. No new decision. S0170 keeps the S0158 host. Host-present `crashResume` uses the host's resolved config. The host builds one hashed pack through existing `codeContext`, or fails with `RUNTIME_SERVICE_UNAVAILABLE`. The supervisor-only empty-config branch stays the US-0148 test seam and stays off both production `index.ts` entrypoints. Active tasks are T-anch and T-001..T-006 in `sprints/S0170/tasks.md`. The seed table above remains the S0158 record.
 
 # BUG-0024 — OpenCode CLI TUI listed `/auto` still toasts OPENCODE_AUTO_TUI_DISPATCH_UNSUPPORTED after BUG-0023 Axis A (live dispatch)
 
@@ -2875,66 +2511,431 @@ claim, publish, push, sprint, `/auto`, or subagent spawn is authorized.
 
 # BUG-0033 — Thin→rich command-pair parity: OpenCode closure/ask/auto/refresh-context/execute
 
-**Verdict: `ARCHITECTURE_PASS`; `decision_gate=false`.** Additive implementation architecture for R-0159 (DQ1–DQ8 LOCKED). BUG-0033 remains **OPEN**; backlog AC-1..AC-8 + its acceptance row stay unchecked. A companion DEC **is** required — **DEC-0154** — because DQ6 Option A amends the US-0125 clone-guard line-cap (a cross-phase normative rule binding /execute + QA), unlike BUG-0034 (one use of an existing taxonomy). This phase appends only this H1 + DEC-0154 + the paired continuation record (architecture.md / decisions.md / state.md / resume_brief.md).
+**Verdict: `ARCHITECTURE_PASS`; `decision_gate=false`.** Additive architecture for R-0159 (DQ1–DQ8 LOCKED). BUG-0033 remains **OPEN**; AC-1..AC-8 stay unchecked. Companion **DEC-0154** is required: DQ6 Option A amends the US-0125 clone-guard line-cap. This phase appends this H1, DEC-0154, and the paired continuation record only.
 
-## Parity contract (DQ1/DQ2 LOCKED — adapted text, not verbatim)
+## Parity contract (DQ1/DQ2 LOCKED)
 
-Exactly five thin OpenCode bodies receive the two rich sections, applied identically to the active + `template/` mirror of each: `.opencode/commands/{closure,ask,auto,refresh-context,execute}.md`.
+Five thin OpenCode bodies get `## Stop conditions` then `## Fail-safe reason codes`, on both the active file and the `template/` mirror: `.opencode/commands/{closure,ask,auto,refresh-context,execute}.md`. The thin surface is diagnostics-only documentation, not dispatch logic. Closure points at `.cursor/commands/closure.md` `## Fail-safe reason codes and remediation guidance`. Ask, auto, refresh-context, and execute have no such rich heading, so each thin section is a terse derived vocabulary plus a pointer to the rich source. Every token is verbatim from the rich source or an already-registered code. Exact text: **R-0159 L16192-16249** (consume, do not re-derive). Insert immediately before the final `STOP` sentinel, except `auto.md`, which has no sentinel and is appended at EOF after one blank line. Projected lines (active==template): closure 19→29, ask 12→19, auto 49→61, refresh-context 18→27, execute 24→34. Similarity vs rich stays ≤0.031 (cap 0.30). No US-0125 forbidden token. Frontmatter `agent:` stays: closure `qa`, auto `auto`, refresh-context `curator`, execute `dev`, ask none.
 
-- **Text rule (0 invented tokens):** the thin surface is *diagnostics-only documentation*, not dispatch logic. For **closure** the `## Fail-safe reason codes` section points to the authoritative rich table (`.cursor/commands/closure.md` `## Fail-safe reason codes and remediation guidance`); for **ask/auto/refresh-context/execute** the rich source has **no** such heading, so the thin section is a terse derived vocabulary + pointer to the rich source. Every token is verbatim from the rich source or an already-registered code (R-0159 DQ1). Exact locked per-file text: **R-0159 L16192-16249** — consume, do not re-derive.
-- **Ordering (LOCKED):** `## Stop conditions` first, then `## Fail-safe reason codes` (matches rich physical order closure.md L58→L164).
-- **Insertion geometry (LOCKED):** insert immediately **before the final `STOP` sentinel** in closure/ask/refresh-context/execute (after the existing `## Validator bridge` / dispatch prose); **auto.md has no `STOP` sentinel** → append at EOF after one blank line.
-- **Projected lines (active==template, both mirrors):** closure 19→29, ask 12→19, auto 49→61, refresh-context 18→27, execute 24→34. Clone-guard similarity vs rich stays ≤0.031 (cap 0.30); no US-0125 forbidden/policy/clone token introduced; frontmatter `agent:` preserved (closure `qa`, auto `auto`, refresh-context `curator`, execute `dev`, ask none).
+## DQ6 Option A (DEC-0154)
 
-## DQ6 Option A — MANDATORY US-0125 line-cap reconciliation (→ DEC-0154)
+`test_us0125_clone_guard` (≤20) and `test_us0125_auto_command_dispatch_only` (`auto.md` ≤20) conflict with AC-1..AC-5. After the insert, closure (29) and refresh-context (27) cross the cap; auto (61) and execute (34) grow; only ask (19) fits. Five pre-existing red failures (R-0159 DQ6.1) are not caused by BUG-0033. **LOCKED:** additive line-cap reconciliation for these five files only (`BUG0033_PARITY_TARGETS` or a per-file cap of ~35). Keep similarity ≤0.30, the clone strip-list, and the frontmatter-shape marker. Option B (only `ask.md`) fails AC-1/AC-3/AC-4/AC-5. Option C (accept the red) is forbidden. T-002 plus DEC-0154 are mandatory. If /execute cannot reconcile, it raises an operator decision_gate and does not silently accept Option C.
 
-The one architectural input the fix depends on; it is **pre-existing, not caused by BUG-0033**. The US-0125 `test_us0125_clone_guard` (≤20 lines) + `test_us0125_auto_command_dispatch_only` (`auto.md` ≤20) caps are structurally in tension with AC-1..AC-5: after the DQ1 insert, closure (29) + refresh-context (27) **newly** cross the cap; auto (61) / execute (34) grow; only ask (19) fits. The suite is **already red** on 5 pre-existing failures (R-0159 DQ6.1), none caused by BUG-0033.
+## Mechanism, tests, tasks
 
-**LOCKED (adopt A; reject B, C):** apply an **additive** US-0125 line-cap reconciliation for the **five parity-target files only** (a `BUG0033_PARITY_TARGETS` exemption set or a per-file cap of ~35), **keeping the similarity ≤0.30 clone-guard, the clone strip-list, and the frontmatter-shape marker INTACT**. Rationale: the two added sections are diagnostics-only documentation (US-0125 "diagnostics only, enforcement in Python"), not dispatch logic; similarity — the real "no 200-line Cursor clone" signal — is unchanged. Additive and consistent with US-0125 being additive (backlog L5701) and the shipped US-0156 re-addition of `auto.md` (14→15 inventory, 49-line auto.md already a known deviation from the 14-file/≤20 shape).
-- **Option B** (re-scope to `ask.md`) REJECTED: fails AC-1/AC-3/AC-4/AC-5; AC-8's "8+ markers over AC-1..AC-7" unsatisfiable.
-- **Option C** (no cap change; accept new red) REJECTED: muddies "no regression", leaves an unexplained breach.
-- **MANDATORY seed task (T-002)** + **DEC-0154** (amends a cross-phase contract). If /execute cannot satisfy the reconciliation it must raise an operator decision_gate (re-scope, Option B) — it may NOT silently accept Option C.
+Add `--scope=bug-0033` to `scripts/check_intake_template_parity.py`. `BUG0033_PAIRS` is the five command mirrors plus `tests/bug0033_opencode_command_parity_test.py` and `template/tests/bug0033_opencode_command_parity_test.py`. `--scope=all` already unions byte-pair tables. Pass: exit 0, `[INTAKE_TEMPLATE_PARITY_OK] scope=bug-0033`, and equal bytes per pair. Ten `test_bug0033_*` markers cover both headings on each of the five files (AC-1..AC-5), byte parity (AC-6), the scope banner (AC-6/AC-7), dispatch-only preservation (no `spawn(`, `ctx.session.create`, `Session.create`, POLICY_TEXT_FRAGMENTS, `OPENCODE_VALIDATOR_FAILED`, `OPENCODE_DRIVER_INVOKE_FAILED`, `npm install`, or `require(`; `agent:` preserved) (AC-7), us0125+us0126 staying inside the pre-existing red baseline with `.opencode/tui.json` `"plugin": []` intact (AC-7), and zero new reason codes (DQ5). Detail: R-0159 DQ4 L16290-16301. Do not mutate `reason_codes.md`, `runbook.md`, `scripts/data/autonomy_stop_matrix.yaml`, or the repair ledger.
 
-## Parity mechanism (DQ3 LOCKED — new `--scope=bug-0033` byte-pair table)
+| id | task | AC |
+|---|---|---|
+| T-anch | Consume R-0159 DQ1–DQ8 and this H1; verify 0 new tokens | all |
+| T-001 | Apply the locked text to the 5 active+template mirrors | AC-1..AC-6 |
+| T-002 | DQ6 Option A line-cap reconciliation; similarity, strip list, and frontmatter marker stay | AC-7 |
+| T-003 | Add `--scope=bug-0033` and `BUG0033_PAIRS` | AC-6/AC-7 |
+| T-004 | Author the 10 markers and the template twin; wire `run-tests.ps1` and `run-tests.sh` | AC-1..AC-8 |
 
-Add `--scope=bug-0033` to `scripts/check_intake_template_parity.py` (existing SCOPES dict + `--scope` choices; BUG-####-per-scope precedent), **not** an ad-hoc comparator. `BUG0033_PAIRS` (active, template):
+No `.cursor/commands/*` edit. No US-0125/US-0126 edit beyond the line-cap reconciliation. No `.opencode/tui.json` change. No BUG-0006/US-0048 spawn-only change. BUG-0035/DEC-0153 unchanged. The other 10 thin files stay unchanged. No mutation of any DONE bug, any other OPEN item, production code, existing tests, other template twins, config, or scratchpad.
 
-```
-(".opencode/commands/closure.md",         "template/.opencode/commands/closure.md"),
-(".opencode/commands/ask.md",             "template/.opencode/commands/ask.md"),
-(".opencode/commands/auto.md",            "template/.opencode/commands/auto.md"),
-(".opencode/commands/refresh-context.md", "template/.opencode/commands/refresh-context.md"),
-(".opencode/commands/execute.md",         "template/.opencode/commands/execute.md"),
-("tests/bug0033_opencode_command_parity_test.py","template/tests/bug0033_opencode_command_parity_test.py"),
-```
-
-`--scope=all` already unions all byte-pair tables (L959) — no further wiring. Parity assertion (BUG-0031 "837b shipped delta" precedent): (a) `python scripts/check_intake_template_parity.py --scope=bug-0033` → exit 0 + `[INTAKE_TEMPLATE_PARITY_OK] scope=bug-0033`; (b) `active.read_bytes() == template.read_bytes()` per pair.
-
-## Test marker contract (DQ4 LOCKED — 10 `test_bug0033_*` markers ≥ 8)
-
-New `tests/bug0033_opencode_command_parity_test.py` (+ byte-identical `template/` twin). Markers: (1) closure both headings (AC-1); (2) ask both (AC-2); (3) auto both (AC-3); (4) refresh-context both (AC-4); (5) execute both (AC-5); (6) active==template byte parity for all 5 pairs (AC-6); (7) `--scope=bug-0033` green + banner (AC-6/AC-7); (8) thin dispatch-only preserved — no `spawn(` / `ctx.session.create` / `Session.create` / POLICY_TEXT_FRAGMENTS / `OPENCODE_VALIDATOR_FAILED` / `OPENCODE_DRIVER_INVOKE_FAILED` / `npm install` / `require(`, frontmatter `agent:` preserved (AC-7); (9) us0125+us0126 no regression — failing set ⊆ the pre-existing red baseline (DQ6) and `.opencode/tui.json` `"plugin": []` (BUG-0030/DEC-0151) intact (AC-7); (10) 0 new reason codes (DQ5). Full table: R-0159 DQ4 L16290-16301.
-
-## Zero new reason codes (DQ5 LOCKED)
-
-**0 new codes.** Every cited token is pre-existing (registry-registered in `reason_codes.md`/`runbook.md`, or surfaced in the rich source). No mutation of `reason_codes.md`, `runbook.md`, `scripts/data/autonomy_stop_matrix.yaml`, or the repair ledger — that is BUG-0034's surface.
-
-## Task seeds for /sprint-plan (consumed, not executed, this phase)
-
-| id | task | AC | surface |
-|---|---|---|---|
-| T-anch | Consume R-0159 DQ1–DQ8 + this H1; verify 0 new tokens | all | (none) |
-| T-001 | Apply DQ1/DQ2 text to the 5 active+template mirrors (before `STOP` / EOF for auto) | AC-1..AC-6 | `.opencode/commands/*` + `template/.opencode/commands/*` |
-| T-002 | DQ6 Option A: additive US-0125 line-cap reconciliation for the 5 targets; similarity cap + strip list + frontmarker INTACT | AC-7 | `tests/us0125_contract_test.py` (per DEC-0154) |
-| T-003 | Add `--scope=bug-0033` BUG0033_PAIRS to the parity CLI | AC-6/AC-7 | `scripts/check_intake_template_parity.py` |
-| T-004 | Author 10 `test_bug0033_*` markers + byte-identical template twin; wire to run-tests.ps1/.sh | AC-1..AC-8 | `tests/bug0033_opencode_command_parity_test.py` + `template/tests/*` + CI |
-
-## Non-goals and compose guards (DQ7 LOCKED)
-
-No `.cursor/commands/*` rich-file change (read-only). No US-0125/US-0126 edit beyond the DQ6 Option A line-cap reconciliation (similarity cap 0.30, strip list, frontmatter-shape marker, `--scope=opencode-adapter` table all untouched). No `.opencode/tui.json` change (`"plugin": []` BUG-0030/DEC-0151 lock). No reason-code / runbook / stop-matrix / repair-ledger mutation (BUG-0034). No BUG-0006/US-0048 spawn-only change; BUG-0035/DEC-0153 rules unchanged. No change to the other 10 thin files. No mutation of any DONE bug, any other OPEN item, production code, existing tests, template twins (except the 5 target mirrors + the new test twin), config, or scratchpad.
-
-## Phase boundary
-
-- Research authority: `R-0159` (DQ1–DQ8 LOCKED; **consume, do not re-decide**); companion DEC: **DEC-0154** (DQ6 Option A normative rule).
-- `phase_id=architecture`; `role=tech-lead`; `bug_id=BUG-0033`; `orchestrator_run_id=auto-20261008-bug0033-architecture`; `fresh_context_marker=tl-BUG0033-architecture-20261008T212725Z-fresh`; `runtime_proof_id=rp-auto-20261008-bug0033-architecture-techlead-20261008T212725Z-BUG-0033`.
+- Research **R-0159**. Companion **DEC-0154**. `phase_id=architecture`; `role=tech-lead`; `bug_id=BUG-0033`; `orchestrator_run_id=auto-20261008-bug0033-architecture`; `fresh_context_marker=tl-BUG0033-architecture-20261008T212725Z-fresh`; `runtime_proof_id=rp-auto-20261008-bug0033-architecture-techlead-20261008T212725Z-BUG-0033`.
 - `effective_plan=[spec, plan, build+verify, ship]`; `skipped_phases=[discovery]`; `completed_phases=[intake,research,architecture]`; `phase_cursor=plan/2-of-3`.
-- **Stop-Matrix action:** `STOP_AFTER_ARCHITECTURE_PASS; validate_pair_then_parent_may_spawn_sprint-plan`. This child does not spawn. Only a parent that independently validates the paired record may later spawn a fresh `/sprint-plan` tech-lead child for BUG-0033; invalid evidence stops as the applicable resume reason code.
+- **Stop:** `STOP_AFTER_ARCHITECTURE_PASS; validate_pair_then_parent_may_spawn_sprint-plan`. This child does not spawn.
+
+# US-0149 — Global `itsm` PATH registration with a user-chosen location
+
+**Verdict: `ARCHITECTURE_PASS`; `decision_gate=false`.** Binding design for **R-0160** (DQ1–DQ8 LOCKED). US-0149 remains **OPEN**. AC-1..AC-6 stay unchecked. **Companion DEC: none.** Opt-in registration of the materialized project shim, Windows plus Linux, removal of only that registration, and fail-closed behavior. `setx` is not viable (PATH truncation). macOS stays on `installer.sh`. Sprint **S0169**.
+
+## Locked design (A1)
+
+| Pin | Rule |
+|---|---|
+| Binary | Link or copy `.its-magic/bin/itsm` (Windows: also `itsm.cmd`). Do not retarget `bin/itsm.js`. |
+| Opt-in | Off unless `--register-itsm-path` or `ITS_MAGIC_REGISTER_ITSM_PATH=1`. No surprise prompt. |
+| Directory | Explicit path, or default `%LOCALAPPDATA%\its-magic\bin` / `$HOME/.local/bin`. `prompt` only on a TTY. |
+| PATH | Append the directory when absent. Do not reorder. Windows: `HKCU\Environment` Path. POSIX: marked snippet. |
+| Ledger | User-level JSON: `dir`, `path_entry_added`, `link_names`, `link_target`. |
+| Remove | Delete recorded links. Drop the PATH dir only when `path_entry_added` is true. |
+| Missing shim | `ITSM_PATH_SHIM_MISSING`. No ledger, no PATH write. BUG-0026 still owns materialize. |
+| Write failure | Roll back the link. `ITSM_PATH_REGISTER_FAILED`. No partial PATH entry. |
+| Tests | Fake home and fake PATH store. Never the live user PATH or live HKCU. |
+
+Print tokens `ITSM_PATH_SHIM_MISSING`, `ITSM_PATH_REGISTER_FAILED`, `ITSM_PATH_REGISTER_OK`, `ITSM_PATH_UNREGISTER_OK` stay out of the autonomy stop matrix. `register_itsm_user_path` and `unregister_itsm_user_path` live in `scripts/standalone_runtime_install_lib.py`. `installer.py` grows `--register-itsm-path` and `--unregister-itsm-path`. `uninstall-standalone` unregisters only when `link_target` is inside that target repo. `installer.ps1` and `installer.sh` forward the flags and do not edit PATH. POSIX symlink, with a mode-`0755` copy fallback. Windows copies the shim files. One new subsection under runbook `## Standalone install, update, and adoption (US-0147)`, mirrored in `template/docs/engineering/runbook.md`. Optional short pointer in `README.md` and `template/README.md` beside the existing npm `--prefix` block. Do not delete that block. Do not edit `its_magic/README.md`.
+
+| AC | Owner | Test |
+|---|---|---|
+| AC-1 | DQ1 shim gate; compose BUG-0026, do not copy its ACs | `test_us0149_register_refuses_when_shim_missing` |
+| AC-2 | DQ2 flag, defaults, prompt rule | `test_us0149_register_opt_in_default_off`, `test_us0149_register_user_chosen_dir` |
+| AC-3 | DQ3 Windows fake store + POSIX snippet; macOS in scope | `test_us0149_register_windows_user_path`, `test_us0149_register_posix_profile_snippet` |
+| AC-4 | DQ4 ledger removal + rollback | `test_us0149_unregister_removes_only_owned_entry`, `test_us0149_register_fail_closed_on_write_error` |
+| AC-5 | DQ5 active + template runbook | `test_us0149_runbook_path_section_parity` |
+| AC-6 | DQ6 marker file + harness wire | all eight markers |
+
+Existing `tests/us0149_global_itsm_launcher_test.py` stays as-is. Sprint **S0169** is T-anch..T-006 (seven tasks, cap 12) in `sprints/S0169/tasks.md`. Execute must not touch BUG-0026 (including open AC-3), BUG-0025, US-0146, US-0148, BUG-0033, `write_itsm_shim`, `bin/itsm.js`, `package.json` `bin.itsm`, the stop matrix, `reason_codes.md`, scratchpad, `.env`, status or AC ticks, publish, push, or US-0150..US-0155. Published kits stay fail-closed until BUG-0026 materializes a shim. Live PATH writes and `setx` are forbidden.
+
+- Research **R-0160**. Companion DEC: **none**. `orchestrator_run_id=auto-20261011-us0149-plan`. `phase_cursor=plan/3-of-3`. Next: execute / dev.
+- `fresh_context_marker=tl-US0149-plan-20261011T125459Z-fresh`; `runtime_proof_id=rp-auto-20261011-us0149-plan-techlead-20261011T125459Z`; `proof_hash=604facda30531a9cbe890329ce2346408fad2dbb3f4e08ebc4731a84829c08dc`; `proof_ttl=2026-10-11T13:54:59Z`.
+- **Stop:** `STOP_AFTER_PLAN_MACRO; validate_pair_then_parent_may_spawn_execute`. This child does not spawn execute.
+
+# US-0151 — Executable lifecycle and operator transport
+
+**Verdict: `ARCHITECTURE_PASS`; `decision_gate=false`.** Binding design for **R-0161** (DQ1–DQ8 LOCKED). US-0151 remains **OPEN**. AC-1..AC-6 stay unchecked. **Companion DEC: none.** One resolved transport, real execution on the existing workflow, fail-closed app/browser, and daemon-owned replay. No new protocol and no new panel language. Sprint **S0171**.
+
+## Locked design (A1)
+
+| Pin | Rule |
+|---|---|
+| Transport | Keep the object `resolveOperatorTransport` returns. Production code does not call `createRunsStore(":memory:")`. |
+| Executor | One helper in `runtime-core` operator code. Daemon `command.submit` and in-process `submitCommand` both call it. |
+| Engine | One `WorkflowEngine` per daemon process, built from the host. CLI in-process uses the same helper on that command's host. |
+| Result | `success`, `gate_block`, or `execution_failure`. A plan or `{ok:true}` is not success. |
+| Resume | `resume` calls existing `crashResume` with `host.store` and `readRepoResume`. |
+| Ask / index | `host.intel.search` and `host.intel.refresh` / `status`, or existing unavailable codes. |
+| App / browser | `APP_HEALTH_UNAVAILABLE` and `BROWSER_UNAVAILABLE`. No `AppRuntime`, no browser driver. |
+| TUI | `run.attach`, `/v1/events` replay, and existing `status.snapshot`. Panel ids stay. |
+| Protocol | Version stays 1. No new JSON-RPC method. `statusSnapshot()` is a client call to `status.snapshot`. |
+| Tests | Six `test_us0151_*` markers. Deterministic local model seam. |
+
+CLI `runCliArgv` resolves the transport, calls `submitCommand`, and prints the executor disposition. Direct CLI still creates one host and `dispose()`s it in `finally`. The daemon host runs the helper and appends events on `DaemonEventStore`. The in-process host runs the helper on `host.store` with the same dispositions. TUI `buildTuiModel` fills phase, status, and timeline from attach, replay, and `status.snapshot` and does not open a store. `status` returns the host snapshot and still appends one `command.submitted` event. Template twins of touched `standalone/` files stay aligned. `panels.ts` collapse order stays. US-0146 assertions that `dispatchItsmCommand` and `OperatorCommandFacade` remain in `run.ts` stay true.
+
+Discarding the transport and executing inside the CLI, always requiring a daemon, adding an RPC method, adding a TUI state object, or implementing app/browser here all miss D1–D6. Calling `WorkflowEngine` and `host.intel` on the transport that already exists is the smallest design that meets D1–D6. No companion DEC. `decision_gate=false`. Success is only the engine or an admitted intel result, never route-only `{ok:true}`. Unreachable daemon is `DAEMON_UNREACHABLE`. Do not change workflow stop policy. Keep `redactEventPayload` on daemon responses.
+
+| AC | Owner | Test |
+|---|---|---|
+| AC-1 | DQ1 shared transport, no `:memory:` production store | `test_us0151_cli_tui_daemon_share_resolved_transport` |
+| AC-2 | DQ2 executor dispositions and persisted events | `test_us0151_lifecycle_persists_success_gate_or_failure` |
+| AC-3 | DQ3 auto, quick, resume, crashResume, one engine | `test_us0151_auto_resume_crash_uses_workflow_and_store` |
+| AC-4 | DQ4 intel or explicit unavailable | `test_us0151_ask_index_app_browser_admit_or_fail_closed` |
+| AC-5 | DQ5 attach, replay, unchanged panels | `test_us0151_attach_and_tui_replay_daemon_events` |
+| AC-6 | DQ6 entry-function end-to-end | `test_us0151_e2e_execute_gate_restart_replay_attach` |
+
+Sprint **S0171** is T-anch..T-006 (seven tasks, cap 12) in `sprints/S0171/tasks.md`. Execute must not flip US-0151, tick AC-1..AC-6, reopen US-0149 or US-0150, start US-0152, edit PATH registration, or read `.env`.
+
+- Research **R-0161**. Companion DEC: **none**. `orchestrator_run_id=auto-20261011-us0151-plan`. `phase_cursor=plan/3-of-3`. Next: execute / dev.
+- `fresh_context_marker=tl-US0151-plan-20261011T162642Z-fresh`; `runtime_proof_id=rp-auto-20261011-us0151-plan-techlead-20261011T162642Z`; `proof_hash=756c68acb9e8264e46cf871bd9072d8b0f3fbe71c1a70a5ab430ef04183015ac`; `proof_ttl=2026-10-11T17:26:42Z`.
+- **Stop:** `STOP_AFTER_PLAN_MACRO; validate_pair_then_parent_may_spawn_execute`. This child does not spawn execute.
+
+# US-0152 — Production application and browser UAT integration
+
+**Verdict: `ARCHITECTURE_PASS`; `decision_gate=false`.** Binding design for **R-0162** (DQ1–DQ8 LOCKED). US-0152 remains **OPEN**. AC-1..AC-6 stay unchecked. **Companion DEC: none.** The host owns existing `AppRuntime` and `BrowserUAT`. Production browser mode is isolated Playwright or `BROWSER_UNAVAILABLE`. Fake driver and text screenshots stay test-only. Sprint **S0172**.
+
+## Locked design (A1)
+
+| Pin | Rule |
+|---|---|
+| Host | `createRuntimeHost` builds `createAppRuntime` and `createBrowserUat({ driver: new PlaywrightIsolatedDriver() })`. `dispose` cleans both. |
+| Default | The class may still default to `FakeBrowserDriver` for US-0142 tests. The production host never uses that default. |
+| Shots | Non-fake `writeShot` writes image bytes. `screenshot-placeholder` is fake-driver only. |
+| Commands | `app` and `browser` call those host services. Unavailable, authorization, and cleanup use existing codes. |
+| Gates | Execute, QA, UAT, and release set `ReleaseGateInput` from repository evidence. `GateEngine` order stays. Incomplete evidence forces `uat_pass` false (`RELEASE_UAT_FAILED`). |
+| Retry | Existing app restart cap and `BrowserUAT.withRetry`. No new cap key. |
+| Evidence | Redacted screenshot, trace, console, network, final URL, and `app_runtime_ref`. `assertEvidenceComplete` blocks a passing gap. |
+| Tests | Six `test_us0152_*` markers. Local fixture. No paid model. No `.env`. |
+
+A new package, a CLI-owned runtime, failing host construction when Playwright is missing, or a fake production driver all miss D1–D6. Wiring the packages the host can already import is the smallest design that meets D1–D6. Pixel baselines and micro-VM isolation stay deferred. No companion DEC. `decision_gate=false`.
+
+| AC | Owner | Test |
+|---|---|---|
+| AC-1 | DQ1 host ownership | `test_us0152_host_owns_app_runtime_and_browser_uat` |
+| AC-2 | DQ2 Playwright or unavailable | `test_us0152_production_driver_is_isolated_or_unavailable` |
+| AC-3 | DQ3 gate evidence and retry | `test_us0152_gates_use_app_health_browser_probe_and_retry` |
+| AC-4 | DQ4 redacted evidence blocks gaps | `test_us0152_incomplete_evidence_blocks_uat` |
+| AC-5 | DQ5 shared command outcomes | `test_us0152_app_and_browser_commands_share_services` |
+| AC-6 | DQ6 launch, gate, and failures | `test_us0152_e2e_launch_gate_and_failure_fixtures` |
+
+Sprint **S0172** is T-anch..T-006 (seven tasks, cap 12) in `sprints/S0172/tasks.md`. Execute must not flip US-0152, tick AC-1..AC-6, reopen US-0149, US-0150, or US-0151, or start US-0153. Do not read `.env`.
+
+- Research **R-0162**. Companion DEC: **none**. `orchestrator_run_id=auto-20261011-us0152-plan`. `phase_cursor=plan/3-of-3`. Next: execute / dev.
+- `fresh_context_marker=tl-US0152-plan-20261011T183005Z-fresh`; `runtime_proof_id=rp-auto-20261011-us0152-plan-techlead-20261011T183005Z`; `proof_hash=8e86f4dcb0753dcd06d6d94b06ad9060821370cf80fa3e6e044912c7b1a168ba`; `proof_ttl=2026-10-11T19:30:05Z`.
+- **Stop:** `STOP_AFTER_PLAN_MACRO; validate_pair_then_parent_may_spawn_execute`. This child does not spawn execute.
+
+# US-0153 — Real parallel delivery and release execution
+
+**Verdict: `ARCHITECTURE_PASS`; `decision_gate=false`.** Binding design for **R-0163** (DQ1–DQ8 LOCKED). US-0153 remains **OPEN**. AC-1..AC-5 stay unchecked. **Companion DEC: none.** Compose US-0145. Arbitration and configured targets run only when admitted. Stub success is not a release pass. Sprint **S0173**.
+
+## Locked design (A1)
+
+| Pin | Rule |
+|---|---|
+| Arbitration | When `SOVEREIGN_PARALLEL_DEV=1`, `runExecuteQaLoop` keeps `afterExecutePass`, calls `runQaArbiter`, and writes `handoffs/parallel_dev_pick.json`. A skipped hook fails closed. Default-off stays the US-0145 noop. |
+| Adapters | Release apply/verify uses configured targets. A missing target returns `RELEASE_TARGET_UNCONFIGURED` and `deploy_targets_pass: false`. `artifact_sha: "fake-sha"` cannot pass. US-0145 `dryRunTargets` stays. |
+| Evidence | Smoke, verify, repair, and closure read the current run, UAT, and artifact refs. Disabled healing is not a deploy pass. Exhausted repair stays `DEPLOY_DEFERRED`. `RELEASE_GATE_ORDER` stays. Release cannot mark DONE. |
+| Limits | `DeliveryResourceGuard` and the existing path policy run before worktree create, deploy, and repair. Each check appends an audit line to `handoffs/deploy_results/deploy_results.jsonl`. No new cap key. |
+| Tests | Five `test_us0153_*` markers. Fixture success plus unavailable target, rejected candidate, failed verification, exhausted repair, and premature closure. |
+
+Calling `runQaArbiter` after a real worktree create, on the pipeline US-0145 already has, is the smallest design that meets D1–D5. A new package, a remote Debian worker, or a stub release pass all miss those locks. No companion DEC. `decision_gate=false`.
+
+| AC | Owner | Test |
+|---|---|---|
+| AC-1 | DQ1 persisted arbiter pick | `test_us0153_arbitration_persists_selected_or_rejected` |
+| AC-2 | DQ2 configured adapter or fail closed | `test_us0153_configured_adapter_or_fail_closed` |
+| AC-3 | DQ3 real smoke, verify, repair, closure | `test_us0153_smoke_verify_repair_closure_use_real_evidence` |
+| AC-4 | DQ4 audited limits before action | `test_us0153_limits_audited_before_worktree_deploy_repair` |
+| AC-5 | DQ5 fixture success and failure matrix | `test_us0153_fixture_success_and_failure_matrix` |
+
+Sprint **S0173** is T-anch..T-005 (six tasks, cap 12) in `sprints/S0173/tasks.md`. Execute must not flip US-0153, tick AC-1..AC-5, reopen US-0149 through US-0152, or start US-0154. Do not read `.env`. Mirror template twins of touched `standalone/` files.
+
+- Research **R-0163**. Companion DEC: **none**. `orchestrator_run_id=auto-20261011-us0153-plan`. `phase_cursor=plan/3-of-3`. Next: execute / dev.
+- `fresh_context_marker=tl-US0153-plan-20261011T202311Z-fresh`; `runtime_proof_id=rp-auto-20261011-us0153-plan-techlead-20261011T202311Z`; `proof_hash=8e76ff0bac99740aea48e49b9d43026e787932573c4f1f13a852261a95b7d516`; `proof_ttl=2026-10-11T21:23:11Z`.
+- **Stop:** `STOP_AFTER_PLAN_MACRO; validate_pair_then_parent_may_spawn_execute`. This child does not spawn execute.
+
+# US-0154 — Standalone operator-path quality gate
+
+**Verdict: `ARCHITECTURE_PASS`; `decision_gate=false`.** Binding design for **R-0164** (DQ1–DQ8 LOCKED). US-0154 remains **OPEN**. AC-1..AC-6 stay unchecked. **Companion DEC: none.** CI adds standalone typecheck, lint, and tests beside the kit harness. The public `itsm` bin must reach production composition. Fake production evidence fails. Sprint **S0174**.
+
+## Locked design (A1)
+
+| Pin | Rule |
+|---|---|
+| CI | Root `checks` stays on kit `TEST_COMMAND`. `LINT_COMMAND` and `TYPECHECK_COMMAND` stay blank. `standalone-test` runs on `windows-latest` and `ubuntu-latest` with Node `22.19.0`, `npm ci`, then `npm run typecheck && npm run lint && npm test`. Document the pin in the runbook and its template twin. Do not edit `template/.github/workflows/ci.yml` (BUG-0009). |
+| Bin | Operator-path tests spawn `standalone/apps/cli/src/index.ts` (bin `itsm`) as a child process with no `RuntimeHostFactories`. In-process host factories do not count. Store path is `.its-magic/runtime/ops.sqlite`. Empty config fails as `RUNTIME_CONFIG_UNAVAILABLE`. |
+| E2E | The same file drives `itsm`, `itsm-daemon`, and `itsm-tui` through the US-0150..US-0153 seams: fresh Pi admission, policy allow/deny, validator failure, restart/resume, daemon replay, and CLI/TUI parity. |
+| Fakes | Operator-path fails on `FakeBrowserDriver`, `screenshot-placeholder`, `artifact_sha: "fake-sha"`, and no-op `{ok:true}` / `{scheduled:true}`. Unit fake seams stay and are labeled `unit_seam`. |
+| Report | `operator_path` fails on a throwing kernel, empty configuration, `:memory:`, or a discarded transport. |
+| Docs | Acceptance text records US-0133..US-0148 as completed library slices and US-0150..US-0154 as the production follow-up. Phase-9 deferrals are not missing v1 work. Do not tick US-0154 here. |
+
+Spawning the existing bins and extending the existing CI job is the smallest design that meets D1–D6. A new runner, a filled kit lint key, or an in-process facade all miss those locks. No companion DEC. `decision_gate=false`.
+
+| AC | Owner | Test |
+|---|---|---|
+| AC-1 | DQ1 matrix typecheck, lint, test | workflow `standalone-test` plus runbook pin |
+| AC-2 | DQ2 public bin | `test_us0154_public_itsm_reaches_production_composition` |
+| AC-3 | DQ3 operator E2E | `test_us0154_operator_e2e_session_policy_validator_resume_replay_parity` |
+| AC-4 | DQ4 reject fakes | `test_us0154_production_rejects_fake_browser_and_synthetic_release` |
+| AC-5 | DQ5 seam report | `test_us0154_report_separates_seams_and_fails_closed` |
+| AC-6 | DQ6 acceptance note | `test_us0154_acceptance_records_library_slices_and_production_followup` |
+
+Sprint **S0174** is T-anch..T-006 (seven tasks, cap 12) in `sprints/S0174/tasks.md`. Execute must not flip US-0154, tick AC-1..AC-6, reopen US-0149 through US-0153, or start US-0155. Do not read `.env`. Do not add a README coverage row.
+
+- Research **R-0164**. Companion DEC: **none**. `orchestrator_run_id=auto-20261011-us0154-plan`. `phase_cursor=plan/3-of-3`. Next: execute / dev.
+- `fresh_context_marker=tl-US0154-plan-20261011T220313Z-fresh`; `runtime_proof_id=rp-auto-20261011-us0154-plan-techlead-20261011T220313Z`; `proof_hash=e6aff2058794baf624751427a8dbb96af9525f7cf98835921840a9f0aff77282`; `proof_ttl=2026-10-11T23:03:13Z`.
+- **Stop:** `STOP_AFTER_PLAN_MACRO; validate_pair_then_parent_may_spawn_execute`. This child does not spawn execute.
+
+# US-0155 — Interactive Pi-style standalone operator TUI
+
+**Verdict: `ARCHITECTURE_PASS`; `decision_gate=false`.** Binding design for **R-0165** (DQ1–DQ7 LOCKED). US-0155 remains **OPEN**. AC-1..AC-5 stay unchecked. **Companion DEC: none.** The existing TUI stays a client of the US-0151 operator transport. Interactive mode uses readline and the current ANSI renderer. Protocol version stays 1. Sprint **S0175**.
+
+## Locked design (A1)
+
+| Pin | Rule |
+|---|---|
+| Client | `@its-magic/tui` only. `runInteractiveTui` uses Node readline plus `renderPanelLayout`. No `WorkflowEngine`, no second store, no `@earendil-works/pi-coding-agent`, `pi-ai`, or `pi-tui` import. `buildTuiModel` stays the one-shot observer snapshot. |
+| Commands | `submitCommand` for admitted argv. Interactive subscribe does not stop at 200ms. Failures show `reason_code`. Approve is `respondApproval` after attach as `controller`. Cancel is `cancel`. Resume argv is `["resume"]`. Pause argv is `["pause"]`, mapped in the existing executor onto the workflow stop `pause_request` / `AUTO_PAUSE_REQUEST`. CLI uses the same argv. No new RPC method. |
+| Panels | Do not change `TuiPanelId` or `TUI_COLLAPSE_ORDER` in `panels.ts`. `interactive-panels.ts` composes that renderer and adds conversation, changed files, app/log health, browser evidence, and model/token/cost. Cap is `OPERATOR_LOG_MAX_LINES` (200) and `OPERATOR_LOG_MAX_BYTES` (32 KiB). At `cols <= 40`, visible panels stay phase and status. |
+| Interaction | Keys submit, approve, deny, cancel, pause, and resume. Resize re-renders. Paint uses `redactEventPayload`. Reconnect uses `after_seq` and re-attach on `EVENT_SEQ_GAP`. No TTY, or `ITS_MAGIC_TUI_NONINTERACTIVE=1`, prints once and exits. Approval then returns `OPERATOR_INPUT_REQUIRED`. Windows and Linux. |
+| Tests | `standalone/tests/contract/us0155.contract.test.ts` speaks the real daemon protocol. Five `test_us0155_*` markers. No Pi session outside runtime admission. |
+| Boundaries | Do not rewrite US-0146. Do not reopen US-0149 through US-0154. No web, mobile, IDE, or remote-worker client. Mirror touched files under `template/.its-magic/standalone/apps/tui`. No README coverage row in this plan. |
+
+Composing the current client and the current transport is the smallest design that meets D1–D5. A Pi TUI dependency, a new RPC, or a wider `TuiPanelId` in `panels.ts` misses those locks. No companion DEC. `decision_gate=false`.
+
+| AC | Owner | Test |
+|---|---|---|
+| AC-1 | DQ1 client, not a second runtime | `test_us0155_tui_is_daemon_client_not_a_second_runtime` |
+| AC-2 | DQ2 shared command path | `test_us0155_commands_stream_diagnostics_approve_cancel_pause_resume` |
+| AC-3 | DQ3 bounded panels | `test_us0155_bounded_panels_cover_operator_surfaces` |
+| AC-4 | DQ4 keyboard, resize, redaction, reconnect, fallback | `test_us0155_keyboard_resize_redaction_reconnect_fallback` |
+| AC-5 | DQ5 daemon protocol, no outside Pi session | `test_us0155_daemon_protocol_without_external_pi_session` |
+
+Sprint **S0175** is T-anch..T-005 (six tasks, cap 12) in `sprints/S0175/tasks.md`. Execute must not flip US-0155, tick AC-1..AC-5, rewrite US-0146, or reopen US-0149 through US-0154. Do not read `.env`.
+
+- Research **R-0165**. Companion DEC: **none**. `orchestrator_run_id=auto-20261012-us0155-plan`. `phase_cursor=plan/3-of-3`. Next: execute / dev.
+- `fresh_context_marker=tl-US0155-plan-20261012T191221Z-fresh`; `runtime_proof_id=rp-auto-20261012-us0155-plan-techlead-20261012T191221Z`; `proof_hash=8dc83c4163517a894a1d42c5856fb05f32418139b19ffefc4dc151f77d654534`; `proof_ttl=2026-10-12T20:12:21Z`.
+- **Stop:** `STOP_AFTER_PLAN_MACRO; validate_pair_then_parent_may_spawn_execute`. This child does not spawn execute.
+
+# BUG-0009: Downstream-safe template CI vs kit-internal active CI
+Archived body in pack_ref: docs/engineering/architecture-archive/architecture-pack-20260913-j.md
+
+# US-0091 — README ↔ backlog feature coverage backfill + blocking drift gate
+Archived body in pack_ref: docs/engineering/architecture-archive/architecture-pack-20260913-i.md
+
+# US-0093 — Cursor browser-integrated UAT self-test
+Archived body in pack_ref: docs/engineering/architecture-archive/architecture-pack-20260913-i.md
+
+# US-0109 — Self-Healing Deploy Loop (post-deploy smoke probe + bounded retry + DEPLOY_DEFERRED)
+Archived body in pack_ref: docs/engineering/architecture-archive/architecture-pack-20260824.md
+
+# BUG-0010 — Dual-level architecture story headings and diff-gated H1 enforcement
+Archived body in pack_ref: docs/engineering/architecture-archive/architecture-pack-20260628.md
+
+# BUG-0011 — Caveman voice-compression rules missing from caveman.mdc
+Archived body in pack_ref: docs/engineering/architecture-archive/architecture-pack-20260628-a.md
+
+# BUG-0012 — Native-chain orchestrator compliance regression (post-US-0095)
+Archived body in pack_ref: docs/engineering/architecture-archive/architecture-pack-20260628-d.md
+
+# US-0042 — Post-QA release findings workflow
+Archived body in pack_ref: docs/engineering/architecture-archive/architecture-pack-20260612-a.md
+
+# US-0089: Cursor Caveman mode (scratchpad-configurable terse responses)
+Archived body in pack_ref: docs/engineering/architecture-archive/architecture-pack-20260913-i.md
+
+# US-0090: Caveman input compression
+
+**`US-0090`** adds an optional **input-side** Caveman file-scope compression layer,
+orthogonal to the response-side voice owned by `# US-0089` (DEC-0072 §1 three-axis
+non-substitution). Binding: **`DEC-0073`**; research **`R-0073`**. Composes on `# US-0089`,
+**`US-0053`**, **`US-0085`** (See `# US-0085` for context fresh-context markers), and
+**`US-0078`** / **`DEC-0060`** (compressed input must not bypass the intake evidence gate).
+2 net-new keys: `CAVEMAN_COMPRESS_INPUT` / `CAVEMAN_FILE_SCOPE` + `CAVEMAN_COMPRESS_SCOPE_EMPTY`.
+
+- Decision: **`DEC-0073`** — Amends: **`DEC-0072`** — Research: **`R-0073`** — Composed: `# US-0089`, **`US-0053`**, **`US-0085`**, **`US-0078`**, **`DEC-0060`**
+
+# US-0141 — Application runtime and pluggable execution backends
+
+## Overview
+
+**US-0141** adds one owned application runtime so operators can discover, start, observe, repair, and clean up real applications across local and Docker (core v1) plus typed WSL/SSH/remote-Docker adapters. New package `@its-magic/app-runtime` never imports Pi. Compose US-0140 `RunsStore.process_handles` **additively** (ProcessManager writes; workflow `reserveProcessHandle` remains a claim token). Do **not** nest AppRuntime inside CommandRouter/GateEngine. AppRuntime **owns** restart; Docker HEALTHCHECK is **status-only**. Browser UAT is **US-0142 OUT**. `/auto`/`/quick` drain is **US-0143 OUT**. OS micro-VM is future (`BACKEND_UNSUPPORTED`). Role-runtime / PolicyEngine / config / KernelBridge / isolation loader stay **unamended**. DEC-0038 `compute_strict_proof_hash` tuple stays **UNAMENDED**. Execute owns package files.
+
+**Research anchor**: **R-0138** (DQ1–DQ10 LOCKED). **Companion DEC**: **DEC-0141** (Accepted — THIS phase). **EARLY_RESEARCH**: consumed from R-0138 (HEALTHCHECK status-only analog; dockerode later-swap only; WSL/`ssh`/`DOCKER_HOST`; Chump backend trait analog — reject unknown→local; `child_process.spawn` AbortSignal) — **no new R-id**. Do not wipe R-0120..R-0138. **R-0137 remains BUG-0023.**
+
+**Fresh context marker**: `tl-US0141-architecture-20260914T003000Z-fresh`
+**Orchestrator run id**: `auto-20260913-us0141`
+**Timestamp**: 2026-09-14T00:30:00Z (UTC)
+**Verdict**: PASS
+**Next**: sovereign-critic (architecture), then `/sprint-plan` **S0149** (orchestrator hint S0148 ineligible — BUG-0023 occupies `sprints/S0148/`; S0146=BUG-0021; S0147=US-0140; orchestrator-owned). ultra_lean: plan-verify is **not** in `resolved_phase_plan`. Do **not** spawn sprint-plan or critic from this subagent (BUG-0006).
+
+**baseline_h2_count (pre-mutate)**: `0`
+
+## Approach locked (A1 — from R-0138)
+
+| Option | Summary | Verdict |
+|--------|---------|---------|
+| **A1** | Sibling `@its-magic/app-runtime` (no Pi) composing `runtime-core` RunsStore; AppRuntime + ProcessManager + CLI-first Docker + WSL/SSH adapters; AppRuntime-owned restart; 12 `test_us0141_*` | **Preferred / LOCKED** — AC-1..AC-8 |
+| A2 | Nested `runtime-core/src/runtime/` | **Rejected** — DQ1 / §30 sibling |
+| A3 | Two packages `execution-runtime` + `dev-environment` | **Rejected** — YAGNI v1 |
+| A4 | dockerode **is** AppRuntime | **Rejected** — adapter, not facade |
+| A5 | Kit Python only as the runtime | **Rejected** — standalone TS owns execution |
+| A6 | PM2 / forever / systemd as ProcessManager | **Rejected** — extra dep |
+| A7 | Docker HEALTHCHECK / `--restart` as remediation owner | **Rejected** — status-only / exit-only |
+| A8 | Implement browser UAT here | **Rejected** — US-0142 |
+| A9 | Micro-VM / Firecracker v1 | **Rejected** — D9 future |
+| A10 | Rewrite workflow / GateEngine / PolicyEngine / config / KernelBridge / `noTools` | **Rejected** — D2/D9 compose |
+| A11 | Require live Docker/WSL/SSH in CI | **Rejected** — fake backends |
+| A12 | Fold into `tool-broker` | **Rejected** — Layer A ≠ Layer B |
+| A13 | Unknown backend → silent local | **Rejected** — AC-8 fail-closed |
+| A14 | Second SQLite or better-sqlite3 for processes | **Rejected** — compose DEC-0140 `node:sqlite` |
+
+**Can this be simpler?** Nested runtime-core looks smaller and couples process lifecycle to the workflow engine. Two §30 packages double npm/test surface. dockerode adds a socket client we can avoid by spawning `docker`. A1 is the simplest design that meets AC-1..AC-8.
+
+### Locked surfaces (DEC-0141)
+
+1. **Package**: `@its-magic/app-runtime` (`standalone/packages/app-runtime`). npm name **LOCKED** `app-runtime` (not `execution-runtime`). `private: true`, `version: 0.0.0`, `type: module`, `engines.node >=22.19.0`, export `./src/index.ts`. **No Pi dependency.** Type-only / public-API imports from `@its-magic/runtime-core`, `@its-magic/role-runtime`, `@its-magic/policy-engine`, `@its-magic/config` allowed. Those packages **do not** import app-runtime internals. Extend US-0133..0140 Pi-import grep to this package. No Biome override. Kit `files` omit `standalone/`. Do not add standalone to kit workspaces. **Execute owns package creation.**
+2. **Compose, do not reimplement**: depend on `RunsStore` public API. Do **not** put AppRuntime inside `runtime-core/workflow/` or GateEngine. Do **not** rewrite CommandRouter, WorkflowEngine, GateEngine, or crash-resume DONE authority.
+3. **`process_handles` additive** (AC-2): keep `id`, `run_id`, `reserved`. Add **LOCKED** columns: `phase_id`, `backend`, `identity_kind` (`process`\|`container`\|`service`), `identity`, `command`, `cwd`, `ports_json`, `url`, `readiness`, `started_at`, `crash_count`, `restart_count`, `log_ring_ref`. ProcessManager writes via `upsertProcessHandle` / `listProcessHandlesForRun`. Log files under `.its-magic/runtime/logs/` + in-memory ring **256** lines; SQLite stores refs.
+4. **ExecutionBackend** (AC-3): `name()` / `execute()` / `health_check()`. Core v1: `local` + `docker` (`docker-local`) via `child_process.spawn` + CLI-first `docker`/`docker compose`. Thin `DockerClient` (dockerode later-swap, not required). Typed adapters: `wsl` (`wsl.exe -d <distro> [--cd <linuxCwd>] -- <cmd>` + `wslpath`) and `ssh`/`remote-docker` (`ssh -o BatchMode=yes -o ConnectTimeout=5` and/or `docker --context` / `DOCKER_HOST=ssh://`; key auth; password SSH unsupported). Micro-VM stub → `BACKEND_UNSUPPORTED`. `health_check` before execute. Missing binary/daemon/distro/SSH → fail-closed, not local fallback.
+5. **Reason codes LOCKED**: `APP_RUNTIME_PROFILE_UNKNOWN`, `APP_RUNTIME_START_FAILED`, `APP_RUNTIME_HEALTH_FAILED`, `APP_RUNTIME_RESTART_CAP_EXHAUSTED`, `APP_RUNTIME_UNSUPPORTED_STACK`, `APP_RUNTIME_CLEANUP_FAILED`; `BACKEND_UNKNOWN`, `BACKEND_UNAVAILABLE`, `BACKEND_DOCKER_UNAVAILABLE`, `BACKEND_WSL_UNAVAILABLE`, `BACKEND_SSH_UNAVAILABLE`, `BACKEND_UNSUPPORTED`, `BACKEND_CONNECTIVITY_FAILED`, `BACKEND_TIMEOUT`; `PROCESS_CRASHED`, `PROCESS_ORPHAN_REAPED`. Do not overload `REMOTE_*` / `RELEASE_*` / `WORKFLOW_*` / `DEV_ENV_*` as the primary family.
+6. **Stack profiles** (AC-4): port `detect_stack_profile` into TS (do not spawn Python). Order: `package.json`→`node`; `pyproject.toml`/`setup.py`→`python`; `go.mod`→`go`; `*.csproj`→`dotnet`; `pom.xml`→`java`. Unknown → `APP_RUNTIME_UNSUPPORTED_STACK` unless `DEV_SERVER_COMMAND` / `start_command` override.
+7. **Bounded self-debug** (AC-5): capture → classify (`start_failed`\|`health_failed`\|`crash`\|`timeout`\|`connectivity`\|`unsupported_stack`\|`unsupported_backend`) → optional fresh DEV (`SessionSupervisor.spawn`) → rebuild/restart → cap. Cap **`APP_RUNTIME_RESTART_MAX` default 3** from resolved config/scratchpad if present. **No new RuntimeConfig domain.** Orthogonal to `AUTO_IMPLEMENTATION_LOOP`. HEALTHCHECK is status-only; AppRuntime owns restart.
+8. **Evidence** (AC-6): `{ command, backend, exit_code, duration_ms, stdout_ref, stderr_ref, reason_code? }`. Summarize large logs (head/tail + error lines, **8 KiB** model budget).
+9. **Connect + cleanup** (AC-7): expose `url`/`ports`/`health`/`health_path` using US-0098 names (`connect_endpoint`, `health_path`, `service_id`, `container_id`, `env_refs` names-only). US-0142 consumes; **no Playwright/CDP**. Never read `.env`. Redact Authorization/Cookie. `ProcessManager.stop` after success/failure/cancellation/runtime restart. AppRuntime reaps process/container orphans (`PROCESS_ORPHAN_REAPED`); workflow `discardOrphans` remains sessions-only. Health: TCP listen and/or HTTP GET `health_path`; process-alive is insufficient.
+10. **Layer B profiles**: `trusted_local`→`local`, `isolated_dev`→`docker`. `untrusted_repo` sandbox → `BACKEND_UNSUPPORTED`. Optional ToolBroker `itsm_app_*` unstub is a **seed**.
+11. **OUT**: US-0142 browser; US-0143 drain; micro-VM; restore `.opencode/commands/auto.md`; kit `cli.json`; plugin-local `its-magic-auto/tui.json`; npm-publish; git push; rewrite of US-0136..0140 packages.
+12. **Tests**: 12 `test_us0141_*`; Win+Linux; fake-model CI; in-memory SQLite; fake backends. Count stays 12.
+
+### Critic NB closures (research us0141res-* — informational)
+
+| NB | Closure |
+|----|---------|
+| NB1 proof MATCH; R-0138 not R-0137; Status OPEN; R-0137 BUG-0023 not wiped (`us0141res-challenger-001`) | LOCKED this H1 + DEC-0141; Status OPEN; ACs unchecked |
+| NB2 `/architecture` owns `# US-0141` + DEC-0141 Accepted; A1 compose `process_handles`; US-0142 browser OUT; US-0143 drain OUT (`us0141res-architect-002`) | LOCKED this H1 + DEC-0141; T-001..T-008 |
+| NB3 no app-runtime code; no DONE; 11 tasks ≤ 12; no `/architecture` spawn from critic (`us0141res-subtractor-003`) | Held — T-anch; Status OPEN; execute owns package; do not spawn `/sprint-plan` from this subagent |
+
+## Components
+
+### `app-runtime` package (AC-1..AC-8)
+
+- Facade `AppRuntime` + `ProcessManager` + `ExecutionBackend` adapters + stack profiles + bounded self-debug
+- Grep denies `@earendil-works/pi-` inside the package
+
+### ProcessManager + RunsStore compose (AC-2)
+
+- Additive `process_handles`; claim token vs filled row; log ring refs
+
+### ExecutionBackend (AC-3)
+
+- local + docker CLI-first core; WSL + SSH/remote-Docker typed adapters; fail-closed `BACKEND_*`
+
+### Stack profiles (AC-4)
+
+- Node/Python/Go/Java/.NET; unknown fail/fallback
+
+### Bounded remediation (AC-5)
+
+- AppRuntime-owned restart; `APP_RUNTIME_RESTART_MAX` default 3; HEALTHCHECK status-only
+
+### Evidence + Connect (AC-6, AC-7)
+
+- Structured test/build JSON + 8 KiB summarize; Connect handoff names; no browser; orphan reap
+
+### Contract tests (AC-1..AC-8)
+
+- Twelve markers (DEC-0141 §12). Kernel tests: `standalone/tests/contract`. Matrix Windows + Linux.
+
+## Companion DEC = DEC-0141 (Required → Accepted)
+
+Authored Accepted in THIS phase at `decisions/DEC-0141.md`. Locks A1, package, schema, backends, reason codes, cap, markers, seeds.
+
+## Risks finalized (R1–R6 from R-0138)
+
+- **R1 (MEDIUM)** Live Docker/WSL/SSH absent on CI hosts → DQ8 fake backends; unavailable codes asserted, not skipped
+- **R2 (MEDIUM)** Operators treat US-0098 JSON or HEALTHCHECK as the owner → D3/DQ5; runtime owns execution; tests 3/6
+- **R3 (LOW)** Log files leak secrets → names-only env; redact compose US-0135/0137; never read `.env`
+- **R4 (MEDIUM)** Orphan processes after runtime crash → DQ7 reap + test 9; compose `discardOrphans` for sessions only
+- **R5 (LOW)** npm name bikeshed `app-runtime` vs `execution-runtime` → this H1 pins `app-runtime`
+- **R6 (LOW)** ToolBroker `itsm_app_*` scope creep → optional seed; PolicyEngine tables unamended
+
+## Compose, do not amend (verified)
+
+| Story / DEC | Surface | Verification |
+|-------------|---------|--------------|
+| US-0140 / DEC-0140 / R-0135 | `RunsStore.process_handles` + workflow/GateEngine | ✓ additive schema; workflow not rewritten |
+| US-0138 / DEC-0138 / R-0130 | resolved config/scratchpad | ✓ consume `APP_RUNTIME_RESTART_MAX`; no new domain |
+| US-0137 / DEC-0137 / R-0129 | PolicyEngine Layer A | ✓ consume path/shell; Layer B profiles only |
+| US-0136 / DEC-0136 / R-0128 | SessionSupervisor `spawn` | ✓ fresh DEV slot; internals unamended |
+| US-0135 / DEC-0135 / R-0127 | `redact.ts` / credentials | ✓ never read `.env`; redact logs |
+| US-0098 / R-0085 | Connect field names | ✓ input; AppRuntime owns execution |
+| US-0086 / R-0068 / DEC-0070 | `remote.json` / `REMOTE_*` | ✓ input routing, not AppRuntime codes |
+| US-0065 | `detect_stack_profile` | ✓ port semantics; Python lib unamended |
+| US-0085 | `.env` deny | ✓ never read |
+| US-0056 / DEC-0038 | `compute_strict_proof_hash` tuple | ✓ UNAMENDED |
+| Kit npm `its-magic` / DEC-0120 | `files` whitelist | ✓ omit `standalone/` |
+| US-0142..US-0148 | later capabilities | ✓ OUT OF SCOPE (US-0142 browser; US-0143 drain) |
+| BUG-0021 / R-0134 | OpenCode CLI TUI `/auto` listing | ✓ DONE; not mutated (`sprints/S0146/`) |
+| BUG-0022 / R-0133 | (open bug) | ✓ OPEN; not mutated |
+| BUG-0023 / R-0137 | OpenCode CLI TUI dispatch | ✓ OPEN; not mutated (`sprints/S0148/` occupied) |
+| R-0120..R-0138 | prior research | ✓ not wiped (R-0136/R-0137 intact) |
+
+## Sprint seeds (11 tasks within SPRINT_MAX_TASKS=12 — for `/sprint-plan` expected S0149)
+
+- **T-anch** (`# US-0141` H1 + DEC-0141 Accepted — RESOLVED in THIS phase; NO-OP / verification)
+- **T-001** (AC-1 — `packages/app-runtime` + Pi-import grep + runtime-core compose)
+- **T-002** (AC-2 — `process_handles` additive schema + ProcessManager)
+- **T-003** (AC-3 — `ExecutionBackend` local+docker CLI-first + `health_check`)
+- **T-004** (AC-3 — WSL + SSH/remote-docker adapters + connectivity diagnostics)
+- **T-005** (AC-4 — stack profiles Node/Python/Go/Java/.NET + unknown fail/fallback)
+- **T-006** (AC-5 — bounded self-debug + `APP_RUNTIME_RESTART_MAX` + fresh DEV slot)
+- **T-007** (AC-6 — test/build evidence + log summarize)
+- **T-008** (AC-7 — Connect handoff no browser + cleanup/orphan reap)
+- **T-009** (AC-8 — chaos fixtures fake backends)
+- **T-010** (AC-1..AC-8 — 12 `test_us0141_*` Win/Linux fake-model)
+
+AC surjection: AC-1→T-001 (T-010 m1); AC-2→T-002 (T-010 m2); AC-3→T-003,T-004 (T-010 m3,m4); AC-4→T-005 (T-010 m5); AC-5→T-006 (T-010 m6); AC-6→T-007 (T-010 m7); AC-7→T-008 (T-010 m8,m9); AC-8→T-009,T-010 m10–m12. Order: T-anch → T-001 → T-002 → T-003 → T-004 → T-005 → T-006 → T-007 → T-008 → T-009 → T-010. No split (11 ≤ 12). Not `/quick`. Orchestrator hint **S0148 ineligible** (BUG-0023). S0146=BUG-0021, S0147=US-0140. Expected **S0149**. Do **not** write `sprints/S0148/` or `sprints/S0149/` this phase.
+
+## Isolation evidence (US-0048 / DEC-0029)
+
+- `phase_id=architecture`, `role=tech-lead`, `story_id=US-0141`, `sprint_id=none` (pending — sprint-plan owns next unused id), `orchestrator_run_id=auto-20260913-us0141`
+- `delivery_mode=ultra_lean`, `macro_phase=plan` (architecture — second canonical phase of `plan` macro)
+- `model_id=cursor-grok-4.6-high` (CROSS_MODEL_REVIEW=1 — required on isolation)
+- `fresh_context_marker=tl-US0141-architecture-20260914T003000Z-fresh`, `timestamp=2026-09-14T00:30:00Z` (UTC)
+- `evidence_ref=docs/engineering/research.md ## R-0138; docs/product/backlog.md ## US-0141; docs/engineering/architecture.md (this # US-0141); decisions/DEC-0141.md; handoffs/resume_brief.md`
+- Fresh tech-lead subagent per BUG-0006 / US-0048; no prior chat history. Narrow-read only. No `.env` reads. Status remains OPEN. US-0133..US-0140 DONE compose-only not reopened. BUG-0021 DONE not mutated. BUG-0022/BUG-0023 OPEN not mutated. No US-0142+ authoring. No `/sprint-plan` spawn from this subagent. No `standalone/packages/app-runtime` this phase.
+- Prior phase strict proof consumed: `rp-auto-20260913-us0141-research-techlead-20260914T001000Z-US-0141` / `A69F1FF95B60E566C03355AD24DDB7144B005BD78CD3701C1C8D2EBF2DAFAC45` — RUNTIME_PROOF_VALID (independent `compute_strict_proof_hash` MATCH; consume-before-TTL `2026-09-14T00:30:00Z` < `2026-09-14T01:10:00Z`; immutable R-0138). Critic findings us0141res-* informational only (`rp-auto-20260913-us0141-sovereign-critic-techlead-20260914T002000Z-US-0141` / `727DABC442D42CD32D3B216AF014C3797BE09F552688BECA429C2A215E6EF53E`; anti_slop=10; 0 blocking; degraded_mode=false; MATCH before TTL `2026-09-14T01:20:00Z`).
+- Sovereign memory: `SOVEREIGN_MEMORY=1`; `build_injection_digest_block` returned `(no sovereign memory entries)` (read-only). No `mistakes.jsonl` write.
+
+## Strict runtime proof (mirror)
+
+- `runtime_proof_id=rp-auto-20260913-us0141-architecture-techlead-20260914T003000Z-US-0141`
+- Canonical hashed payload (DEC-0038, `compute_strict_proof_hash` positional): `{"orchestrator_run_id":"auto-20260913-us0141","phase_id":"architecture","proof_issued_at":"2026-09-14T00:30:00Z","proof_ttl_seconds":3600,"role":"tech-lead","runtime_proof_id":"rp-auto-20260913-us0141-architecture-techlead-20260914T003000Z-US-0141"}`
+- Isolation extras (not hashed): `delivery_mode=ultra_lean`, `macro_phase=plan`, `model_id=cursor-grok-4.6-high`, `sprint_id=none`, `story_id=US-0141`
+- `proof_hash=4B5EBD9D8FF00C4C7CC5CF114B946AFBA684E11998C4C553C59AE5080326A3BF`
+- `proof_ttl=2026-09-14T01:30:00Z`
+- `hash_recompute_confirmation=true` (compute_strict_proof_hash → 4B5EBD9D8FF00C4C7CC5CF114B946AFBA684E11998C4C553C59AE5080326A3BF; **64 hex** verified)
+- Consumed research proof: `rp-auto-20260913-us0141-research-techlead-20260914T001000Z-US-0141` / `A69F1FF95B60E566C03355AD24DDB7144B005BD78CD3701C1C8D2EBF2DAFAC45` — RUNTIME_PROOF_VALID MATCH before TTL `2026-09-14T01:10:00Z`
+- Consumed critic proof: `rp-auto-20260913-us0141-sovereign-critic-techlead-20260914T002000Z-US-0141` / `727DABC442D42CD32D3B216AF014C3797BE09F552688BECA429C2A215E6EF53E` — RUNTIME_PROOF_VALID MATCH before TTL `2026-09-14T01:20:00Z`

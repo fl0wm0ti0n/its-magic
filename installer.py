@@ -1372,6 +1372,14 @@ def show_help(version):
     print("                    --host gates ONLY .cursor/ and .opencode/ trees; kernel paths")
     print("                    (docs/, scripts/, its_magic/, handoffs/, decisions/, sprints/,")
     print("                    .github/workflows/) always install regardless of --host.")
+    print("  --register-itsm-path [dir|prompt]")
+    print("                    Opt in to placing itsm on the user PATH. Off by default.")
+    print("                    No directory uses %LOCALAPPDATA%\\its-magic\\bin or $HOME/.local/bin.")
+    print("                    'prompt' asks only on a TTY. Env: ITS_MAGIC_REGISTER_ITSM_PATH=1")
+    print("                    and ITS_MAGIC_ITSM_PATH_DIR. See the runbook PATH section.")
+    print("  --unregister-itsm-path")
+    print("                    Remove only the recorded itsm links and, when this installer")
+    print("                    appended it, that PATH directory.")
     print("  Note: installer bootstraps runbook TEST/LINT/TYPECHECK commands")
     print("        from OS+stack detection; unresolved TEST_COMMAND fails fast with")
     print("        [RUNBOOK_BOOTSTRAP_ERROR] diagnostics.")
@@ -1456,6 +1464,27 @@ def _clean_one_path(target_root, rel, preserve):
         print(f"Cleaned: {rel} (preserved model-config locals)")
 
 
+def _dispatch_itsm_path(target_root, register_flag, unregister):
+    lib = _load_standalone_runtime_install_lib()
+    code, _token = lib.dispatch_itsm_path_registration(
+        target_root,
+        register_flag=register_flag,
+        unregister=bool(unregister),
+        env=os.environ,
+    )
+    return code
+
+
+def _itsm_path_only(args):
+    if args.mode is not None or args.clean_repo:
+        return False
+    if args.scratchpad_postinstall or args.kit_config_postinstall:
+        return False
+    if args.standalone_postinstall or args.standalone_bootstrap or args.validate_install_completeness:
+        return False
+    return args.register_itsm_path is not None or args.unregister_itsm_path
+
+
 def main():
     script_dir = normalize(os.path.dirname(__file__))
     template_dir = os.path.join(script_dir, "template")
@@ -1468,6 +1497,18 @@ def main():
     )
     parser.add_argument("--target", help="Target repository path")
     parser.add_argument("--mode", choices=["missing", "overwrite", "interactive", "upgrade", "uninstall-standalone"], help="Install mode")
+    parser.add_argument(
+        "--register-itsm-path",
+        nargs="?",
+        const="",
+        default=None,
+        help="Opt in to user PATH registration for itsm. Optional directory, or 'prompt'.",
+    )
+    parser.add_argument(
+        "--unregister-itsm-path",
+        action="store_true",
+        help="Remove the itsm user PATH registration recorded by this installer.",
+    )
     parser.add_argument("--backup", action="store_true", help="Backup files before overwriting")
     parser.add_argument("--create", action="store_true", help="Create target directory if missing")
     parser.add_argument("--clean-repo", action="store_true", help="Remove installed workflow artifacts")
@@ -1517,6 +1558,13 @@ def main():
     if args.version:
         print(f"its-magic v{version}")
         return 0
+
+    if _itsm_path_only(args):
+        target_root = normalize(args.target) if args.target else normalize(".")
+        if args.register_itsm_path is not None and not os.path.isdir(target_root):
+            print(f"[ITSM_PATH_REGISTER_FAILED] TARGET_MISSING: {target_root}")
+            return 1
+        return _dispatch_itsm_path(target_root, args.register_itsm_path, args.unregister_itsm_path)
 
     if args.source_root:
         source_root = normalize(args.source_root)
@@ -1574,6 +1622,10 @@ def main():
             print(f"[UNINSTALL_STANDALONE_ERROR] TARGET_MISSING: {target_root}")
             return 1
         lib = _load_standalone_runtime_install_lib()
+        if args.unregister_itsm_path:
+            ok, _token = lib.unregister_itsm_user_path()
+            if not ok:
+                return 1
         lib.uninstall_standalone(target_root)
         print("[UNINSTALL_STANDALONE_OK] standalone product removed; host trees preserved.")
         return 0
@@ -1807,7 +1859,7 @@ def main():
                 print(f"    {f}")
             print("    Check .cursor/scratchpad.local.example.md for new flags.")
         print(f"\nRepository: {REPO_URL}\n")
-        return 0
+        return _dispatch_itsm_path(target_root, args.register_itsm_path, args.unregister_itsm_path)
 
     for rel in files:
         src = os.path.join(source_root, rel)
@@ -1870,7 +1922,7 @@ def main():
     print(f"its-magic v{version}")
     print(f"Repository: {REPO_URL}")
     print()
-    return 0
+    return _dispatch_itsm_path(target_root, args.register_itsm_path, args.unregister_itsm_path)
 
 
 if __name__ == "__main__":

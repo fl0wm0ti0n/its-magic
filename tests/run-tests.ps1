@@ -1765,6 +1765,10 @@ Assert-True "BUG-0026 packaged range contract tests pass" ($bug0026Contract.Exit
 $us0149Contract = Start-Process python -ArgumentList @("-m", "pytest", "tests\us0149_global_itsm_launcher_test.py", "-q") -PassThru -NoNewWindow -Wait -WorkingDirectory $root
 Assert-True "US-0149 global itsm launcher contract tests pass" ($us0149Contract.ExitCode -eq 0)
 
+# 26AU2) US-0149 — opt-in user PATH registration (fake home + fake PATH store)
+$us0149Path = Start-Process python -ArgumentList @("-m", "pytest", "tests\us0149_path_registration_test.py", "-q") -PassThru -NoNewWindow -Wait -WorkingDirectory $root
+Assert-True "US-0149 path registration contract tests pass" ($us0149Path.ExitCode -eq 0)
+
 # 26AV) BUG-0027 — OpenCode manual phase persist (IsolationEvidence + validator packs)
 $bug0027Parity = Start-Process python -ArgumentList @((Join-Path $root "scripts\check_intake_template_parity.py"), "--scope=bug-0027") -PassThru -NoNewWindow -Wait -WorkingDirectory $root
 Assert-True "check_intake_template_parity --scope=bug-0027 passes (BUG-0027)" ($bug0027Parity.ExitCode -eq 0)

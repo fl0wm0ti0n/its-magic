@@ -2732,6 +2732,47 @@ AI coding assistants in Cursor lose context across sessions, produce fragmented 
 - **Out of scope**: Lifecycle transport/execution (`US-0151`), app/browser services (`US-0152`), parallel/deploy (`US-0153`), CI operator-path gate (`US-0154`), PATH/bootstrap (`US-0149`/`BUG-0026`), and masterplan phase-9 deferrals.
 - **Research asks**: Allocate `R-0150` to compare composition lifetime and cleanup, typed dependency injection, admitted Pi test-session construction, deterministic unavailable-service reasons, and production-composition test fixtures.
 
+## Discovery Notes — US-0151
+
+- **Product outcome**: CLI, daemon, and TUI submit work to one persistent runtime and return real run events. `itsm intake`, `auto`, `resume`, `ask`, and lifecycle commands execute admitted work. A rendered plan or `{ok:true}` is not an operator result.
+- **Locked scope**: Keep the resolved operator transport on the US-0150 composition. Compose the US-0146 command/panel surfaces and the US-0148 protocol. Ask, index, app, and browser either call an admitted service or fail closed. App and browser service implementation stays US-0152.
+- **Failure posture**: Missing runtime, transport, or service returns a specific fail-closed result. Gate blocks and execution failures stay visible. Repository artifacts stay canonical; SQLite stays operational.
+- **Out of scope**: PATH registration (US-0149), published-kit bootstrap (BUG-0026), parallel/deploy (US-0153), CI operator-path gate (US-0154), the interactive Pi-style TUI (US-0155), npm publish, git push, and `.env` reads.
+- **Research asks**: Tech-lead authors **R-0161** (highest existing heading is R-0160; R-0151 is already used). Compare transport retention, execution versus schedule-only results, daemon event streaming, and TUI replay of daemon-owned state. Do not author that heading in discovery.
+
+## Discovery Notes — US-0152
+
+- **Product outcome**: Execute, QA, and UAT launch a supported application and collect real browser evidence so a release gate uses actual health, screenshot, console, network, and trace results.
+- **Locked scope**: The production composition owns `AppRuntime` and `BrowserUAT` and routes `itsm app` and `itsm browser` through them. Compose the completed US-0141 and US-0142 packages. Production browser mode is isolated Playwright, or `BROWSER_UNAVAILABLE` when that driver cannot start.
+- **Failure posture**: Unavailable runtime, missing authorization, crash, failed assertion, and incomplete evidence fail closed. `FakeBrowserDriver` and the text `screenshot-placeholder` are test-only and cannot satisfy UAT.
+- **Out of scope**: Pixel-baseline infrastructure, stronger micro-VM isolation, parallel/deploy (US-0153), the CI operator-path gate (US-0154), the interactive TUI (US-0155), reopening US-0149, US-0150, or US-0151, npm publish, git push, and `.env` reads.
+- **Research asks**: Tech-lead authors **R-0162** (highest existing heading is R-0161; R-0152 is already used by BUG-0030). Compare host ownership of the existing app and browser packages, production Playwright versus fail-closed unavailable, and evidence that can block a release gate. Do not author that heading in discovery.
+
+## Discovery Notes — US-0153
+
+- **Product outcome**: Parallel DEV candidates, release targets, deployment verification, and bounded repair run only when real configured services admit them. A release passes only with persisted arbitration evidence and a configured target result.
+- **Locked scope**: Compose the completed US-0145 delivery pipeline. After worktrees exist, the workflow invokes candidate QA/arbitration and persists the selected or rejected candidate. Release uses configured target adapters. Unconfigured targets fail closed.
+- **Failure posture**: Skipped arbitration fails closed. A stub adapter that returns success, including `artifact_sha: "fake-sha"`, is not a release pass. Unavailable targets, rejected candidates, failed deploy verification, exhausted repair, and premature closure fail closed.
+- **Out of scope**: Distributed workers and remote always-on Debian execution (phase-9 deferred). Do not start US-0154 or US-0155. Do not reopen US-0149, US-0150, US-0151, or US-0152. US-0145 stays DONE and compose-only. No sprint, no AC tick, no npm publish, no git push, and no `.env` read.
+- **Research asks**: Tech-lead authors **R-0163** (highest existing heading is R-0162; R-0153 is already used by US-0156). Compare workflow invocation of arbitration versus a skipped hook, configured adapters versus stub success, and fail-closed unconfigured targets. Do not author that heading in discovery.
+
+## Discovery Notes — US-0154
+
+- **Product outcome**: Installed `itsm` acceptance and CI are authoritative. Hermetic package contracts alone cannot claim this story done. A public `itsm` entrypoint must reach production composition.
+- **Locked scope**: Validate the US-0150 through US-0153 integration sequence. CI runs standalone workspace typecheck, lint, and tests in addition to root-kit checks. A packaged or installed `itsm` fixture invokes the public entrypoint (`standalone/apps/cli` bin `itsm`) and proves production composition. Operator-path evidence covers session admission, policy, validator failure, persistent resume, daemon replay, and CLI/TUI parity.
+- **Failure posture**: Fake drivers, placeholder screenshots, synthetic target success, and no-op command responses cannot satisfy production acceptance. Reports fail when a claimed production entrypoint uses a throwing kernel, empty configuration, ephemeral store, or discarded transport.
+- **Out of scope**: Do not expand product scope. Do not replace deterministic fake seams used by unit tests. Phase-9 own indexer, stronger sandbox, IDE, web/mobile/watch, distributed workers, and remote always-on Debian stay deferred and are not missing v1 work. Do not start US-0155. Do not reopen US-0149 through US-0153. US-0133 through US-0148 stay completed library/contract slices. No sprint, no AC tick, no npm publish, no git push, and no `.env` read.
+- **Confirmed gap**: Root CI uses kit `TEST_COMMAND` and blank `LINT_COMMAND` / `TYPECHECK_COMMAND`. The standalone CI job typechecks and tests on Windows only and does not lint. The public `itsm` entrypoint calls `createRuntimeHost`, and no standalone test spawns that bin.
+- **Research asks**: Tech-lead authors **R-0164** (highest existing heading is R-0163; **R-0154** is already used by BUG-0022). Compare authoritative standalone CI versus root-kit-only checks, the public entrypoint versus a test-created facade, and report failure when production evidence is a unit seam. Do not author that heading in discovery.
+
+## Discovery Notes — US-0155
+
+- **Product outcome**: An operator runs an interactive terminal UI for the standalone runtime: conversation, live run events, approvals, phase/timeline, tools, changed files, app/browser evidence, and model/token/cost panels. A static ANSI snapshot is not this story.
+- **Locked scope**: The TUI is a client of the daemon/operator transport owned by US-0151. It uses Pi TUI components or compatible interactive primitives. Commands, streaming events, diagnostics, and approve/cancel/pause/resume go through the admitted runtime. Panels are bounded. Keyboard, resize, redaction, reconnect, and non-interactive fallback are in scope on Windows and Linux.
+- **Failure posture**: A second runtime or workflow engine fails this story. Tests that create a Pi session outside runtime admission fail this story. Missing transport, a failed command, or an unreadable secret stays a specific fail-closed result.
+- **Out of scope**: Do not rewrite US-0146 (completed lightweight ANSI/client slice). Do not reopen US-0149 through US-0154. US-0156 stays DONE. Do not add web, mobile, IDE, or remote-worker clients. No sprint, no AC tick, no npm publish, no git push, and no `.env` read.
+- **Confirmed gap**: `buildTuiModel` (`standalone/apps/tui/src/index.ts`) attaches as an observer, waits 200ms, and prints a one-shot layout. `panels.ts` renders phase, status, timeline, and tools only.
+- **Research asks**: Tech-lead authors **R-0165** (highest existing heading is R-0164; **R-0155** is already used by BUG-0031). Compare Pi TUI components versus compatible interactive primitives as a daemon client, bounded panels, keyboard/resize/redaction/reconnect/non-interactive fallback, and daemon-protocol tests that do not create a Pi session outside runtime admission. Do not author that heading in discovery.
 ## Discovery Notes — BUG-0030
 
 - **Operator value proposition**: In the supported OpenCode CLI TUI (`opencode`, not `--pure`), selecting `/auto` starts its-magic `runAutoLifecycle` and the phase lifecycle. A fail-closed diagnostic is appropriate only when the host truly lacks the required capability.
