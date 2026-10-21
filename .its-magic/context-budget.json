@@ -1,0 +1,6 @@
+{
+  "initial_budget_tokens": 6000,
+  "expansion_budget_tokens": 4000,
+  "max_expansions": 2,
+  "max_single_artifact_tokens": 3000
+}

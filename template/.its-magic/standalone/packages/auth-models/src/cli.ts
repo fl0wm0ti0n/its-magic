@@ -1,6 +1,6 @@
 import { AuthService } from "./auth-service.ts";
 import { loadStandaloneCatalog } from "./catalog.ts";
-import { AuthModelsError, MODELS_TEST_LIVE_FORBIDDEN } from "./errors.ts";
+import { AUTH_SYNC_FAILED, AuthModelsError, MODELS_TEST_LIVE_FORBIDDEN } from "./errors.ts";
 import type { AuthRuntimePort, AuthType, StandaloneCatalog } from "./types.ts";
 import {
 	BUILTIN_API_KEY_PROVIDERS,
@@ -16,6 +16,8 @@ export interface CliIo {
 	stdout: (line: string) => void;
 	stderr: (line: string) => void;
 	prompt?: (message: string) => Promise<string | undefined>;
+	readStdinLine?: () => Promise<string>;
+	stdinIsTTY?: boolean;
 }
 
 export interface DispatchDeps {
@@ -75,8 +77,13 @@ async function handleAuth(
 	}
 	if (sub === "login") {
 		const provider = rest[0];
-		if (!provider) {
-			io.stderr("usage: itsm auth login <provider> [--type oauth|api_key]");
+		if (!provider || provider.startsWith("-")) {
+			io.stderr(LOGIN_USAGE);
+			return 1;
+		}
+		const args = parseLoginArgs(rest);
+		if (!args.ok) {
+			io.stderr(LOGIN_USAGE);
 			return 1;
 		}
 		const type = parseType(rest);
@@ -84,34 +91,77 @@ async function handleAuth(
 			io.stderr("oauth login is not available in CI");
 			return 1;
 		}
-		await service.login(provider, type, {
-			prompt: async (p) => {
-				io.stdout(p.message);
-				if (p.type === "select" && p.options?.length) {
-					io.stdout(p.options.map((o) => o.id).join(", "));
-					return p.options[0]?.id;
+		try {
+			let stdinSecret: string | undefined;
+			if (type === "api_key" && args.stdin) {
+				const raw = io.readStdinLine ? await io.readStdinLine() : await readOneStdinLine();
+				const secret = stripOneTrailingNewline(raw);
+				if (secret.trim() === "") {
+					io.stderr(redactLine(AUTH_LOGIN_EMPTY));
+					return 1;
 				}
-				return io.prompt ? io.prompt(p.message) : undefined;
-			},
-			notify: (event) => {
-				if (event.type === "auth_url" && event.url) {
-					io.stdout(`auth_url ${event.url}`);
-				}
-				if (event.type === "device_code") {
-					if (event.userCode) {
-						io.stdout(`device_code ${event.userCode}`);
+				stdinSecret = secret;
+			} else if (type === "api_key" && !loginStdinIsTTY(io)) {
+				io.stderr(redactLine(AUTH_LOGIN_TTY_REQUIRED));
+				return 1;
+			}
+			await service.login(provider, type, {
+				prompt: async (p) => {
+					if (p.type === "select" && p.options?.length) {
+						io.stdout(p.message);
+						io.stdout(p.options.map((o) => o.id).join(", "));
+						return p.options[0]?.id;
 					}
-					if (event.verificationUri) {
-						io.stdout(`verification_uri ${event.verificationUri}`);
+					if (p.type === "secret") {
+						if (p.signal?.aborted) {
+							throw new AuthModelsError(AUTH_LOGIN_CANCELLED, AUTH_LOGIN_CANCELLED);
+						}
+						let secret: string | undefined;
+						if (stdinSecret !== undefined) {
+							io.stdout(p.message);
+							secret = stdinSecret;
+						} else {
+							secret = io.prompt ? await io.prompt(p.message) : undefined;
+						}
+						if (secret === undefined) {
+							throw new AuthModelsError(AUTH_LOGIN_CANCELLED, AUTH_LOGIN_CANCELLED);
+						}
+						if (secret.trim() === "") {
+							throw new AuthModelsError(AUTH_LOGIN_EMPTY, AUTH_LOGIN_EMPTY);
+						}
+						return secret;
 					}
-				}
-				if (event.message) {
-					io.stdout(event.message);
-				}
-			},
-		});
-		io.stdout(JSON.stringify({ provider, auth: "configured" }));
-		return 0;
+					io.stdout(p.message);
+					return io.prompt ? io.prompt(p.message) : undefined;
+				},
+				notify: (event) => {
+					if (event.type === "auth_url" && event.url) {
+						io.stdout(`auth_url ${event.url}`);
+					}
+					if (event.type === "device_code") {
+						if (event.userCode) {
+							io.stdout(`device_code ${event.userCode}`);
+						}
+						if (event.verificationUri) {
+							io.stdout(`verification_uri ${event.verificationUri}`);
+						}
+					}
+					if (event.message) {
+						io.stdout(event.message);
+					}
+				},
+			});
+			const stored = await service.checkAuth(provider);
+			if (!stored || stored.type !== type) {
+				io.stderr(redactLine(AUTH_LOGIN_INVALID));
+				return 1;
+			}
+			io.stdout(JSON.stringify({ provider, auth: "configured" }));
+			return 0;
+		} catch (err) {
+			io.stderr(redactLine(loginDiagnostic(err)));
+			return 1;
+		}
 	}
 	if (sub === "logout") {
 		const provider = rest[0];
@@ -201,6 +251,216 @@ async function handleModels(
 	}
 	io.stderr("usage: itsm models list|test");
 	return 1;
+}
+
+const LOGIN_USAGE = "usage: itsm auth login <provider> [--type oauth|api_key] [--api-key-stdin]";
+const AUTH_LOGIN_CANCELLED = "AUTH_LOGIN_CANCELLED";
+const AUTH_LOGIN_EMPTY = "AUTH_LOGIN_EMPTY";
+const AUTH_LOGIN_INVALID = "AUTH_LOGIN_INVALID";
+const AUTH_LOGIN_TTY_REQUIRED = "AUTH_LOGIN_TTY_REQUIRED";
+
+interface MaskedStdin {
+	isTTY?: boolean;
+	isRaw?: boolean;
+	setRawMode(mode: boolean): void;
+	setEncoding?(encoding: BufferEncoding): void;
+	resume(): void;
+	on(event: "data", listener: (chunk: string | Buffer) => void): void;
+	off(event: "data", listener: (chunk: string | Buffer) => void): void;
+}
+
+interface MaskedStdout {
+	isTTY?: boolean;
+	write(chunk: string): void;
+}
+
+export async function readMaskedTtySecret(
+	message: string,
+	streams?: { stdin?: MaskedStdin; stdout?: MaskedStdout },
+): Promise<string | undefined> {
+	const stdin = streams?.stdin ?? (process.stdin as unknown as MaskedStdin);
+	const stdout = streams?.stdout ?? (process.stdout as unknown as MaskedStdout);
+	if (!stdin.isTTY || !stdout.isTTY) {
+		return undefined;
+	}
+	const previous = Boolean(stdin.isRaw);
+	let onData: ((chunk: string | Buffer) => void) | undefined;
+	let line = "";
+	let settled = false;
+	try {
+		stdout.write(message.endsWith("\n") ? message : `${message}\n`);
+		stdin.setEncoding?.("utf8");
+		stdin.setRawMode(true);
+		stdin.resume();
+		return await new Promise<string | undefined>((resolve) => {
+			onData = (chunk) => {
+				if (settled) {
+					return;
+				}
+				const text = typeof chunk === "string" ? chunk : chunk.toString("utf8");
+				for (const ch of text) {
+					if (ch === "\u0003") {
+						settled = true;
+						resolve(undefined);
+						return;
+					}
+					if (ch === "\r" || ch === "\n") {
+						settled = true;
+						resolve(line);
+						return;
+					}
+					if (ch === "\u007f" || ch === "\b") {
+						line = line.slice(0, -1);
+						continue;
+					}
+					if (ch < " ") {
+						continue;
+					}
+					line += ch;
+				}
+			};
+			stdin.on("data", onData);
+		});
+	} finally {
+		if (onData) {
+			stdin.off("data", onData);
+		}
+		try {
+			stdin.setRawMode(previous);
+		} catch {
+			// A closed terminal still must not stay in raw mode.
+		}
+	}
+}
+
+function parseLoginArgs(rest: string[]): { ok: true; stdin: boolean } | { ok: false } {
+	let stdin = false;
+	for (let i = 0; i < rest.length; i++) {
+		const arg = rest[i] ?? "";
+		if (arg === "--type") {
+			i += 1;
+			continue;
+		}
+		if (arg === "--api-key" || arg.startsWith("--api-key=") || arg.startsWith("--api-key-stdin=")) {
+			return { ok: false };
+		}
+		if (arg === "--api-key-stdin") {
+			const next = rest[i + 1];
+			if (next && !next.startsWith("-")) {
+				return { ok: false };
+			}
+			stdin = true;
+		}
+	}
+	return { ok: true, stdin };
+}
+
+function loginStdinIsTTY(io: CliIo): boolean {
+	if (typeof io.stdinIsTTY === "boolean") {
+		return io.stdinIsTTY;
+	}
+	return Boolean(process.stdin.isTTY);
+}
+
+function stripOneTrailingNewline(value: string): string {
+	if (value.endsWith("\r\n")) {
+		return value.slice(0, -2);
+	}
+	if (value.endsWith("\n") || value.endsWith("\r")) {
+		return value.slice(0, -1);
+	}
+	return value;
+}
+
+function firstLine(text: string): string | null {
+	const newline = text.indexOf("\n");
+	const carriage = text.indexOf("\r");
+	let at = -1;
+	if (newline < 0) {
+		at = carriage;
+	} else if (carriage < 0) {
+		at = newline;
+	} else {
+		at = Math.min(newline, carriage);
+	}
+	if (at < 0) {
+		return null;
+	}
+	const length = text[at] === "\r" && text[at + 1] === "\n" ? 2 : 1;
+	return text.slice(0, at + length);
+}
+
+function readOneStdinLine(stdin: NodeJS.ReadableStream = process.stdin): Promise<string> {
+	return new Promise((resolve, reject) => {
+		let raw = "";
+		const onData = (chunk: string | Buffer) => {
+			raw += typeof chunk === "string" ? chunk : chunk.toString("utf8");
+			const line = firstLine(raw);
+			if (line !== null) {
+				cleanup();
+				resolve(line);
+			}
+		};
+		const onEnd = () => {
+			cleanup();
+			resolve(raw);
+		};
+		const onError = (err: unknown) => {
+			cleanup();
+			reject(err instanceof Error ? err : new Error(AUTH_LOGIN_INVALID));
+		};
+		const cleanup = () => {
+			stdin.off("data", onData);
+			stdin.off("end", onEnd);
+			stdin.off("error", onError);
+		};
+		const source = stdin as NodeJS.ReadableStream & {
+			setEncoding?: (encoding: BufferEncoding) => void;
+			resume?: () => void;
+		};
+		source.setEncoding?.("utf8");
+		stdin.on("data", onData);
+		stdin.on("end", onEnd);
+		stdin.on("error", onError);
+		source.resume?.();
+	});
+}
+
+function loginDiagnostic(err: unknown): string {
+	if (isCredentialSyncFailure(err)) {
+		return AUTH_SYNC_FAILED;
+	}
+	const code = err instanceof AuthModelsError ? err.code : errorCode(err);
+	if (
+		code === AUTH_LOGIN_CANCELLED ||
+		code === AUTH_LOGIN_EMPTY ||
+		code === AUTH_LOGIN_INVALID ||
+		code === AUTH_SYNC_FAILED
+	) {
+		return code;
+	}
+	return AUTH_LOGIN_INVALID;
+}
+
+function isCredentialSyncFailure(err: unknown): boolean {
+	if (err instanceof AuthModelsError && err.code === AUTH_SYNC_FAILED) {
+		return true;
+	}
+	if (typeof err !== "object" || err === null) {
+		return false;
+	}
+	const name = "name" in err ? String(err.name) : "";
+	if (name === "CredentialSynchronizationError" || name === "AuthSyncFailedError") {
+		return true;
+	}
+	return errorCode(err) === AUTH_SYNC_FAILED;
+}
+
+function errorCode(err: unknown): string {
+	if (typeof err === "object" && err !== null && "code" in err) {
+		return String(err.code);
+	}
+	return "";
 }
 
 function parseType(rest: string[]): AuthType {

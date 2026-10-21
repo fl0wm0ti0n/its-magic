@@ -331,6 +331,53 @@ def test_us0156_start_from_resume_phase_plan_precedence(tmp_path: Path) -> None:
     assert res4["parsed"].get("reasonCode") == "OPENCODE_AUTO_RESUME_AMBIGUOUS"
 
 
+def test_us0156_resolver_uses_latest_valid_state_pair_not_historical_blocker(
+    tmp_path: Path,
+) -> None:
+    brief = tmp_path / "handoffs" / "resume_brief.md"
+    brief.parent.mkdir(parents=True, exist_ok=True)
+    brief.write_text(
+        """## Latest orchestration pointer
+
+- next_scheduled_phase=qa
+- orchestrator_run_id=r-latest-pair
+- story_id=US-9999
+- sprint_id=S9999
+
+---
+
+- intended_resume_phase=discovery
+""",
+        encoding="utf-8",
+    )
+    state = tmp_path / "docs" / "engineering" / "state.md"
+    state.parent.mkdir(parents=True, exist_ok=True)
+    state.write_text(
+        """```json
+{"record_key":"historical|story|US-9999|execute|proof-1","next_scheduled_phase":"release"}
+```
+
+```json
+{"record_key":"latest|story|US-9999|execute|proof-2","next_scheduled_phase":"qa"}
+```
+
+```json
+{"record_key":"blocked|story|US-9999|qa|proof-3","next_scheduled_phase":"none"}
+```
+""",
+        encoding="utf-8",
+    )
+    res = _run_bridge(
+        tmp_path,
+        "--resolve-continuation",
+        "--orchestrator-run-id",
+        "r-latest-pair",
+    )
+    assert res["status"] == 0, res["parsed"]
+    assert res["parsed"]["phase_id"] == "qa"
+    assert res["parsed"]["source"] == "resume_brief"
+
+
 # ---------------------------------------------------------------------------
 # AC-3 / AC-4: scheduler mutex, order, OPEN-only filtering, empty failures.
 # ---------------------------------------------------------------------------

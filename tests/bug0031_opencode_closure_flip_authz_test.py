@@ -26,6 +26,8 @@ ACTIVE_QA = REPO_ROOT / ".opencode" / "agents" / "qa.md"
 TEMPLATE_QA = REPO_ROOT / "template" / ".opencode" / "agents" / "qa.md"
 ACTIVE_CLOSURE = REPO_ROOT / ".cursor" / "commands" / "closure.md"
 TEMPLATE_CLOSURE = REPO_ROOT / "template" / ".cursor" / "commands" / "closure.md"
+ACTIVE_ORCHESTRATOR = REPO_ROOT / ".opencode" / "plugins" / "orchestrator.ts"
+TEMPLATE_ORCHESTRATOR = REPO_ROOT / "template" / ".opencode" / "plugins" / "orchestrator.ts"
 ACTIVE_RUNBOOK = REPO_ROOT / "docs" / "engineering" / "runbook.md"
 ACTIVE_REASON_CODES = REPO_ROOT / "docs" / "engineering" / "reason_codes.md"
 CURATOR_MDC_ACTIVE = REPO_ROOT / ".cursor" / "agents" / "curator.mdc"
@@ -128,6 +130,14 @@ def test_bug0031_curator_flip_paths_present_active():
     assert not (allow_keys & {"sprints/Sxxxx/closure-verification.md"}), (
         f"unexpected concrete-sprint literal allow: {allow_keys}"
     )
+
+
+def test_bug0031_opencode_closure_uses_curator():
+    """The OpenCode matrix must select the only role with all flip paths."""
+    for path in (ACTIVE_ORCHESTRATOR, TEMPLATE_ORCHESTRATOR):
+        text = path.read_text(encoding="utf-8")
+        assert 'closure: "curator"' in text
+        assert 'closure: "release"' not in text
 
 
 # -- marker 2 ----------------------------------------------------------------

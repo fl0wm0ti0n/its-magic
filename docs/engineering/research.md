@@ -16922,3 +16922,1070 @@ Do not rewrite US-0146. Do not reopen US-0149 through US-0154. Do not start anot
 - `template/docs/engineering/research.md` is not a parity pair. This heading was not copied there.
 - US-0155 stays **OPEN**. AC-1..AC-5 stay unchecked. This plan child does not spawn execute.
 
+## R-0166
+
+- **Date**: 2026-10-13
+- **Topic**: BUG-0028 — split lightweight `itsm` commands from production runtime admission.
+- **Query**: How can help, local auth/models, and status finish without a repository scan or an unused workflow session, while workflow commands still admit the US-0150 production host?
+- **Sources** (EARLY_RESEARCH=1; pages fetched this phase):
+  - https://nodejs.org/api/esm.html — `import()` expressions are the asynchronous load path; static `import` dependencies are part of the module graph before the body runs (Node.js v26.11.1 docs, section fetched 2026-10-13).
+  - https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Operators/import — a static import declaration is evaluated at load time; dynamic `import()` evaluates only when reached.
+  - https://github.com/tc39/ecma262/issues/368 — declarative imports run `ModuleEvaluation` on dependencies before the module body; source order of the import does not delay that.
+  - https://nodejs.org/api/globals.html#fetch — Node `fetch` is undici and has no total-request timeout parameter; cancellation is an `AbortSignal`.
+  - https://undici.nodejs.org/api/Client — default `headersTimeout` is `300e3` ms and default `connectTimeout` is `10e3` ms. `standalone/packages/protocol/src/protocol-client.ts` `jsonRpcCall` calls `fetch` with no `signal`, so `daemon.ping` can wait on those defaults.
+  - Local: `bin/itsm.js`; `standalone/apps/cli/src/index.ts`; `standalone/apps/cli/src/run.ts`; `standalone/packages/runtime-host/src/index.ts` `createRuntimeHost`; `standalone/packages/code-intelligence/src/provider.ts` `walkDocs`; `standalone/packages/pi-kernel/src/index.ts` barrel; `standalone/packages/pi-kernel/src/auth-runtime.ts`; `standalone/packages/pi-kernel/package.json` (`exports` only `"."`); `standalone/packages/auth-models/src/cli.ts`; `standalone/packages/runtime-core/src/operator/operator-command-facade.ts` `DEDICATED_COMMANDS`; `standalone/packages/runtime-core/src/operator/operator-executor.ts` status branch; `standalone/packages/runtime-core/src/daemon-client/resolve-transport.ts`; `standalone/packages/runtime-core/src/daemon-client/in-process-transport.ts`; `standalone/packages/runtime-core/src/operator/operator-observability-service.ts` `buildStatusSnapshot`; `its_magic/README.md` itsm paragraph and `template/its_magic/README.md`; `.its-magic/bin/itsm` and `.its-magic/bin/itsm.cmd` (generated exec of `apps/cli/src/index.ts`).
+- **Linked**: BUG-0028. Compose US-0150, US-0151, US-0155 (DONE; do not reopen). Distinct from BUG-0029, BUG-0026, US-0154, US-0156. Do not wipe **R-0165**.
+- **Confidence**: high
+- **Status**: delivered
+- **Approach**: **A1** locked. Three command classes, classified before any static import of `run.ts`. **Companion DEC**: **none** (`decision_gate=false`). **Sprint**: expected **S0176** is not created in this phase.
+
+### Context
+
+`bin/itsm.js` locates the install, checks Node `>=22.19.0`, and `spawnSync`s `standalone/apps/cli/src/index.ts`. That shim does not walk the repository. The scan starts in the CLI entry: `index.ts` statically imports `@its-magic/runtime-host` and `./run.ts`, then calls `createRuntimeHost` before `runCliArgv`. `createRuntimeHost` constructs `createAgentKernel`, the kernel bridge, `createCodeIntelligenceProvider` (constructor calls `walkDocs`), `ToolBroker`, and `.its-magic/runtime/ops.sqlite`. `run.ts` statically imports `createAuthRuntimeAdapter` from the `@its-magic/pi-kernel` barrel. That barrel's only export is `./src/index.ts`, which re-exports `createAgentKernel` from `kernel.ts`, so evaluating the barrel evaluates the agent kernel module and `@earendil-works/pi-coding-agent`. Help and auth/models run only after that graph loads. `itsm status` is a dedicated command beside `ask`, `resume`, `pause`, `index`, `app`, and `browser`. The CLI then calls `createOperatorSession` and `resolveOperatorTransport`. That transport either `daemon.ping`s or `createInProcessTransport` builds `createWorkflowEngine`. Status itself only needs `buildStatusSnapshot`. The operator 10–20 second wait is the symptom, not a numeric SLA.
+
+Sovereign-critic locks from discovery (informational, not a new bug): do not skip `createRuntimeHost` for every dedicated-command token; status sits in that dedicated list with workflow commands, and a blanket skip violates AC-3. Classify help / local auth / models in a module that does not statically import `run.ts`. Auth/models subcommands that need model runtime dynamically import the auth adapter module, not the pi-kernel barrel. Status is a bounded read-only snapshot: no code-intelligence scan, no unused workflow session, no unbounded `daemon.ping`, and no `resolveOperatorTransport`. Workflow commands keep production `createRuntimeHost` and the existing unavailable-service errors.
+
+### DQ1 — argv class before the heavy graph (LOCKED, AC-1)
+
+Add a classifier module under `standalone/apps/cli/src/` whose static imports are only Node builtins. `index.ts` statically imports that module and does not statically import `./run.ts`, `@its-magic/runtime-host`, `@its-magic/pi-kernel`, or code intelligence. Moving the `createRuntimeHost` call below argv checks while leaving those static imports fails AC-1: ESM evaluates the dependency graph before the body. `import defer` is rejected: the `itsm` floor is Node 22.19, and a deferred static import still links the barrel.
+
+Classes, after the same `--validator=` / `--policy-probe` strip `run.ts` already uses:
+
+| Class | Tokens | Load |
+|---|---|---|
+| help | no token, `help`, `--help`, `-h` | print help in the classifier module; exit 0 |
+| local | `auth`, `models` | dynamic import of `@its-magic/auth-models` only |
+| status | `status` | dynamic import of a bounded snapshot reader only |
+| workflow | every other token | dynamic import of `createRuntimeHost`, then `runCliArgv` |
+
+`runCliArgv` may keep its current help and auth branches for direct unit callers. The process entry must not import it to serve help, auth, models, or status.
+
+### DQ2 — bounded status snapshot (LOCKED, AC-2)
+
+`itsm status` does not call `createRuntimeHost`, `walkDocs`, `createOperatorSession`, `createWorkflowEngine`, `resolveOperatorTransport`, `isDaemonReachable`, or `daemon.ping`, and it does not open `.its-magic/runtime/ops.sqlite` or write an audit row. The reader uses `node:fs` on named files only: `handoffs/resume_brief.md` for story, sprint, and intended resume phase, and the single latest file in `handoffs/token_cost_runs` for the token field. App, index, and browser health stay the existing unavailable defaults. `sovereign` is null on this path because filling it requires the admitted host config. The printed object keeps `schema_version: 1` and `read_only: true`. It does not add `store_path`, host `config`, or `transport`.
+
+### DQ3 — ping stays off status (LOCKED, AC-2)
+
+`jsonRpcCall` has no `AbortSignal`. Undici's default header wait is 300 seconds. Do not keep `daemon.ping` on status and do not add a timeout around `resolveOperatorTransport`. Daemon reachability remains a workflow-transport concern.
+
+### DQ4 — auth adapter module, not the barrel (LOCKED, AC-1)
+
+`@its-magic/auth-models` does not import the Pi kernel. `models list` and `auth migrate` do not call the adapter; they must not import it. `auth list`, `auth login`, `auth logout`, and `models test` call `ensureRuntime` / `checkAuth` and dynamically import `createAuthRuntimeAdapter` from a new package subpath `@its-magic/pi-kernel/auth-runtime` mapped to `./src/auth-runtime.ts`. Importing `@its-magic/pi-kernel` evaluates `kernel.ts`. This bug does not change login prompting or the false-success path; that is BUG-0029.
+
+### DQ5 — contract seam, not a latency SLA (LOCKED, AC-4)
+
+Tests prove absence of the heavy graph, not a 10–20 second budget. Seeds: `test_bug0028_help_auth_models_skip_host_and_kernel_barrel`, `test_bug0028_status_bounded_snapshot_no_scan_session_or_ping`, `test_bug0028_workflow_tokens_keep_production_host`, `test_bug0028_installed_entrypoint_windows_and_linux`, `test_bug0028_operator_doc_lightweight_versus_full_runtime`. The import-graph assertions read the classifier and `index.ts` and forbid static imports of `run.ts`, `@its-magic/runtime-host`, and `@its-magic/pi-kernel`. Status and help must not create `ops.sqlite`. Spawn `bin/itsm.js` on Windows and Linux. The generated `.its-magic/bin/itsm` and `itsm.cmd` only exec `apps/cli/src/index.ts`; do not hand-edit those absolute-path copies. Mirror touched CLI sources to `template/.its-magic/standalone/apps/cli/src/`.
+
+### DQ6 — operator doc (LOCKED, AC-5)
+
+Extend the existing `itsm` paragraph in `its_magic/README.md` and keep `template/its_magic/README.md` in parity. Name no-args, help, auth, models, and status as lightweight, and name workflow commands as the ones that admit `createRuntimeHost`. The runbook PATH section is not this AC.
+
+### DQ7 — who still calls the production host (LOCKED, AC-3)
+
+Workflow class only. That includes dedicated `ask`, `resume`, `pause`, `index`, `app`, and `browser`, plus `auto`, `quick`, and phase tokens. Those calls stay `createRuntimeHost({ projectRoot, lifetime: "direct-cli" })` with the current `RuntimeHostError` codes (`RUNTIME_CONFIG_UNAVAILABLE`, `RUNTIME_BRIDGE_UNAVAILABLE`, `RUNTIME_KERNEL_ADMISSION_FAILED`, `RUNTIME_SERVICE_UNAVAILABLE`) and `host.dispose()` in `finally`. Treating every `DEDICATED_COMMANDS` token as lightweight is rejected.
+
+### DQ8 — shim is not the scan owner (LOCKED)
+
+`bin/itsm.js` stays the locator, Node check, and spawn. No repository walk is added there.
+
+### DQ9 — lazy host is still the US-0150 host (LOCKED, AC-3)
+
+The workflow dynamic import calls the same `createRuntimeHost`. No second host, no stub kernel, and no cache of `walkDocs` inside the host.
+
+### DQ10 — no companion DEC (LOCKED)
+
+The three classes are the BUG-0028 acceptance split. They fit under a future `# BUG-0028` architecture section. `decision_gate=false`. No `DEC-` record in this phase.
+
+### Expected sprint (not created)
+
+Next free sprint id is **S0176** (`sprints/S0175/` exists). Do not create it here. A later sprint-plan can use six tasks (baseline, classifier and entry, status reader, auth subpath, five contract tests, README parity), under `SPRINT_MAX_TASKS=12`. No auto-split. This is not a `/quick`.
+
+### Alternatives rejected
+
+| Option | Why rejected |
+|---|---|
+| A2 move `createRuntimeHost` below the argv branch and keep static imports | ESM evaluates those imports before the body, so the kernel and `walkDocs` still load |
+| A3 skip `createRuntimeHost` for every dedicated token | `status` shares `DEDICATED_COMMANDS` with `ask`, `resume`, `pause`, `index`, `app`, and `browser`; skipping that set violates AC-3 |
+| A4 keep status on `resolveOperatorTransport` | That path builds a workflow engine or calls unbounded `daemon.ping` |
+| A5 cache `walkDocs` inside the full host | Help, auth, and models would still construct the host (AC-1) |
+| A6 separate binaries per command class | Heavier than one classifier and a dynamic import |
+| A7 `import defer` of the barrel | Not on the Node 22.19 floor, and the barrel would still link `kernel.ts` |
+| A8 a companion DEC | DQ10; the ACs already choose the split |
+
+### Risks
+
+| Risk | Mitigation |
+|---|---|
+| A later edit statically imports `run.ts` from the classifier or `index.ts` | AC-4 import-graph test forbids `run.ts`, `@its-magic/runtime-host`, and the pi-kernel barrel |
+| Auth imports `@its-magic/pi-kernel` instead of the auth-runtime subpath | AC-1 test forbids the barrel specifier on the local path |
+| Status still opens SQLite or pings the daemon | AC-2 test asserts no `ops.sqlite`, no `resolveOperatorTransport`, and no `daemon.ping` |
+| Workflow tokens are classified as local | AC-3 test lists `ask`, `resume`, `pause`, `index`, `app`, `browser`, `auto` as workflow and expects `createRuntimeHost` |
+| Status snapshot drops `read_only` or scans the repo to fill sovereign/app health | Reader is named-file only; sovereign/app/index/browser stay null or unavailable |
+| Login behavior changes while moving the import | BUG-0029 stays untouched; login still calls the same `dispatchItsmCommand` |
+| Tests assert a 10–20 second ceiling | DQ5 forbids a wall-clock SLA |
+| Generated `.its-magic/bin/itsm` copies are edited by hand | Change the workspace CLI source and the template mirror only |
+
+### Research isolation
+
+- phase_id=research; role=tech-lead; model_id=inherit; fresh_context_marker=`tl-BUG0028-research-20261013T204637Z-fresh`; runtime_proof_id=`rp-auto-20261013-bug0028-research-techlead-20261013T204637Z-BUG-0028`; proof_hash=`01552104620c5b64c751c3f3647da31f1c1877913067adbd074c67f3a4a3d4b9`; proof_issued_at=`2026-10-13T20:46:37Z`; proof_ttl_seconds=3600; proof_ttl=`2026-10-13T21:46:37Z`; hash_recompute_confirmation=true.
+- Consumed discovery pair `auto-20261013-bug0028|bug|BUG-0028|discovery|rp-auto-20261013-bug0028-discovery-po-20261013T201218Z-BUG-0028` / `f813df4d8936c8eb4ba977d97f6f84310a916d06f5c56fef474df6ec4842f597` recompute MATCH and in TTL at this write (issued 2026-10-13T20:12:18Z, ttl 3600).
+- `template/docs/engineering/research.md` is not a parity pair. This heading was not copied there.
+- BUG-0028 stays **OPEN**. AC-1..AC-5 stay unchecked. No sprint. No DEC. No CLI edit. This research child does not spawn `/architecture`.
+
+### Delivery closure (2026-10-14, curator, `orchestrator_run_id=auto-20261013-bug0028`, `phase_id=refresh-context`, `fresh_context_marker=curator-BUG0028-refresh-20261014T214623Z-fresh`)
+
+- **R-0166** **delivered** with **BUG-0028 DONE** / **S0176** (`sprints/S0176/closure-verification.md` CLOSURE_PASS; five `test_bug0028_*` 5/0). **Status**: **delivered** (was **current**). No companion DEC. Do not reopen BUG-0028 from this note.
+
+## R-0167
+
+- **Date**: 2026-10-15
+- **Topic**: BUG-0026 — Linux published-global half of AC-3 for `its-magic@0.1.5` or later.
+- **Query**: Does the 2026-09-19 range-artifact fix already cover the false `KERNEL_CONTRACT_MISMATCH`, and what Linux observation closes AC-3 without treating the Windows run or the contract tests as that half?
+- **Sources** (EARLY_RESEARCH=0; no web fetch; local files only):
+  - `docs/product/backlog.md` ### BUG-0026 implementation_notes and discovery_notes; `docs/product/vision.md` ## Discovery Notes — BUG-0026; `handoffs/po_to_tl.md` discovery handoff.
+  - `handoffs/releases/0.1.5-release-notes.md`; `package.json` `version` `0.1.10` and `files` (still lists `scripts/standalone-supported-kernel-range.json`, still omits `standalone/`).
+  - `scripts/standalone_runtime_install_lib.py` `load_supported_range`, `run_kernel_preflight`, `write_itsm_shim`; `scripts/standalone-supported-kernel-range.json` and `standalone/packages/kernel-bridge/supported-kernel-range.json` (same `minInclusive` `0.1.3-9`, `maxExclusive` `0.2.0`, `includePrerelease` true).
+  - `scripts/guard_installer_publish.py` range allowlist; `tests/bug0026_packaged_range_contract_test.py`; `bin/its-magic.js` non-Windows branch; `installer.sh` `standalone_postinstall`; `docs/engineering/runbook.md` BUG-0026 token row.
+- **Linked**: BUG-0026. Compose BUG-0025 DONE and US-0149 DONE. Distinct from BUG-0028 DONE, BUG-0029 OPEN, BUG-0022, and BUG-0024. Do not wipe **R-0166**.
+- **Confidence**: high
+- **Status**: current
+- **Approach**: **A1** locked. Prove AC-3 with a real Linux global upgrade of published `its-magic@0.1.5` or later. **Companion DEC**: none (`decision_gate=false`). **Sprint**: not allocated.
+
+### Context
+
+AC-1, AC-2, and AC-4..AC-8 already hold. The 2026-09-19 change shipped an allowlisted `scripts/standalone-supported-kernel-range.json`, canonical-first then packaged fallback loading, and `STANDALONE_SUPPORTED_RANGE_MISSING` when both files are absent. Published `its-magic@0.1.5` is that fix. A Windows global `upgrade --host both` on 0.1.5 reached `STANDALONE_BOOTSTRAP_OK` / `STANDALONE_POSTINSTALL_OK` and materialized `.its-magic/bin/itsm` plus `itsm.cmd`. No Linux published-global run was observed. AC-3 stays open for that observation only. This phase does not re-implement the loader, does not republish, and does not claim the Linux run happened.
+
+### DQ1 — range artifact already shipped (LOCKED)
+
+`load_supported_range` reads `standalone/packages/kernel-bridge/supported-kernel-range.json` first, then `scripts/standalone-supported-kernel-range.json`. The packaged JSON matches the canonical three fields. `package.json` `files` includes the packaged range and the installer peers, and does not include `standalone/`. `guard_installer_publish.py` fails a kit `files` list that drops the range or adds `standalone/`. The 0.1.5 release notes document that publish. The working tree is now `0.1.10` and still has the same allowlist. This phase did not re-download the registry tarball. The range-artifact half is already the published fix. The open half is the Linux observation.
+
+### DQ2 — Linux half is a published global run (LOCKED, AC-3)
+
+A Linux half is an observed run on a Linux host of `npm install -g its-magic@0.1.5` (or a later published version that still contains `scripts/standalone-supported-kernel-range.json`), then `its-magic --target . --mode upgrade --host both`. On non-Windows, `bin/its-magic.js` spawns `installer.sh`. That script's upgrade path calls `installer.py --standalone-postinstall`. Success evidence is `STANDALONE_BOOTSTRAP_OK` and a materialized `.its-magic/bin/itsm`. The posix writer uses mode `0755` and does not write `itsm.cmd`. That extra file is Windows-only.
+
+If the installed package lacks both range files, the same command must fail with `STANDALONE_SUPPORTED_RANGE_MISSING` and must not use `KERNEL_CONTRACT_MISMATCH` for that miss. On 0.1.5 or later the expected result is success, because the range file is in the pack. The diagnostic remains the honest fail-closed result when the file is absent.
+
+These do not count as the Linux half: the 2026-09-19 Windows log; any `test_bug0026_*` result, including the packed-tarball upgrade (`installer.py` from an extracted pack, `ITSM_SKIP_NPM_CI=1`, host of pytest); the statement that `installer.sh` is wired; a missing WSL or Docker runtime; `PYTHON_NOT_FOUND` or `STANDALONE_BOOTSTRAP_FAILED` because Python 3 is absent.
+
+### DQ3 — tokens stay distinct (LOCKED, AC-8)
+
+`run_kernel_preflight` returns `KERNEL_CONTRACT_MISMATCH` for a missing or empty version file, unreadable contract JSON, `schema_version != 1`, `kernel_version` differing from the version file, or `validators` not a list. It returns `STANDALONE_SUPPORTED_RANGE_MISSING` only when `load_supported_range` returns `None`. A version outside the document returns `KERNEL_VERSION_UNSUPPORTED`. `test_bug0026_missing_range_is_not_false_kernel_contract_mismatch` asserts the missing-range reason is `STANDALONE_SUPPORTED_RANGE_MISSING`. Do not merge those tokens.
+
+### DQ4 — no further republish (LOCKED)
+
+Not required for this residual. `its-magic@0.1.5` is the fix republish already recorded (npm, GitHub `v0.1.5`, Chocolatey, Homebrew tap). Republish only if a later Linux install of a published tarball shows the range file absent. This phase does not republish, commit, or push.
+
+### DQ5 — tests already cover allowlist and the false mismatch (LOCKED)
+
+`tests/bug0026_packaged_range_contract_test.py` defines eight `test_bug0026_*` functions. The 2026-09-19 note said seven; this phase does not rewrite that note. Current names:
+
+| Test | What it locks |
+|---|---|
+| `test_bug0026_allowlist_ships_equivalent_range_without_private_workspace` | `files` contains the range and omits `standalone/` |
+| `test_bug0026_packaged_range_matches_kernel_bridge_source` | packaged JSON equals the canonical range |
+| `test_bug0026_npm_pack_contains_range_fallback_and_omits_standalone_workspace` | `npm pack --dry-run` inventory |
+| `test_bug0026_published_layout_preflight_uses_packaged_range` | preflight succeeds with only the packaged range |
+| `test_bug0026_published_layout_materializes_itsm_shim` | shim materializes without a `standalone/` workspace |
+| `test_bug0026_packed_tarball_upgrade_materializes_itsm_shim` | extracted tarball `upgrade --host both`; not a published global Linux install |
+| `test_bug0026_incomplete_runtime_payload_fails_closed` | incomplete payload stays `STANDALONE_BOOTSTRAP_FAILED` |
+| `test_bug0026_missing_range_is_not_false_kernel_contract_mismatch` | missing range is `STANDALONE_SUPPORTED_RANGE_MISSING` |
+
+No new contract is required to re-prove the allowlist. A later phase may record the Linux published-global log. It must not relabel the packed-tarball test as that log.
+
+### DQ6 — Windows and Linux stay separate rows (LOCKED)
+
+Windows row, already observed: 2026-09-19, global `its-magic@0.1.5`, `upgrade --host both`, `STANDALONE_BOOTSTRAP_OK` / `STANDALONE_POSTINSTALL_OK`, `.its-magic/bin/itsm` and `itsm.cmd`. Linux row: unobserved. Do not copy the Windows tokens into the Linux row. AC-3 stays unchecked until the Linux row exists. A later Windows re-run is optional parity confirmation. It is not the open gap.
+
+### DQ7 — boundaries (LOCKED)
+
+Do not reopen BUG-0025. The installer library and fail-closed loader stay DONE. Do not reopen US-0149. Path registration and the user-chosen location stay that story. Do not edit BUG-0028 (DONE) or BUG-0029 (OPEN, next queue item). Do not reopen BUG-0022 or BUG-0024.
+
+### DQ8 — no companion DEC (LOCKED)
+
+The token split, the allowlist, and the Linux-versus-Windows evidence rule fit under a future `# BUG-0026` architecture section. `decision_gate=false`. `docs/engineering/decisions.md` is unchanged.
+
+### DQ9 — no sprint id (LOCKED)
+
+Do not allocate a sprint here. `sprints/S0176/` exists (BUG-0028). Sprint-plan chooses the next free id. This is not a `/quick`. The residual is one evidence lock, not a new loader.
+
+### DQ10 — plan-verify stays skipped (LOCKED)
+
+`resolved_phase_plan=[spec, plan, build+verify, ship]`. Plan-verify is absent (`ultra_lean_not_in_resolved_phase_plan`). Do not write a plan-verify artifact in this phase.
+
+### Alternatives rejected
+
+| Option | Why rejected |
+|---|---|
+| A2 republish before any OS check | 0.1.5 already published the range; Windows success on that version is recorded |
+| A3 close AC-3 from the Windows run plus contract tests | AC-3 names Windows and Linux; a missing Linux runtime is not a pass |
+| A4 re-implement the loader or uncheck AC-1, AC-2, AC-4..AC-8 | Discovery D2 holds the partial fix |
+| A5 treat the packed-tarball pytest as the Linux global half | It is not `npm install -g` on Linux |
+| A6 a companion DEC | DQ8; the contract already lives in the loader and the tests |
+
+### Risks
+
+| Risk | Mitigation |
+|---|---|
+| Linux host has no Python 3 | `installer.sh` emits `PYTHON_NOT_FOUND`; that does not close AC-3; install Python 3 and rerun the same global upgrade |
+| A published tarball newer than 0.1.5 drops the range file | The Linux run must show `STANDALONE_SUPPORTED_RANGE_MISSING`, not `KERNEL_CONTRACT_MISMATCH`; republish is then a later release choice, not this lock |
+| Unavailable WSL or Docker is recorded as a pass | AC-3 stays open |
+| The Linux check requires `itsm.cmd` | The posix shim is `.its-magic/bin/itsm` only |
+| Scope drifts into US-0149 PATH registration | AC-3 is bootstrap shim materialization |
+
+### Research isolation
+
+- phase_id=research; role=tech-lead; model_id=inherit; model_provenance=`provenance=host=cursor;path=.cursor/scratchpad.local.md;step=MODEL_TIER_<PHASE>`; fresh_context_marker=`tl-BUG0026-research-20261015T081219Z-fresh`; runtime_proof_id=`rp-auto-20261015-bug0026-research-techlead-20261015T081219Z-BUG-0026`; proof_hash=`a99220ec6e91786ed704a8f3b39c7332a67984d6ff40051e9d54ce931d65a01a`; proof_issued_at=`2026-10-15T08:12:19Z`; proof_ttl_seconds=3600; proof_ttl=`2026-10-15T09:12:19Z`; hash_recompute_confirmation=true.
+- Consumed discovery pair `auto-20261015-bug0026|bug|BUG-0026|discovery|rp-auto-20261015-bug0026-discovery-po-20261015T080001Z-BUG-0026` / `826a4ba7f4f61cd10b0d430956cc2fce376cec69cca51549cfc553d900d47954` recompute MATCH and in TTL at this write (issued 2026-10-15T08:00:01Z, ttl until 2026-10-15T09:00:01Z).
+- BUG-0026 stays **OPEN**. AC-3 stays unchecked. No sprint. No DEC. No republish. This research child does not spawn `/architecture`.
+
+## R-0168
+
+- **Date**: 2026-10-15
+- **Topic**: BUG-0029 — `itsm auth login` API-key entry and false configuration success.
+- **Query**: How should API-key login read a masked TTY secret or one stdin secret, and refuse `{"auth":"configured"}` unless the runtime verifies the stored credential?
+- **Sources** (EARLY_RESEARCH=0; no web fetch; local files only):
+  - `docs/product/backlog.md` ### BUG-0029 discovery_notes; `docs/product/vision.md` ## Discovery Notes — BUG-0029; `handoffs/po_to_tl.md` discovery handoff (DQ1–DQ10).
+  - `standalone/apps/cli/src/index.ts` (`auth` is local); `standalone/apps/cli/src/local-command.ts` `runLocalCommand`; `standalone/apps/cli/src/run.ts` auth branch; `standalone/apps/cli/src/command-class.ts` `printCliHelp`.
+  - `standalone/packages/auth-models/src/cli.ts` login prompt and unconditional configured success; `redactLine`.
+  - `standalone/packages/auth-models/src/auth-service.ts` `login` / `checkAuth`; `standalone/packages/auth-models/src/types.ts` prompt types; `standalone/packages/auth-models/src/paths.ts` owned auth dir; `standalone/packages/auth-models/src/errors.ts`; `standalone/packages/auth-models/src/redact.ts`.
+  - `standalone/packages/pi-kernel/src/auth-runtime.ts` `ModelRuntime.login` forward and `checkAuth`.
+  - `its_magic/README.md` itsm paragraph and `template/its_magic/README.md`.
+- **Linked**: BUG-0029. Distinct from BUG-0028 (DONE, R-0166) and BUG-0026 (OPEN, R-0167). Compose US-0135. Do not reopen US-0150, US-0151, US-0154, US-0155, or US-0156. Do not wipe **R-0167**.
+- **Confidence**: high
+- **Status**: **delivered** — BUG-0029 backlog **DONE**, S0178 CLOSURE_PASS + REFRESH_CONTEXT_PASS (`2026-10-16T15:03:00Z`); harness `tests/report.md` **2026-10-16T14:52:23Z** Pass=880 Fail=0; seven `test_bug0029_*` green.
+- **Approach**: **A1** locked. Masked TTY prompt, documented `--api-key-stdin`, and verify-before-success. **Companion DEC**: none (`decision_gate=false`). **Sprint**: **S0178** (shipped).
+
+### Context
+
+Installed `itsm auth` is the local class. `runLocalCommand` calls `dispatchItsmCommand` with no `io`. The auth branch in `run.ts` does the same if a caller reaches it. Login prints `p.message` (the reproduction text is `Enter OpenAI API key`), then returns `undefined` when `io.prompt` is absent. `service.login` forwards that callback to `ModelRuntime.login` and does not inspect the prompt result. After `login` resolves, the handler always writes `{"provider","auth":"configured"}` and returns 0. It never calls `checkAuth`. No `--api-key-stdin` flag exists. `redactLine` rewrites only `sk-` and `Bearer` shapes, and only on thrown errors. This phase does not change that code.
+
+### DQ1 — undefined secret is not success (LOCKED, AC-3)
+
+The prompt union includes `"secret"`. The CLI special-cases only `"select"` (it returns the first option id). Every other type, including `"secret"` and `"text"`, returns `io.prompt(message)` or `undefined`. Both entry paths omit `io`, so the secret callback returns `undefined`. `login` returning is not evidence that a secret was stored. The configured line must not run for an undefined, empty, or failed prompt. A later phase keeps the select shortcut for non-secret prompts and does not treat that first option as an API key.
+
+### DQ2 — masked TTY read (LOCKED, AC-1)
+
+The installed path and the `run.ts` auth branch share one prompt helper. It runs only when stdin and stdout are TTYs. It uses Node raw mode (`stdin.setRawMode(true)` with keypress events), which Node 22 provides on Windows and Linux TTYs. Characters are not written back. Enter submits one line. Ctrl+C cancels. `readline.question` is rejected because it echoes. The helper prints the question and never prints the answer. The secret is the callback return value only. The helper does not import `@its-magic/runtime-host` or the pi-kernel barrel, so the BUG-0028 local class stays lightweight. `local-command.ts` keeps its dynamic import of `@its-magic/pi-kernel/auth-runtime` for login, list, logout, and `models test`.
+
+### DQ3 — `--api-key-stdin` is one line and not an argv value (LOCKED, AC-2, D6)
+
+The flag takes no value. `--api-key <value>` and `--api-key=` are rejected. When the flag is present, login reads exactly one stdin line, strips one trailing newline, and does not open the TTY prompt. That line is the secret passed to the `"secret"` callback. Document the flag in the existing `itsm` paragraph of `its_magic/README.md` and `template/its_magic/README.md`, and name it in `printCliHelp` (and the `run.ts` help text). The documented non-interactive shape is a pipe, for example `itsm auth login openai --type api_key --api-key-stdin` with the secret on stdin. The secret is not a command argument.
+
+### DQ4 — non-TTY without the flag (LOCKED, AC-2)
+
+For `--type api_key` (the default), if stdin is not a TTY and `--api-key-stdin` is absent, exit 1 with stderr `AUTH_LOGIN_TTY_REQUIRED` and do not call `service.login`. Do not print `{"auth":"configured"}`. OAuth keeps its current CI refusal (`oauth login is not available in CI`). This bug does not redesign the OAuth device flow.
+
+### DQ5 — stored-credential verification (LOCKED, AC-4)
+
+After `adapter.login` resolves, call the existing `service.checkAuth(provider)`. Success requires a non-null result whose `type` is the requested `api_key`. Only then write `{"provider":"<id>","auth":"configured"}` and return 0. A null or different type is `AUTH_LOGIN_INVALID`, exit 1, and no configured JSON. `allowModelNetwork` stays false. Verification is the runtime's stored-auth report, not a live provider HTTP call. The owned store remains `resolveAuthDir` (`auth.json` outside the project). Logout, list, and migrate keep writing there as they do now.
+
+### DQ6 — cancel, empty, invalid, persistence (LOCKED, AC-3)
+
+| Case | Token | Result |
+|---|---|---|
+| Cancel (Ctrl+C, abort, or a secret prompt that would return undefined) | `AUTH_LOGIN_CANCELLED` | exit 1; no configured line |
+| Empty or whitespace-only secret | `AUTH_LOGIN_EMPTY` | exit 1; do not pass it to the store |
+| `login` throws a non-sync error, or `checkAuth` is null or the wrong type | `AUTH_LOGIN_INVALID` | exit 1; no configured line |
+| `CredentialSynchronizationError` / `AUTH_SYNC_FAILED` | `AUTH_SYNC_FAILED` | exit 1; no configured line |
+| Non-TTY api_key login without the flag | `AUTH_LOGIN_TTY_REQUIRED` | exit 1; `login` is not called |
+
+The configured JSON stays after both the prompt gate and `checkAuth`. A throw already skips it today because that print is after `await service.login`. The undefined-prompt path does not throw, which is the false success.
+
+### DQ7 — redaction beyond `sk-` and `Bearer` (LOCKED, D7)
+
+`redactLine` and `redactSecretShaped` only rewrite `sk-` and `Bearer` shapes. Unknown shapes can leak if an error message includes the typed secret. Login diagnostics are fixed strings with no secret slot. Do not print the prompt result. Do not log argv. If a lower layer throws a message that might contain the secret, stderr prints the fixed token and does not print `err.message`. `redactLine` remains a second pass and is not the only control.
+
+### DQ8 — list, logout, and migrate stay (LOCKED, AC-4, D8)
+
+`auth list`, `auth logout`, and `auth migrate --from-pi` keep their current stdout and exit codes. `models list` and `models test` stay unchanged. Migration is not a login substitute. Do not edit BUG-0028 or BUG-0026. Do not reopen US-0150, US-0151, US-0154, US-0155, or US-0156. US-0135 stays compose-only. The Pi TUI is not this prompt.
+
+### DQ9 — contract tests (LOCKED, AC-5)
+
+Add `standalone/tests/contract/bug0029.contract.test.ts`. There is no template copy of `bug0028.contract.test.ts`; do not invent one. Touched product sources that already have template twins are mirrored: `standalone/packages/auth-models/src/cli.ts`, `standalone/apps/cli/src/local-command.ts`, `standalone/apps/cli/src/run.ts`, `standalone/apps/cli/src/command-class.ts`, and `its_magic/README.md`. Seeds:
+
+| Test | What it locks |
+|---|---|
+| `test_bug0029_masked_tty_does_not_echo_or_argv` | raw-mode reader; secret absent from stdout and argv |
+| `test_bug0029_api_key_stdin_one_line` | one stdin line; no TTY prompt |
+| `test_bug0029_non_tty_without_flag_is_nonzero` | `AUTH_LOGIN_TTY_REQUIRED`; no configured JSON |
+| `test_bug0029_cancel_empty_invalid_persist_never_configured` | the four failure tokens; stdout has no `{"auth":"configured"}` |
+| `test_bug0029_success_only_after_check_auth` | configured JSON only when `checkAuth` returns `api_key` |
+| `test_bug0029_list_logout_migrate_unchanged` | those three commands keep current results |
+| `test_bug0029_secret_absent_outside_owned_store` | secret not in output or in storage outside the owned auth dir |
+
+Run the file on Windows and Linux. A scripted stdin and a mock TTY reader satisfy the contract. Do not require a human at the keyboard or a new PTY dependency.
+
+### DQ10 — no companion DEC (LOCKED)
+
+A1 fits a future `# BUG-0029` architecture section. `decision_gate=false`. `docs/engineering/decisions.md` is unchanged. No sprint id. `sprints/S0176/` and `sprints/S0177/` already exist. Sprint-plan chooses the next free id. This is not a `/quick`: the change crosses the prompt helper, the login success gate, operator help text, and the contract file. Plan-verify stays skipped (`ultra_lean_not_in_resolved_phase_plan`).
+
+### Alternatives rejected
+
+| Option | Why rejected |
+|---|---|
+| A2 stdin-only, refuse TTY login | AC-1 requires a masked interactive TTY |
+| A3 `--api-key <value>` on argv | D6; the secret would be in the process command line |
+| A4 keep printing configured when the prompt returns undefined | That is the bug |
+| A5 verify with a live provider HTTP call | `allowModelNetwork` stays false; AC-4 is the stored `checkAuth` result |
+| A6 a companion DEC | DQ10; the contract fits the later architecture section |
+
+### Risks
+
+| Risk | Mitigation |
+|---|---|
+| `run.ts` keeps the no-`io` login path | DQ2 wires the same helper there even though the installed entry uses `local-command.ts` |
+| Raw mode is left on after cancel | The helper restores the previous raw mode in `finally` |
+| A secret is interpolated into `err.message` | DQ7 prints the fixed token and drops `err.message` |
+| `checkAuth` is skipped because `login` returned | DQ5 gates the configured JSON on `checkAuth` |
+| Login work pulls the pi-kernel barrel back into the local class | The prompt helper imports neither the barrel nor `runtime-host` |
+| Tests only mock `io.prompt` and never assert masking | DQ9 includes a raw-mode reader test that fails if the secret is written to stdout |
+| Scope drifts into BUG-0028 startup or BUG-0026 publish | DQ8; those rows stay untouched |
+
+### Research isolation
+
+- phase_id=research; role=tech-lead; model_id=inherit; model_provenance=`provenance=host=cursor;path=.cursor/scratchpad.local.md;step=MODEL_TIER_<PHASE>`; fresh_context_marker=`tl-BUG0029-research-20261015T225730Z-fresh`; runtime_proof_id=`rp-auto-20261016-bug0029-research-techlead-20261015T225730Z-BUG-0029`; proof_hash=`098fca90f747cc3bb55b100d72ecfb035f30f2d5288e8b3970f5ee7a776070b6`; proof_issued_at=`2026-10-15T22:57:30Z`; proof_ttl_seconds=3600; proof_ttl=`2026-10-15T23:57:30Z`; hash_recompute_confirmation=true.
+- Consumed discovery pair `auto-20261016-bug0029|bug|BUG-0029|discovery|rp-auto-20261016-bug0029-discovery-po-20261015T224827Z-BUG-0029` / `236e4675845879983d94898c6efd1bf1a52ff13870578869ed205106ce341f97` recompute MATCH and in TTL at this write (issued 2026-10-15T22:48:27Z, ttl until 2026-10-15T23:48:27Z).
+- `template/docs/engineering/research.md` is not a parity pair. This heading was not copied there.
+- BUG-0029 stays **OPEN**. AC-1..AC-5 stay unchecked. No sprint. No DEC. No CLI edit. This research child does not spawn `/architecture`.
+
+## R-0169
+
+- **Date**: 2026-10-16
+- **Topic**: US-0162 — token optimization and host-neutral model routing v2.
+- **Query**: Which approach satisfies AC-1..AC-12 and discovery D1..D10 without amending DEC-0086, DEC-0087, DEC-0054, DEC-0038, or DEC-0062, and without reopening US-0139?
+- **Sources** (EARLY_RESEARCH=0; no web fetch; local files only):
+  - `docs/product/backlog.md` ## US-0162; `handoffs/po_to_tl.md` discovery handoff (D1..D10, DQ1..DQ10).
+  - `docs/product/its-magic – Token Optimization + Model Routing v2.md` sections Context Pack, sharding, machine evidence, always-on kernel, delta handoffs, memory audit, read dedup, routing config, priority, provider abstraction, complexity, capabilities, fallback, escalation, TOKEN_PROFILE separation, observability, benchmark, quality gates, targets, implementation order.
+  - `docs/engineering/phase-context.md` (pointer table, not a budgeted pack).
+  - `scripts/model_tier_lib.py` `resolve_model_for_phase` (DEC-0087 5-step). `decisions/DEC-0086.md`, `decisions/DEC-0087.md`, `decisions/DEC-0054.md`, `decisions/DEC-0038.md`, `decisions/DEC-0062.md`.
+  - `.cursor/commands/memory-audit.md` (step 1 still reads the full memory set). `.cursor/rules/core.mdc` (always-on, `globs: ["**/*"]`).
+  - `standalone/packages/context-engine/package.json` and `standalone/packages/code-intelligence/package.json` (US-0139, DONE).
+  - `.cursor/scratchpad.md` `TOKEN_PROFILE=lean|balanced|full`, `SPRINT_MAX_TASKS=12`, `SPRINT_AUTO_SPLIT=1`, `EARLY_RESEARCH=0`, `ID_NAMESPACE_BOOTSTRAP=0`.
+- **Linked**: US-0162. Compose DEC-0086, DEC-0087, DEC-0062, DEC-0054, DEC-0038, DEC-0153. Do not amend those decisions. Do not reopen US-0101, US-0102, US-0080, US-0089, US-0090, US-0096, or US-0139. Do not weaken US-0048, US-0056, US-0069, or US-0039. Do not edit BUG-0026 or BUG-0029. Do not wipe **R-0168**.
+- **Confidence**: high
+- **Status**: current
+- **Approach**: **A1** locked (evolutionary adapter). **Companion DEC**: none (`decision_gate=false`). **Sprint**: none allocated here.
+
+### Context
+
+A typical run re-reads full memory surfaces in every fresh subagent, and model choice is still the Cursor host catalog inside `resolve_model_for_phase`. `scripts/build_phase_context.py`, `.its-magic/model-routing.json`, and `.its-magic/runtime/context-packs` are absent. `docs/engineering/phase-context.md` is a pointer table. `/memory-audit` step 1 still says to read state, backlog, acceptance, architecture, every sprint, and every handoff. `TOKEN_PROFILE` is already `lean|balanced|full` and stays a separate axis (DEC-0062). US-0139 context packs are `@its-magic/context-engine` plus `@its-magic/code-intelligence`. That engine is not this phase pack. This phase does not change product code.
+
+### DQ1 — adapter beside `model_tier_lib.py` (LOCKED, AC-8, AC-10, D8, D10)
+
+`resolve_model_for_phase` keeps the DEC-0087 5-step chain (`MODEL_<PHASE>`, `MODEL_TIER_<PHASE>`, role catalog, `MODEL_TIER_DEFAULT`, Cursor alias). Do not edit that precedence and do not amend DEC-0086 or DEC-0087.
+
+New module `scripts/model_routing_lib.py` owns `.its-magic/model-routing.json`. When that file is absent, callers keep today's `resolve_model_for_phase` result. When it is present, the new router is the source of truth. Resolution order is explicit invocation override, task override, phase override, role override, complexity routing, then global default.
+
+Legacy mapping, only while the routing file is present:
+
+| Existing setting | Slot | Result |
+|---|---|---|
+| `MODEL_<PHASE>=<slug>` | explicit invocation | `{provider: "host-catalog", model: <slug>}` |
+| `MODEL_TIER_<PHASE>` and no `MODEL_<PHASE>` | phase override | tier `cheap`→profile `cheap`, `balanced`→`balanced`, `strong`→`expert` |
+| neither | none | routing file phase, role, complexity, then global default |
+
+`host-catalog` means the slug is still spawned through the existing host alias path. `resolve_model_for_phase` is not rewritten to do that. OpenAI, OpenRouter, LM Studio, KIE.ai, and Anthropic results are `{provider, model}` and are not rewritten into a Cursor alias. Provider and model stay separate fields.
+
+### DQ2 — pack builder and budgets (LOCKED, AC-1, D1)
+
+`scripts/build_phase_context.py` writes `.its-magic/runtime/context-packs/<run_id>/<phase>.json`. Inputs are phase, role, work_item_id, sprint_id, run_id, and `TOKEN_PROFILE`. The pack contains only the active story or bug, relevant acceptance criteria, current goal, current sprint or task, the relevant architecture section, relevant decisions, the previous-phase handoff delta, changed source files or relevant symbols, and open blockers. It does not include the full backlog, acceptance, architecture, state history, old sprints, old handoffs, state archives, token-cost history, or every decision.
+
+Hard caps, never raised: `initial_budget_tokens` 6000, `expansion_budget_tokens` 4000, `max_expansions` 2, `max_single_artifact_tokens` 3000. They live in `.its-magic/context-budget.json`, not in the model-routing file. `TOKEN_PROFILE` selects a preset inside those caps: `lean` uses initial 3000, expansion 2000, max expansions 1, max single 3000; `balanced` and `full` use the hard caps. `full` does not mean unlimited reads. Read order is pack, then a targeted section or symbol, then at most two expansions. Over the single-artifact cap, the builder returns a section or symbol pointer and does not inline the rest. `docs/engineering/phase-context.md` stays the pointer table.
+
+### DQ3 — shard layout that keeps DEC-0054 (LOCKED, AC-2, D2)
+
+DEC-0054 still owns `state.md`, `handoffs/po_to_tl.md`, and `docs/engineering/architecture.md`. The archiver is unchanged. Do not add backlog or acceptance to that triad.
+
+The prompt surface is the pack, not the hot file. `architecture.md` stays core plus an index. Active story or bug detail that the pack must include is a shard at `docs/engineering/architecture/US-xxxx.md` or `docs/engineering/architecture/BUG-xxxx.md`, with a short index stub left in the hot file so heading discovery still finds it. Execute moves only the active item. It does not bulk-rewrite historical architecture sections.
+
+Backlog and acceptance stay one file each. "Extractable per story" means the pack copies the active heading's section. `state.md` keeps its checkpoint history and archive packs. The pack's state slice is only active story, active phase, active sprint or task, objective, blockers, next action, and relevant refs.
+
+### DQ4 — evidence leaves the prompt; DEC-0038 stays (LOCKED, AC-3, D3)
+
+The DEC-0038 6-tuple and `compute_strict_proof_hash` stay the phase-boundary proof. The continuation pair (DEC-0153) still records `runtime_proof_id`, `proof_hash`, and `proof_issued_at`. Runtime proof bodies, isolation proof, token metrics, status-reconciliation detail, hashes, validator evidence, and archive verification are stored as JSON or JSONL under `.its-magic/runtime/`, `.its-magic/evidence/`, and `.its-magic/metrics/`. `state.md` keeps `runtime_evidence_ref` and `token_metrics_ref`. The pack stores those refs and does not inline the proof payload.
+
+A context pack has its own `pack_hash` (SHA-256 of the pack's canonical JSON). That hash is not `compute_strict_proof_hash` and is not a runtime proof. This matches the US-0139 rule that a pack hash is not a DEC-0038 proof, without reopening US-0139.
+
+### DQ5 — one kernel, pointers elsewhere (LOCKED, AC-4, D4)
+
+`.cursor/rules/core.mdc` is the always-on file (`globs: ["**/*"]`). Its repeated workflow prose is replaced by these eight lines: canonical repo state beats chat memory; work only on active scope; start with the generated context pack; use targeted reads before broad reads; never invent evidence; respect artifact ownership; mandatory QA, UAT, and release gates may not be bypassed; persist only meaningful deltas. Phase commands, agents, skills, and the runbook keep their operational steps and replace a pasted copy of those eight lines with one pointer to the kernel. Do not build a generator. `template/.cursor/rules/core.mdc` is updated in the same change. QA, UAT, release, isolation, and strict-proof gates stay non-suppressible.
+
+### DQ6 — zero model calls when the audit is clean (LOCKED, AC-6, D6)
+
+`.cursor/commands/memory-audit.md` step 1 stops saying "read every memory file into a model." New helper `scripts/memory_audit_deterministic.py` runs, in order: git diff, hash comparison, cross-reference validation, status validation, schema validation. A clean result records `model_calls=0`. A model runs only when that helper returns an unresolved semantic question. The contract test imports the helper on a clean fixture and asserts `model_calls==0`. It does not mock a model as required.
+
+### DQ7 — dedup ledger (LOCKED, AC-7, D7)
+
+Inside one phase run, a full read is stored as JSONL at `.its-magic/metrics/read-dedup.jsonl` with `path`, `sha256`, `section` or symbol, and `estimated_tokens`. A later full read of the same path, sha256, and section in that phase is a duplicate and is not performed. "Large" means `estimated_tokens >= 3000` (the single-artifact cap). The benchmark ratio is duplicate large reads divided by large reads, and it must stay under 0.10. A new sha256 may be read again. The ledger is machine evidence and is not copied into `state.md`.
+
+### DQ8 — provider registry, env names only (LOCKED, AC-8, D8)
+
+`.its-magic/model-routing.json` holds `profiles`, `roles`, `phases`, `tasks`, and `providers`. Each provider has `type`, optional `base_url`, and `api_key_env`. `api_key_env` matches `^[A-Z][A-Z0-9_]*$` and is a variable name, never a secret. Any other field whose value looks like a key is a schema error. The router does not read `.env`. The host reads the named variable at call time.
+
+Provider types are `openai`, `openai-compatible`, and `anthropic`. LM Studio, OpenRouter, and KIE.ai use `openai-compatible`. KIE `base_url` is operator-supplied. Tests use a fixture URL. Do not invent a production KIE URL. A run may resolve a different provider on intake, architecture, execute, qa, and refresh-context because each phase resolves independently. The committed example contains no secrets.
+
+### DQ9 — complexity, fallback, escalation (LOCKED, AC-9, D9)
+
+The classifier is deterministic and makes no model call. Inputs are changed files, estimated lines, component count, API or schema change, security or auth, migration, architecture impact, unknown dependencies, and failing tests. First match wins, using defaults stored under `complexity.thresholds` in the routing file:
+
+| Class | Predicate |
+|---|---|
+| critical | security or auth, or destructive migration, or release blocker |
+| high | architecture impact, or component count >= 3, or (failing tests and estimated lines >= 200), or (API or schema change and component count >= 2) |
+| trivial | no source files changed, or (estimated lines == 0 and no failing tests) |
+| low | component count <= 1, no API or schema change, no unknown dependencies, estimated lines < 80 |
+| normal | otherwise |
+
+Profiles may declare `code`, `tools`, `reasoning`, and `large_context`. A phase may require a subset. An incompatible profile is not used. The router walks that profile's `fallback` chain and records exactly one of `MODEL_UNAVAILABLE`, `MODEL_CAPABILITY_MISMATCH`, `MODEL_CONTEXT_TOO_SMALL`, `PROVIDER_UNAVAILABLE`, or `MODEL_RATE_LIMITED`. One compact object per phase is appended to `.its-magic/metrics/routing.jsonl` (`phase`, `role`, `task`, `complexity`, `profile`, `provider`, `model`, `reason`, `fallback`). `state.md` may hold `routing_evidence_ref` only.
+
+Escalation defaults: `max_failures` 2, `on_context_overflow` true, `on_repeated_test_failure` true, `on_uncertainty` true. After the cap, the router stops escalating and keeps the last code. It does not loop.
+
+### DQ10 — tests, benchmarks, and the US-0139 boundary (LOCKED, AC-11, AC-12, D10)
+
+US-0139 stays DONE. Its context engine is not the phase-pack builder. The pack may name changed files or symbols. It does not call `@its-magic/context-engine` to build itself.
+
+Contract file: `tests/us0162_token_routing_contract_test.py`. Markers:
+
+| Test | Lock |
+|---|---|
+| `test_us0162_pack_budgets_and_read_order` | caps 6000/4000/2/3000; lean does not raise them; over-cap returns a section pointer |
+| `test_us0162_pack_omits_full_memory_surfaces` | no full backlog, architecture, state history, or archives in the pack |
+| `test_us0162_evidence_ref_not_proof_body` | pack has refs; proof JSON is not inlined; `pack_hash` is not `compute_strict_proof_hash` |
+| `test_us0162_kernel_present_and_gates_remain` | eight kernel lines in `core.mdc`; QA, UAT, and release gates still named |
+| `test_us0162_delta_handoff_fields` | `story`, `from`, `to`, `changed`, `open`, `required_reads`, `do_not_reload` |
+| `test_us0162_audit_clean_is_zero_model_calls` | clean fixture, `model_calls==0` |
+| `test_us0162_dedup_second_read_counted` | same path+sha256+section is not fully read twice; large ratio under 0.10 |
+| `test_us0162_multi_provider_resolution_order` | six-step order; two providers in one run; `api_key_env` name only |
+| `test_us0162_capability_fallback_codes` | the five codes; no silent incompatible model; escalation stops at `max_failures` |
+| `test_us0162_token_profile_independent_of_model` | `lean`+expert and `balanced`+local both valid; absent routing file still uses `resolve_model_for_phase` |
+
+Benchmark rows add input tokens, cached input, output tokens, requests, provider, model, phase, context pack size, expansions, duplicate reads, latency, estimated or actual cost, test result, QA cycles, and acceptance, UAT, and release results, plus quality per token and quality per cost. Targets stay: typical logical input about 40 to 55 percent lower, static bootstrap per phase under 1500 tokens, context pack usually under 8k tokens, duplicate large reads under 10 percent, QA and UAT quality not meaningfully worse. The percentage is a before/after benchmark row. It is not a reason to remove a gate. This research phase does not claim a live reduction.
+
+`TOKEN_PROFILE` and the model profile stay separate. `TOKEN_PROFILE=lean` with an expert profile, and `TOKEN_PROFILE=balanced` with a local profile, are both valid. Existing `MODEL_*` keys are not deleted.
+
+Quality gates that stay: fresh subagent contexts, canonical repo memory, QA, UAT and verify-work, the release gate, decision gates, tests, artifact ownership, runtime verification for relevant applications, and security-sensitive escalation. US-0048, US-0056, US-0069, and US-0039 are not weakened. QA may use a different profile than execute.
+
+### Task seeds for sprint-plan (not allocated)
+
+`SPRINT_MAX_TASKS=12` and `SPRINT_AUTO_SPLIT=1`. These twelve seeds fit the cap. Do not allocate a sprint id in this phase. Not a `/quick`. If architecture adds a thirteenth task, sprint-plan proposes a second sprint instead of exceeding the cap.
+
+| Seed | Scope |
+|---|---|
+| T-anch | Traceability for US-0162 |
+| T-001 | Routing schema plus inventory; absent file keeps `resolve_model_for_phase` |
+| T-002 | Provider registry and `api_key_env` validation |
+| T-003 | Six-step resolver and `MODEL_*` adapter |
+| T-004 | Complexity, capability fallback, escalation cap, compact routing log |
+| T-005 | Pack builder and `TOKEN_PROFILE` presets inside the hard caps |
+| T-006 | Evidence refs, pack omits proof bodies, `pack_hash` separate from DEC-0038 |
+| T-007 | Active architecture shard plus index stub; archiver unchanged |
+| T-008 | Kernel in `core.mdc` and template twin; pointers replace pasted copies |
+| T-009 | Delta handoff fields |
+| T-010 | Deterministic audit and dedup ledger |
+| T-011 | Contract tests and benchmark fields |
+
+Build order follows the specification: inventory, instrument, router, resolution, fallback, pack builder, pack-first `/auto`, kernel, sharding, audit, benchmark, then switch defaults. Defaults flip last.
+
+### Alternatives rejected
+
+| Option | Why rejected |
+|---|---|
+| A2 delete `MODEL_*` now | AC-10 and the specification require a compatibility adapter |
+| A3 use the US-0139 context engine as this pack | Different job (code intelligence). Story stays DONE |
+| A4 extend the DEC-0087 5-step inside `model_tier_lib.py` | That would amend DEC-0087. The new order and providers belong in a new module |
+| A5 inline proof JSON in the pack "so the guarantee is visible" | AC-3. The guarantee is the validator and the stored envelope, not the prompt |
+| A6 generate every rule from a new compiler | The specification calls that long-term. One kernel plus pointers meets AC-4 |
+| A7 a companion DEC | The locks compose on DEC-0086, DEC-0087, DEC-0054, DEC-0038, DEC-0062, and DEC-0153 without amending them |
+
+### Risks
+
+| Risk | Mitigation |
+|---|---|
+| A routing-file miss silently changes today's host resolution | Absent file keeps `resolve_model_for_phase` unchanged (DQ1, DQ10) |
+| `full` is read as "load every memory file" | `full` uses the same hard caps as `balanced` (DQ2) |
+| Sharding rewrites the archiver or bulk-moves architecture | Archiver unchanged; only the active item is sharded (DQ3) |
+| `pack_hash` is accepted as a runtime proof | Separate hash function; DEC-0038 tuple unchanged (DQ4) |
+| Kernel shrink deletes a QA, UAT, or release gate | Those gates stay named in the kernel and in the phase commands (DQ5) |
+| Audit "clean" still calls a model | Helper returns `model_calls=0`; the test imports it (DQ6) |
+| Fallback codes land as long `state.md` logs | One JSONL object; state holds a ref (DQ9) |
+| A secret is committed in the routing example | Schema accepts env names only; this phase does not read `.env` (DQ8) |
+| Task count grows past 12 | Seeds are twelve; a thirteenth task triggers `SPRINT_AUTO_SPLIT` at sprint-plan |
+
+### Research isolation
+
+- phase_id=research; role=tech-lead; model_id=inherit; model_provenance=`provenance=host=cursor;path=.cursor/scratchpad.local.md;step=MODEL_TIER_<PHASE>`; fresh_context_marker=`tl-US0162-research-20261016T161128Z-fresh`; runtime_proof_id=`rp-auto-20261016-us0162-research-techlead-20261016T161128Z`; proof_hash=`6f5e4c25bb527346345f3d2962f3519904a98e4fc40011024dab29a11c0b9d9e`; proof_issued_at=`2026-10-16T16:11:28Z`; proof_ttl_seconds=3600; proof_ttl=`2026-10-16T17:11:28Z`; hash_recompute_confirmation=true.
+- Consumed discovery pair `auto-20261016-us0162|story|(none)|discovery|rp-auto-20261016-us0162-discovery-po-20261016T160043Z` / `d5cd5e8af5afcef3c70dcb933ff2fbb29cef07ac1f513d7a8f1b0d5d626e0926` recompute MATCH and in TTL at this write (issued 2026-10-16T16:00:43Z, ttl until 2026-10-16T17:00:43Z).
+- `template/docs/engineering/research.md` is not a parity pair. This heading was not copied there.
+- US-0162 stays **OPEN**. AC-1..AC-12 stay unchecked. No sprint. No DEC. No product edit. This research child does not spawn `/architecture`.
+
+## R-0170
+
+- **Date**: 2026-10-16
+- **Topic**: BUG-0036 — repairable `/auto` blockers with configurable hardness.
+- **Query**: Which hardness control lets a bounded repair continue `/auto`, while block still stops, without a new scratchpad key, without repealing DEC-0153, and without auto-performing US-0092 denies?
+- **Sources** (EARLY_RESEARCH=0; no web fetch; local files only):
+  - `docs/product/backlog.md` ### BUG-0036 discovery_notes D1..D10; `docs/product/vision.md` ## Discovery Notes — BUG-0036; `handoffs/po_to_tl.md` discovery handoff.
+  - `docs/engineering/phase-context.md` (pointer table).
+  - `.cursor/scratchpad.md` `AUTONOMY_STOP_POLICY=block` and `RESUME_BRIEF_AUTO_REFRESH=0`. Enum comment: `block|auto_repair_then_block|auto_repair_then_skip`.
+  - `scripts/data/autonomy_stop_matrix.yaml` `RESUME_BRIEF_STALE` row (`security_hard`, `auto_repair_kind=n/a`, `cap=0`). `docs/engineering/autonomy-stop-matrix.md` same row, conditioned on `RESUME_BRIEF_AUTO_REFRESH != 1`.
+  - `scripts/autonomy_repair_ledger_lib.py` `resolve_matrix_repair` (rejects any code that is not `autonomy_resolvable`). `scripts/validate_autonomy_stop_matrix.py` (security_hard must stay `n/a` and cap 0; inverse-orphan check only sees `autonomy_preset_lib.py`, `validate_autonomy_stop_matrix.py`, and `autonomy_repair_ledger_lib.py`).
+  - `scripts/opencode_auto_bridge.py` DEC-0153 pair predicates (`RESUME_BRIEF_STALE` vs `RESUME_BRIEF_UNPARSEABLE`). `write_resume_pair` prepends `state.md`.
+  - `decisions/DEC-0078.md` §3 and §8; `docs/engineering/research.md` ## R-0078 Q2 matrix (US-0092). DEC-0119 and DEC-0153 composed, not amended.
+- **Linked**: BUG-0036. Compose DEC-0119, DEC-0153, DEC-0078, US-0092, US-0119. Do not amend those decisions. Do not edit BUG-0026, BUG-0029, or US-0162. Do not wipe **R-0169**.
+- **Confidence**: high
+- **Status**: **delivered** — BUG-0036 backlog **DONE**, S0180 CLOSURE_PASS + REFRESH_CONTEXT_PASS (`2026-10-16T20:34:04Z`); harness `tests/report.md` **2026-10-16T20:03:04Z** Pass=874 Fail=8 (named foreign set; not S0180 fail-closed); seven `test_bug0036_*` green.
+- **Approach**: **A1** locked (reuse `AUTONOMY_STOP_POLICY` plus the stop matrix). **Companion DEC**: none (`decision_gate=false`). **Sprint**: **S0180** (shipped).
+
+### Context
+
+`/auto` stopped US-0162 / S0179 execute on foreign harness failures (`execute_harness_blocked_out_of_scope`) even though the in-scope contract tests were 10/10. A later `/auto` after that proof's TTL stopped `[AUTO_RESUME_ERROR] RESUME_BRIEF_STALE` and did not spawn. `RESUME_BRIEF_STALE` is `security_hard` while `RESUME_BRIEF_AUTO_REFRESH` is 0. The spawn-only parent does not author `state.md` or `handoffs/resume_brief.md` (DEC-0153). `execute_harness_blocked_out_of_scope` is not a YAML matrix code. `resolve_matrix_repair` refuses every `security_hard` code. This phase does not change product code.
+
+### DQ1 — hardness knob (LOCKED, AC-3, D3)
+
+Reuse `AUTONOMY_STOP_POLICY`. Do not add a scratchpad key.
+
+| Value | This class |
+|---|---|
+| `block` (shipped default, current live value) | Members stay terminal. Today's two stops remain stops. |
+| `auto_repair_then_block` | When the class predicate matches, run the bounded repair. If the repair is not proven, block. |
+| `auto_repair_then_skip` | When the class predicate matches, run the bounded repair. If the repair is not proven, skip that segment. |
+
+The repair values are the repair setting. `block` is the block setting. Cap is 3 attempts per `(orchestrator_run_id, member)` in `handoffs/repairable_blocker_ledger/<orchestrator_run_id>.jsonl` (names only). Cap exhaustion follows the selected value: block, or skip. Do not call `resolve_matrix_repair` or `attempt_repair` for these members. Those functions require an `autonomy_resolvable` row, and these members stay off that path so the YAML `security_hard` invariants stay intact.
+
+Do not change the live `AUTONOMY_STOP_POLICY=block` assignment. Turning the global key to a repair value also enables the existing autonomy-resolvable repairs. That is already the meaning of the key. This class does not get a second switch.
+
+### DQ2 — foreign harness without editing foreign owners (LOCKED, AC-1, AC-2, D1, D2, D6)
+
+A harness failure is this member when the active work item's own contract tests passed and every remaining failure names another owner (another bug, or a scratchpad/template byte mismatch the active pair forbids editing). The observed stop id is the lowercase string `execute_harness_blocked_out_of_scope`.
+
+Repair, only when the policy is a repair value: the authorized execute child writes a quarantine row (failure name, path, owning id, active work item id) and schedules the next lawful phase. It does not edit BUG-0026, BUG-0029, US-0162, US-0162 acceptance ticks, scratchpad drain flags, or the README. In-scope failures of the active item are not this member. When the policy is `block`, the stop stays terminal.
+
+### DQ3 — who writes the expired-proof pair (LOCKED, AC-2, D7, D8)
+
+The spawn-only parent does not write `state.md` or `handoffs/resume_brief.md`. `RESUME_BRIEF_AUTO_REFRESH` stays 0. DEC-0153 is not repealed.
+
+The repairable stale predicate is only: the pair's `compute_strict_proof_hash` still matches, the locked fields agree, the writer is authorized, and the only defect is `proof_issued_at` plus `proof_ttl_seconds` in the past. The parent then spawns a fresh child of that pair's `writer_role` for the same `completed_phase`. That child appends a new checkpoint at the bottom of `state.md`, then prepends `handoffs/resume_brief.md`, with a new `runtime_proof_id`, a new hash, and the same `next_scheduled_phase` and `next_scheduled_role`. The parent validates that new pair and only then spawns the next phase.
+
+Do not use `write_resume_pair` for this repair. That helper prepends `state.md`. The child follows the bottom-append order this phase uses.
+
+### DQ4 — stale predicates that stay fail-closed (LOCKED, D4, D8)
+
+These stay fail-closed at `block`, `auto_repair_then_block`, and `auto_repair_then_skip`. They are not class members. Skip does not apply to them.
+
+- `RESUME_BRIEF_UNPARSEABLE` (syntax, including `strict_proof_ttl_invalid` and `strict_proof_hash_invalid`).
+- `RESUME_BRIEF_STALE` predicates other than expired-TTL-of-a-matching-pair: `absent_required_record_key`, `absent_required_field`, `fresh_marker_reused_or_missing`, `strict_proof_phase_invalid`, `strict_proof_issued_at_missing`, `strict_proof_id_missing`, `unauthorized_writer_role`, `writer_role_mismatch`, `pair_key_mismatch`, `tuple_conflict`, `replay_conflict`.
+- `RUNTIME_PROOF_MISSING`, `RUNTIME_PROOF_REUSED`, `RUNTIME_PROOF_STALE`, and `RUNTIME_PROOF_AMBIGUOUS_LINK`. TTL expiry of a matching continuation pair is `RESUME_BRIEF_STALE`, not `RUNTIME_PROOF_STALE`. Those four codes stay `security_hard` with no class exception.
+- Missing evidence, conflicting evidence, or an unauthorized writer, for every member.
+
+`opencode_auto_bridge.py` keeps those predicates. The class check runs before the terminal stale stop and only when the sole defect is TTL expiry of a matching authorized pair.
+
+### DQ5 — later members (LOCKED, AC-5, D5)
+
+Membership is the predicate, not the two session stops. A stop is in this class when all of these hold:
+
+1. It blocks the next lawful `/auto` action.
+2. A bounded repair can restore scheduling without an operator re-invocation.
+3. That repair does not edit a foreign owner and is not a US-0092 deny.
+4. Evidence for the repair is present, consistent, and authorized.
+
+`scripts/repairable_blocker_lib.py` exposes that predicate. A later code joins by satisfying it and by carrying a repair descriptor that meets rule 3 and rule 4. A code that only matches the two session strings is not the contract. The synthetic test member is neither `execute_harness_blocked_out_of_scope` nor `RESUME_BRIEF_STALE`.
+
+### DQ6 — US-0092 matrix classification (LOCKED, discovery risk)
+
+From DEC-0078 §3 and R-0078 Q2. These actions are not repair actions and are not auto-performed.
+
+| Action | US-0092 row | At every `AUTONOMY_STOP_POLICY` value |
+|---|---|---|
+| `.env` read | Security deny (`.env`, intake evidence mutation): hard deny, no `full_autonomy` change. `UAT_PROBE_FORBIDDEN` if a probe would need `.env`. | Not performed. Not a class member. |
+| npm publish | `RELEASE_PUBLISH_MODE=auto`: explicit opt-in, hard default-off. | Not performed by this class. |
+| git push | Not a row in the Q2 delta table. Absence is not permission. `full_autonomy` does not relax it. | Same hard-deny posture. Not performed. |
+
+The Q2 row "`blocked` — isolation / strict-proof / ownership" stays "no change — hard". That is the same fail-closed rule as DQ4.
+
+### DQ7 — active and template surfaces (LOCKED)
+
+| Surface | Change |
+|---|---|
+| `scripts/repairable_blocker_lib.py` and `template/scripts/repairable_blocker_lib.py` | Predicate, policy dispatch, quarantine record, expired-proof spawn request. No scratchpad read inside the library. The caller passes the policy value. |
+| `.cursor/commands/auto.md` and `template/.cursor/commands/auto.md` | Call the predicate before the terminal stale stop. Parent remains spawn-only. |
+| `docs/engineering/autonomy-stop-matrix.md` and `template/docs/engineering/autonomy-stop-matrix.md` | Overlay section only. Existing rows unchanged. The two copies stay byte-identical to each other. |
+| `scripts/data/autonomy_stop_matrix.yaml` | No row edit. `RESUME_BRIEF_STALE` stays `security_hard`, `n/a`, cap 0. Do not add an uppercase code. The harness stop id stays lowercase so the inverse-orphan check does not require a YAML row. |
+| `.cursor/scratchpad.md` and `template/.cursor/scratchpad.md` | No edit. Live `AUTONOMY_STOP_POLICY` and `RESUME_BRIEF_AUTO_REFRESH` stay as they are. |
+
+### DQ8 — D4 assertions (LOCKED, AC-4)
+
+The operator quote is not a test spec. File `tests/bug0036_repairable_blocker_contract_test.py`. Markers `test_bug0036_*`. Assertions:
+
+| Marker | Lock |
+|---|---|
+| `test_bug0036_foreign_harness_repair_continues` | Repair policy quarantines foreign failures and schedules the next phase. No edit to the foreign owner. |
+| `test_bug0036_foreign_harness_block_stops` | `block` still emits `execute_harness_blocked_out_of_scope`. |
+| `test_bug0036_expired_proof_repair_spawns_child` | Repair policy requests an authorized child and a new state-first pair. Parent does not write either file. |
+| `test_bug0036_expired_proof_block_stays_stale` | `block` stays `RESUME_BRIEF_STALE` and does not schedule. |
+| `test_bug0036_bad_evidence_fail_closed` | Missing, conflicting, and unauthorized evidence stay fail-closed at all three policy values. |
+| `test_bug0036_later_member_same_rule` | A synthetic later member uses the same predicate. |
+| `test_bug0036_us0092_denies_not_performed` | `.env` read, npm publish, and git push are not performed at any hardness. |
+
+### DQ9 — companion DEC (LOCKED, D10)
+
+None. `# BUG-0036` can hold the overlay. DEC-0119, DEC-0153, and DEC-0078 are not amended. The YAML `security_hard` row is not reclassified. No tenth `auto_repair_kind`. `decision_gate=false`.
+
+### DQ10 — sprint and plan-verify (LOCKED)
+
+No sprint id in this phase. `SPRINT_MAX_TASKS=12` and `SPRINT_AUTO_SPLIT=1`. Seven seeds fit the cap. Not a `/quick`. Plan-verify stays skipped (`ultra_lean_not_in_resolved_phase_plan`). Do not reuse S0179. Do not allocate the next id here.
+
+| Seed | Scope |
+|---|---|
+| T-anch | Traceability for BUG-0036 |
+| T-001 | Predicate helper and `AUTONOMY_STOP_POLICY` dispatch |
+| T-002 | Foreign-harness quarantine without foreign-owner edits |
+| T-003 | Expired-proof child spawn; parent stays non-author; `RESUME_BRIEF_AUTO_REFRESH` stays 0 |
+| T-004 | Fail-closed predicates and the US-0092 deny list |
+| T-005 | `test_bug0036_*` contract tests |
+| T-006 | Active and template command plus matrix overlay |
+
+### Alternatives rejected
+
+| Option | Why rejected |
+|---|---|
+| A2 a new hardness key | Discovery does not name a new key. It would duplicate `AUTONOMY_STOP_POLICY`. |
+| A3 delete both stops unconditionally | Removes the block setting and the fail-closed predicates. |
+| A4 flip `RESUME_BRIEF_AUTO_REFRESH` to 1 | D8. That flag makes the parent refresh path resolvable. This repair is a child-written pair. |
+| A5 reclassify `RESUME_BRIEF_STALE` as `autonomy_resolvable` with `auto_refresh_brief` | That kind is the parent refresh. `resolve_matrix_repair` would then allow it. DEC-0153 forbids the parent write. |
+| A6 a tenth `auto_repair_kind` | The validator's closed set of nine would fail. The overlay does not need a new kind. |
+| A7 a companion DEC | The overlay fits under `# BUG-0036` without amending DEC-0119, DEC-0153, or DEC-0078. |
+
+### Risks
+
+| Risk | Mitigation |
+|---|---|
+| A repair value also enables older autonomy-resolvable repairs | That is the existing key. This bug does not add a second key (DQ1). |
+| The overlay looks like a softened `security_hard` row | YAML row stays `n/a` and cap 0. The helper never calls `resolve_matrix_repair` for these members (DQ1, DQ9). |
+| Expired-proof repair lets a parent write the pair | Parent only spawns. The child appends state at the bottom, then prepends the brief (DQ3). |
+| Foreign-harness repair edits BUG-0029 or the drain flags | Quarantine records the owner and does not write those files (DQ2). |
+| `auto_repair_then_skip` skips a bad pair or a US-0092 deny | Those predicates are not members, so skip never applies (DQ4, DQ6). |
+| A later stop joins by being added to a two-name list | Membership is the four-part predicate plus a repair descriptor (DQ5). |
+| `write_resume_pair` prepends state and breaks DEC-0153 order | The repair child does not call it (DQ3). |
+| Live scratchpad edit breaks template byte parity | No scratchpad edit in this bug (DQ7). |
+| Cap loop | Three attempts, then block or skip (DQ1). |
+
+### Research isolation
+
+- phase_id=research; role=tech-lead; model_id=inherit; model_provenance=`provenance=host=cursor;path=.cursor/scratchpad.local.md;step=MODEL_TIER_<PHASE>`; fresh_context_marker=`tl-BUG0036-research-20261016T191811Z-fresh`; runtime_proof_id=`rp-auto-20261016-bug0036-research-techlead-20261016T191811Z-BUG-0036`; proof_hash=`305880a128a2d45460de8065da4bc2964489c18d43095b152af910cb6f28e956`; proof_issued_at=`2026-10-16T19:18:11Z`; proof_ttl_seconds=3600; proof_ttl=`2026-10-16T20:18:11Z`; hash_recompute_confirmation=true.
+- Consumed discovery pair `auto-20261016-bug0036|bug|BUG-0036|discovery|rp-auto-20261016-bug0036-discovery-po-20261016T190650Z-BUG-0036` / `9f571b3e32c13d12267c3dcbdfc09340f26f6d6b4a283e36021bf0be84b6885b` recompute MATCH and in TTL at this write (issued 2026-10-16T19:06:50Z, ttl until 2026-10-16T20:06:50Z; clock at validation 2026-10-16T19:18:11Z).
+- `template/docs/engineering/research.md` is not a parity pair. This heading was not copied there.
+- BUG-0036 stays **OPEN**. AC-1..AC-5 stay unchecked. No sprint. No DEC. No product edit. No architecture section. This research child does not spawn `/architecture`.
+
+## R-0171
+
+- **Date**: 2026-10-16
+- **Topic**: US-0157 — OpenCode `/auto` continues through the critic hook and a faulty continuation pair.
+- **Query**: Which single approach lets OpenCode `/auto` run `/sovereign-critic` on the existing tech-lead Task allow, and lets the owning phase child repair only its own invalid continuation pair, without a new critic role, a parent write, or a repeal of DEC-0153?
+- **Sources** (EARLY_RESEARCH=0; no web fetch; local files only):
+  - `docs/engineering/phase-context.md` (pointer table).
+  - `docs/product/backlog.md` ## US-0157 discovery_notes D1..D7; `docs/product/vision.md` ## Discovery Notes — US-0157; `handoffs/po_to_tl.md` discovery handoff.
+  - `.opencode/agents/auto.md` and `template/.opencode/agents/auto.md`: `edit: deny`, `bash: deny`, `task: "*": deny`, allow only po, tech-lead, dev, qa, release, curator, security.
+  - `.opencode/commands/auto.md` and `template/.opencode/commands/auto.md`: no critic hook. Parent is read/validate/spawn-only. `RESUME_BRIEF_AUTO_REFRESH=0`.
+  - `.cursor/commands/auto.md` cross-model hook: when `CROSS_MODEL_REVIEW=1`, Task-spawn fresh `/sovereign-critic`. `CROSS_MODEL_REVIEW=0` is zero overhead.
+  - `.cursor/commands/sovereign-critic.md`: default critic role is tech-lead. No `.opencode/commands/sovereign-critic.md` (active or template).
+  - `.opencode/plugins/orchestrator.ts` `PHASE_ROLE_MATRIX` and `spawnPhase`: agent name is the matrix role. No `CROSS_MODEL_REVIEW` branch. Unknown phase throws `PHASE_ROLE_MISMATCH`. Twin: `template/.opencode/plugins/orchestrator.ts`.
+  - `scripts/opencode_auto_bridge.py` `validate_resume_pair` predicates. `write_resume_pair` prepends `state.md`.
+  - `scripts/data/autonomy_stop_matrix.yaml`: `PHASE_ROLE_CAPABILITY_MISSING` and `RESUME_BRIEF_STALE` stay `security_hard`, `auto_repair_kind=n/a`, cap 0.
+  - `scripts/repairable_blocker_lib.py` `evaluate_expired_proof` (BUG-0036). `decisions/DEC-0153.md` §1–§4. **R-0170** DQ3–DQ4 composed, not rewritten.
+- **Linked**: US-0157. Compose DEC-0153, DEC-0152, DEC-0051, US-0104, US-0119, DONE BUG-0036. Do not amend those decisions. Do not edit US-0162, BUG-0026, BUG-0029, or BUG-0036. Do not rewrite **R-0170**.
+- **Confidence**: high
+- **Status**: **delivered** — US-0157 backlog **DONE**, S0181 CLOSURE_PASS + REFRESH_CONTEXT_PASS (`2026-10-16T22:26:00Z`); harness `tests/report.md` **2026-10-16T21:58:06Z** Pass=875 Fail=8 (named foreign set; not S0181 fail-closed); four `test_us0157_*` green.
+- **Approach**: **A1** locked (map the critic hook onto tech-lead, and let the owning child repair only its own pair). **Companion DEC**: none (`decision_gate=false`). **Sprint**: **S0181** (shipped).
+
+### Context
+
+OpenCode `/auto` dead-ends in two places. The Task allowlist has no critic role, so a `/sovereign-critic` spawn that asks for a critic agent is denied. An invalid continuation pair stops the run even when the phase child that owns that pair could rewrite it. `CROSS_MODEL_REVIEW=0` stays zero overhead. This phase does not change product code. US-0157 stays **OPEN**. AC-1..AC-5 stay unchecked.
+
+### DQ1 — OpenCode tech-lead mapping (LOCKED, AC-1, D1)
+
+When `CROSS_MODEL_REVIEW=1`, after a producer phase returns, OpenCode `/auto` spawns a fresh Task whose agent is `tech-lead` and whose command is `/sovereign-critic`. Isolation role and strict-proof role stay `tech-lead`. The critic still runs (three lenses, existing outputs). Do not add a `critic` or `sovereign-critic` key to the Task allowlist. Do not emit `PHASE_ROLE_CAPABILITY_MISSING` because that critic key is absent. `CROSS_MODEL_REVIEW=0` spawns nothing.
+
+`sovereign-critic` is not added to `PHASE_ROLE_MATRIX`. It is a post-phase hook, not a delivery phase. `spawnPhase` keeps resolving delivery phases through the existing matrix.
+
+### DQ2 — OpenCode command file (LOCKED)
+
+Yes. Add `.opencode/commands/sovereign-critic.md` and `template/.opencode/commands/sovereign-critic.md`, byte-identical. Front matter sets `agent: tech-lead`. The body points at the existing `.cursor/commands/sovereign-critic.md` lens contract. It does not fork the rubric and it does not name a new Task role. Without that file, OpenCode has no `/sovereign-critic` command to hand the tech-lead spawn.
+
+### DQ3 — predicates the owning child may repair (LOCKED, AC-2, D2)
+
+The repair writer is the phase child whose `writer_role` already matches the pair, and whose `orchestrator_run_id`, work item, and `completed_phase` already match. The writer is not `auto`, `parent`, or `orchestrator`. One repair attempt. Then the parent validates again.
+
+Repairable, only for that identity:
+
+| Predicate | Repair |
+|---|---|
+| `strict_proof_hash_invalid` | Recompute `compute_strict_proof_hash` from the existing DEC-0038 6-tuple. Write that hash. Do not change the tuple to force a match. |
+| `pair_key_mismatch`, `tuple_conflict:<field>` | Both sides already name this child. Rewrite the brief from the state record. |
+| Brief-side `absent_required_record_key`, `absent_required_field:<field>`, `malformed_record_key`, `malformed_field:<field>`, `strict_proof_ttl_invalid` | State side already validates for this child. Copy state onto the brief. |
+| Those same shape predicates on the state side | One new checkpoint appended at the bottom of `state.md` for the same `completed_phase`, with a new `runtime_proof_id` and a new hash, then the brief is prepended. |
+
+Not repairable. They stay the existing fail-closed codes:
+
+- `unauthorized_writer_role`, `writer_role_mismatch`, `replay_conflict`
+- `fresh_marker_reused_or_missing`, `strict_proof_phase_invalid`
+- `strict_proof_issued_at_missing`, `strict_proof_id_missing`
+- `pair_record_not_object`
+- `expired_ttl` (BUG-0036 member only)
+
+Do not call `write_resume_pair`. That helper prepends `state.md`. The child appends state at the bottom, then prepends the brief.
+
+### DQ4 — orchestrator stays read-only (LOCKED, AC-3, D3)
+
+The parent calls `validate_resume_pair` only. On a DQ3 repairable predicate for the just-completed child, it spawns one fresh child of that `writer_role` for that same `completed_phase` with a repair-only charter. It does not write `docs/engineering/state.md` or `handoffs/resume_brief.md`. It does not set `RESUME_BRIEF_AUTO_REFRESH`. After the child returns, it validates again. A valid pair continues to `next_scheduled_phase`. A pair that is still invalid stops with the original reason code. A pair whose writer is not that child stops with no repair spawn. DEC-0153 §4 still holds: the next scheduled phase is not spawned while the pair is invalid. The repair spawn is the same completed phase, not the next phase.
+
+### DQ5 — `PHASE_ROLE_CAPABILITY_MISSING` stays security-hard (LOCKED, AC-4, D4)
+
+The YAML row stays `security_hard`, `n/a`, cap 0. The code still fires when a required phase role is absent from the Task allowlist (a real missing capability, US-0119). It does not fire for the missing critic key, because the hook never asks for that key. If `tech-lead` itself is removed from the allowlist, the code still fires. Hard security denies (`.env`, secrets, credential theft) stay hard stops. This story does not read `.env`. Do not add the code to the repairable-blocker class. Do not call `resolve_matrix_repair` for it.
+
+### DQ6 — contract test file and markers (LOCKED, AC-5, D5)
+
+File: `tests/us0157_opencode_critic_pair_contract_test.py`. Markers `test_us0157_*`.
+
+| Marker | Lock |
+|---|---|
+| `test_us0157_critic_spawns_tech_lead` | `CROSS_MODEL_REVIEW=1` spawns agent `tech-lead` for `/sovereign-critic`. No `PHASE_ROLE_CAPABILITY_MISSING` for a missing critic role. `CROSS_MODEL_REVIEW=0` spawns no critic. |
+| `test_us0157_own_pair_repair_continues` | The owning child repairs one DQ3 predicate and the next phase is scheduled. A different writer's pair is not repaired. |
+| `test_us0157_orchestrator_cannot_write_pair` | Parent, `auto`, and `orchestrator` do not write `state.md` or `resume_brief.md`. `RESUME_BRIEF_AUTO_REFRESH` stays 0. |
+| `test_us0157_security_denies_stay_hard` | `.env` is not read. A real missing Task capability still emits `PHASE_ROLE_CAPABILITY_MISSING`. `expired_ttl` is not repaired here. |
+
+### DQ7 — DONE BUG-0036 (LOCKED, D6)
+
+Do not edit BUG-0036, its acceptance ticks, `scripts/repairable_blocker_lib.py`, `scripts/data/autonomy_stop_matrix.yaml`, or `test_bug0036_*`. Do not change live `AUTONOMY_STOP_POLICY=block`. `expired_ttl` of a matching pair stays the BUG-0036 member and stays terminal at `block`. The US-0157 helper is a separate child-owned rewrite. It does not call `evaluate_expired_proof` or `resolve_matrix_repair`. **R-0170** stays as written.
+
+### DQ8 — active and template parity (LOCKED)
+
+| Surface | Change |
+|---|---|
+| `.opencode/agents/auto.md` and `template/.opencode/agents/auto.md` | Instruction only: the critic hook spawns tech-lead. Permission block unchanged. |
+| `.opencode/commands/auto.md` and `template/.opencode/commands/auto.md` | Same mapping sentence. Parent stays read-only. |
+| `.opencode/commands/sovereign-critic.md` and `template/.opencode/commands/sovereign-critic.md` | New. `agent: tech-lead`. Byte-identical pair. |
+| `.opencode/plugins/orchestrator.ts` and `template/.opencode/plugins/orchestrator.ts` | Hook spawn uses agent `tech-lead`. `PHASE_ROLE_MATRIX` unchanged. |
+| `.cursor/scratchpad.md` and `template/.cursor/scratchpad.md` | No edit. |
+
+`template/docs/engineering/research.md` is not a parity pair. This heading is not copied there.
+
+### DQ9 — companion DEC (LOCKED)
+
+None. `# US-0157` can hold the mapping and the predicate table. DEC-0153, DEC-0152, and DEC-0051 are not amended. The YAML `security_hard` rows are not reclassified. `decision_gate=false`.
+
+### DQ10 — sprint and plan-verify (LOCKED)
+
+No sprint id in this phase. Highest existing sprint is **S0180**. Do not allocate the next id here. `SPRINT_MAX_TASKS=12`. `SPRINT_AUTO_SPLIT=1`. Eight seeds fit the cap. Not a `/quick`: the change crosses the OpenCode agent, command, plugin, and contract test, on the active tree and the template. Plan-verify stays skipped (`ultra_lean` resolved plan is `[spec, plan, build+verify, ship]`).
+
+| Seed | Scope |
+|---|---|
+| T-anch | Traceability for US-0157 |
+| T-001 | Tech-lead mapping text and the OpenCode sovereign-critic command |
+| T-002 | Hook spawn uses `tech-lead` and does not emit `PHASE_ROLE_CAPABILITY_MISSING` for a missing critic role |
+| T-003 | Owning-child pair repair; state append at the bottom, then brief prepend; not `write_resume_pair` |
+| T-004 | Parent stays read-only; `RESUME_BRIEF_AUTO_REFRESH` stays 0 |
+| T-005 | Security-hard denies, real capability miss, and the BUG-0036 `expired_ttl` boundary |
+| T-006 | `test_us0157_*` contract tests |
+| T-007 | Active and template parity |
+
+### Alternatives rejected
+
+| Option | Why rejected |
+|---|---|
+| A2 add a critic Task role | Intake assumption and D1. The allowlist stays the seven roles. |
+| A3 skip the critic when the role is missing | `CROSS_MODEL_REVIEW=1` still runs the critic. |
+| A4 spawn tech-lead with an inline prompt and no OpenCode command file | OpenCode would still have no `/sovereign-critic` command. DQ2. |
+| A5 parent writes or refreshes the pair | DEC-0153. `RESUME_BRIEF_AUTO_REFRESH` stays 0. |
+| A6 call `write_resume_pair` for the repair | That helper prepends `state.md`. This story appends at the bottom. |
+| A7 a companion DEC | `# US-0157` can hold the locks. DQ9. |
+| A8 fold the repair into the BUG-0036 policy overlay or flip `AUTONOMY_STOP_POLICY` | D6. BUG-0036 stays DONE and untouched. |
+| A9 repair every `RESUME_BRIEF_STALE` and `RESUME_BRIEF_UNPARSEABLE` predicate | Unauthorized writer, replay, reused fresh marker, and `expired_ttl` stay fail-closed. DQ3. |
+
+### Risks
+
+| Risk | Mitigation |
+|---|---|
+| The hook looks like a new role | Agent name is `tech-lead`. No new permission key. DQ1. |
+| A command file is read as a new agent | Front matter `agent: tech-lead`. DQ2. |
+| The child repairs another writer's pair | Identity match is required. Otherwise the parent stops. DQ3. |
+| The repair spawn is treated as the next phase while the pair is invalid | The spawn repeats the same `completed_phase`. The next phase waits for a valid pair. DQ4. |
+| `PHASE_ROLE_CAPABILITY_MISSING` is softened | YAML row unchanged. A real missing allowlisted role still emits it. DQ5. |
+| `expired_ttl` gains a second repair path | That predicate is excluded. BUG-0036 files are not edited. DQ7. |
+| `write_resume_pair` prepends state | The repair child does not call it. DQ3. |
+| Active and template drift | The four pairs in DQ8 stay byte-identical within each pair. |
+| Task count grows past 12 | Eight seeds. A ninth task triggers `SPRINT_AUTO_SPLIT` at sprint-plan. |
+
+### Research isolation
+
+- phase_id=research; role=tech-lead; model_id=inherit; model_provenance=`provenance=host=cursor;path=.cursor/scratchpad.local.md;step=MODEL_TIER_<PHASE>`; fresh_context_marker=`tl-US0157-research-20261016T210742Z-fresh`; runtime_proof_id=`rp-auto-20261016-us0157-research-techlead-20261016T210742Z`; proof_hash=`4da3d695842e8926e60efce8e1d98ff43851dce72285b8b91580f4b98476ceaf`; proof_issued_at=`2026-10-16T21:07:42Z`; proof_ttl_seconds=3600; proof_ttl=`2026-10-16T22:07:42Z`; hash_recompute_confirmation=true.
+- Consumed discovery pair `auto-20261016-us0157|story|US-0157|discovery|rp-auto-20261016-us0157-discovery-po-20261016T205830Z` / `640f55e666c50b3c15374e1f21538dbc90343f3f0a30a17c69803baec3b14f04` recompute MATCH and in TTL at this write (issued 2026-10-16T20:58:30Z, ttl until 2026-10-16T21:58:30Z; clock at validation 2026-10-16T21:07:42Z).
+- `template/docs/engineering/research.md` is not a parity pair. This heading was not copied there.
+- US-0157 stays **OPEN**. AC-1..AC-5 stay unchecked. No sprint. No DEC. No product edit. No architecture section. This research child does not spawn `/architecture`.
+
+## R-0172
+
+- **Date**: 2026-10-16
+- **Topic**: US-0158 — OpenCode `/auto` continues through a recoverable blocker, an AI error, an aborted phase, and a permission dead-end.
+- **Query**: Which single approach lets those four classes continue in the same OpenCode `/auto` run, without a session restart, while security-hard denies, quality/UAT failure, and budget exhaustion stay terminal, and the parent stays read-only under DEC-0153?
+- **Sources** (EARLY_RESEARCH=0; no web fetch; local files only):
+  - `docs/engineering/phase-context.md` (pointer table).
+  - `docs/product/backlog.md` ## US-0158 discovery_notes D1..D7; `docs/product/vision.md` ## Discovery Notes — US-0158; `handoffs/po_to_tl.md` discovery handoff; `handoffs/intake_evidence/US-0158-intake-20261015T171800Z.json` (read-only).
+  - `.opencode/agents/auto.md` and `.opencode/commands/auto.md`: seven-role Task allow; critic hook already spawns tech-lead; prose terminates on every hard gate, missing evidence, quality/UAT failure, security stop, or exhausted budget. Stop reasons named: `completed`, `decision_gate`, `missing_input`, `pause_request`, `loop_max`, `error`, `blocked`.
+  - `.opencode/plugins/orchestrator.ts` `runAutoLifecycle`: spawn or critic failure returns `ok: false` before the matrix call. The matrix call after a successful spawn passes `stopReason: "completed"`. The loop breaks when `next_phase` is empty, `action === "stop"`, `stop_reason === "completed"`, or `next_phase === phaseId`. `spawnPhase` swallows every `session.wait` rejection and still returns `ok: true`. `planSovereignCriticSpawn` already maps a missing critic key onto tech-lead. `deliveryRoleCapability` emits `PHASE_ROLE_CAPABILITY_MISSING` when a matrix role is absent. `parentResumePairDecision` keeps `writes_state` and `writes_brief` false.
+  - `scripts/auto_outer_driver.py` `run_stop_matrix_json`: `error` is in `HARD_STOP_REASONS` (`action=hard_stop`); `blocked` is in `RECOVERABLE_STOP_REASONS` (`action=ledger_write`, `next_phase` null). `HARD_BLOCKED_SUBCODES` are `isolation`, `strict_proof`, `ownership`, `security_deny`. `qa_fail` and `uat_fail` are recoverable only when `AUTO_IMPLEMENTATION_LOOP=1`. Absent new flags, that JSON path stays as it is.
+  - `scripts/data/autonomy_stop_matrix.yaml`: `QUALITY_EVIDENCE_FAILED`, `BUDGET_EXHAUSTED`, `PHASE_ROLE_CAPABILITY_MISSING`, and `PHASE_ROLE_MISMATCH` stay `security_hard`, `auto_repair_kind=n/a`, cap 0. Twin prose: `docs/engineering/autonomy-stop-matrix.md`.
+  - `scripts/opencode_auto_bridge.py` `OPENCODE_AUTO_DEPENDENCY_BLOCKED` (story selection). Drain `AUTO_BACKLOG_ON_BLOCK=skip` is that selection path.
+  - **R-0171** DQ1 and DQ4 (tech-lead critic spawn; parent read-only). `decisions/DEC-0153.md` composed, not amended. **R-0171** heading stays as written.
+- **Linked**: US-0158. Compose DEC-0153, DEC-0152, DEC-0119, DONE US-0157. Do not amend those decisions. Do not edit US-0157, US-0162, BUG-0026, BUG-0029, or BUG-0036. Do not rewrite **R-0171**. Do not pull in US-0160 or US-0161.
+- **Confidence**: high
+- **Status**: **current**
+- **Approach**: **A1** (same-run `continue_same_phase` inside the existing Stop-Matrix JSON path; parent stays read-only). **Companion DEC**: none (`decision_gate=false`).
+
+### Context
+
+OpenCode `/auto` ends the operator session on a recoverable blocker, an AI error, an aborted phase, or a permission dead-end. The agent prose treats every hard gate as terminal. `runAutoLifecycle` returns fail-closed before the matrix sees those failures, and a matrix result with no `next_phase` breaks the loop. `QUALITY_EVIDENCE_FAILED` and `BUDGET_EXHAUSTED` stay `security_hard`. DONE US-0157 already continues the missing-critic example by spawning tech-lead and lets the owning child repair only its own pair. This phase does not change product code. US-0158 stays **OPEN**. AC-1..AC-5 stay unchecked.
+
+### DQ1 — four classes and the codes that stay terminal (LOCKED, AC-1, D1, D6)
+
+The continue classifier accepts exactly four class tokens. It does not add YAML rows.
+
+| Class token | Match |
+|---|---|
+| `blocked` | `stop_reason=blocked`, and `blocked_subcode` and `reason_code` are outside `HARD_BLOCKED_SUBCODES`, and `reason_code` is not `OPENCODE_AUTO_DEPENDENCY_BLOCKED`. |
+| `ai_error` | The host reports a model or provider failure as `reason_code=ai_error`. A bare `stop_reason=error` without that code stays `hard_stop`. |
+| `aborted` | `reason_code=phase_aborted` from an abort-shaped `session.wait` rejection (`AbortError`, `abort`, or `aborted`). |
+| `permission_dead_end` | A Task denial whose denied agent is outside `PHASE_ROLE_MATRIX` and outside the seven-role allow. The missing-critic example stays the US-0157 tech-lead spawn and is not a second path. |
+
+These stay terminal. The classifier returns `hard_stop` for them, including when a caller also passes a class token:
+
+- `QUALITY_EVIDENCE_FAILED`, `BUDGET_EXHAUSTED`, `qa_fail`, `uat_fail`
+- `security_deny`, and the hard subcodes `isolation`, `strict_proof`, `ownership`
+- `PHASE_ROLE_CAPABILITY_MISSING`, `PHASE_ROLE_MISMATCH`
+- `OPENCODE_AUTO_DEPENDENCY_BLOCKED` and drain `AUTO_BACKLOG_ON_BLOCK=skip` (story selection)
+- `decision_gate`, `pause_request`, `loop_max`
+- `PLUGIN_SPAWN_UNSUPPORTED`, `HEADLESS_UNSUPPORTED`, `AUTO_ALREADY_RUNNING`, `SUBTASK_IGNORED`, `MANUAL_PHASE_PERSIST_DENIED`, `MANUAL_PHASE_WRITE_DENIED`, `PLACEHOLDER_PARENT_REJECTED`
+- `.env` and secrets
+
+`error` stays in `HARD_STOP_REASONS`. `blocked` stays in `RECOVERABLE_STOP_REASONS` for callers that omit the new flag.
+
+### DQ2 — continue path, parent read-only (LOCKED, AC-2, AC-4, D2, D4)
+
+The path is `scripts/auto_outer_driver.py` `run_stop_matrix_json`, which the plugin already calls. Optional argv `--recoverable-class` is one of the four tokens. When the flag is absent, the JSON payload stays today's branch (`hard_stop`, `ledger_write`, or `spawn_next`) and `next_phase` stays null on those existing branches.
+
+When the flag is present and DQ1 guards pass, the payload is `action=continue_same_phase` and `next_phase` equals the `--phase` argument. When guards fail, the payload is `action=hard_stop` and `next_phase` is null.
+
+`runAutoLifecycle` calls that path on a class match instead of returning `ok: false` before the matrix. On `continue_same_phase`, and only on that action, the loop respawns the same `phaseId` with a new fresh marker. The existing break for `next_phase === phaseId` stays in force for every other action. One in-memory attempt per `(phaseId, class)`. The second hit uses the original reason code. The agent and command text do not ask the operator to restart the session for these four classes.
+
+The parent does not write `docs/engineering/state.md` or `handoffs/resume_brief.md`. It does not set `RESUME_BRIEF_AUTO_REFRESH`. It does not call `write_resume_pair`. The attempt counter is process memory, not a pair file. A valid pair that already names a next phase still uses the existing validate-then-spawn path.
+
+### DQ3 — permission dead-end (LOCKED, AC-1, D1)
+
+The seven-role allow stays. No critic Task role is added. `PHASE_ROLE_MATRIX` gains no critic key.
+
+| Case | Result |
+|---|---|
+| `CROSS_MODEL_REVIEW=1` and the critic key is absent | Existing `planSovereignCriticSpawn`: agent `tech-lead`, command `/sovereign-critic`. No `PHASE_ROLE_CAPABILITY_MISSING` for that missing key. |
+| Denied agent is outside the matrix and outside the seven roles | Class `permission_dead_end`. Respawn the current matrix role once. The denied name is not added to the allowlist. |
+| A matrix role is absent from the allowlist | `deliveryRoleCapability` returns `PHASE_ROLE_CAPABILITY_MISSING`. The YAML row stays `security_hard`. No continue. |
+| `tech-lead` itself is absent | Same capability code. The critic hook stays the US-0157 behavior. |
+
+### DQ4 — AI error and aborted phase (LOCKED, AC-1, AC-2)
+
+`spawnPhase` maps an abort-shaped `session.wait` rejection to `{ ok: false, reasonCode: "phase_aborted" }`. Every other `session.wait` rejection keeps today's evidence return (`ok: true`). The lifecycle then calls the matrix with `--recoverable-class=aborted`.
+
+An AI error is a child result with `reason_code=ai_error`. The lifecycle calls the matrix with `--recoverable-class=ai_error`. A bare `stop_reason=error` does not take that branch.
+
+Both classes respawn the same phase once inside the same run. The operator is not asked to restart. `PLUGIN_SPAWN_UNSUPPORTED` and `SUBTASK_IGNORED` stay immediate fail-closed returns and are not relabeled `phase_aborted`.
+
+### DQ5 — blocker versus quality and budget (LOCKED, AC-1, D6)
+
+A blocker continue requires class `blocked` plus the DQ1 subcode guards. The same run respawns that phase once. It does not select another story and it does not read `AUTO_BACKLOG_ON_BLOCK`.
+
+`QUALITY_EVIDENCE_FAILED` and `BUDGET_EXHAUSTED` stay `security_hard`, `n/a`, cap 0. `qa_fail` and `uat_fail` stay on the existing outer-driver implementation-loop path and are not this class, including when `AUTO_IMPLEMENTATION_LOOP=1`. The YAML file is not edited. `resolve_matrix_repair` is not called. `AUTONOMY_STOP_POLICY` stays `block`.
+
+### DQ6 — write lock under test (LOCKED, AC-4, AC-5)
+
+The continue decision object keeps `writes_state: false`, `writes_brief: false`, and `sets_resume_brief_auto_refresh: false` for writers `auto`, `parent`, and `orchestrator`. The contract test imports that decision and asserts those three fields. It also asserts the continue function does not call `write_resume_pair` and that `RESUME_BRIEF_AUTO_REFRESH` is not assigned on this path. DEC-0153 §4 stays: the next scheduled phase is spawned only after a valid pair. The same-phase respawn is a repeat of the current phase, not a parent-authored pair.
+
+### DQ7 — contract test file and markers (LOCKED, AC-5, D5)
+
+File: `tests/us0158_opencode_recoverable_stop_contract_test.py`. Markers `test_us0158_*`.
+
+| Marker | Lock |
+|---|---|
+| `test_us0158_recoverable_classes_continue` | Each of the four tokens returns `continue_same_phase` and the lifecycle respawns that phase once. |
+| `test_us0158_no_session_restart_prompt` | Agent and command text for those classes contain no session-restart instruction. |
+| `test_us0158_security_hard_stops` | `.env`, secrets, and `security_deny` return `hard_stop`. The test does not read `.env`. |
+| `test_us0158_quality_and_budget_stay_terminal` | `QUALITY_EVIDENCE_FAILED`, `BUDGET_EXHAUSTED`, `qa_fail`, and `uat_fail` stay terminal. |
+| `test_us0158_orchestrator_cannot_write_pair` | Parent writers do not write `state.md` or `resume_brief.md`. `RESUME_BRIEF_AUTO_REFRESH` stays 0. |
+| `test_us0158_permission_dead_end_keeps_seven_roles` | No new Task role. A real missing matrix role still emits `PHASE_ROLE_CAPABILITY_MISSING`. The critic hook stays tech-lead. |
+
+### DQ8 — active and template parity (LOCKED)
+
+| Surface | Change |
+|---|---|
+| `scripts/auto_outer_driver.py` and `template/scripts/auto_outer_driver.py` | Optional `--recoverable-class` branch only. Absent flag keeps today's JSON. Byte-identical pair. |
+| `.opencode/plugins/orchestrator.ts` and `template/.opencode/plugins/orchestrator.ts` | Class call, one same-phase respawn, abort-shaped wait maps to `phase_aborted`. |
+| `.opencode/agents/auto.md` and `template/.opencode/agents/auto.md` | The four classes continue in the same run. Quality, UAT, security, and budget still terminate. Permission block unchanged. |
+| `.opencode/commands/auto.md` and `template/.opencode/commands/auto.md` | Same sentence. Parent stays read-only. |
+| `scripts/data/autonomy_stop_matrix.yaml` | No row edit. |
+| `.cursor/scratchpad.md` and `template/.cursor/scratchpad.md` | No edit. |
+
+`tests/.tmp-debug-install/` is not a parity pair. `template/docs/engineering/research.md` is not a parity pair. This heading is not copied there.
+
+### DQ9 — companion DEC (LOCKED)
+
+None. `# US-0158` can hold the class table and the `continue_same_phase` action. The action is an explicit Stop-Matrix continuation, so it composes with DEC-0152. DEC-0119 rows are not reclassified. DEC-0153 is not amended. `decision_gate=false`.
+
+### DQ10 — sprint and plan-verify (LOCKED)
+
+No sprint id in this phase. Highest existing sprint is **S0181**. Do not allocate the next id here. `SPRINT_MAX_TASKS=12`. `SPRINT_AUTO_SPLIT=1`. Eight seeds fit the cap. Not a `/quick`: the change crosses the driver, the OpenCode plugin, the agent, the command, and the contract test, on the active tree and the template. Plan-verify stays skipped (`ultra_lean` resolved plan is `[spec, plan, build+verify, ship]`).
+
+| Seed | Scope |
+|---|---|
+| T-anch | Traceability for US-0158 |
+| T-001 | Optional `--recoverable-class` branch; absent flag keeps today's JSON |
+| T-002 | Lifecycle honors `continue_same_phase` once; no session-restart prompt |
+| T-003 | Abort-shaped wait, `ai_error`, and blocker subcode guards |
+| T-004 | Permission dead-end keeps the seven roles and the US-0157 tech-lead hook |
+| T-005 | Security, quality, and budget stay terminal; parent write lock |
+| T-006 | `test_us0158_*` contract tests |
+| T-007 | Active and template parity |
+
+### DQ11 — DONE US-0157 and DEC-0153 (LOCKED, D4, D6)
+
+Do not edit US-0157, its acceptance ticks, `test_us0157_*`, `planSovereignCriticSpawn`, or **R-0171**. Do not edit `scripts/repairable_blocker_lib.py` or the YAML rows. The owning child still repairs only its own invalid pair. `expired_ttl` stays the BUG-0036 member. US-0160 and US-0161 stay as written: this story does not add TUI self-repair or a cross-host policy. DEC-0153 stays Accepted and unamended. `RESUME_BRIEF_AUTO_REFRESH` stays 0.
+
+### Alternatives rejected
+
+| Option | Why rejected |
+|---|---|
+| A2 flip every `security_hard` row to continue | AC-3 and D6. Quality, budget, and secrets would continue. |
+| A3 keep the session-restart prompt and only skip the story | AC-2. Drain skip is story selection, not this in-run continue. |
+| A4 remove `error` from `HARD_STOP_REASONS` | Every error would continue. Only `reason_code=ai_error` is the class. |
+| A5 treat `qa_fail` and `uat_fail` as the blocker class | D6. They stay the implementation-loop path. |
+| A6 add a critic Task role for the permission dead-end | D1 and the US-0157 lock. The allowlist stays the seven roles. |
+| A7 parent writes the pair so the next phase can start | DEC-0153. The respawn repeats the current phase. |
+| A8 call `write_resume_pair` or set `RESUME_BRIEF_AUTO_REFRESH=1` | That helper prepends `state.md`. The flag stays 0. |
+| A9 a companion DEC | `# US-0158` can hold the locks. DQ9. |
+| A10 fold the four classes into BUG-0036 or US-0160 | Those owners stay untouched. DQ11. |
+
+### Risks
+
+| Risk | Mitigation |
+|---|---|
+| `continue_same_phase` looks like a softened `security_hard` row | YAML rows stay `n/a` and cap 0. Guards in DQ1 force `hard_stop`. |
+| The optional flag changes today's JSON for `blocked` and `error` | The flag is opt-in. Absent flag keeps the current branch. DQ2. |
+| `next_phase === phaseId` breaks the respawn | Only `continue_same_phase` skips that break. Other actions still break. DQ2. |
+| Abort-shaped wait turns every wait failure into a continue | Only `AbortError`, `abort`, and `aborted`. Other rejections keep today's evidence return. DQ4. |
+| A second failure loops | One attempt per `(phaseId, class)`, then the original reason code. DQ2. |
+| The parent writes a pair during the respawn | Decision fields stay false. No `write_resume_pair`. DQ6. |
+| The permission class adds a role or a second critic spawn | Denied names are not added. The critic hook stays US-0157. DQ3. |
+| `qa_fail` under `AUTO_IMPLEMENTATION_LOOP=1` is swallowed by this class | Those reasons are excluded. The outer-driver loop is a different path. DQ5. |
+| Active and template drift | The four pairs in DQ8 stay byte-identical within each pair. |
+| Task count grows past 12 | Eight seeds. A ninth task triggers `SPRINT_AUTO_SPLIT` at sprint-plan. |
+
+### Research isolation
+
+- phase_id=research; role=tech-lead; model_id=inherit; model_provenance=`provenance=host=cursor;path=.cursor/scratchpad.local.md;step=MODEL_TIER_<PHASE>`; fresh_context_marker=`tl-US0158-research-20261016T223927Z-fresh`; runtime_proof_id=`rp-auto-20261016-us0158-research-techlead-20261016T223927Z`; proof_hash=`10eede37888d78f551407d983e1ce93caa6f55711b21db52d4176361b1f168db`; proof_issued_at=`2026-10-16T22:39:27Z`; proof_ttl_seconds=3600; proof_ttl=`2026-10-16T23:39:27Z`; hash_recompute_confirmation=true.
+- Consumed discovery pair `auto-20261016-us0158|story|US-0158|discovery|rp-auto-20261016-us0158-discovery-po-20261016T223101Z` / `5097d04aedf6ae81fbefdd374b2f2df2e9d3672ab4a5e7ae2d3215dba72e5bf4` recompute MATCH and in TTL at this write (issued 2026-10-16T22:31:01Z, ttl until 2026-10-16T23:31:01Z; clock at validation 2026-10-16T22:39:27Z).
+- `template/docs/engineering/research.md` is not a parity pair. This heading was not copied there.
+- US-0158 stays **OPEN**. AC-1..AC-5 stay unchecked. No sprint. No DEC. No product edit. No architecture section. This research child does not spawn `/architecture`.
+
+## R-0173
+
+- **Date**: 2026-10-18
+- **Topic**: BUG-0038 — QA/verify-work continuation-brief permission dead-end.
+- **Query**: What is the minimum-authority repair that lets the QA phase writer persist its DEC-0153 continuation brief for both `qa` and `verify-work`, while preserving deny-first maps, active/template parity, and the parent/orchestrator write boundary?
+- **Sources** (local, read-only; no secrets):
+  - `docs/product/backlog.md` `### BUG-0038`; `docs/product/acceptance.md` BUG-0038 row; `handoffs/po_to_tl.md` BUG-0038 discovery handoff.
+  - `decisions/DEC-0153.md`; `.opencode/commands/research.md`; `scripts/opencode_auto_bridge.py` pair-key and `validate_resume_pair` contract.
+  - `.opencode/agents/{qa,auto,po,tech-lead,dev,release,curator}.md` and their `template/.opencode/agents/` peers; `.opencode/plugins/orchestrator.ts` and template peer.
+  - `tests/bug0016_contract_test.py`, `tests/bug0035_continuation_pair_test.py`, and `docs/engineering/autonomy-stop-matrix.md`.
+- **Linked**: BUG-0038; compose BUG-0016 and DONE BUG-0035 / DEC-0153 without reopening or amending them.
+- **Confidence**: high
+- **Status**: current
+- **Approach**: **A1 — one QA-only continuation-brief allow plus matrix-wide contract coverage**. No companion DEC is required; this is a minimum-authority application of accepted DEC-0153, so `decision_gate=false`.
+- **Validation note**: `python scripts/bug_issue_validate.py --backlog docs/product/backlog.md --check-acceptance` passed. Focused inherited-contract probe `python -m pytest tests/bug0016_contract_test.py tests/bug0035_continuation_pair_test.py -q` produced 13 passed / 1 failed: `test_bug0035_active_template_parity_and_runbook_remediation` expects the existing BUG-0035 runbook remediation token. This is outside BUG-0038 research scope; it was not changed, weakened, or repaired here.
+
+### Findings and locks
+
+1. `PHASE_ROLE_MATRIX` assigns both `qa` and `verify-work` to the sole `qa` writer. Every completed phase writer that persists a DEC-0153 pair is one of `{po, tech-lead, dev, qa, release, curator}`; `security` is not a delivery-phase writer. The coverage must derive this set from the matrix, then assert that each corresponding active and template agent map has exactly one `"handoffs/resume_brief.md": allow` after `"**": deny`.
+2. The repair unit is exactly `.opencode/agents/qa.md` and `template/.opencode/agents/qa.md`. The intended delta is exactly one continuation-brief allow in each map, at the equivalent deny-first location. At research inspection, both working-tree copies are byte-identical (SHA-256 `17226b8702cd49cce177286c3cee64947f9426c97c683c0f1fdc3e6b025a7744`), contain one such allow, and retain deny-before-allow order. This is a mutable implementation observation, not delivery evidence: BUG-0038 remains OPEN and all ACs remain unchecked until the later lifecycle proves it.
+3. The deny-first boundary is unchanged: no `handoffs/**`, wildcard, agent-map, or all-role grant is allowed; existing security-hard denials remain. The parent/orchestrator remains read/validate/spawn-only: `.opencode/agents/auto.md` keeps `edit: deny`, the plugin gains no map-writing or pair-writing path, and no `PHASE_ROLE_MATRIX` entry or seven-role allowlist entry is added.
+4. The phase-writer regression must be fixture/mock contract coverage, proposed as `tests/bug0038_qa_resume_brief_permission_contract_test.py`, with five `test_bug0038_*` markers: (a) QA owns both `qa` and `verify-work`; (b) active/template QA maps are byte-identical, contain exactly the one narrow path, and retain every deny-first/security-hard invariant; (c) every matrix-derived phase writer has the narrow continuation-brief grant in both parity trees; (d) `auto`/parent/orchestrator have neither continuation-pair nor agent-map grant and remain forbidden writers; (e) a missing/unrepairable active/template QA path produces only `PERMISSION_MATRIX_REPAIR_REQUIRES_OPERATOR`, naming both maps and `handoffs/resume_brief.md`, writing neither pair member, and requiring authorized operator repair plus revalidation.
+5. `PERMISSION_MATRIX_REPAIR_REQUIRES_OPERATOR` is an operator-only deterministic Stop-Matrix outcome, not an auto-repair class. It must not set `RESUME_BRIEF_AUTO_REFRESH`, call `write_resume_pair`, fall back to state, alter a status/AC, or schedule a next phase. `RESUME_BRIEF_STALE` remains security-hard under the live `RESUME_BRIEF_AUTO_REFRESH=0` policy.
+
+### Rejected alternatives
+
+| Option | Rejection reason |
+|---|---|
+| Grant parent/orchestrator pair or map write authority | Violates DEC-0153 child ownership and BUG-0038 AC-3. |
+| Grant all seven roles or a handoff wildcard | Breaks minimum authority and deny-first preservation. |
+| Cover `/qa` only | Leaves `verify-work`, owned by the same QA map, regressed and fails AC-1/AC-4. |
+| Auto-repair an unrepairable map or refresh the brief | Violates `RESUME_BRIEF_AUTO_REFRESH=0`, fail-closed pair semantics, and AC-5. |
+| Amend DEC-0153 or add a companion DEC | The accepted decision already supplies the needed ownership rule; an amendment is unnecessary. |
+
+### Architecture handoff locks
+
+- Architecture may define the exact contract-test fixture and deterministic operator-stop assertion, but must not implement, create a sprint, alter product status/ACs, or grant the parent/orchestrator anything.
+- Preserve active/template byte identity, deny-first ordering, all existing QA paths and security-hard denials; do not modify `PHASE_ROLE_MATRIX`, `TASK_ALLOWLIST`, DEC-0153, `RESUME_BRIEF_AUTO_REFRESH=0`, or `CROSS_MODEL_REVIEW=0`.
+- BUG-0038 remains **OPEN/P0** with AC-1..AC-5 and its acceptance row unchecked. No secret access, `/auto`, critic, child spawn, commit, push, or publish occurred in this research phase.
+
+### Research isolation
+
+- phase_id=research; role=tech-lead; model_id=`openai/gpt-5.6-terra`; model_provenance=`fresh canonical phase child`; fresh_context_marker=`tl-BUG0038-research-20261018T140938Z-fresh`; runtime_proof_id=`rp-repair-20261018-bug0038-anchor-repair-research-techlead-20261018T140938Z-BUG-0038`; proof_hash=`7f7e9e4f71d89901bfef5af5dc73b0003aeeca532d52ac73bd95f11e1e86fa77`; proof_issued_at=`2026-10-18T14:09:38Z`; proof_ttl_seconds=3600; hash recompute MATCH.
+- Incoming discovery pair `repair-20261018-bug0038-anchor-repair|bug|BUG-0038|discovery|rp-repair-20261018-bug0038-anchor-repair-discovery-po-20261018T140404Z-BUG-0038-pairrepair` was exact-key/tuple/hash validated read-only before this phase; it schedules this research child only. This child does not spawn `/architecture`.
+- **Delivery closure (2026-10-19T21:00:00Z, curator, `orchestrator_run_id=repair-20261018-bug0038-anchor-repair`)**: **`BUG-0038`** **DONE**; sprint **`S0183`** **released**; approach **A1** delivered — one exact QA continuation-brief allow in the active/template QA maps (deny-first preserved; QA+verify-work covered; byte parity kept), five **`test_bug0038_*`** contract markers (**`tests/bug0038_qa_resume_brief_permission_contract_test.py`**), the **`PERMISSION_MATRIX_REPAIR_REQUIRES_OPERATOR`** operator-only stop boundary (**`scripts/permission_matrix_repair_lib.py`**), and parent/orchestrator authority left read/validate/spawn-only; canonical flip to **DONE** with AC-1..AC-5 `[x]` and the **`docs/product/acceptance.md`** row `[x]`; **`sprints/S0183/closure-verification.md`** CLOSURE_PASS; curator **`/refresh-context`** reconciled research posture with delivery (**`docs/engineering/state.md`** refresh-context checkpoint, **`handoffs/resume_brief.md`** refresh-context pair). **`R-0173`** **delivered**.
+
+## R-0174
+
+- **Date**: 2026-10-20
+- **Topic**: BUG-0037 — OpenCode story creation omits the canonical structured fields (especially `Status`).
+- **Query**: Given the discovery-confirmed root cause (the OpenCode PO story-creation surface is a thin stub with no canonical structured story-block contract), what is the bounded, minimum-scope remediation that restores canonical structured story-block output on the OpenCode host, and what is the exact contract-test design that proves it — without weakening the canonical reference block, importing remote stories, or editing agent maps, production code, or the backlog from this research phase?
+- **Sources** (local, read-only; no secrets):
+  - Discovery continuation pair and checkpoint: `docs/engineering/state.md` (BUG-0037 discovery checkpoint, `record_key=auto-20261020-bug0037|bug|BUG-0037|discovery|rp-auto-20261020-bug0037-discovery-po-20261020T164109Z-BUG-0037`); `handoffs/resume_brief.md` (BUG-0037 discovery latest-pointer block); `handoffs/po_to_tl.md` BUG-0037 intake/discovery handoffs; `handoffs/intake_evidence/BUG-0037-intake-20261016T192729Z.json`.
+  - OpenCode surface (repair unit, active): `.opencode/agents/po.md` (19 lines; no field template), `.opencode/commands/intake.md` (19-line dispatch-only stub ending "STOP"); template twins `template/.opencode/agents/po.md`, `template/.opencode/commands/intake.md`.
+  - Cursor contrast (read-only): `.cursor/agents/po.mdc` (143 lines), `.cursor/commands/intake.md` (351 lines; US-0051 persistence / writer-safety / intake-evidence contracts).
+  - Prose template (both hosts): `.cursor/skills/its-magic/templates/story.md` + template twin (15-line `# User Story` prose shape — **not** the canonical structured block).
+  - Canonical reference block: `docs/product/backlog.md` `## US-0161` (L6144–6178) — H2 `## US-0161 — <Title>`, `- user_visible:`, `- Title:`, `- Summary:`, `- Priority: P1`, `- Status:`, intake provenance, `- Acceptance:` with `  - [ ] AC-n:` bullets, `- Boundaries:`, `related_us`/`related_dec`.
+  - Pair/proof contract: `decisions/DEC-0153.md`, `scripts/opencode_auto_bridge.py` (`PAIR_LOCKED_FIELDS`, `build_resume_pair_key`, `validate_resume_pair`), `scripts/token_cost_lib.py` (`compute_strict_proof_hash`).
+  - Research schema: `docs/engineering/research.md` header (DEC-0011: required ID/Date/Topic; optional Query/Sources/Findings/Linked/Confidence/Status; auto-increment from highest → R-0174).
+- **Linked**: BUG-0037 (OPEN/P1; this entry). Composes with BUG-0036 (OPEN, not reopened) and DONE BUG-0038 without touching either. Consumes the discovery pair `auto-20261020-bug0037|bug|BUG-0037|discovery|…-20261020T164109Z-BUG-0037`.
+- **Confidence**: high
+- **Status**: current
+- **Approach**: **A — restore the canonical structured story-block contract on the OpenCode PO story-creation surface (4-file parity set), paired with the AC-4 shape contract test.** `decision_gate=false`; **no companion DEC** (bounded remediation of an existing defect under the accepted DEC-0153 continuation discipline; no new decision).
+
+### Findings and locks
+
+1. **Root cause re-confirmed on the live surfaces.** The OpenCode PO story-creation surface is a thin stub: `.opencode/agents/po.md` (19 lines; permission map + two role sentences, no field template) and `.opencode/commands/intake.md` (19 lines; front matter, artifacts list, validator-bridge note, terminal "STOP") carry **no** structured story-block contract. Their template twins are byte-identical (active/template SHA-256: agents/po.md `9a832ea9d905001b…`; commands/intake.md `42bfb16cb13d88dd…`; both pairs verified byte-identical in the working tree). The Cursor host carries the structured practice instead: `.cursor/agents/po.mdc` (143 lines) and `.cursor/commands/intake.md` (351 lines) contain the rich intake machinery (question packs, writer-safety guard, intake-evidence gate). Consequence: Cursor-created stories are structured; OpenCode-created stories are prose (`### US-####` H3, `**Priority:**`, `**Release:**`, `**Acceptance criteria**`, no `Status`) — the observed defect.
+2. **Canonical shape is exemplar-derived, not template-carried, on both hosts.** No explicit canonical story-block field-list template exists on either host. The canonical structured block is defined by the live exemplar — `## US-0161` at `docs/product/backlog.md` L6144–6178 — and enforced downstream by the validator tooling; the shared prose skill template (`.cursor/skills/its-magic/templates/story.md` + twin, 15 lines, `# User Story` / `ID: US-0001`) is the PROSE shape, **not** the canonical structured block, and is not the remediation surface. The OpenCode stub therefore has **nothing** to reference; that is the defect.
+3. **Repair unit = 4-file OpenCode parity set (locked).** `.opencode/agents/po.md` + `.opencode/commands/intake.md` (active) and their `template/.opencode/` twins. The structured story-block contract (H2 `## US-#### — <Title>` + `- user_visible:` / `- Title:` / `- Summary:` / `- Priority: P<n>` / `- Status:` + `- Acceptance:` with `  - [ ] AC-n:` bullets; prose markers `**Priority:**` / `**Release:**` / `**Acceptance criteria**` forbidden) must be restored so the OpenCode PO writer emits the canonical shape. The exact content split between agent (contract pointer) and command (field template) is architecture to decide. The set is minimal + additive; no wildcard, no map/permission change, no other-file change.
+4. **The "shared story writer" is the PO LLM role; no separate Python story-writer exists.** Greps for `story.?writer|write_story|backlog_block|story_block|build_story` return no writer implementation; one-off backfill scripts are not the live writer. The contract therefore lives on the host surface (agent/command), not in a new script. Adding a new Python story-writer script is rejected (no such writer exists; the PO LLM is the writer).
+5. **AC-4 contract-test design (documented; not authored).** Proposed file `tests/bug0037_story_shape_contract_test.py` (repo convention `bug####_*_test.py`, no `test_` prefix; models: `tests/bug0035_continuation_pair_test.py`, `tests/bug0036_repairable_blocker_contract_test.py`, `tests/bug0038_qa_resume_brief_permission_contract_test.py`). Assertion list locked in discovery (positive canonical shape): (1) H2 `## US-#### — <Title>` (not H3, not `# User Story`); (2) `- user_visible:`; (3) `- Title:`; (4) `- Summary:`; (5) `- Priority: P<n>`; (6) `- Status:` (the operator's headline missing field, MUST be present); (7) `- Acceptance:` header with ≥1 `  - [ ] AC-n:` bullet; plus shape discriminator (8): the block must NOT use the prose markers `**Priority:**`, `**Release:**`, `**Acceptance criteria**`. Deliberately NOT over-locked to intake-specific provenance fields (`intake_run_id`, `writer_id`, `topic_coverage`) — the contract is about shape, not provenance. The live canonical block (`US-0161`, L6144–6178) is the positive reference fixture; a prose-shaped fixture is the negative fixture. After the remediation, the four repair-unit files must be byte-identical active/template within each pair.
+6. **Scope locks.** No agent-map/permission edits; no production code; no remote import of `US-0001`..`US-0004` (the faulty samples are evidence, not importable — AC-5); no US-0161 weakening/reopen; no AC ticks; no commit/push/publish; no `/auto` or child spawn; research phase writes no backlog (the tech-lead permission map denies `docs/product/backlog.md` — no `research_notes` line is added to the BUG-0037 block from this phase; that is PO-owned). Composes with BUG-0036 (OPEN) and BUG-0038 (DONE) without touching either.
+
+### Rejected alternatives
+
+| Option | Rejection reason |
+|---|---|
+| Cross-host template-parity track (also rework Cursor surfaces) | Broader than the defect; the Cursor host already carries the structured practice (AC-2: Cursor/Pi are not promised user outcomes). Bounded OpenCode-only remediation is sufficient. |
+| Remote import of the faulty `US-0001`..`US-0004` samples | Those are the defect evidence, not importable fixtures; AC-5 forbids them. The canonical reference is the live `US-0161` block. |
+| New Python story-writer script | No writer implementation exists (greps return none); the PO LLM is the writer. A new script is out of scope and would not fix the surface defect. |
+| Companion DEC | Bounded remediation under the accepted DEC-0153 continuation discipline; no new decision is required. `decision_gate=false`. |
+| Over-locking AC-4 to intake provenance fields | The contract is about canonical **shape**, not intake provenance; over-locking couples the shape contract to intake internals. |
+
+### Architecture handoff locks
+
+- Architecture defines the exact OpenCode PO agent/command contract text and the `tests/bug0037_story_shape_contract_test.py` fixtures (positive `US-0161`-shaped canonical block; negative prose fixture) and the 4-file active/template byte-parity assertion. It must not implement, create a sprint, alter product status/ACs, or grant the parent/orchestrator anything.
+- Preserve the 4-file repair-unit active/template byte identity and add nothing outside it; do not modify agent maps/permissions, `PHASE_ROLE_MATRIX`, DEC-0153, `RESUME_BRIEF_AUTO_REFRESH=0`, or `CROSS_MODEL_REVIEW=0`.
+- The canonical reference block `US-0161` (`docs/product/backlog.md` L6144–6178) stays byte-for-byte as the positive fixture; no weakening, no reopen. The contract is shape, not provenance.
+- BUG-0037 remains **OPEN/P1** with AC-1..AC-5 and its acceptance row unchecked. No secret/.env read, `/auto`, critic, child spawn, commit, push, or publish occurred in this research phase.
+
+### Research isolation
+
+- phase_id=research; role=tech-lead; model_id=`zelisko_llm/qwen3.8-27b`; model_provenance=`fresh canonical phase child (tech-lead research)`; fresh_context_marker=`tl-BUG0037-research-20261020T170729Z-fresh`; runtime_proof_id=`rp-auto-20261020-bug0037-research-techlead-20261020T170729Z-BUG-0037`; proof_hash=`062e987b746280dc0f26f400e186ebc2d99b5c788d9966f623c3f062d0a7fa95`; proof_issued_at=`2026-10-20T17:07:29Z`; proof_ttl_seconds=3600; proof_ttl=`2026-10-20T18:07:29Z`; hash_recompute_confirmation=true.
+- Consumed discovery pair `auto-20261020-bug0037|bug|BUG-0037|discovery|rp-auto-20261020-bug0037-discovery-po-20261020T164109Z-BUG-0037` / `b57f5bff9c3e95f8abf9370cd5dbdeefef6d876ee698af4c0061d035a58d57f7` recompute MATCH and IN-TTL at this write (issued 2026-10-20T16:41:09Z, ttl until 2026-10-20T17:41:09Z; clock at validation 2026-10-20T17:07:29Z).
+- `template/docs/engineering/research.md` is not a parity pair; this `R-0174` heading was not copied there.
+- BUG-0037 stays **OPEN/P1**. AC-1..AC-5 stay unchecked. No sprint. No DEC. No backlog edit (tech-lead map denies `docs/product/backlog.md`). No product edit. No architecture section. This research child does not spawn `/architecture`.
+

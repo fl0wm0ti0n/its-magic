@@ -97,6 +97,7 @@ unavailable). Guided and decision-gated modes remain the default.
 - `/auto` — Catalog-resolved Cursor Task spawns prevent silent parent-model inheritance (`BUG-0022`).
 - `/auto` — Hybrid OpenCode CLI-TUI dispatch is retained as a guarded fallback (`BUG-0024`).
 - `/auto` — Direct OpenCode slash phases persist isolation evidence before continuation (`BUG-0027`).
+- `itsm` — Help, local auth/models, and bare `status` skip full runtime admission (`BUG-0028`).
 - `/auto` — Paired state/resume continuation records reject stale or conflicting handoffs (`BUG-0035`).
 - `US-0016` scratchpad flag — Homebrew Version Sync (`US-0016`).
 - `/acceptance` — Standalone authentication and model routing with Codex OAuth, API-key providers, 6-step precedence, thinking levels, critic pinning, and health diagnostics (`BUG-0021`, `US-0135`).
@@ -161,6 +162,10 @@ walking upward. From another directory, select one explicitly with
 `$env:ITSM_PROJECT_ROOT = "C:\path\to\repo"`). Remove both global commands with
 `npm uninstall -g --prefix <same-prefix> its-magic`. `itsm` requires Node.js
 `>=22.19.0`; older Node versions exit with `ITSM_NODE_VERSION_UNSUPPORTED`.
+No-argument `itsm`, `itsm help` (`--help` and `-h`), `itsm auth`, `itsm models`,
+and bare `itsm status` are lightweight inspection and auth commands. Workflow
+commands, including `ask`, `resume`, `pause`, `index`, `app`, and `browser`,
+admit the full runtime through `createRuntimeHost`. API-key login from a pipe is `itsm auth login openai --type api_key --api-key-stdin`.
 
 ### Global Linux install: empty `install_include_paths` (CRLF manifest)
 

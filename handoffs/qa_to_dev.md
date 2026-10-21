@@ -1,3 +1,46 @@
+# QA handoff — BUG-0038 / S0183 (QA_PASS — no dev route)
+
+- **Timestamp:** 2026-10-19T20:37:10Z; **verdict:** **QA_PASS**; `decision_gate=false`.
+- **Resolution:** the canonical QA child lawfully persisted its complete DEC-0153 state-first pair and matching resume-brief pointer. The prior QA_BLOCKED records below remain historical blocker evidence only.
+- **Evidence:** `sprints/S0183/qa-findings.md`, `uat.md`, `uat.json`, `plan-verify.json`, and `docs/engineering/state.md` QA checkpoint; focused BUG-0038 + US-0156 resolver tests **16 passed**; canonical bug linkage validator **[BUG_VALIDATION_OK]**.
+- **Route:** no dev remediation and no QA-to-dev action. The only authorized successor is fresh `verify-work` as `qa` after validating `repair-20261018-bug0038-anchor-repair|bug|BUG-0038|qa|rp-repair-20261018-bug0038-qa-canonical-qa-20261019T203710Z-BUG-0038`.
+- **Guard:** BUG-0038 remains OPEN/P0; AC-1..AC-5 and the acceptance row remain unchecked. No closure action.
+
+---
+
+# QA handoff — BUG-0038 / S0183 (QA_BLOCKED — DEC-0153 brief permission denied)
+
+- **Timestamp:** 2026-10-18T21:10:26Z
+- **Verdict:** `QA_BLOCKED`; reason code `QA_RESUME_BRIEF_PERMISSION_DENIED`.
+- **Isolation:** `qa-BUG0038-qa-recovery-20261018T211026Z-fresh`; strict proof `rp-repair-20261018-bug0038-qa-recovery-qa-20261018T211026Z-BUG-0038` / `b65a5a2041d5d047fdbed6bf7e7830d68ccef56cc31c37a17bc80742fb37dd56` (MATCH twice).
+- **Evidence:** `docs/engineering/state.md#bug-0038-qa-recovery-20261018T211026Z`, `sprints/S0183/qa-findings.md`, `sprints/S0183/uat.md`, and `sprints/S0183/plan-verify.json`.
+- **Blocking fact:** incoming execute pair and QA candidate pair validation passed, then the current QA surface denied the required `handoffs/resume_brief.md` prepend. The brief was not written and there is no valid QA continuation pair.
+- **Route:** no dev remediation, no next phase, and no spawn. This handoff is durable blocker evidence only; BUG-0038 remains OPEN/P0.
+
+---
+
+# QA handoff — US-0158 / S0182 (QA_BLOCKED — DEC-0153 prerequisite permission denied)
+
+- **Timestamp:** 2026-10-17T11:19:49Z
+- **Verdict:** **QA_BLOCKED**; reason code `QA_RESUME_BRIEF_PERMISSION_DENIED`.
+- **Fresh continue_same_phase confirmation:** the next QA child retried the
+  scoped `apply_patch` repair first; effective edit enforcement again denied
+  both QA-map paths, so no configuration, QA/UAT evidence, state checkpoint,
+  or resume-brief pair was written. Terminal stop remains unchanged.
+- **Evidence:** `sprints/S0182/qa-findings.md`.
+- **Blocking fact:** active and template `.opencode/agents/qa.md` are byte-identical
+  (SHA-256 `880798c2862451fae0c51bdfceb088c1e1e2cb55e01917b7663a0ced2ae406a1`),
+  but each has zero exact `"handoffs/resume_brief.md": allow` entries. The
+  narrow user-authorized repair was rejected by the current QA permission map.
+- **Required repair:** an authorized configuration writer must add only that
+  exact QA allow to the active map and template mirror, preserving deny-first
+  order, every existing allow, the seven-role Task policy, and byte parity.
+- **No QA execution:** canonical QA tests/UAT and the DEC-0153 state/brief pair
+  were not run or written; the permission gate fails closed before the phase.
+- **STOP:** no next phase is named; no child was spawned.
+
+---
+
 # QA -> Dev handoff — BUG-0033 / S0168 (QA_FAIL — B-1: S0168 "harness green Fail=0" exit gate unmet; triad hot-surface over-size from stale harness evidence)
 
 > **Routing note (qa → dev):** this is the **`/execute` rework handoff** for the S0168 / BUG-0033 segment. A fresh `qa` context (`qa-BUG0033-20261009T225321Z-fresh`) independently re-verified the dev's gate-lifted `EXECUTE_PASS` (gatefix3, `E24685BB…6935`) and found the **S0168 "harness green Fail=0" exit gate (sprint.md L134) NOT met in the current repo state**: the full harness is **red** (`Pass=877/Fail=2`) because `docs/engineering/state.md` is **1209 lines > the 1200-line triad cap**, which the dev's **own gatefix3 checkpoint append** introduced **after** its last green harness run (with no post-append re-run). The BUG-0033 functional core (AC-1..AC-8) and all 3 gate-lift fixes are **intact and independently GREEN** — this is a **gate/hygiene regression, not a BUG-0033-fix defect**. Do NOT re-verify the BUG-0033 slice; do the single remediation below and re-spawn `/qa`.

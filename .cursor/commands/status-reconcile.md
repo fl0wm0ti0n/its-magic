@@ -2,6 +2,8 @@
 description: "its-magic status-reconcile: deterministic status normalization and resume readiness."
 ---
 
+Kernel pointer: `.cursor/rules/core.mdc`. Do not paste the kernel lines into this file.
+
 # /status-reconcile
 
 ## Subagents

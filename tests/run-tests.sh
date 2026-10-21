@@ -1723,6 +1723,34 @@ BUG0033_CONTRACT_PY=$?
 set -e
 assert_true "BUG-0033 10-marker command parity suite (tests/bug0033_opencode_command_parity_test.py)" "[ \"$BUG0033_CONTRACT_PY\" -eq 0 ]"
 
+# 26AX) US-0162 — token routing and context pack contract
+set +e
+"$PY" -m pytest tests/us0162_token_routing_contract_test.py -q >/dev/null 2>&1
+US0162_CONTRACT_PY=$?
+set -e
+assert_true "US-0162 token routing contract tests pass" "[ \"$US0162_CONTRACT_PY\" -eq 0 ]"
+
+# 26AY) BUG-0036 — repairable blocker contract
+set +e
+"$PY" -m pytest tests/bug0036_repairable_blocker_contract_test.py -q >/dev/null 2>&1
+BUG0036_CONTRACT_PY=$?
+set -e
+assert_true "BUG-0036 repairable blocker contract tests pass" "[ \"$BUG0036_CONTRACT_PY\" -eq 0 ]"
+
+# 26AZ) US-0157 — OpenCode critic hook and owning-child pair repair
+set +e
+"$PY" -m pytest tests/us0157_opencode_critic_pair_contract_test.py -q >/dev/null 2>&1
+US0157_CONTRACT_PY=$?
+set -e
+assert_true "US-0157 OpenCode critic pair contract tests pass" "[ \"$US0157_CONTRACT_PY\" -eq 0 ]"
+
+# 26BA) US-0158 — OpenCode recoverable stop continuation
+set +e
+"$PY" -m pytest tests/us0158_opencode_recoverable_stop_contract_test.py -q >/dev/null 2>&1
+US0158_CONTRACT_PY=$?
+set -e
+assert_true "US-0158 OpenCode recoverable stop contract tests pass" "[ \"$US0158_CONTRACT_PY\" -eq 0 ]"
+
 timestamp=$(date -u +"%Y-%m-%dT%H:%M:%SZ")
 {
   echo "# its-magic Test Report"

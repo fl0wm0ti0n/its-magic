@@ -4,6 +4,7 @@ mode: subagent
 permission:
   edit:
     "**": deny
+    "handoffs/resume_brief.md": allow
     "sprints/S*/qa-findings.md": allow
     "sprints/S*/plan-verify.json": allow
     "sprints/S*/verify-work-findings.md": allow

@@ -1,0 +1,3 @@
+Title: Cross-host maximum autonomy: Cursor, Pi, and OpenCode continue through recoverable errors, flow faults, missing workflow rights, and expectation mismatches.
+
+Summary: As an operator, I want the whole its-magic concept on Cursor, Pi, and OpenCode checked and shaped so maximum autonomy is possible. Clear phase sequences stay. A blocker caused by an error, a fault in the its-magic flow, or missing workflow rights is not possible, or the agent resolves it and continues. A result that does not match the expected outcome does not block the sequence.

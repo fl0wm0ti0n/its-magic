@@ -2,6 +2,8 @@
 description: "its-magic memory-audit: read-only check for memory drift between artifacts and repository signals."
 ---
 
+Kernel pointer: `.cursor/rules/core.mdc`. Do not paste the kernel lines into this file.
+
 # /memory-audit
 
 ## Subagents
@@ -20,19 +22,9 @@ description: "its-magic memory-audit: read-only check for memory drift between a
 - **Narrow-read (US-0053 / US-0096 Tranche A)**: Start at docs/engineering/phase-context.md
   and the story section anchor in vision/architecture/decisions when a heading exists; forbid
   full-file reads when a section heading exists.
-Read these files to build the audit picture:
+Run `scripts/memory_audit_deterministic.py` before any model call. The helper order is git diff, hash comparison, cross-reference validation, status validation, then schema validation. A clean result records `model_calls=0`. A model reads a file only when that helper returns an unresolved semantic question. Do not read every memory file into a model.
 
-- `docs/engineering/state.md` — current project status and progress snapshot
-- `docs/product/backlog.md` — story definitions and statuses
-- `docs/product/acceptance.md` — acceptance criteria and completion status
-- `docs/engineering/architecture.md` — technical design and decisions
-- `docs/engineering/decisions.md` — decision index
-- `decisions/DEC-*.md` — individual decision records (check for open TODOs/gates)
-- `sprints/S*/progress.md` — sprint progress (all sprints, not just latest)
-- `sprints/S*/tasks.md` — task definitions and status
-- `sprints/S*/summary.md` — sprint completion summaries
-- `handoffs/*.md` — handoff artifacts
-- `.cursor/scratchpad.md` — automation flags and config
+The helper scope is state, backlog, acceptance, architecture, decisions, sprints, handoffs, and scratchpad flags. That scope is not a prompt dump.
 
 ## Outputs (artifacts)
 - `docs/engineering/memory-drift-report.md`

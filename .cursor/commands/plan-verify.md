@@ -2,6 +2,8 @@
 description: "its-magic plan verify: verify sprint tasks against acceptance."
 ---
 
+Kernel pointer: `.cursor/rules/core.mdc`. Do not paste the kernel lines into this file.
+
 # /plan-verify
 
 ## Subagents

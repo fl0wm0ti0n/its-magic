@@ -2,6 +2,8 @@
 description: "its-magic release: prepare release notes and runbook updates."
 ---
 
+Kernel pointer: `.cursor/rules/core.mdc`. Do not paste the kernel lines into this file.
+
 # /release
 
 ## Subagents

@@ -1,0 +1,72 @@
+{
+  "selected_pack": "small-intake-pack",
+  "intake_run_id": "ir-20261015T164800Z-rolegrant",
+  "writer_id": "po-cursor-20261015-rolegrant",
+  "INTAKE_GUIDED_MODE": 0,
+  "INTAKE_WORK_ITEM_KIND": "story",
+  "requested_mode": "story",
+  "ID_NAMESPACE_BOOTSTRAP": 0,
+  "WORK_KIND_ROUTING": 0,
+  "EARLY_RESEARCH": 0,
+  "FRAMEWORK_KIT_REPO": 1,
+  "story_id": null,
+  "bug_id": null,
+  "persistence": "blocked",
+  "asked_topics": [
+    "outcome_success_criteria",
+    "impacted_components",
+    "done_definition"
+  ],
+  "missing_topics": [
+    "constraints_compatibility_risks",
+    "required_tests_acceptance_checks"
+  ],
+  "assumptions_confirmed": "(none)",
+  "topic_coverage": [
+    {
+      "topic_key": "outcome_success_criteria",
+      "satisfied_by": "answer_ref",
+      "ref": "ie:ir-20261015T164800Z-rolegrant:0:4bbfabde98141601",
+      "quoted_user_text": "The development flow must not be stopped.",
+      "intake_run_id": "ir-20261015T164800Z-rolegrant",
+      "turn_index": 0
+    },
+    {
+      "topic_key": "impacted_components",
+      "satisfied_by": "answer_ref",
+      "ref": "ie:ir-20261015T164800Z-rolegrant:1:91633859432add4a",
+      "quoted_user_text": "The OpenCode agent then said it may only start po, tech-lead, dev, qa, release, curator, and security, so it fail-closed instead of skipping the critic or starting /execute.",
+      "intake_run_id": "ir-20261015T164800Z-rolegrant",
+      "turn_index": 1
+    },
+    {
+      "topic_key": "done_definition",
+      "satisfied_by": "answer_ref",
+      "ref": "ie:ir-20261015T164800Z-rolegrant:2:981693b68bb8e878",
+      "quoted_user_text": "Whenever permission problems or faulty states occur, agents must be allowed to repair themselves and repair the state.",
+      "intake_run_id": "ir-20261015T164800Z-rolegrant",
+      "turn_index": 2
+    }
+  ],
+  "bug_routing_guard": {
+    "defect_prose": "[INTAKE_BUG_ROUTING_OK] kind=story exit=0",
+    "policy_prose": "[INTAKE_BUG_ROUTING_OK] kind=story exit=0",
+    "note": "Exit 0 does not split a BUG. No US allocated because small-intake-pack coverage is incomplete."
+  },
+  "duplicate_check": {
+    "highest_us": "US-0156",
+    "highest_bug": "BUG-0035",
+    "not_reopened": [
+      "BUG-0016",
+      "BUG-0026",
+      "BUG-0027",
+      "BUG-0029",
+      "BUG-0035"
+    ],
+    "overlap_notes": "US-0104 DONE already requires a fresh tech-lead /sovereign-critic spawn. US-0119 DONE keeps PHASE_ROLE_CAPABILITY_MISSING security-hard. US-0156 DONE does not cover critic-role dead-ends or phase-child continuation repair. DEC-0153 Accepted: the phase child writes the continuation pair; the spawn-only parent does not; no self-heal and no RESUME_BRIEF_AUTO_REFRESH=0 bypass."
+  },
+  "remediation_questions": {
+    "constraints_compatibility_risks": "Which compatibility limits stay in force while restrictions are loosened? In particular, confirm whether a fresh phase child may repair only its own invalid continuation pair, the /auto orchestrator still must not write or repair state.md or resume_brief.md (DEC-0153), and hard security denies stay hard.",
+    "required_tests_acceptance_checks": "Which checks prove the change? For example, OpenCode /auto with CROSS_MODEL_REVIEW=1 spawns tech-lead for /sovereign-critic and does not stop with PHASE_ROLE_CAPABILITY_MISSING for a missing critic role, and a contract test shows a fresh phase child can repair its own invalid continuation pair while the orchestrator still does not write that pair."
+  }
+}

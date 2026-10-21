@@ -2,6 +2,8 @@
 description: "its-magic QA: test plan, findings, verify fixes."
 ---
 
+Kernel pointer: `.cursor/rules/core.mdc`. Do not paste the kernel lines into this file.
+
 # /qa
 
 ## Subagents

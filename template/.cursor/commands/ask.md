@@ -2,6 +2,8 @@
 description: "its-magic ask: answer questions using project context, read-only."
 ---
 
+Kernel pointer: `.cursor/rules/core.mdc`. Do not paste the kernel lines into this file.
+
 # /ask
 
 ## Subagents

@@ -2,6 +2,8 @@
 description: "its-magic sovereign-critic: cross-model adversarial review after producer phase."
 ---
 
+Kernel pointer: `.cursor/rules/core.mdc`. Do not paste the kernel lines into this file.
+
 # /sovereign-critic
 
 ## Subagents

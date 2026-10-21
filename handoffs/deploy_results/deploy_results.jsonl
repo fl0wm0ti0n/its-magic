@@ -1,0 +1,12 @@
+{"audit":"delivery_limit","action":"deploy","ok":true,"path":"handoffs/deploy_results"}
+{"target_id":"missing","kind":"custom_command","ok":false,"target_run_key":"ff07492210dca8ddd5f69e40af5b67c3","reason_code":"RELEASE_TARGET_UNCONFIGURED"}
+{"audit":"delivery_limit","action":"deploy","ok":true,"path":"handoffs/deploy_results"}
+{"audit":"delivery_limit","action":"repair","ok":true,"path":"handoffs/deploy_results"}
+{"audit":"delivery_limit","action":"deploy","ok":true,"path":"handoffs/deploy_results"}
+{"target_id":"missing","kind":"custom_command","ok":false,"target_run_key":"ff07492210dca8ddd5f69e40af5b67c3","reason_code":"RELEASE_TARGET_UNCONFIGURED"}
+{"audit":"delivery_limit","action":"deploy","ok":true,"path":"handoffs/deploy_results"}
+{"audit":"delivery_limit","action":"repair","ok":true,"path":"handoffs/deploy_results"}
+{"audit":"delivery_limit","action":"deploy","ok":true,"path":"handoffs/deploy_results"}
+{"target_id":"missing","kind":"custom_command","ok":false,"target_run_key":"ff07492210dca8ddd5f69e40af5b67c3","reason_code":"RELEASE_TARGET_UNCONFIGURED"}
+{"audit":"delivery_limit","action":"deploy","ok":true,"path":"handoffs/deploy_results"}
+{"audit":"delivery_limit","action":"repair","ok":true,"path":"handoffs/deploy_results"}

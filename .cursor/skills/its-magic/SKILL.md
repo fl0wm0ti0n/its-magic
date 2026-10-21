@@ -1,3 +1,5 @@
+Kernel pointer: `.cursor/rules/core.mdc`. Do not paste the kernel lines into this file.
+
 # its-magic Skill
 
 This skill guides the AI dev team through the its-magic workflow. It enforces

@@ -1,0 +1,69 @@
+{
+  "selected_pack": "small-intake-pack",
+  "intake_run_id": "ir-20261016T184815Z-autoblock",
+  "writer_id": "po-cursor-20261016-autoblock",
+  "INTAKE_GUIDED_MODE": 0,
+  "INTAKE_WORK_ITEM_KIND": "bug",
+  "requested_mode": "bug",
+  "intake_boundary_utc": "2026-10-16T18:48:15Z",
+  "ID_NAMESPACE_BOOTSTRAP": 0,
+  "WORK_KIND_ROUTING": 0,
+  "EARLY_RESEARCH": 0,
+  "asked_topics": [
+    "outcome_success_criteria",
+    "impacted_components",
+    "constraints_compatibility_risks",
+    "required_tests_acceptance_checks",
+    "done_definition"
+  ],
+  "missing_topics": [],
+  "assumptions_confirmed": "(none)",
+  "topic_coverage": [
+    {
+      "topic_key": "outcome_success_criteria",
+      "satisfied_by": "answer_ref",
+      "ref": "ie:ir-20261016T184815Z-autoblock:0:6f14b0124548c514",
+      "quoted_user_text": "/intake bug genau solche blocker wie eben dürfen in zukunft nicht passieren",
+      "intake_run_id": "ir-20261016T184815Z-autoblock",
+      "turn_index": 0
+    },
+    {
+      "topic_key": "impacted_components",
+      "satisfied_by": "answer_ref",
+      "ref": "ie:ir-20261016T184815Z-autoblock:1:d7077e741f1263e0",
+      "quoted_user_text": "1. mehrere",
+      "intake_run_id": "ir-20261016T184815Z-autoblock",
+      "turn_index": 1
+    },
+    {
+      "topic_key": "constraints_compatibility_risks",
+      "satisfied_by": "answer_ref",
+      "ref": "ie:ir-20261016T184815Z-autoblock:2:93e0c24bfc88465d",
+      "quoted_user_text": "2. generell sollte alles nicht absolut hart stoppen, wenn möglich sollte es sich reparieren können. bzw man die härte einstellen können",
+      "intake_run_id": "ir-20261016T184815Z-autoblock",
+      "turn_index": 2
+    },
+    {
+      "topic_key": "required_tests_acceptance_checks",
+      "satisfied_by": "answer_ref",
+      "ref": "ie:ir-20261016T184815Z-autoblock:3:3bfc22125eea0dae",
+      "quoted_user_text": "3. ich habe keine meinung dazu",
+      "intake_run_id": "ir-20261016T184815Z-autoblock",
+      "turn_index": 3
+    },
+    {
+      "topic_key": "done_definition",
+      "satisfied_by": "answer_ref",
+      "ref": "ie:ir-20261016T184815Z-autoblock:4:7d0c50ca2fa87deb",
+      "quoted_user_text": "4. jede",
+      "intake_run_id": "ir-20261016T184815Z-autoblock",
+      "turn_index": 4
+    }
+  ],
+  "duplicate_check_pass": true,
+  "duplicate_check_notes": "No open BUG is this defect. BUG-0005, BUG-0012, BUG-0013, BUG-0032, and BUG-0035 are DONE and related, not reopened. BUG-0029 is cited only; this intake does not edit it.",
+  "decomposition_verdict": "single_bug",
+  "decomposition_rationale": "INTAKE_GUIDED_MODE=0. No story split. One defect class: automatic-flow blockers that hard-stop when repair is possible.",
+  "decision_gate": false,
+  "bug_id": "BUG-0036"
+}

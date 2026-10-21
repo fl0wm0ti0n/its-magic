@@ -1,0 +1,219 @@
+{
+  "selected_pack": "first-intake-pack",
+  "intake_run_id": "ir-20261015T213041Z-us0161",
+  "writer_id": "po-cursor-20261015-us0161",
+  "INTAKE_GUIDED_MODE": 0,
+  "INTAKE_WORK_ITEM_KIND": "story",
+  "requested_mode": "story",
+  "ID_NAMESPACE_BOOTSTRAP": 0,
+  "WORK_KIND_ROUTING": 0,
+  "EARLY_RESEARCH": 0,
+  "CROSS_REPO_OBSERVABILITY": 0,
+  "COMPONENT_SCOPE_MODE": 0,
+  "SPEC_PACK_MODE": 0,
+  "USER_GUIDE_MODE": 0,
+  "FRAMEWORK_KIT_REPO": 1,
+  "story_id": "US-0161",
+  "bug_id": null,
+  "decision_gate": false,
+  "persistence": "persisted",
+  "asked_topics": [
+    "users_problem",
+    "runtime_target_environment",
+    "language_framework_runtime",
+    "architecture_preference",
+    "ui_design_expectations",
+    "security_compliance",
+    "non_functional_priorities",
+    "scope_timeline"
+  ],
+  "missing_topics": [],
+  "assumptions_confirmed": "(none)",
+  "topic_coverage": [
+    {
+      "topic_key": "users_problem",
+      "satisfied_by": "answer_ref",
+      "quoted_user_text": "Blocker wegen Fehler oder Fehler im its-magic-Ablauf oder wegen fehlender Rechte sollen nicht mehr möglich sein bzw selbstsändig aufgelöst werden",
+      "intake_run_id": "ir-20261015T213041Z-us0161",
+      "turn_index": 3,
+      "ref": "ie:ir-20261015T213041Z-us0161:3:67386fa6d42b4466"
+    },
+    {
+      "topic_key": "runtime_target_environment",
+      "satisfied_by": "answer_ref",
+      "quoted_user_text": "das gesamtkonzept für alle module cursor, pi, opencode prüfen",
+      "intake_run_id": "ir-20261015T213041Z-us0161",
+      "turn_index": 1,
+      "ref": "ie:ir-20261015T213041Z-us0161:1:948b18d566a7a67a"
+    },
+    {
+      "topic_key": "non_functional_priorities",
+      "satisfied_by": "answer_ref",
+      "quoted_user_text": "es so gestalten das maximale autonomie gegeben sein kann",
+      "intake_run_id": "ir-20261015T213041Z-us0161",
+      "turn_index": 2,
+      "ref": "ie:ir-20261015T213041Z-us0161:2:1f78be5e2ddda594"
+    },
+    {
+      "topic_key": "architecture_preference",
+      "satisfied_by": "answer_ref",
+      "quoted_user_text": "es sollen klare abfolgen sein, aber nicht blocken wenn etwa snicht den ewrwartungen entspricht",
+      "intake_run_id": "ir-20261015T213041Z-us0161",
+      "turn_index": 4,
+      "ref": "ie:ir-20261015T213041Z-us0161:4:1fa48753024e84d1"
+    },
+    {
+      "topic_key": "security_compliance",
+      "satisfied_by": "delegation_ref",
+      "quoted_user_text": "delegation-label: workflow-permission-stop self-resolve",
+      "intake_run_id": "ir-20261015T213041Z-us0161",
+      "turn_index": 5,
+      "ref": "ie:ir-20261015T213041Z-us0161:5:4a107ce4d221f51d",
+      "delegation_scope": "its-magic workflow permission stops self-resolve; reading .env and npm/git publish stay on US-0092 AC-10 and are not widened by this story",
+      "delegation_rationale": "the operator named missing rights as a workflow blocker, not secret or publish removal",
+      "delegation_confidence": "medium"
+    },
+    {
+      "topic_key": "language_framework_runtime",
+      "satisfied_by": "delegation_ref",
+      "quoted_user_text": "delegation-label: existing hosts only, no new language or framework",
+      "intake_run_id": "ir-20261015T213041Z-us0161",
+      "turn_index": 6,
+      "ref": "ie:ir-20261015T213041Z-us0161:6:3839662c5ac9b539",
+      "delegation_scope": "existing hosts only: Cursor command pack, standalone Pi runtime (TypeScript itsm), OpenCode adapter, shared Python stop matrix",
+      "delegation_rationale": "operator named the three modules and did not ask for a new language or framework",
+      "delegation_confidence": "high"
+    },
+    {
+      "topic_key": "ui_design_expectations",
+      "satisfied_by": "delegation_ref",
+      "quoted_user_text": "delegation-label: no new client, stop and continue behavior only",
+      "intake_run_id": "ir-20261015T213041Z-us0161",
+      "turn_index": 7,
+      "ref": "ie:ir-20261015T213041Z-us0161:7:c464b1d340403100",
+      "delegation_scope": "no new client; the same Cursor, Pi/itsm, and OpenCode surfaces keep their current UI and change only stop/continue behavior",
+      "delegation_rationale": "this turn specifies modules and flow, not a new screen",
+      "delegation_confidence": "medium"
+    },
+    {
+      "topic_key": "scope_timeline",
+      "satisfied_by": "delegation_ref",
+      "quoted_user_text": "delegation-label: one story, no date, next phase is discovery",
+      "intake_run_id": "ir-20261015T213041Z-us0161",
+      "turn_index": 8,
+      "ref": "ie:ir-20261015T213041Z-us0161:8:e0d439fe8cf19600",
+      "delegation_scope": "one story, no date; next phase is /discovery",
+      "delegation_rationale": "low-touch and no timeline was given",
+      "delegation_confidence": "high"
+    }
+  ],
+  "operator_quotes": [
+    {
+      "id": "1",
+      "text": "das gesamtkonzept für alle module cursor, pi, opencode prüfen",
+      "answer_ref_topic": "runtime_target_environment"
+    },
+    {
+      "id": "2",
+      "text": "es so gestalten das maximale autonomie gegeben sein kann",
+      "answer_ref_topic": "non_functional_priorities"
+    },
+    {
+      "id": "3",
+      "text": "Blocker wegen Fehler oder Fehler im its-magic-Ablauf oder wegen fehlender Rechte sollen nicht mehr möglich sein bzw selbstsändig aufgelöst werden",
+      "answer_ref_topic": "users_problem"
+    },
+    {
+      "id": "4",
+      "text": "es sollen klare abfolgen sein, aber nicht blocken wenn etwa snicht den ewrwartungen entspricht",
+      "answer_ref_topic": "architecture_preference",
+      "typos_as_typed": [
+        "ewrwartungen",
+        "snicht"
+      ],
+      "corrected_reading": "es sollen klare abfolgen sein, aber nicht blocken wenn etwa nicht den Erwartungen entspricht",
+      "corrected_reading_summary": "Clear phase sequences remain, but an outcome that does not match expectations must not block."
+    }
+  ],
+  "candidate_story_ids": [
+    "US-0161"
+  ],
+  "plan_area_inventory": [
+    {
+      "plan_area_id": "cross-host-autonomy",
+      "title": "Cursor, Pi, and OpenCode share maximum-autonomy continue policy"
+    },
+    {
+      "plan_area_id": "recoverable-flow-errors",
+      "title": "Errors and its-magic flow faults self-resolve"
+    },
+    {
+      "plan_area_id": "permission-stop-recovery",
+      "title": "Missing its-magic workflow rights self-resolve"
+    },
+    {
+      "plan_area_id": "expectation-mismatch-continue",
+      "title": "Clear sequence continues when the outcome differs from the expected result"
+    }
+  ],
+  "plan_area_coverage": [
+    {
+      "plan_area_id": "cross-host-autonomy",
+      "story_ids": [
+        "US-0161"
+      ]
+    },
+    {
+      "plan_area_id": "recoverable-flow-errors",
+      "story_ids": [
+        "US-0161"
+      ]
+    },
+    {
+      "plan_area_id": "permission-stop-recovery",
+      "story_ids": [
+        "US-0161"
+      ]
+    },
+    {
+      "plan_area_id": "expectation-mismatch-continue",
+      "story_ids": [
+        "US-0161"
+      ]
+    }
+  ],
+  "coverage_complete": true,
+  "decomposition": {
+    "verdict": "single_story",
+    "mode": "low-touch",
+    "why_not_split": "INTAKE_GUIDED_MODE=0. One operator outcome: the whole its-magic concept on Cursor, Pi, and OpenCode is checked and shaped so maximum autonomy is possible, clear sequences stay, and mismatch, error, flow fault, and missing workflow rights do not halt the run.",
+    "split_axis": "none"
+  },
+  "duplicate_check": {
+    "highest_us_before_write": "US-0160",
+    "allocated": "US-0161",
+    "not_a_true_duplicate_of": "US-0160",
+    "open_overlap_not_true_duplicate": [
+      "US-0160",
+      "US-0158"
+    ],
+    "left_closed": [
+      "US-0092",
+      "US-0095",
+      "US-0156"
+    ],
+    "rationale": "US-0160 (OPEN) is the OpenCode plus itsm TUI slice: recoverable blocker, error, abort, permission, and faulty-state continues, and the TUI shows the latest diagnostic once plus the ask result. This request is the whole-concept check across Cursor, Pi, and OpenCode, plus the rule that a clear phase sequence does not block when the outcome does not match expectations. US-0158 (OPEN) only repairs a phase child's own invalid continuation pair. US-0092, US-0095, and US-0156 stay DONE."
+  },
+  "non_goals": {
+    "decision_gate": false,
+    "us0092_ac10": "Do not authorize reading .env or automatic npm publish / git push. Those stay US-0092 AC-10. Recorded as a non-goal and a discovery risk, not as a decision_gate.",
+    "honest_results": "UNKNOWN_COMMAND for free text and APP_HEALTH_UNAVAILABLE when no app process is running stay honest results. They are not expectation-mismatch repairs.",
+    "spawn_only": "Do not weaken spawn-only orchestration (BUG-0006).",
+    "do_not_reopen": "US-0160"
+  },
+  "bug_routing_guard": {
+    "prose_file": "handoffs/intake_evidence/US-0161-routing-prose.txt",
+    "result": "[INTAKE_BUG_ROUTING_OK] kind=story exit=0",
+    "note": "Exit 0 does not allocate a BUG id. US-0161 allocated after the guard. Prose avoids the defect-signal words."
+  }
+}

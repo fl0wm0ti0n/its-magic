@@ -1,3 +1,134 @@
+## Release finalized note (S0184) -- 2026-10-21T16:03:14Z
+
+- Sprint: `S0184`; BUG-0037 remains **OPEN/P1**. Closure owns the DONE flip and AC/acceptance ticks.
+- Release: **finalized / PASS**; marker `release-BUG0037-S0184-20261021T160314Z-fresh`; proof `rp-auto-20261020-bug0037-release-release-20261021T160314Z-BUG-0037` / `36aae656139a36723e8c45c081f01487a9122850ce6ab9ddb390f284167d859d` (TTL `2026-10-21T17:03:14Z`; independent recompute MATCH).
+- Validation: BUG-0037 contract **5 passed**; `BUG0037_FOCUSED_REGRESSION_OK`; `[BUG_VALIDATION_OK]`; QA 0 blockers; UAT 5/5; incoming verify-work pair exact key/tuple/hash MATCH and IN-TTL.
+- Start / endpoint: not applicable (static local contract slice). Verify: `handoffs/releases/S0184-release-notes.md`.
+- Publish / push / deployment: **NOT PERFORMED** (no npm publish, git commit, git push, or external deployment).
+- CHANGELOG: `[Unreleased]` `### Fixed` BUG-0037 bullet. `template/CHANGELOG.md` untouched.
+- Next: `/closure` as `release`; `stop_reason=release_complete_phase_boundary`. This child did not spawn it.
+- Canonical notes: `handoffs/releases/S0184-release-notes.md`
+
+## Segment finalization note (S0183) -- 2026-10-19T21:00:00Z
+
+- Sprint: `S0183`
+- Bug: `BUG-0038` is now **DONE** (closure canonical flip; single canonical backlog block; AC-1..AC-5 + acceptance row checked). The release-time note below predates the flip and stays for history.
+- Refresh: **REFRESH_CONTEXT_PASS** @ `2026-10-19T21:00:00Z` (`fresh_context_marker=curator-BUG0038-refresh-20261019T210000Z-fresh`; `runtime_proof_id=rp-repair-20261018-bug0038-refresh-curator-20261019T210000Z-BUG-0038`; `proof_hash=cc54d67b2e9e119af9c33acc7366a473224bc2499192033a4b4268e573083c83`)
+- Validation: focused **33/33**; `[BUG_VALIDATION_OK]`; triad `--check` exit 0 (`state-pack-20261019.md`)
+- Publish / push: **NOT PERFORMED** (no publish, git push, or commit invoked)
+- Canonical notes: `handoffs/releases/S0183-release-notes.md`
+- Next: **none** — segment terminal
+
+## Release finalized note (S0183) -- 2026-10-19T20:49:49Z
+
+- Sprint: `S0183`
+- Bug: `BUG-0038` remains **OPEN/P0**. The QA-owned continuation-brief boundary is verified through static contract and resolver evidence. Closure owns the DONE flip; AC-1..AC-5 and the acceptance row stay unchecked.
+- Release: **finalized / PASS**
+  - `fresh_context_marker=release-BUG0038-S0183-20261019T204949Z-fresh`
+  - `orchestrator_run_id=repair-20261018-bug0038-anchor-repair`
+  - `model_id=openai/gpt-5.6-terra`
+  - `runtime_proof_id=rp-repair-20261018-bug0038-anchor-repair-release-release-20261019T204949Z-BUG-0038`
+  - `proof_hash=08439644125cab12232d31dccdf29eb599a42f74e023d600c1cc397dabcb4f94`
+  - `proof_issued_at=2026-10-19T20:49:49Z`, `ttl_seconds=3600`, `proof_ttl=2026-10-19T21:49:49Z`
+- Validation: focused BUG-0038 permission contract plus US-0156 resolver regression: **16 passed**; canonical linkage: **[BUG_VALIDATION_OK]**; incoming verify-work pair exact key/locked tuple/hash MATCH.
+- UAT: `VERIFY_PASS`, non-placeholder, 5/5 AC evidence; no live probe is claimed or required.
+- Publish / push: **NOT PERFORMED** (no publish, git push, or commit invoked).
+- CHANGELOG: `[Unreleased]` `### Fixed` BUG-0038 bullet. `template/CHANGELOG.md` untouched.
+- Next: `/closure` as `release`; `stop_reason=release_complete_phase_boundary`. This child did NOT spawn it.
+- Canonical notes: `handoffs/releases/S0183-release-notes.md`
+
+## Release finalized note (S0181) -- 2026-10-16T22:19:06Z
+
+- Sprint: `S0181`
+- Story: `US-0157` remains **OPEN**. OpenCode `/auto` with `CROSS_MODEL_REVIEW=1` spawns a fresh tech-lead for `/sovereign-critic`. The owning child repairs only its own invalid pair. The parent does not write the pair. Closure owns the DONE flip. AC-1..AC-5 stay unchecked.
+- Release: **finalized / PASS**
+  - `fresh_context_marker=release-US0157-release-20261016T221906Z-fresh`
+  - `orchestrator_run_id=auto-20261016-us0157`
+  - `model_id=inherit`
+  - `runtime_proof_id=rp-auto-20261016-us0157-release-release-20261016T221906Z`
+  - `proof_hash=2959e6494d4f5d3d5eebea6eca9038bb31ffe20a9817df1c8a050dd35fc0358d`
+  - `proof_issued_at=2026-10-16T22:19:06Z`, `ttl_seconds=3600`, `proof_ttl=2026-10-16T23:19:06Z`
+- Harness: `tests/report.md` **2026-10-16T21:58:06Z**, **Pass=875**, **Fail=8** (foreign set, not a S0181 fail-closed reason). Four `test_us0157_*` markers re-run this release: 4 passed / 0 failed.
+- Start: `python -m pytest tests/us0157_opencode_critic_pair_contract_test.py -q`. Endpoint: n/a (local). Verify: `handoffs/releases/S0181-release-notes.md`.
+- Coverage: foreign gaps `README_FEATURE_COVERAGE_GAP:BUG-0029` and `README_FEATURE_COVERAGE_GAP:BUG-0036` (`coverage_total=54`). Not a S0181 fail-closed reason. US-0157 stays out of `coverage_present` while OPEN.
+- Publish: **NOT PERFORMED** (`RELEASE_PUBLISH_MODE=confirm`, `npm_published=false`, no registry write, no kit semver bump)
+- Push: **NOT PERFORMED** (`SYNC_POLICY_MODE=disabled`, no git push)
+- CHANGELOG: `[Unreleased]` `### Added` US-0157 bullet. `template/CHANGELOG.md` untouched.
+- Next: `/closure` (fresh curator; `qe` is not spawnable; DEC-0052 sanctioned alternate). `stop_reason=release_complete_phase_boundary`. This child did NOT spawn `/closure`.
+- Canonical notes: `handoffs/releases/S0181-release-notes.md`
+
+## Unreleased queue visibility
+
+- `S0177` / BUG-0026 remains `blocked` (`RELEASE_TEST_FAILED` at `2026-10-15T09:27:02Z`). This release did not mutate that row.
+
+## Release finalized note (S0180) -- 2026-10-16T20:26:26Z
+
+- Sprint: `S0180`
+- Bug: `BUG-0036` remains **OPEN**. A foreign harness and an expired matching proof are classified before a terminal stale stop. `block` stays terminal. Repair values quarantine the member and schedule the next lawful phase without editing the foreign owner. Closure owns the DONE flip. AC-1..AC-5 stay unchecked.
+- Release: **finalized / PASS**
+  - `fresh_context_marker=release-BUG0036-release-20261016T202626Z-fresh`
+  - `orchestrator_run_id=auto-20261016-bug0036`
+  - `model_id=inherit`
+  - `runtime_proof_id=rp-auto-20261016-bug0036-release-release-20261016T202626Z-BUG-0036`
+  - `proof_hash=6b5fbb67527ebba6bfa02243671a14cf9e2d458305a2a8b9d486f374ed2a424b`
+  - `proof_issued_at=2026-10-16T20:26:26Z`, `ttl_seconds=3600`, `proof_ttl=2026-10-16T21:26:26Z`
+- Harness: `tests/report.md` **2026-10-16T20:03:04Z**, **Pass=874**, **Fail=8** (foreign set, not a S0180 fail-closed reason). Seven `test_bug0036_*` markers re-run this release: 7 passed / 0 failed.
+- Start: `python -m pytest tests/bug0036_repairable_blocker_contract_test.py -q`. Endpoint: n/a (local). Verify: `handoffs/releases/S0180-release-notes.md`.
+- Coverage: foreign gap `README_FEATURE_COVERAGE_GAP:BUG-0029` only (`coverage_total=53`). Not a S0180 fail-closed reason. BUG-0036 stays out of `coverage_present` while OPEN.
+- Publish: **NOT PERFORMED** (`RELEASE_PUBLISH_MODE=confirm`, `npm_published=false`, no registry write, no kit semver bump)
+- Push: **NOT PERFORMED** (`SYNC_POLICY_MODE=disabled`, no git push)
+- CHANGELOG: `[Unreleased]` `### Fixed` BUG-0036 bullet. `template/CHANGELOG.md` untouched.
+- Next: `/closure` (fresh curator; `qe` is not spawnable; DEC-0052 sanctioned alternate). `stop_reason=release_complete_phase_boundary`. This child did NOT spawn `/closure`.
+- Canonical notes: `handoffs/releases/S0180-release-notes.md`
+
+## Unreleased queue visibility
+
+- `S0177` / BUG-0026 remains `blocked` (`RELEASE_TEST_FAILED` at `2026-10-15T09:27:02Z`). This release did not mutate that row.
+
+## Release finalized note (S0178) -- 2026-10-16T14:54:00Z
+
+- Sprint: `S0178`
+- Bug: `BUG-0029` remains **OPEN**. Masked TTY and `--api-key-stdin` login are recorded. Configured JSON is printed only after `checkAuth` confirms a stored credential of the requested type. Closure owns the DONE flip. AC-1..AC-5 stay unchecked.
+- Release: **finalized / PASS** (implementation loop 1; prior `2026-10-16T00:26:12Z` RELEASE_FAIL kept as history)
+  - `fresh_context_marker=release-BUG0029-release-fix1-20261016T145400Z-fresh`
+  - `orchestrator_run_id=auto-20261016-bug0029`
+  - `model_id=inherit`
+  - `runtime_proof_id=rp-auto-20261016-bug0029-release-release-20261016T145400Z-BUG-0029-fix1`
+  - `proof_hash=40328d3ec669b480e982a18759cf1198c8acefc5e7308fba87d581e86db2f270`
+  - `proof_issued_at=2026-10-16T14:54:00Z`, `ttl_seconds=3600`, `proof_ttl=2026-10-16T15:54:00Z`
+- Harness: `tests/report.md` **2026-10-16T14:52:23Z**, **Pass=880**, **Fail=0**. Seven `test_bug0029_*` markers re-run this release: 7 passed / 0 failed.
+- Start: `node --experimental-strip-types --test --test-name-pattern "test_bug0029_" tests/contract/bug0029.contract.test.ts` (cwd `standalone`). Endpoint: n/a (local). Verify: `handoffs/releases/S0178-release-notes.md`.
+- Coverage: `status=PASS`, `coverage_missing=[]`, `coverage_total=52`.
+- Publish: **NOT PERFORMED** (`RELEASE_PUBLISH_MODE=confirm`, `npm_published=false`, no registry write, no kit semver bump)
+- Push: **NOT PERFORMED** (`SYNC_POLICY_MODE=disabled`, no git push)
+- CHANGELOG: `[Unreleased]` `### Fixed` BUG-0029 bullet. `template/CHANGELOG.md` untouched.
+- Next: `/closure` (fresh curator; `qe` is not spawnable; DEC-0052 sanctioned alternate). `stop_reason=release_complete_phase_boundary`. This child did NOT spawn `/closure`.
+- Canonical notes: `handoffs/releases/S0178-release-notes.md`
+
+## Unreleased queue visibility
+
+- `S0177` / BUG-0026 remains `blocked` (`RELEASE_TEST_FAILED` at `2026-10-15T09:27:02Z`). This release did not mutate that row.
+
+## Release finalized note (S0176) -- 2026-10-14T21:07:42Z
+
+- Sprint: `S0176`
+- Bug: `BUG-0028` remains **OPEN**. Lightweight `itsm` help, auth, models, and bare status are recorded. Workflow commands, including `/status`, still admit `createRuntimeHost`. Closure owns the DONE flip. AC-1..AC-5 stay unchecked.
+- Release: **finalized / PASS**
+  - `fresh_context_marker=release-BUG0028-release-20261014T210742Z-fresh`
+  - `orchestrator_run_id=auto-20261013-bug0028`
+  - `model_id=inherit`
+  - `runtime_proof_id=rp-auto-20261013-bug0028-release-release-20261014T210742Z-BUG-0028`
+  - `proof_hash=5b6179bd2d740349350250637e17f292d1db0f55ecf55d93eeda7bf73392d77e`
+  - `proof_issued_at=2026-10-14T21:07:42Z`, `ttl_seconds=3600`, `proof_ttl=2026-10-14T22:07:42Z`
+- Harness: `tests/report.md` **2026-10-14T21:06:12Z**, **Pass=880**, **Fail=0**. Five `test_bug0028_*` markers re-run this release: 5 passed / 0 failed.
+- Start: `node --experimental-strip-types --test --test-name-pattern "test_bug0028_" tests/contract/bug0028.contract.test.ts` (cwd `standalone`). Endpoint: n/a (local). Verify: `handoffs/releases/S0176-release-notes.md`.
+- Coverage: `status=PASS`, `coverage_missing=[]`, `coverage_total=51`. BUG-0028 stays out of `coverage_present` while OPEN.
+- Publish: **NOT PERFORMED** (`RELEASE_PUBLISH_MODE=confirm`, `npm_published=false`, no registry write, no kit semver bump)
+- Push: **NOT PERFORMED** (`SYNC_POLICY_MODE=disabled`, no git push)
+- CHANGELOG: `[Unreleased]` `### Fixed` BUG-0028 bullet. `template/CHANGELOG.md` untouched.
+- Next: `/closure` (fresh curator; `qe` is not spawnable; S0175 sanctioned alternate). `stop_reason=release_complete_phase_boundary`. This child did NOT spawn `/closure`.
+- Canonical notes: `handoffs/releases/S0176-release-notes.md`
+
 ## Release finalized note (S0175) -- 2026-10-12T20:23:01Z
 
 - Sprint: `S0175`

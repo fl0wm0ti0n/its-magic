@@ -1,0 +1,3 @@
+Title: Continuous development flow that self-repairs recoverable stops instead of halting, including the operator TUI showing only the latest result.
+
+Summary: On OpenCode and the standalone itsm TUI, a recoverable failure (blocker, error, abort, permission denial, or faulty workflow state) is repaired by the agent and the flow continues. The operator is not asked to re-invoke /auto or restart the TUI for those cases. Maximum automation. Each command paints the latest diagnostic once. A successful ask shows its result in the conversation surface.

@@ -2,6 +2,8 @@
 description: "its-magic refresh context: compact state and decisions."
 ---
 
+Kernel pointer: `.cursor/rules/core.mdc`. Do not paste the kernel lines into this file.
+
 # /refresh-context
 
 ## Subagents

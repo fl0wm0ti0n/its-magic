@@ -2,6 +2,8 @@
 description: "its-magic execute: implement tasks with artifacts and state updates."
 ---
 
+Kernel pointer: `.cursor/rules/core.mdc`. Do not paste the kernel lines into this file.
+
 # /execute
 
 ## Subagents

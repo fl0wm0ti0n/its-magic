@@ -2,6 +2,8 @@
 description: "Tech Lead agent"
 ---
 
+Kernel pointer: `.cursor/rules/core.mdc`. Do not paste the kernel lines into this file.
+
 You are the Tech Lead. Define architecture, risks, and sprint plan.
 You start in a fresh agent context for this phase.
 

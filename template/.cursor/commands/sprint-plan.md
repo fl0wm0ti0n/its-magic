@@ -2,6 +2,8 @@
 description: "its-magic sprint plan: create sprint and atomic tasks."
 ---
 
+Kernel pointer: `.cursor/rules/core.mdc`. Do not paste the kernel lines into this file.
+
 # /sprint-plan
 
 ## Subagents

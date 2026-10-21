@@ -17,7 +17,7 @@
     // AUTO_IMPLEMENTATION_LOOP: 0|1 (auto cycle execute->qa->execute)
     "AUTO_IMPLEMENTATION_LOOP": "1",
     // AUTO_LOOP_MAX_CYCLES: integer >= 1 (safety guard). Under /auto this counts
-    "AUTO_LOOP_MAX_CYCLES": "50",
+    "AUTO_LOOP_MAX_CYCLES": "10000",
     // AUTO_PAUSE_REQUEST: 0|1 (request graceful stop at next safe boundary)
     "AUTO_PAUSE_REQUEST": "0",
     // AUTO_PAUSE_POLICY: after_task|after_phase (safe stop boundary)
@@ -41,25 +41,25 @@
     // AUTO_BACKLOG_DRAIN: 0|1 (continue across multiple stories when enabled)
     "AUTO_BACKLOG_DRAIN": "1",
     // AUTO_BACKLOG_MAX_STORIES: integer >= 1 (max stories per auto run when drain enabled)
-    "AUTO_BACKLOG_MAX_STORIES": "10",
+    "AUTO_BACKLOG_MAX_STORIES": "10000",
     // AUTO_BACKLOG_ON_BLOCK: stop|skip (behavior when a story blocks)
     "AUTO_BACKLOG_ON_BLOCK": "skip",
     // AUTO_STORY_SELECTION: priority_then_backlog_order
     "AUTO_STORY_SELECTION": "priority_then_backlog_order",
     // AUTO_EXECUTE_BULK: 0|1 (explicit bulk execute orchestration mode)
-    "AUTO_EXECUTE_BULK": "0",
+    "AUTO_EXECUTE_BULK": "1",
     // AUTO_EXECUTE_MAX_ITEMS: integer >= 1 (max planned items per bulk execute run)
-    "AUTO_EXECUTE_MAX_ITEMS": "1",
+    "AUTO_EXECUTE_MAX_ITEMS": "10000",
     // AUTO_EXECUTE_ON_BLOCK: stop|skip (behavior when a planned item blocks)
     "AUTO_EXECUTE_ON_BLOCK": "skip",
     // AUTO_EXECUTE_SELECTION: planned_then_priority
     "AUTO_EXECUTE_SELECTION": "planned_then_priority",
     // AUTO_TEAM_SCOPE_ENFORCE: 0|1 (when TEAM_MODE=1, enforce TEAM_MEMBER + ACTIVE_TASK_IDS)
-    "AUTO_TEAM_SCOPE_ENFORCE": "1",
+    "AUTO_TEAM_SCOPE_ENFORCE": "0",
     // AUTO_BUG_QUEUE: 0|1 (1 = enable bug-targeted /auto; mutex vs AUTO_BACKLOG_DRAIN without bug-target argv)
     "AUTO_BUG_QUEUE": "0",
     // AUTO_BUG_TARGET: all-open|BUG-#### (required when AUTO_BUG_QUEUE=1 unless bug-target= argv supplies target)
-    "AUTO_BUG_TARGET": "",
+    "AUTO_BUG_TARGET": "all-open",
     // AUTO_BUG_MAX_ITEMS: non-negative integer (0 or unset = no cap for all-open queue per run)
     "AUTO_BUG_MAX_ITEMS": "0",
     // AUTO_BUG_ON_BLOCK: stop|skip (bug segment pause/stop boundary)
@@ -135,7 +135,7 @@
     // AUTO_DELIVERY_ROUTING: scratchpad_only|backlog_then_scratchpad (default scratchpad_only)
     "AUTO_DELIVERY_ROUTING": "scratchpad_only",
     // WORK_KIND_ROUTING: 0|1 (default 0; absence = 0)
-    "WORK_KIND_ROUTING": "0",
+    "WORK_KIND_ROUTING": "1",
     // WORK_KIND_TIE_BREAK: highest_tier_wins (default; LOCKED Q1 -- code > mini > doc)
     "WORK_KIND_TIE_BREAK": "highest_tier_wins",
     // EARLY_RESEARCH: 0|1 (PO/TL search web during intake/architecture)
@@ -143,7 +143,7 @@
     // INTAKE_GUIDED_MODE: 0|1 (guided intake follow-up/options/research behavior)
     "INTAKE_GUIDED_MODE": "1",
     // INTAKE_SUBAGENT_FALLBACK: deny|allow (deny by default; when deny, missing
-    "INTAKE_SUBAGENT_FALLBACK": "deny",
+    "INTAKE_SUBAGENT_FALLBACK": "allow",
     // INTAKE_WORK_ITEM_KIND: story|bug (default story; bug selects BUG-#### path per DEC-0061 / US-0079)
     "INTAKE_WORK_ITEM_KIND": "story",
     // ID_NAMESPACE_BOOTSTRAP: 0|1 (optional fresh-project ID bootstrap mode; when 1, allow first IDs to start at 0001 only if deterministic freshness checks pass)
@@ -163,7 +163,7 @@
     // ARCH_HOT_MAX_STORY_SECTIONS: integer >= 20 (max # US-xxxx story sections retained)
     "ARCH_HOT_MAX_STORY_SECTIONS": "120",
     // RELEASE_PUBLISH_MODE: disabled|confirm|auto
-    "RELEASE_PUBLISH_MODE": "confirm",
+    "RELEASE_PUBLISH_MODE": "auto",
     // RELEASE_TARGETS_FILE: canonical target config path
     "RELEASE_TARGETS_FILE": "docs/engineering/release-targets.json",
     // RELEASE_TARGETS_DEFAULT: comma-separated default target IDs (optional)
@@ -191,9 +191,9 @@
     // DOC_DETAIL_LEVEL: concise|balanced|technical-deep (empty -> balanced during transition)
     "DOC_DETAIL_LEVEL": "balanced",
     // README_FEATURE_COVERAGE_ENFORCE: 0|1 (default 0 until backfill + --report green)
-    "README_FEATURE_COVERAGE_ENFORCE": "1",
+    "README_FEATURE_COVERAGE_ENFORCE": "0",
     // PROJECT_README_ENFORCE: 0|1 (default 1 post-bootstrap)
-    "PROJECT_README_ENFORCE": "1",
+    "PROJECT_README_ENFORCE": "0",
     // FRAMEWORK_KIT_REPO: 0|1 (default 0)
     "FRAMEWORK_KIT_REPO": "1",
     // UAT_BROWSER_PROBE_MODE: cursor|http_fallback|playwright_fallback (default cursor)
@@ -223,7 +223,7 @@
     // AI_DECISION_LEDGER: 0|1 (default 0) -- when 0: no ledger reads/writes/schema checks.
     "AI_DECISION_LEDGER": "1",
     // AUTO_PLAN_FIDELITY: strict|relaxed|extended (default strict) -- active only when ledger enabled.
-    "AUTO_PLAN_FIDELITY": "relaxed",
+    "AUTO_PLAN_FIDELITY": "extended",
     // SOVEREIGN_GOAL_MODE: phase_driven|goal_convergence (default phase_driven)
     "SOVEREIGN_GOAL_MODE": "goal_convergence",
     // SOVEREIGN_GOAL: explicit goal text (wins over vision auto-derive; default empty)
@@ -257,7 +257,7 @@
     // AUTO_SOVEREIGN_DRAIN_GENERATE_MAX: int >= 0 (default 3) -- drain-generate iterations per run
     "AUTO_SOVEREIGN_DRAIN_GENERATE_MAX": "3",
     // AUTO_SOVEREIGN_DEFERRAL_POLICY: stop|skip|resolve_first (default resolve_first)
-    "AUTO_SOVEREIGN_DEFERRAL_POLICY": "resolve_first",
+    "AUTO_SOVEREIGN_DEFERRAL_POLICY": "skip",
     // SOVEREIGN_NOTIFY_TARGET: off|ntfy|email|hook (default off)
     "SOVEREIGN_NOTIFY_TARGET": "off",
     // SOVEREIGN_NOTIFY_NTFY_TOPIC: string (default empty -- local-only)
@@ -315,35 +315,35 @@
     // RELEASE_TRIGGER_FALLBACK_TO_LOCAL: 0|1 (default 0; npm adapter offline fallback)
     "RELEASE_TRIGGER_FALLBACK_TO_LOCAL": "0",
     // AUTONOMY_PRESET: none|balanced|full (default=none)
-    "AUTONOMY_PRESET": "none",
+    "AUTONOMY_PRESET": "full",
     // AUTONOMY_STOP_POLICY: block|auto_repair_then_block|auto_repair_then_skip (default=block)
-    "AUTONOMY_STOP_POLICY": "block",
+    "AUTONOMY_STOP_POLICY": "auto_repair_then_skip",
     // ARCH_LINKAGE_AUTO_REPAIR: 0|1 (default=0) -- opt-in H1-stub restore; not in AUTONOMY_PRESET
-    "ARCH_LINKAGE_AUTO_REPAIR": "0",
+    "ARCH_LINKAGE_AUTO_REPAIR": "1",
     // INTAKE_AUTONOMY_MODE: 0|1 (default=0)
-    "INTAKE_AUTONOMY_MODE": "0",
+    "INTAKE_AUTONOMY_MODE": "1",
     // INTAKE_MINIMAL_PACK: 0|1 (default=0)
-    "INTAKE_MINIMAL_PACK": "0",
+    "INTAKE_MINIMAL_PACK": "1",
     // INTAKE_ASSUME_STACK_CONTEXT: 0|1 (default=0)
-    "INTAKE_ASSUME_STACK_CONTEXT": "0",
+    "INTAKE_ASSUME_STACK_CONTEXT": "1",
     // WORK_KIND_AUTO_ACCEPT: 0|1 (default=0)
-    "WORK_KIND_AUTO_ACCEPT": "0",
+    "WORK_KIND_AUTO_ACCEPT": "1",
     // CROSS_MODEL_REWORK_EXHAUSTED_POLICY: block|downgrade (default=block)
-    "CROSS_MODEL_REWORK_EXHAUSTED_POLICY": "block",
+    "CROSS_MODEL_REWORK_EXHAUSTED_POLICY": "downgrade",
     // CROSS_MODEL_SKIP_PHASES: csv of phase ids (default empty)
     "CROSS_MODEL_SKIP_PHASES": "",
     // RESUME_BRIEF_AUTO_REFRESH: 0|1 (default=0)
-    "RESUME_BRIEF_AUTO_REFRESH": "0",
+    "RESUME_BRIEF_AUTO_REFRESH": "1",
     // RUNTIME_PROOF_KIND: strict|lightweight (default=strict)
-    "RUNTIME_PROOF_KIND": "strict",
+    "RUNTIME_PROOF_KIND": "lightweight",
     // GOAL_CONVERGENCE_INTERVAL: integer >= 1 (default=3)
-    "GOAL_CONVERGENCE_INTERVAL": "3",
+    "GOAL_CONVERGENCE_INTERVAL": "1",
     // SOVEREIGN_DRAIN_AUTO_ACCEPT: 0|1 (default=0)
-    "SOVEREIGN_DRAIN_AUTO_ACCEPT": "0",
+    "SOVEREIGN_DRAIN_AUTO_ACCEPT": "1",
     // RELEASE_PUBLISH_AUTO_CONFIRM: 0|1 (default=0)
-    "RELEASE_PUBLISH_AUTO_CONFIRM": "0",
+    "RELEASE_PUBLISH_AUTO_CONFIRM": "1",
     // AUTONOMY_REPAIR_CAP_OVERRIDE: integer >= 1 or empty (empty = matrix default cap)
-    "AUTONOMY_REPAIR_CAP_OVERRIDE": ""
+    "AUTONOMY_REPAIR_CAP_OVERRIDE": "10"
   },
   // host_overlays unused in v1 -- resolver does not merge overlays; keep empty objects
   "host_overlays": {

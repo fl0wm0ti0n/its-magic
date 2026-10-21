@@ -31,9 +31,19 @@ Rewrite this file with a fresh stub after rollover.
 ## Current index
 
 ```yaml
+bug_id: BUG-0038
+bug_status: DONE
 story_id: (none)
-delivery_mode: standard
-read_before_code: []
-last_delta_utc: (unset)
-open_risks: []
+delivery_mode: ultra_lean
+phase: segment-complete
+sprint_id: S0183
+read_before_code:
+  - sprints/S0183/summary.md
+  - sprints/S0183/closure-verification.md
+  - tests/bug0038_qa_resume_brief_permission_contract_test.py
+last_delta_utc: 2026-10-19T21:00:00Z
+open_risks:
+  - segment terminal; parent selects next work (no auto drain from this pair)
+  - BUG-0037 remains OPEN in backlog
+archive_ref: handoffs/archive/active-context-BUG-0038-20261019T210000Z.md
 ```

@@ -105,7 +105,7 @@ const PHASE_ROLE_MATRIX: Record<string, string> = {
   qa: "qa",
   "verify-work": "qa",
   release: "release",
-  closure: "release",
+  closure: "curator",
   "refresh-context": "curator",
 };
 
@@ -162,6 +162,10 @@ export interface SpawnResult {
   reasonCode?: string;
   sessionID?: string;
   evidence?: IsolationEvidence;
+  stopReason?: string;
+  blockedSubcode?: string;
+  deniedAgent?: string;
+  recoverableClass?: "blocked" | "ai_error" | "aborted" | "permission_dead_end";
 }
 
 export async function spawnPhase(
@@ -192,6 +196,25 @@ export async function spawnPhase(
     if (isMissingPrimitiveThrow(err)) {
       return { ok: false, reasonCode: REASON_CODES.PLUGIN_SPAWN_UNSUPPORTED };
     }
+    const denied = deniedAgentOf(err);
+    if (denied) {
+      const denial = classifyTaskDenial({ deniedAgent: denied });
+      if (denial.recoverableClass === "permission_dead_end") {
+        return {
+          ok: false,
+          reasonCode: "permission_dead_end",
+          recoverableClass: "permission_dead_end",
+          deniedAgent: denied,
+        };
+      }
+      if (denial.reasonCode) {
+        return {
+          ok: false,
+          reasonCode: denial.reasonCode,
+          deniedAgent: denied,
+        };
+      }
+    }
     return { ok: false, reasonCode: REASON_CODES.SUBTASK_IGNORED };
   }
   if (!handle) {
@@ -201,12 +224,24 @@ export async function spawnPhase(
   if (!sessionID || sessionID === args.orchestratorSessionId) {
     return { ok: false, reasonCode: REASON_CODES.SUBTASK_IGNORED };
   }
+  let waitValue: unknown;
   if (typeof session.wait === "function") {
     try {
-      await session.wait(sessionID);
-    } catch {
-      // non-fatal for evidence persistence
+      waitValue = await session.wait(sessionID);
+    } catch (err) {
+      if (isAbortShapedWait(err)) {
+        return {
+          ok: false,
+          reasonCode: "phase_aborted",
+          recoverableClass: "aborted",
+        };
+      }
+      // Every other rejection keeps today's evidence return.
     }
+  }
+  const childStop = classifyChildStop(waitValue);
+  if (childStop) {
+    return childStop;
   }
   const evidence: IsolationEvidence = {
     parentID: args.orchestratorSessionId,
@@ -221,6 +256,363 @@ export async function spawnPhase(
     bugId: args.bugId,
   };
   return { ok: true, sessionID, evidence };
+}
+
+// US-0157 — critic hook uses the existing tech-lead allow. PHASE_ROLE_MATRIX
+// stays the delivery-phase matrix. A missing critic key is not a capability miss.
+export const TASK_ALLOWLIST: readonly string[] = [
+  "po",
+  "tech-lead",
+  "dev",
+  "qa",
+  "release",
+  "curator",
+  "security",
+];
+
+export const PHASE_ROLE_CAPABILITY_MISSING = "PHASE_ROLE_CAPABILITY_MISSING";
+
+export interface CriticSpawnPlan {
+  spawn: boolean;
+  agent?: "tech-lead";
+  command?: "/sovereign-critic";
+  reasonCode?: string;
+}
+
+export function planSovereignCriticSpawn(input: {
+  crossModelReview?: number | string | null;
+  allowlist?: readonly string[];
+}): CriticSpawnPlan {
+  const review = input?.crossModelReview;
+  const enabled = review === 1 || review === "1";
+  if (!enabled) {
+    return { spawn: false };
+  }
+  const allow = input.allowlist ?? TASK_ALLOWLIST;
+  if (!allow.includes("tech-lead")) {
+    return { spawn: false, reasonCode: PHASE_ROLE_CAPABILITY_MISSING };
+  }
+  return { spawn: true, agent: "tech-lead", command: "/sovereign-critic" };
+}
+
+export function deliveryRoleCapability(
+  role: string,
+  allowlist: readonly string[] = TASK_ALLOWLIST,
+): { ok: boolean; reasonCode?: string } {
+  if (!allowlist.includes(role)) {
+    return { ok: false, reasonCode: PHASE_ROLE_CAPABILITY_MISSING };
+  }
+  return { ok: true };
+}
+
+export function isAbortShapedWait(err: unknown): boolean {
+  const name =
+    err instanceof Error
+      ? err.name
+      : String((err as { name?: unknown } | null)?.name ?? "");
+  if (name === "AbortError") return true;
+  const message = err instanceof Error ? err.message : String(err ?? "");
+  const code = String((err as { code?: unknown } | null)?.code ?? "");
+  const blob = `${name} ${message} ${code}`.toLowerCase();
+  return /\baborted?\b/.test(blob) || blob.includes("aborterror");
+}
+
+export function deniedAgentOf(err: unknown): string | null {
+  if (!err || typeof err !== "object") return null;
+  const rec = err as Record<string, unknown>;
+  for (const key of ["deniedAgent", "denied_agent"]) {
+    const raw = rec[key];
+    if (typeof raw === "string" && raw.trim()) return raw.trim();
+  }
+  const permissionShaped = /permission|denied/i.test(
+    `${String(rec.name ?? "")} ${String(rec.message ?? "")}`,
+  );
+  if (permissionShaped && typeof rec.agent === "string" && rec.agent.trim()) {
+    return rec.agent.trim();
+  }
+  return null;
+}
+
+export function classifyTaskDenial(input: {
+  deniedAgent?: string | null;
+  allowlist?: readonly string[];
+}): {
+  recoverableClass?: "permission_dead_end";
+  reasonCode?: string;
+  addToAllowlist: false;
+} {
+  const denied = (input.deniedAgent ?? "").trim();
+  const allow = input.allowlist ?? TASK_ALLOWLIST;
+  const matrixRoles = new Set(Object.values(PHASE_ROLE_MATRIX));
+  if (!denied) return { addToAllowlist: false };
+  if (matrixRoles.has(denied) && !allow.includes(denied)) {
+    return {
+      reasonCode: PHASE_ROLE_CAPABILITY_MISSING,
+      addToAllowlist: false,
+    };
+  }
+  if (!matrixRoles.has(denied) && !allow.includes(denied)) {
+    return {
+      recoverableClass: "permission_dead_end",
+      addToAllowlist: false,
+    };
+  }
+  return { addToAllowlist: false };
+}
+
+function stringField(obj: Record<string, unknown>, key: string): string | undefined {
+  const raw = obj[key];
+  if (typeof raw === "string" && raw.trim()) return raw.trim();
+  return undefined;
+}
+
+export function classifyChildStop(value: unknown): SpawnResult | null {
+  if (!value || typeof value !== "object") return null;
+  const obj = value as Record<string, unknown>;
+  const reasonCode = stringField(obj, "reason_code") ?? stringField(obj, "reasonCode");
+  const stopReason = stringField(obj, "stop_reason") ?? stringField(obj, "stopReason");
+  const blockedSubcode =
+    stringField(obj, "blocked_subcode") ?? stringField(obj, "blockedSubcode");
+  const deniedAgent = stringField(obj, "deniedAgent") ?? stringField(obj, "denied_agent");
+  if (!reasonCode && !stopReason && !deniedAgent) return null;
+  if (deniedAgent) {
+    const denial = classifyTaskDenial({ deniedAgent });
+    if (denial.recoverableClass === "permission_dead_end") {
+      return {
+        ok: false,
+        reasonCode: "permission_dead_end",
+        recoverableClass: "permission_dead_end",
+        deniedAgent,
+      };
+    }
+    if (denial.reasonCode) {
+      return { ok: false, reasonCode: denial.reasonCode, deniedAgent };
+    }
+  }
+  if (stopReason === "error" || (reasonCode === "ai_error" && stopReason === "error")) {
+    return { ok: false, reasonCode: "error", stopReason: "error" };
+  }
+  if (reasonCode === "ai_error") {
+    return {
+      ok: false,
+      reasonCode: "ai_error",
+      recoverableClass: "ai_error",
+      stopReason,
+    };
+  }
+  if (stopReason === "blocked") {
+    return {
+      ok: false,
+      reasonCode: reasonCode || blockedSubcode || "blocked",
+      stopReason: "blocked",
+      blockedSubcode,
+      recoverableClass: "blocked",
+    };
+  }
+  return null;
+}
+
+export function inferRecoverableClass(
+  result: SpawnResult,
+): "blocked" | "ai_error" | "aborted" | "permission_dead_end" | null {
+  if (result.recoverableClass) return result.recoverableClass;
+  if (result.reasonCode === "phase_aborted") return "aborted";
+  if (result.reasonCode === "ai_error") return "ai_error";
+  if (result.reasonCode === "permission_dead_end") return "permission_dead_end";
+  if (result.stopReason === "blocked") return "blocked";
+  return null;
+}
+
+export interface ContinueSamePhaseParentDecision {
+  writer: string;
+  writes_state: false;
+  writes_brief: false;
+  sets_resume_brief_auto_refresh: false;
+  calls_write_resume_pair: false;
+  action: "continue_same_phase";
+}
+
+export function continueSamePhaseParentDecision(
+  writer: string,
+): ContinueSamePhaseParentDecision {
+  return {
+    writer,
+    writes_state: false,
+    writes_brief: false,
+    sets_resume_brief_auto_refresh: false,
+    calls_write_resume_pair: false,
+    action: "continue_same_phase",
+  };
+}
+
+const PARENT_WRITERS = new Set(["auto", "parent", "orchestrator"]);
+const SHAPE_EXACT = new Set([
+  "absent_required_record_key",
+  "malformed_record_key",
+  "strict_proof_ttl_invalid",
+]);
+
+export interface ResumePairView {
+  ok: boolean;
+  predicate?: string | null;
+  reasonCode?: string | null;
+  next_scheduled_phase?: string | null;
+  writer_role?: string | null;
+  completed_phase?: string | null;
+  child_writer_role?: string | null;
+  child_completed_phase?: string | null;
+  identity_match?: boolean;
+}
+
+export interface ParentPairDecision {
+  writes_state: false;
+  writes_brief: false;
+  sets_resume_brief_auto_refresh: false;
+  spawn_repair: boolean;
+  spawn_next: boolean;
+  next_scheduled_phase: string | null;
+  repair_role?: string;
+  repair_phase?: string;
+  charter?: "repair-only";
+  reasonCode?: string | null;
+  predicate?: string | null;
+}
+
+function predicateRepairable(predicate: string | null | undefined): boolean {
+  if (!predicate || predicate === "expired_ttl") return false;
+  if (
+    predicate === "strict_proof_hash_invalid" ||
+    predicate === "pair_key_mismatch" ||
+    SHAPE_EXACT.has(predicate)
+  ) {
+    return true;
+  }
+  return (
+    predicate.startsWith("tuple_conflict:") ||
+    predicate.startsWith("absent_required_field:") ||
+    predicate.startsWith("malformed_field:")
+  );
+}
+
+export function parentResumePairDecision(
+  input: ResumePairView,
+): ParentPairDecision {
+  const locked = {
+    writes_state: false as const,
+    writes_brief: false as const,
+    sets_resume_brief_auto_refresh: false as const,
+  };
+  if (input.ok) {
+    return {
+      ...locked,
+      spawn_repair: false,
+      spawn_next: true,
+      next_scheduled_phase: input.next_scheduled_phase ?? null,
+    };
+  }
+  const child = input.child_writer_role ?? "";
+  const sameChild =
+    input.identity_match !== false &&
+    child.length > 0 &&
+    !PARENT_WRITERS.has(child) &&
+    input.writer_role === child &&
+    input.completed_phase != null &&
+    input.completed_phase === input.child_completed_phase &&
+    predicateRepairable(input.predicate);
+  if (sameChild) {
+    return {
+      ...locked,
+      spawn_repair: true,
+      spawn_next: false,
+      next_scheduled_phase: null,
+      repair_role: child,
+      repair_phase: input.completed_phase ?? undefined,
+      charter: "repair-only",
+      reasonCode: input.reasonCode,
+      predicate: input.predicate,
+    };
+  }
+  return {
+    ...locked,
+    spawn_repair: false,
+    spawn_next: false,
+    next_scheduled_phase: null,
+    reasonCode: input.reasonCode,
+    predicate: input.predicate,
+  };
+}
+
+export async function spawnSovereignCriticHook(
+  ctx: any,
+  args: {
+    crossModelReview?: number | string | null;
+    allowlist?: readonly string[];
+    orchestratorSessionId: string;
+    freshContextMarker: string;
+    prompt?: string;
+    producerPhaseId?: string;
+    storyId?: string;
+    sprintId?: string;
+    orchestratorRunId?: string;
+    bugId?: string;
+  },
+): Promise<SpawnResult & { spawned: boolean }> {
+  const plan = planSovereignCriticSpawn({
+    crossModelReview: args.crossModelReview,
+    allowlist: args.allowlist,
+  });
+  if (!plan.spawn) {
+    return {
+      ok: !plan.reasonCode,
+      spawned: false,
+      reasonCode: plan.reasonCode,
+    };
+  }
+  const session = ctx?.session;
+  if (!session || typeof session.create !== "function") {
+    return {
+      ok: false,
+      spawned: false,
+      reasonCode: REASON_CODES.PLUGIN_SPAWN_UNSUPPORTED,
+    };
+  }
+  let handle: { sessionID?: string } | null;
+  try {
+    handle = await session.create({
+      parentID: args.orchestratorSessionId,
+      agent: "tech-lead",
+      prompt: args.prompt ?? "/sovereign-critic",
+    });
+  } catch (err) {
+    if (isMissingPrimitiveThrow(err)) {
+      return {
+        ok: false,
+        spawned: false,
+        reasonCode: REASON_CODES.PLUGIN_SPAWN_UNSUPPORTED,
+      };
+    }
+    return { ok: false, spawned: false, reasonCode: REASON_CODES.SUBTASK_IGNORED };
+  }
+  if (!handle) {
+    return { ok: false, spawned: false, reasonCode: REASON_CODES.SUBTASK_IGNORED };
+  }
+  const sessionID = handle.sessionID;
+  if (!sessionID || sessionID === args.orchestratorSessionId) {
+    return { ok: false, spawned: false, reasonCode: REASON_CODES.SUBTASK_IGNORED };
+  }
+  const evidence: IsolationEvidence = {
+    parentID: args.orchestratorSessionId,
+    sessionID,
+    role: "tech-lead",
+    phase_id: args.producerPhaseId ?? "execute",
+    timestamp: utcNowIso(),
+    fresh_context_marker: args.freshContextMarker,
+    storyId: args.storyId,
+    sprintId: args.sprintId,
+    orchestratorRunId: args.orchestratorRunId,
+    bugId: args.bugId,
+  };
+  return { ok: true, spawned: true, sessionID, evidence };
 }
 
 // --- Headless CLI (DEC-0124 §7 / DQ7) ------------------------------------
@@ -307,6 +699,10 @@ export interface StopMatrixArgs {
   sprint?: string;
   orchestratorRunId?: string;
   stopReason?: string;
+  recoverableClass?: string;
+  reasonCode?: string;
+  blockedSubcode?: string;
+  deniedAgent?: string;
 }
 
 export interface StopMatrixResult {
@@ -355,6 +751,11 @@ export function dispatchStopMatrix(
   if (args.orchestratorRunId)
     pyArgs.push("--orchestrator-run-id", args.orchestratorRunId);
   if (args.stopReason) pyArgs.push("--stop-reason", args.stopReason);
+  if (args.recoverableClass)
+    pyArgs.push("--recoverable-class", args.recoverableClass);
+  if (args.reasonCode) pyArgs.push("--reason-code", args.reasonCode);
+  if (args.blockedSubcode) pyArgs.push("--blocked-subcode", args.blockedSubcode);
+  if (args.deniedAgent) pyArgs.push("--denied-agent", args.deniedAgent);
   const proc = spawnFn(pyArgs);
   if (proc.status !== 0) {
     return { ok: false, reasonCode: REASON_CODES.DRIVER_INVOKE_FAILED };
@@ -469,6 +870,25 @@ export interface AutoLifecycleOpts {
   cursor?: number;
   remainingBudget?: number;
   resolveContinuationFn?: (opts: AutoLifecycleOpts) => ContinuationSelection;
+  crossModelReview?: number | string;
+  taskAllowlist?: readonly string[];
+  spawnCriticFn?: (
+    ctx: any,
+    args: {
+      crossModelReview?: number | string | null;
+      allowlist?: readonly string[];
+      orchestratorSessionId: string;
+      freshContextMarker: string;
+      prompt?: string;
+      producerPhaseId?: string;
+      storyId?: string;
+      sprintId?: string;
+      orchestratorRunId?: string;
+      bugId?: string;
+    },
+  ) => Promise<SpawnResult & { spawned: boolean }>;
+  resumePairValidation?: ResumePairView;
+  resumePairValidationAfterRepair?: ResumePairView;
 }
 
 export interface AutoLifecycleResult {
@@ -926,6 +1346,85 @@ export function leftoverAutoMarkdownExists(ctx: any): boolean {
   return false;
 }
 
+function freshMarkerFor(
+  role: string,
+  phaseId: string,
+  base: string | undefined,
+  generation: number,
+): string {
+  if (generation === 0) {
+    return (
+      base ??
+      `${role}-${phaseId}-${utcNowIso().replace(/[-:]/g, "").slice(0, 15)}Z-fresh`
+    );
+  }
+  const stem = (base ?? `${role}-${phaseId}`).replace(/-fresh$/, "");
+  return `${stem}-r${generation}-${utcNowIso().replace(/[-:]/g, "").slice(0, 15)}Z-fresh`;
+}
+
+function continueRecoverableSpawn(
+  spawnResult: SpawnResult,
+  phaseId: string,
+  role: string,
+  stopFn: NonNullable<AutoLifecycleOpts["dispatchStopMatrixFn"]>,
+  opts: AutoLifecycleOpts,
+  continueAttempts: Set<string>,
+  storyId?: string,
+  sprintId?: string,
+): { respawn: boolean; reasonCode?: string } {
+  const parentDecision = continueSamePhaseParentDecision("orchestrator");
+  if (
+    parentDecision.writes_state ||
+    parentDecision.writes_brief ||
+    parentDecision.sets_resume_brief_auto_refresh ||
+    parentDecision.calls_write_resume_pair
+  ) {
+    return {
+      respawn: false,
+      reasonCode: REASON_CODES.MANUAL_PHASE_WRITE_DENIED,
+    };
+  }
+  const klass = inferRecoverableClass(spawnResult);
+  if (!klass) {
+    return { respawn: false, reasonCode: spawnResult.reasonCode };
+  }
+  const attemptKey = `${phaseId}\0${klass}`;
+  if (continueAttempts.has(attemptKey)) {
+    return { respawn: false, reasonCode: spawnResult.reasonCode };
+  }
+  const stop = stopFn(
+    {
+      phase: phaseId,
+      role,
+      story: storyId,
+      sprint: sprintId,
+      orchestratorRunId: opts.orchestratorRunId,
+      stopReason: klass === "blocked" ? spawnResult.stopReason ?? "blocked" : spawnResult.stopReason,
+      recoverableClass: klass,
+      reasonCode:
+        klass === "aborted"
+          ? "phase_aborted"
+          : klass === "ai_error"
+            ? "ai_error"
+            : spawnResult.reasonCode,
+      blockedSubcode: spawnResult.blockedSubcode,
+      deniedAgent: spawnResult.deniedAgent,
+    },
+    opts.stopMatrixOpts,
+  );
+  if (!stop.ok) {
+    return {
+      respawn: false,
+      reasonCode: stop.reasonCode ?? spawnResult.reasonCode,
+    };
+  }
+  if (stop.action === "continue_same_phase" && stop.next_phase === phaseId) {
+    continueAttempts.add(attemptKey);
+    return { respawn: true };
+  }
+  return { respawn: false, reasonCode: spawnResult.reasonCode };
+}
+
 /**
  * Shared internal lifecycle entry (CF4 / DQ2 / DQ4).
  * Owns: in-flight mutex, first-phase selection, spawnPhase + dispatchStopMatrix
@@ -973,6 +1472,8 @@ export async function runAutoLifecycle(
     const stopFn = opts.dispatchStopMatrixFn ?? dispatchStopMatrix;
     const maxCycles = opts.maxCycles ?? 32;
     let cycles = 0;
+    let markerGeneration = 0;
+    const continueAttempts = new Set<string>();
     let lastEvidence: IsolationEvidence | undefined;
     let lastSessionID: string | undefined;
 
@@ -988,9 +1489,23 @@ export async function runAutoLifecycle(
           cycles,
         };
       }
-      const fresh =
-        opts.freshContextMarker ??
-        `${role}-${phaseId}-${utcNowIso().replace(/[-:]/g, "").slice(0, 15)}Z-fresh`;
+      const capability = deliveryRoleCapability(
+        role,
+        opts.taskAllowlist ?? TASK_ALLOWLIST,
+      );
+      if (!capability.ok) {
+        return {
+          ok: false,
+          reasonCode: capability.reasonCode,
+          cycles,
+        };
+      }
+      const fresh = freshMarkerFor(
+        role,
+        phaseId,
+        opts.freshContextMarker,
+        markerGeneration,
+      );
       const spawnResult = await spawnFn(ctx, {
         phaseId,
         prompt: opts.prompt ?? `phase=${phaseId}`,
@@ -1002,10 +1517,25 @@ export async function runAutoLifecycle(
         bugId: continuationBugId,
       });
       if (!spawnResult.ok) {
-        // Fail-closed paths clear mutex in finally (critic NB clear-on-fail-closed).
+        // Class matches call the matrix instead of returning before it.
+        // Fail-closed paths still clear the mutex in finally.
+        const continued = continueRecoverableSpawn(
+          spawnResult,
+          phaseId,
+          role,
+          stopFn,
+          opts,
+          continueAttempts,
+          continuationStoryId,
+          continuationSprintId,
+        );
+        if (continued.respawn) {
+          markerGeneration += 1;
+          continue;
+        }
         return {
           ok: false,
-          reasonCode: spawnResult.reasonCode,
+          reasonCode: continued.reasonCode ?? spawnResult.reasonCode,
           cycles,
         };
       }
@@ -1025,6 +1555,77 @@ export async function runAutoLifecycle(
               cycles,
             };
           }
+        }
+      }
+      if (opts.crossModelReview === 1 || opts.crossModelReview === "1") {
+        const criticFn = opts.spawnCriticFn ?? spawnSovereignCriticHook;
+        const critic = await criticFn(ctx, {
+          crossModelReview: opts.crossModelReview,
+          allowlist: opts.taskAllowlist,
+          orchestratorSessionId: opts.orchestratorSessionId,
+          freshContextMarker: `${fresh}-critic`,
+          prompt: "/sovereign-critic",
+          producerPhaseId: phaseId,
+          storyId: continuationStoryId,
+          sprintId: continuationSprintId,
+          orchestratorRunId: opts.orchestratorRunId,
+          bugId: continuationBugId,
+        });
+        if (!critic.ok) {
+          return {
+            ok: false,
+            reasonCode: critic.reasonCode,
+            cycles,
+          };
+        }
+      }
+      if (opts.resumePairValidation) {
+        const decision = parentResumePairDecision(opts.resumePairValidation);
+        if (decision.spawn_repair && decision.repair_phase) {
+          const repairSpawn = await spawnFn(ctx, {
+            phaseId: decision.repair_phase,
+            prompt: "repair-only",
+            orchestratorSessionId: opts.orchestratorSessionId,
+            freshContextMarker: `${fresh}-repair`,
+            storyId: continuationStoryId,
+            sprintId: continuationSprintId,
+            orchestratorRunId: opts.orchestratorRunId,
+            bugId: continuationBugId,
+          });
+          if (!repairSpawn.ok) {
+            return {
+              ok: false,
+              reasonCode: repairSpawn.reasonCode,
+              cycles,
+            };
+          }
+          const again = parentResumePairDecision(
+            opts.resumePairValidationAfterRepair ?? {
+              ok: false,
+              predicate: opts.resumePairValidation.predicate,
+              reasonCode: opts.resumePairValidation.reasonCode,
+              writer_role: opts.resumePairValidation.writer_role,
+              completed_phase: opts.resumePairValidation.completed_phase,
+              child_writer_role: opts.resumePairValidation.child_writer_role,
+              child_completed_phase:
+                opts.resumePairValidation.child_completed_phase,
+              identity_match: false,
+            },
+          );
+          if (!again.spawn_next) {
+            return {
+              ok: false,
+              reasonCode: opts.resumePairValidation.reasonCode,
+              cycles,
+            };
+          }
+        } else if (!decision.spawn_next) {
+          return {
+            ok: false,
+            reasonCode:
+              decision.reasonCode ?? opts.resumePairValidation.reasonCode,
+            cycles,
+          };
         }
       }
       const stop = stopFn(
@@ -1047,6 +1648,20 @@ export async function runAutoLifecycle(
           phase_id: phaseId,
           cycles,
         };
+      }
+      if (stop.action === "continue_same_phase" && stop.next_phase === phaseId) {
+        const klass = inferRecoverableClass(spawnResult) ?? "continue_same_phase";
+        const attemptKey = `${phaseId}\0${klass}`;
+        if (continueAttempts.has(attemptKey)) {
+          return {
+            ok: false,
+            reasonCode: spawnResult.reasonCode,
+            cycles,
+          };
+        }
+        continueAttempts.add(attemptKey);
+        markerGeneration += 1;
+        continue;
       }
       if (
         !stop.next_phase ||

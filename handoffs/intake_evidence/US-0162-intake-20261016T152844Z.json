@@ -1,0 +1,333 @@
+{
+  "selected_pack": "first-intake-pack",
+  "intake_run_id": "ir-20261016T152844Z-us0162",
+  "writer_id": "po-cursor-20261016-tokenopt",
+  "INTAKE_GUIDED_MODE": 0,
+  "INTAKE_WORK_ITEM_KIND": "story",
+  "requested_mode": "story",
+  "ID_NAMESPACE_BOOTSTRAP": 0,
+  "WORK_KIND_ROUTING": 0,
+  "EARLY_RESEARCH": 0,
+  "CROSS_REPO_OBSERVABILITY": 0,
+  "COMPONENT_SCOPE_MODE": 0,
+  "SPEC_PACK_MODE": 0,
+  "USER_GUIDE_MODE": 0,
+  "FRAMEWORK_KIT_REPO": 1,
+  "story_id": "US-0162",
+  "bug_id": null,
+  "decision_gate": false,
+  "persistence": "persisted",
+  "timestamp_utc": "2026-10-16T15:28:44Z",
+  "spec_ref": "docs/product/its-magic – Token Optimization + Model Routing v2.md",
+  "asked_topics": [
+    "users_problem",
+    "runtime_target_environment",
+    "language_framework_runtime",
+    "architecture_preference",
+    "ui_design_expectations",
+    "security_compliance",
+    "non_functional_priorities",
+    "scope_timeline"
+  ],
+  "missing_topics": [],
+  "assumptions_confirmed": "(none)",
+  "topic_coverage": [
+    {
+      "topic_key": "users_problem",
+      "satisfied_by": "answer_ref",
+      "quoted_user_text": "1. Typische Runs sollen deutlich weniger Input-Tokens verbrauchen.\n2. Codequalität, QA, UAT und Release-Sicherheit sollen ungefähr gleich bleiben.\n3. Jede Rolle/Phase/Aufgabenklasse muss ein eigenes Modell verwenden können.\n4. Modelle unterschiedlicher Provider müssen gleichzeitig unterstützt werden:\n   - lokale OpenAI-kompatible APIs / LM Studio\n   - OpenAI\n   - OpenRouter\n   - KIE.ai\n   - Anthropic oder weitere Provider\n5. Modellwahl darf nicht nur vom Host Cursor/OpenCode abhängen, sondern muss Teil von its-magic selbst sein.",
+      "intake_run_id": "ir-20261016T152844Z-us0162",
+      "turn_index": 1,
+      "ref": "ie:ir-20261016T152844Z-us0162:1:5ae33a4b1b9694b2"
+    },
+    {
+      "topic_key": "runtime_target_environment",
+      "satisfied_by": "answer_ref",
+      "quoted_user_text": "Cursor/OpenCode-spezifische Model Catalogs dürfen weiterhin Adapter sein, aber NICHT die Source of Truth für Routing.",
+      "intake_run_id": "ir-20261016T152844Z-us0162",
+      "turn_index": 2,
+      "ref": "ie:ir-20261016T152844Z-us0162:2:2f838a6eeae3a7fb"
+    },
+    {
+      "topic_key": "language_framework_runtime",
+      "satisfied_by": "delegation_ref",
+      "quoted_user_text": "delegation-label: current its-magic scripts and JSON config, no new language",
+      "intake_run_id": "ir-20261016T152844Z-us0162",
+      "turn_index": 3,
+      "ref": "ie:ir-20261016T152844Z-us0162:3:9dbd9ac1a470e613",
+      "delegation_scope": "Keep the current its-magic implementation surface: Python workflow scripts and JSON or YAML configuration. Example paths such as scripts/build_phase_context.py and .its-magic/model-routing.json illustrate placement and do not choose a new language or framework.",
+      "delegation_rationale": "The specification shows example script and configuration paths and does not name a new language or framework.",
+      "delegation_confidence": "high"
+    },
+    {
+      "topic_key": "architecture_preference",
+      "satisfied_by": "answer_ref",
+      "quoted_user_text": "pack first -> targeted read -> bounded expansion",
+      "intake_run_id": "ir-20261016T152844Z-us0162",
+      "turn_index": 4,
+      "ref": "ie:ir-20261016T152844Z-us0162:4:22ed57430ab2b29f"
+    },
+    {
+      "topic_key": "ui_design_expectations",
+      "satisfied_by": "delegation_ref",
+      "quoted_user_text": "delegation-label: no new operator screen; routing stays a compact log",
+      "intake_run_id": "ir-20261016T152844Z-us0162",
+      "turn_index": 5,
+      "ref": "ie:ir-20261016T152844Z-us0162:5:3b93f7ae43c475ab",
+      "delegation_scope": "No new screen or client. Operator-visible routing output stays the compact per-phase log and benchmark fields already specified in the source document.",
+      "delegation_rationale": "The specification defines machine-readable routing logs and benchmarks and does not describe a screen, theme, or client.",
+      "delegation_confidence": "high"
+    },
+    {
+      "topic_key": "security_compliance",
+      "satisfied_by": "answer_ref",
+      "quoted_user_text": "Keine Secrets in Repo-Konfiguration.",
+      "intake_run_id": "ir-20261016T152844Z-us0162",
+      "turn_index": 6,
+      "ref": "ie:ir-20261016T152844Z-us0162:6:0fc1e4557bafeb9b"
+    },
+    {
+      "topic_key": "non_functional_priorities",
+      "satisfied_by": "answer_ref",
+      "quoted_user_text": "typischer logical input:\n-40 bis -55 %\n\nduplicate large reads:\n< 10 %\n\nstatic bootstrap pro Phase:\n< 1500 Tokens\n\nContext Pack:\nmeist < 8k Tokens\n\nQA/UAT Qualität:\nnicht relevant schlechter als vorher",
+      "intake_run_id": "ir-20261016T152844Z-us0162",
+      "turn_index": 7,
+      "ref": "ie:ir-20261016T152844Z-us0162:7:76c7e84401dd79ee"
+    },
+    {
+      "topic_key": "scope_timeline",
+      "satisfied_by": "answer_ref",
+      "quoted_user_text": "Bestehende Konfigurationen müssen möglichst migrationsfähig bleiben.\n\nAlte `MODEL_*` Einstellungen wenn möglich als Compatibility Adapter auf das neue Routing abbilden, statt sie abrupt zu entfernen.",
+      "intake_run_id": "ir-20261016T152844Z-us0162",
+      "turn_index": 8,
+      "ref": "ie:ir-20261016T152844Z-us0162:8:a6d71ea0d73236c4"
+    }
+  ],
+  "operator_quotes": [
+    {
+      "id": "1",
+      "text": "1. Typische Runs sollen deutlich weniger Input-Tokens verbrauchen.\n2. Codequalität, QA, UAT und Release-Sicherheit sollen ungefähr gleich bleiben.\n3. Jede Rolle/Phase/Aufgabenklasse muss ein eigenes Modell verwenden können.\n4. Modelle unterschiedlicher Provider müssen gleichzeitig unterstützt werden:\n   - lokale OpenAI-kompatible APIs / LM Studio\n   - OpenAI\n   - OpenRouter\n   - KIE.ai\n   - Anthropic oder weitere Provider\n5. Modellwahl darf nicht nur vom Host Cursor/OpenCode abhängen, sondern muss Teil von its-magic selbst sein.",
+      "answer_ref_topic": "users_problem"
+    },
+    {
+      "id": "2",
+      "text": "Cursor/OpenCode-spezifische Model Catalogs dürfen weiterhin Adapter sein, aber NICHT die Source of Truth für Routing.",
+      "answer_ref_topic": "runtime_target_environment"
+    },
+    {
+      "id": "3",
+      "text": "pack first -> targeted read -> bounded expansion",
+      "answer_ref_topic": "architecture_preference"
+    },
+    {
+      "id": "4",
+      "text": "Keine Secrets in Repo-Konfiguration.",
+      "answer_ref_topic": "security_compliance"
+    },
+    {
+      "id": "5",
+      "text": "typischer logical input:\n-40 bis -55 %\n\nduplicate large reads:\n< 10 %\n\nstatic bootstrap pro Phase:\n< 1500 Tokens\n\nContext Pack:\nmeist < 8k Tokens\n\nQA/UAT Qualität:\nnicht relevant schlechter als vorher",
+      "answer_ref_topic": "non_functional_priorities"
+    },
+    {
+      "id": "6",
+      "text": "Bestehende Konfigurationen müssen möglichst migrationsfähig bleiben.\n\nAlte `MODEL_*` Einstellungen wenn möglich als Compatibility Adapter auf das neue Routing abbilden, statt sie abrupt zu entfernen.",
+      "answer_ref_topic": "scope_timeline"
+    }
+  ],
+  "candidate_story_ids": [
+    "US-0162"
+  ],
+  "plan_area_inventory": [
+    {
+      "plan_area_id": "phase-context-packs",
+      "title": "Phase context packs replace full memory reads"
+    },
+    {
+      "plan_area_id": "memory-doc-sharding",
+      "title": "Shard large memory documents instead of one linear surface"
+    },
+    {
+      "plan_area_id": "machine-evidence-split",
+      "title": "Keep machine evidence out of LLM memory"
+    },
+    {
+      "plan_area_id": "always-on-rule-kernel",
+      "title": "Shrink always-on rules to a permanent kernel"
+    },
+    {
+      "plan_area_id": "delta-handoffs",
+      "title": "Handoffs become deltas"
+    },
+    {
+      "plan_area_id": "deterministic-memory-audit",
+      "title": "Memory audit is deterministic first"
+    },
+    {
+      "plan_area_id": "read-deduplication",
+      "title": "Deduplicate unchanged reads inside a phase"
+    },
+    {
+      "plan_area_id": "host-neutral-model-routing",
+      "title": "its-magic owns per role, phase, and task routing"
+    },
+    {
+      "plan_area_id": "provider-abstraction",
+      "title": "Provider registry is separate from model identity"
+    },
+    {
+      "plan_area_id": "complexity-router",
+      "title": "Deterministic complexity classes before any model call"
+    },
+    {
+      "plan_area_id": "routing-fallbacks",
+      "title": "Capability checks, fallback chains, and escalation"
+    },
+    {
+      "plan_area_id": "routing-observability",
+      "title": "Compact routing logs and expanded benchmarks"
+    },
+    {
+      "plan_area_id": "token-model-axis-separation",
+      "title": "TOKEN_PROFILE and model profile stay separate axes"
+    },
+    {
+      "plan_area_id": "quality-gate-preservation",
+      "title": "Quality, QA, UAT, release, isolation, and strict-proof gates stay"
+    }
+  ],
+  "plan_area_coverage": [
+    {
+      "plan_area_id": "phase-context-packs",
+      "story_ids": [
+        "US-0162"
+      ]
+    },
+    {
+      "plan_area_id": "memory-doc-sharding",
+      "story_ids": [
+        "US-0162"
+      ]
+    },
+    {
+      "plan_area_id": "machine-evidence-split",
+      "story_ids": [
+        "US-0162"
+      ]
+    },
+    {
+      "plan_area_id": "always-on-rule-kernel",
+      "story_ids": [
+        "US-0162"
+      ]
+    },
+    {
+      "plan_area_id": "delta-handoffs",
+      "story_ids": [
+        "US-0162"
+      ]
+    },
+    {
+      "plan_area_id": "deterministic-memory-audit",
+      "story_ids": [
+        "US-0162"
+      ]
+    },
+    {
+      "plan_area_id": "read-deduplication",
+      "story_ids": [
+        "US-0162"
+      ]
+    },
+    {
+      "plan_area_id": "host-neutral-model-routing",
+      "story_ids": [
+        "US-0162"
+      ]
+    },
+    {
+      "plan_area_id": "provider-abstraction",
+      "story_ids": [
+        "US-0162"
+      ]
+    },
+    {
+      "plan_area_id": "complexity-router",
+      "story_ids": [
+        "US-0162"
+      ]
+    },
+    {
+      "plan_area_id": "routing-fallbacks",
+      "story_ids": [
+        "US-0162"
+      ]
+    },
+    {
+      "plan_area_id": "routing-observability",
+      "story_ids": [
+        "US-0162"
+      ]
+    },
+    {
+      "plan_area_id": "token-model-axis-separation",
+      "story_ids": [
+        "US-0162"
+      ]
+    },
+    {
+      "plan_area_id": "quality-gate-preservation",
+      "story_ids": [
+        "US-0162"
+      ]
+    }
+  ],
+  "coverage_complete": true,
+  "decomposition": {
+    "verdict": "single_story",
+    "mode": "low-touch",
+    "why_not_split": "INTAKE_GUIDED_MODE=0. The operator did not ask to split. One outcome: fewer input tokens via context packs and slimmer memory, plus its-magic-owned per-role/per-task model routing across providers, while existing quality, QA, UAT, release, isolation, and strict-proof gates stay.",
+    "split_axis": "none"
+  },
+  "duplicate_check": {
+    "highest_us_before_write": "US-0161",
+    "allocated": "US-0162",
+    "not_a_true_duplicate_of": [
+      "US-0053",
+      "US-0072",
+      "US-0080",
+      "US-0089",
+      "US-0090",
+      "US-0096",
+      "US-0123",
+      "US-0132",
+      "US-0135"
+    ],
+    "left_closed": [
+      "US-0053",
+      "US-0072",
+      "US-0080",
+      "US-0089",
+      "US-0090",
+      "US-0096",
+      "US-0123",
+      "US-0132",
+      "US-0135"
+    ],
+    "rationale": "No OPEN or DONE story already owns this v2 scope. US-0053 is TOKEN_PROFILE compaction. US-0072 is hot-surface archive and minimal reads. US-0080 is measured cache-read slimming. US-0089 and US-0090 are caveman voice and optional file compression. US-0096 is delivery-mode lifecycle shape. US-0123 and US-0132 are host catalogs for OpenCode and Cursor. US-0135 is standalone auth and Pi routing. This story is the delta: context packs and slimmer memory, plus its-magic-owned host-neutral routing. Those stories stay as they are."
+  },
+  "non_goals": {
+    "decision_gate": false,
+    "do_not_delete_gates": "Do not delete quality, QA, UAT, release, isolation, or strict-proof gates to save tokens. Do not weaken US-0048, US-0056, US-0069, or US-0039.",
+    "do_not_replace_token_profile": "Do not silently replace TOKEN_PROFILE. It stays the context-breadth axis.",
+    "do_not_reopen_caveman": "Do not reopen US-0089 or US-0090 as this story.",
+    "template_parity": "This intake does not mirror template/docs/product. Recent story intakes US-0157 through US-0161 did not either.",
+    "resume_brief": "Story intake does not refresh handoffs/resume_brief.md."
+  },
+  "bug_routing_guard": {
+    "prose_file": "handoffs/intake_evidence/US-0162-routing-prose.txt",
+    "result": "[INTAKE_BUG_ROUTING_OK] kind=story exit=0",
+    "note": "Exit 0 does not allocate a BUG id. US-0162 allocated after the guard. Prose describes the new capability."
+  },
+  "priority_rationale": "P0 because the specification Hauptziele treat fewer input tokens and its-magic-owned model choice as operator-critical, and the core workstreams are marked P0."
+}

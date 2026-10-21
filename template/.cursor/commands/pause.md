@@ -2,6 +2,8 @@
 description: "its-magic pause: write checkpoint and resume brief."
 ---
 
+Kernel pointer: `.cursor/rules/core.mdc`. Do not paste the kernel lines into this file.
+
 # /pause
 
 ## Subagents

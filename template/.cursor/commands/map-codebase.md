@@ -2,6 +2,8 @@
 description: "its-magic map codebase: analyze existing project before changes."
 ---
 
+Kernel pointer: `.cursor/rules/core.mdc`. Do not paste the kernel lines into this file.
+
 # /map-codebase
 
 ## Subagents

@@ -1,0 +1,193 @@
+{
+  "sprint": "S0178",
+  "sprint_id": "S0178",
+  "story_id": null,
+  "bug_id": "BUG-0029",
+  "status": "VERIFY_PASS",
+  "verdict": "VERIFY_PASS",
+  "uat_lifecycle": "populated",
+  "placeholder_only": false,
+  "verify_work_claimed": true,
+  "delivery_mode": "ultra_lean",
+  "macro_phase": "build+verify",
+  "phase_id": "verify-work",
+  "role": "qa",
+  "timestamp": "2026-10-16T14:37:00Z",
+  "fresh_context_marker": "qa-BUG0029-vw-fix1-20261016T143700Z-fresh",
+  "implementation_loop_index": 1,
+  "prior_verify_work_timestamp": "2026-10-16T00:05:15Z",
+  "prior_fresh_context_marker": "qa-BUG0029-vw-20261016T000515Z-fresh",
+  "model_id": "omit",
+  "cross_model_review": 0,
+  "bug_status": "OPEN",
+  "acceptance_boxes": "unchecked",
+  "acceptance_boxes_checked": false,
+  "contract_test_failed": 0,
+  "harness_fail_zero_claimed": true,
+  "total": 6,
+  "passed": 6,
+  "failed": 0,
+  "steps": [
+    {
+      "id": "UAT-1",
+      "ac": "AC-1",
+      "description": "API-key login obtains a secret from an interactive TTY without echoing it, logging it, or placing it in command-line arguments",
+      "result": "pass",
+      "marker": "test_bug0029_masked_tty_does_not_echo_or_argv",
+      "probe_kind": "contract_tests_primary"
+    },
+    {
+      "id": "UAT-2",
+      "ac": "AC-2",
+      "description": "A documented non-interactive --api-key-stdin path accepts one secret from standard input and rejects non-TTY interactive login without pretending success",
+      "result": "pass",
+      "marker": "test_bug0029_api_key_stdin_one_line",
+      "probe_kind": "contract_tests_primary"
+    },
+    {
+      "id": "UAT-3",
+      "ac": "AC-3",
+      "description": "Cancelled, empty, invalid, or persistence-failed login exits non-zero with a deterministic redacted diagnostic and never emits configured JSON",
+      "result": "pass",
+      "marker": "test_bug0029_cancel_empty_invalid_persist_never_configured",
+      "probe_kind": "contract_tests_primary"
+    },
+    {
+      "id": "UAT-4",
+      "ac": "AC-4",
+      "description": "Login verifies stored credentials through the runtime before emitting configured success; auth list, logout, and Pi migration retain their existing behavior",
+      "result": "pass",
+      "marker": "test_bug0029_success_only_after_check_auth",
+      "probe_kind": "contract_tests_primary"
+    },
+    {
+      "id": "UAT-5",
+      "ac": "AC-5",
+      "description": "Cross-platform tests cover masked TTY input, stdin input, cancellation, redaction, false-success prevention, and no secret outside the owned auth store",
+      "result": "pass",
+      "marker": "test_bug0029_secret_absent_outside_owned_store",
+      "probe_kind": "contract_tests_primary"
+    },
+    {
+      "id": "convergence_smoke",
+      "description": "Convergence smoke surrogate — waived-probe slice with green contract-test harness",
+      "result": "pass",
+      "marker": "test_us0128_convergence_smoke_surrogate",
+      "evidence_ref": "tests/report.md Fail:0 + uat.json waived_probes[] (6 classes, UAT_PROBE_FORBIDDEN)",
+      "probe_kind": "contract_tests_primary"
+    }
+  ],
+  "summary": {
+    "passed": 6,
+    "failed": 0
+  },
+  "contract_test_markers": [
+    "test_bug0029_masked_tty_does_not_echo_or_argv",
+    "test_bug0029_api_key_stdin_one_line",
+    "test_bug0029_non_tty_without_flag_is_nonzero",
+    "test_bug0029_cancel_empty_invalid_persist_never_configured",
+    "test_bug0029_success_only_after_check_auth",
+    "test_bug0029_list_logout_migrate_unchanged",
+    "test_bug0029_secret_absent_outside_owned_store"
+  ],
+  "contract_test_passed": 7,
+  "contract_test_command": "node --experimental-strip-types --test --test-name-pattern \"test_bug0029_\" tests/contract/bug0029.contract.test.ts",
+  "contract_test_output": "Windows Node v24.19.0 7 pass / 0 fail duration_ms 154.4677; Linux Node v24.19.0 7 pass / 0 fail duration_ms 268.94279",
+  "blocking_findings": [],
+  "probe_results": [
+    {
+      "step_id": "UAT-1",
+      "probe_class": "contract_tests_primary",
+      "passed": true,
+      "reason_code": "UAT_PROBE_PASS",
+      "evidence_ref": "test_bug0029_masked_tty_does_not_echo_or_argv"
+    },
+    {
+      "step_id": "UAT-2",
+      "probe_class": "contract_tests_primary",
+      "passed": true,
+      "reason_code": "UAT_PROBE_PASS",
+      "evidence_ref": "test_bug0029_api_key_stdin_one_line"
+    },
+    {
+      "step_id": "UAT-3",
+      "probe_class": "contract_tests_primary",
+      "passed": true,
+      "reason_code": "UAT_PROBE_PASS",
+      "evidence_ref": "test_bug0029_cancel_empty_invalid_persist_never_configured"
+    },
+    {
+      "step_id": "UAT-4",
+      "probe_class": "contract_tests_primary",
+      "passed": true,
+      "reason_code": "UAT_PROBE_PASS",
+      "evidence_ref": "test_bug0029_success_only_after_check_auth"
+    },
+    {
+      "step_id": "UAT-5",
+      "probe_class": "contract_tests_primary",
+      "passed": true,
+      "reason_code": "UAT_PROBE_PASS",
+      "evidence_ref": "test_bug0029_secret_absent_outside_owned_store"
+    },
+    {
+      "step_id": "convergence_smoke",
+      "probe_class": "contract_tests_primary",
+      "passed": true,
+      "reason_code": "UAT_PROBE_PASS",
+      "evidence_ref": "contract_test_failed=0; independent Windows and Linux 7 pass / 0 fail test_bug0029_*; 6 waived_probes UAT_PROBE_FORBIDDEN; tests/report.md 2026-10-16T14:15:41Z Fail:0 after re-run of the eight prior fail commands"
+    }
+  ],
+  "probe_class_note": "Live installed binary, browser, and operator probes are UAT_PROBE_FORBIDDEN. Independent contract tests cover the acceptance paths on Windows and Linux. No .env read. BUG-0029 stays OPEN. Backlog AC-1..AC-5 stay unchecked.",
+  "waived_probes": [
+    {
+      "probe_class": "browser_smoke",
+      "reason": "No live browser. This ultra-lean slice is contract-test primary.",
+      "reason_code": "UAT_PROBE_FORBIDDEN"
+    },
+    {
+      "probe_class": "api_health",
+      "reason": "No live API. This ultra-lean slice is contract-test primary.",
+      "reason_code": "UAT_PROBE_FORBIDDEN"
+    },
+    {
+      "probe_class": "process_health",
+      "reason": "No live process health probe. This ultra-lean slice is contract-test primary.",
+      "reason_code": "UAT_PROBE_FORBIDDEN"
+    },
+    {
+      "probe_class": "cli_smoke",
+      "reason": "A live installed itsm binary probe is UAT_PROBE_FORBIDDEN. The contract markers exercise the login paths.",
+      "reason_code": "UAT_PROBE_FORBIDDEN"
+    },
+    {
+      "probe_class": "build",
+      "reason": "No product build or publish. This ultra-lean slice is contract-test primary.",
+      "reason_code": "UAT_PROBE_FORBIDDEN"
+    },
+    {
+      "probe_class": "manual_operator",
+      "reason": "No live operator session and no human at the keyboard. This ultra-lean slice is contract-test primary.",
+      "reason_code": "UAT_PROBE_FORBIDDEN"
+    }
+  ],
+  "remediation_verification": {
+    "implementation_loop_index": 1,
+    "verdict": "VERIFY_PASS",
+    "timestamp": "2026-10-16T14:37:00Z",
+    "fresh_context_marker": "qa-BUG0029-vw-fix1-20261016T143700Z-fresh",
+    "readme_enforce_exit": 0,
+    "readme_feature_coverage_gap_bug0028": false,
+    "coverage_missing": [],
+    "coverage_total": 52,
+    "harness_report": "tests/report.md 2026-10-16T14:15:41Z Pass 880 / Fail 0",
+    "eight_prior_fail_rows": "PASS",
+    "contract_windows": "7 pass / 0 fail",
+    "contract_linux": "7 pass / 0 fail",
+    "uat_passed": 6,
+    "uat_failed": 0,
+    "live_probes": "UAT_PROBE_FORBIDDEN",
+    "bug_status": "OPEN",
+    "acceptance_boxes_checked": false
+  }
+}

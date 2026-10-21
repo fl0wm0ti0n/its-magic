@@ -1,0 +1,1 @@
+In auto mode, OPEN stories and OPEN bugs are worked by priority band, then backlog order. Each intake assigns P0, P1, P2, or P3 and appends the new item at the end of that band. When intake sees a dependency or a chicken-and-egg, it picks an order and records the dependency.

@@ -36,7 +36,7 @@ def _parse_resume_brief(repo: Path) -> dict[str, str]:
     path = repo / "handoffs" / "resume_brief.md"
     if not path.is_file():
         return {}
-    text = path.read_text(encoding="utf-8")
+    text = path.read_text(encoding="utf-8").split("\n---\n", 1)[0]
     out: dict[str, str] = {}
     for key in (
         "intended_resume_phase",
@@ -71,9 +71,33 @@ def _parse_state_next_phase(repo: Path) -> str | None:
     if not path.is_file():
         return None
     text = path.read_text(encoding="utf-8")
+    # State checkpoints are append-only. Prefer the newest complete canonical
+    # pair over historical prose and incomplete blocker evidence, which may
+    # legitimately carry next_scheduled_phase=none.
+    records: list[dict] = []
+    for raw in re.findall(r"```json\s*\n(.*?)\n```", text, flags=re.DOTALL):
+        try:
+            record = json.loads(raw)
+        except json.JSONDecodeError:
+            continue
+        if isinstance(record, dict):
+            records.append(record)
+    for record in reversed(records):
+        phase = record.get("next_scheduled_phase")
+        if (
+            isinstance(record.get("record_key"), str)
+            and isinstance(phase, str)
+            and _is_known_phase(phase)
+        ):
+            return phase
+
+    # Retain compatibility with older state checkpoints that predate the JSON
+    # continuation-pair record, while ignoring terminal `none` markers.
     matches = re.findall(r"next_scheduled_phase[=:][\s`*]*([^\s`;*`]+)", text)
-    if matches:
-        return matches[0].strip("`")
+    for phase in reversed(matches):
+        phase = phase.strip("`")
+        if _is_known_phase(phase):
+            return phase
     return None
 
 

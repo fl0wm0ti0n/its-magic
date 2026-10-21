@@ -2,6 +2,8 @@
 description: "its-magic auto: deterministic continuation orchestrator."
 ---
 
+Kernel pointer: `.cursor/rules/core.mdc`. Do not paste the kernel lines into this file.
+
 # /auto
 
 ## Subagents
@@ -500,6 +502,29 @@ of silently falling back.
   a state-only fallback, **never** repairs or auto-refreshes the pair, and
   **never** schedules the next phase (including `/architecture`) when the pair
   is stale, missing, malformed, conflicting, unauthorized, or reused.
+- Repairable blocker class (BUG-0036): before that terminal stale stop, call
+  `classify_before_terminal_stale` in `scripts/repairable_blocker_lib.py`.
+  Pass the current `AUTONOMY_STOP_POLICY` value. The library does not read
+  configuration. The check is a member only when the sole defect is TTL
+  expiry of a matching authorized pair (`compute_strict_proof_hash` matches,
+  locked fields agree, the writer is authorized, and `proof_issued_at` plus
+  `proof_ttl_seconds` is past). `block` keeps `RESUME_BRIEF_STALE` and
+  `execute_harness_blocked_out_of_scope` terminal. `auto_repair_then_block`
+  and `auto_repair_then_skip` run a bounded repair, cap 3 per orchestrator
+  run and member. An expired matching pair spawns a fresh child of that
+  pair's writer role for the same completed phase. The parent writes neither
+  `docs/engineering/state.md` nor `handoffs/resume_brief.md` and does not
+  call `write_resume_pair`. The child appends the checkpoint at the bottom
+  of state, then prepends the brief, with a new runtime proof id, a new
+  hash, and the same next phase and role. A foreign harness whose own
+  contract passed, and whose remaining failures name another owner, records
+  a quarantine row (failure name, path, owning id, active work item id) and
+  schedules the next lawful phase. Do not call `resolve_matrix_repair` or
+  `attempt_repair` for this class. Runtime-proof codes
+  `RUNTIME_PROOF_MISSING`, `RUNTIME_PROOF_REUSED`, `RUNTIME_PROOF_STALE`,
+  and `RUNTIME_PROOF_AMBIGUOUS_LINK` stay security-hard. Env reads, npm
+  publish, and git push are not performed. Spawning the child is not a
+  parent write and is not an auto-refresh. `RESUME_BRIEF_AUTO_REFRESH` stays 0.
 - Fail-closed vocabulary: syntax → **`RESUME_BRIEF_UNPARSEABLE`**; stale,
   absent-required, conflicting, authorization, replay, or proof/isolation
   invalid → **`RESUME_BRIEF_STALE`** (predicate retained). A retry is a

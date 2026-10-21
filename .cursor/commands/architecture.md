@@ -2,6 +2,8 @@
 description: "its-magic architecture: define approach, risks, and decisions."
 ---
 
+Kernel pointer: `.cursor/rules/core.mdc`. Do not paste the kernel lines into this file.
+
 # /architecture
 
 ## Subagents

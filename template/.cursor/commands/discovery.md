@@ -2,6 +2,8 @@
 description: "its-magic discovery: collect design/UX inspiration and scope updates."
 ---
 
+Kernel pointer: `.cursor/rules/core.mdc`. Do not paste the kernel lines into this file.
+
 # /discovery
 
 ## Subagents

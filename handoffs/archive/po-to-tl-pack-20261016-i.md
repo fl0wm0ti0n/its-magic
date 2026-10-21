@@ -1,0 +1,25 @@
+# PO to TL archive pack (2026-10-16)
+
+- Rollover trigger: `PO_TO_TL_HOT_MAX_LINES=650, PO_TO_TL_HOT_MAX_SECTIONS=60`
+- Source: `handoffs/po_to_tl.md`
+- Archived units (oldest first, contiguous prefix): 1
+- Retained units in hot file: 26
+- First archived heading: `## Discovery handoff — BUG-0026 published upgrade `KERNEL_CONTRACT_MISMATCH``
+- Last archived heading: `## Discovery handoff — BUG-0026 published upgrade `KERNEL_CONTRACT_MISMATCH``
+- Verification tuple (mandatory):
+  - archived_body_lines=11
+  - retained_body_lines=640
+
+---
+
+## Discovery handoff — BUG-0026 published upgrade `KERNEL_CONTRACT_MISMATCH`
+
+- **Phase completed**: discovery. **Role**: po. **Bug**: BUG-0026 only. **Sprint**: (none — do not create). **Verdict**: DISCOVERY_PASS (`decision_gate=false`). **Timestamp (UTC)**: 2026-10-15T08:00:01Z. **Fresh marker**: `po-BUG0026-discovery-20261015T080001Z-fresh`.
+- **Orchestrator**: `orchestrator_run_id=auto-20261015-bug0026`, `delivery_mode=ultra_lean`, `resolved_phase_plan=[spec, plan, build+verify, ship]`, `reinstatement_mode=none`, `memory_layer=pack`, `invocation_mode=auto`, `resolution_source=argument`, `resolved_start_phase=discovery`. Winning config layer already resolved: `.cursor/scratchpad.local.md` (cursor_local). Intake already persisted (`handoffs/intake_evidence/BUG-0026-intake-20260919T100204Z.json`, read-only). Do not continue the BUG-0028 refresh pair. Queue position 1, remaining 1. **BUG-0029** is next and out of this phase.
+- **Problem lock**: Published `its-magic` upgrade fail-closes `KERNEL_CONTRACT_MISMATCH` because package-root `standalone/` was omitted, so `load_supported_range` returned `None`. The 2026-09-19 partial fix is already recorded: allowlisted supported-range artifact, `STANDALONE_SUPPORTED_RANGE_MISSING`, publish-guard, seven `test_bug0026_*`, published `its-magic@0.1.5`, and a Windows `upgrade --host both` that reached `STANDALONE_BOOTSTRAP_OK`. The Linux published-global live check was not run. That is the residual.
+- **Locks**: **D1** AC-3 requires the same success, or a precise missing-standalone / missing-range diagnostic distinct from a false `KERNEL_CONTRACT_MISMATCH`, on Windows and Linux with global `its-magic@≥0.1.4` or the fix republish. **D2** hold the partial fix; do not re-implement, republish, or uncheck AC-1, AC-2, AC-4..AC-8. **D3** the open gap is the Linux published-global half; a missing Linux runtime is not a PASS. **D4** a true kernel mismatch stays `KERNEL_CONTRACT_MISMATCH`; the named distinct token is `STANDALONE_SUPPORTED_RANGE_MISSING` (AC-8). **D5** do not reopen BUG-0025 (AC-5). **D6** US-0149 is DONE — compose/link only (AC-6). **D7** do not merge, drain, or edit BUG-0028 (DONE) or BUG-0029 (OPEN); do not reopen BUG-0022 or BUG-0024. **D8** no new story, no sprint id, no plan-verify artifact (`ultra_lean_not_in_resolved_phase_plan`), no companion DEC expected. **D9** EARLY_RESEARCH=0; tech-lead authors the next free heading after **R-0166** (expected **R-0167**); do not wipe R-0166. **D10** status stays OPEN; AC-3 stays unchecked; acceptance row stays unchecked.
+- **Research questions** (tech-lead authors expected **R-0167**; PO does not author the body): **DQ1** whether `its-magic@0.1.5` already satisfies the range-artifact half, leaving only the Linux live half of AC-3. **DQ2** what counts as the Linux half without claiming a live PASS that was not observed. **DQ3** confirm `STANDALONE_SUPPORTED_RANGE_MISSING` stays distinct from `KERNEL_CONTRACT_MISMATCH`. **DQ4** whether a further republish is required. **DQ5** which existing `test_bug0026_*` already cover the pack allowlist and the false-mismatch path. **DQ6** how to record Windows and Linux without treating the 2026-09-19 Windows run as the Linux half. **DQ7** confirm do-not-reopen BUG-0025, US-0149, and BUG-0028, and do-not-merge BUG-0029. **DQ8** companion DEC stays none unless a contract cannot live under `# BUG-0026`. **DQ9** sprint id is whatever is free at sprint-plan; do not allocate it here. **DQ10** plan-verify stays skipped. Viable options: (1) prove AC-3 on published `its-magic@0.1.5` with a real Linux global upgrade — recommended direction; (2) republish first only if 0.1.5 still omits the range; (3) close AC-3 from Windows plus contract tests — rejected.
+- **Non-goals**: no implementation, no republish, no sprint, no architecture, no DEC, no new `R-` body, no sovereign critic (`CROSS_MODEL_REVIEW=0`), no npm publish, no git commit, no git push, no `.env` read, no mutation of BUG-0028, BUG-0029, BUG-0025, or US-0149.
+- **Proof**: `rp-auto-20261015-bug0026-discovery-po-20261015T080001Z-BUG-0026` / `826a4ba7f4f61cd10b0d430956cc2fce376cec69cca51549cfc553d900d47954`; issued 2026-10-15T08:00:01Z; `proof_ttl_seconds=3600`; ttl 2026-10-15T09:00:01Z; `hash_recompute_confirmation=true`.
+- **Status**: BUG-0026 remains **OPEN**. AC-3 remains `[ ]`. AC-1, AC-2, and AC-4..AC-8 stay `[x]`. Acceptance row stays `[ ]`. **Next**: `/research` in a fresh **tech-lead** context. This PO child does not spawn it. STOP.
+

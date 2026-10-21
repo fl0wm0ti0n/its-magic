@@ -2,6 +2,8 @@
 description: "its-magic phase context: capture phase preferences and constraints."
 ---
 
+Kernel pointer: `.cursor/rules/core.mdc`. Do not paste the kernel lines into this file.
+
 # /phase-context
 
 ## Subagents

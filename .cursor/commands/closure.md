@@ -1,3 +1,5 @@
+Kernel pointer: `.cursor/rules/core.mdc`. Do not paste the kernel lines into this file.
+
 # /closure — dedicated story closure phase
 
 ## Subagents

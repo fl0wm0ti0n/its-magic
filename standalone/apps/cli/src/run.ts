@@ -1,4 +1,4 @@
-import { dispatchItsmCommand } from "@its-magic/auth-models";
+import { dispatchItsmCommand, readMaskedTtySecret } from "@its-magic/auth-models";
 import { createAuthRuntimeAdapter } from "@its-magic/pi-kernel";
 import type { SessionSupervisor } from "@its-magic/role-runtime";
 import {
@@ -90,6 +90,7 @@ Usage:
   itsm status
   itsm resume
   itsm auth <list|login|logout|migrate>
+  itsm auth login <provider> --type api_key --api-key-stdin
   itsm models <list|test>
   itsm <phase-or-command>
 
@@ -110,6 +111,11 @@ export async function runCliArgv(argv: string[], deps: CliRunDeps): Promise<numb
 			adapter: createAuthRuntimeAdapter(),
 			projectRoot: deps.projectRoot,
 			env,
+			io: {
+				stdout: (line) => console.log(line),
+				stderr: (line) => console.error(line),
+				prompt: (message) => readMaskedTtySecret(message),
+			},
 		});
 	}
 	if (!deps.host?.store || !deps.host.supervisor) {

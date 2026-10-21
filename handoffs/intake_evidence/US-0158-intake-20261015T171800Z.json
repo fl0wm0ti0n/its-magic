@@ -1,0 +1,100 @@
+{
+  "selected_pack": "small-intake-pack",
+  "intake_run_id": "ir-20261015T171800Z-us0158",
+  "writer_id": "po-cursor-20261015-us0158",
+  "INTAKE_GUIDED_MODE": 0,
+  "INTAKE_WORK_ITEM_KIND": "story",
+  "requested_mode": "story",
+  "ID_NAMESPACE_BOOTSTRAP": 0,
+  "WORK_KIND_ROUTING": 0,
+  "EARLY_RESEARCH": 0,
+  "FRAMEWORK_KIT_REPO": 1,
+  "story_id": "US-0158",
+  "bug_id": null,
+  "persistence": "persisted",
+  "asked_topics": [
+    "outcome_success_criteria",
+    "impacted_components",
+    "constraints_compatibility_risks",
+    "required_tests_acceptance_checks",
+    "done_definition"
+  ],
+  "missing_topics": [],
+  "assumptions_confirmed": "confirmed",
+  "assumption_confirmation_ref": "ie:ir-20261015T171800Z-us0158:3:36c3bca8a0c3fd41",
+  "assumption_confirmation_intake_run_id": "ir-20261015T171800Z-us0158",
+  "assumption_confirmation_turn_index": 3,
+  "assumption_confirmation_quoted": "mach wies am besten ist",
+  "topic_coverage": [
+    {
+      "topic_key": "outcome_success_criteria",
+      "satisfied_by": "answer_ref",
+      "ref": "ie:ir-20261015T171800Z-us0158:0:86f7f8d4e10aba15",
+      "quoted_user_text": "When errors happen because of the AI, or because something was aborted, or for whatever reason, it should continue and not be blocked every time. It must be maximum automation.",
+      "intake_run_id": "ir-20261015T171800Z-us0158",
+      "turn_index": 0
+    },
+    {
+      "topic_key": "impacted_components",
+      "satisfied_by": "answer_ref",
+      "ref": "ie:ir-20261015T171800Z-us0158:1:57286ba9bbb6072a",
+      "quoted_user_text": "The current implementation, specifically in OpenCode, is too strict. It is always interrupted because of blockers, errors, or permissions.",
+      "intake_run_id": "ir-20261015T171800Z-us0158",
+      "turn_index": 1
+    },
+    {
+      "topic_key": "constraints_compatibility_risks",
+      "satisfied_by": "assumption_confirmation_ref",
+      "ref": "ie:ir-20261015T171800Z-us0158:3:4650abe593047305",
+      "quoted_user_text": "A fresh phase child may repair only its own invalid continuation pair. The /auto orchestrator still must not write or repair docs/engineering/state.md or handoffs/resume_brief.md (DEC-0153). RESUME_BRIEF_AUTO_REFRESH=0 stays absolute. Hard security denies for .env and secrets stay hard stops. Do not add a critic Task role. Spawn tech-lead for /sovereign-critic.",
+      "intake_run_id": "ir-20261015T171800Z-us0158",
+      "turn_index": 3
+    },
+    {
+      "topic_key": "required_tests_acceptance_checks",
+      "satisfied_by": "answer_ref",
+      "ref": "ie:ir-20261015T171800Z-us0158:4:8632804acd11c5cd",
+      "quoted_user_text": "Contract tests cover continuation vs security-hard stop.",
+      "intake_run_id": "ir-20261015T171800Z-us0158",
+      "turn_index": 4
+    },
+    {
+      "topic_key": "done_definition",
+      "satisfied_by": "answer_ref",
+      "ref": "ie:ir-20261015T171800Z-us0158:2:b6ffcfd84fda650d",
+      "quoted_user_text": "The operator is not asked to restart the session for those cases.",
+      "intake_run_id": "ir-20261015T171800Z-us0158",
+      "turn_index": 2
+    }
+  ],
+  "decomposition": {
+    "verdict": "two_stories",
+    "mode": "low-touch",
+    "why_split": "The operator named two independently testable outcomes. Low-touch does not force a workshop, and cleanup is not folded into the flow story.",
+    "split_axis": "operator outcome",
+    "boundaries": [
+      "US-0158 is OpenCode /auto recoverable continuation only",
+      "US-0159 is bounded repo clutter cleanup only",
+      "US-0157 stays OPEN and is not rewritten"
+    ]
+  },
+  "bug_routing_guard": {
+    "prose": "[INTAKE_BUG_ROUTING_OK] kind=story exit=0",
+    "note": "Exit 0 does not allocate a BUG. US-0158 allocated after the guard."
+  },
+  "duplicate_check": {
+    "highest_us_before_write": "US-0157",
+    "allocated": "US-0158",
+    "not_reopened": [
+      "US-0157"
+    ],
+    "widening": "Recoverable OpenCode stops continue. US-0157 AC-3 and AC-4 stay in force."
+  },
+  "operator_confirmation_applies_to": [
+    "constraints_compatibility_risks"
+  ],
+  "verified_surfaces": [
+    ".opencode/agents/auto.md permission block denies edit, bash, and task * except po, tech-lead, dev, qa, release, curator, security",
+    ".opencode/plugins/orchestrator.ts dispatchStopMatrix and runAutoLifecycle break on action stop"
+  ]
+}

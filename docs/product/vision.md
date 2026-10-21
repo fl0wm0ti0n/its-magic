@@ -2953,3 +2953,66 @@ AI coding assistants in Cursor lose context across sessions, produce fragmented 
 
 - **Isolation + STOP**: Discovery only. Do **not** proceed to `/research` in this session. Do **not** mutate US-0156, BUG-0022, BUG-0027, BUG-0016, or any sibling bug. Do **not** author any `decisions/DEC-*` (new or amended) — the additive amendment (if locked by `/research`) is architecture's job. `docs/product/acceptance.md` BUG-0031 row remains **unchecked**; `docs/product/backlog.md` `### BUG-0031` `Status: OPEN`. **Next**: `/research` in a fresh **tech-lead** context — allocate **R-0155** and answer DQ1–DQ10; do not author architecture or implementation from this discovery phase. **STATUS**: BUG-0031 remains **OPEN**. STOP.
 
+
+## Discovery Notes — BUG-0028
+
+- **Product outcome**: Help, local auth, and model inspection respond without admitting the full standalone runtime. `itsm status` reads only the data it displays. Workflow commands still admit the production runtime.
+- **Locked scope**: `itsm`, `itsm --help`, `itsm auth ...`, and `itsm models ...` finish locally before RuntimeHost, the Pi kernel, code intelligence, ToolBroker, or the SQLite store. Status does not recursively load the repository and does not create an unused workflow session. Operator docs name which commands stay lightweight and which commands admit the full runtime. Windows and Linux installed entrypoints are in the test surface.
+- **Failure posture**: A workflow command that skips policy, kernel-contract, or persistent-run admission fails this bug. A help, auth, models, or status path that constructs code intelligence or scans project files fails this bug.
+- **Out of scope**: BUG-0029 credential login and false configuration success. US-0150, US-0151, and US-0155 stay DONE compose-only. Do not merge or mutate BUG-0026, US-0154, or US-0156. No sprint, no companion DEC, no CLI implementation, no npm publish, no git commit, no git push, and no `.env` read.
+- **Confirmed gap**: `standalone/apps/cli/src/index.ts` constructs `createRuntimeHost` before argv dispatch. That host walks the repository in `walkDocs` and opens the operational SQLite store. Status then resolves an operator transport that can create a workflow engine.
+- **Research asks**: Tech-lead authors the next free heading after delivered **R-0165** (expected **R-0166**). Compare an argv split plus dynamic import against any narrower status reader. Do not author that heading in discovery. `decision_gate=false`.
+
+## Discovery Notes — BUG-0026
+
+- **Product outcome**: A published global `its-magic` upgrade finishes standalone bootstrap on Windows and Linux, or it fails closed with a precise missing-standalone / missing-range diagnostic. A missing packaged range is not reported as `KERNEL_CONTRACT_MISMATCH`.
+- **Locked residual**: AC-1, AC-2, and AC-4..AC-8 already hold, including the 2026-09-19 allowlisted range artifact, `STANDALONE_SUPPORTED_RANGE_MISSING`, publish-guard, `test_bug0026_*`, and published `its-magic@0.1.5` with a Windows `STANDALONE_BOOTSTRAP_OK`. AC-3 stays open until the same success, or that precise diagnostic, is shown on Linux as well as Windows.
+- **Failure posture**: Closing AC-3 from the Windows run alone fails this bug. Treating an unavailable Linux runtime as a pass fails this bug. Re-labeling a true kernel mismatch as a packaging miss fails this bug.
+- **Out of scope**: Do not reopen BUG-0025 or US-0149. Do not merge, drain, or edit BUG-0028 (DONE) or BUG-0029 (OPEN). No sprint, no republish, no companion DEC, no new research body, no npm publish, no git commit, and no git push.
+- **Research asks**: Tech-lead authors the next free heading after **R-0166** (expected **R-0167**). Define the Linux published-global proof and confirm whether `its-magic@0.1.5` is already the fix republish. Do not author that heading in discovery. `decision_gate=false`.
+
+## Intake Notes — US-0161
+
+- The whole its-magic concept on Cursor, Pi, and OpenCode is checked and shaped so maximum autonomy is possible.
+- Clear phase sequences stay. An error, a fault in the its-magic flow, missing workflow rights, or an outcome that does not match the expected result does not halt the run.
+- Reading `.env` and automatic npm publish or git push stay US-0092 AC-10. US-0160 stays the OpenCode and TUI slice and is not reopened.
+- Next phase is `/discovery`. `decision_gate=false`.
+
+## Discovery Notes — BUG-0029
+
+- **Product outcome**: `itsm auth login` for an API key either accepts a masked TTY secret or one secret from `--api-key-stdin`, then reports configured only after the runtime verifies the stored credential. Cancel, empty, invalid, and persistence failure are honest non-zero results.
+- **Locked scope**: Interactive input does not echo, log, or place the secret in argv. The non-interactive path is `--api-key-stdin` only. Diagnostics are redacted. `auth list`, logout, and Pi migration keep their current behavior.
+- **Failure posture**: Emitting `{"auth":"configured"}` without a verified stored credential fails this bug. A secret in argv, output, or storage outside the owned auth store fails this bug. Treating a non-TTY interactive login as success fails this bug.
+- **Out of scope**: BUG-0028 cold start (DONE) and BUG-0026 published upgrade (OPEN, release-blocked). Do not reopen US-0150, US-0151, US-0154, US-0155, or US-0156. No sprint, no companion DEC, no CLI implementation, no npm publish, no git commit, no git push, and no `.env` read.
+- **Confirmed gap**: `standalone/apps/cli/src/local-command.ts` dispatches auth with no `io.prompt`. `standalone/packages/auth-models/src/cli.ts` returns `undefined` for that secret prompt and then unconditionally prints configured success. `standalone/packages/pi-kernel/src/auth-runtime.ts` forwards the interaction and does not supply a prompt. `--api-key-stdin` is absent.
+- **Research asks**: Tech-lead authors the next free heading after **R-0167** (expected **R-0168**). Do not author that heading in discovery. `decision_gate=false`.
+
+## Discovery Notes — BUG-0036
+
+- **Product outcome**: When `/auto` can repair a blocker, the automatic flow continues. Hardness is a setting. A repair setting continues. A block setting still stops.
+- **Operator flow**: Foreign harness failures during execute, the stop `execute_harness_blocked_out_of_scope`, and `RESUME_BRIEF_STALE` after an expired proof are the observed members. Later blockers of the same class follow the same hardness rule. No new screen.
+- **Failure posture**: Continuing by editing another bug, the scratchpad drain flags, or US-0162 acceptance fails this bug. An unauthorized or conflicting continuation pair still fails closed.
+- **Discovery risk**: Reading `.env`, npm publish, and git push stay existing US-0092 boundaries the operator did not mention. They are not an automatic repair and they are not a narrowing of the class. `decision_gate=false`.
+- **Research stub**: **R-0170**. Highest existing heading **R-0169** is untouched. No `R-` body in this phase.
+
+## Intake Notes — US-0163
+
+- `/auto` works OPEN stories and OPEN bugs by priority band (P0, then P1, then P2, then P3). Inside a band, already queued items stay ahead of later ones.
+- Each intake assigns P0, P1, P2, or P3 and appends the new item at the end of that band. A dependency or a chicken-and-egg is the case where intake picks an order, records it, and does not stop to ask.
+- This story is P1, at the end of that band. In-flight P0 US-0162 stays ahead. Next phase is `/discovery`. `decision_gate=false`.
+
+## Discovery Notes — US-0157
+
+- **Product outcome**: OpenCode `/auto` continues through the sovereign-critic hook and through a faulty continuation pair. A missing critic Task role is not a dead-end. The phase child that owns an invalid pair repairs that pair, and the run continues.
+- **Operator flow**: No new screen. When `CROSS_MODEL_REVIEW=1`, the orchestrator spawns tech-lead for `/sovereign-critic`. The critic still runs. The `/auto` orchestrator still does not write the continuation pair.
+- **Failure posture**: Adding a critic Task role fails this story. Skipping the critic when `CROSS_MODEL_REVIEW=1` fails this story. A parent write of `docs/engineering/state.md` or `handoffs/resume_brief.md` fails this story. Repairing another writer's pair fails this story. A hard security deny that continues fails this story.
+- **Confirmed gap**: OpenCode auto Task allowlist is po, tech-lead, dev, qa, release, curator, and security on the active file and the template. No OpenCode sovereign-critic command. The pair validator is read-only for the parent.
+- **Research stub**: **R-0171**. Highest existing heading **R-0170** is untouched. No `R-` body in this phase. `decision_gate=false`.
+
+## Discovery Notes — US-0158
+
+- **Product outcome**: OpenCode `/auto` continues through a recoverable blocker, an AI error, an aborted phase, and a permission dead-end. The operator is not asked to restart the session for those cases. Security-hard denies for `.env` and secrets still stop.
+- **Operator flow**: No new screen. The same `/auto` run continues. The `/auto` orchestrator still does not write the continuation pair. A fresh phase child may repair only its own invalid pair. The critic hook stays the existing tech-lead spawn.
+- **Failure posture**: Asking the operator to restart for those four classes fails this story. Continuing a `.env` or secrets deny fails this story. A parent write of `docs/engineering/state.md` or `handoffs/resume_brief.md` fails this story. Adding a critic Task role fails this story. Treating quality/UAT failure or exhausted budget as recoverable fails this story.
+- **Confirmed gap**: Active and template OpenCode auto agents still terminate on every hard gate, missing evidence, quality/UAT failure, security stop, or exhausted budget. `runAutoLifecycle` breaks on a stop action, a completed stop reason, or no next phase. `QUALITY_EVIDENCE_FAILED` and `BUDGET_EXHAUSTED` stay `security_hard`.
+- **Research stub**: **R-0172**. Highest existing heading **R-0171** is untouched. No `R-` body in this phase. `decision_gate=false`.

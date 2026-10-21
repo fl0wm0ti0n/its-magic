@@ -2,6 +2,8 @@
 description: "its-magic verify work: guided user acceptance testing."
 ---
 
+Kernel pointer: `.cursor/rules/core.mdc`. Do not paste the kernel lines into this file.
+
 # /verify-work
 
 ## Subagents

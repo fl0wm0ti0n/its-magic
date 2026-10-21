@@ -1,3 +1,50 @@
+# Verify-Work-to-Release Handoff — S0184 / BUG-0037 (VERIFY_PASS)
+
+- **from / to:** `verify-work` as `qa` → fresh `release` as `release`; parent validates and may spawn only. This QA child does not spawn release.
+- **timestamp:** 2026-10-21T15:54:48Z; **verdict:** **VERIFY_PASS**; `decision_gate=false`; 0 blocking findings.
+- **consumed QA pair:** `auto-20261020-bug0037|bug|BUG-0037|qa|rp-auto-20261020-bug0037-qa-qa-20261021T154810Z-BUG-0037`; state/brief equality, exact key, locked tuple, strict hash `246415f0a138aa31db53cb1ac4c16bd160165a2d05f73edaaf9ef71c523d1900`, and IN-TTL validation all passed.
+- **fresh pair:** `auto-20261020-bug0037|bug|BUG-0037|verify-work|rp-auto-20261020-bug0037-verify-work-qa-20261021T155448Z-BUG-0037`; marker `qa-BUG0037-verifywork-20261021T155448Z-fresh`; proof `5be2ea888887ae5c0fd30ca6c0093c92f8a0e8ed0733a1f6dee355d5e8f0f79b` (library mint and independent strict six-tuple recompute MATCH; TTL=3600).
+- **evidence:** `tests/bug0037_story_shape_contract_test.py` → **5 passed**; focused four-surface regression → `BUG0037_FOCUSED_REGRESSION_OK`; bug validator → **[BUG_VALIDATION_OK]**; exact structured-template/directive split, two parity pairs, US-0161 hash, and scope guards independently PASS. See `sprints/S0184/verify-work-findings.md`, `uat.md`, and `uat.json`.
+- **status guard:** BUG-0037 remains **OPEN/P1**; AC-1..AC-5 and acceptance remain unchecked. No `/auto`, child spawn, closure, publish, push, commit, or secrets read.
+- **STOP:** `STOP_AFTER_VERIFY_PASS; validate_pair_then_parent_may_spawn_release`.
+
+---
+
+# QA-to-Verify-Work Handoff — S0184 / BUG-0037 (QA_PASS)
+
+- **from / to:** `qa` → fresh `verify-work` as `qa`; the parent may validate and spawn only. This QA child does not spawn it.
+- **timestamp:** 2026-10-21T15:48:10Z; **verdict:** **QA_PASS**; `decision_gate=false`; 0 blocking findings.
+- **incoming execute pair:** `auto-20261020-bug0037|bug|BUG-0037|execute|rp-auto-20261020-bug0037-execute-dev-retry-20261021T154418Z-BUG-0037`; exact state/brief tuple, key, strict hash, and IN-TTL check passed before QA.
+- **QA proof:** `qa-BUG0037-qa-20261021T154810Z-fresh`; `rp-auto-20261020-bug0037-qa-qa-20261021T154810Z-BUG-0037` / `246415f0a138aa31db53cb1ac4c16bd160165a2d05f73edaaf9ef71c523d1900` (strict six-tuple mint and independent recompute MATCH).
+- **evidence:** AC-1..AC-5 PASS in `sprints/S0184/qa-findings.md`, `uat.md`, and `uat.json`; `python -m pytest tests/bug0037_story_shape_contract_test.py -v` → **5 passed**; focused regression → `BUG0037_FOCUSED_REGRESSION_OK`; validator → **[BUG_VALIDATION_OK]**.
+- **required verify-work checks:** independently rerun focused tests and validator; recheck both parity pairs, `US-0161` invariance, OpenCode-only/reference-split scope, and this exact QA pair; mint a distinct verify-work proof. Do not tick ACs or alter BUG-0037 status.
+- **status guard:** BUG-0037 remains OPEN/P1; backlog ACs and acceptance row remain unchecked. No closure, publish, push, commit, or secret/.env read.
+- **STOP:** `STOP_AFTER_QA_PASS; validate_pair_then_parent_may_spawn_verify_work`.
+
+---
+
+# Verify-Work-to-Release Handoff — S0183 / BUG-0038 (VERIFY_PASS)
+
+- **from / to:** `verify-work` as `qa` → fresh `release` as `release`; orchestrator may validate and spawn only. This QA child does not spawn it.
+- **timestamp:** 2026-10-19T20:44:17Z; **verdict:** **VERIFY_PASS**; `decision_gate=false`; 0 blocking findings.
+- **consumed canonical QA pair:** `repair-20261018-bug0038-anchor-repair|bug|BUG-0038|qa|rp-repair-20261018-bug0038-qa-canonical-qa-20261019T203710Z-BUG-0038`; exact key, locked tuple, and strict proof `471b9738a6d8245cb8a1e1513c47faef78e58c2b7aa3f84a5e6aa11c145b2353` validated MATCH.
+- **fresh verify-work pair:** `repair-20261018-bug0038-anchor-repair|bug|BUG-0038|verify-work|rp-repair-20261018-bug0038-verify-work-qa-20261019T204417Z-BUG-0038`; marker `qa-BUG0038-verifywork-20261019T204417Z-fresh`; proof `e9e1662dc4c24dd80d5a6954f6d1d1fa514b0b420e0e74ee5abc8c7d9803922c` (strict tuple recomputed twice, MATCH).
+- **evidence:** `python -m pytest tests/bug0038_qa_resume_brief_permission_contract_test.py tests/us0156_contract_test.py -q` → **16 passed**; canonical linkage validator → **[BUG_VALIDATION_OK]**; UAT AC-1..AC-5 independently reviewed PASS.
+- **status guard:** BUG-0038 remains OPEN/P0; all five backlog AC checkboxes and acceptance row remain unchecked. No closure action, publish, push, commit, or secret/.env read.
+- **STOP:** `STOP_AFTER_VERIFY_PASS; validate_pair_then_parent_may_spawn_release`.
+
+---
+
+- **from / to:** `qa` → fresh `verify-work` as `qa`; orchestrator may validate and spawn only. This QA child does not spawn it.
+- **timestamp:** 2026-10-19T20:37:10Z; **verdict:** **QA_PASS**; `decision_gate=false`; 0 blocking findings.
+- **canonical pair:** `repair-20261018-bug0038-anchor-repair|bug|BUG-0038|qa|rp-repair-20261018-bug0038-qa-canonical-qa-20261019T203710Z-BUG-0038`; state-first checkpoint and matching brief pointer persisted after exact key/tuple/hash validation.
+- **fresh proof:** `qa-BUG0038-qa-canonical-20261019T203710Z-fresh`; `rp-repair-20261018-bug0038-qa-canonical-qa-20261019T203710Z-BUG-0038` / `471b9738a6d8245cb8a1e1513c47faef78e58c2b7aa3f84a5e6aa11c145b2353` (strict tuple recomputed twice, MATCH).
+- **evidence:** BUG-0038 AC-1..AC-5 PASS in `sprints/S0183/qa-findings.md`, `uat.md`, `uat.json`, and `plan-verify.json`; `python -m pytest tests/bug0038_qa_resume_brief_permission_contract_test.py tests/us0156_contract_test.py -q` → **16 passed**; canonical linkage validator → **[BUG_VALIDATION_OK]**.
+- **required verify-work checks:** independently repeat focused tests/validator and UAT review; validate this exact QA continuation pair; mint a distinct verify-work proof and state-first pair. Do not reuse the QA proof as its own proof.
+- **status guard:** BUG-0038 remains OPEN/P0; all five backlog AC checkboxes and acceptance row remain unchecked. No closure action, publish, push, commit, or secret/.env read.
+
+---
+
 # Verify-Work-to-Release Handoff - S0168 / BUG-0033 (verifywork2 VERIFY_PASS)
 
 > **Routing note (verify-work -> release):** fresh QA context `qa-BUG0033-vw-20261010T205038Z-fresh` (run `auto-20261010-bug0033-verifywork2`) re-verified UAT-1..UAT-8 on static evidence and re-ran the full harness after the state.md append. **VERIFY_PASS** / `S0168_VERIFY_OK`. BUG-0033 stays **OPEN**. This child does not spawn `/release`. Prior entries below remain history.

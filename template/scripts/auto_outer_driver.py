@@ -46,6 +46,54 @@ HARD_BLOCKED_SUBCODES = frozenset(
 RECOVERABLE_STOP_REASONS = frozenset(
     {"blocked", "missing_input", "uat_fail", "qa_fail"}
 )
+# US-0158 — optional continue classes. Absent --recoverable-class keeps today's JSON.
+RECOVERABLE_CLASS_TOKENS = frozenset(
+    {"blocked", "ai_error", "aborted", "permission_dead_end"}
+)
+SEVEN_ROLE_ALLOW = frozenset(
+    {"po", "tech-lead", "dev", "qa", "release", "curator", "security"}
+)
+MATRIX_ROLES = frozenset(
+    {"po", "tech-lead", "dev", "qa", "release", "curator"}
+)
+TERMINAL_CONTINUE_TOKENS = frozenset(
+    {
+        "QUALITY_EVIDENCE_FAILED",
+        "BUDGET_EXHAUSTED",
+        "qa_fail",
+        "uat_fail",
+        "security_deny",
+        "isolation",
+        "strict_proof",
+        "ownership",
+        "PHASE_ROLE_CAPABILITY_MISSING",
+        "PHASE_ROLE_MISMATCH",
+        "OPENCODE_AUTO_DEPENDENCY_BLOCKED",
+        "AUTO_BACKLOG_ON_BLOCK",
+        "AUTO_BACKLOG_ON_BLOCK=skip",
+        "decision_gate",
+        "pause_request",
+        "loop_max",
+        "PLUGIN_SPAWN_UNSUPPORTED",
+        "OPENCODE_PLUGIN_SPAWN_UNSUPPORTED",
+        "HEADLESS_UNSUPPORTED",
+        "OPENCODE_HEADLESS_UNSUPPORTED",
+        "AUTO_ALREADY_RUNNING",
+        "OPENCODE_AUTO_ALREADY_RUNNING",
+        "SUBTASK_IGNORED",
+        "OPENCODE_SUBTASK_IGNORED",
+        "MANUAL_PHASE_PERSIST_DENIED",
+        "OPENCODE_MANUAL_PHASE_PERSIST_DENIED",
+        "MANUAL_PHASE_WRITE_DENIED",
+        "OPENCODE_MANUAL_PHASE_WRITE_DENIED",
+        "PLACEHOLDER_PARENT_REJECTED",
+        "OPENCODE_PLACEHOLDER_PARENT_REJECTED",
+        "error",
+        ".env",
+        "secrets",
+        "secret",
+    }
+)
 DRAIN_ADVANCE_MARKERS = frozenset(
     {"refresh-context", "discovery", "intake"}
 )
@@ -258,6 +306,64 @@ def _map_exit(
     return EXIT_HARD_STOP
 
 
+def _is_terminal_continue_token(value: str | None) -> bool:
+    if value is None:
+        return False
+    if value in TERMINAL_CONTINUE_TOKENS:
+        return True
+    return value.strip().lower() in {".env", "secrets", "secret"}
+
+
+def recoverable_class_guards_pass(
+    *,
+    recoverable_class: str | None,
+    stop_reason: str | None,
+    reason_code: str | None,
+    blocked_subcode: str | None,
+    denied_agent: str | None,
+) -> bool:
+    """US-0158 DQ1. True only for the four classes when the terminal guards pass."""
+    if recoverable_class not in RECOVERABLE_CLASS_TOKENS:
+        return False
+    for token in (stop_reason, reason_code, blocked_subcode):
+        if _is_terminal_continue_token(token):
+            return False
+    if recoverable_class == "blocked":
+        if stop_reason != "blocked":
+            return False
+        if blocked_subcode in HARD_BLOCKED_SUBCODES:
+            return False
+        if reason_code in HARD_BLOCKED_SUBCODES:
+            return False
+        if reason_code == "OPENCODE_AUTO_DEPENDENCY_BLOCKED":
+            return False
+        return True
+    if recoverable_class == "ai_error":
+        return reason_code == "ai_error" and stop_reason != "error"
+    if recoverable_class == "aborted":
+        return reason_code == "phase_aborted"
+    if recoverable_class == "permission_dead_end":
+        agent = (denied_agent or "").strip()
+        if not agent:
+            return False
+        if agent in MATRIX_ROLES or agent in SEVEN_ROLE_ALLOW:
+            return False
+        return True
+    return False
+
+
+def continue_same_phase_parent_decision(writer: str) -> dict[str, object]:
+    """US-0158 DQ6. Parent writers stay read-only. Pair files stay untouched."""
+    return {
+        "writer": writer,
+        "writes_state": False,
+        "writes_brief": False,
+        "sets_resume_brief_auto_refresh": False,
+        "calls_write_resume_pair": False,
+        "action": "continue_same_phase",
+    }
+
+
 def run_stop_matrix_json(
     *,
     phase: str,
@@ -266,6 +372,10 @@ def run_stop_matrix_json(
     sprint: str | None,
     orchestrator_run_id: str | None,
     stop_reason: str | None,
+    recoverable_class: str | None = None,
+    reason_code: str | None = None,
+    blocked_subcode: str | None = None,
+    denied_agent: str | None = None,
 ) -> int:
     """US-0124 / DEC-0124 §6 — additive argv JSON response path.
 
@@ -274,11 +384,30 @@ def run_stop_matrix_json(
     flags are absent, the legacy run_driver() path is byte-identical (no
     regression to US-0092 / DEC-0078). The plugin (TypeScript) parses this JSON
     and dispatches; the Python SOT owns all state-machine transitions.
+
+    US-0158: optional --recoverable-class. When the flag is absent, the JSON
+    branch stays today's action and next_phase stays null on those branches.
+    When the flag is present and the guards pass, action is continue_same_phase
+    and next_phase equals --phase. When the guards fail, action is hard_stop
+    and next_phase is null.
     """
     action = "spawn_next"
     next_phase: str | None = None
     emitted_stop_reason = stop_reason or "(none)"
-    if stop_reason in HARD_STOP_REASONS:
+    if recoverable_class is not None:
+        if recoverable_class_guards_pass(
+            recoverable_class=recoverable_class,
+            stop_reason=stop_reason,
+            reason_code=reason_code,
+            blocked_subcode=blocked_subcode,
+            denied_agent=denied_agent,
+        ):
+            action = "continue_same_phase"
+            next_phase = phase
+        else:
+            action = "hard_stop"
+            next_phase = None
+    elif stop_reason in HARD_STOP_REASONS:
         action = "hard_stop"
     elif stop_reason == "pause_request":
         action = "pause_boundary"
@@ -530,6 +659,33 @@ def main() -> int:
         dest="stop_reason",
         help="US-0124: stop_reason for stop-matrix JSON path.",
     )
+    parser.add_argument(
+        "--recoverable-class",
+        default=None,
+        dest="recoverable_class",
+        help=(
+            "US-0158: optional class token "
+            "(blocked, ai_error, aborted, permission_dead_end)."
+        ),
+    )
+    parser.add_argument(
+        "--reason-code",
+        default=None,
+        dest="reason_code",
+        help="US-0158: reason_code consulted by the continue guards.",
+    )
+    parser.add_argument(
+        "--blocked-subcode",
+        default=None,
+        dest="blocked_subcode",
+        help="US-0158: blocked_subcode consulted by the continue guards.",
+    )
+    parser.add_argument(
+        "--denied-agent",
+        default=None,
+        dest="denied_agent",
+        help="US-0158: denied Task agent for permission_dead_end.",
+    )
     args = parser.parse_args()
     repo = Path(args.repo).resolve()
 
@@ -545,6 +701,10 @@ def main() -> int:
             sprint=args.sprint,
             orchestrator_run_id=args.orchestrator_run_id,
             stop_reason=args.stop_reason,
+            recoverable_class=args.recoverable_class,
+            reason_code=args.reason_code,
+            blocked_subcode=args.blocked_subcode,
+            denied_agent=args.denied_agent,
         )
 
     if args.self_test:

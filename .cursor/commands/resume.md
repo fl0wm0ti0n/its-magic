@@ -2,6 +2,8 @@
 description: "its-magic resume: deterministic continuation context loader."
 ---
 
+Kernel pointer: `.cursor/rules/core.mdc`. Do not paste the kernel lines into this file.
+
 # /resume
 
 ## Subagents

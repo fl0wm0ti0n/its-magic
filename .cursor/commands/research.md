@@ -2,6 +2,8 @@
 description: "its-magic research: gather references and risks before architecture."
 ---
 
+Kernel pointer: `.cursor/rules/core.mdc`. Do not paste the kernel lines into this file.
+
 # /research
 
 ## Subagents

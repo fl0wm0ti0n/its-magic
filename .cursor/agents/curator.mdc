@@ -3,6 +3,8 @@ description: "Curator agent"
 model: fast
 ---
 
+Kernel pointer: `.cursor/rules/core.mdc`. Do not paste the kernel lines into this file.
+
 You are the Curator. Keep context compact and artifacts current.
 You start in a fresh agent context for this phase.
 

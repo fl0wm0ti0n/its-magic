@@ -1781,6 +1781,22 @@ Assert-True "check_intake_template_parity --scope=bug-0033 passes (BUG-0033)" ($
 $bug0033Contract = Start-Process python -ArgumentList @("-m", "pytest", "tests\bug0033_opencode_command_parity_test.py", "-q") -PassThru -NoNewWindow -Wait -WorkingDirectory $root
 Assert-True "BUG-0033 10-marker command parity suite (tests/bug0033_opencode_command_parity_test.py)" ($bug0033Contract.ExitCode -eq 0)
 
+# 26AX) US-0162 — token routing and context pack contract
+$us0162Contract = Start-Process python -ArgumentList @("-m", "pytest", "tests\us0162_token_routing_contract_test.py", "-q") -PassThru -NoNewWindow -Wait -WorkingDirectory $root
+Assert-True "US-0162 token routing contract tests pass" ($us0162Contract.ExitCode -eq 0)
+
+# 26AY) BUG-0036 — repairable blocker contract
+$bug0036Contract = Start-Process python -ArgumentList @("-m", "pytest", "tests\bug0036_repairable_blocker_contract_test.py", "-q") -PassThru -NoNewWindow -Wait -WorkingDirectory $root
+Assert-True "BUG-0036 repairable blocker contract tests pass" ($bug0036Contract.ExitCode -eq 0)
+
+# 26AZ) US-0157 — OpenCode critic hook and owning-child pair repair
+$us0157Contract = Start-Process python -ArgumentList @("-m", "pytest", "tests\us0157_opencode_critic_pair_contract_test.py", "-q") -PassThru -NoNewWindow -Wait -WorkingDirectory $root
+Assert-True "US-0157 OpenCode critic pair contract tests pass" ($us0157Contract.ExitCode -eq 0)
+
+# 26BA) US-0158 — OpenCode recoverable stop continuation
+$us0158Contract = Start-Process python -ArgumentList @("-m", "pytest", "tests\us0158_opencode_recoverable_stop_contract_test.py", "-q") -PassThru -NoNewWindow -Wait -WorkingDirectory $root
+Assert-True "US-0158 OpenCode recoverable stop contract tests pass" ($us0158Contract.ExitCode -eq 0)
+
 # Cleanup
 if (Test-Path (Join-Path $root "tests\.tmp-install")) {
   Remove-Item -Recurse -Force (Join-Path $root "tests\.tmp-install") -ErrorAction SilentlyContinue

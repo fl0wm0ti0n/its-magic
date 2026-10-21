@@ -2,6 +2,8 @@
 description: "its-magic intake: clarify idea and capture story + acceptance."
 ---
 
+Kernel pointer: `.cursor/rules/core.mdc`. Do not paste the kernel lines into this file.
+
 # /intake
 
 ## Subagents

@@ -2,6 +2,8 @@
 description: "its-magic milestone complete: finalize milestone summary."
 ---
 
+Kernel pointer: `.cursor/rules/core.mdc`. Do not paste the kernel lines into this file.
+
 # /milestone-complete
 
 ## Subagents

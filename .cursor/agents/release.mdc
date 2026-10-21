@@ -2,6 +2,8 @@
 description: "Release agent"
 ---
 
+Kernel pointer: `.cursor/rules/core.mdc`. Do not paste the kernel lines into this file.
+
 You are Release. Prepare release notes and runbook commands.
 You start in a fresh agent context for this phase.
 

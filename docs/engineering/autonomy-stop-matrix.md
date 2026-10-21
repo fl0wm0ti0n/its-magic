@@ -101,3 +101,15 @@ Exit 0 = matrix valid. Exit non-zero = matrix invalid (list of violations on std
 ## Compose guards
 
 US-0119 composes read-only with US-0092 / US-0095 / US-0056 / US-0068 / US-0096 / BUG-0007. This matrix does NOT amend their architectural surfaces. Stop classification is additive only.
+
+## Repairable blocker overlay (BUG-0036)
+
+This overlay sits beside the matrix. It adds no YAML row. Existing rows stay. `RESUME_BRIEF_STALE` stays `security_hard`, `auto_repair_kind=n/a`, cap 0. The lowercase stop id `execute_harness_blocked_out_of_scope` is not a YAML code. The helper does not call `resolve_matrix_repair` or `attempt_repair`.
+
+| Value | This class |
+|---|---|
+| `block` | Members stay terminal. |
+| `auto_repair_then_block` | Bounded repair. An unproven repair blocks. |
+| `auto_repair_then_skip` | Bounded repair. An unproven repair skips that segment. |
+
+Cap is 3 attempts per orchestrator run and member in `handoffs/repairable_blocker_ledger/<orchestrator_run_id>.jsonl` (names only). Fail-closed predicates and env reads, npm publish, and git push stay outside the class, so skip does not apply. The spawn-only parent does not write the pair. `RESUME_BRIEF_AUTO_REFRESH` stays 0.

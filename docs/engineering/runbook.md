@@ -24,6 +24,10 @@ TEST_TIMEOUT_SECONDS: 120
   GitHub Actions. When `false` (default), CI reports failures but does not
   attempt auto-fix commits.
 
+## Always-on kernel
+
+The always-on kernel lives in `.cursor/rules/core.mdc`. Phase commands, agents, and skills point there. Do not paste a second copy of the kernel. QA, UAT, release, isolation, and strict-proof gates stay named and non-suppressible.
+
 ## Standalone workspace CI pin (US-0154)
 
 Job `standalone-test` runs on `windows-latest` and `ubuntu-latest`. Each leg pins Node `22.19.0`, runs `npm ci` in `standalone/`, then `npm run typecheck && npm run lint && npm test`. Root job `checks` stays on kit `TEST_COMMAND`. `LINT_COMMAND` and `TYPECHECK_COMMAND` stay blank. Do not fold standalone npm scripts into `TEST_COMMAND`. Do not add this job to `template/.github/workflows/ci.yml` (BUG-0009).
@@ -31,6 +35,22 @@ Job `standalone-test` runs on `windows-latest` and `ubuntu-latest`. Each leg pin
 ## Interactive operator TUI (US-0155)
 
 `runInteractiveTui` is the interactive client of the admitted daemon/operator transport. Pause submits argv `["pause"]` on that executor. Set `ITS_MAGIC_TUI_NONINTERACTIVE=1`, or run without a TTY, to paint one layout and return without waiting for a key. A pending approval then returns `OPERATOR_INPUT_REQUIRED`. Protocol version stays 1.
+
+## Lightweight itsm inspection (BUG-0028)
+
+No-argument `itsm`, `itsm help` (`--help` and `-h`), `itsm auth`, `itsm models`, and bare `itsm status` classify before the workflow runner and do not construct the full runtime. Bare `status` is a bounded read-only snapshot. Workflow commands, including `ask`, `resume`, `pause`, `index`, `app`, `browser`, and `/status`, still admit production `createRuntimeHost`. `DEPLOY_STAGING_COMMAND` and `DEPLOY_PROD_COMMAND` stay the explicit echo lines in the Commands section.
+
+## API-key login (BUG-0029)
+
+`itsm auth login <provider> --type api_key` reads one masked TTY secret, or one stdin line when `--api-key-stdin` is set. Success prints `{"provider":"<id>","auth":"configured"}` only after `checkAuth` reports a stored credential of the requested type. Cancel, empty, invalid, persist failure, and non-TTY login without the flag exit 1 and do not print that JSON. `DEPLOY_STAGING_COMMAND` and `DEPLOY_PROD_COMMAND` stay the explicit echo lines in the Commands section.
+
+## Repairable blocker class (BUG-0036)
+
+`scripts/repairable_blocker_lib.py` classifies a foreign harness and an expired matching proof before a terminal stale stop. The caller passes `AUTONOMY_STOP_POLICY`. The library does not read the scratchpad. `block` keeps those members terminal. `auto_repair_then_block` and `auto_repair_then_skip` write a quarantine row (cap 3) and schedule the next lawful phase without editing the foreign owner. An expired matching proof on a repair value is a spawn request for a fresh child. The parent does not write `docs/engineering/state.md` or `handoffs/resume_brief.md`. Missing or unauthorized evidence stays fail-closed. `DEPLOY_STAGING_COMMAND` and `DEPLOY_PROD_COMMAND` stay the explicit echo lines in the Commands section.
+
+## OpenCode critic and owning-child pair repair (US-0157)
+
+When `CROSS_MODEL_REVIEW=1`, OpenCode `/auto` spawns a fresh tech-lead whose command is `/sovereign-critic`. `CROSS_MODEL_REVIEW=0` spawns nothing. No critic Task role is added. `scripts/owning_child_pair_repair_lib.py` lets that owning child repair only its own invalid continuation pair: append one checkpoint at the bottom of `docs/engineering/state.md`, then prepend `handoffs/resume_brief.md`. The parent calls `validate_resume_pair` only and does not write either file. `RESUME_BRIEF_AUTO_REFRESH` stays 0. Hard security denies stay hard stops. `AUTONOMY_STOP_POLICY` stays `block`. Verify with `python -m pytest tests/us0157_opencode_critic_pair_contract_test.py -q`. `DEPLOY_STAGING_COMMAND` and `DEPLOY_PROD_COMMAND` stay the explicit echo lines in the Commands section.
 
 ## Intentional empty commands (US-0015)
 

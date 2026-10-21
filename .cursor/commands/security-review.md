@@ -2,6 +2,8 @@
 description: "its-magic security-review: optional security and compliance review."
 ---
 
+Kernel pointer: `.cursor/rules/core.mdc`. Do not paste the kernel lines into this file.
+
 # /security-review
 
 ## Subagents

@@ -1,0 +1,9 @@
+{
+  "sprint_id": "S0178",
+  "bug_id": "BUG-0029",
+  "status": "SKIPPED",
+  "verdict": "SKIPPED",
+  "reason": "ultra_lean_not_in_resolved_phase_plan",
+  "note": "SKIPPED placeholder from /sprint-plan. Not a /plan-verify phase. To be overwritten by QA within build+verify.",
+  "decision_gate": false
+}

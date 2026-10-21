@@ -1,0 +1,99 @@
+{
+  "default": {"profile": "balanced"},
+  "profiles": {
+    "cheap": {
+      "provider": "lmstudio",
+      "model": "local-small",
+      "capabilities": ["code"],
+      "fallback": ["balanced"]
+    },
+    "balanced": {
+      "provider": "openai",
+      "model": "gpt-4.1-mini",
+      "capabilities": ["code", "tools"],
+      "fallback": ["expert"]
+    },
+    "expert": {
+      "provider": "anthropic",
+      "model": "claude-opus",
+      "capabilities": ["code", "tools", "reasoning", "large_context"],
+      "fallback": []
+    },
+    "local": {
+      "provider": "lmstudio",
+      "model": "local-coder",
+      "capabilities": ["code", "tools"],
+      "fallback": ["cheap"]
+    }
+  },
+  "roles": {
+    "dev": {"profile": "expert"},
+    "qa": {"profile": "balanced"},
+    "po": {"profile": "cheap"},
+    "tech-lead": {"profile": "expert"},
+    "curator": {"profile": "cheap"},
+    "release": {"profile": "balanced"}
+  },
+  "phases": {
+    "intake": {"profile": "cheap"},
+    "discovery": {"profile": "balanced"},
+    "research": {"profile": "expert"},
+    "architecture": {"profile": "expert"},
+    "sprint-plan": {"profile": "balanced"},
+    "execute": {"profile": "expert"},
+    "qa": {"profile": "balanced"},
+    "verify-work": {"profile": "balanced"},
+    "release": {"profile": "expert"},
+    "refresh-context": {"profile": "cheap"}
+  },
+  "tasks": {},
+  "providers": {
+    "openai": {"type": "openai", "api_key_env": "OPENAI_API_KEY"},
+    "openrouter": {
+      "type": "openai-compatible",
+      "base_url": "https://openrouter.ai/api/v1",
+      "api_key_env": "OPENROUTER_API_KEY"
+    },
+    "lmstudio": {
+      "type": "openai-compatible",
+      "base_url": "http://127.0.0.1:1234/v1",
+      "api_key_env": "LMSTUDIO_API_KEY"
+    },
+    "kie": {
+      "type": "openai-compatible",
+      "base_url": "http://127.0.0.1:9/v1",
+      "api_key_env": "KIE_API_KEY"
+    },
+    "anthropic": {"type": "anthropic", "api_key_env": "ANTHROPIC_API_KEY"},
+    "host-catalog": {
+      "type": "openai-compatible",
+      "api_key_env": "HOST_CATALOG_API_KEY"
+    }
+  },
+  "complexity": {
+    "thresholds": {
+      "component_count_high": 3,
+      "estimated_lines_high_with_failures": 200,
+      "component_count_high_with_api": 2,
+      "component_count_low_max": 1,
+      "estimated_lines_low_max": 80
+    },
+    "routes": {
+      "critical": "expert",
+      "high": "expert",
+      "normal": "balanced",
+      "low": "cheap",
+      "trivial": "cheap"
+    }
+  },
+  "escalation": {
+    "max_failures": 2,
+    "on_context_overflow": true,
+    "on_repeated_test_failure": true,
+    "on_uncertainty": true
+  },
+  "phase_requirements": {
+    "execute": ["code", "tools"],
+    "qa": ["code"]
+  }
+}

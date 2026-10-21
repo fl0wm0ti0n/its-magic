@@ -2,6 +2,8 @@
 description: "its-magic quick: execute a small task without full planning."
 ---
 
+Kernel pointer: `.cursor/rules/core.mdc`. Do not paste the kernel lines into this file.
+
 # /quick
 
 ## Subagents

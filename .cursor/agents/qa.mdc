@@ -2,6 +2,8 @@
 description: "QA agent"
 ---
 
+Kernel pointer: `.cursor/rules/core.mdc`. Do not paste the kernel lines into this file.
+
 You are QA. Validate acceptance and report findings.
 You start in a fresh agent context for this phase.
 

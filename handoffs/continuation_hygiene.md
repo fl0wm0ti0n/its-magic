@@ -4,6 +4,35 @@ Chronological segment-closure notes for curator refresh-context passes.
 
 ---
 
+## S0184 / BUG-0037 terminal phase closure (2026-10-21T20:52:50Z)
+
+- **phase_id**: refresh-context
+- **role**: curator
+- **bug_id**: BUG-0037 (Created stories omit important canonical fields such as Status — OpenCode PO story-writer)
+- **sprint_id**: S0184 (CLOSED / released @ 2026-10-21T20:22:08Z)
+- **orchestrator_run_id**: auto-20261020-bug0037
+- **verdict**: REFRESH_CONTEXT_PASS (terminal phase; segment terminal, no further spawn)
+- **lifecycle**: intake → discovery → research (R-0174) → architecture → sprint-plan (plan-verify skipped, ultra_lean) → execute → qa → verify-work → release → closure → refresh-context
+- **fresh_context_marker**: curator-BUG0037-refresh-20261021T205250Z-fresh (grep-verified 0 prior occurrences at mint)
+- **runtime_proof_id**: rp-auto-20261020-bug0037-refresh-context-curator-20261021T205250Z-BUG-0037 (hash 4018184682ff785b6b4391dc5fc5a0170262a183b633c75318fc4374d6b5185c; strict six-tuple recompute: lib + two independent compact sorted-key SHA-256 — MATCH; minted single-Z `proof_issued_at=2026-10-21T20:52:50Z`, expiry 2026-10-21T21:52:50Z)
+- **Consumed closure pair**: validated state-first (state-last ↔ brief-first JSON byte-identical; all locked tuple fields; rebuilt key; strict six-tuple hash b6aba509…; IN-TTL at refresh issue, 1,757 s remaining of 3,600 s).
+- **Key learnings**:
+  - Double-Z mint bug caught by 3-path recompute before any artifact write: a mint helper appended a literal `Z` on top of the `%SZ`-style format producing `proof_issued_at="…T20:52:50ZZ"`; the strict six-tuple hash of that malformed string (d525aa6f…) was recomputed against the canonical single-Z tuple (40181846…) and only the latter written. Lesson: canonicalize `proof_issued_at` (`strftime('%Y-%m-%dT%H:%M:%S') + 'Z'`) and always 3-path recompute before persisting the tuple.
+  - State-first ordering held across two rollovers: the checkpoint was appended to state.md bottom before the resume_brief.md prepend, and both the closure pair and the new refresh pair survived rollover byte-identical (state-last ↔ brief-first). Rollover moved only old segment checkpoints (BUG-0036 refresh-context, 31 lines) — never the live BUG-0037 records.
+  - The append pushed state.md back over the 1200-line cap (1205/1200, 48/80 checkpoints), so a second mandatory `--rollover` was required in the same phase (pack `state-pack-20261021-a.md`); final `--check` exit 0 with state.md at 1176 lines / 44 checkpoints.
+- **Carried residuals (recorded verbatim, not repaired in this phase)**:
+  - (a) `docs/product/backlog.md` BUG-0037 cross-reference lines (`research_notes`/`architecture_notes`) not written — tech-lead permission map excludes `docs/product/backlog.md` (operator-gated permission-map gap, same class as the BUG-0038 curator-map finding); validation still `[BUG_VALIDATION_OK]`.
+  - (b) `SPRIT_PLAN_PASS` typo at `handoffs/resume_brief.md` L213 (historical sprint-plan pointer block; correct spelling `SPRINT_PLAN_PASS` in the same block's record and the TTL-repair pair) — historical record, out of scope.
+  - (c) triad over-cap pre-run RECONCILED by the mandatory rollovers in this phase (`state-pack-20261021.md` 9 checkpoints; `state-pack-20261021-a.md` 1 checkpoint; `po-to-tl-pack-20261021.md` 1 section); `resume_brief.md` 106,007 lines / ~4.48 MB recorded as size observation — no resume-brief cap exists in `scripts/enforce-triad-hot-surface.py` (state/po_to_tl/architecture only); no history trim performed.
+- **Compose guards preserved**: US-0161 OPEN/intact (verified at refresh; not reopened, not weakened); BUG-0026/BUG-0029/BUG-0036/BUG-0038 and US-0158/US-0160/US-0162 untouched; DONE siblings not reopened.
+- **Publish/push**: none (refresh-context only; no commit, push, publish, spawn, `/auto`, secret/.env read).
+- **Portfolio state**: 5 OPEN stories (US-0158, US-0159, US-0160, US-0161, US-0162); 1 OPEN bug (BUG-0026); US-0108 status-drift resolved (row now DONE); drain not active.
+- **Artifacts reconciled**: state.md terminal refresh-context checkpoint (state-first, after two rollovers); resume_brief.md terminal pointer + continuation pair (byte-identical to state record); decisions.md context pack NOT rolled (out of this child's scope — parent/subsequent curator pass under its own proof); portfolio_state.md refresh; this note.
+- **Remaining active work**: US-0158, US-0159, US-0160, US-0161, US-0162, BUG-0026 (operator `/intake` / `/auto` eligible).
+- **Next action for orchestrator**: none — segment terminal; STOP_AFTER_REFRESH_CONTEXT_PASS; no further spawn from this pair.
+
+---
+
 ## S0161 / BUG-0030 terminal phase closure (2026-09-27T15:10:00Z)
 
 - **phase_id**: refresh-context

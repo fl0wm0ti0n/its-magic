@@ -1,0 +1,22 @@
+{
+  "sprint_id": "S0184",
+  "bug_id": "BUG-0037",
+  "phase_id": "verify-work",
+  "status": "VERIFY_PASS",
+  "uat_lifecycle": "verify_work_complete_release_pending",
+  "uat_revalidated_at": "2026-10-21T15:54:48Z",
+  "decision_gate": false,
+  "next_scheduled_phase": "release",
+  "next_scheduled_role": "release",
+  "reason_code": "VERIFY_PASS",
+  "static_only": true,
+  "contract_test": "python -m pytest tests/bug0037_story_shape_contract_test.py -v -> 5 passed (independent verify-work run)",
+  "validator": "[BUG_VALIDATION_OK]",
+  "steps": [
+    {"ac": "AC-1", "result": "PASS", "detail": "Canonical structured story template includes mandatory Status and intake directive is before STOP."},
+    {"ac": "AC-2", "result": "PASS", "detail": "OpenCode-only active/template parity holds for po.md and intake.md."},
+    {"ac": "AC-3", "result": "PASS", "detail": "Agent is exact template source; intake has only reference directive and prose-shape guard."},
+    {"ac": "AC-4", "result": "PASS", "detail": "All five test_bug0037 contract tests independently pass."},
+    {"ac": "AC-5", "result": "PASS", "detail": "US-0161 hash stable; no remote import, map/grant change, status flip, or AC tick."}
+  ]
+}

@@ -1,0 +1,60 @@
+{
+  "sprint": "S0183",
+  "sprint_id": "S0183",
+  "story_id": null,
+  "bug_id": "BUG-0038",
+  "status": "VERIFY_PASS",
+  "uat_lifecycle": "verify_work_complete_release_pending",
+  "uat_revalidated_at": "2026-10-19T20:44:17Z",
+  "previous_qa_attempts": "blocker evidence only; not continuation pairs",
+  "placeholder_only": false,
+  "decision_gate": false,
+  "next_scheduled_phase": "release",
+  "next_scheduled_role": "release",
+  "reason_code": "VERIFY_PASS",
+  "strict_proof": {
+    "record_key": "repair-20261018-bug0038-anchor-repair|bug|BUG-0038|verify-work|rp-repair-20261018-bug0038-verify-work-qa-20261019T204417Z-BUG-0038",
+    "runtime_proof_id": "rp-repair-20261018-bug0038-verify-work-qa-20261019T204417Z-BUG-0038",
+    "fresh_context_marker": "qa-BUG0038-verifywork-20261019T204417Z-fresh",
+    "proof_hash": "e9e1662dc4c24dd80d5a6954f6d1d1fa514b0b420e0e74ee5abc8c7d9803922c",
+    "proof_issued_at": "2026-10-19T20:44:17Z",
+    "proof_ttl_seconds": 3600,
+    "hash_recomputed_twice": "MATCH",
+    "pair_key_tuple_hash_validate": "PAIR_KEY_TUPLE_HASH_VALIDATE_MATCH",
+    "qa_pair_sanity_recompute": "471b9738a6d8245cb8a1e1513c47faef78e58c2b7aa3f84a5e6aa11c145b2353 MATCH",
+    "brief_prepend_outcome": "WRITTEN after state-first exact key/tuple/hash validation"
+  },
+  "contract_test": "python -m pytest tests/bug0038_qa_resume_brief_permission_contract_test.py tests/us0156_contract_test.py -q -> 16 passed (permission contract plus newest-valid-pair resolver regression)",
+  "steps": [
+    {
+      "ac": "AC-1",
+      "step": "qa-owned verify-work persists its DEC-0153 state-first continuation pair without QA_RESUME_BRIEF_PERMISSION_DENIED",
+      "result": "PASS",
+      "detail": "fresh verify-work QA child completed the state-first pair and matching resume-brief pointer after exact key/tuple/strict-hash validation; the shared QA writer owns both qa and verify-work"
+    },
+    {
+      "ac": "AC-2",
+      "step": "active/template QA maps byte-identical, deny-first, exactly one narrow handoffs/resume_brief.md allow, security-hard denials retained",
+      "result": "PASS",
+      "detail": "SHA-256 17226b8702cd49cce177286c3cee64947f9426c97c683c0f1fdc3e6b025a7744; both trees identical"
+    },
+    {
+      "ac": "AC-3",
+      "step": "orchestrator/parent auto.md remains a negative surface (no continuation-pair grant, no agent-map write grant)",
+      "result": "PASS",
+      "detail": "edit: deny, bash: deny, seven-role task allowlist only; no forbidden grant in either tree"
+    },
+    {
+      "ac": "AC-4",
+      "step": "contract test covers the continuation-brief grant for every PHASE_ROLE_MATRIX-derived phase-writer role in both active and template trees",
+      "result": "PASS",
+      "detail": "deduped roles [curator, dev, po, qa, release, tech-lead] all carry the narrow brief grant in both trees"
+    },
+    {
+      "ac": "AC-5",
+      "step": "permission_matrix_repair_lib.py deterministically reports PERMISSION_MATRIX_REPAIR_REQUIRES_OPERATOR on an unrepairable QA map (naming both QA map paths + handoffs/resume_brief.md) with no pair write, no schedule, no auto-repair",
+      "result": "PASS",
+      "detail": "non-parity verdict emits the operator-only reason with the three diagnostic paths; assert_no_continuation_side_effects passes; live pair QA_MAP_PAIR_HEALTHY"
+    }
+  ]
+}

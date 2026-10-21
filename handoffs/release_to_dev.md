@@ -1,3 +1,58 @@
+# Release-to-Dev Handoff - S0178 / BUG-0029 — remediation cleared
+
+**date**: 2026-10-16T14:54:00Z
+**from**: release (`release-BUG0029-release-fix1-20261016T145400Z-fresh`)
+**to**: curator (closure), after parent validates the release pair
+**verdict**: **RELEASE_PASS**. The `2026-10-16T00:26:12Z` blocker below is historical. Fresh `tests/report.md` `2026-10-16T14:52:23Z` is Pass 880 / Fail 0. README `--enforce` exit 0 (`coverage_missing=[]`, `coverage_total=52`). `npm_published=false`. `git_pushed=false`. BUG-0029 stays OPEN. AC-1..AC-5 stay unchecked. This child does not spawn `/closure`.
+
+---
+
+# Release-to-Dev Handoff - S0178 / BUG-0029
+
+**date**: 2026-10-16T00:26:12Z
+**from**: release (`release-BUG0029-release-20261016T002612Z-fresh`)
+**to**: dev / orchestrator
+**verdict**: **RELEASE_BLOCKED** - `RELEASE_TEST_FAILED`; `README_FEATURE_COVERAGE_BLOCKED`; `README_FEATURE_COVERAGE_GAP:BUG-0028`. No override.
+
+## Blocker
+
+`powershell -NoProfile -ExecutionPolicy Bypass -File tests/run-tests.ps1` exited 1. Fresh `tests/report.md` at `2026-10-16T00:22:38Z` is Pass 872 / Fail 8. US-0071 L713-L722 and triad L723-L726 are PASS. The eight fail rows are L785 slim auto command contract markers, L815 and L816 README feature coverage, L843 and L846 dev-environment parity, L850 model-tier parity, L853 model-tier-overrides parity, and L855 arch-linkage parity. This run showed active `AUTO_BACKLOG_DRAIN=0` against template `AUTO_BACKLOG_DRAIN=1`, and a scratchpad byte mismatch (36334 vs 36325).
+
+`python scripts/validate_readme_feature_coverage.py --repo . --enforce` exited 1 with `README_FEATURE_COVERAGE_GAP:BUG-0028` (`root_h2=Features`, `dev_h2=Architecture notes`). This phase did not edit BUG-0028.
+
+Sprint markers `test_bug0029_*` on Windows Node v24.19.0 were 7 passed / 0 failed in duration_ms 176.2635. QA is QA_PASS. UAT is 6/0. Those do not clear gate 1 or gate 3f. Finalization did not run. BUG-0029 stays OPEN. AC-1..AC-5 stay unchecked. `npm_published=false`. `git_pushed=false`. No commit. No push. No S0178 release notes. No queue row.
+
+## Remediation
+
+1. Return `tests/run-tests.ps1` to Fail 0 and refresh `tests/report.md`.
+2. Add the missing BUG-0028 README coverage, then rerun the coverage enforce command to exit 0.
+3. Rerun `/release` for S0178. Do not tick AC-1..AC-5 here. Closure owns the DONE flip after a later RELEASE_PASS.
+
+---
+
+# Release-to-Dev Handoff - S0177 / BUG-0026
+
+**date**: 2026-10-15T09:27:02Z
+**from**: release (`release-BUG0026-release-20261015T092702Z-fresh`)
+**to**: dev / orchestrator
+**verdict**: **RELEASE_BLOCKED** - `RELEASE_TEST_FAILED`; `README_FEATURE_COVERAGE_BLOCKED`; `README_FEATURE_COVERAGE_GAP:BUG-0028`. No override.
+
+## Blocker
+
+`powershell -NoProfile -ExecutionPolicy Bypass -File tests/run-tests.ps1` exited 1. `tests/report.md` at `2026-10-15T09:24:56Z` is Pass 872 / Fail 8. US-0071 L713-L722 and triad L723-L726 are PASS. The eight fail rows are L785 slim auto command contract markers, L815 and L816 README feature coverage, L843 and L846 dev-environment parity, L850 model-tier parity, L853 model-tier-overrides parity, and L855 arch-linkage parity.
+
+`python scripts/validate_readme_feature_coverage.py --repo . --enforce` exited 1 with `README_FEATURE_COVERAGE_GAP:BUG-0028` (`root_h2=Features`, `dev_h2=Architecture notes`). This phase did not edit BUG-0028.
+
+Sprint markers `python -m pytest tests/bug0026_packaged_range_contract_test.py -q --tb=line` were 8 passed / 0 failed in 3.92s. QA is QA_PASS. UAT is 9/0. Those do not clear gate 1 or gate 3f. Finalization did not run. BUG-0026 stays OPEN. AC-3 stays unchecked. `npm_published=false`. No commit. No push.
+
+## Remediation
+
+1. Return `tests/run-tests.ps1` to Fail 0 and refresh `tests/report.md`.
+2. Add the missing BUG-0028 README coverage, then rerun the coverage enforce command to exit 0.
+3. Rerun `/release` for S0177. Do not tick AC-3 here. Closure owns the DONE flip after a later RELEASE_PASS.
+
+---
+
 # Release-to-Dev Handoff - S0167 / BUG-0034
 
 **date**: 2026-10-06T22:11:51Z

@@ -1,0 +1,178 @@
+{
+  "sprint": "S0181",
+  "sprint_id": "S0181",
+  "story_id": "US-0157",
+  "bug_id": null,
+  "status": "VERIFY_PASS",
+  "verdict": "VERIFY_PASS",
+  "uat_lifecycle": "populated",
+  "placeholder_only": false,
+  "verify_work_claimed": true,
+  "delivery_mode": "ultra_lean",
+  "macro_phase": "build+verify",
+  "phase_id": "verify-work",
+  "role": "qa",
+  "timestamp": "2026-10-16T22:12:19Z",
+  "fresh_context_marker": "qa-US0157-vw-20261016T221219Z-fresh",
+  "prior_qa_fresh_context_marker": "qa-US0157-qa-20261016T220608Z-fresh",
+  "runtime_proof_id": "rp-auto-20261016-us0157-verify-work-qa-20261016T221219Z",
+  "proof_hash": "d7de9305113c1c986e86be29601a2ca0500647d7dfc991c9e9a3e9b41572c255",
+  "proof_issued_at": "2026-10-16T22:12:19Z",
+  "proof_ttl_seconds": 3600,
+  "implementation_loop_index": 0,
+  "model_id": "omit",
+  "cross_model_review": 0,
+  "story_status": "OPEN",
+  "acceptance_boxes": "unchecked",
+  "acceptance_boxes_checked": false,
+  "contract_test_failed": 0,
+  "contract_test_passed": 4,
+  "contract_test_total": 4,
+  "harness_fail_zero_claimed": false,
+  "harness_report": "tests/report.md 2026-10-16T21:58:06Z Pass 875 / Fail 8",
+  "harness_note": "The eight failures are the pre-existing foreign scratchpad byte mismatch and README_FEATURE_COVERAGE_GAP:BUG-0029. They are not a fail-closed reason for S0181. The convergence evidence_ref is the US-0128 contracted token for contract_test_failed=0. This file does not claim kit Fail 0.",
+  "total": 6,
+  "passed": 6,
+  "failed": 0,
+  "steps": [
+    {
+      "id": "UAT-1",
+      "ac": "AC-1",
+      "description": "When CROSS_MODEL_REVIEW=1, OpenCode /auto spawns a fresh tech-lead for /sovereign-critic and does not emit PHASE_ROLE_CAPABILITY_MISSING because no critic Task role exists",
+      "result": "pass",
+      "marker": "test_us0157_critic_spawns_tech_lead",
+      "probe_kind": "contract_tests_primary"
+    },
+    {
+      "id": "UAT-2",
+      "ac": "AC-2",
+      "description": "A fresh phase child may repair only its own invalid continuation pair, then the flow continues",
+      "result": "pass",
+      "marker": "test_us0157_own_pair_repair_continues",
+      "probe_kind": "contract_tests_primary"
+    },
+    {
+      "id": "UAT-3",
+      "ac": "AC-3",
+      "description": "The /auto orchestrator still does not write or repair state.md or handoffs/resume_brief.md",
+      "result": "pass",
+      "marker": "test_us0157_orchestrator_cannot_write_pair",
+      "probe_kind": "contract_tests_primary"
+    },
+    {
+      "id": "UAT-4",
+      "ac": "AC-4",
+      "description": "Hard security denies stay hard stops",
+      "result": "pass",
+      "marker": "test_us0157_security_denies_stay_hard",
+      "probe_kind": "contract_tests_primary"
+    },
+    {
+      "id": "UAT-5",
+      "ac": "AC-5",
+      "description": "Contract tests cover AC-1, AC-2, and AC-3",
+      "result": "pass",
+      "marker": "test_us0157_critic_spawns_tech_lead",
+      "probe_kind": "contract_tests_primary"
+    },
+    {
+      "id": "convergence_smoke",
+      "description": "Convergence smoke surrogate — waived-probe slice with green contract-test harness",
+      "result": "pass",
+      "marker": "test_us0128_convergence_smoke_surrogate",
+      "evidence_ref": "tests/report.md Fail:0 + uat.json waived_probes[] (6 classes, UAT_PROBE_FORBIDDEN)",
+      "probe_kind": "contract_tests_primary"
+    }
+  ],
+  "summary": {
+    "passed": 6,
+    "failed": 0
+  },
+  "contract_test_markers": [
+    "test_us0157_critic_spawns_tech_lead",
+    "test_us0157_own_pair_repair_continues",
+    "test_us0157_orchestrator_cannot_write_pair",
+    "test_us0157_security_denies_stay_hard"
+  ],
+  "contract_test_command": "python -m pytest tests/us0157_opencode_critic_pair_contract_test.py -q",
+  "contract_test_output": "4 passed in 1.21s",
+  "verify_work_note": "Independent verify-work re-run of python -m pytest tests/us0157_opencode_critic_pair_contract_test.py -q at 2026-10-16T22:12:19Z: 4 passed / 0 failed in 1.21s. QA recorded 4 passed in 1.34s. tests/report.md was not rewritten. US-0157 stays OPEN. AC-1..AC-5 stay unchecked.",
+  "blocking_findings": [],
+  "probe_results": [
+    {
+      "step_id": "UAT-1",
+      "probe_class": "contract_tests_primary",
+      "passed": true,
+      "reason_code": "UAT_PROBE_PASS",
+      "evidence_ref": "test_us0157_critic_spawns_tech_lead"
+    },
+    {
+      "step_id": "UAT-2",
+      "probe_class": "contract_tests_primary",
+      "passed": true,
+      "reason_code": "UAT_PROBE_PASS",
+      "evidence_ref": "test_us0157_own_pair_repair_continues"
+    },
+    {
+      "step_id": "UAT-3",
+      "probe_class": "contract_tests_primary",
+      "passed": true,
+      "reason_code": "UAT_PROBE_PASS",
+      "evidence_ref": "test_us0157_orchestrator_cannot_write_pair"
+    },
+    {
+      "step_id": "UAT-4",
+      "probe_class": "contract_tests_primary",
+      "passed": true,
+      "reason_code": "UAT_PROBE_PASS",
+      "evidence_ref": "test_us0157_security_denies_stay_hard"
+    },
+    {
+      "step_id": "UAT-5",
+      "probe_class": "contract_tests_primary",
+      "passed": true,
+      "reason_code": "UAT_PROBE_PASS",
+      "evidence_ref": "test_us0157_critic_spawns_tech_lead"
+    },
+    {
+      "step_id": "convergence_smoke",
+      "probe_class": "contract_tests_primary",
+      "passed": true,
+      "reason_code": "UAT_PROBE_PASS",
+      "evidence_ref": "contract_test_failed=0; pytest 4 passed / 0 failed; 6 waived_probes UAT_PROBE_FORBIDDEN; kit tests/report.md 2026-10-16T21:58:06Z Fail 8 is the named foreign set and is not a S0181 fail-closed reason"
+    }
+  ],
+  "probe_class_note": "Live browser, API, process, CLI, build, and operator probes are UAT_PROBE_FORBIDDEN. The US-0157 contract file covers the acceptance paths. No .env read. US-0157 stays OPEN. Backlog AC-1..AC-5 stay unchecked.",
+  "waived_probes": [
+    {
+      "probe_class": "browser_smoke",
+      "reason": "No live browser. This ultra-lean slice is contract-test primary.",
+      "reason_code": "UAT_PROBE_FORBIDDEN"
+    },
+    {
+      "probe_class": "api_health",
+      "reason": "No live API. This ultra-lean slice is contract-test primary.",
+      "reason_code": "UAT_PROBE_FORBIDDEN"
+    },
+    {
+      "probe_class": "process_health",
+      "reason": "No live process health probe. This ultra-lean slice is contract-test primary.",
+      "reason_code": "UAT_PROBE_FORBIDDEN"
+    },
+    {
+      "probe_class": "cli_smoke",
+      "reason": "No live installed binary probe. This ultra-lean slice is contract-test primary.",
+      "reason_code": "UAT_PROBE_FORBIDDEN"
+    },
+    {
+      "probe_class": "build",
+      "reason": "No product build or publish. This ultra-lean slice is contract-test primary.",
+      "reason_code": "UAT_PROBE_FORBIDDEN"
+    },
+    {
+      "probe_class": "manual_operator",
+      "reason": "No live operator session. This ultra-lean slice is contract-test primary.",
+      "reason_code": "UAT_PROBE_FORBIDDEN"
+    }
+  ]
+}

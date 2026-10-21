@@ -26,9 +26,11 @@ US-0156 / DEC-0152 — sequential, command-owned fresh-Task contract (approach A
    this parent session and do not treat a completed child as permission to
    bypass the Stop-Matrix.
 4. Continue only on an explicit Stop-Matrix continuation action and next
-   phase/segment. Hard gates, decision requests, pause, missing evidence,
-   quality/UAT failures, release ownership, security stops, and exhausted
-   retry/loop/backlog/bug budgets terminate the run unchanged.
+   phase/segment. A recoverable blocker, an AI error, an aborted phase, and
+   a permission dead-end continue in this same run through continue_same_phase.
+   Decision requests, pause, missing evidence, release ownership, quality
+   failure, UAT failure, security stops, and exhausted retry/loop/backlog/bug
+   budgets still terminate the run. The parent stays read-only.
 5. Preserve the bridge-owned, idempotent continuation tuple (source, effective
    plan, skipped phases, completed/next phase, cursor/budget, stop reason,
    child isolation reference). Exact repeats are no-ops; conflicting evidence
@@ -39,9 +41,11 @@ phase child alone authors its state-first paired continuation record (the
 `docs/engineering/state.md` checkpoint first, then the `handoffs/resume_brief.md`
 latest-pointer block after exact pair-key and tuple validation). This parent is
 permanently read/validate/spawn-only: it never writes either artifact, never
-applies a state fallback, never refreshes the brief, never repairs, and never
-schedules the next phase on `RESUME_BRIEF_STALE` or `RESUME_BRIEF_UNPARSEABLE`
-evidence. `RESUME_BRIEF_AUTO_REFRESH=0` remains an absolute prohibition.
+applies a state fallback, never refreshes the brief, and never schedules the
+next phase while the pair is invalid. `RESUME_BRIEF_AUTO_REFRESH=0` remains an
+absolute prohibition.
+
+When `CROSS_MODEL_REVIEW=1`, the critic hook spawns tech-lead for `/sovereign-critic`. `CROSS_MODEL_REVIEW=0` spawns nothing. The permission block stays the seven roles. On a repairable continuation predicate for the just-completed child, this parent calls `validate_resume_pair` only and spawns one fresh child of that `writer_role` for that same `completed_phase` with a repair-only charter. This parent does not write `docs/engineering/state.md` or `handoffs/resume_brief.md` and does not set `RESUME_BRIEF_AUTO_REFRESH`. The next scheduled phase is not spawned while the pair is invalid.
 
 Retired and forbidden: do not recursively invoke `/auto`, do not restore the
 TUI/RPC dispatch route, a JSON command template, or a localhost endpoint, and
@@ -52,6 +56,7 @@ evidence.
 
 - Deterministic stop reasons (see rich `.cursor/commands/auto.md` Stop matrix): `completed`, `decision_gate`,
   `missing_input`, `pause_request`, `loop_max`, `error`, `blocked`.
+- A recoverable blocker, an AI error, an aborted phase, and a permission dead-end continue in this same run. Quality, UAT, security, and budget stops still terminate the run. The parent stays read-only.
 
 ## Fail-safe reason codes
 

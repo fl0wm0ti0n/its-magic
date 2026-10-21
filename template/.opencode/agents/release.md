@@ -16,6 +16,9 @@ permission:
     "docs/engineering/runbook.md": allow
     "CHANGELOG.md": allow
     "template/CHANGELOG.md": allow
+    "docs/product/backlog.md": allow
+    "docs/product/acceptance.md": allow
+    "sprints/S0184/closure-verification.md": allow
   bash: ask
   task: deny
 ---

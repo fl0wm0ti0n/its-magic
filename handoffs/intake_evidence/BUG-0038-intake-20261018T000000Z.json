@@ -1,0 +1,78 @@
+{
+  "selected_pack": "small-intake-pack",
+  "intake_run_id": "ir-20261018T000000Z-qa-resume-brief",
+  "writer_id": "po-gpt-20261018-qa-resume-brief",
+  "INTAKE_GUIDED_MODE": 1,
+  "INTAKE_WORK_ITEM_KIND": "bug",
+  "requested_mode": "bug",
+  "intake_boundary_utc": "2026-10-18T00:00:00Z",
+  "ID_NAMESPACE_BOOTSTRAP": 0,
+  "WORK_KIND_ROUTING": 0,
+  "EARLY_RESEARCH": 0,
+  "asked_topics": [
+    "outcome_success_criteria",
+    "impacted_components",
+    "constraints_compatibility_risks",
+    "required_tests_acceptance_checks",
+    "done_definition"
+  ],
+  "missing_topics": [],
+  "assumptions_confirmed": "(none)",
+  "topic_coverage": [
+    {
+      "topic_key": "outcome_success_criteria",
+      "satisfied_by": "answer_ref",
+      "quoted_user_text": "QA phase fails with QA_RESUME_BRIEF_PERMISSION_DENIED because qa lacks permission for handoffs/resume_brief.md.",
+      "turn_index": 0,
+      "intake_run_id": "ir-20261018T000000Z-qa-resume-brief",
+      "ref": "ie:ir-20261018T000000Z-qa-resume-brief:0:8e1c59469896f118"
+    },
+    {
+      "topic_key": "impacted_components",
+      "satisfied_by": "answer_ref",
+      "quoted_user_text": "OpenCode agent permission maps: .opencode/agents/qa.md and template/.opencode/agents/qa.md; affected qa and verify-work phases.",
+      "turn_index": 1,
+      "intake_run_id": "ir-20261018T000000Z-qa-resume-brief",
+      "ref": "ie:ir-20261018T000000Z-qa-resume-brief:1:24d4ca23d853cbd5"
+    },
+    {
+      "topic_key": "constraints_compatibility_risks",
+      "satisfied_by": "delegation_ref",
+      "quoted_user_text": "Keep active and template agent-map bytes identical; preserve deny-first and security-hard denies.",
+      "turn_index": 2,
+      "intake_run_id": "ir-20261018T000000Z-qa-resume-brief",
+      "ref": "ie:ir-20261018T000000Z-qa-resume-brief:2:c356616afd3603e3",
+      "delegation_scope": "Keep active and template QA agent maps byte-identical; retain deny-first ordering and all security-hard denials.",
+      "delegation_rationale": "The operator required the two-map repair and explicitly preserved the existing permission-security boundary.",
+      "delegation_confidence": "high"
+    },
+    {
+      "topic_key": "required_tests_acceptance_checks",
+      "satisfied_by": "delegation_ref",
+      "quoted_user_text": "Add contract coverage that every phase-writer role has the required resume-brief grant.",
+      "turn_index": 3,
+      "intake_run_id": "ir-20261018T000000Z-qa-resume-brief",
+      "ref": "ie:ir-20261018T000000Z-qa-resume-brief:3:f6506731e70f3cc8",
+      "delegation_scope": "Define additive contract coverage for all phase-writer roles and the precise fail-safe behavior for an unrepairable permission-map dead-end.",
+      "delegation_rationale": "The operator recommended this hardening but did not prescribe exact test names or assertions.",
+      "delegation_confidence": "high"
+    },
+    {
+      "topic_key": "done_definition",
+      "satisfied_by": "delegation_ref",
+      "quoted_user_text": "Done when QA can persist continuation evidence and missing grants are CI-detected; unrepairable map dead-ends report operator action.",
+      "turn_index": 4,
+      "intake_run_id": "ir-20261018T000000Z-qa-resume-brief",
+      "ref": "ie:ir-20261018T000000Z-qa-resume-brief:4:90fdb19307bbe5b1",
+      "delegation_scope": "Lock precise completion evidence and reason-code behavior during discovery without weakening the listed security constraints.",
+      "delegation_rationale": "The operator specified the required outcome and an optional remediation classification, while implementation-level detail remains for discovery.",
+      "delegation_confidence": "medium"
+    }
+  ],
+  "duplicate_check_pass": true,
+  "duplicate_check_notes": "New defect. BUG-0016 is DONE but its permission-matrix contract omitted QA resume-brief coverage; BUG-0035 is DONE and established child-owned continuation pairs. This defect is their live integration gap, not a reopen of either completed bug.",
+  "decomposition_verdict": "single_bug",
+  "decomposition_rationale": "One permission-matrix omission prevents QA and verify-work from writing a mandatory continuation artifact. The operator-required active/template parity and regression coverage belong to the same vertical repair.",
+  "decision_gate": false,
+  "bug_id": "BUG-0038"
+}

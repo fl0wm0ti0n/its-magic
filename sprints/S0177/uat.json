@@ -1,0 +1,163 @@
+{
+  "sprint": "S0177",
+  "sprint_id": "S0177",
+  "story_id": null,
+  "bug_id": "BUG-0026",
+  "status": "PASS",
+  "verdict": "QA_PASS",
+  "uat_lifecycle": "populated",
+  "placeholder_only": false,
+  "delivery_mode": "ultra_lean",
+  "macro_phase": "build+verify",
+  "phase_id": "qa",
+  "role": "qa",
+  "timestamp": "2026-10-15T08:56:25Z",
+  "fresh_context_marker": "qa-BUG0026-qa-20261015T085625Z-fresh",
+  "model_id": "omit",
+  "cross_model_review": 0,
+  "bug_status": "OPEN",
+  "acceptance_boxes": "AC-3 unchecked",
+  "acceptance_boxes_checked": false,
+  "contract_test_failed": 0,
+  "harness_fail_zero_claimed": false,
+  "total": 9,
+  "passed": 9,
+  "failed": 0,
+  "steps": [
+    {
+      "id": "UAT-1",
+      "ac": "AC-1",
+      "description": "Published its-magic includes a supported-range source the installer can load",
+      "result": "pass",
+      "marker": "test_bug0026_allowlist_ships_equivalent_range_without_private_workspace",
+      "probe_kind": "contract_tests_primary"
+    },
+    {
+      "id": "UAT-2",
+      "ac": "AC-2",
+      "description": "Windows published-global bootstrap row is cited and not copied into the Linux row",
+      "result": "pass",
+      "marker": "windows_row_cited_not_copied",
+      "probe_kind": "contract_tests_primary"
+    },
+    {
+      "id": "UAT-3",
+      "ac": "AC-3",
+      "description": "Linux published-global its-magic@0.1.5 upgrade materializes a posix itsm shim at mode 0755",
+      "result": "pass",
+      "marker": "debian13_wsl2_reobserve",
+      "evidence_ref": "sprints/S0177/qa-findings.md Linux re-observation",
+      "probe_kind": "cli_smoke"
+    },
+    {
+      "id": "UAT-4",
+      "ac": "AC-4",
+      "description": "Existing pack allowlist contracts stay and no new contract is added",
+      "result": "pass",
+      "marker": "test_bug0026_npm_pack_contains_range_fallback_and_omits_standalone_workspace",
+      "probe_kind": "contract_tests_primary"
+    },
+    {
+      "id": "UAT-5",
+      "ac": "AC-5",
+      "description": "BUG-0025 is not reopened",
+      "result": "pass",
+      "marker": "guard_bug0025_untouched",
+      "probe_kind": "contract_tests_primary"
+    },
+    {
+      "id": "UAT-6",
+      "ac": "AC-6",
+      "description": "US-0149 is not reopened",
+      "result": "pass",
+      "marker": "guard_us0149_untouched",
+      "probe_kind": "contract_tests_primary"
+    },
+    {
+      "id": "UAT-7",
+      "ac": "AC-7",
+      "description": "BUG-0028 and BUG-0029 are not edited",
+      "result": "pass",
+      "marker": "guard_bug0028_bug0029_untouched",
+      "probe_kind": "contract_tests_primary"
+    },
+    {
+      "id": "UAT-8",
+      "ac": "AC-8",
+      "description": "A missing range stays STANDALONE_SUPPORTED_RANGE_MISSING and is not a false KERNEL_CONTRACT_MISMATCH",
+      "result": "pass",
+      "marker": "test_bug0026_missing_range_is_not_false_kernel_contract_mismatch",
+      "probe_kind": "contract_tests_primary"
+    },
+    {
+      "id": "convergence_smoke",
+      "description": "Convergence smoke surrogate — contract-test harness green and Linux cli_smoke re-observed",
+      "result": "pass",
+      "marker": "test_us0128_convergence_smoke_surrogate",
+      "evidence_ref": "8 test_bug0026_* pass / 0 fail; cli_smoke re-observed on Debian 13; 5 waived_probes UAT_PROBE_FORBIDDEN; full harness Fail=0 not claimed",
+      "probe_kind": "contract_tests_primary"
+    }
+  ],
+  "summary": {
+    "passed": 9,
+    "failed": 0
+  },
+  "contract_test_markers": [
+    "test_bug0026_allowlist_ships_equivalent_range_without_private_workspace",
+    "test_bug0026_packaged_range_matches_kernel_bridge_source",
+    "test_bug0026_npm_pack_contains_range_fallback_and_omits_standalone_workspace",
+    "test_bug0026_published_layout_preflight_uses_packaged_range",
+    "test_bug0026_published_layout_materializes_itsm_shim",
+    "test_bug0026_packed_tarball_upgrade_materializes_itsm_shim",
+    "test_bug0026_incomplete_runtime_payload_fails_closed",
+    "test_bug0026_missing_range_is_not_false_kernel_contract_mismatch"
+  ],
+  "contract_test_passed": 8,
+  "contract_test_command": "python -m pytest tests/bug0026_packaged_range_contract_test.py -q --tb=line",
+  "contract_test_output": "8 pass / 0 fail; duration 4.84s",
+  "blocking_findings": [],
+  "probe_results": [
+    {
+      "step_id": "UAT-3",
+      "probe_class": "cli_smoke",
+      "passed": true,
+      "reason_code": "UAT_PROBE_PASS",
+      "evidence_ref": "sprints/S0177/qa-findings.md Linux re-observation"
+    },
+    {
+      "step_id": "convergence_smoke",
+      "probe_class": "contract_tests_primary",
+      "passed": true,
+      "reason_code": "UAT_PROBE_PASS",
+      "evidence_ref": "contract_test_failed=0; 8 pass / 0 fail test_bug0026_*; cli_smoke re-observed; 5 waived_probes UAT_PROBE_FORBIDDEN; full harness Fail=0 not claimed"
+    }
+  ],
+  "probe_class_note": "cli_smoke was re-observed read-only on Debian 13 WSL2. The upgrade command was not run again. No .env read. BUG-0026 stays OPEN. AC-3 stays unchecked.",
+  "waived_probes": [
+    {
+      "probe_class": "browser_smoke",
+      "reason": "No live browser. AC-3 is a Linux CLI observation.",
+      "reason_code": "UAT_PROBE_FORBIDDEN"
+    },
+    {
+      "probe_class": "api_health",
+      "reason": "No live API. AC-3 is a Linux CLI observation.",
+      "reason_code": "UAT_PROBE_FORBIDDEN"
+    },
+    {
+      "probe_class": "process_health",
+      "reason": "No long-running process health probe. The CLI observation already finished.",
+      "reason_code": "UAT_PROBE_FORBIDDEN"
+    },
+    {
+      "probe_class": "build",
+      "reason": "No republish and no product rebuild in this QA pass.",
+      "reason_code": "UAT_PROBE_FORBIDDEN"
+    },
+    {
+      "probe_class": "manual_operator",
+      "reason": "No live operator session.",
+      "reason_code": "UAT_PROBE_FORBIDDEN"
+    }
+  ]
+}

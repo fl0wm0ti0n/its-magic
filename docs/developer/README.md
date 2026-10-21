@@ -109,6 +109,7 @@ setup stays in the root `README.md` (user channel).
 - **US-0156** — OpenCode `/auto` parity: continuous lifecycle, drain, resume, and phase selection; traceability: architecture `# US-0156`.
 - **BUG-0022** — `/auto` Task-spawns resolve phase models from role_catalog (no parent-chat inherit); traceability: architecture `# BUG-0022`.
 - **BUG-0027** — OpenCode manual phase commands persist canonical workflow evidence; traceability: architecture `# BUG-0027`.
+- **BUG-0028** — `itsm` help, local auth/models, and bare status skip full runtime admission; traceability: architecture `# BUG-0028`.
 - **BUG-0035** — Phase-child-owned paired continuation repair (lawful resume without `RESUME_BRIEF_STALE`); traceability: architecture `# BUG-0035`, `decisions/DEC-0153.md`.
 - High-level contracts live in `docs/engineering/architecture.md` (search for story ids).
 - Installer ownership is driven by `docs/engineering/context/installer-owned-paths.manifest`.

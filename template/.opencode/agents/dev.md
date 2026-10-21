@@ -13,6 +13,7 @@ permission:
     "sprints/S*/qa-findings.md": allow
     "docs/engineering/state.md": allow
     "handoffs/dev_to_qa.md": allow
+    "handoffs/resume_brief.md": allow
     # bootstrap S0165/BUG-0035: minimal operator grant for the T-001 permission
     # pair (DEC-0153). Only the two tech-lead maps — no broad or handoffs/** grant.
     ".opencode/agents/tech-lead.md": allow
@@ -24,6 +25,11 @@ permission:
     "CHANGELOG.md": allow
     "handoffs/po_to_tl.md": allow
     "docs/developer/**": allow
+    # BUG-0037 / S0184 operator grant: active OpenCode PO story-creation
+    # surface (4-file parity unit). Minimal, exact paths only; deny-first
+    # ordering and all existing denials preserved.
+    ".opencode/agents/po.md": allow
+    ".opencode/commands/intake.md": allow
   bash: ask
   task: deny
 ---

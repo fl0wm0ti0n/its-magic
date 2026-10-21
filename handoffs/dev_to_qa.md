@@ -1,3 +1,183 @@
+## Execute handoff — BUG-0037 / S0184 — EXECUTE_FAIL
+
+- bug_id: BUG-0037; sprint: S0184; from: execute; to: execute (blocked; no QA spawn).
+- verdict: **EXECUTE_FAIL** (permission dead-end on the core deliverable; fail-closed); decision_gate=false; BUG-0037 remains **OPEN/P1** and AC-1..AC-5 remain unchecked.
+- blocker: `PO_STORY_SHAPE_SURFACE_WRITE_PERMISSION_DENIED` — the dev deny-first edit map allows `template/**` but does not grant the active `.opencode/agents/po.md` or `.opencode/commands/intake.md` (live edit attempt denied; full allow list in `sprints/S0184/progress.md`). 2 of the 4 core parity files unwritable; no partial edit made (would break active/template byte parity, AC-2).
+- delivered (in authority): `tests/bug0037_story_shape_contract_test.py` (sole new AC-4 test, markers `test_bug0037_*`); `sprints/S0184/progress.md` (baseline, denial + intended 4-file content, test results); `docs/engineering/state.md` EXECUTE_FAIL blocker checkpoint with minted proof; this handoff.
+- intended 4-file content (recorded verbatim in `sprints/S0184/progress.md`, to apply byte-identical in both trees of each pair): (a) append `## Story block shape` single-source-of-truth template to `po.md`; (b) insert `## Story creation` directive (reference `po.md`, cite `## US-0161` at `docs/product/backlog.md` L6144–6178, forbid prose shape) before "STOP" in `intake.md`.
+- validation: `python -m pytest tests/bug0037_story_shape_contract_test.py -v` → **4 passed, 1 failed** (expected failure: `test_bug0037_template_in_pomd_and_directive_in_intake`, core fix unapplied on stubs; flips green once grant + fresh execute applies it). `python scripts/bug_issue_validate.py` → `[BUG_VALIDATION_OK]`.
+- invariants hold: both pairs byte-identical (po.md `9A832EA9D905001B…` 654 B; intake.md `42BFB16CB13D88DD…` 482 B); `US-0161` L6144–6178 byte-for-byte; no new grant; no US-0158/US-0160/US-0161/US-0162/acceptance/DEC/backlog edit; no AC tick.
+- marker: `dev-BUG0037-execute-20261020T190859Z-fresh`; proof: `rp-auto-20261020-bug0037-execute-dev-20261020T190859Z-BUG-0037` / `4852cfbf7d6628516b948f06f370323036dd95166f15809c5c94014a019701d4` (mint == independent recompute, MATCH).
+- next: **STOP: `STOP_AFTER_EXECUTE_FAIL`.** No successor DEC-0153 continuation pair written; the consumed sprint-plan pair (`rp-…sprint-plan-techlead-20261020T183221Z-BUG-0037` / `7cae5773…`, still valid pointer) remains latest. An authorized operator must grant the active OpenCode PO surface to the dev map (or apply the recorded content directly), then spawn a fresh `/execute` as dev for BUG-0037/S0184. This child does not spawn QA or `/auto`.
+- required reads: `sprints/S0184/progress.md`, `sprints/S0184/tasks.md`, `tests/bug0037_story_shape_contract_test.py`, `.opencode/agents/dev.md`, `docs/engineering/architecture.md` `# BUG-0037`, `docs/product/backlog.md` `## US-0161`.
+- do not reload: full backlog/state history; BUG-0036, BUG-0038, US-0158/US-0160/US-0162.
+
+---
+
+## Execute handoff — BUG-0038 / S0183 — EXECUTE_PASS
+
+- bug_id: BUG-0038; sprint: S0183; from: execute; to: qa.
+- verdict: implementation validation **PASS**; continuation **PAIR WRITTEN** (state-first); decision_gate=false; BUG-0038 remains **OPEN** and AC-1..AC-5 remain unchecked. Closure owns the DONE flip.
+- delivered:
+  - **T-anch (read-only baseline)**: both QA maps byte-identical (SHA256 `17226B8702CD49CCE177286C3CEE64947F9426C97C683C0F1FDC3E6B025A7744`), exactly one narrow `"handoffs/resume_brief.md": allow` at deny-first position in each tree; PHASE_ROLE_MATRIX maps `qa` and `verify-work` to `qa`; parent/orchestrator `auto.md` keeps `edit: deny` with no brief/state/QA-map/matrix/Task-allowlist write grant.
+  - **T-001 + T-002 (NO-OP)**: both QA maps already correct; no edits made. `git diff` confirms the single `+` line each is pre-existing, not from this session.
+  - **T-003**: `scripts/permission_matrix_repair_lib.py` — pure, deterministic `PERMISSION_MATRIX_REPAIR_REQUIRES_OPERATOR` classifier (`classify_qa_map_pair`, `assert_no_continuation_side_effects`, `is_healthy`, `is_operator_required`). No writes, no scheduling, no auto-repair.
+  - **T-004**: `tests/bug0038_qa_resume_brief_permission_contract_test.py` — exactly 5 markers, 5/5 PASS.
+  - **T-005**: QA-map byte parity + exactly-one allow re-verified; no write_resume_pair/state-fallback/auto-repair in deliverables; `git status` shows only the two new untracked files.
+- validation: `python -m pytest tests/bug0038_qa_resume_brief_permission_contract_test.py -v` → **5 passed**.
+- required reads: `sprints/S0183/progress.md`, `tests/bug0038_qa_resume_brief_permission_contract_test.py`, `scripts/permission_matrix_repair_lib.py`, `.opencode/agents/qa.md`, `template/.opencode/agents/qa.md`, `.opencode/plugins/orchestrator.ts`.
+- do not reload: full backlog/state history; BUG-0035, BUG-0026, BUG-0029, BUG-0036, US-0157, US-0162.
+- marker: `dev-BUG0038-execute-20261018T184310Z-fresh`; proof: `rp-repair-20261018-bug0038-execute-dev-20261018T184310Z-BUG-0038` / `3c21ef8613eddb0b842f213878d7cef12cc2eed1068a1f0c85efb2c6b6a851a3`.
+- next: **qa / qa** — plan-verify then UAT. QA must confirm the operator-only boundary holds (unrepairable map ⇒ operator required, no continuation pair written, no schedule) and that the narrow allow parity is intact in both trees.
+- background (not acted upon): `test_bug0035_active_template_parity_and_runbook_remediation` may fail in the full harness; pre-existing, outside BUG-0038 scope; not fixed, not suppressed.
+
+---
+
+## Execute handoff — US-0158 / S0182 — EXECUTE_PASS
+
+- story: US-0158; sprint: S0182; from: execute; to: qa.
+- verdict: implementation validation **PASS**, continuation **STOPPED** (`RESUME_BRIEF_STALE`); decision_gate=false; US-0158 remains **OPEN** and AC-1..AC-5 remain unchecked.
+- delivered: guarded same-run continuation for `blocked`, `ai_error`, `aborted`, and `permission_dead_end`; one in-memory retry per `(phaseId, class)` with a fresh marker; abort-shaped waits map to `phase_aborted`; permission denial retains the seven-role allowlist. Security, quality, UAT, and budget outcomes remain terminal; the parent remains continuation-pair read/validate/spawn-only.
+- validation: `python -m pytest tests/us0158_opencode_recoverable_stop_contract_test.py -q` → **6 passed**; `python scripts/auto_outer_driver.py --self-test` → **PASS**; required active/template pairs match byte-for-byte.
+- required reads: `sprints/S0182/summary.md`, `sprints/S0182/progress.md`, `tests/us0158_opencode_recoverable_stop_contract_test.py`, `scripts/auto_outer_driver.py`, `.opencode/plugins/orchestrator.ts`.
+- do not reload: full backlog/state history; US-0157, US-0162, BUG-0026, BUG-0029, BUG-0036.
+- marker: `dev-US0158-execute-20261017T110021Z-fresh`; proof: `rp-auto-20261016-us0158-execute-dev-20261017T110021Z` / `e3d645b60be85b08080764b05a3883d5b123b3276cb9e455eddb2a90ed5cbc45`.
+- next: **STOP: `RESUME_BRIEF_STALE`; do not spawn QA.** The matching active resume latest-pointer is outside the DEV write surface, so this child cannot complete the required DEC-0153 pair. This child spawned no child and did not spawn QA.
+
+---
+
+## Execute handoff — US-0157 / S0181 — EXECUTE_PASS
+
+- story: US-0157
+- bug_id: (none)
+- from: execute
+- to: qa
+- changed: OpenCode sovereign-critic command, tech-lead critic hook, owning-child pair repair helper, four contract tests
+- open: US-0157 stays OPEN. AC-1..AC-5 stay unchecked. Kit harness 875 pass / 8 fail. Those eight are the foreign scratchpad byte mismatch and README coverage gap BUG-0029.
+- required_reads: sprints/S0181/summary.md, tests/us0157_opencode_critic_pair_contract_test.py, scripts/owning_child_pair_repair_lib.py, .opencode/plugins/orchestrator.ts
+- do_not_reload: full backlog, full state history, US-0162, BUG-0026, BUG-0029, BUG-0036
+
+- **date**: 2026-10-16T21:58:54Z (UTC)
+- **verdict**: EXECUTE_PASS. decision_gate=false. Contract tests 4/4. next_scheduled_phase=qa. next_scheduled_role=qa. This child does not spawn qa.
+- **sprint**: S0181. R-0171 A1. Architecture `# US-0157`. Companion DEC none.
+- **marker**: `dev-US0157-execute-20261016T215854Z-fresh`
+- **proof**: `rp-auto-20261016-us0157-execute-dev-20261016T215854Z` / `4ecf894a119a1443b61fce2dbfc64284f1f4899203c1120c7ffb1c55fe5231ce`
+- **Tests**: `python -m pytest tests/us0157_opencode_critic_pair_contract_test.py -q` 4 passed. Metadata check exit 0. Triad `--check` exit 0 after rollover. Test harness exit 1 (`tests/report.md` 2026-10-16T21:58:06Z Pass 875 / Fail 8).
+- **Harness:** the eight failures are pre-existing and outside S0181. Do not edit scratchpad drain flags or add a BUG-0029 README row from this story.
+- **Stack**: python and the OpenCode orchestrator plugin. Runtime evidence is the contract pytest process, the node critic-hook harness, and the kit harness report. No HTTP surface. No `.env` read. No publish. No commit. No push.
+- **Ordering:** `docs/engineering/state.md` execute checkpoint was appended at the bottom before `handoffs/resume_brief.md` was prepended.
+
+---
+
+## Execute handoff — BUG-0036 / S0180 — EXECUTE_PASS
+
+- story: (none)
+- bug_id: BUG-0036
+- from: execute
+- to: qa
+- changed: repairable blocker predicate, policy dispatch, quarantine and expired-proof spawn request, seven contract tests, auto command call, matrix overlay
+- open: BUG-0036 stays OPEN. AC-1..AC-5 stay unchecked. Kit harness 874 pass / 8 fail. Those eight are the foreign scratchpad byte mismatch and README coverage gap BUG-0029.
+- required_reads: sprints/S0180/summary.md, tests/bug0036_repairable_blocker_contract_test.py, scripts/repairable_blocker_lib.py
+- do_not_reload: full backlog, full state history, BUG-0026, BUG-0029, US-0162
+
+- **date**: 2026-10-16T20:04:44Z (UTC)
+- **verdict**: EXECUTE_PASS. decision_gate=false. Contract tests 7/7. next_scheduled_phase=qa. next_scheduled_role=qa. This child does not spawn qa.
+- **sprint**: S0180. R-0170 A1. Architecture `# BUG-0036`. Companion DEC none.
+- **marker**: `dev-BUG0036-execute-20261016T200444Z-fresh`
+- **proof**: `rp-auto-20261016-bug0036-execute-dev-20261016T200444Z-BUG-0036` / `0088e9cfee2aeb4ae6392656f7529d48290a12577bd4ab1b5be53dcf673a21de`
+- **Tests**: `python -m pytest tests/bug0036_repairable_blocker_contract_test.py -q` 7 passed. Metadata check exit 0. Triad `--check` exit 0 after rollover. Test harness exit 1 (`tests/report.md` 2026-10-16T20:03:04Z Pass 874 / Fail 8).
+- **Harness:** the eight failures are pre-existing and outside S0180. Do not edit scratchpad drain flags or add a BUG-0029 README row from this bug.
+- **Stack**: python. Runtime evidence is the contract pytest process plus the kit harness report. No HTTP surface. No `.env` read. No publish. No commit. No push.
+
+---
+
+## Execute handoff — US-0162 / S0179 — EXECUTE_FAIL
+
+- story: US-0162
+- from: execute
+- to: execute
+- changed: host-neutral router, budgeted context pack, US-0162 architecture shard, kernel pointers, deterministic audit, read-dedup ledger, ten contract tests
+- open: kit harness 873 pass / 8 fail. Failures are scratchpad active/template drift and README coverage gap BUG-0029. US-0162 stays OPEN. AC-1..AC-12 stay unchecked.
+- required_reads: sprints/S0179/summary.md, tests/report.md, tests/us0162_token_routing_contract_test.py
+- do_not_reload: full backlog, full state history, BUG-0026, BUG-0029
+
+- **date**: 2026-10-16T17:06:02Z (UTC)
+- **verdict**: EXECUTE_FAIL. decision_gate=false. Contract tests 10/10. This child does not spawn qa.
+- **sprint**: S0179. R-0169 A1. Architecture shard `docs/engineering/architecture/US-0162.md`. Companion DEC none.
+- **marker**: `dev-US0162-execute-20261016T170602Z-fresh`
+- **proof**: `rp-auto-20261016-us0162-execute-dev-20261016T170602Z` / `e1fd77fb69298c61c279fcc2b961b20be9fc69a5df3661bea68f96fa3d9974e6`
+- **Tests**: `python -m pytest tests/us0162_token_routing_contract_test.py -q` 10 passed. Metadata check exit 0. Triad check exit 0 before the state append. Test harness exit 1 (`tests/report.md` 2026-10-16T17:02:28Z Pass 873 / Fail 8).
+- **Blocked**: do not edit scratchpad drain flags and do not add a BUG-0029 README row from this story.
+- **Stack**: python. Runtime evidence is the contract pytest process. No HTTP surface. No `.env` read. No publish. No commit. No push.
+
+---
+
+# Dev-to-QA Handoff — S0178 / BUG-0029 (release-gate remediation)
+
+- **date**: 2026-10-16T14:17:02Z (UTC)
+- **from**: `dev` (fresh execute remediation; marker `dev-BUG0029-execute-fix1-20261016T141702Z-fresh`)
+- **to**: `qa` (orchestrator-owned fresh `/qa` only — this child does not spawn it)
+- **verdict**: **EXECUTE_PASS**. `implementation_loop_index=1`. `next_scheduled_phase=qa`. `decision_gate=false`. BUG-0029 stays **OPEN**. AC-1..AC-5 stay unchecked. Closure owns the DONE flip.
+- **why**: Prior release `rp-auto-20261016-bug0029-release-release-20261016T002612Z-BUG-0029` / `80e689ec75612e0634b1ca749bb06813bab409cc2d2bd8dcb431287c5d85365d` is past TTL (issued `2026-10-16T00:26:12Z`, ttl until `2026-10-16T01:26:12Z`) with `RELEASE_FAIL`. This spawn clears the gates and does not spawn closure.
+- **kit gate**: `template/.cursor/scratchpad.md` is a byte copy of live `.cursor/scratchpad.md`. Live `AUTO_BACKLOG_DRAIN` stays `0` (`AUTO_BUG_QUEUE=1`, `AUTO_BUG_TARGET=all-open` mirrored with it). The four intake-parity scopes and `tests/auto_command_contract_test.py` (151 passed) use that equality.
+- **README gate**: `BUG-0028` is under `## Features` in `its_magic/README.md` and `template/its_magic/README.md`, and under `## Architecture notes` in `docs/developer/README.md`. The BUG-0028 backlog row, its ACs, and its DONE status were not edited.
+- **tests**: `powershell -NoProfile -ExecutionPolicy Bypass -File tests/run-tests.ps1` exit 0. `tests/report.md` timestamp `2026-10-16T14:15:41Z`, Pass 880 / Fail 0. The eight previously failing rows are `[PASS]`. `python scripts/validate_readme_feature_coverage.py --repo . --enforce` exit 0 (`coverage_missing=[]`, `coverage_total=52`). Login behavior was not reopened. `test_bug0029_*` was not re-run in this loop.
+- **not touched**: BUG-0029 status and AC boxes, BUG-0026, BUG-0028 backlog row, US-0150, US-0151, US-0154, US-0155, US-0156, `docs/engineering/decisions.md`, `docs/engineering/architecture.md`. No `.env` read. No publish, commit, or push.
+- **next**: fresh `/qa` for BUG-0029 / S0178. This dev child does not spawn it.
+
+---
+
+# Dev-to-QA Handoff — S0178 / BUG-0029 (API-key login)
+
+- **date**: 2026-10-15T23:37:22Z (UTC)
+- **from**: `dev` (fresh execute; marker `dev-BUG0029-execute-20261015T233722Z-fresh`)
+- **to**: `qa` (orchestrator-owned fresh `/qa` only — this child does not spawn it)
+- **verdict**: **EXECUTE_PASS**. `next_scheduled_phase=qa`. `decision_gate=false`. BUG-0029 stays **OPEN**. AC-1..AC-5 stay unchecked. Closure owns the DONE flip and the acceptance boxes.
+- **sprint**: S0178. Tasks T-anch and T-001..T-005 are checked. Research R-0168. Architecture `# BUG-0029`. Companion DEC: none. Plan-verify skipped (`ultra_lean_not_in_resolved_phase_plan`).
+- **what shipped**: `readMaskedTtySecret` uses Node raw mode, writes no secret characters, submits one line on Enter, cancels on Ctrl+C, and restores the previous raw mode in `finally`. `local-command.ts` and the `run.ts` auth branch pass that helper as `io.prompt`. `--api-key-stdin` reads one stdin line and strips one trailing newline. `--api-key <value>` and `--api-key=` are rejected and the value is not echoed. Non-TTY `api_key` login without the flag exits 1 with `AUTH_LOGIN_TTY_REQUIRED` and does not call `service.login`. Cancel, empty, invalid, and `CredentialSynchronizationError` exit 1 with `AUTH_LOGIN_CANCELLED`, `AUTH_LOGIN_EMPTY`, `AUTH_LOGIN_INVALID`, or `AUTH_SYNC_FAILED`. Those paths do not print `{"auth":"configured"}`. Stderr is the fixed token. `redactLine` stays a second pass. Configured JSON is emitted only after `checkAuth` returns a stored credential whose `type` matches the request. `auth list`, logout, `migrate --from-pi`, `models list`, and `models test` keep their current results. Help text and both README `itsm` paragraphs name `itsm auth login openai --type api_key --api-key-stdin`. Template twins of the touched CLI and auth-models sources match. No template copy of the contract file.
+- **tests**: `node --experimental-strip-types --test --test-name-pattern "test_bug0029_" tests/contract/bug0029.contract.test.ts` from `standalone`. Windows Node v24.19.0: 7 pass / 0 fail (duration_ms 148.5945). Linux Node v24.19.0 (`/home/flow/bug0026-toolchain/node-v24.19.0-linux-x64/bin/node` on WSL): 7 pass / 0 fail (duration_ms 251.266733). Markers: `test_bug0029_masked_tty_does_not_echo_or_argv`, `test_bug0029_api_key_stdin_one_line`, `test_bug0029_non_tty_without_flag_is_nonzero`, `test_bug0029_cancel_empty_invalid_persist_never_configured`, `test_bug0029_success_only_after_check_auth`, `test_bug0029_list_logout_migrate_unchanged`, `test_bug0029_secret_absent_outside_owned_store`. Windows regression `test_bug0028_` 5 pass / 0 fail (duration_ms 5821.4137). `python scripts/check-user-visible-metadata.py --repo .` exit 0. No `.env` read. No publish, commit, or push.
+- **not touched**: BUG-0029 status and AC boxes, BUG-0026, BUG-0028, US-0150, US-0151, US-0154, US-0155, US-0156, `docs/engineering/decisions.md`, `docs/engineering/architecture.md`.
+- **next**: fresh `/qa` for BUG-0029 / S0178. This dev child does not spawn it.
+
+---
+
+# Dev-to-QA Handoff — S0177 / BUG-0026 (Linux published-global upgrade)
+
+- **date**: 2026-10-15T08:45:28Z (UTC)
+- **from**: `dev` (fresh execute; marker `dev-BUG0026-execute-20261015T084528Z-fresh`)
+- **to**: `qa` (orchestrator-owned fresh `/qa` only — this child does not spawn it)
+- **verdict**: **EXECUTE_PASS**. `next_scheduled_phase=qa`. `decision_gate=false`. BUG-0026 stays **OPEN**. AC-3 stays unchecked. Closure owns the DONE flip and the AC-3 box.
+- **sprint**: S0177. Tasks T-anch and T-001 are checked. Research R-0167. Architecture `# BUG-0026`. Companion DEC: none. Plan-verify skipped (`ultra_lean_not_in_resolved_phase_plan`).
+- **Linux outcome**: `STANDALONE_BOOTSTRAP_OK` plus posix `.its-magic/bin/itsm` at mode 0755. Also `STANDALONE_POSTINSTALL_OK` and `HOST_CONFIG_POSTINSTALL_OK`. Command exit 0. The output did not contain `KERNEL_CONTRACT_MISMATCH`, `STANDALONE_SUPPORTED_RANGE_MISSING`, or `PYTHON_NOT_FOUND`. `itsm.cmd` is absent and was not required.
+- **Host**: Debian 13, WSL2, `Linux 6.18.33.2-microsoft-standard-WSL2 x86_64`. Docker is not installed. The distro was stopped and was started for this run. User-local Linux Node.js v24.19.0 and CPython 3.12.15 (`sys.platform=linux`) were used because the distro image had neither binary and `sudo` requires a password. The Windows `npm` on `/mnt/c` was not used.
+- **Install**: `npm install -g its-magic@0.1.5`. Installed version `0.1.5`. `scripts/standalone-supported-kernel-range.json` is present in that package. npm 11 did not run the package postinstall (`allow-scripts`). The observation command was then run explicitly.
+- **Command**: in `/home/flow/bug0026-consumer-s0177`, `its-magic --target . --mode upgrade --host both`. Shim first line `#!/usr/bin/env sh`. Mode `0755`.
+- **T-anch**: 2026-09-19 allowlisted range file held (`3d9d5f0`). `STANDALONE_SUPPORTED_RANGE_MISSING` held. Eight `test_bug0026_*` held. The packed-tarball test is not this Linux half. The recorded Windows `itsm.cmd` row was cited and not copied. No product-code change.
+- **not touched**: BUG-0026 status and AC-3, BUG-0028, BUG-0029, BUG-0025, US-0149, the loader, the allowlisted range file, `docs/engineering/decisions.md`, `docs/engineering/architecture.md`. No commit, push, or npm publish. No `.env` read.
+- **next**: fresh `/qa` for BUG-0026 / S0177. This dev child does not spawn it.
+
+---
+
+# Dev-to-QA Handoff — S0176 / BUG-0028 (lightweight itsm commands)
+
+- **date**: 2026-10-14T19:29:00Z (UTC)
+- **from**: `dev` (fresh execute continuing the interrupted 2026-10-13 spawn; marker `dev-BUG0028-execute-20261014T192900Z-fresh`)
+- **to**: `qa` (orchestrator-owned fresh `/qa` only — this child does not spawn it)
+- **verdict**: **EXECUTE_PASS**. `next_scheduled_phase=qa`. BUG-0028 stays **OPEN**. AC-1..AC-5 stay unchecked. Closure owns the DONE flip and the acceptance boxes.
+- **sprint**: S0176. Tasks T-anch and T-001..T-005 are checked. Research R-0166. Architecture `# BUG-0028`. Companion DEC: none.
+- **what shipped**: `command-class.ts` classifies the first token after a classification-only `--validator=` / `--policy-probe` strip. `index.ts` statically imports only that module. Help prints in the classifier. `auth` and `models` dynamically import `@its-magic/auth-models`. `auth list`, `auth login`, `auth logout`, and `models test` dynamically import `createAuthRuntimeAdapter` from `@its-magic/pi-kernel/auth-runtime`. `models list` and `auth migrate` do not. `auth-runtime.ts` does not statically import `kernel.ts` or `./index.ts`. Login prompting is unchanged. Bare `status` reads `status-snapshot.ts` (resume brief plus the latest token-cost file). A missing, thrown, or malformed brief returns null story, sprint, phase, and token fields and does not call `createRuntimeHost`. `/status` and every other token call production `createRuntimeHost({ projectRoot, lifetime: "direct-cli" })`, then `runCliArgv` with the original argv, and `host.dispose()` in `finally`. `--policy-probe` runs only on that workflow path. Template twins of the touched CLI sources and the pi-kernel `./auth-runtime` export match. Generated bins were not hand-edited.
+- **tests**: `node --experimental-strip-types --test --test-name-pattern "test_bug0028_" tests/contract/bug0028.contract.test.ts` from `standalone`. Five markers, 5 pass / 0 fail (duration_ms 5587.1181): `test_bug0028_help_auth_models_skip_host_and_kernel_barrel`, `test_bug0028_status_bounded_snapshot_no_scan_session_or_ping`, `test_bug0028_workflow_tokens_keep_production_host`, `test_bug0028_installed_entrypoint_windows_and_linux`, `test_bug0028_operator_doc_lightweight_versus_full_runtime`. No `.env` read. No publish, commit, or push.
+- **not touched**: BUG-0028 status and AC boxes, BUG-0026, BUG-0029, US-0150, US-0151, US-0154, US-0155, US-0156, `docs/engineering/decisions.md`, `docs/engineering/architecture.md`. Unrelated version and packaging edits from the interrupted spawn were restored, including removal of the untracked `packaging/chocolatey/its-magic.0.1.11.nupkg`. `test_us0154_public_itsm_reaches_production_composition` still spawns bare `status` and expects `store_path`; that test file was not edited.
+- **next**: fresh `/qa` for BUG-0028 / S0176. This dev child does not spawn it.
+
+### critic_evidence
+
+```json
+{"producer_model_id":"omit","critic_model_id":"omit","anti_slop_aggregate":0,"rework_generation":0,"degraded_mode":true,"findings_path":"handoffs/sovereign_critic_findings.jsonl"}
+```
+
+---
+
 # Dev-to-QA Handoff — S0175 / US-0155 (interactive standalone operator TUI)
 
 - **date**: 2026-10-12T19:46:05Z (UTC)

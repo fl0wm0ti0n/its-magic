@@ -1,0 +1,75 @@
+{
+  "selected_pack": "small-intake-pack",
+  "intake_run_id": "ir-20261016T192729Z-storyfields",
+  "writer_id": "po-cursor-20261016-storyfields",
+  "INTAKE_GUIDED_MODE": 0,
+  "INTAKE_WORK_ITEM_KIND": "bug",
+  "requested_mode": "bug",
+  "intake_boundary_utc": "2026-10-16T19:27:29Z",
+  "ID_NAMESPACE_BOOTSTRAP": 0,
+  "WORK_KIND_ROUTING": 0,
+  "EARLY_RESEARCH": 0,
+  "asked_topics": [
+    "outcome_success_criteria",
+    "impacted_components",
+    "constraints_compatibility_risks",
+    "required_tests_acceptance_checks",
+    "done_definition"
+  ],
+  "missing_topics": [],
+  "assumptions_confirmed": "(none)",
+  "topic_coverage": [
+    {
+      "topic_key": "outcome_success_criteria",
+      "satisfied_by": "answer_ref",
+      "quoted_user_text": "in der aktuellen version scheinen die stories nicht mehr korrekt erstellt zu werden, es fehlen alle wichtigen felder.. wie zb status etc...",
+      "turn_index": 0,
+      "intake_run_id": "ir-20261016T192729Z-storyfields",
+      "ref": "ie:ir-20261016T192729Z-storyfields:0:8b1f82900c011306"
+    },
+    {
+      "topic_key": "impacted_components",
+      "satisfied_by": "answer_ref",
+      "quoted_user_text": "in meinen fall mit opencode getestet",
+      "turn_index": 1,
+      "intake_run_id": "ir-20261016T192729Z-storyfields",
+      "ref": "ie:ir-20261016T192729Z-storyfields:1:cae83f6d7c33d908"
+    },
+    {
+      "topic_key": "constraints_compatibility_risks",
+      "satisfied_by": "delegation_ref",
+      "quoted_user_text": "delegation-label: do not weaken the canonical story block or import remote rows",
+      "turn_index": 2,
+      "delegation_scope": "Do not weaken the existing canonical story block. Do not reopen US-0161. Do not import remote US-0001 through US-0004 into this repo backlog, and do not edit docs/product/its-magic-remote-control-plane-masterplan.md.",
+      "delegation_rationale": "The operator showed a faulty prose backlog and cited the usual structured example. They did not authorize weakening that block, reopening US-0161, or importing those remote rows.",
+      "delegation_confidence": "high",
+      "intake_run_id": "ir-20261016T192729Z-storyfields",
+      "ref": "ie:ir-20261016T192729Z-storyfields:2:62d05a6ab1011cd3"
+    },
+    {
+      "topic_key": "required_tests_acceptance_checks",
+      "satisfied_by": "delegation_ref",
+      "quoted_user_text": "delegation-label: contract test for canonical story fields including Status, assertions locked in discovery",
+      "turn_index": 3,
+      "delegation_scope": "A contract test that a created story includes the important canonical fields the usual example has, including Status. The exact assertion list is locked in discovery. This intake does not invent a test as a user promise.",
+      "delegation_rationale": "The operator did not name a test.",
+      "delegation_confidence": "medium",
+      "intake_run_id": "ir-20261016T192729Z-storyfields",
+      "ref": "ie:ir-20261016T192729Z-storyfields:3:f28fb0624f8add24"
+    },
+    {
+      "topic_key": "done_definition",
+      "satisfied_by": "answer_ref",
+      "quoted_user_text": "Gewohntes Beispiel: @backlog.md (6098-6133)",
+      "turn_index": 4,
+      "intake_run_id": "ir-20261016T192729Z-storyfields",
+      "ref": "ie:ir-20261016T192729Z-storyfields:4:4c6220fdb9123504"
+    }
+  ],
+  "duplicate_check_pass": true,
+  "duplicate_check_notes": "No open BUG is this defect. BUG-0036 is OPEN and is the /auto hard-stop defect, not reopened. BUG-0027 is DONE and is OpenCode phase persistence, not this missing-field shape, not reopened. Remote US-0001 through US-0004 are evidence of the bad shape and are not imported.",
+  "decomposition_verdict": "single_bug",
+  "decomposition_rationale": "INTAKE_GUIDED_MODE=0. No story split. One defect: current its-magic story creation omits important canonical fields such as Status. Host observed: OpenCode.",
+  "decision_gate": false,
+  "bug_id": "BUG-0037"
+}

@@ -2,6 +2,8 @@
 description: "its-magic milestone start: create milestone tracking files."
 ---
 
+Kernel pointer: `.cursor/rules/core.mdc`. Do not paste the kernel lines into this file.
+
 # /milestone-start
 
 ## Subagents

@@ -2,6 +2,8 @@
 description: "Developer agent"
 ---
 
+Kernel pointer: `.cursor/rules/core.mdc`. Do not paste the kernel lines into this file.
+
 You are the Dev. Implement tasks and maintain artifacts.
 You start in a fresh agent context for this phase.
 
