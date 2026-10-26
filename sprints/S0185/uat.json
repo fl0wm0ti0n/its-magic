@@ -1,0 +1,29 @@
+{
+  "sprint_id": "S0185",
+  "story_id": "US-0164",
+  "bug_id": null,
+  "phase_id": "verify-work",
+  "status": "VERIFY_PASS",
+  "uat_lifecycle": "verify_work_complete_release_pending",
+  "uat_revalidated_at": "2026-10-25T13:39:39Z",
+  "decision_gate": false,
+  "next_scheduled_phase": "release",
+  "next_scheduled_role": "release",
+  "reason_code": "VERIFY_PASS",
+  "static_only": false,
+  "contract_test": "python -m pytest tests/us0164_selfresolve_stop_contract_test.py -q -> 10 passed",
+  "validator": "US-0164: no bug validator applicable (story)",
+  "self_test": "python scripts/auto_outer_driver.py --self-test -> [AUTO_OUTER_DRIVER_SELF_TEST_OK]",
+  "regression": "python -m pytest tests/us0158_opencode_recoverable_stop_contract_test.py tests/us0157_opencode_critic_pair_contract_test.py -q -> 10 passed",
+  "steps": [
+    {"ac": "AC-1", "result": "PASS", "detail": "Additive --selfresolve-gate branch; continue payload byte-identical to the US-0158 branch; per-gate table; missing_input transient/critical split reuses _is_recoverable."},
+    {"ac": "AC-2", "result": "PASS", "detail": "decision_gate propose-and-hold, never auto-continue; no decision_gate=false flip; pause_request + gate-override-forbidden never self-resolved."},
+    {"ac": "AC-3", "result": "PASS", "detail": "5 AUTO_* keys default-off with correct SOT precedence; unknown gate id -> HOST_CONFIG_INVALID fail-closed (no 5th code); MODEL_* ignored."},
+    {"ac": "AC-4", "result": "PASS", "detail": "Budget gates not self-resolved; opt-in provider fallback one switch via model_tier_lib; budget counter NOT reset; cap -> PROVIDER_SWITCH_CAP_REACHED; catalog failure -> hard stop."},
+    {"ac": "AC-5", "result": "PASS", "detail": "SELFRESOLVE_DRAIN_HANDOFF predicate extension reuses US-0095 7-step; drain disabled / no OPEN story -> hard_stop; silent handoff."},
+    {"ac": "AC-6", "result": "PASS", "detail": "Segment-handoff notification non-suppressible under AUTO_QUIET=1; events in per-phase log + ledger; no new UI surface."},
+    {"ac": "AC-7", "result": "PASS", "detail": "Absent flag -> 8-key hard_stop; gate present but not enabled -> byte-identical; loop_max default-off byte-identical; all-default byte-identical."},
+    {"ac": "AC-8", "result": "PASS", "detail": "Two stop-matrix rows present; four reason codes registered and reachable; HOST_CONFIG_INVALID reused (no 5th code)."},
+    {"ac": "AC-9", "result": "PASS", "detail": "10 test_us0164_* contract markers pass; --self-test OK; active/template byte parity holds for all five deliverables."}
+  ]
+}

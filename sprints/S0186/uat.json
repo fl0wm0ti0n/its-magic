@@ -1,0 +1,24 @@
+{
+  "sprint_id": "S0186",
+  "bug_id": "BUG-0044",
+  "story_id": null,
+  "phase_id": "verify-work",
+  "status": "VERIFY_PASS",
+  "uat_lifecycle": "verify_work_complete_release_pending",
+  "uat_revalidated_at": "2026-10-25T21:20:11Z",
+  "decision_gate": false,
+  "next_scheduled_phase": "release",
+  "next_scheduled_role": "release",
+  "reason_code": "VERIFY_PASS",
+  "static_only": false,
+  "contract_test": "python -m pytest tests/bug0044_phase_boundary_pair_contract_test.py -q -> 6 passed",
+  "regression": "python -m pytest tests/bug0044_phase_boundary_pair_contract_test.py tests/bug0035_continuation_pair_test.py tests/bug0036_repairable_blocker_contract_test.py tests/bug0038_qa_resume_brief_permission_contract_test.py -q -> 22 passed, 3 pre-existing failures (bug0035 x2 + bug0038 x1; in-progress US-0164/DEC-0155 working-tree edit, NOT S0186)",
+  "validator": "python scripts/bug_issue_validate.py --repo . --check-acceptance -> [BUG_VALIDATION_OK]",
+  "steps": [
+    {"ac": "AC-1", "result": "PASS", "detail": "Lock-1 contract section `## Continuation + terminal-state reconcile contract (BUG-0044 / DEC-0156, composes on DEC-0153 / DEC-0038)` present exactly once in all 7 OpenCode primary command files (spot-verified; full 28-file parity was execute+qa); this verify-work child itself wrote the DEC-0153 state-first continuation pair (state-bottom + byte-identical brief-top, strict 6-tuple proof hash MATCH) IN-TTL on the first pass, demonstrating the A2 `phase_boundary_self_check` defense-in-depth path (ok=true on the incoming QA pair)."},
+    {"ac": "AC-2", "result": "PASS", "detail": "Terminal-state-reconcile canonical row honored: this child authored `sprints/S0186/uat.json` + `uat.md` to the verify-work terminal state (status=VERIFY_PASS / phase_id=verify-work / uat_lifecycle=verify_work_complete_release_pending) BEFORE STOP, so /release will not fail-closed RELEASE_UAT_INCOMPLETE on a stale QA-state UAT. No stale QA-state uat.json existed to repair (ultra_lean QA merged UAT evidence into qa-findings.md); the terminal artifacts are authored fresh per the S0185 pattern."},
+    {"ac": "AC-3", "result": "PASS", "detail": "Parent stays spawn-only (DEC-0153): `phase_boundary_self_check` grants NO parent authority; a writer_role of auto/parent/orchestrator is rejected by the composed validate_resume_pair. RESUME_BRIEF_AUTO_REFRESH=0 absolute; CROSS_MODEL_REVIEW=0; no parent proof-minting; no new reason code; no MODEL_* governance key."},
+    {"ac": "AC-4", "result": "PASS", "detail": "The 6-item contract-test surface tests/bug0044_phase_boundary_pair_contract_test.py (6 test_bug0044_* markers: presence+parity, byte-identity, missing/conflicting fail-closed, terminal-state reconcile, no-parent-proof-minting, replay idempotence) — all 6 PASS (re-run this phase). Covers the phase-boundary continuation-pair write + the phase-artifact terminal-state reconcile; the missing/conflicting-pair case remains a deterministic fail-closed stop."},
+    {"ac": "AC-5", "result": "PASS", "detail": "Prevention at the source: the codified Lock-1 contract + deterministic A2 self-check make the FIRST pass write the pair and reconcile the owned artifact (execute pair IN-TTL on first pass; QA pair minted cleanly on first pass; this verify-work pair minted cleanly on first pass). No repair-only re-mint, no separate repair child. US-0163/US-0164 citations only, not reopened; BUG-0015..BUG-0043 not reopened."}
+  ]
+}

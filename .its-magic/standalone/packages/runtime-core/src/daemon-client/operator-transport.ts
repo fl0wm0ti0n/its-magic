@@ -1,4 +1,5 @@
 import type { AttachRole, ClientKind, RuntimeEvent } from "@its-magic/protocol";
+import type { OperatorStatusSnapshot } from "../operator/types.ts";
 
 export interface AttachRunInput {
 	run_id: string;
@@ -37,6 +38,8 @@ export interface SubscribeEventsInput {
 export interface OperatorTransport {
 	readonly kind: "daemon" | "in_process";
 	submitCommand(input: SubmitCommandInput): Promise<Record<string, unknown>>;
+	/** Client call to the existing `status.snapshot` RPC. Not a new method. */
+	statusSnapshot(): Promise<OperatorStatusSnapshot>;
 	subscribeEvents(input: SubscribeEventsInput): Promise<{ unsubscribe: () => void }>;
 	attachRun(input: AttachRunInput): Promise<Record<string, unknown>>;
 	cancel(input: CancelRunInput): Promise<Record<string, unknown>>;

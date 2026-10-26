@@ -94,11 +94,6 @@ unavailable). Guided and decision-gated modes remain the default.
 - `/workdir` — installer.sh fails in shell path with `set: Illegal option -` (`BUG-0004`).
 - `MIGRATION` scratchpad flag — Smart Upgrade Mode (`US-0018`).
 - `/auto` — OpenCode pack LF so Linux slash commands parse (`BUG-0017`).
-- `/auto` — Catalog-resolved Cursor Task spawns prevent silent parent-model inheritance (`BUG-0022`).
-- `/auto` — Hybrid OpenCode CLI-TUI dispatch is retained as a guarded fallback (`BUG-0024`).
-- `/auto` — Direct OpenCode slash phases persist isolation evidence before continuation (`BUG-0027`).
-- `itsm` — Help, local auth/models, and bare `status` skip full runtime admission (`BUG-0028`).
-- `/auto` — Paired state/resume continuation records reject stale or conflicting handoffs (`BUG-0035`).
 - `US-0016` scratchpad flag — Homebrew Version Sync (`US-0016`).
 - `/acceptance` — Standalone authentication and model routing with Codex OAuth, API-key providers, 6-step precedence, thinking levels, critic pinning, and health diagnostics (`BUG-0021`, `US-0135`).
 - `/auto` — Fresh role sessions and runtime attestation with SessionSupervisor, RoleCatalog, spawn/start/end attestations, and fail-closed isolation (`BUG-0023`, `US-0136`).
@@ -114,13 +109,6 @@ unavailable). Guided and decision-gated modes remain the default.
 - CLI/TUI polish — Operational observability with status, logs, run tracking, and TUI mode for interactive sessions (`US-0146`).
 - `its-magic --target` — Installation, update, and existing-project adoption with fresh/upgrade/overwrite/clean-repo modes and lifecycle QA matrix (`US-0147`).
 - Recoverable daemon — Stable control protocol with boot UUID, process tracking, session recovery, and graceful shutdown (`US-0148`).
-- Opt-in user PATH — Register the project shim `.its-magic/bin/itsm` on a chosen user PATH directory, Windows and POSIX, and remove only that registration (`US-0149`).
-- Production runtime composition — One shared runtime host for CLI and daemon, with a real context pack, attested custom-tool sessions, and no placeholder tool success (`US-0150`).
-- Executable lifecycle transport — CLI, daemon, and TUI submit admitted work to one persistent runtime and persist success, gate block, or execution failure (`US-0151`).
-- Application and browser UAT — The production host owns app runtime and isolated browser evidence, and incomplete evidence fails the release gate (`US-0152`).
-- Parallel arbitration and release targets — Parallel DEV candidates and configured deploy targets fail closed when arbitration is skipped or a stub adapter reports success (`US-0153`).
-- Operator-path quality gate — Standalone CI typecheck, lint, and tests sit beside the kit checks, and a public itsm entrypoint must reach production composition (`US-0154`).
-- OpenCode `/auto` parity — Spawn-only command-owned lifecycle orchestration with phase-plan and Stop-Matrix gates (`US-0156`).
 
 ## Setup
 
@@ -162,10 +150,12 @@ walking upward. From another directory, select one explicitly with
 `$env:ITSM_PROJECT_ROOT = "C:\path\to\repo"`). Remove both global commands with
 `npm uninstall -g --prefix <same-prefix> its-magic`. `itsm` requires Node.js
 `>=22.19.0`; older Node versions exit with `ITSM_NODE_VERSION_UNSUPPORTED`.
-No-argument `itsm`, `itsm help` (`--help` and `-h`), `itsm auth`, `itsm models`,
-and bare `itsm status` are lightweight inspection and auth commands. Workflow
-commands, including `ask`, `resume`, `pause`, `index`, `app`, and `browser`,
-admit the full runtime through `createRuntimeHost`. API-key login from a pipe is `itsm auth login openai --type api_key --api-key-stdin`.
+
+To put the project shim `.its-magic/bin/itsm` on your user PATH at a directory
+you choose, opt in with `python installer.py --target <repo> --register-itsm-path`
+(or `ITS_MAGIC_REGISTER_ITSM_PATH=1`). That is separate from the npm `--prefix`
+commands above. Defaults, the `prompt` rule, and removal are in
+`docs/engineering/runbook.md` under **Global itsm PATH registration (US-0149)**.
 
 ### Global Linux install: empty `install_include_paths` (CRLF manifest)
 
@@ -451,12 +441,6 @@ Generated test scaffolding + auto-run behavior (US-0066):
 - **US-0124**: OpenCode orchestrator plugin spawn-only `/auto` (Task-spawns US-0069 roles, never executes phase work in-session).
 - **BUG-0019** — OpenCode TUI slash lists `/auto` via `its-magic-auto/tui.ts` keymap after plugin-only ownership (`BUG-0018`); does not restore `auto.md`.
 - **BUG-0020** — OpenCode desktop Command.Info cannot list execute-only `/auto`; CLI TUI `/auto` via project `.opencode/tui.json` + desktop fail-closed `OPENCODE_AUTO_DESKTOP_COMMAND_INFO_LISTING_UNSUPPORTED`; does not restore `auto.md`.
-- **BUG-0024** — OpenCode CLI-TUI `/auto` routing keeps peer-branded dispatch stages and rejects undefined residual routes.
-- **BUG-0030** — OpenCode `/auto` is a documented spawn-only command that selects the `auto` agent; retired private TUI/RPC routes remain forbidden.
-- **BUG-0031** — `/closure` authorization has a narrow curator-owned DONE-flip path; release and QA cannot bypass ownership.
-- **BUG-0032** — Autonomy flag drift is detected fail-closed against the live shared baseline; it is never auto-repaired.
-- **BUG-0033** — OpenCode thin command surfaces (closure, ask, auto, refresh-context, execute) carry Stop conditions and Fail-safe reason codes, byte-identical to template, with a bug-0033 parity scope.
-- **BUG-0034** — PO closure precondition conflict registered in the autonomy stop matrix with `disambiguate_state` repair (cap 3); never auto-refreshes the brief.
 
 ### OpenCode host operator runbook (US-0126)
 
@@ -1574,7 +1558,6 @@ Reliable pattern:
 - `US-0012` scratchpad flag — Benchmark Suite (`US-0012`).
 - `US-0014` scratchpad flag — Quality Chain (3-Layer) (`US-0014`).
 - `US-0017` scratchpad flag — Template Drift Guard (`US-0017`).
-- Interactive operator TUI — A readline client of the admitted daemon transport, with bounded panels, redaction, and a non-interactive fallback (`US-0155`).
 
 ## Developer and release deep-dive
 

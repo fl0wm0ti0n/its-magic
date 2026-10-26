@@ -1,3 +1,20 @@
+## Execute handoff — BUG-0026 / S0177 (Linux published-global upgrade) — RE-ATTEST (re-release cycle)
+
+- **date**: 2026-10-23T14:09:47Z (UTC)
+- **from**: execute (dev); **to**: qa
+- **verdict**: **EXECUTE_PASS**; `decision_gate=false`; `next_scheduled_phase=qa`; `next_scheduled_role=qa`. This re-attest execute child does not spawn `/qa`.
+- **sprint**: S0177. research_anchor **R-0167**; architecture anchor `docs/engineering/architecture.md` `# BUG-0026`; companion DEC **none**; delivery_mode **ultra_lean**; plan-verify SKIPPED (`ultra_lean_not_in_resolved_phase_plan`).
+- **bug status**: BUG-0026 remains **OPEN**. AC-3 remains **unchecked** (AC-1/AC-2/AC-4..AC-8 checked). Closure owns the DONE flip.
+- **re-attest scope**: re-attests the execute phase of re-release cycle `auto-20261023-bug0026-execute`; does NOT re-implement `load_supported_range`, republish, re-pack the range file, or author a DEC. Prior release blockers confirmed fixed: `tests/report.md` `2026-10-23T13:39:31Z Pass=884 Fail=0`; `python scripts/validate_readme_feature_coverage.py --repo . --enforce` → exit 0, `coverage_missing=[]`, `coverage_total=57`.
+- **T-anch (baseline hold)**: range file held; eight `test_bug0026_*` held; Windows `itsm.cmd` row cited not copied; no product-code change.
+- **T-001 (fresh Linux published-global observation)**: Debian 13 WSL2 (`Linux BigOne 6.18.33.2-microsoft-standard-WSL2 x86_64`). Linux-only PATH (Node v24.19.0, npm 11.17.0, CPython 3.12.15). Published global `its-magic@0.1.5`; `scripts/standalone-supported-kernel-range.json` present (88 bytes). Consumer `/home/flow/bug0026-consumer-s0177`; prior `.its-magic` wiped. `its-magic --target . --mode upgrade --host both` → **exit 0** (v0.1.4 -> v0.1.5). Present: `HOST_CONFIG_POSTINSTALL_OK`, `STANDALONE_BOOTSTRAP_OK`, `STANDALONE_POSTINSTALL_OK`. Absent: `KERNEL_CONTRACT_MISMATCH`, `STANDALONE_SUPPORTED_RANGE_MISSING`, `STANDALONE_BOOTSTRAP_FAILED`, `PYTHON_NOT_FOUND`. `.its-magic/bin/itsm` mode `0755`, shebang `#!/usr/bin/env sh`; `itsm.cmd` absent.
+- **scoped test**: `python -m pytest tests/bug0026_packaged_range_contract_test.py -q --tb=line` → **8 passed**, exit 0.
+- **not touched**: `decisions.md`, `architecture.md`, `backlog.md`, `acceptance.md`, `.cursor/scratchpad.md`, the allowlisted range file; no AC tick; no BUG-0026 DONE flip; no US-0149/BUG-0025 drift; no `.env` read; no `npm publish`/`git commit`/`git push`.
+- **marker**: `dev-BUG0026-execute-20261023T140947Z-fresh`; **proof**: `rp-auto-20261023-bug0026-execute-dev-20261023T140947Z-BUG-0026` / `30d2784461bdbc1a63d94da2448d2b6fb70735fe49a9bcc59e5433e00874a1f1` (strict six-tuple: lib + independent compact sorted-key SHA-256, MATCH; 0 prior repo occurrences at mint).
+- **next**: **qa / qa** — validate this pair (state-first) then UAT the Linux published-global upgrade evidence; parent may spawn `/qa`. This dev child does not spawn it.
+
+---
+
 ## Execute handoff — BUG-0037 / S0184 — EXECUTE_FAIL
 
 - bug_id: BUG-0037; sprint: S0184; from: execute; to: execute (blocked; no QA spawn).

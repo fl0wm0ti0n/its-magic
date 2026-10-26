@@ -2,7 +2,7 @@ export type { AuthServiceOptions } from "./auth-service.ts";
 export { AuthService } from "./auth-service.ts";
 export { emptyCatalog, loadStandaloneCatalog } from "./catalog.ts";
 export type { DispatchDeps } from "./cli.ts";
-export { dispatchItsmCommand } from "./cli.ts";
+export { dispatchItsmCommand, readMaskedTtySecret } from "./cli.ts";
 export {
 	AUTH_LIVE_FORBIDDEN,
 	AUTH_PATH_IN_PROJECT,

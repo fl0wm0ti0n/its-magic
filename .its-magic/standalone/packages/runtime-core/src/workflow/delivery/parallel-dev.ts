@@ -1,8 +1,10 @@
+import { mkdirSync, writeFileSync } from "node:fs";
+import { dirname, join } from "node:path";
 import type { KernelBridge } from "@its-magic/kernel-bridge";
 import type { SessionSupervisor, SupervisedSession } from "@its-magic/role-runtime";
 import { type ConfigView, lookupParallelDev } from "../config-view.ts";
 import { WorkflowError } from "../types.ts";
-import { createDeliveryResourceGuard } from "./resource-guard.ts";
+import { admitDeliveryAction } from "./resource-guard.ts";
 
 export const PARALLEL_DEV_WORKTREE_CREATE_FAILED = "PARALLEL_DEV_WORKTREE_CREATE_FAILED";
 export const PARALLEL_DEV_SELECTION_NO_PASS = "PARALLEL_DEV_SELECTION_NO_PASS";
@@ -47,6 +49,8 @@ export interface ParallelDevHookInput {
 	kernel_root?: string;
 	producer_session_id: string;
 	candidates?: CandidateEvidence[];
+	/** Optional path checked before worktree create. Default stays inside the run worktree root. */
+	admit_path?: string;
 }
 
 export interface ParallelDevHookResult {
@@ -56,6 +60,7 @@ export interface ParallelDevHookResult {
 	outcome?: "winner_selected" | "reject_all" | "merge_conflict";
 	pick_ref?: string;
 	reason_code?: string;
+	candidates?: CandidateEvidence[];
 }
 
 export interface ParallelDevCoordinatorDeps {
@@ -70,14 +75,12 @@ export class ParallelDevCoordinator {
 	private readonly supervisor: SessionSupervisor;
 	private readonly bridge?: DeliveryBridge;
 	private readonly kernelRoot?: string;
-	private readonly guard;
 
 	constructor(deps: ParallelDevCoordinatorDeps) {
 		this.config = deps.config;
 		this.supervisor = deps.supervisor;
 		this.bridge = deps.bridge;
 		this.kernelRoot = deps.kernelRoot;
-		this.guard = createDeliveryResourceGuard(deps.config);
 	}
 
 	enabled(): boolean {
@@ -92,14 +95,21 @@ export class ParallelDevCoordinator {
 		if (!this.enabled()) {
 			return this.noopSnapshot();
 		}
-		const cap = this.guard.check({
-			active_worktrees: input.candidates?.length ?? 0,
-			concurrent_tests: 0,
-			wall_clock_ms: 0,
-			token_spend: 0,
+		const root = input.kernel_root ?? this.kernelRoot ?? "";
+		const admission = admitDeliveryAction({
+			config: this.config,
+			kernelRoot: root,
+			action: "worktree_create",
+			path: input.admit_path ?? `.its-magic/worktrees/${input.orchestrator_run_id}`,
+			snapshot: {
+				active_worktrees: input.candidates?.length ?? 0,
+				concurrent_tests: 0,
+				wall_clock_ms: 0,
+				token_spend: 0,
+			},
 		});
-		if (!cap.ok) {
-			throw new WorkflowError(cap.reason_code, "parallel dev resource guard");
+		if (!admission.ok) {
+			throw new WorkflowError(admission.reason_code, "parallel dev admission refused");
 		}
 		if (!this.bridge) {
 			return {
@@ -130,7 +140,11 @@ export class ParallelDevCoordinator {
 				"worktree create failed",
 			);
 		}
-		return { skipped: false, byte_identical: false };
+		return {
+			skipped: false,
+			byte_identical: false,
+			candidates: candidatesFromWorktrees(create.result, input.model_id),
+		};
 	}
 
 	async runQaArbiter(input: ParallelDevHookInput): Promise<ParallelDevHookResult> {
@@ -227,4 +241,72 @@ export function kernelBridgeDeliveryAdapter(
 	return {
 		runDeliveryOperation: (input) => bridge.runDeliveryOperation(input),
 	};
+}
+
+export function parallelHookFailsClosed(
+	hook: ParallelDevHookResult,
+): { ok: true } | { ok: false; reason_code: string } {
+	if (hook.skipped || hook.reason_code) {
+		return {
+			ok: false,
+			reason_code: hook.reason_code || PARALLEL_DEV_WORKTREE_CREATE_FAILED,
+		};
+	}
+	return { ok: true };
+}
+
+export const PARALLEL_DEV_PICK_REF = "handoffs/parallel_dev_pick.json";
+
+export function writeParallelDevPick(kernelRoot: string, pick: ParallelDevHookResult): string {
+	const abs = join(kernelRoot, "handoffs", "parallel_dev_pick.json");
+	mkdirSync(dirname(abs), { recursive: true });
+	const winner = pick.candidates?.[0];
+	const reason_code =
+		pick.outcome === "reject_all"
+			? pick.reason_code || PARALLEL_DEV_SELECTION_NO_PASS
+			: pick.reason_code;
+	writeFileSync(
+		abs,
+		`${JSON.stringify({
+			outcome: pick.outcome,
+			reason_code,
+			pick_ref: PARALLEL_DEV_PICK_REF,
+			arbiter_session_id: pick.arbiter_session_id,
+			candidate_id: winner?.candidate_id,
+			worktree_path: winner?.worktree_path,
+			skipped: pick.skipped,
+		})}\n`,
+		"utf8",
+	);
+	return PARALLEL_DEV_PICK_REF;
+}
+
+function candidatesFromWorktrees(
+	result: Record<string, unknown>,
+	modelId: string,
+): CandidateEvidence[] {
+	const rows = result.worktrees;
+	if (!Array.isArray(rows)) {
+		return [];
+	}
+	const out: CandidateEvidence[] = [];
+	for (const row of rows) {
+		if (!row || typeof row !== "object") {
+			continue;
+		}
+		const rec = row as Record<string, unknown>;
+		const path = typeof rec.path === "string" ? rec.path : "";
+		if (!path) {
+			continue;
+		}
+		out.push({
+			candidate_id: typeof rec.instance_id === "string" ? rec.instance_id : "c0",
+			worktree_path: path,
+			test_report_refs: ["handoffs/dev_to_qa.md"],
+			diff_stat_ref: "diff",
+			token_cost_ref: "cost",
+			model_ids: [modelId],
+		});
+	}
+	return out;
 }

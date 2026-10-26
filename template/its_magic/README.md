@@ -99,6 +99,9 @@ unavailable). Guided and decision-gated modes remain the default.
 - `/auto` — Direct OpenCode slash phases persist isolation evidence before continuation (`BUG-0027`).
 - `itsm` — Help, local auth/models, and bare `status` skip full runtime admission (`BUG-0028`).
 - `/auto` — Paired state/resume continuation records reject stale or conflicting handoffs (`BUG-0035`).
+- `/auto` — Hard-stop repairable blockers with configurable hardness instead of unbounded self-repair (`BUG-0036`).
+- Story creation — OpenCode story creation retains the canonical structured block including `Status` (`BUG-0037`).
+- QA continuation — OpenCode QA/verify-work persist the DEC-0153 continuation pair without a permission dead-end (`BUG-0038`).
 - `US-0016` scratchpad flag — Homebrew Version Sync (`US-0016`).
 - `/acceptance` — Standalone authentication and model routing with Codex OAuth, API-key providers, 6-step precedence, thinking levels, critic pinning, and health diagnostics (`BUG-0021`, `US-0135`).
 - `/auto` — Fresh role sessions and runtime attestation with SessionSupervisor, RoleCatalog, spawn/start/end attestations, and fail-closed isolation (`BUG-0023`, `US-0136`).
@@ -457,6 +460,8 @@ Generated test scaffolding + auto-run behavior (US-0066):
 - **BUG-0032** — Autonomy flag drift is detected fail-closed against the live shared baseline; it is never auto-repaired.
 - **BUG-0033** — OpenCode thin command surfaces (closure, ask, auto, refresh-context, execute) carry Stop conditions and Fail-safe reason codes, byte-identical to template, with a bug-0033 parity scope.
 - **BUG-0034** — PO closure precondition conflict registered in the autonomy stop matrix with `disambiguate_state` repair (cap 3); never auto-refreshes the brief.
+- **BUG-0029** — `itsm auth login` accepts secure API-key input (TTY / `--api-key-stdin`) and reports verified configuration outcomes.
+- **US-0157** — OpenCode `/auto` continues through the sovereign-critic hook and a faulty continuation pair without a dead-end.
 
 ### OpenCode host operator runbook (US-0126)
 

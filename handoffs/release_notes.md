@@ -1,3 +1,26 @@
+## Release finalized note (S0186) -- 2026-10-25T21:42:30Z
+
+- Sprint: `S0186`; BUG-0044 remains **OPEN/P1**. Closure owns the DONE flip and the AC-1..AC-5 acceptance ticks.
+- Release: **finalized / PASS** (first release pass of the run); marker `release-BUG0044-S0186-20261025T214230Z-fresh`; proof `rp-auto-20261025-bug0044-release-release-20261025T214230Z-BUG-0044` / `03935c562535bb7c107b89f28c6cd21d8c43cd22a8e8bb5f5273450592489f4a` (TTL `2026-10-25T22:42:30Z`; lib + independent compact sorted-key SHA-256 two-method MATCH).
+- Validation: bug0044 contract **6 passed**; combined regression 22 passed + 3 pre-existing US-0164/DEC-0155-prose failures (read-only `git diff HEAD` proves zero S0186 content); `[BUG_VALIDATION_OK]`; QA_PASS 0 blocking; UAT terminal `VERIFY_PASS` 5/5; incoming verify-work pair exact key/locked tuple/hash two-method MATCH and **IN-TTL** at release clock (~22m).
+- Optional gates: 3a–3d skipped (toggles 0); 3e `no_repair`; 3f **FAIL_nonblocking** (24 OPEN-item README gaps; BUG-0044 absent; S0160/S0157/S0181 precedent); 3g skipped (`kit_repo_skipped=true`).
+- DEC-0054: pre-append triad `--check` exit 0 (1198 lines); post-append 1234 > 1200 → rollover to `docs/engineering/state-archive/state-pack-20261025-p.md`; post-rollover `--check` exit 0.
+- Publish / push / deployment: **NOT PERFORMED** (no npm publish, git commit, git push, or external deployment). `npm_published=false`; `git_pushed=false`.
+- Queue: S0186 row inserted, status=`released`. `release_version=none` (workflow-only; no kit semver bump).
+- Next: `/closure` as `qe`; `stop_reason=release_complete_phase_boundary`. This child did not spawn it.
+- Canonical notes: `handoffs/releases/S0186-release-notes.md`
+
+## Release finalized note (S0177) -- 2026-10-24T10:06:41Z
+
+- Sprint: `S0177`; BUG-0026 remains **OPEN**. Closure owns the DONE flip and AC-3 tick.
+- Release: **finalized / PASS** (release2 re-attestation); marker `release-BUG0026-release2-20261024T100641Z-fresh`; proof `rp-auto-20261023-bug0026-release-release-20261024T100641Z-BUG-0026` / `8a92de7f66b2fbc08da87459e78840aab9e52de1d5ccadf6b7c271e9a757ca4c` (TTL `2026-10-24T11:06:41Z`; lib + independent compact sorted-key SHA-256 MATCH).
+- Validation: harness `tests/report.md` `2026-10-24T10:05:47Z` **Pass 884 / Fail 0**; eight `test_bug0026_*` markers 8 passed in 4.46s; `[BUG_VALIDATION_OK]` exit 0; README feature coverage 57/57 `gaps=[]`; QA_PASS + UAT 9/9 cited; incoming verify-work pair exact key/locked tuple/hash MATCH and **IN-TTL at issue**.
+- Queue: `blocked → released`. `release_version=none` (workflow-only; no kit semver bump).
+- Publish / push / deployment: **NOT PERFORMED** (no npm publish, git commit, git push, or external deployment). `npm_published=false`; `git_pushed=false`.
+- CHANGELOG: `[Unreleased]` `### Fixed` BUG-0026 bullet. `template/CHANGELOG.md` untouched.
+- Next: `/closure` as `curator` (DEC-0052 sanctioned alternate; `qe` unspawnable); `stop_reason=release_complete_phase_boundary`. This child did not spawn it.
+- Canonical notes: `handoffs/releases/S0177-release-notes.md`
+
 ## Release finalized note (S0184) -- 2026-10-21T16:03:14Z
 
 - Sprint: `S0184`; BUG-0037 remains **OPEN/P1**. Closure owns the DONE flip and AC/acceptance ticks.

@@ -1,3 +1,24 @@
+# Release-to-Dev Handoff - S0185 / US-0164 — UAT reconcile needed
+
+**date**: 2026-10-25T13:33:58Z
+**from**: release (`release-US0164-S0185-20261025T133358Z-fresh`)
+**to**: qa (UAT reconcile) + orchestrator
+**verdict**: **RELEASE_BLOCKED** - `RELEASE_UAT_INCOMPLETE` (Gate 3, UAT completion). No override. Gates 1 / 2 / 4 / 4b are all PASS on fresh evidence; only the mandated UAT artifact is out of the verified state.
+
+## Blocker
+
+`sprints/S0185/uat.json` is **not in the verified (verify-work terminal) state** the release boundary requires: `status=QA_PASS`, `phase_id=qa`, `uat_lifecycle=qa_complete_verify_work_pending`, `next_scheduled_phase=verify-work`, `reason_code=QA_PASS`, `uat_revalidated_at=2026-10-25T02:45:00Z`. All **9/9** AC steps are `result=PASS` with **0 failed/unresolved** steps, so this is **not** `RELEASE_UAT_FAILED` (S0162/US-0156's case was a genuine `failed=1` / `result="fail"`). The gap is that S0185's verify-work re-ran the suite green and logged `VERIFY_PASS` in `sprints/S0185/verify-work-findings.md` (2026-10-25T12:56:00Z) but **never reconciled the mandated `uat.json` + `uat.md`** to the verify-work state. Both release-passing precedents are reconciled (S0184 `VERIFY_PASS`/`verify-work`/`verify_work_complete_release_pending`/`release`; S0181 `VERIFY_PASS`/`verify-work`/`populated`). Per release.md US-0039, "Do not infer pass from missing or placeholder UAT." Release is fenced out from editing `uat*` (qa owns verify-work artifacts), so this phase fails closed and does not edit the UAT files.
+
+US-0164 stays **OPEN/P1**; backlog AC-1..AC-9 and acceptance L195 stay unchecked. `npm_published=false`. `git_pushed=false`. No S0185 release notes. No queue row advanced.
+
+## Remediation
+
+1. **`/verify-work` (fresh qa) on S0185** — reconcile `sprints/S0185/uat.json` + `uat.md` to `status=VERIFY_PASS` / `phase_id=verify-work` / `uat_lifecycle=verify_work_complete_release_pending` / `next_scheduled_phase=release` / `reason_code=VERIFY_PASS`. The 9/9-PASS green evidence already exists in `sprints/S0185/verify-work-findings.md`; this is a reconciliation of existing evidence, not a waiver. Re-mint a fresh verify-work strict-proof tuple.
+2. **`/release` (fresh release) on S0185** — re-run the full gate chain on fresh evidence. Gates 1 / 2 / 4 / 4b expected PASS (already green); Gate 3 expected PASS once the UAT artifacts are reconciled; Gate 5 finalization then proceeds (S0185 → `released`, canonical notes `handoffs/releases/S0185-release-notes.md`).
+3. **After `/release` (fresh) S0185 → released** — `/closure` (fresh curator) performs the US-0164 OPEN→DONE flip + acceptance L195 tick + closure-verification + state.md closure checkpoint. Do not tick AC-1..AC-9 here. The orchestrator owns the next boundary; this release child does not spawn `/verify-work` or `/closure`.
+
+---
+
 # Release-to-Dev Handoff - S0178 / BUG-0029 — remediation cleared
 
 **date**: 2026-10-16T14:54:00Z

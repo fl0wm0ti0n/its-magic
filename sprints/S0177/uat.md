@@ -1,10 +1,12 @@
 # UAT — Sprint S0177 / BUG-0026
 
 - **verdict**: PASS
-- **timestamp**: 2026-10-15T08:56:25Z
-- **fresh_context_marker**: `qa-BUG0026-qa-20261015T085625Z-fresh`
+- **phase**: verify-work (re-attest, run `auto-20261023-bug0026-verify-work`)
+- **timestamp**: 2026-10-24T09:38:56Z
+- **fresh_context_marker**: `qa-BUG0026-verifywork-20261024T093856Z-fresh`
 - **counts**: 9 pass / 0 fail
 - **bug status**: BUG-0026 stays OPEN. AC-3 stays unchecked. Closure owns the DONE flip.
+- **re-release-cycle note**: All 9 steps re-confirmed at the verify-work phase boundary. Contract re-run 8/8 green (5.83s). `cli_smoke` re-observed read-only only — the upgrade command was not run again. Consumed QA pair hash `95cd78d9…ae0f4c` integrity-verified as provenance (out-of-TTL, no stale-proof waiver). No republish, no DEC, no commit/push.
 
 ## Target
 

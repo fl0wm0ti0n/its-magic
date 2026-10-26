@@ -1,5 +1,50 @@
 # Release Notes — S0177 / BUG-0026
 
+## Re-attestation (release2) — 2026-10-24T10:06:41Z (UTC)
+
+**RELEASE_PASS** — fresh independent release child of re-release cycle `auto-20261023-bug0026-release`. The Oct-15 `RELEASE_FAIL` below is retained as history only.
+
+- **Sprint**: `S0177`; **Bug**: `BUG-0026` (OPEN; not a DONE flip)
+- **Release date**: `2026-10-24T10:06:41Z` (UTC) — **finalized, queue `blocked → released`**
+- **orchestrator_run_id**: `auto-20261023-bug0026-release`
+- **fresh_context_marker**: `release-BUG0026-release2-20261024T100641Z-fresh` (0 prior occurrences at mint)
+- **model_id**: `zelisko_llm/qwen3.8-27b`
+- **runtime_proof_id**: `rp-auto-20261023-bug0026-release-release-20261024T100641Z-BUG-0026`
+- **proof_hash**: `8a92de7f66b2fbc08da87459e78840aab9e52de1d5ccadf6b7c271e9a757ca4c` (strict 6-tuple; lib + independent compact sorted-key SHA-256 MATCH)
+- **proof_issued_at**: `2026-10-24T10:06:41Z`; **proof_ttl_seconds**: `3600`; **proof_ttl_expiry**: `2026-10-24T11:06:41Z`
+- **release_version**: none (workflow-only release; no kit semver bump)
+- **npm_published**: `false` (publish NOT PERFORMED — `RELEASE_PUBLISH_MODE=confirm`)
+- **git_pushed**: `false` (push NOT PERFORMED — `SYNC_POLICY_MODE=disabled`)
+
+### Gate summary (fresh this release)
+
+| Gate | Result |
+|------|--------|
+| check_in_tests (1) | **PASS** — `tests/run-tests.ps1` exit 0; `tests/report.md` `2026-10-24T10:05:47Z` **Pass 884 / Fail 0**; US-0071 L713–L722 PASS; triad L725–L726 PASS; scoped 8/8 in 4.46s. |
+| qa (2) | **PASS** — cited from `sprints/S0177/qa-findings.md` RE-ATTEST record (QA_PASS, 0 blocking). |
+| uat (3) | **PASS** — cited from `sprints/S0177/uat.json` 9/9, `phase_id=verify-work`. |
+| readme_feature_coverage_3f | **PASS** — 57/57, `gaps=[]` (Oct-15 BUG-0028 gap closed). |
+| project_readme_3g | **PASS** — `kit_repo_skipped=true`. |
+| isolation (4) | **PASS** — 4 distinct markers (execute/dev, qa/qa, verify-work/qa, release/release). |
+| strict_runtime_proof (4b) | **PASS** — verify-work pair IN-TTL at issue + two-method MATCH; own proof two-method MATCH. |
+| validator AC gate | **PASS** — `[BUG_VALIDATION_OK]` exit 0. |
+| publish | **NOT PERFORMED** (`RELEASE_PUBLISH_MODE=confirm`) |
+| sync | **NOT PERFORMED** (`SYNC_DISABLED`) |
+| backlog | **not flipped** — BUG-0026 remains OPEN; AC-3 unchecked (closure owns flip) |
+| finalization (5) | **RUN** — queue `released`; `CHANGELOG.md` `[Unreleased]`/`### Fixed` BUG-0026 bullet; legacy `handoffs/release_notes.md` finalized note prepended |
+
+### Consumed verify-work pair
+
+IN-TTL at release issue and integrity-verified: record_key `auto-20261023-bug0026-verify-work|bug|BUG-0026|verify-work|rp-auto-20261023-bug0026-verify-work-qa-20261024T093856Z-BUG-0026`; strict 6-tuple `435104b2db05f4c26fec27e87005e7450c11eba4d5b37f17dc9709651ea303c8` two-method MATCH; state-bottom ↔ brief-top byte-identical; 20 PAIR_LOCKED_FIELDS; `validate_resume_pair(writer_role=qa)` ok=true; expiry `2026-10-24T10:38:56Z` after issue `2026-10-24T10:06:41Z`. Provenance chain execute `30d2784461bdbc1a63d94da2448d2b6fb70735fe49a9bcc59e5433e00874a1f1` / qa `95cd78d9aa441ba17fbe9f9c22c000c9dbe7a73ca19a2e4a5664bad929ae0f4c` integrity-verified, out-of-TTL at issue, provenance-only.
+
+### Stop
+
+`STOP_AFTER_RELEASE_PASS`. Parent may validate the release pair and spawn `/closure` (curator; DEC-0052 sanctioned alternate). This release child does not spawn it. `next_scheduled_phase=closure`; `next_scheduled_role=curator`.
+
+---
+
+## (history) 2026-10-15T09:27:02Z — RELEASE_FAIL
+
 - **Sprint**: `S0177`
 - **Bug**: `BUG-0026` — Debian 13 WSL2 published-global `its-magic@0.1.5` upgrade observation. Recorded tokens include `STANDALONE_BOOTSTRAP_OK`. Posix `.its-magic/bin/itsm` mode `0755`.
 - **Release date**: `2026-10-15T09:27:02Z` (UTC) — **blocked, not finalized**

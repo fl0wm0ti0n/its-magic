@@ -4,16 +4,17 @@
   "story_id": null,
   "bug_id": "BUG-0026",
   "status": "PASS",
-  "verdict": "QA_PASS",
+  "verdict": "VERIFY_PASS",
   "uat_lifecycle": "populated",
   "placeholder_only": false,
   "delivery_mode": "ultra_lean",
   "macro_phase": "build+verify",
-  "phase_id": "qa",
+  "phase_id": "verify-work",
   "role": "qa",
-  "timestamp": "2026-10-15T08:56:25Z",
-  "fresh_context_marker": "qa-BUG0026-qa-20261015T085625Z-fresh",
+  "timestamp": "2026-10-24T09:38:56Z",
+  "fresh_context_marker": "qa-BUG0026-verifywork-20261024T093856Z-fresh",
   "model_id": "omit",
+  "re_release_cycle_note": "Re-attested at the verify-work phase boundary (run auto-20261023-bug0026-verify-work) after the QA pair became out-of-TTL; all 9 steps re-confirmed, cli_smoke read-only re-observation only, no upgrade re-run.",
   "cross_model_review": 0,
   "bug_status": "OPEN",
   "acceptance_boxes": "AC-3 unchecked",
@@ -46,7 +47,7 @@
       "description": "Linux published-global its-magic@0.1.5 upgrade materializes a posix itsm shim at mode 0755",
       "result": "pass",
       "marker": "debian13_wsl2_reobserve",
-      "evidence_ref": "sprints/S0177/qa-findings.md Linux re-observation",
+      "evidence_ref": "sprints/S0177/qa-findings.md Linux re-observation; re-attested handoffs/qa_to_verify.md",
       "probe_kind": "cli_smoke"
     },
     {
@@ -114,7 +115,7 @@
   ],
   "contract_test_passed": 8,
   "contract_test_command": "python -m pytest tests/bug0026_packaged_range_contract_test.py -q --tb=line",
-  "contract_test_output": "8 pass / 0 fail; duration 4.84s",
+  "contract_test_output": "8 pass / 0 fail; duration 5.83s (verify-work re-run 2026-10-24)",
   "blocking_findings": [],
   "probe_results": [
     {
@@ -132,7 +133,7 @@
       "evidence_ref": "contract_test_failed=0; 8 pass / 0 fail test_bug0026_*; cli_smoke re-observed; 5 waived_probes UAT_PROBE_FORBIDDEN; full harness Fail=0 not claimed"
     }
   ],
-  "probe_class_note": "cli_smoke was re-observed read-only on Debian 13 WSL2. The upgrade command was not run again. No .env read. BUG-0026 stays OPEN. AC-3 stays unchecked.",
+  "probe_class_note": "cli_smoke was re-observed read-only on Debian 13 WSL2. The upgrade command was not run again. No .env read. BUG-0026 stays OPEN. AC-3 stays unchecked. verify-work re-attest: contract 8/8 re-run green; consumed qa pair hash 95cd78d9aa441ba17fbe9f9c22c000c9dbe7a73ca19a2e4a5664bad929ae0f4c integrity-verified (out-of-TTL, no stale-proof waiver).",
   "waived_probes": [
     {
       "probe_class": "browser_smoke",

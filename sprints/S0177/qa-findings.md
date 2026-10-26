@@ -1,5 +1,53 @@
 # QA Findings — S0177 / BUG-0026
 
+## RE-ATTEST QA record (fresh /qa, re-release cycle auto-20261023-bug0026-qa)
+
+**Verdict:** **QA_PASS** — run `auto-20261023-bug0026-qa`, S0177 re-attest qa; **0 blocking findings**.
+
+> **History note:** This is the fresh RE-ATTEST QA record for the re-release cycle
+> `auto-20261023-bug0026-qa`. The prior-cycle QA record below (run
+> `auto-20261015-bug0026`, verdict `QA_PASS`, timestamp 2026-10-15T08:56:25Z,
+> marker `qa-BUG0026-qa-20261015T085625Z-fresh`) is **preserved below as
+> history**. The prior release blockers (full-harness Fail; README feature
+> coverage gap) are both confirmed fixed in this cycle; this record
+> independently re-verifies. No prior proof is reused or re-minted.
+
+- **Phase / role:** `qa` / `qa` (fresh, independent of execute)
+- **Run / scope:** run `auto-20261023-bug0026-qa`; bug `BUG-0026`; sprint `S0177`; re-attest of the qa phase of the re-release cycle — re-verifies, does not re-implement, republish, or author a DEC.
+- **Timestamp:** 2026-10-23T14:30:37Z
+- **Fresh marker:** `qa-BUG0026-qa-20261023T143037Z-fresh` (grep-verified **0 prior occurrences** repo-wide at mint)
+- **QA proof (held from the interrupted run — NOT re-minted):**
+  - runtime_proof_id=`rp-auto-20261023-bug0026-qa-qa-20261023T143037Z-BUG-0026`
+  - proof_hash=`95cd78d9aa441ba17fbe9f9c22c000c9dbe7a73ca19a2e4a5664bad929ae0f4c`
+  - proof_issued_at=`2026-10-23T14:30:37Z`; proof_ttl_seconds=3600 (TTL expiry 2026-10-23T15:30:37Z)
+  - canonical payload: `{"orchestrator_run_id":"auto-20261023-bug0026-qa","phase_id":"qa","proof_issued_at":"2026-10-23T14:30:37Z","proof_ttl_seconds":3600,"role":"qa","runtime_proof_id":"rp-auto-20261023-bug0026-qa-qa-20261023T143037Z-BUG-0026"}`
+  - strict-proof recompute: `scripts.token_cost_lib.compute_strict_proof_hash` and independent compact sorted-key SHA-256 both returned `95cd78d9aa441ba17fbe9f9c22c000c9dbe7a73ca19a2e4a5664bad929ae0f4c` (MATCH).
+- **Consumed execute proof:** `rp-auto-20261023-bug0026-execute-dev-20261023T140947Z-BUG-0026`; consumed execute pair hash `30d2784461bdbc1a…74a1f1` (full `30d2784461bdbc1a63d94da2448d2b6fb70735fe49a9bcc59e5433e00874a1f1`) independently recomputed by both methods → **MATCH**. Consumed **IN-TTL** at qa issue 2026-10-23T14:30:37Z (execute expiry 2026-10-23T15:09:47Z; ~2,405 seconds remaining). **TTL note:** both the execute and qa proofs are now TTL-expired; any downstream consumption is integrity-verified provenance-only — no stale-proof waiver. All functional evidence re-runs fresh at release.
+
+### Independent re-verification (re-release cycle)
+
+| Check | Exact result |
+|---|---|
+| BUG-0026 scoped contract | `python -m pytest tests/bug0026_packaged_range_contract_test.py -q --tb=line` → **8 passed in 4.31s**, exit 0 (**8/8** `test_bug0026_*` markers; independent of the execute child's run) |
+| Full harness attestation | `tests/report.md` read + cited (NOT re-run this session) → **2026-10-23T13:39:31Z Pass=884 Fail=0** (US-0071 metadata-guard and triad-enforcement rows `[PASS]`) |
+| UAT | `sprints/S0177/uat.json` (+ `uat.md`) reviewed → **9/9** (`status=PASS`, `placeholder_only=false`, `uat_lifecycle=populated`); `UAT_PROBE_FORBIDDEN` held for the 5 live external probe classes |
+| AC-8 token distinction | **confirmed**: `scripts/standalone_runtime_install_lib.py` `run_kernel_preflight` (L263-L305) — a missing supported-range returns **`STANDALONE_SUPPORTED_RANGE_MISSING`** (L286-L289) **before** any kernel-mismatch conclusion, distinct from **`KERNEL_CONTRACT_MISMATCH`** (L274-L294); contract marker `test_bug0026_missing_range_is_not_false_kernel_contract_mismatch` (tests/bug0026_packaged_range_contract_test.py L220-L230) asserts the distinction |
+| AC-3 Linux published-global upgrade | independently re-attested PASS from the fresh execute observation (Debian 13 WSL2, published global `its-magic@0.1.5`, `exit 0`, tokens `HOST_CONFIG_POSTINSTALL_OK` / `STANDALONE_BOOTSTRAP_OK` / `STANDALONE_POSTINSTALL_OK`; `KERNEL_CONTRACT_MISMATCH` / `STANDALONE_SUPPORTED_RANGE_MISSING` absent; posix shim mode `0755`, `#!/usr/bin/env sh`). No live WSL probe re-run (the execute child just produced fresh Linux evidence; job was to independently verify tokens/AC logic). |
+
+### Status and guard evidence
+
+- `docs/product/backlog.md` `### BUG-0026` remains **OPEN**; AC-1/AC-2/AC-4/AC-5/AC-6/AC-7/AC-8 `[x]`; **AC-3 `[ ]`** (not ticked — closure owns the tick).
+- `docs/product/acceptance.md` BUG-0026 row remains `[ ]`. Neither file modified.
+- The allowlisted range file `scripts/standalone-supported-kernel-range.json` is held (not republished, not re-packed); `load_supported_range` NOT re-implemented; the eight `test_bug0026_*` remain the contract scope (no new contract).
+- This QA context ticked **no** AC, did **not** flip BUG-0026 to DONE, wrote **no** production code, spawned **no** child, performed **no** republish / `npm publish` / `git commit` / `git push`, and read **no** `.env`.
+- **Blockers: 0.** `generated_test_result=pass`; `generated_test_reason_code=ok`.
+
+**Ready for an orchestrator-owned fresh `/verify-work`** after the parent validates this pair. This QA child did **not** spawn it.
+
+---
+
+## HISTORY — prior-cycle QA record (auto-20261015-bug0026), preserved
+
 - **verdict**: **QA_PASS**
 - **decision_gate**: false
 - **phase_id**: qa

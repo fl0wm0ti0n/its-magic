@@ -1,0 +1,42 @@
+{
+  "schema_version": 1,
+  "story_id": null,
+  "bug_id": "BUG-0044",
+  "sprint_id": "S0186",
+  "phase_id": "plan-verify",
+  "role": "qa",
+  "orchestrator_run_id": "auto-20261025-bug0044",
+  "delivery_mode": "ultra_lean",
+  "macro_phase": "build+verify",
+  "status": "QA_PASS",
+  "verdict": "QA_PASS",
+  "skipped": false,
+  "deferred": false,
+  "completed_by": "qa",
+  "reason_code": "ULTRA_LEAN_PLAN_VERIFY_MERGED_INTO_QA",
+  "verified_at": "2026-10-25T21:10:35Z",
+  "fresh_context_marker": "qa-BUG0044-qa-20261025T211035Z-fresh",
+  "task_count": 6,
+  "acceptance_criteria": 5,
+  "ac_coverage_surjective": true,
+  "coverage_complete": true,
+  "uncovered_acs": [],
+  "gaps": [],
+  "ac_surjection": {
+    "AC-1": ["T-001", "T-002", "T-003", "T-005"],
+    "AC-2": ["T-002", "T-004", "T-005"],
+    "AC-3": ["T-001", "T-003", "T-005"],
+    "AC-4": ["T-003", "T-004", "T-005"],
+    "AC-5": ["T-anch", "T-001", "T-002", "T-003", "T-004", "T-005"]
+  },
+  "task_traceability": {
+    "T-anch": "all ACs (baseline + traceability, no product change)",
+    "T-001": ["AC-1", "AC-3", "AC-5"],
+    "T-002": ["AC-1", "AC-2", "AC-5"],
+    "T-003": ["AC-1", "AC-3", "AC-4", "AC-5"],
+    "T-004": ["AC-2", "AC-4", "AC-5"],
+    "T-005": ["AC-1", "AC-2", "AC-3", "AC-4", "AC-5"]
+  },
+  "note": "Ultra-lean merges plan-verify into build+verify. No PENDING stub file existed for S0186 (sprint.md/tasks.md only at sprint-plan; execute added the build surface). QA completes the deferred plan-verify as a qa-owned artifact. AC-1..AC-5 stay unchecked in backlog/acceptance; BUG-0044 stays OPEN/P1; S0186 tasks.md boxes remain unticked (closure-owned).",
+  "next_phase_after_plan_verify": "verify-work"
+}

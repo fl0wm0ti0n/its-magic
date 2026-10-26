@@ -18,7 +18,7 @@ permission:
     "template/CHANGELOG.md": allow
     "docs/product/backlog.md": allow
     "docs/product/acceptance.md": allow
-    "sprints/S0184/closure-verification.md": allow
+    "sprints/S*/closure-verification.md": allow
   bash: ask
   task: deny
 ---

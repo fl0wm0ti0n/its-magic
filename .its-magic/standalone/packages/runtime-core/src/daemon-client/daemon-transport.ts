@@ -7,6 +7,7 @@ import {
 	type RuntimeEvent,
 } from "@its-magic/protocol";
 import WebSocket from "ws";
+import type { OperatorStatusSnapshot } from "../operator/types.ts";
 import type {
 	AttachRunInput,
 	CancelRunInput,
@@ -71,6 +72,10 @@ export function createDaemonTransport(opts: DaemonTransportOptions): OperatorTra
 				client_id: input.client_id ?? clientId,
 				client_kind: input.client_kind ?? clientKind,
 			});
+		},
+		async statusSnapshot() {
+			const { baseUrl, token } = resolveEndpoint();
+			return jsonRpcCall<OperatorStatusSnapshot>(baseUrl, token, "status.snapshot", {});
 		},
 		async cancel(input: CancelRunInput) {
 			const { baseUrl, token } = resolveEndpoint();

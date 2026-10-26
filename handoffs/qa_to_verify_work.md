@@ -1,3 +1,16 @@
+# QA-to-Verify-Work Handoff — S0185 / US-0164 (QA_PASS)
+
+- **from / to:** `qa` → fresh `verify-work` as `qa`; the parent may validate and spawn only. This QA child does not spawn it.
+- **timestamp:** 2026-10-25T02:45:00Z (canonical UTC; host wall-clock 2026-10-25T12:00:23Z noted for transparency only); **verdict:** **QA_PASS**; `decision_gate=false`; 0 blocking findings.
+- **incoming execute pair:** `auto-20261025-us0164-execute|story|US-0164|execute|rp-auto-20261025-us0164-execute-dev-20261025T021911Z-US-0164`; exact state/brief tuple **byte-identical**, 20/20 `PAIR_LOCKED_FIELDS`, strict 6-tuple hash `c9513bc6db7583eb02293d0ca552cd6121e53d9e659baa490a30d7f49f3abfd1` (two-method MATCH), and IN-TTL check (expiry 2026-10-25T03:19:11Z) all passed before QA.
+- **fresh QA pair:** `auto-20261025-us0164-qa|story|US-0164|qa|rp-auto-20261025-us0164-qa-qa-20261025T024500Z-US-0164`; marker `qa-US0164-qa-20261025T024500Z-fresh`; proof `7b2c76e6b30af30489b528956ab699afb1b1656619176a327a98a31812a12df5` (strict six-tuple mint and independent recompute MATCH; TTL=3600, expiry 2026-10-25T03:45:00Z IN-TTL). State-first checkpoint appended at the bottom of `docs/engineering/state.md` and the byte-identical brief pointer prepended to `handoffs/resume_brief.md`.
+- **evidence:** AC-1..AC-9 PASS in `sprints/S0185/qa-findings.md`, `uat.md`, and `uat.json`; `python -m pytest tests/us0164_selfresolve_stop_contract_test.py -q` → **10 passed**; US-0158/US-0157 regression → **10 passed**; `python scripts/auto_outer_driver.py --self-test` → `[AUTO_OUTER_DRIVER_SELF_TEST_OK]`; broader stop/autonomy sweep 377 passed / 17 failed with HEAD worktree proof that all 17 are pre-existing foreign (16 at HEAD + 1 `ci.yml` drift — US-0164 introduced **NO regression**); 5-pair active/template byte parity (independent SHA-256); absent-flag byte-identity; safety-floor sandbox (pause_request hard; decision_gate propose-and-hold; unknown gate id `HOST_CONFIG_INVALID`; provider fallback one-switch + carry-over + budget counter NOT reset). QA-owned plan-verify completion written to `sprints/S0185/plan-verify.json`.
+- **required verify-work checks:** independently rerun the contract + regression suite and `--self-test`; recheck the 5-pair byte parity, the absent-flag byte-identity, the safety-floor behavior, the US-0164 status guard, and this exact QA pair; mint a distinct verify-work proof. Do not tick ACs or alter US-0164 status.
+- **status guard:** US-0164 remains **OPEN/P1**; backlog AC-1..AC-9 and its acceptance row remain unchecked. No closure, publish, push, commit, or secret/.env read.
+- **STOP:** `STOP_AFTER_QA_PASS; validate_pair_then_parent_may_spawn_verify_work`.
+
+---
+
 # Verify-Work-to-Release Handoff — S0184 / BUG-0037 (VERIFY_PASS)
 
 - **from / to:** `verify-work` as `qa` → fresh `release` as `release`; parent validates and may spawn only. This QA child does not spawn release.

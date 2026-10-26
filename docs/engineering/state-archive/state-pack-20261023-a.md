@@ -1,0 +1,45 @@
+# State archive pack (2026-10-23)
+
+- Rollover trigger: `STATE_HOT_MAX_LINES=1200, STATE_HOT_MAX_CHECKPOINTS=80`
+- Source: `docs/engineering/state.md`
+- Archived units (oldest first, contiguous prefix): 1
+- Retained units in hot file: 47
+- First archived heading: `## Research checkpoint — US-0157 / auto-20261016-us0157 (role=tech-lead) — **RESEARCH_PASS**`
+- Last archived heading: `## Research checkpoint — US-0157 / auto-20261016-us0157 (role=tech-lead) — **RESEARCH_PASS**`
+- Verification tuple (mandatory):
+  - archived_body_lines=30
+  - preamble_lines=11
+  - retained_body_lines=1177
+
+---
+
+## Research checkpoint — US-0157 / auto-20261016-us0157 (role=tech-lead) — **RESEARCH_PASS**
+
+- phase_id=research; role=tech-lead; work_item_kind=story; story_id=US-0157; bug_id=(none); verdict=RESEARCH_PASS; decision_gate=false; timestamp=2026-10-16T21:07:42Z.
+- fresh_context_marker=**tl-US0157-research-20261016T210742Z-fresh** (FRESH; grep-verified **0 prior occurrences** repo-wide at mint); orchestrator_run_id=**auto-20261016-us0157**; writer_role=tech-lead; completed_phase=research; resolution_source=resume_brief; model_id=**inherit**; model_provenance=provenance=host=cursor;path=.cursor/scratchpad.local.md;step=MODEL_TIER_<PHASE>; CROSS_MODEL_REVIEW=0.
+- runtime_proof_id=**rp-auto-20261016-us0157-research-techlead-20261016T210742Z**; proof_hash=**4da3d695842e8926e60efce8e1d98ff43851dce72285b8b91580f4b98476ceaf**; proof_issued_at=2026-10-16T21:07:42Z; proof_ttl_seconds=3600; proof_ttl=2026-10-16T22:07:42Z; hash_recompute_confirmation=true (`scripts.token_cost_lib.compute_strict_proof_hash` sorted-key SHA-256 over the DEC-0038 6-tuple, second invocation MATCH).
+- canonical tuple (verbatim): {"orchestrator_run_id":"auto-20261016-us0157","phase_id":"research","proof_issued_at":"2026-10-16T21:07:42Z","proof_ttl_seconds":3600,"role":"tech-lead","runtime_proof_id":"rp-auto-20261016-us0157-research-techlead-20261016T210742Z"}
+- consumed_discovery_proof=**rp-auto-20261016-us0157-discovery-po-20261016T205830Z** / **640f55e666c50b3c15374e1f21538dbc90343f3f0a30a17c69803baec3b14f04** (DISCOVERY_PASS): recompute **MATCH**; IN-TTL at research issue (`proof_ttl=2026-10-16T21:58:30Z`; clock at validation `2026-10-16T21:07:42Z`).
+- record_key=`auto-20261016-us0157|story|US-0157|research|rp-auto-20261016-us0157-research-techlead-20261016T210742Z`.
+- effective_plan=`[spec, plan, build+verify, ship]`; skipped_phases=`[intake, plan-verify]`; completed_phases=`[intake, discovery, research]`; next_scheduled_phase=**architecture**; next_scheduled_role=**tech-lead**; phase_cursor=**spec/research-pass**; phase_boundary=research.
+- outer_cycle_index=2; implementation_loop_index=0; native_chain_active=true; native_chain_continuing=true; drain_advance_action=spawned; delivery_mode=ultra_lean; reinstatement_mode=none; memory_layer=pack.
+- backlog_drain_active=true; bug_queue_active=false; backlog_drain_stories_consumed=1; backlog_drain_stories_remaining_budget=49; skipped_blocked=US-0162,BUG-0026.
+- budget_scope=`OPEN story US-0157; active_story_id=US-0157; backlog_drain_stories_consumed=1; backlog_drain_stories_remaining_budget=49; AUTO_BACKLOG_MAX_STORIES=50; AUTO_BUG_QUEUE=0; skipped_blocked=US-0162,BUG-0026; outer_cycle_index=2; implementation_loop_index=0; backlog_drain_active=true; bug_queue_active=false; native_chain_active=true; native_chain_continuing=true; drain_advance_action=spawned`.
+- stop_reason=research_complete_phase_boundary; stop_matrix_action=STOP_AFTER_RESEARCH_PASS; validate_pair_then_parent_may_spawn_architecture.
+- status_guard=US-0157 OPEN; AC-1..AC-5 unchecked. Research body **R-0171** approach **A1**. Companion DEC none. **R-0170** untouched. Did not edit US-0162, BUG-0026, BUG-0029, or BUG-0036. Did not repeal DEC-0153. `RESUME_BRIEF_AUTO_REFRESH` stays 0. No npm publish. No git commit. No git push. No `.env` read.
+- locks=DQ1..DQ10 LOCKED; approach=A1; decision_gate=false; research_entry=R-0171.
+- triad_post_append=post-append `--rollover --json` `{"boundary":"triad-rollover|state","moved":1,"pack_ref":"docs/engineering/state-archive/state-pack-20261016-t.md","retained_checkpoints":39,"retained_lines":1175}`. US-0157 research checkpoint stayed on the hot tail. Architecture and po_to_tl were not rolled in this pass. Follow-up `--check` exit **0**.
+- paired-continuation (DEC-0153): this checkpoint appended **BOTTOM** first; matching `handoffs/resume_brief.md` prepend follows state-first. Parent remains read/validate/spawn-only.
+
+### Isolation evidence (US-0048 / DEC-0029) — research
+
+- phase_id=**research**; role=**tech-lead**; model_id=**inherit**; model_provenance=provenance=host=cursor;path=.cursor/scratchpad.local.md;step=MODEL_TIER_<PHASE>; fresh_context_marker=**tl-US0157-research-20261016T210742Z-fresh**; timestamp=2026-10-16T21:07:42Z; evidence_ref=`docs/engineering/research.md` ## R-0171, `docs/product/backlog.md` ## US-0157, `handoffs/po_to_tl.md` discovery handoff.
+
+### Canonical continuation-pair record (DEC-0153)
+
+```json
+{"record_key":"auto-20261016-us0157|story|US-0157|research|rp-auto-20261016-us0157-research-techlead-20261016T210742Z","orchestrator_run_id":"auto-20261016-us0157","work_item_kind":"story","story_id":"US-0157","bug_id":"(none)","completed_phase":"research","writer_role":"tech-lead","role":"tech-lead","fresh_context_marker":"tl-US0157-research-20261016T210742Z-fresh","resolution_source":"resume_brief","effective_plan":["spec","plan","build+verify","ship"],"skipped_phases":["intake","plan-verify"],"completed_phases":["intake","discovery","research"],"next_scheduled_phase":"architecture","next_scheduled_role":"tech-lead","phase_cursor":"spec/research-pass","phase_boundary":"research","budget_scope":"OPEN story US-0157; active_story_id=US-0157; backlog_drain_stories_consumed=1; backlog_drain_stories_remaining_budget=49; AUTO_BACKLOG_MAX_STORIES=50; AUTO_BUG_QUEUE=0; skipped_blocked=US-0162,BUG-0026; outer_cycle_index=2; implementation_loop_index=0; backlog_drain_active=true; bug_queue_active=false; native_chain_active=true; native_chain_continuing=true; drain_advance_action=spawned","stop_reason":"research_complete_phase_boundary","runtime_proof_id":"rp-auto-20261016-us0157-research-techlead-20261016T210742Z","proof_hash":"4da3d695842e8926e60efce8e1d98ff43851dce72285b8b91580f4b98476ceaf","proof_issued_at":"2026-10-16T21:07:42Z","proof_ttl_seconds":3600,"phase_id":"research","stop_matrix_action":"STOP_AFTER_RESEARCH_PASS; validate_pair_then_parent_may_spawn_architecture","model_id":"inherit","model_provenance":"provenance=host=cursor;path=.cursor/scratchpad.local.md;step=MODEL_TIER_<PHASE>","native_chain_active":true,"native_chain_continuing":true,"drain_advance_action":"spawned","backlog_drain_active":true,"bug_queue_active":false,"backlog_drain_stories_consumed":1,"backlog_drain_stories_remaining_budget":49,"skipped_blocked":"US-0162,BUG-0026","outer_cycle_index":2,"implementation_loop_index":0,"delivery_mode":"ultra_lean","reinstatement_mode":"none","memory_layer":"pack","decision_gate":false,"verdict":"RESEARCH_PASS"}
+```
+
+- **stop_condition=STOP after RESEARCH_PASS.** Parent may spawn fresh `/architecture` (tech-lead) for **US-0157** after validating this pair. This tech-lead child does NOT spawn it. US-0157 stays OPEN. AC-1..AC-5 stay unchecked. `next_scheduled_phase=architecture`. `next_scheduled_role=tech-lead`. `native_chain_continuing=true`. `decision_gate=false`.
+

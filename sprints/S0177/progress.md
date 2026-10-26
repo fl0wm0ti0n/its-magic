@@ -1,13 +1,35 @@
 # Sprint S0177 progress — BUG-0026
 
-- status: **VERIFY_PASS**
-- verdict: verify-work complete; release has not started
-- tasks: T-anch and T-001 finished
+- status: **EXECUTE_PASS** (re-attest; re-release cycle `auto-20261023-bug0026-execute`)
+- verdict: re-attest execute complete; qa not spawned
+- tasks: T-anch (baseline hold) and T-001 (one fresh Linux published-global observation) finished
 - bug: BUG-0026 remains **OPEN**. AC-3 remains unchecked. AC-1, AC-2, AC-4..AC-8 remain checked.
 - plan-verify: SKIPPED (`ultra_lean_not_in_resolved_phase_plan`)
-- fresh_context_marker: `dev-BUG0026-execute-20261015T084528Z-fresh`
-- linux_outcome: `STANDALONE_BOOTSTRAP_OK` plus posix `.its-magic/bin/itsm` mode 0755
-- This execute child did not spawn `/qa`, did not run `/verify-work`, and did not close the bug.
+- fresh_context_marker: `dev-BUG0026-execute-20261023T140947Z-fresh`
+- runtime_proof_id: `rp-auto-20261023-bug0026-execute-dev-20261023T140947Z-BUG-0026`; proof_hash `30d2784461bdbc1a63d94da2448d2b6fb70735fe49a9bcc59e5433e00874a1f1`; issued `2026-10-23T14:09:47Z`; ttl 3600s (expiry `2026-10-23T15:09:47Z`)
+- linux_outcome: `STANDALONE_BOOTSTRAP_OK` plus posix `.its-magic/bin/itsm` mode 0755 (FRESH re-observation on Debian 13 WSL2)
+- This re-attest execute child did not spawn `/qa`, did not run `/verify-work`, and did not close the bug.
+
+## Re-attest execute — BUG-0026 / S0177 / auto-20261023-bug0026-execute (role=dev)
+
+Finished 2026-10-23T14:09:47Z (UTC). Verdict **EXECUTE_PASS**. `decision_gate=false`. This is a re-attest of the S0177 execute phase after the prior release blockers were fixed; it re-attests, it does not re-implement, republish, or author a DEC.
+
+- Prior-cycle release blockers confirmed fixed before this re-attest:
+  - `tests/report.md` is current: `Timestamp: 2026-10-23T13:39:31Z`, `Pass=884`, `Fail=0` (read-only, not re-run).
+  - README feature-coverage blocker fixed: `python scripts/validate_readme_feature_coverage.py --repo . --enforce` → exit 0, `coverage_missing=[]`, `coverage_total=57`.
+- T-anch (baseline hold): BUG-0026 **OPEN**, AC-3 `[ ]`, AC-1/AC-2/AC-4..AC-8 `[x]`; allowlisted range file `scripts/standalone-supported-kernel-range.json` held (not republished, not re-packed); `load_supported_range` NOT re-implemented; the eight `test_bug0026_*` remain the contract scope (no new contract); the 2026-09-19 Windows `itsm.cmd` row is cited, not copied into the Linux row.
+- T-001 (one FRESH Linux published-global observation, not a replay):
+  - Host: Debian 13 on WSL2, `Linux BigOne 6.18.33.2-microsoft-standard-WSL2 x86_64`. Real Linux host, not a missing-runtime pass.
+  - Toolchain (Linux-only PATH, from `/home/flow/bug0026-toolchain`): Node v24.19.0, npm 11.17.0, CPython 3.12.15 (`python3` resolvable). The Windows `npm` on `/mnt/c` was not used.
+  - Published global `its-magic@0.1.5` present; `scripts/standalone-supported-kernel-range.json` present in the installed package (88 bytes). No republish.
+  - Consumer project: `/home/flow/bug0026-consumer-s0177` (outside this kit repo). The prior `.its-magic` was wiped to force a fresh bootstrap.
+  - Command: `its-magic --target . --mode upgrade --host both`. **Exit 0** (upgrade `v0.1.4 -> v0.1.5`).
+  - Tokens present: `HOST_CONFIG_POSTINSTALL_OK`, `STANDALONE_BOOTSTRAP_OK`, `STANDALONE_POSTINSTALL_OK`.
+  - Tokens absent: `KERNEL_CONTRACT_MISMATCH`, `STANDALONE_SUPPORTED_RANGE_MISSING`, `STANDALONE_BOOTSTRAP_FAILED`, `PYTHON_NOT_FOUND`.
+  - Shim: `.its-magic/bin/itsm` recreated as a regular file, mode `0755` (`-rwxr-xr-x`), first line `#!/usr/bin/env sh`. `itsm.cmd` absent and not required (Windows-only).
+- Scoped test: `python -m pytest tests/bug0026_packaged_range_contract_test.py -q --tb=line` → **8 passed in 4.33s**, exit 0.
+- Status guard: AC-3 not ticked; BUG-0026 not flipped to DONE; `docs/engineering/decisions.md`, `docs/engineering/architecture.md`, `docs/product/backlog.md`, `docs/product/acceptance.md`, the allowlisted range file, and `.cursor/scratchpad.md` not edited; BUG-0025/US-0149/BUG-0028/BUG-0029 untouched; no `.env` read; no npm publish, git commit, or git push; this child did not spawn `/qa`.
+- Proof: `runtime_proof_id` and `fresh_context_marker` each verified 0 prior repo occurrences at mint; strict six-tuple hash `30d2784461bdbc1a63d94da2448d2b6fb70735fe49a9bcc59e5433e00874a1f1` recomputed by `scripts.token_cost_lib.compute_strict_proof_hash` AND an independent compact sorted-key SHA-256 — both MATCH.
 
 ## QA — Linux re-observation
 

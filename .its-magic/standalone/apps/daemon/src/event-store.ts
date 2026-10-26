@@ -56,6 +56,25 @@ export class DaemonEventStore {
 		return event;
 	}
 
+	/** Insert a sequence hole so a live subscriber observes EVENT_SEQ_GAP. Not an RPC method. */
+	appendSeqHole(run_id: string): number {
+		const row = this.db
+			.prepare("SELECT COALESCE(MAX(seq), 0) AS m FROM run_events WHERE run_id = ?")
+			.get(run_id) as { m: number };
+		const seq = row.m + 2;
+		const event: RuntimeEvent = {
+			run_id,
+			seq,
+			kind: "seq.hole",
+			protocol_version: PROTOCOL_VERSION,
+			payload: {},
+		};
+		this.db
+			.prepare("INSERT INTO run_events (run_id, seq, kind, payload_json) VALUES (?, ?, ?, ?)")
+			.run(run_id, seq, event.kind, JSON.stringify(event.payload ?? {}));
+		return seq;
+	}
+
 	listAfter(run_id: string, after_seq: number): RuntimeEvent[] {
 		const rows = this.db
 			.prepare(

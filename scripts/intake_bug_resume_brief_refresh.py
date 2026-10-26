@@ -40,7 +40,7 @@ def upsert_latest_orchestration_pointer(full_text: str, latest_block: str) -> st
     replaced = False
     while i < len(lines):
         line = lines[i]
-        if line.startswith("## Latest orchestration pointer"):
+        if line.startswith("## Latest orchestration pointer") and not replaced:
             out.append(latest_block)
             i += 1
             while i < len(lines) and not lines[i].startswith("## "):
@@ -182,6 +182,28 @@ def self_test() -> int:
         return _fail("SELFTEST_FAILED", "missing expected content")
     if "## Latest orchestration pointer — old" in new:
         return _fail("SELFTEST_FAILED", "old latest not replaced")
+    # append-only brief carries multiple historical pointer sections; only the
+    # topmost may be replaced — every later one must survive byte-for-byte
+    old_multi = (
+        "# Resume Brief\n\n"
+        "## Latest orchestration pointer — top\n\n- top-body\n\n"
+        "## Next\n\nn1\n\n"
+        "## Latest orchestration pointer — history-a\n\n- hist-a\n\n"
+        "## Next\n\nn2\n\n"
+        "## Latest orchestration pointer — history-b\n\n- hist-b\n"
+    )
+    new_multi = upsert_latest_orchestration_pointer(old_multi, block)
+    if new_multi.count("## Latest orchestration pointer") != 3:
+        return _fail("SELFTEST_FAILED", "expected exactly 3 pointer sections (top replaced, 2 historical kept)")
+    if "## Latest orchestration pointer — top" in new_multi:
+        return _fail("SELFTEST_FAILED", "topmost pointer not replaced")
+    if "## Latest orchestration pointer — history-a" not in new_multi or "hist-a" not in new_multi:
+        return _fail("SELFTEST_FAILED", "historical pointer section history-a lost or rewritten")
+    if "## Latest orchestration pointer — history-b" not in new_multi or "hist-b" not in new_multi:
+        return _fail("SELFTEST_FAILED", "historical pointer section history-b lost or rewritten")
+    tail = new_multi.split("## Latest orchestration pointer — history-a", 1)[1]
+    if tail != "\n\n- hist-a\n\n## Next\n\nn2\n\n## Latest orchestration pointer — history-b\n\n- hist-b\n":
+        return _fail("SELFTEST_FAILED", "historical pointer tail not byte-identical")
     good_backlog = """## Bug issues (canonical)
 
 ### BUG-0999 — T

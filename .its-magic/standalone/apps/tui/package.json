@@ -11,6 +11,7 @@
 		"itsm-tui": "./src/index.ts"
 	},
 	"dependencies": {
+		"@its-magic/protocol": "*",
 		"@its-magic/runtime-core": "*"
 	}
 }

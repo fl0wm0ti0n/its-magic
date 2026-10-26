@@ -833,6 +833,29 @@ following hold:
 | `RELEASE_PUBLISH_MODE=auto` | Explicit opt-in | **No change — hard default-off** | Always on publish |
 | Security deny (`.env`, intake mutation) | Hard deny | **No change — hard** | Always |
 
+### Gate cause-resolution stop rows (US-0164 / DEC-0155)
+
+The US-0088/US-0092 stop matrix gains **exactly two** rows (additive,
+default-off; absent `--selfresolve-gate` keeps today's JSON byte-identical).
+New reason codes (4): `SELFRESOLVE_ATTEMPT_EXHAUSTED`, `PROVIDER_SWITCH_APPLIED`,
+`PROVIDER_SWITCH_CAP_REACHED`, `SELFRESOLVE_DRAIN_HANDOFF`. `HOST_CONFIG_INVALID`
+(existing, US-0131) is **reused** for unknown gate ids — **not** a 5th code.
+
+| # | Condition | Bounded action | Outcome |
+|---|-----------|----------------|---------|
+| 1 | Active gate with id in the validated `AUTO_SELFRESOLVE_GATES` set | one cause-resolution attempt per `(phaseId, gate)` via the same-phase child | `continue_same_phase` if the unchanged gate re-check passes, else `SELFRESOLVE_ATTEMPT_EXHAUSTED` |
+| 2 | `SELFRESOLVE_ATTEMPT_EXHAUSTED` or budget-gate after provider fallback (`PROVIDER_SWITCH_CAP_REACHED`) | silent drain handoff (`SELFRESOLVE_DRAIN_HANDOFF`) when drain is enabled + eligible OPEN story + budget remaining | `hard_stop` when `AUTO_BACKLOG_DRAIN=0` or no eligible OPEN story (fail-closed, unchanged) |
+
+**Safety floor (unchanged in every configuration):** `pause_request` is never
+self-resolved; `decision_gate` is propose-and-hold, **never** auto-continue (no
+`decision_gate=false` flip); critical `missing_input` stays a hard stop; no
+`.env` read, no automatic npm publish, no automatic git push. Budget-gate
+provider fallback (`loop_max` / `BACKLOG_MAX_STORIES_REACHED`) is opt-in
+(`AUTO_BUDGET_PROVIDER_FALLBACK=1`), at most one switch per run
+(`AUTO_PROVIDER_SWITCH_MAX=1`), reads the catalog via
+`scripts/model_tier_lib.py resolve_model_for_phase` (no `MODEL_*` governance
+key, no new vendors), and the **budget counter is NOT reset** (carries over).
+
 **Drain-advance-without-pause**: with **`full_autonomy`** in IDE, native in-chat chain
 schedules next OPEN story/bug **immediately** **without operator re-`/auto`**; outer
 driver is **optional** / **fallback** for headless/CI. Paired **`resume_brief`** +

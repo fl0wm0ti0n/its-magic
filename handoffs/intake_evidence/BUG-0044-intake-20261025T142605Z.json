@@ -1,0 +1,72 @@
+{
+  "selected_pack": "small-intake-pack",
+  "intake_run_id": "ir-20261025T142605Z-bug0044-continuation-pair",
+  "writer_id": "po-opencode-20261025-continuation-pair",
+  "INTAKE_GUIDED_MODE": 0,
+  "INTAKE_WORK_ITEM_KIND": "bug",
+  "requested_mode": "bug",
+  "intake_boundary_utc": "2026-10-25T14:26:05Z",
+  "ID_NAMESPACE_BOOTSTRAP": 0,
+  "WORK_KIND_ROUTING": 0,
+  "EARLY_RESEARCH": 0,
+  "asked_topics": [
+    "outcome_success_criteria",
+    "impacted_components",
+    "constraints_compatibility_risks",
+    "required_tests_acceptance_checks",
+    "done_definition"
+  ],
+  "missing_topics": [],
+  "assumptions_confirmed": "(none)",
+  "topic_coverage": [
+    {
+      "topic_key": "outcome_success_criteria",
+      "satisfied_by": "answer_ref",
+      "quoted_user_text": "whenever a framework gap recurs, create a bug with intake",
+      "intake_run_id": "ir-20261025T142605Z-bug0044-continuation-pair",
+      "turn_index": 0,
+      "ref": "ie:ir-20261025T142605Z-bug0044-continuation-pair:0:8deaf2b5b260bad7"
+    },
+    {
+      "topic_key": "impacted_components",
+      "satisfied_by": "answer_ref",
+      "quoted_user_text": "the spawned phase children on the OpenCode auto orchestrator, sprint-plan and verify-work, and their DEC-0153 handoff writes",
+      "intake_run_id": "ir-20261025T142605Z-bug0044-continuation-pair",
+      "turn_index": 1,
+      "ref": "ie:ir-20261025T142605Z-bug0044-continuation-pair:1:b2d8a06ca829118e"
+    },
+    {
+      "topic_key": "constraints_compatibility_risks",
+      "satisfied_by": "answer_ref",
+      "quoted_user_text": "do not weaken DEC-0153, keep the parent spawn-only, and keep RESUME_BRIEF_AUTO_REFRESH=0 absolute",
+      "intake_run_id": "ir-20261025T142605Z-bug0044-continuation-pair",
+      "turn_index": 2,
+      "ref": "ie:ir-20261025T142605Z-bug0044-continuation-pair:2:55cee1295096a48a"
+    },
+    {
+      "topic_key": "required_tests_acceptance_checks",
+      "satisfied_by": "delegation_ref",
+      "quoted_user_text": "contract tests must cover the phase-boundary continuation-pair write and the phase-artifact terminal-state reconcile, keeping a missing or conflicting pair a deterministic fail-closed stop",
+      "intake_run_id": "ir-20261025T142605Z-bug0044-continuation-pair",
+      "turn_index": 3,
+      "ref": "ie:ir-20261025T142605Z-bug0044-continuation-pair:3:e74942d853a1f9bc",
+      "delegation_scope": "Contract-test surface for the phase-boundary continuation-pair write and the phase-artifact terminal-state reconcile (test file + markers), locked in discovery/research.",
+      "delegation_rationale": "Exact contract-test file names and assertion markers are an implementation-surface detail to be locked in discovery, not fixed at intake.",
+      "delegation_confidence": "high"
+    },
+    {
+      "topic_key": "done_definition",
+      "satisfied_by": "answer_ref",
+      "quoted_user_text": "no repair-only re-mint and no separate repair child on a later run, and US-0163 and US-0164 are not reopened",
+      "intake_run_id": "ir-20261025T142605Z-bug0044-continuation-pair",
+      "turn_index": 4,
+      "ref": "ie:ir-20261025T142605Z-bug0044-continuation-pair:4:e50f268b271d18a1"
+    }
+  ],
+  "duplicate_check_pass": true,
+  "duplicate_check_notes": "BUG-0015..BUG-0043 reviewed; BUG-0016/BUG-0038 (permission dead-ends) and BUG-0035 (resume-brief ownership) are DONE and related but not this continuation-pair-omission class; BUG-0040..BUG-0043 (just filed) are distinct defect classes and are NOT reopened; US-0163/US-0164 are citations only, not edited.",
+  "decomposition_verdict": "single_bug",
+  "decomposition_rationale": "The recurring class is one defect: a phase child does not complete its canonical handoff/reconcile obligations before STOP; the continuation-pair omission and the stale-UAT terminal-state manifestation are the same class.",
+  "decision_gate": false,
+  "bug_id": "BUG-0044"
+}

@@ -16,16 +16,19 @@ import {
 } from "@its-magic/protocol";
 import type { SessionSupervisor } from "@its-magic/role-runtime";
 import {
+	type ConfigView,
 	crashResume,
 	createCommandRouter,
 	createOperatorCommandFacade,
 	createOperatorObservabilityService,
 	createOperatorSession,
 	createRunsStore,
+	createWorkflowEngine,
+	executeOperatorCommand,
 	readRepoResume,
 	reconcileOperationalLedger,
 } from "@its-magic/runtime-core";
-import type { RuntimeHost } from "@its-magic/runtime-host";
+import { type RuntimeHost, readHostAppHealth } from "@its-magic/runtime-host";
 import { WebSocketServer } from "ws";
 import { DaemonEventStore } from "./event-store.ts";
 
@@ -48,6 +51,8 @@ export interface StartedDaemon {
 	close: () => Promise<void>;
 	workflowEngineCount: () => number;
 	session: ReturnType<typeof createOperatorSession>;
+	requestApproval: (run_id: string, approval_id: string) => void;
+	appendSeqHole: (run_id: string) => number;
 }
 
 let singletonWorkflowEngines = 0;
@@ -116,21 +121,45 @@ export async function startDaemonServer(deps: DaemonServerDeps): Promise<Started
 	const observability = createOperatorObservabilityService({
 		projectRoot: deps.projectRoot,
 		store,
+		config: deps.runtime ? (deps.runtime.config as ConfigView) : {},
+		ports: {
+			readAppHealth: () => readHostAppHealth(deps.runtime?.app),
+		},
 	});
 	const session = createOperatorSession({
 		onCancel: () => {
 			eventStore.append(activeRunId, "run.cancelled", { source: "daemon" });
 		},
 	});
+	let kernelRoot = deps.projectRoot;
+	if (deps.runtime) {
+		try {
+			const located = await deps.runtime.bridge.locateProjectKernel({ cwd: deps.projectRoot });
+			kernelRoot = located.kernelRoot;
+		} catch {
+			kernelRoot = deps.projectRoot;
+		}
+	}
+	const engineConfig = (deps.runtime ? deps.runtime.config : {}) as ConfigView;
+	const engine = createWorkflowEngine({
+		supervisor,
+		config: engineConfig,
+		kernelBridge: deps.runtime?.bridge,
+		kernelRoot,
+		app: deps.runtime?.app,
+		browser: deps.runtime?.browser,
+		evidenceRoot: deps.projectRoot,
+	});
 	singletonWorkflowEngines += 1;
 
 	if (!deps.skipStartupReconcile) {
 		try {
 			const { brief, state_md } = readRepoResume(deps.projectRoot);
+			const resumeConfig = deps.runtime ? deps.runtime.config : {};
 			await crashResume({
 				supervisor,
 				store,
-				config: {},
+				config: resumeConfig,
 				repo: { backlog_status: "OPEN", acceptance_done: false, sprint_done: false },
 				brief,
 				state_md,
@@ -230,7 +259,7 @@ export async function startDaemonServer(deps: DaemonServerDeps): Promise<Started
 				const client_id = String(params.client_id ?? "anonymous");
 				const client_kind = String(params.client_kind ?? "test");
 				if (role === "controller") {
-					if (controllerClient) {
+					if (controllerClient && controllerClient.client_id !== client_id) {
 						respond(jsonRpcError(id, -32000, DAEMON_CONTROLLER_BUSY, DAEMON_CONTROLLER_BUSY));
 						return;
 					}
@@ -252,10 +281,29 @@ export async function startDaemonServer(deps: DaemonServerDeps): Promise<Started
 			}
 			if (method === "command.submit") {
 				const argv = (params.argv as string[]) ?? [];
-				const outcome = await facade.routeArgv(argv);
 				const run_id = String(params.run_id ?? activeRunId);
-				eventStore.append(run_id, "command.submitted", { argv, outcome });
-				respond({ jsonrpc: "2.0", id, result: redactEventPayload({ ok: true, outcome }) });
+				const outcome = await executeOperatorCommand(argv, run_id, {
+					projectRoot: deps.projectRoot,
+					store,
+					engine,
+					observability,
+					facade,
+					supervisor,
+					config: engineConfig,
+					intel: deps.runtime?.intel,
+					kernelRoot,
+					routeInput: {
+						orchestrator_run_id: run_id,
+						model_id: "inherit",
+						kernelRoot,
+					},
+					persistEvent: (id, kind, payload) => {
+						eventStore.append(id, kind, payload);
+					},
+					appService: deps.runtime?.app,
+					browserService: deps.runtime?.browser,
+				});
+				respond({ jsonrpc: "2.0", id, result: redactEventPayload(outcome) });
 				return;
 			}
 			if (method === "approval.respond") {
@@ -352,6 +400,10 @@ export async function startDaemonServer(deps: DaemonServerDeps): Promise<Started
 		baseUrl: `http://${host}:${port}`,
 		session,
 		workflowEngineCount: () => singletonWorkflowEngines,
+		requestApproval: (run_id: string, approval_id: string) => {
+			requestApprovalOnDaemon(eventStore, run_id, approval_id);
+		},
+		appendSeqHole: (run_id: string) => eventStore.appendSeqHole(run_id),
 		close: async () => {
 			for (const client of wss.clients) {
 				client.close();

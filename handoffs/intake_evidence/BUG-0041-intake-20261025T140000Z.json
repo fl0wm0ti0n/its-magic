@@ -1,0 +1,69 @@
+{
+  "selected_pack": "small-intake-pack",
+  "intake_run_id": "ir-20261025T140000Z-intake-brief-anchor",
+  "writer_id": "po-gpt-20261025-intake-brief-anchor",
+  "INTAKE_GUIDED_MODE": 0,
+  "INTAKE_WORK_ITEM_KIND": "bug",
+  "requested_mode": "bug",
+  "intake_boundary_utc": "2026-10-25T14:00:00Z",
+  "ID_NAMESPACE_BOOTSTRAP": 0,
+  "WORK_KIND_ROUTING": 0,
+  "EARLY_RESEARCH": 0,
+  "asked_topics": [
+    "outcome_success_criteria",
+    "impacted_components",
+    "constraints_compatibility_risks",
+    "required_tests_acceptance_checks",
+    "done_definition"
+  ],
+  "missing_topics": [],
+  "assumptions_confirmed": "(none)",
+  "topic_coverage": [
+    {
+      "topic_key": "outcome_success_criteria",
+      "satisfied_by": "answer_ref",
+      "quoted_user_text": "Nach einem Bug-Intake soll der Resume-Brief wieder einen gültigen Anker tragen, nicht nur Breadcrumb-Felder ohne Strict-Proof-Tuple.",
+      "intake_run_id": "ir-20261025T140000Z-intake-brief-anchor",
+      "turn_index": 0,
+      "ref": "ie:ir-20261025T140000Z-intake-brief-anchor:0:8f7639d1aa13ad62"
+    },
+    {
+      "topic_key": "impacted_components",
+      "satisfied_by": "answer_ref",
+      "quoted_user_text": "Der Bug-Writer intake_bug_resume_brief_refresh.py und die Resume-Brief-Grenzen sind die betroffene Fläche.",
+      "intake_run_id": "ir-20261025T140000Z-intake-brief-anchor",
+      "turn_index": 1,
+      "ref": "ie:ir-20261025T140000Z-intake-brief-anchor:1:a1594ccaaf295417"
+    },
+    {
+      "topic_key": "constraints_compatibility_risks",
+      "satisfied_by": "answer_ref",
+      "quoted_user_text": "Die US-0164-Boundary-Klausel bleibt: ein Story-Intake aktualisiert den Resume-Brief bewusst nicht; nur der Bug-Pfad darf ihn aktualisieren.",
+      "intake_run_id": "ir-20261025T140000Z-intake-brief-anchor",
+      "turn_index": 2,
+      "ref": "ie:ir-20261025T140000Z-intake-brief-anchor:2:484a435d61ccabff"
+    },
+    {
+      "topic_key": "required_tests_acceptance_checks",
+      "satisfied_by": "answer_ref",
+      "quoted_user_text": "Ich empfehle den Standard-Bug-Flow plus eine Intake-Repro, die den Anker nach dem Intake bestätigt.",
+      "intake_run_id": "ir-20261025T140000Z-intake-brief-anchor",
+      "turn_index": 3,
+      "ref": "ie:ir-20261025T140000Z-intake-brief-anchor:3:7918089528aa2cf9"
+    },
+    {
+      "topic_key": "done_definition",
+      "satisfied_by": "answer_ref",
+      "quoted_user_text": "Empfohlen ist, dass nach einem Bug-Intake der Anker gültig ist, ohne die Story-Grenze oder RESUME_BRIEF_AUTO_REFRESH=0 aufzuweichen.",
+      "intake_run_id": "ir-20261025T140000Z-intake-brief-anchor",
+      "turn_index": 4,
+      "ref": "ie:ir-20261025T140000Z-intake-brief-anchor:4:19dc0e7e3481f90e"
+    }
+  ],
+  "duplicate_check_pass": true,
+  "duplicate_check_notes": "The bug intake writer refreshes only breadcrumb fields and omits the strict proof tuple, so the post-intake anchor is not valid. This is a writer-side defect, distinct from the US-0164 story boundary that intentionally does not refresh the brief.",
+  "decomposition_verdict": "single_bug",
+  "decomposition_rationale": "One writer surface is incomplete: the post-intake refresh emits breadcrumb fields but not a valid continuation anchor. Writer output and the anchor repro are one repair.",
+  "decision_gate": false,
+  "bug_id": "BUG-0041"
+}

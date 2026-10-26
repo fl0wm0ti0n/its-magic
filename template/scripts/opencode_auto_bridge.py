@@ -23,6 +23,7 @@ _SCRIPT_DIR = Path(__file__).resolve().parent
 if str(_SCRIPT_DIR) not in sys.path:
     sys.path.insert(0, str(_SCRIPT_DIR))
 import host_runtime_config_lib as hrc  # noqa: E402
+import token_cost_lib  # noqa: E402  (BUG-0044 strict-proof recompute)
 
 EXIT_OK = 0
 EXIT_FAIL = 1
@@ -809,6 +810,118 @@ def validate_resume_pair(
         "key": key_s,
         "next_scheduled_phase": rec_s.get("next_scheduled_phase"),
     }
+
+
+def phase_boundary_self_check(
+    repo: Path,
+    *,
+    writer_role: str,
+    state_json: str,
+    brief_json: str,
+) -> dict:
+    """BUG-0044 Lock 4: completed phase child's pre-STOP pair self-check.
+
+    Composes the existing DEC-0153 state/brief pair validation
+    (`validate_resume_pair`) with two pre-checks so that a phase child can
+    verify its own state-bottom checkpoint and brief-top pointer before
+    emitting its STOP reason (architecture `# BUG-0044` Lock 1, step 5):
+      1. BOTH sides parse as a JSON object -> otherwise RESUME_BRIEF_UNPARSEABLE
+         (predicate `pair_json_unparseable:state` / `pair_json_unparseable:brief`);
+      2. the canonical forms are byte-identical -> otherwise RESUME_BRIEF_STALE
+         (predicate `pair_not_byte_identical`);
+      3. the strict 6-tuple proof hash recomputed from the STATE side's
+         strict-proof fields (via `token_cost_lib.compute_strict_proof_hash`)
+         equals the stored `proof_hash` -> otherwise RESUME_BRIEF_STALE
+         (predicate `proof_hash_mismatch`). Only when all six fields are
+         well-typed; malformed types defer to the composed validator below,
+         which retains its own reason code and predicate.
+    Step 4 delegates to `validate_resume_pair(writer_role=<own role>)`, which
+    retains every existing predicate (unauthorized writer role, writer-role
+    mismatch, pair-key/field conflict, replay).
+
+    Read-only: this helper NEVER writes either artifact, NEVER mints a proof,
+    and NEVER grants the parent any authority. `RESUME_BRIEF_AUTO_REFRESH=0`
+    remains an absolute prohibition. A missing/conflicting pair is a
+    deterministic fail-closed stop (no state-alone fallback, no auto-refresh,
+    no silent continue); `next_scheduled_phase` is only reported on the
+    delegated validator's success path.
+    """
+    # -- step 1: both sides must parse as a JSON object --------------------
+    try:
+        state_rec = json.loads(state_json)
+    except (TypeError, ValueError):
+        return {
+            "ok": False,
+            "reasonCode": RESUME_BRIEF_UNPARSEABLE,
+            "predicate": "pair_json_unparseable:state",
+            "next_scheduled_phase": None,
+        }
+    try:
+        brief_rec = json.loads(brief_json)
+    except (TypeError, ValueError):
+        return {
+            "ok": False,
+            "reasonCode": RESUME_BRIEF_UNPARSEABLE,
+            "predicate": "pair_json_unparseable:brief",
+            "next_scheduled_phase": None,
+        }
+    if not isinstance(state_rec, dict):
+        return {
+            "ok": False,
+            "reasonCode": RESUME_BRIEF_UNPARSEABLE,
+            "predicate": "pair_record_not_object:state",
+            "next_scheduled_phase": None,
+        }
+    if not isinstance(brief_rec, dict):
+        return {
+            "ok": False,
+            "reasonCode": RESUME_BRIEF_UNPARSEABLE,
+            "predicate": "pair_record_not_object:brief",
+            "next_scheduled_phase": None,
+        }
+    # -- step 2: canonical byte-identity (normalized form) -----------------
+    if token_cost_lib.canonical_json_dumps(state_rec) != token_cost_lib.canonical_json_dumps(brief_rec):
+        return {
+            "ok": False,
+            "reasonCode": RESUME_BRIEF_STALE,
+            "predicate": "pair_not_byte_identical",
+            "next_scheduled_phase": None,
+        }
+    # -- step 3: strict 6-tuple proof hash recompute (STATE side) ----------
+    orch_id = state_rec.get("orchestrator_run_id")
+    proof_id = state_rec.get("runtime_proof_id")
+    phase_id = state_rec.get("phase_id")
+    role_field = state_rec.get("role", writer_role)
+    issued_at = state_rec.get("proof_issued_at")
+    ttl_seconds = state_rec.get("proof_ttl_seconds")
+    if (
+        isinstance(orch_id, str)
+        and isinstance(proof_id, str)
+        and isinstance(phase_id, str)
+        and isinstance(role_field, str)
+        and isinstance(issued_at, str)
+        and isinstance(ttl_seconds, int)
+        and not isinstance(ttl_seconds, bool)
+    ):
+        recomputed = token_cost_lib.compute_strict_proof_hash(
+            orch_id, proof_id, phase_id, role_field, issued_at, ttl_seconds
+        )
+        if recomputed != state_rec.get("proof_hash"):
+            return {
+                "ok": False,
+                "reasonCode": RESUME_BRIEF_STALE,
+                "predicate": "proof_hash_mismatch",
+                "next_scheduled_phase": None,
+            }
+    # malformed strict-proof types defer to the composed validator below,
+    # which retains its own reason code and predicate.
+    # -- step 4: composed DEC-0153 pair validation (retained predicates) ---
+    return validate_resume_pair(
+        repo,
+        writer_role=writer_role,
+        state_tuple=state_rec,
+        brief_tuple=brief_rec,
+    )
 
 
 def _write_resume_pointer_block(

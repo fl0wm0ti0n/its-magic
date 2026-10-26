@@ -423,6 +423,36 @@ export function inferRecoverableClass(
   return null;
 }
 
+// US-0164 / DEC-0155 — the five self-resolvable gate ids (default-enabled set).
+// `pause_request` + gate-override-forbidden are NEVER here (safety floor).
+// `decision_gate` is in the set but propose-and-hold only (never auto-continue).
+export const SELFRESOLVE_GATE_TOKENS: readonly string[] = [
+  "error",
+  "missing_input",
+  "decision_gate",
+  "security",
+  "publish",
+];
+
+/**
+ * US-0164 / DEC-0155 — map a child stop to its self-resolve gate id, or null
+ * when the stop is not a gate (so the US-0158 recoverable-class / legacy path
+ * is untouched). The driver is the SOT: it validates the gate id (unknown →
+ * HOST_CONFIG_INVALID fail-closed) and owns the continue-vs-stop decision.
+ */
+export function selfresolveGateForStop(
+  stopReason: string | null | undefined,
+  reasonCode: string | null | undefined,
+): string | null {
+  if (stopReason && SELFRESOLVE_GATE_TOKENS.includes(stopReason)) {
+    return stopReason;
+  }
+  if (reasonCode && SELFRESOLVE_GATE_TOKENS.includes(reasonCode)) {
+    return reasonCode;
+  }
+  return null;
+}
+
 export interface ContinueSamePhaseParentDecision {
   writer: string;
   writes_state: false;
@@ -703,6 +733,10 @@ export interface StopMatrixArgs {
   reasonCode?: string;
   blockedSubcode?: string;
   deniedAgent?: string;
+  // US-0164 / DEC-0155 — optional gate id for the additive self-resolve
+  // stop-matrix branch (default-off). Present → the driver's --selfresolve-gate
+  // branch is reached; absent → today's JSON is byte-identical (US-0156 style).
+  selfresolveGate?: string;
 }
 
 export interface StopMatrixResult {
@@ -711,6 +745,17 @@ export interface StopMatrixResult {
   action?: string;
   next_phase?: string;
   stop_reason?: string;
+  // US-0164 / DEC-0155 — surfaced from the driver payload so the lifecycle can
+  // honor the new actions (propose-and-hold decision_gate, self-resolve
+  // exhaustion, one-switch provider override, budget carry-over). Absent on the
+  // legacy (default-off) path → today's behavior is byte-identical.
+  reason_code?: string;
+  selfresolve_gate?: string;
+  decision_gate?: boolean;
+  provider_switch?: boolean;
+  switched_alias?: string;
+  switched_tier?: string;
+  budget_carryover?: boolean;
   raw?: unknown;
 }
 
@@ -756,6 +801,10 @@ export function dispatchStopMatrix(
   if (args.reasonCode) pyArgs.push("--reason-code", args.reasonCode);
   if (args.blockedSubcode) pyArgs.push("--blocked-subcode", args.blockedSubcode);
   if (args.deniedAgent) pyArgs.push("--denied-agent", args.deniedAgent);
+  // US-0164 / DEC-0155 — additive; absent → the driver's self-resolve branch is
+  // not reached and the JSON stays byte-identical to today. Mutually exclusive
+  // with --recoverable-class by construction (gate id vs recoverable class).
+  if (args.selfresolveGate) pyArgs.push("--selfresolve-gate", args.selfresolveGate);
   const proc = spawnFn(pyArgs);
   if (proc.status !== 0) {
     return { ok: false, reasonCode: REASON_CODES.DRIVER_INVOKE_FAILED };
@@ -766,12 +815,30 @@ export function dispatchStopMatrix(
   } catch {
     return { ok: false, reasonCode: REASON_CODES.DRIVER_INVOKE_FAILED };
   }
-  const obj = parsed as { action?: string; next_phase?: string; stop_reason?: string };
+  const obj = parsed as {
+    action?: string;
+    next_phase?: string;
+    stop_reason?: string;
+    reason_code?: string;
+    selfresolve_gate?: string;
+    decision_gate?: boolean;
+    provider_switch?: boolean;
+    switched_alias?: string;
+    switched_tier?: string;
+    budget_carryover?: boolean;
+  };
   return {
     ok: true,
     action: obj.action,
     next_phase: obj.next_phase,
     stop_reason: obj.stop_reason,
+    reason_code: obj.reason_code,
+    selfresolve_gate: obj.selfresolve_gate,
+    decision_gate: obj.decision_gate,
+    provider_switch: obj.provider_switch,
+    switched_alias: obj.switched_alias,
+    switched_tier: obj.switched_tier,
+    budget_carryover: obj.budget_carryover,
     raw: parsed,
   };
 }
@@ -1426,6 +1493,83 @@ function continueRecoverableSpawn(
 }
 
 /**
+ * US-0164 / DEC-0155 — additive self-resolve gate respawn (T-001/AC-1).
+ * Mirrors continueRecoverableSpawn but passes --selfresolve-gate to the driver
+ * (the SOT). Bounded = one attempt per (phaseId, gate) via the SAME
+ * continueAttempts Set. Fail-closed returns the ORIGINAL child stop reasonCode,
+ * so when the gate is not enabled (default-off) the outcome is byte-identical
+ * to today. The driver never inspects/edits/re-scores the gate — the SAME
+ * unchanged gate check re-runs in the spawned same-phase child. decision_gate
+ * is propose-and-hold (never auto-continue); pause_request is never reached here
+ * (safety floor).
+ */
+function continueSelfresolveGateSpawn(
+  spawnResult: SpawnResult,
+  phaseId: string,
+  role: string,
+  stopFn: NonNullable<AutoLifecycleOpts["dispatchStopMatrixFn"]>,
+  opts: AutoLifecycleOpts,
+  continueAttempts: Set<string>,
+  storyId?: string,
+  sprintId?: string,
+): { respawn: boolean; reasonCode?: string } {
+  const parentDecision = continueSamePhaseParentDecision("orchestrator");
+  if (
+    parentDecision.writes_state ||
+    parentDecision.writes_brief ||
+    parentDecision.sets_resume_brief_auto_refresh ||
+    parentDecision.calls_write_resume_pair
+  ) {
+    return {
+      respawn: false,
+      reasonCode: REASON_CODES.MANUAL_PHASE_WRITE_DENIED,
+    };
+  }
+  const gate = selfresolveGateForStop(
+    spawnResult.stopReason,
+    spawnResult.reasonCode,
+  );
+  if (!gate) {
+    return { respawn: false, reasonCode: spawnResult.reasonCode };
+  }
+  const attemptKey = `${phaseId}\0${gate}`;
+  if (continueAttempts.has(attemptKey)) {
+    // Second hit per (phaseId, gate) → the driver returns
+    // SELFRESOLVE_ATTEMPT_EXHAUSTED; we fail closed with the original stop.
+    return { respawn: false, reasonCode: spawnResult.reasonCode };
+  }
+  const stop = stopFn(
+    {
+      phase: phaseId,
+      role,
+      story: storyId,
+      sprint: sprintId,
+      orchestratorRunId: opts.orchestratorRunId,
+      stopReason: spawnResult.stopReason,
+      reasonCode: spawnResult.reasonCode,
+      blockedSubcode: spawnResult.blockedSubcode,
+      deniedAgent: spawnResult.deniedAgent,
+      selfresolveGate: gate,
+    },
+    opts.stopMatrixOpts,
+  );
+  if (!stop.ok) {
+    return {
+      respawn: false,
+      reasonCode: stop.reasonCode ?? spawnResult.reasonCode,
+    };
+  }
+  if (stop.action === "continue_same_phase" && stop.next_phase === phaseId) {
+    continueAttempts.add(attemptKey);
+    return { respawn: true };
+  }
+  // decision_gate propose-and-hold / safety floor / bounded exhaustion /
+  // gate-not-enabled (default-off) → fail closed with the ORIGINAL child stop
+  // reason (byte-identical to today when the gate is not enabled).
+  return { respawn: false, reasonCode: spawnResult.reasonCode };
+}
+
+/**
  * Shared internal lifecycle entry (CF4 / DQ2 / DQ4).
  * Owns: in-flight mutex, first-phase selection, spawnPhase + dispatchStopMatrix
  * loop, IsolationEvidence durable write. Used by interactive transform execute
@@ -1532,6 +1676,41 @@ export async function runAutoLifecycle(
         if (continued.respawn) {
           markerGeneration += 1;
           continue;
+        }
+        // US-0164 / DEC-0155 — additive self-resolve gate path. Engaged ONLY
+        // when the stop is NOT one of US-0158's four recoverable classes
+        // (guarantees the US-0158 path is untouched) and maps to a gate id.
+        // The driver (SOT) decides continue-vs-stop; default-off (gate not in
+        // AUTO_SELFRESOLVE_GATES) → byte-identical outcome (original stop).
+        // decision_gate is propose-and-hold (never auto-continue); pause_request
+        // is never reached here (safety floor).
+        if (
+          inferRecoverableClass(spawnResult) === null &&
+          selfresolveGateForStop(
+            spawnResult.stopReason,
+            spawnResult.reasonCode,
+          )
+        ) {
+          const gateContinued = continueSelfresolveGateSpawn(
+            spawnResult,
+            phaseId,
+            role,
+            stopFn,
+            opts,
+            continueAttempts,
+            continuationStoryId,
+            continuationSprintId,
+          );
+          if (gateContinued.respawn) {
+            markerGeneration += 1;
+            continue;
+          }
+          return {
+            ok: false,
+            reasonCode:
+              gateContinued.reasonCode ?? continued.reasonCode ?? spawnResult.reasonCode,
+            cycles,
+          };
         }
         return {
           ok: false,

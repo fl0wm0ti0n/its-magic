@@ -1,0 +1,69 @@
+{
+  "selected_pack": "small-intake-pack",
+  "intake_run_id": "ir-20261025T140000Z-installer-sovereign-frame",
+  "writer_id": "po-gpt-20261025-installer-sovereign-frame",
+  "INTAKE_GUIDED_MODE": 0,
+  "INTAKE_WORK_ITEM_KIND": "bug",
+  "requested_mode": "bug",
+  "intake_boundary_utc": "2026-10-25T14:00:00Z",
+  "ID_NAMESPACE_BOOTSTRAP": 0,
+  "WORK_KIND_ROUTING": 0,
+  "EARLY_RESEARCH": 0,
+  "asked_topics": [
+    "outcome_success_criteria",
+    "impacted_components",
+    "constraints_compatibility_risks",
+    "required_tests_acceptance_checks",
+    "done_definition"
+  ],
+  "missing_topics": [],
+  "assumptions_confirmed": "(none)",
+  "topic_coverage": [
+    {
+      "topic_key": "outcome_success_criteria",
+      "satisfied_by": "answer_ref",
+      "quoted_user_text": "Eine frische Installation soll die kritische Sovereign-Frame-Skripte ausliefern, damit CROSS_MODEL_REVIEW=1 den Cross-Model-Critic spawnen kann.",
+      "intake_run_id": "ir-20261025T140000Z-installer-sovereign-frame",
+      "turn_index": 0,
+      "ref": "ie:ir-20261025T140000Z-installer-sovereign-frame:0:958fe01c56716b82"
+    },
+    {
+      "topic_key": "impacted_components",
+      "satisfied_by": "answer_ref",
+      "quoted_user_text": "Das Installer-Eigenschaftsmanifest und das Sovereign-Critic-Frame sind die betroffene Fläche; die 44-Skript-Differenz ist Discovery-Material.",
+      "intake_run_id": "ir-20261025T140000Z-installer-sovereign-frame",
+      "turn_index": 1,
+      "ref": "ie:ir-20261025T140000Z-installer-sovereign-frame:1:cf8fd01746ec64ae"
+    },
+    {
+      "topic_key": "constraints_compatibility_risks",
+      "satisfied_by": "answer_ref",
+      "quoted_user_text": "Die Manifest-Symmetrie aktiv+Template bleibt; das fail-closed Default bleibt; das OpenCode-Plugin ist eine eigene Defekt-Klasse.",
+      "intake_run_id": "ir-20261025T140000Z-installer-sovereign-frame",
+      "turn_index": 2,
+      "ref": "ie:ir-20261025T140000Z-installer-sovereign-frame:2:5584f6190b5b9ac8"
+    },
+    {
+      "topic_key": "required_tests_acceptance_checks",
+      "satisfied_by": "answer_ref",
+      "quoted_user_text": "Ich empfehle den Standard-Bug-Flow plus eine Install-Repro, die die Manifest-Vollständigkeit der kritischen Skripte prüft.",
+      "intake_run_id": "ir-20261025T140000Z-installer-sovereign-frame",
+      "turn_index": 3,
+      "ref": "ie:ir-20261025T140000Z-installer-sovereign-frame:3:ddda0f0cfb650b44"
+    },
+    {
+      "topic_key": "done_definition",
+      "satisfied_by": "answer_ref",
+      "quoted_user_text": "Empfohlen ist, dass die kritischen Sovereign-Frame-Skripte installiert werden und der Manifest-Vollständigkeitstext sie abdeckt.",
+      "intake_run_id": "ir-20261025T140000Z-installer-sovereign-frame",
+      "turn_index": 4,
+      "ref": "ie:ir-20261025T140000Z-installer-sovereign-frame:4:442845732bd39e38"
+    }
+  ],
+  "duplicate_check_pass": true,
+  "duplicate_check_notes": "A fresh install omits the entire sovereign_* script family plus referenced scripts because the installer-owned-paths manifest does not list them, so CROSS_MODEL_REVIEW=1 fails with CROSS_MODEL_CRITIC_SPAWN_FAILED. This is the BUG-0001/BUG-0003 installer-completeness line, not a writer/verifier asymmetry.",
+  "decomposition_verdict": "single_bug",
+  "decomposition_rationale": "One installer-completeness outcome is broken: the critical sovereign frame is not delivered on fresh install. Manifest listing and the install repro are one repair.",
+  "decision_gate": false,
+  "bug_id": "BUG-0043"
+}

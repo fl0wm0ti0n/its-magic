@@ -5,6 +5,15 @@ export {
 	type OperatorCommandFacadeDeps,
 } from "./operator-command-facade.ts";
 export {
+	executeOperatorCommand,
+	OPERATOR_DISPOSITIONS,
+	OPERATOR_RUN_ID,
+	type OperatorCommandResult,
+	type OperatorDisposition,
+	type OperatorExecutorDeps,
+	type OperatorIntelPort,
+} from "./operator-executor.ts";
+export {
 	createOperatorObservabilityService,
 	type OperatorObservabilityDeps,
 	type OperatorObservabilityPorts,

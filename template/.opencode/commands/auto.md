@@ -57,6 +57,7 @@ evidence.
 - Deterministic stop reasons (see rich `.cursor/commands/auto.md` Stop matrix): `completed`, `decision_gate`,
   `missing_input`, `pause_request`, `loop_max`, `error`, `blocked`.
 - A recoverable blocker, an AI error, an aborted phase, and a permission dead-end continue in this same run. Quality, UAT, security, and budget stops still terminate the run. The parent stays read-only.
+- US-0164 / DEC-0155 — gate cause-resolution is a same-run, same-phase continuation, not a gate bypass. When the Stop-Matrix decision for an active gate is `continue_same_phase` (gate in the validated `AUTO_SELFRESOLVE_GATES` set + safety-floor guards pass), respawn that same phase once (one attempt per phase+gate) so the unchanged gate check re-runs against the child's repair; the gate is never weakened, flipped, or removed, and a still-failing gate halts the run. `pause_request` is never self-resolved (hard in every configuration); `decision_gate` is propose-and-hold, never auto-continue; critical `missing_input` stays a hard stop; unknown gate id fails closed with `HOST_CONFIG_INVALID` (offending key+value, not a new reason code). No `.env` read, no automatic npm publish, no automatic git push. The parent stays read-only and `RESUME_BRIEF_AUTO_REFRESH=0` remains an absolute prohibition.
 
 ## Fail-safe reason codes
 

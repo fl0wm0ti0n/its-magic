@@ -15,6 +15,10 @@ export interface ConfigView {
 		SOVEREIGN_DRAIN_AUTO_ACCEPT?: string;
 	};
 	phase?: Record<string, string>;
+	/** Configured release targets. Not a new cap key. */
+	release?: {
+		targets?: Array<{ kind: string; target_id: string; endpoint?: string }>;
+	};
 }
 
 function flagOf(config: ConfigView, key: string, fallback = ""): string {

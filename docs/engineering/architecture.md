@@ -1,284 +1,4 @@
 
-# US-0147 — Installation, update, and existing-project adoption
-
-## Overview
-
-US-0147 delivers triple-installer parity bootstrap for the standalone operator product: template-mirrored `.its-magic/standalone/` workspace, `itsm` shim, kernel-bridge preflight, `runtime-metadata.json`, adoption classifier, explicit browser setup, and uninstall/coexistence semantics. `DEC-0147` and `R-0144` are authoritative. **Approach A1 (A\*)** is locked. Compose US-0146 delivered CLI/TUI/operator facades (wire only — do not rewrite `runtime-core/src/operator/`), US-0134 kernel-bridge handshake, US-0008/US-0018 installers + manifest, US-0055 installer QA patterns, US-0142 browser-uat for `itsm setup browser`. No host `.cursor/` / `.opencode/` rewrite. No US-0148 daemon protocol. No kit `cli.json` / plugin `tui.json`. No `.env` access.
-
-**Research anchor**: **R-0144** (DQ1–DQ10 LOCKED). **Companion DEC**: **DEC-0147** (Accepted — authored THIS phase). **baseline_h2_count (pre-mutate)**: `0`.
-**Fresh context marker**: `tl-US0147-architecture-20260917T204000Z-fresh`
-**Orchestrator run id**: `auto-20260917-us0146` (drain story **2 of 3**; `backlog_drain_stories_remaining_budget=1`)
-**Timestamp**: 2026-09-17T20:40:00Z (UTC)
-**Verdict**: PASS
-**Next**: `/sprint-plan` **S0154** (fresh **tech-lead**). CROSS_MODEL_REVIEW=0 — do **not** spawn sovereign-critic from this subagent. Status remains OPEN. AC-1..AC-8 remain unchecked.
-
-## Locked design (A1)
-
-| DQ | Lock |
-|----|------|
-| DQ1 | Template mirror → `.its-magic/standalone/`; kit `files` omit root `standalone/`; FRAMEWORK_KIT_REPO in-tree pin for kit-dev |
-| DQ2 | `bootstrap_standalone_runtime_installer_hook` in `installer.py`; PS1/sh parity; repair via `--standalone-bootstrap` |
-| DQ3 | `classifyProjectAdoptionProfile` + US-0134 locate; `ADOPT_PARTIAL_MARKERS` fail-closed |
-| DQ4 | Fresh init via `template/` skeleton; no US-0001..0132 backlog clone |
-| DQ5 | `install_include_paths` vs `deny_overwrite`; staged rollback `INSTALL_INTERRUPTED_ROLLBACK_OK` |
-| DQ6 | Kernel preflight before shim; `.its-magic/standalone/runtime-metadata.json` |
-| DQ7 | Explicit `itsm setup browser`; `ITS_MAGIC_INSTALL_BROWSER=1` opt-in silent path |
-| DQ8 | No `LegacyScratchpadAdapter` at install; `SCRATCHPAD_LEGACY_KEYS_PRESENT` WARN only |
-| DQ9 | `uninstall-standalone` removes standalone tree/shims; preserves hosts + user layers |
-| DQ10 | Ten `test_us0147_*`; **R-0144**; expected sprint **S0154** |
-
-### Path and hook pins
-
-- `docs/engineering/context/installer-owned-paths.manifest` (+ `template/` mirror) — additive standalone paths, `deny_overwrite`, staging dir
-- `template/.its-magic/standalone/` — workspace mirror (apps/cli, apps/tui, packages/*, lockfile)
-- `installer.py` — `bootstrap_standalone_runtime_installer_hook` (post host-config refresh, pre runbook bootstrap)
-- `.its-magic/bin/itsm` — primary shim → standalone workspace `apps/cli` bin; optional `bin/itsm` opt-in only
-- `.its-magic/standalone/runtime-metadata.json` — kernel/contract/browser_prereq summary
-- `.its-magic/install-staging/<run_id>/` — interrupted update staging
-- `classifyProjectAdoptionProfile` — installer module (Python); compose kernel-bridge locate
-- `itsm setup browser` — delegates to US-0142 Playwright install scoped under standalone `node_modules`
-
-### Reason codes (architecture-owned)
-
-| Code | When |
-|------|------|
-| `STANDALONE_BOOTSTRAP_FAILED` | Hook/npm ci failure |
-| `ADOPT_PARTIAL_MARKERS` | 1–2 of 3 kernel markers |
-| `INSTALL_INTERRUPTED_ROLLBACK_OK` | Staging rollback success |
-| `INSTALL_BROWSER_OFFLINE` | Airgap browser setup |
-| `SCRATCHPAD_LEGACY_KEYS_PRESENT` | Advisory WARN |
-| `KIT_VERSION_COEXISTENCE` | `.its-magic-version` mismatch advisory |
-| `KERNEL_*` | Compose US-0134 (no duplicate validator) |
-
-### Risks (architecture-owned)
-
-| Risk | Mitigation |
-|------|------------|
-| Installer triple drift | Single Python hook entry; US-0055 parity tests |
-| Overwrite user backlog on adopt | deny_overwrite + no historical backlog copy |
-| Publish guard regression | No root `standalone/` in `files`; manifest parity test |
-| Operator expects daemon reconnect | Document US-0146 in-process session; US-0148 OUT |
-| US-0145 deploy scope creep | Explicit OUT in DEC-0147 |
-
-## AC coverage
-
-| AC | Architecture owner | Tests |
-|----|-------------------|-------|
-| AC-1 | DQ1+2+6+7 install/update/rollback/browser | `test_us0147_fresh_install_manifest_parity`, `test_us0147_interrupted_update_rollback`, `test_us0147_kernel_mismatch_fail_closed`, `test_us0147_browser_setup_explicit_gate` |
-| AC-2 | DQ4 fresh skeleton | `test_us0147_fresh_install_manifest_parity` |
-| AC-3 | DQ3 adopt | `test_us0147_adopt_cursor_only_repo`, `test_us0147_adopt_opencode_only_repo`, `test_us0147_adopt_both_hosts_repo` |
-| AC-4 | DQ3 host coexistence | adopt matrix (no host tree mutation) |
-| AC-5 | DQ5 preservation | `test_us0147_upgrade_preserves_user_layers` |
-| AC-6 | DQ6 diagnostics | `test_us0147_kernel_mismatch_fail_closed` |
-| AC-7 | DQ8+9+runbook | `test_us0147_runbook_sections_present`, `test_us0147_uninstall_preserves_hosts` |
-| AC-8 | DQ10 lifecycle matrix | all ten `test_us0147_*` Win+Linux |
-
-## Test contract
-
-1. `test_us0147_fresh_install_manifest_parity` — AC-1/AC-2 triple-installer + template mirror.
-2. `test_us0147_upgrade_preserves_user_layers` — AC-5 locals untouched.
-3. `test_us0147_adopt_cursor_only_repo` — AC-3/AC-4 cursor-only profile.
-4. `test_us0147_adopt_opencode_only_repo` — AC-3/AC-4 opencode-only profile.
-5. `test_us0147_adopt_both_hosts_repo` — AC-3/AC-4 both-host profile.
-6. `test_us0147_interrupted_update_rollback` — AC-1 staging rollback.
-7. `test_us0147_kernel_mismatch_fail_closed` — AC-6 `KERNEL_*` / preflight.
-8. `test_us0147_browser_setup_explicit_gate` — AC-1 explicit browser prereq.
-9. `test_us0147_uninstall_preserves_hosts` — AC-7/AC-9 host preservation.
-10. `test_us0147_runbook_sections_present` — AC-7 runbook + template parity sections.
-
-## Sprint seeds
-
-- T-anch: DEC-0147 and this `# US-0147` section.
-- T-001: manifest + template `.its-magic/standalone/` mirror scaffolding.
-- T-002: `bootstrap_standalone_runtime_installer_hook` + triple-installer wiring.
-- T-003: `classifyProjectAdoptionProfile` + `ADOPT_PARTIAL_MARKERS`.
-- T-004: fresh init + deny_overwrite preservation matrix.
-- T-005: staging dir + interrupted rollback (`INSTALL_INTERRUPTED_ROLLBACK_OK`).
-- T-006: kernel preflight + `runtime-metadata.json`.
-- T-007: `itsm` shim + optional repo-root `bin/itsm` opt-in.
-- T-008: `itsm setup browser` + metadata flags.
-- T-009: `uninstall-standalone` + `KIT_VERSION_COEXISTENCE` advisory.
-- T-010: runbook + template operator doc parity (AC-7).
-- T-011: ten `test_us0147_*` pytest/installer fixtures.
-
-AC coverage is surjective across T-001..T-011; sprint-plan owns **S0154** materialization (≤12 tasks; reconcile T-anch..T-011 to cap). ultra_lean: plan-verify skipped after sprint-plan.
-
-## Template parity (FRAMEWORK_KIT_REPO=1)
-
-- Kit `package.json` `files` continue to omit repo-root `standalone/`; standalone delivered via `template/.its-magic/standalone/` mirror + post-install `npm ci`.
-- No kit `cli.json`; no plugin-local `its-magic-auto/tui.json`; no `auto.md` restore.
-- `template/` manifest updates mirror active `installer-owned-paths.manifest` entries for standalone paths.
-
-## Isolation evidence (US-0048 / DEC-0029)
-
-- `phase_id=architecture`, `role=tech-lead`, `story_id=US-0147`, `sprint_id=none` (S0154 expected at sprint-plan)
-- `delivery_mode=ultra_lean`, `macro_phase=plan`, `drain_story_index=2 of 3`
-- `model_id=inherit` (CROSS_MODEL_REVIEW=0)
-- `fresh_context_marker=tl-US0147-architecture-20260917T204000Z-fresh`, `timestamp=2026-09-17T20:40:00Z` (UTC)
-- `evidence_ref=docs/engineering/research.md ## R-0144; docs/product/backlog.md ## US-0147 discovery_notes; docs/engineering/architecture.md (this # US-0147); decisions/DEC-0147.md; docs/engineering/decisions.md; handoffs/resume_brief.md; handoffs/po_to_tl.md`
-- Fresh tech-lead subagent per BUG-0006; narrow-read only. No `.env`. US-0140..US-0146 DONE compose-only (US-0146 install wiring IN). US-0145/US-0148 OUT. BUG-0022 OPEN not drained. No `/sprint-plan` spawn from this subagent.
-
-## Strict runtime proof (mirror)
-
-- `runtime_proof_id=rp-auto-20260917-us0146-architecture-techlead-20260917T204000Z-US-0147`
-- Canonical hashed payload (DEC-0038, `compute_strict_proof_hash` positional): `{"orchestrator_run_id":"auto-20260917-us0146","phase_id":"architecture","proof_issued_at":"2026-09-17T20:40:00Z","proof_ttl_seconds":3600,"role":"tech-lead","runtime_proof_id":"rp-auto-20260917-us0146-architecture-techlead-20260917T204000Z-US-0147"}`
-- Isolation extras (not hashed): `delivery_mode=ultra_lean`, `macro_phase=plan`, `model_id=inherit`, `sprint_id=none`, `story_id=US-0147`, `drain_story_index=2 of 3`
-- `proof_hash=90A68CD12FB24348890E4DCE47CDCE639736C67C6D91F3914542BFF282A366AD`
-- `proof_ttl=2026-09-17T21:40:00Z`
-- `hash_recompute_confirmation=true` (compute_strict_proof_hash → 90A68CD12FB24348890E4DCE47CDCE639736C67C6D91F3914542BFF282A366AD; independently MATCH; **64 hex** verified)
-- Consumed research proof: `rp-auto-20260917-us0146-research-techlead-20260917T203000Z-US-0147` / `96C81771F5CE812898410E6F551A0C209475E9F31696EA13B07E7CDB1FC39237` — RUNTIME_PROOF_VALID MATCH before TTL `2026-09-17T21:30:00Z` (consumed_at `2026-09-17T20:40:00Z`; not STALE)
-
-# US-0145 — Parallel development, release/deploy, self-healing, and closure
-
-## Overview
-
-US-0145 delivers optional parallel DEV arbitration and typed release/deploy with bounded post-deploy self-healing, composing existing US-0108/US-0109 Python libs through a delivery bridge without rewriting US-0143 drain or amending `RELEASE_GATE_ORDER`. `DEC-0145` and `R-0145` are authoritative. **Approach A1 (A\*)** is locked. Compose US-0140 closure/release ownership, US-0143 scheduling, US-0146 operator observe-only, US-0147 install paths (no deploy install coupling). No US-0148 daemon protocol. No live npm-publish/git-push in tests. No `.env` access.
-
-**Research anchor**: **R-0145** (DQ1–DQ10 LOCKED). **Companion DEC**: **DEC-0145** (Accepted — authored THIS phase). **baseline_h2_count (pre-mutate)**: `0`.
-**Fresh context marker**: `tl-US0145-architecture-20260917T223000Z-fresh`
-**Orchestrator run id**: `auto-20260917-us0146` (drain story **3 of 3**; `backlog_drain_stories_remaining_budget=0`)
-**Timestamp**: 2026-09-17T22:30:00Z (UTC)
-**Verdict**: PASS
-**Next**: `/sprint-plan` **S0155** (fresh **tech-lead**). CROSS_MODEL_REVIEW=0 — do **not** spawn sovereign-critic from this subagent. Status remains OPEN. AC-1..AC-9 remain unchecked.
-
-## Locked design (A1)
-
-| DQ | Lock |
-|----|------|
-| DQ1 | `ParallelDevCoordinator` in `workflow/delivery/`; WorkflowEngine post-execute hook; US-0143 drain unchanged |
-| DQ2 | Bridge → `parallel_dev_arbiter.py`; `.its-magic/worktrees/<run_id>/`; PolicyEngine allowlist additive |
-| DQ3 | Fresh `qa-arbiter` session; evidence packages; merge/reject/conflict paths |
-| DQ4 | `DeliveryResourceGuard`; scratchpad + US-0080 + concurrency caps |
-| DQ5 | `ReleaseTargetAdapter` registry (git_github, npm, ssh_command, docker, custom_command); deploy results ledger |
-| DQ6 | Additive `ReleaseGateInput`; `RELEASE_GATE_ORDER` literal unamended |
-| DQ7 | `ReleaseDeployPipeline.runPostDeployHealing()` → `self_healing_deploy_lib.py`; bounded DEV repair |
-| DQ8 | `DEPLOY_DEFERRED`; no RELEASE_PASS on deploy fail; US-0146 `deploy_state=deferred` |
-| DQ9 | `releaseCannotMarkDone` + `applyClosure` sole DONE authority |
-| DQ10 | Twelve `test_us0145_*`; **R-0145**; expected sprint **S0155** |
-
-### Path and module pins
-
-- `standalone/packages/runtime-core/src/workflow/delivery/parallel-dev.ts` — `ParallelDevCoordinator`
-- `standalone/packages/runtime-core/src/workflow/delivery/release-deploy.ts` — `ReleaseDeployPipeline`, `ReleaseTargetKind`, adapters
-- `standalone/packages/runtime-core/src/workflow/delivery/resource-guard.ts` — `DeliveryResourceGuard`
-- `standalone/packages/kernel-bridge/src/` — `runDeliveryOperation(op, payload)` closed surface
-- `scripts/delivery_runtime_bridge.py` — dispatch to `parallel_dev_arbiter.py` / `self_healing_deploy_lib.py`
-- `.its-magic/worktrees/<run_id>/` — parallel worktree root (gitignored)
-- `handoffs/deploy_results/deploy_results.jsonl` — per-target `DeployTargetResult` ledger
-- `handoffs/parallel_dev_pick.json` — v1 arbiter pick artifact (DEC-0108)
-- `workflow-engine.ts` — hooks after execute PASS; after release artifact PASS before closure handoff
-
-### Bridge operations (architecture-owned)
-
-| Op | Purpose |
-|----|---------|
-| `parallel_dev_spawn` | Start N parallel DEV sessions against worktrees |
-| `parallel_dev_create_worktrees` | Git worktree CRUD via US-0108 |
-| `parallel_dev_list_active` | List active worktrees for run |
-| `parallel_dev_cleanup_orphans` | End-of-run + resume orphan discard |
-| `parallel_dev_merge_winner` | Controlled merge after QA arbiter |
-| `deploy_smoke_probe` | Post-deploy health/smoke |
-| `deploy_healing_retry` | Bounded repair loop via US-0109 |
-
-### Feature flags (default-off)
-
-- `SOVEREIGN_PARALLEL_DEV=0` — parallel coordinator no-op; byte-identical execute path
-- `AUTO_SOVEREIGN_SELF_HEALING_DEPLOY=0` — deploy/healing pipeline no-op when disabled
-
-### Reason codes (architecture-owned)
-
-| Code | When |
-|------|------|
-| `PARALLEL_DEV_WORKTREE_CREATE_FAILED` | Git missing or worktree create error |
-| `PARALLEL_DEV_SELECTION_NO_PASS` | QA arbiter rejects all candidates |
-| `PARALLEL_DEV_MERGE_TIMEOUT` | Merge op exceeded timeout |
-| `PARALLEL_DEV_RESOURCE_CAP_EXHAUSTED` | Parallel cap hit |
-| `DELIVERY_WALL_CLOCK_EXCEEDED` | Delivery wall clock cap |
-| `DELIVERY_TOKEN_BUDGET_EXHAUSTED` | US-0080 budget exceeded |
-| `DELIVERY_CONCURRENT_TEST_CAP` | Test worker cap |
-| `DEPLOY_DEFERRED` / `DEPLOY_HEALING_DEFERRED` | Exhausted healing (US-0107 deferral) |
-
-### Risks (architecture-owned)
-
-| Risk | Mitigation |
-|------|------------|
-| Git worktree flaky on Windows | Fake-git contract doubles; fail-closed create |
-| Gate order regression | Golden test on `RELEASE_GATE_ORDER` literal |
-| Release marks DONE | `test_us0145_release_cannot_mark_done` + `releaseCannotMarkDone` |
-| US-0143 drain creep | Coordinator orthogonal; no CommandRouter edits |
-| US-0148 scope creep | In-process delivery only; no daemon protocol |
-
-## AC coverage
-
-| AC | Architecture owner | Tests |
-|----|-------------------|-------|
-| AC-1 | DQ1+DQ2 isolation + default-off | `test_us0145_parallel_default_off_byte_identical`, `test_us0145_worktree_isolation_no_main_mutation` |
-| AC-2 | DQ4 resource guards | `test_us0145_resource_guard_fail_closed` |
-| AC-3 | DQ3 QA arbiter | `test_us0145_qa_arbiter_fresh_session_winner_merge`, `test_us0145_qa_arbiter_reject_all_evidence` |
-| AC-4 | DQ5 target kinds | `test_us0145_release_target_matrix_dry_run` |
-| AC-5 | DQ6 gates + targets | `test_us0145_release_gates_compose_order_unchanged`, `test_us0145_deploy_target_failure_no_release_pass` |
-| AC-6 | DQ7 smoke repair | `test_us0145_smoke_repair_success_bounded`, `test_us0145_smoke_repair_exhausted_deferred` |
-| AC-7 | DQ8 deferral truth | `test_us0145_smoke_repair_exhausted_deferred`, `test_us0145_deploy_target_failure_no_release_pass` |
-| AC-8 | DQ9 closure boundary | `test_us0145_release_cannot_mark_done`, `test_us0145_closure_requires_valid_release_envelope` |
-| AC-9 | DQ10 ownership matrix | all twelve `test_us0145_*` |
-
-## Test contract
-
-1. `test_us0145_parallel_default_off_byte_identical` — AC-1 default-off boundary.
-2. `test_us0145_worktree_isolation_no_main_mutation` — AC-1 main tree read-only until merge.
-3. `test_us0145_resource_guard_fail_closed` — AC-2 caps.
-4. `test_us0145_qa_arbiter_fresh_session_winner_merge` — AC-3 winner path.
-5. `test_us0145_qa_arbiter_reject_all_evidence` — AC-3 reject-all path.
-6. `test_us0145_release_target_matrix_dry_run` — AC-4 kinds smoke.
-7. `test_us0145_release_gates_compose_order_unchanged` — AC-5 gate order held.
-8. `test_us0145_deploy_target_failure_no_release_pass` — AC-5/AC-7 no false PASS.
-9. `test_us0145_smoke_repair_success_bounded` — AC-6 repair success.
-10. `test_us0145_smoke_repair_exhausted_deferred` — AC-6/AC-7 deferral.
-11. `test_us0145_release_cannot_mark_done` — AC-8/AC-9 release ownership.
-12. `test_us0145_closure_requires_valid_release_envelope` — AC-8/AC-9 closure envelope.
-
-## Sprint seeds
-
-- T-anch: DEC-0145 and this `# US-0145` section.
-- T-001: `delivery_runtime_bridge.py` + `runDeliveryOperation` kernel-bridge surface.
-- T-002: `ParallelDevCoordinator` + WorkflowEngine post-execute hook (default-off).
-- T-003: worktree bridge ops + PolicyEngine allowlist for `.its-magic/worktrees/`.
-- T-004: QA arbiter session + evidence packages + merge/reject paths.
-- T-005: `DeliveryResourceGuard` + reason codes.
-- T-006: `ReleaseTargetAdapter` registry + dry-run/apply/verify + deploy results ledger.
-- T-007: additive `ReleaseGateInput` conjuncts (order array frozen).
-- T-008: `ReleaseDeployPipeline` + post-deploy healing bridge ops.
-- T-009: deferral/truthfulness wiring (`DEPLOY_DEFERRED`, release evidence fail-closed).
-- T-010: closure/release ownership guards compose US-0140.
-- T-011: twelve `test_us0145_*` contract tests (fake git/target doubles).
-
-AC coverage is surjective across T-001..T-011; sprint-plan owns **S0155** materialization (≤12 tasks; reconcile T-anch..T-011 to cap). ultra_lean: plan-verify skipped after sprint-plan.
-
-## Template parity (FRAMEWORK_KIT_REPO=1)
-
-- Kit `package.json` `files` continue to omit repo-root `standalone/`; delivery code lives under standalone workspace only.
-- No kit `cli.json`; no plugin-local `its-magic-auto/tui.json`; no `auto.md` restore.
-- Python bridge scripts remain at repo `scripts/` (compose US-0108/US-0109).
-
-## Isolation evidence (US-0048 / DEC-0029)
-
-- `phase_id=architecture`, `role=tech-lead`, `story_id=US-0145`, `sprint_id=none` (S0155 expected at sprint-plan)
-- `delivery_mode=ultra_lean`, `macro_phase=plan`, `drain_story_index=3 of 3`
-- `model_id=inherit` (CROSS_MODEL_REVIEW=0)
-- `fresh_context_marker=tl-US0145-architecture-20260917T223000Z-fresh`, `timestamp=2026-09-17T22:30:00Z` (UTC)
-- `evidence_ref=docs/engineering/research.md ## R-0145; docs/product/backlog.md ## US-0145 discovery_notes; docs/engineering/architecture.md (this # US-0145); decisions/DEC-0145.md; docs/engineering/decisions.md; handoffs/resume_brief.md; handoffs/po_to_tl.md`
-- Fresh tech-lead subagent per BUG-0006; narrow-read only. No `.env`. US-0140..US-0147 DONE compose-only. US-0148 OUT. BUG-0022 OPEN not drained. No `/sprint-plan` spawn from this subagent.
-
-## Strict runtime proof (mirror)
-
-- `runtime_proof_id=rp-auto-20260917-us0146-architecture-techlead-20260917T223000Z-US-0145`
-- Canonical hashed payload (DEC-0038, `compute_strict_proof_hash` positional): `{"orchestrator_run_id":"auto-20260917-us0146","phase_id":"architecture","proof_issued_at":"2026-09-17T22:30:00Z","proof_ttl_seconds":3600,"role":"tech-lead","runtime_proof_id":"rp-auto-20260917-us0146-architecture-techlead-20260917T223000Z-US-0145"}`
-- Isolation extras (not hashed): `delivery_mode=ultra_lean`, `macro_phase=plan`, `model_id=inherit`, `sprint_id=none`, `story_id=US-0145`, `drain_story_index=3 of 3`
-- `proof_hash=80F3C316829DD9A44996EE4BD61E4FF3AAC0FCF3DC276D02B7FC9585FDA5FBE9`
-- `proof_ttl=2026-09-17T23:30:00Z`
-- `hash_recompute_confirmation=true` (compute_strict_proof_hash → 80F3C316829DD9A44996EE4BD61E4FF3AAC0FCF3DC276D02B7FC9585FDA5FBE9; independently MATCH; **64 hex** verified)
-- Consumed research proof: `rp-auto-20260917-us0146-research-techlead-20260917T220000Z-US-0145` / `CBBD28E0CA404A019F3919AA8870EA7FCC2699CC7AD4576F5F9CEA0323F222C6` — RUNTIME_PROOF_VALID MATCH before TTL `2026-09-17T23:00:00Z` (consumed_at `2026-09-17T22:30:00Z`; not STALE)
-
 # US-0148 — Stable control protocol and recoverable daemon
 
 ## Overview
@@ -2995,3 +2715,167 @@ Six seeds, within `SPRINT_MAX_TASKS=12`. **T-anch** records the BUG-0037 baselin
 ## Isolation
 
 phase_id=architecture; role=tech-lead; model_id=zelisko_llm/qwen3.8-27b; model_provenance=`fresh canonical phase child (tech-lead architecture)`; fresh_context_marker=`tl-BUG0037-architecture-20261020T174525Z-fresh` (0 prior occurrences before mint); timestamp=2026-10-20T17:45:25Z; evidence_ref=`# BUG-0037`, R-0174, the validated research pair, and the 4-file OpenCode parity set. Consumed research pair `auto-20261020-bug0037|bug|BUG-0037|research|rp-auto-20261020-bug0037-research-techlead-20261020T170729Z-BUG-0037` / `062e987b746280dc0f26f400e186ebc2d99b5c788d9966f623c3f062d0a7fa95` recomputed MATCH, in TTL at issue (issued 2026-10-20T17:07:29Z, ttl to 2026-10-20T18:07:29Z). Architecture proof `rp-auto-20261020-bug0037-architecture-techlead-20261020T174525Z-BUG-0037` / `bd788e693cd94177ff573bd07b922e04eae40cc41005eb6139fa24cafe0b471d` (mint == independent recompute, MATCH) recorded in the state-first continuation pair. `CROSS_MODEL_REVIEW=0`; this child does not spawn `/sprint-plan`.
+
+# US-0164 — Gate cause resolution and autonomy continuity
+
+**Verdict: `ARCHITECTURE_PASS`; `decision_gate=false`.** Binding design for **R-0175** (Q1–Q7 RESOLVED, approach **A**). US-0164 stays **OPEN/P1**; AC-1..AC-9 unchecked. **Companion DEC: DEC-0155** (the per-gate cause-resolution + provider-fallback + drain-handoff policy; composes on DEC-0078/DEC-0124/DEC-0086/DEC-0131). No sprint is created; no sprint id is allocated (highest existing sprint is **S0184**). `RESUME_BRIEF_AUTO_REFRESH=0`; `CROSS_MODEL_REVIEW=0`. `baseline_h2_count` before this append is **0**.
+
+## Challenge
+
+An `/auto` run halts at an active gate and the operator must re-invoke. Resolving the **cause** and continuing the same run is the ask; bypassing the gate is forbidden. The candidate approaches: flip every gate to auto-continue (weakes the safety floor; rejected by D1/AC-2); add a 5th reason code for unknown gate ids (violates the D8 four-code lock — reuse `HOST_CONFIG_INVALID`); reset the budget counter after a provider switch (manufactures budget; rejected PO fail-closed); auto-continue on `decision_gate` (a decision the AI cannot make; propose-and-hold instead); a new `MODEL_*` governance key for the switch (violates the US-0132 ignore boundary — read the catalog via `model_tier_lib`); a new ledger surface (reuse the existing names-only `handoffs/auto_block_retry/<run>.jsonl`); a new screen/client (operator lock — existing compact per-phase log). The smallest shape that meets AC-1..AC-9 is an additive, default-off `--selfresolve-gate` branch on the existing Python stop-matrix JSON path, reusing the US-0158 `continue_same_phase` one-attempt machinery, the US-0101/DEC-0086 provider catalog, and the US-0095 drain-advance algorithm.
+
+## Approach locked (A)
+
+1. **Additive `--selfresolve-gate <gate_id>` branch in `run_stop_matrix_json` (Q1/AC-1).** New optional flag, additive to the US-0158 `--recoverable-class` branch. Precedence: `--recoverable-class` present → US-0158 branch wins, unchanged; otherwise the self-resolve branch is evaluated. When `gate_id` is in the validated enabled set AND the safety-floor guards pass → `action=continue_same_phase`, `next_phase=<phase>` — byte-identical to the US-0158 continue branch, so the existing OpenCode plugin respawn-once machinery (one in-memory attempt per `(phaseId, gate)`, fresh marker) is reused unchanged. Absent flag → today's JSON is byte-identical (default-off, US-0156 style). The driver only decides continue-vs-stop; the cause resolution itself is performed by the spawned same-phase child (the LLM role). The driver never inspects, edits, or re-scores the gate. After the child's repair, the **SAME unchanged** gate check re-runs: passes → continue; still fails → second hit → `SELFRESOLVE_ATTEMPT_EXHAUSTED` (bounded = one attempt per `(phaseId, gate)`).
+2. **Per-gate cause-resolution table (Q1/Q2/Q3/AC-1).**
+
+   | gate id (default-enabled set) | resolution | outcome if still failing after one attempt |
+   |---|---|---|
+   | `error` | same-phase child repairs the cause; gate re-check re-runs unchanged | `SELFRESOLVE_ATTEMPT_EXHAUSTED` |
+   | `missing_input` | transient only (`reason_code` NOT in `critical`/`CRITICAL_MISSING_INPUT`); child obtains/derives the input; critical → hard stop unchanged | `SELFRESOLVE_ATTEMPT_EXHAUSTED` |
+   | `decision_gate` | **propose-and-hold, never auto-continue**: child writes proposal artifact + names-only `auto_block_retry/<run>.jsonl` row; gate re-check still fails | run halts with `decision_gate=true` + non-suppressible notify (excluded from `continue_same_phase`) |
+   | `security` | same-phase child resolves the cause; the security gate re-runs unchanged (never weakened) | `SELFRESOLVE_ATTEMPT_EXHAUSTED` |
+   | `publish` | same-phase child resolves the cause; no automatic npm publish/git push ever | `SELFRESOLVE_ATTEMPT_EXHAUSTED` |
+
+   `pause_request` and gate-override-forbidden are NEVER in the self-resolve set; they stay in `HARD_STOP_REASONS` and remain hard stops in every configuration (AC-2). `decision_gate` stays in `HARD_STOP_REASONS` and `TERMINAL_CONTINUE_TOKENS` so no continue branch can fire for it.
+3. **Budget-gate provider fallback (Q4/AC-4).** Budget gates (`loop_max`, `BACKLOG_MAX_STORIES_REACHED`) are NOT in the self-resolve set. When a budget gate fires AND `AUTO_BUDGET_PROVIDER_FALLBACK=1` AND the one-switch cap is unused → at most ONE switch: the NEXT phase child's model is resolved via `scripts/model_tier_lib.py resolve_model_for_phase()` (US-0101/DEC-0086 catalog + US-0102/DEC-0087 role chain, 5-step precedence), selecting a DIFFERENT tier/alias than the one that hit the gate. No hard vendor slug, no new vendors. Ledger row `reason_code=PROVIDER_SWITCH_APPLIED` in `handoffs/auto_block_retry/<orchestrator_run_id>.jsonl` (append-only, names-only, no secrets). Cap hit (second budget-gate hit, or `AUTO_PROVIDER_SWITCH_MAX` exceeded) → stop with `PROVIDER_SWITCH_CAP_REACHED`. **Budget counter NOT reset — remaining budget carries over (PO decision, fail-closed).** Scope: next-phase child model override only; the outer driver is model-less Python and the running parent model is unchanged. Catalog-resolution failure → no switch, budget gate stays a hard stop.
+4. **Silent drain handoff (Q5/AC-5).** `SELFRESOLVE_DRAIN_HANDOFF` fires on (a) self-resolve exhausted OR (b) budget gate after provider fallback. It extends the US-0095 drain-advance predicate (`_should_drain_advance`) in addition to `stop_reason=completed`: the run also drain-advances when the stop is the handoff AND drain is enabled (`AUTO_BACKLOG_DRAIN=1` or bug-queue per US-0087 mutex) AND an eligible OPEN story exists AND budget remaining. The US-0095 7-step algorithm (READ → ASSERT DEC-0069 pairing → SELECT per `AUTO_STORY_SELECTION=priority_then_backlog_order` → RELOAD/MATERIALIZE → PREPEND `resume_brief` → APPEND `state.md` breadcrumb → IMMEDIATELY spawn) is reused verbatim; `drain_advance_action=spawned`. `AUTO_BACKLOG_DRAIN=0` or no eligible OPEN story → `SELFRESOLVE_DRAIN_HANDOFF` is emitted but the action is `hard_stop` (fail-closed, unchanged). Silent: no operator/auto re-invoke.
+5. **5-key config surface (Q6/AC-3/AC-7).** `AUTO_SELFRESOLVE_GATES` (per-gate comma list, default empty; default set when enabled `error,missing_input,decision_gate,security,publish`); `AUTO_SELFRESOLVE_EXCLUDE=pause_request` (hard, cannot be removed, never self-resolved); `AUTO_BUDGET_PROVIDER_FALLBACK=0`; `AUTO_PROVIDER_SWITCH_MAX=1`; `AUTO_BUDGET_EXHAUSTED_DRAIN=0`. Precedence: US-0131/DEC-0131 SOT chain (`.its-magic/config.local.json` > `config.json` > `config.example.json`) with the DEC-0055 scratchpad adapter for the Cursor host (`.cursor/scratchpad.local.md` > `.cursor/scratchpad.md` > `.cursor/scratchpad.local.example.md`); read via `host_runtime_config_lib.resolve_runtime_config`. Unknown gate id → fail closed reusing `HOST_CONFIG_INVALID` with the offending key+value (NOT a 5th new code, NOT silently ignored). `MODEL_*` keys stay ignored (US-0132). Default-off = byte-identical to today.
+6. **Notification + log (AC-6).** The segment-handoff notification is non-suppressible under `AUTO_QUIET=1` (US-0095 rule); only regular per-phase chatter is suppressed. Self-resolve and provider-switch events are recorded in the existing compact per-phase log and the block-retry ledger. No new screen or client.
+
+## Stop-matrix rows + reason codes (D8/AC-8)
+
+The US-0088/US-0092 stop matrix gains exactly two rows:
+
+| # | Condition | Bounded action | Outcome |
+|---|---|---|---|
+| 1 | Active gate with id in the validated `AUTO_SELFRESOLVE_GATES` set | one cause-resolution attempt per `(phaseId, gate)` via the same-phase child | `continue_same_phase` if the unchanged gate re-check passes, else `SELFRESOLVE_ATTEMPT_EXHAUSTED` |
+| 2 | `SELFRESOLVE_ATTEMPT_EXHAUSTED` or budget-gate after provider fallback (`PROVIDER_SWITCH_CAP_REACHED`) | silent drain handoff (`SELFRESOLVE_DRAIN_HANDOFF`) when drain is enabled + eligible OPEN story + budget remaining | `hard_stop` when `AUTO_BACKLOG_DRAIN=0` or no eligible OPEN story (fail-closed, unchanged) |
+
+New reason codes registered (4; grep confirmed 0 prior occurrences): `SELFRESOLVE_ATTEMPT_EXHAUSTED`, `PROVIDER_SWITCH_APPLIED`, `PROVIDER_SWITCH_CAP_REACHED`, `SELFRESOLVE_DRAIN_HANDOFF`. `HOST_CONFIG_INVALID` (existing, US-0131) is reused for unknown gate ids.
+
+## Components
+
+1. `scripts/auto_outer_driver.py` (+ template twin): gains the `--selfresolve-gate` branch + self-resolve guard path + the `_should_drain_advance` handoff extension + the budget-gate provider-fallback decision; absent-flag / all-default behavior byte-identical.
+2. `.opencode/plugins/orchestrator.ts` (+ template twin): honors the new payload — respawns the same phase once on `continue_same_phase`; performs the one-switch next-child model override on `PROVIDER_SWITCH_APPLIED`; runs the US-0095 7-step on `SELFRESOLVE_DRAIN_HANDOFF` when drain is enabled + eligible OPEN story, else hard stop; keeps `decision_gate` propose-and-hold (no auto-flip).
+3. `.opencode/agents/auto.md` + `.opencode/commands/auto.md` (+ template twins): the four-class → five-gate continuation sentence; the safety floor (pause_request hard, no `.env`, no auto publish/push) unchanged; parent stays read-only.
+4. `scripts/model_tier_lib.py`: reused unchanged (provider switch reads the catalog via `resolve_model_for_phase()`; no `MODEL_*` governance key; no new vendors).
+5. `handoffs/auto_block_retry/<orchestrator_run_id>.jsonl`: reused unchanged (ledger rows for `PROVIDER_SWITCH_APPLIED` + `decision_gate` proposal + self-resolve exhaustion).
+6. `scripts/data/autonomy_stop_matrix.yaml`: NOT edited (DEC-0119 two-tier matrix unchanged; `pause_request`/`decision_gate`/`.env`/publish rows stay hard). `.cursor/scratchpad*.md` gains the five default-off keys only when the operator opts in; the example documents defaults.
+7. `tests/us0164_selfresolve_stop_contract_test.py` (10 `test_us0164_*` markers): authored in the next phase; this phase does not write it.
+
+## Tests (AC-9 — 10 `test_us0164_*` markers)
+
+`test_us0164_cause_resolution_same_run_continue` (error gate repaired → `continue_same_phase`, no re-invoke); `test_us0164_gate_never_bypassed` (no `decision_gate=false` flip, no threshold change, no removal — gate check re-runs unchanged); `test_us0164_pause_request_safety_floor_hard` (under full self-resolve config; no `.env` read, no auto npm publish, no auto git push); `test_us0164_per_gate_config_list_and_default` (empty default; default set when enabled; unknown gate id → `HOST_CONFIG_INVALID` fail-closed); `test_us0164_provider_fallback_one_switch_cap` (`PROVIDER_SWITCH_CAP_REACHED`); `test_us0164_budget_carryover_after_switch` (counter NOT reset); `test_us0164_silent_drain_handoff_trigger` (`SELFRESOLVE_DRAIN_HANDOFF` fires the US-0095 7-step); `test_us0164_hard_stop_drain_disabled_no_open_story`; `test_us0164_nonsuppressible_handoff_notify_under_quiet`; `test_us0164_default_off_byte_identity` (absent flag keeps today's JSON; all 5 keys default-off → byte-identical behavior). Plus `auto_outer_driver.py --self-test` extensions and active/template parity (US-0017 style).
+
+## Risks
+
+The new `--selfresolve-gate` and US-0158 `--recoverable-class` branches could both match one stop_reason: flags are mutually exclusive by construction (gate id vs recoverable class); terminal-token guards disallow both; precedence locks absent `--recoverable-class` → self-resolve branch, present → US-0158 wins unchanged. `decision_gate` could become a continue: it stays in `TERMINAL_CONTINUE_TOKENS`, the self-resolve branch explicitly excludes it (emit `hard_stop` + `decision_gate=true` + proposal artifact). The provider switch could conflict with US-0132: it reads the catalog via `model_tier_lib`, NOT a `MODEL_*` key; `host_runtime_config_lib` unchanged. Budget-counter reset regression (provider cycling manufactures budget): PO decision — counter NOT reset, carry over. Drain handoff firing when it should hard-stop: `SELFRESOLVE_DRAIN_HANDOFF` emitted but `action=hard_stop` when `AUTO_BACKLOG_DRAIN=0` or no eligible OPEN story. Unknown gate id silently ignored: `HOST_CONFIG_INVALID` fail-closed with offending key+value. `AUTO_QUIET=1` suppressing the segment handoff notification: the handoff notification is non-suppressible; regular chatter is suppressed. Active/template copies can drift: each pair in the component list stays byte-identical within the pair. Task count can pass 12: the seed list below is within the cap; a ninth-plus task triggers `SPRINT_AUTO_SPLIT` at sprint-plan.
+
+## Task seeds (sprint not created)
+
+Ten seeds, under `SPRINT_MAX_TASKS=12`. 1:1 to AC where possible (AC-1..AC-9). Plan-verify stays skipped (`ultra_lean` resolved plan is `[spec, plan, build+verify, ship]`). Order: **T-anch** traceability for US-0164 (verify R-0175, DEC-0155, D1–D8, the four reason codes' 0 prior occurrences, all OUT guards, no status/AC mutation) → **T-001** the `--selfresolve-gate` branch + self-resolve guard path in `run_stop_matrix_json` (absent flag keeps today's JSON; AC-1) → **T-002** the per-gate cause-resolution table + `decision_gate` propose-and-hold terminal-continue exclusion (AC-1/AC-2) → **T-003** the `missing_input` transient/critical split reuse (AC-1) → **T-004** the budget-gate provider fallback + `AUTO_PROVIDER_SWITCH_MAX` accounting + budget carry-over + ledger row (AC-4) → **T-005** the `SELFRESOLVE_DRAIN_HANDOFF` predicate extension to `_should_drain_advance` + hard-stop fallback (AC-5) → **T-006** the 5-key config surface + `HOST_CONFIG_INVALID` fail-closed + unknown-gate-id detail (AC-3/AC-7) → **T-007** the non-suppressible segment handoff notification under `AUTO_QUIET=1` + per-phase log/ledger recording (AC-6) → **T-008** the two stop-matrix rows + the four reason-code registrations (AC-8) → **T-009** the 10 `test_us0164_*` contract tests + `--self-test` extensions + active/template parity (AC-9).
+
+## Isolation
+
+phase_id=architecture; role=tech-lead; model_id=`zelisko_llm/qwen3.8-27b`; model_provenance=`fresh canonical phase child (tech-lead architecture)`; fresh_context_marker=`tl-US0164-architecture-20261024T185500Z-fresh` (repository scan found **0 prior occurrences** before mint); timestamp=2026-10-24T18:55:00Z; evidence_ref=`docs/engineering/architecture.md` # US-0164, `docs/engineering/research.md` ## R-0175, `decisions/DEC-0155.md`. Consumed research proof `rp-auto-20261024-us0164-research-20261024T184136Z-US-0164` / `8c1c83a6bbf7b7d5e61ad497524a8bf1590354962543654342a9c6ef4f9ad067` recompute MATCH and in TTL at write (issued 2026-10-24T18:41:36Z, ttl until 2026-10-24T19:41:36Z; clock 2026-10-24T18:55:00Z). runtime_proof_id=`rp-auto-20261024-us0164-architecture-20261024T185500Z-US-0164`; proof_hash=`7e47c93af12269955ae75f83334f83e583ad7d10e1e4d4dc4cd301f12044b085`; proof_issued_at=`2026-10-24T18:55:00Z`; proof_ttl_seconds=3600; proof_ttl=`2026-10-24T19:55:00Z`; hash_recompute_confirmation=true (independent compact sorted-key SHA-256 recompute over the same six-field tuple — **MATCH**, 64 hex). baseline_h2_count=0. Companion DEC **DEC-0155**. `RESUME_BRIEF_AUTO_REFRESH=0`; `CROSS_MODEL_REVIEW=0`. This child does not spawn `/sprint-plan`.
+
+# BUG-0044 — Recurring DEC-0153 continuation-pair omission at phase boundaries
+
+**Verdict: `ARCHITECTURE_PASS`; `decision_gate=false`.** Binding design for **R-0176** (F1–F7 RESOLVED/LOCKED, approach **A**). BUG-0044 stays **OPEN/P1**; AC-1..AC-5 and its acceptance row stay **unchecked**. **Companion DEC: DEC-0156** (the phase-child continuation-pair + terminal-state-reconcile obligation; composes on DEC-0153/DEC-0038 + the release UAT gate). No sprint is created; no sprint id is allocated (highest existing sprint is **S0185**). `RESUME_BRIEF_AUTO_REFRESH=0`; `CROSS_MODEL_REVIEW=0`. `baseline_h2_count` before this append is **1** (one pre-existing legacy `## US-####` heading; this section is H1 and adds **zero** H2 story headings). The remediation set is `discovery`, `execute`, `sprint-plan`, `qa`, `verify-work`, `release`, `closure` on the **OpenCode host (primary)** with `.cursor` + `template` active/template byte-parity where the file exists.
+
+## Challenge
+
+The DEC-0153 "Continuation contract" is codified on only a subset of phase-child command contracts (research, architecture, parent) and **absent** on the children where the defect manifested (R-0176 F1), so the obligation to write the state-first pair + reconcile phase-owned lifecycle artifacts before STOP is implicit and intermittently omitted. US-0164 `/sprint-plan` STOPped without the pair; US-0164 `/verify-work` left `uat.json` in the QA lifecycle state so `/release` fail-closed `RELEASE_UAT_INCOMPLETE`. The smallest additive remediation: re-codify the contract on each remediation child (A1, primary), add a read-only deterministic pre-STOP self-check (A2, enabler), keep the parent spawn-only (A3, defense-in-depth, already in place). Rejected: a standalone pair-writer script (recreates the child's owned writer), a new reason code, a new `MODEL_*` governance key, and reopening US-0163/US-0164/BUG-0015..BUG-0043.
+
+## Approach locked (A)
+
+Additive, host-neutral, no pair-logic re-implementation, no new reason code, no parent authority. A1 codifies the exact contract text below on each remediation command; A2 extends `scripts/opencode_auto_bridge.py` with a read-only `phase_boundary_self_check` that composes on `validate_resume_pair` + `compute_strict_proof_hash`; A3 (parent-side) is unchanged and already in place. The DEC-0153 child-owned / parent-spawn-only split is preserved unamended; `RESUME_BRIEF_AUTO_REFRESH=0` and `CROSS_MODEL_REVIEW=0` stay absolute.
+
+## Lock 1 — Exact "Continuation + terminal-state reconcile contract" section text + placement
+
+**Placement:** append this exact section to each remediation command file, as the LAST section, immediately before the file's final `STOP` / hand-off line (after any "Validator bridge" or "Cross-phase ownership guard" section): `.opencode/commands/discovery.md`, `.opencode/commands/execute.md`, `.opencode/commands/sprint-plan.md`, `.opencode/commands/qa.md`, `.opencode/commands/verify-work.md`, `.opencode/commands/release.md`, `.opencode/commands/closure.md` (OpenCode host — primary), plus byte-parity twins under `.cursor/commands/` and `template/.opencode/commands/` + `template/.cursor/commands/` where the file exists. The parent `.opencode/commands/auto.md` / `.cursor/commands/auto.md` are NOT edited (they already carry the spawn-only + repair-path contract).
+
+**Locked section text (verbatim; execute applies byte-identical on every host twin):**
+
+````markdown
+## Continuation + terminal-state reconcile contract (BUG-0044 / DEC-0156, composes on DEC-0153 / DEC-0038)
+
+Before emitting this phase's STOP reason, this completed phase child MUST:
+1. Reconcile its owned lifecycle artifacts to the terminal state for THIS phase
+   (the per-phase table in `docs/engineering/architecture.md` `# BUG-0044` Lock 3).
+2. Append the state-bottom checkpoint (the canonical continuation-pair JSON record)
+   to `docs/engineering/state.md` (state-first; append-never-rewrite, DEC-0040).
+3. Compute the strict 6-tuple proof hash via
+   `token_cost_lib.compute_strict_proof_hash(orchestrator_run_id, runtime_proof_id,
+   phase_id, role, proof_issued_at, proof_ttl_seconds)`.
+4. Prepend the byte-identical brief-top record to `handoffs/resume_brief.md`
+   (temp-file-plus-replace; cross-file atomicity deliberately NOT claimed).
+5. Re-read BOTH sides and assert byte-identical + `validate_resume_pair(writer_role=<own role>)`
+   -> `ok=true` (via `opencode_auto_bridge.phase_boundary_self_check`) BEFORE STOP.
+
+The pair key is `orchestrator_run_id|work_item_kind|bug_id|completed_phase|runtime_proof_id`;
+both sides agree on all 20 `PAIR_LOCKED_FIELDS` + strict-proof fields. The parent stays
+spawn-only (validate + spawn only; it never writes either artifact, never mints a proof, and
+`RESUME_BRIEF_AUTO_REFRESH=0` is absolute). A missing/conflicting pair is a deterministic
+fail-closed stop (`RESUME_BRIEF_STALE` / `RESUME_BRIEF_UNPARSEABLE`, predicate retained; no
+state-alone fallback, no auto-refresh, no silent continue). This child does NOT spawn the next
+phase.
+````
+
+## Lock 2 — Host-parity set
+
+OpenCode host is **primary** (the bug's observed `environment`); every remediation twin must be byte-identical within its pair where the file exists: `.opencode/commands/<c>.md` ↔ `template/.opencode/commands/<c>.md` and `.cursor/commands/<c>.md` ↔ `template/.cursor/commands/<c>.md`, for `c ∈ {discovery, execute, sprint-plan, qa, verify-work, release, closure}`. Contract test #1 (Lock 5) asserts this parity on the OpenCode primary. `scripts/opencode_auto_bridge.py` ↔ `template/scripts/opencode_auto_bridge.py` also stay byte-identical.
+
+## Lock 3 — Per-phase terminal-state-reconcile table
+
+Each remediation phase child leaves the lifecycle artifacts it owns in the terminal state for its own phase before STOP (the NEW normative obligation, AC-2; composes on the release UAT gate, is NOT a new reason code):
+
+| phase | role | owned lifecycle artifact(s) | terminal state before STOP |
+|---|---|---|---|
+| discovery | po | `discovery_notes` line in the backlog block | present + PASS verdict recorded (no pair on intake/discovery pair-surface per DEC-0069 boundary; discovery writes its own DEC-0153 pair) |
+| research | tech-lead | `## R-####` entry in `docs/engineering/research.md` | entry present, append-only, highest-R-id; research writes its own DEC-0153 pair |
+| architecture | tech-lead | `# US/BUG-####` section in `docs/engineering/architecture.md` + companion `decisions/DEC-####.md` | section + DEC present; architecture writes its own DEC-0153 pair |
+| sprint-plan | tech-lead | `sprints/<S>/sprint.md` + `sprints/<S>/tasks.md` | present + SPRINT_PLAN_PASS; under `SPRINT_MAX_TASKS` |
+| execute | dev | `sprints/<S>/*` build evidence + `tests/` | build evidence present; execute writes its own DEC-0153 pair |
+| qa | qa | `sprints/<S>/qa-findings.md` + `tests/report.md` | QA_PASS record present |
+| verify-work | qa | **`sprints/<S>/uat.json` + `sprints/<S>/uat.md`** (canonical example) | **`status=VERIFY_PASS` / `phase_id=verify-work` / `uat_lifecycle=verify_work_complete_release_pending`** |
+| release | release | `sprints/<S>/release-findings.md` + release queue/notes | RELEASE_PASS/RELEASE_BLOCKED record; release is fenced from editing `uat*` |
+| closure | curator | backlog Status flip + acceptance row + closure-verification | canonical OPEN→DONE flip applied (if closure is the terminal boundary) |
+
+The verify-work row is the canonical case: US-0164 `/verify-work` left `uat.json` in `status=QA_PASS`/`phase_id=qa`/`uat_lifecycle=qa_complete_verify_work_pending` (the prior phase's state), so `/release` fail-closed `RELEASE_UAT_INCOMPLETE`. Under this obligation verify-work reconciles UAT to its OWN terminal state, so `/release` no longer sees a stale UAT lifecycle. The gate still **detects** any residual stale state with the existing `RELEASE_UAT_INCOMPLETE`; the child **prevents** it.
+
+## Lock 4 — A2 read-only self-check helper surface
+
+`scripts/opencode_auto_bridge.py` (+ template twin, byte-identical) gains:
+
+```
+def phase_boundary_self_check(repo: Path, *, writer_role: str, state_json: str, brief_json: str) -> dict:
+```
+
+Read-only, reason-coded, composes on `validate_resume_pair` (does NOT re-implement pair logic): it re-reads/normalizes `state_json` and `brief_json` (parse → `RESUME_BRIEF_UNPARSEABLE` on syntax error), asserts byte-identity (normalized canonical form), recomputes the strict 6-tuple hash via `token_cost_lib.compute_strict_proof_hash` (mismatch → `RESUME_BRIEF_STALE` predicate `proof_hash_mismatch`), then returns the verbatim `validate_resume_pair(writer_role=writer_role, state_tuple=..., brief_tuple=...)` result so the retained predicate is preserved. A `writer_role` of `auto`/`parent`/`orchestrator` is rejected by the composed `validate_resume_pair` → `RESUME_BRIEF_STALE` / `unauthorized_writer_role`. It writes nothing; it grants NO parent authority. `reset_resume_pair_registry_for_tests` is reused for test isolation. This is an **enabler** (A1 the contract is primary — without it the children have no obligation to call it). `token_cost_lib.py` is NOT edited (the hash function is reused as-is).
+
+## Lock 5 — 6-item contract-test inventory + fixtures
+
+Contract file `tests/bug0044_phase_boundary_pair_contract_test.py` (repo convention `bug####_*_test.py`; markers `test_bug0044_*`), authored in the execute phase (NOT this phase). Uses `reset_resume_pair_registry_for_tests` for isolation. Fixtures are temp-repo state/brief pairs + a temp `uat.json` lifecycle object; no live `.env`, no network, no publish.
+
+| # | marker | asserts | fixture |
+|---|---|---|---|
+| 1 | `test_bug0044_command_contract_presence_and_parity` | every remediation command (discovery, execute, sprint-plan, qa, verify-work, release, closure) carries the Lock-1 section on the OpenCode host (primary) with `.cursor` + `template` active/template byte-parity where the file exists | static file-set fixtures (the 7 commands × hosts) |
+| 2 | `test_bug0044_pair_write_byte_identity` | a fixture child writes state-bottom + brief-top → byte-identical JSON; 20/20 `PAIR_LOCKED_FIELDS` present; strict 6-tuple hash MATCH via `compute_strict_proof_hash` + independent compact sorted-key recompute | temp-repo state.md + resume_brief.md pair |
+| 3 | `test_bug0044_missing_conflicting_pair_fail_closed` | absent pair / `pair_key_mismatch` / `tuple_conflict` → deterministic `RESUME_BRIEF_STALE` with predicate retained (no silent continue, no state-alone fallback) | temp-repo pair fixtures (missing / mismatched key / conflicting field) |
+| 4 | `test_bug0044_terminal_state_reconcile_uat` | a `uat.json` qa→verify-work lifecycle fixture: child leaves it terminal (`VERIFY_PASS`/`verify-work`/`verify_work_complete_release_pending`); a stale QA-state fixture still fails the release gate with `RELEASE_UAT_INCOMPLETE` | temp `uat.json` (terminal + stale) |
+| 5 | `test_bug0044_no_parent_proof_minting` | `writer_role` in `{auto, parent, orchestrator}` → `RESUME_BRIEF_STALE`/`unauthorized_writer_role`; `RESUME_BRIEF_AUTO_REFRESH=0` absolute (no refresh/fallback/reconciler/hand-edit) | parent-role writer fixture |
+| 6 | `test_bug0044_replay_idempotence` | exact canonical replay → `idempotent_noop=true`; a conflicting same-key replay → `RESUME_BRIEF_STALE`/`replay_conflict` | registry + replay fixtures |
+
+## Risks
+
+Over-scope (editing command files in a non-execute phase) is prevented here: this architecture only LOCKS the exact text + placement; execute performs the file edits under its own map. The terminal-state-reconcile clause (AC-2) is misread as a new reason code — it reuses `RELEASE_UAT_INCOMPLETE` at the gate (the child prevents, the gate detects); no new code. A new Python helper is mistaken for the root fix — A2 is an enabler, A1 the contract is primary. The parent gains implicit proof-minting via the repair path — repair stays spawn-only; `validate_resume_pair` rejects `auto`/`parent`/`orchestrator`; `RESUME_BRIEF_AUTO_REFRESH=0` absolute. Cross-file atomicity is assumed — it is NOT claimed; the validation rule (byte-identical + `validate_resume_pair` ok), re-run child pre-STOP and parent post-spawn, is the safety boundary. Host-parity drift — remediation is host-neutral with active/template byte-parity; test #1 asserts it. Intake (PO) is pulled into the DEC-0153 pair surface — intake uses the distinct DEC-0069 script refresh; it is excluded from the remediation set.
+
+## Task seeds (sprint not created)
+
+Order (sprint-plan allocates ids): **T-anch** traceability (verify R-0176, DEC-0156, F1–F7, Lock 1–5, no new reason code, no parent authority) → **T-001** Lock-1 section applied verbatim to the 7 OpenCode remediation commands (primary) → **T-002** Lock-2 host-parity twins (`.cursor` + `template`) byte-identical → **T-003** Lock-4 `phase_boundary_self_check` in `opencode_auto_bridge.py` (+ template twin byte-identical) composing on `validate_resume_pair` + `compute_strict_proof_hash`; no pair-logic re-implementation → **T-004** Lock-3 terminal-state-reconcile table documented + verify-work UAT reconcile exercised in fixtures → **T-005** Lock-5 `tests/bug0044_phase_boundary_pair_contract_test.py` (6 `test_bug0044_*` markers) + `reset_resume_pair_registry_for_tests` isolation. Under `SPRINT_MAX_TASKS=12`; plan-verify stays skipped (`ultra_lean` resolved plan is `[spec, plan, build+verify, ship]`).
+
+## Isolation
+
+phase_id=architecture; role=tech-lead; model_id=`zelisko_llm/qwen3.8-27b`; model_provenance=`provenance=host=opencode; fresh canonical phase child (tech-lead architecture)`; fresh_context_marker=`tl-BUG0044-architecture-20261025T194557Z-fresh` (repository scan found **0 prior occurrences** before mint); timestamp=2026-10-25T19:45:57Z; evidence_ref=`docs/engineering/architecture.md` # BUG-0044, `docs/engineering/research.md` ## R-0176, `decisions/DEC-0156.md`. Consumed research pair `auto-20261025-bug0044|bug|BUG-0044|research|rp-auto-20261025-bug0044-research-tl-20261025T193147Z-BUG-0044` / `02a8e0a67de51812732b79e18d8a5f930dfe19151757a1aaf26c31a8029ae7eb` (state-bottom == brief-top byte-identical; strict 6-tuple recompute **MATCH**; **IN-TTL** at this write — issued 2026-10-25T19:31:47Z + 3600 → expiry 2026-10-25T20:31:47Z; clock 2026-10-25T19:45:57Z; ~46m remaining — consumed on the validated-pair basis; no stale-proof waiver needed; the fresh architecture pair below is the authority for the parent's next-phase spawn). runtime_proof_id=`rp-auto-20261025-bug0044-architecture-tl-20261025T194557Z-BUG-0044` (grep-verified 0 prior occurrences at mint); proof_hash=`2a4a13879d7007792866506c55db462204b2703a25c1b549a1c5d4691e7d3029`; proof_issued_at=`2026-10-25T19:45:57Z`; proof_ttl_seconds=3600; proof_ttl=`2026-10-25T20:45:57Z`; hash_recompute_confirmation=true (`scripts.token_cost_lib.compute_strict_proof_hash` sorted-key compact JSON SHA-256 over the strict 6-tuple == independent compact sorted-key SHA-256 — **MATCH**, 64 hex). baseline_h2_count=1 (unchanged; this section adds zero H2 story headings). Companion DEC **DEC-0156**. `RESUME_BRIEF_AUTO_REFRESH=0`; `CROSS_MODEL_REVIEW=0`. This child does not spawn `/sprint-plan`.

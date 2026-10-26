@@ -1,3 +1,704 @@
+## Refresh-context complete — BUG-0044 / S0186 ship macro terminal pointer
+
+- **Boundary:** completed **`refresh-context`** checkpoint (ship-macro **TERMINAL** phase; canonical mint **`2026-10-25T22:19:13Z`**); the matching checkpoint is appended at the bottom of `docs/engineering/state.md` (`## Refresh-context checkpoint - BUG-0044 / S0186 ship macro terminal (role=curator) - **REFRESH_CONTEXT_PASS**`).
+- **`orchestrator_run_id`:** `auto-20261025-bug0044` — **TERMINATED** at the ship macro's final phase (refresh-context); all 10 phases + refresh-context complete (`effective_plan=[spec, plan, build+verify, ship]`, `skipped_phases=[]`, `completed_phases=[intake, discovery, research, architecture, sprint-plan, execute, qa, verify-work, release, closure]`, `refresh_context=complete`).
+- **`bug_id`:** **`BUG-0044`**; **`story_id`:** **`(none)`**; **`sprint_id`:** **`S0186`** — **DONE/P1** (AC-1..AC-5 ticked by the closure phase; acceptance row L245 ticked).
+- **Verdict:** **`REFRESH_CONTEXT_PASS`**; `decision_gate=false`; `writer_role=curator`; `role=curator`.
+- **Verdict chain (terminal):** DISCOVERY_PASS → RESEARCH_PASS → ARCHITECTURE_PASS → SPRINT_PLAN_PASS → EXECUTE_PASS → QA_PASS → VERIFY_PASS → RELEASE_PASS → CLOSURE_PASS → **REFRESH_CONTEXT_PASS**.
+- **`RESUME_BRIEF_AUTO_REFRESH=0` honored — NO new continuation pair minted:** no new `runtime_proof_id` / `record_key` / record SHA-256; no proof re-mint of the consumed closure pair. The **closure pair** (top JSON record of this file, `# Resume Brief — BUG-0044 closure continuation pair`, mint **`2026-10-25T21:51:00Z`**) **REMAINS** the durable terminal anchor for any future resume; it is cited, not mutated. **No `intended_resume_phase` exists** — the ship macro is complete and no phase remains in `effective_plan`.
+- **`next_scheduled_phase`: (none)**; **`next_scheduled_role`: (none)**; `phase_cursor=ship/refresh-context-terminal`.
+- **Continuation note:** the first refresh-context attempt for this phase returned an empty result with **zero durable output** (verified clean pre-state by the parent: `state.md` still ended at L1183 with the closure STOP line; this file's top pointer was still the closure pair; nothing partially written). This terminal pointer + the state-bottom checkpoint are the **durable continuation completion** (`continue_same_phase`).
+- **Deviation record (host-isolation boundary, not a defect):** `sprints/S0186/tasks.md` 6 boxes (T-anch + T-001..T-005) remain `[ ]` — this host's curator edit allowlist carries no `sprints/S*/tasks.md` grant (deny-default; S0183 (BUG-0038) / S0185 (US-0164) precedent).
+- **Out-of-scope baseline record (citation only):** 3 pre-existing test failures (bug0035 ×2 + bug0038 ×1) caused by the in-progress US-0164/DEC-0155 working-tree edit (`.opencode/agents/auto.md` + `docs/engineering/auto-orchestration-reference.md` dirty; zero S0186/BUG-0044 content) — NOT fixed; release gate3f FAIL_nonblocking (24 OPEN-item README gaps; **BUG-0044 not among them**; S0160/S0157/S0181 precedent — non-blocking).
+- **Fresh evidence (this session):** `python scripts/bug_issue_validate.py --repo . --check-acceptance` → **[BUG_VALIDATION_OK]**; `python -m pytest tests/bug0044_phase_boundary_pair_contract_test.py -q` → **6 passed**; triad `python scripts/enforce-triad-hot-surface.py --repo . --check` → exit 0 pre-append (1183 lines) and post-rollover (1182 lines); DEC-0054 rollover `state-pack-20261025-r.md` (oldest checkpoint archived; no BUG-0044/S0186 content archived).
+- **`next_action`: none for this run.** Future work (US-0163/US-0164 completion, BUG-0015..BUG-0043) starts **fresh `/auto` runs with their own intake** — this brief does **NOT** schedule them.
+- **Provenance (this write):** terminal pointer prose written by the BUG-0044 refresh-context curator child (fresh context; continuation attempt); `fresh_context_marker=refresh-context-BUG0044-S0186-20261025T221913Z-fresh` (grep-verified 0 prior occurrences). The closure pointer and all older pointers below are kept intact. This child did **NOT** spawn any further phase or `/auto`.
+
+---
+
+## Latest orchestration pointer — BUG-0044 closure continuation pair (DEC-0153)
+
+- **Boundary:** completed **`closure`** checkpoint (canonical mint **`2026-10-25T21:51:00Z`**); state-first — the matching checkpoint is appended at the bottom of `docs/engineering/state.md` (state record = the last ```json block, `Closure checkpoint - BUG-0044 ... CLOSURE_PASS`).
+- **`bug_id`:** **`BUG-0044`**; **`story_id`:** **`(none)`**; **`sprint_id`:** **`S0186`** — **DONE/P1** (AC-1..AC-5 ticked; acceptance row L245 ticked by this closure phase).
+- **`orchestrator_run_id`:** `auto-20261025-bug0044`
+- **Verdict:** **`CLOSURE_PASS`**; `decision_gate=false`.
+- **STOP:** `STOP_AFTER_CLOSURE_PASS; validate_pair_then_parent_may_spawn_refresh_context`. This child does **NOT** spawn the next phase.
+- `intended_resume_phase`: **`refresh-context`**; `next_scheduled_phase`: **`refresh-context`**; `next_scheduled_role`: **`curator`**.
+- `writer_role`: **`curator`**; `role`: **`curator`** (DEC-0052 alternate — qe unspawnable on this host; BUG-0026/S0177 precedent); `reinstatement_mode`: **`none`**.
+- **Provenance (this write):** pointer + record prose written by the BUG-0044 closure curator child (fresh context); the JSON record below is **byte-identical** to the state-bottom record (state-first, DEC-0153). No proof re-minted; no stale-proof waiver (the consumed release pair was IN-TTL at this write, ~51m remaining). Canonical closure flip applied to BUG-0044 ONLY (backlog Status OPEN→DONE + AC-1..AC-5 [x]; acceptance L245 row [x]); tasks.md tick host-permission-denied (curator allowlist, S0183/S0185 precedent). Sprint **S0186** closure (CLOSURE_PASS; BUG-0044 now DONE/P1) is locked for `/refresh-context` in a fresh curator context.
+
+# Resume Brief — BUG-0044 closure continuation pair (state-first, DEC-0153)
+
+- `record_key`: `auto-20261025-bug0044|bug|BUG-0044|closure|rp-auto-20261025-bug0044-closure-curator-20261025T215100Z-BUG-0044`
+- `completed_phase`: `closure`; `writer_role`: `curator`; `role`: `curator`; `next_scheduled_phase`: `refresh-context`; `next_scheduled_role`: `curator`.
+- `fresh_context_marker`: `closure-BUG0044-S0186-20261025T215100Z-fresh`; `runtime_proof_id`: `rp-auto-20261025-bug0044-closure-curator-20261025T215100Z-BUG-0044`; `proof_hash`: `8d3b9be8dfea5625444f93798dda25c1b443597bbb29afc629b8573a3ceda807`; `proof_issued_at`: `2026-10-25T21:51:00Z`; `proof_ttl_seconds`: 3600; expiry `2026-10-25T22:51:00Z`.
+- **Validation / ordering:** state record precedes this pointer (state-first, DEC-0153). JSON byte-identical to the `docs/engineering/state.md` closure checkpoint record (SHA-256 `3f4401d0f62752fe91a168dd44dacc76bb4d37d8ff42813da88f45a3767e210c`, 1995 bytes).
+
+```json
+{"CROSS_MODEL_REVIEW":0,"RESUME_BRIEF_AUTO_REFRESH":0,"budget_scope":"DONE-flip closure phase for BUG-0044 (P1 bug, S0186); closure-owned flips ONLY (backlog status OPEN->DONE, AC-1..AC-5 tick, acceptance row tick, closure-verification.md) + DEC-0153 state/brief pair; tasks.md tick host-permission-denied (curator allowlist, S0183/S0185 precedent); no automatic phase spawn","bug_id":"BUG-0044","child_isolation_ref":"docs/engineering/state.md#bug-0044-closure-20261025T215100Z","completed_phase":"closure","completed_phases":["intake","discovery","research","architecture","sprint-plan","execute","qa","verify-work","release","closure"],"decision_gate":false,"delivery_mode":"ultra_lean","effective_plan":["spec","plan","build+verify","ship"],"fresh_context_marker":"closure-BUG0044-S0186-20261025T215100Z-fresh","invocation_mode":"auto","memory_layer":"pack","model_id":"zelisko_llm/qwen3.8-27b","model_provenance":"provenance=host=opencode; fresh canonical closure curator phase child (DEC-0052 alternate)","next_scheduled_phase":"refresh-context","next_scheduled_role":"curator","orchestrator_run_id":"auto-20261025-bug0044","phase_boundary":"closure","phase_cursor":"ship/closure-pass","phase_id":"closure","proof_hash":"8d3b9be8dfea5625444f93798dda25c1b443597bbb29afc629b8573a3ceda807","proof_issued_at":"2026-10-25T21:51:00Z","proof_ttl_seconds":3600,"record_key":"auto-20261025-bug0044|bug|BUG-0044|closure|rp-auto-20261025-bug0044-closure-curator-20261025T215100Z-BUG-0044","reinstatement_mode":"none","requested_start_from":"(none)","resolution_source":"resume_brief","resolution_status":"resolved","role":"curator","runtime_proof_id":"rp-auto-20261025-bug0044-closure-curator-20261025T215100Z-BUG-0044","skipped_phases":[],"sprint_id":"S0186","stop_matrix_action":"STOP_AFTER_CLOSURE_PASS; validate_pair_then_parent_may_spawn_refresh_context","stop_reason":"closure_complete_phase_boundary","story_id":"(none)","verdict":"CLOSURE_PASS","work_item_kind":"bug","writer_role":"curator"}
+```
+
+---
+
+## Latest orchestration pointer — BUG-0044 release continuation pair (DEC-0153)
+
+- **Boundary:** completed **`release`** checkpoint (canonical mint **`2026-10-25T21:42:30Z`**); state-first — the matching checkpoint is appended at the bottom of `docs/engineering/state.md` (state record = the last ```json block, `Release checkpoint - BUG-0044 ... RELEASE_PASS`).
+- **`bug_id`:** **`BUG-0044`**; **`story_id`:** **`(none)`**; **`sprint_id`:** **`S0186`** — **OPEN/P1** (AC-1..AC-5 unchecked; no flip by this phase).
+- **`orchestrator_run_id`:** `auto-20261025-bug0044`
+- **Verdict:** **`RELEASE_PASS`**; `decision_gate=false`.
+- **STOP:** `STOP_AFTER_RELEASE_PASS; validate_pair_then_parent_may_spawn_closure`. This child does **NOT** spawn the next phase.
+- `intended_resume_phase`: **`closure`**; `next_scheduled_phase`: **`closure`**; `next_scheduled_role`: **`qe`**.
+- `writer_role`: **`release`**; `role`: **`release`**; `reinstatement_mode`: **`none`**.
+- **Provenance (this write):** pointer + record prose written by the BUG-0044 release child (fresh context); the JSON record below is **byte-identical** to the state-bottom record (state-first, DEC-0153). No proof re-minted; no stale-proof waiver (the consumed verify-work pair was IN-TTL at this write, ~22m remaining). Sprint **S0186** release finalization (RELEASE_PASS; publish/push/deployment NOT PERFORMED; `npm_published=false`, `git_pushed=false`) is locked for `/closure` in a fresh qe context.
+
+# Resume Brief — BUG-0044 release continuation pair (state-first, DEC-0153)
+
+- `record_key`: `auto-20261025-bug0044|bug|BUG-0044|release|rp-auto-20261025-bug0044-release-release-20261025T214230Z-BUG-0044`
+- `completed_phase`: `release`; `writer_role`: `release`; `role`: `release`; `next_scheduled_phase`: `closure`; `next_scheduled_role`: `qe`.
+- `fresh_context_marker`: `release-BUG0044-S0186-20261025T214230Z-fresh`; `runtime_proof_id`: `rp-auto-20261025-bug0044-release-release-20261025T214230Z-BUG-0044`; `proof_hash`: `03935c562535bb7c107b89f28c6cd21d8c43cd22a8e8bb5f5273450592489f4a`; `proof_issued_at`: `2026-10-25T21:42:30Z`; `proof_ttl_seconds`: 3600; expiry `2026-10-25T22:42:30Z`.
+- **Validation / ordering:** state record precedes this pointer (state-first, DEC-0153). JSON byte-identical to the `docs/engineering/state.md` release checkpoint record (SHA-256 `60154a436f0dc10662eb5fc220f60d0eacda4914125e482118a07ffce87cd1c3`, 1764 bytes).
+
+```json
+{"CROSS_MODEL_REVIEW":0,"RESUME_BRIEF_AUTO_REFRESH":0,"budget_scope":"OPEN/P1 bug BUG-0044; release-only; S0186 release finalization (RELEASE_PASS) + DEC-0153 state/brief pair; no automatic phase spawn","bug_id":"BUG-0044","child_isolation_ref":"docs/engineering/state.md#bug-0044-release-20261025T214230Z","completed_phase":"release","completed_phases":["intake","discovery","research","architecture","sprint-plan","execute","qa","verify-work","release"],"decision_gate":false,"delivery_mode":"ultra_lean","effective_plan":["spec","plan","build+verify","ship"],"fresh_context_marker":"release-BUG0044-S0186-20261025T214230Z-fresh","invocation_mode":"auto","memory_layer":"pack","model_id":"zelisko_llm/qwen3.8-27b","model_provenance":"provenance=host=opencode; fresh canonical phase child (release)","next_scheduled_phase":"closure","next_scheduled_role":"qe","orchestrator_run_id":"auto-20261025-bug0044","phase_boundary":"release","phase_cursor":"ship/release-pass","phase_id":"release","proof_hash":"03935c562535bb7c107b89f28c6cd21d8c43cd22a8e8bb5f5273450592489f4a","proof_issued_at":"2026-10-25T21:42:30Z","proof_ttl_seconds":3600,"record_key":"auto-20261025-bug0044|bug|BUG-0044|release|rp-auto-20261025-bug0044-release-release-20261025T214230Z-BUG-0044","reinstatement_mode":"none","requested_start_from":"(none)","resolution_source":"resume_brief","resolution_status":"resolved","role":"release","runtime_proof_id":"rp-auto-20261025-bug0044-release-release-20261025T214230Z-BUG-0044","skipped_phases":[],"sprint_id":"S0186","stop_matrix_action":"STOP_AFTER_RELEASE_PASS; validate_pair_then_parent_may_spawn_closure","stop_reason":"release_complete_phase_boundary","story_id":"(none)","verdict":"RELEASE_PASS","work_item_kind":"bug","writer_role":"release"}
+```
+
+---
+
+## Latest orchestration pointer — BUG-0044 verify-work continuation pair (DEC-0153)
+
+- **Boundary:** completed **`verify-work`** checkpoint (canonical mint **`2026-10-25T21:20:11Z`**); state-first — the matching checkpoint is appended at the bottom of `docs/engineering/state.md` (state record = the last ```json block, `Verify-work checkpoint - BUG-0044 ... VERIFY_PASS`).
+- **`bug_id`:** **`BUG-0044`**; **`story_id`:** **`(none)`**; **`sprint_id`:** **`S0186`** — **OPEN/P1** (AC-1..AC-5 unchecked; no flip by this phase).
+- **`orchestrator_run_id`:** `auto-20261025-bug0044`
+- **Verdict:** **`VERIFY_PASS`**; `decision_gate=false`.
+- **STOP:** `STOP_AFTER_VERIFY_WORK_PASS; validate_pair_then_parent_may_spawn_release`. This child does **NOT** spawn the next phase.
+- `intended_resume_phase`: **`release`**; `next_scheduled_phase`: **`release`**; `next_scheduled_role`: **`release`**.
+- `writer_role`: **`qa`**; `role`: **`qa`**; `reinstatement_mode`: **`none`**.
+- **Provenance (this write):** pointer + record prose written by the BUG-0044 verify-work qa child (fresh context); the JSON record below is **byte-identical** to the state-bottom record (state-first, DEC-0153). No proof re-minted; no stale-proof waiver (the consumed QA pair was IN-TTL at this write, ~50m remaining). Sprint **S0186** terminal UAT (`sprints/S0186/uat.json` + `uat.md`, VERIFY_PASS / `verify_work_complete_release_pending`, AC-1..AC-5 independently re-verified) is locked for `/release` in a fresh release context.
+
+# Resume Brief — BUG-0044 verify-work continuation pair (state-first, DEC-0153)
+
+- `record_key`: `auto-20261025-bug0044|bug|BUG-0044|verify-work|rp-auto-20261025-bug0044-verify-work-qa-20261025T212011Z-BUG-0044`
+- `completed_phase`: `verify-work`; `writer_role`: `qa`; `role`: `qa`; `next_scheduled_phase`: `release`; `next_scheduled_role`: `release`.
+- `fresh_context_marker`: `qa-BUG0044-verifywork-20261025T212011Z-fresh`; `runtime_proof_id`: `rp-auto-20261025-bug0044-verify-work-qa-20261025T212011Z-BUG-0044`; `proof_hash`: `2b2bc23204e501e57a122f60e10d780754a9b9573ee202d927d847dc317637e4`; `proof_issued_at`: `2026-10-25T21:20:11Z`; `proof_ttl_seconds`: 3600; expiry `2026-10-25T22:20:11Z`.
+- **Validation / ordering:** state record precedes this pointer (state-first, DEC-0153). JSON byte-identical to the `docs/engineering/state.md` verify-work checkpoint record (SHA-256 `cc8952a16b9087b949dba03e2bce2d5996f21a925fea95c905a00d58b7dfb657`, 1797 bytes).
+
+```json
+{"CROSS_MODEL_REVIEW":0,"RESUME_BRIEF_AUTO_REFRESH":0,"budget_scope":"OPEN/P1 bug BUG-0044; verify-work-only; S0186 terminal UAT reconcile (VERIFY_PASS) + DEC-0153 state/brief pair; no automatic phase spawn","bug_id":"BUG-0044","child_isolation_ref":"docs/engineering/state.md#bug-0044-verifywork-20261025T212011Z","completed_phase":"verify-work","completed_phases":["intake","discovery","research","architecture","sprint-plan","execute","qa","verify-work"],"decision_gate":false,"delivery_mode":"ultra_lean","effective_plan":["spec","plan","build+verify","ship"],"fresh_context_marker":"qa-BUG0044-verifywork-20261025T212011Z-fresh","invocation_mode":"auto","memory_layer":"pack","model_id":"zelisko_llm/qwen3.8-27b","model_provenance":"provenance=host=opencode; fresh canonical phase child (qa verify-work)","next_scheduled_phase":"release","next_scheduled_role":"release","orchestrator_run_id":"auto-20261025-bug0044","phase_boundary":"verify-work","phase_cursor":"build+verify/verify-work-pass","phase_id":"verify-work","proof_hash":"2b2bc23204e501e57a122f60e10d780754a9b9573ee202d927d847dc317637e4","proof_issued_at":"2026-10-25T21:20:11Z","proof_ttl_seconds":3600,"record_key":"auto-20261025-bug0044|bug|BUG-0044|verify-work|rp-auto-20261025-bug0044-verify-work-qa-20261025T212011Z-BUG-0044","reinstatement_mode":"none","requested_start_from":"(none)","resolution_source":"resume_brief","resolution_status":"resolved","role":"qa","runtime_proof_id":"rp-auto-20261025-bug0044-verify-work-qa-20261025T212011Z-BUG-0044","skipped_phases":[],"sprint_id":"S0186","stop_matrix_action":"STOP_AFTER_VERIFY_WORK_PASS; validate_pair_then_parent_may_spawn_release","stop_reason":"verify_work_complete_phase_boundary","story_id":"(none)","verdict":"VERIFY_PASS","work_item_kind":"bug","writer_role":"qa"}
+```
+
+---
+
+## Latest orchestration pointer — BUG-0044 qa continuation pair (DEC-0153)
+
+- **Boundary:** completed **`qa`** checkpoint (canonical mint **`2026-10-25T21:10:35Z`**); state-first — the matching checkpoint is appended at the bottom of `docs/engineering/state.md` (state record = the last ```json block, `QA checkpoint - BUG-0044 ... QA_PASS`).
+- **`bug_id`:** **`BUG-0044`**; **`story_id`:** **`(none)`**; **`sprint_id`:** **`S0186`** — **OPEN/P1** (AC-1..AC-5 unchecked; no flip by this phase).
+- **`orchestrator_run_id`:** `auto-20261025-bug0044`
+- **Verdict:** **`QA_PASS`**; `decision_gate=false`.
+- **STOP:** `STOP_AFTER_QA_PASS; validate_pair_then_parent_may_spawn_verify_work`. This child does **NOT** spawn the next phase.
+- `intended_resume_phase`: **`verify-work`**; `next_scheduled_phase`: **`verify-work`**; `next_scheduled_role`: **`qa`**.
+- `writer_role`: **`qa`**; `role`: **`qa`**; `reinstatement_mode`: **`none`**.
+- **Provenance (this write):** pointer + record prose written by the BUG-0044 qa child (fresh context); the JSON record below is **byte-identical** to the state-bottom record (state-first, DEC-0153). No proof re-minted; no stale-proof waiver (the consumed execute pair was IN-TTL at this write, ~13m remaining). Sprint **S0186** QA verdict (AC-1..AC-5 PASS, plan-verify merged into QA, Locks 1-5 verified) is locked for `/verify-work` in a fresh qa context.
+
+# Resume Brief — BUG-0044 qa continuation pair (state-first, DEC-0153)
+
+- `record_key`: `auto-20261025-bug0044|bug|BUG-0044|qa|rp-auto-20261025-bug0044-qa-qa-20261025T211035Z-BUG-0044`
+- `completed_phase`: `qa`; `writer_role`: `qa`; `role`: `qa`; `next_scheduled_phase`: `verify-work`; `next_scheduled_role`: `qa`.
+- `fresh_context_marker`: `qa-BUG0044-qa-20261025T211035Z-fresh`; `runtime_proof_id`: `rp-auto-20261025-bug0044-qa-qa-20261025T211035Z-BUG-0044`; `proof_hash`: `06bc9303d393540f72c75092918ff199da4a8e8ae867ba05d2d88acc81ef0653`; `proof_issued_at`: `2026-10-25T21:10:35Z`; `proof_ttl_seconds`: 3600; expiry `2026-10-25T22:10:35Z`.
+- **Validation / ordering:** state record precedes this pointer (state-first, DEC-0153). JSON byte-identical to the `docs/engineering/state.md` QA checkpoint record (SHA-256 `ecbf12f4185f3a77aa1383a8e4fd8b2d19b6004f89f030b4c04386fa44ca080d`, 1664 bytes).
+
+```json
+{"CROSS_MODEL_REVIEW":0,"RESUME_BRIEF_AUTO_REFRESH":0,"budget_scope":"OPEN/P1 bug BUG-0044; qa-only; S0186 QA_PASS findings + plan-verify merge + DEC-0153 state/brief pair; no automatic phase spawn","bug_id":"BUG-0044","child_isolation_ref":"docs/engineering/state.md#bug-0044-qa-20261025T211035Z","completed_phase":"qa","completed_phases":["intake","discovery","research","architecture","sprint-plan","execute","qa"],"decision_gate":false,"delivery_mode":"ultra_lean","effective_plan":["spec","plan","build+verify","ship"],"fresh_context_marker":"qa-BUG0044-qa-20261025T211035Z-fresh","invocation_mode":"auto","memory_layer":"pack","model_id":"zelisko_llm/qwen3.8-27b","model_provenance":"provenance=host=opencode; fresh canonical phase child (qa)","next_scheduled_phase":"verify-work","next_scheduled_role":"qa","orchestrator_run_id":"auto-20261025-bug0044","phase_boundary":"qa","phase_cursor":"build+verify/qa-pass","phase_id":"qa","proof_hash":"06bc9303d393540f72c75092918ff199da4a8e8ae867ba05d2d88acc81ef0653","proof_issued_at":"2026-10-25T21:10:35Z","proof_ttl_seconds":3600,"record_key":"auto-20261025-bug0044|bug|BUG-0044|qa|rp-auto-20261025-bug0044-qa-qa-20261025T211035Z-BUG-0044","reinstatement_mode":"none","requested_start_from":"(none)","resolution_source":"resume_brief","resolution_status":"resolved","role":"qa","runtime_proof_id":"rp-auto-20261025-bug0044-qa-qa-20261025T211035Z-BUG-0044","skipped_phases":[],"sprint_id":"S0186","stop_matrix_action":"STOP_AFTER_QA_PASS; validate_pair_then_parent_may_spawn_verify_work","stop_reason":"qa_complete_phase_boundary","story_id":"(none)","verdict":"QA_PASS","work_item_kind":"bug","writer_role":"qa"}
+```
+
+---
+
+## Latest orchestration pointer — BUG-0044 execute continuation pair (DEC-0153)
+
+- **Boundary:** completed **`execute`** checkpoint (canonical mint **`2026-10-25T20:23:47Z`**); state-first — the matching checkpoint is appended at the bottom of `docs/engineering/state.md` (state record = the last ```json block, `Execute checkpoint - BUG-0044 ... EXECUTE_PASS`).
+- **`bug_id`:** **`BUG-0044`**; **`story_id`:** **`(none)`**; **`sprint_id`:** **`S0186`** — **OPEN/P1** (AC-1..AC-5 unchecked; no flip by this phase).
+- **`orchestrator_run_id`:** `auto-20261025-bug0044`
+- **Verdict:** **`EXECUTE_PASS`**; `decision_gate=false`.
+- **STOP:** `STOP_AFTER_EXECUTE_PASS; validate_pair_then_parent_may_spawn_qa`. This child does **NOT** spawn the next phase.
+- `intended_resume_phase`: **`qa`**; `next_scheduled_phase`: **`qa`**; `next_scheduled_role`: **`qa`**.
+- `writer_role`: **`dev`**; `role`: **`dev`**; `reinstatement_mode`: **`none`**.
+- **Provenance (this write):** pointer + record prose written by the BUG-0044 execute dev child (fresh context); the JSON record below is **byte-identical** to the state-bottom record (state-first, DEC-0153). No proof re-minted; no stale-proof waiver (the consumed sprint-plan pair was IN-TTL at this write, ~36m remaining). Sprint **S0186** deliverables (Locks 1–5: 28 command files, `phase_boundary_self_check` + template twin, `tests/bug0044_phase_boundary_pair_contract_test.py` + template twin, 6/6 tasks) are locked for `/qa` in a fresh qa context.
+
+# Resume Brief — BUG-0044 execute continuation pair (state-first, DEC-0153)
+
+- `record_key`: `auto-20261025-bug0044|bug|BUG-0044|execute|rp-auto-20261025-bug0044-execute-dev-20261025T202347Z-BUG-0044`
+- `completed_phase`: `execute`; `writer_role`: `dev`; `role`: `dev`; `next_scheduled_phase`: `qa`; `next_scheduled_role`: `qa`.
+- `fresh_context_marker`: `dev-BUG0044-execute-20261025T202347Z-fresh`; `runtime_proof_id`: `rp-auto-20261025-bug0044-execute-dev-20261025T202347Z-BUG-0044`; `proof_hash`: `7296c5ff48bc2a14682b9cba36f32b1ec71bb2b2b44a7e88947f34741b6141de`; `proof_issued_at`: `2026-10-25T20:23:47Z`; `proof_ttl_seconds`: 3600; expiry `2026-10-25T21:23:47Z`.
+- **Validation / ordering:** state record precedes this pointer (state-first, DEC-0153). JSON byte-identical to the `docs/engineering/state.md` execute checkpoint record (SHA-256 `fb39a87d4bec7b274de00da979dda2c0cd7845484563d9d2ad73ae3f2a7b9d53`, 1719 bytes).
+
+```json
+{"CROSS_MODEL_REVIEW":0,"RESUME_BRIEF_AUTO_REFRESH":0,"budget_scope":"OPEN/P1 bug BUG-0044; execute-only; S0186 T-anch..T-005 delivered (Locks 1-5) + DEC-0153 state/brief pair; no automatic phase spawn","bug_id":"BUG-0044","child_isolation_ref":"docs/engineering/state.md#bug-0044-execute-20261025T202347Z","completed_phase":"execute","completed_phases":["intake","discovery","research","architecture","sprint-plan","execute"],"decision_gate":false,"delivery_mode":"ultra_lean","effective_plan":["spec","plan","build+verify","ship"],"fresh_context_marker":"dev-BUG0044-execute-20261025T202347Z-fresh","invocation_mode":"auto","memory_layer":"pack","model_id":"zelisko_llm/qwen3.8-27b","model_provenance":"provenance=host=opencode; fresh canonical phase child (dev execute)","next_scheduled_phase":"qa","next_scheduled_role":"qa","orchestrator_run_id":"auto-20261025-bug0044","phase_boundary":"execute","phase_cursor":"build+verify/execute-pass","phase_id":"execute","proof_hash":"7296c5ff48bc2a14682b9cba36f32b1ec71bb2b2b44a7e88947f34741b6141de","proof_issued_at":"2026-10-25T20:23:47Z","proof_ttl_seconds":3600,"record_key":"auto-20261025-bug0044|bug|BUG-0044|execute|rp-auto-20261025-bug0044-execute-dev-20261025T202347Z-BUG-0044","reinstatement_mode":"none","requested_start_from":"(none)","resolution_source":"resume_brief","resolution_status":"resolved","role":"dev","runtime_proof_id":"rp-auto-20261025-bug0044-execute-dev-20261025T202347Z-BUG-0044","skipped_phases":[],"sprint_id":"S0186","stop_matrix_action":"STOP_AFTER_EXECUTE_PASS; validate_pair_then_parent_may_spawn_qa","stop_reason":"execute_complete_phase_boundary","story_id":"(none)","verdict":"EXECUTE_PASS","work_item_kind":"bug","writer_role":"dev"}
+```
+
+---
+
+## Latest orchestration pointer — BUG-0044 sprint-plan continuation pair (DEC-0153)
+
+- **Boundary:** completed **`sprint-plan`** checkpoint (canonical mint **`2026-10-25T20:00:09Z`**); state-first — the matching checkpoint is appended at the bottom of `docs/engineering/state.md` (state record = the last ```json block, `Sprint-plan checkpoint - BUG-0044 ... SPRINT_PLAN_PASS`).
+- **`bug_id`:** **`BUG-0044`**; **`story_id`:** **`(none)`**; **`sprint_id`:** **`S0186`** — **OPEN/P1** (AC-1..AC-5 unchecked; no flip by this phase).
+- **`orchestrator_run_id`:** `auto-20261025-bug0044`
+- **Verdict:** **`SPRINT_PLAN_PASS`**; `decision_gate=false`.
+- **STOP:** `STOP_AFTER_SPRINT_PLAN_PASS; validate_pair_then_parent_may_spawn_execute`. This child does **NOT** spawn the next phase.
+- `intended_resume_phase`: **`execute`**; `next_scheduled_phase`: **`execute`**; `next_scheduled_role`: **`dev`**.
+- `writer_role`: **`tech-lead`**; `role`: **`tech-lead`**; `reinstatement_mode`: **`none`**.
+- **Provenance (this write):** pointer + record prose written by the BUG-0044 sprint-plan tech-lead child (fresh context); the JSON record below is **byte-identical** to the state-bottom record (state-first, DEC-0153). No proof re-minted; no stale-proof waiver. Sprint **S0186** (`sprints/S0186/sprint.md` + `tasks.md`, 6 tasks T-anch..T-005, 1:1 with `# BUG-0044` seeds, under `SPRINT_MAX_TASKS=12`) is locked for `/execute` in a fresh dev context.
+
+# Resume Brief — BUG-0044 sprint-plan continuation pair (state-first, DEC-0153)
+
+- `record_key`: `auto-20261025-bug0044|bug|BUG-0044|sprint-plan|rp-auto-20261025-bug0044-sprint-plan-tl-20261025T200009Z-BUG-0044`
+- `completed_phase`: `sprint-plan`; `writer_role`: `tech-lead`; `role`: `tech-lead`; `next_scheduled_phase`: `execute`; `next_scheduled_role`: `dev`.
+- `fresh_context_marker`: `tl-BUG0044-sprintplan-20261025T200009Z-fresh`; `runtime_proof_id`: `rp-auto-20261025-bug0044-sprint-plan-tl-20261025T200009Z-BUG-0044`; `proof_hash`: `18e1db1cbe969cf77d340359c25520d9df0aa8e25472b97bdd621b43df9e8789`; `proof_issued_at`: `2026-10-25T20:00:09Z`; `proof_ttl_seconds`: 3600; expiry `2026-10-25T21:00:09Z`.
+- **Validation / ordering:** state record precedes this pointer (state-first, DEC-0153). JSON byte-identical to the `docs/engineering/state.md` sprint-plan checkpoint record (SHA-256 `150dcbf22420e5d3be9e8495a25994da33b2bee1580a48c7e3e4500677e2a455`, 1760 bytes).
+
+```json
+{"CROSS_MODEL_REVIEW":0,"RESUME_BRIEF_AUTO_REFRESH":0,"budget_scope":"OPEN/P1 bug BUG-0044; sprint-plan-only; S0186 plan artifacts + DEC-0153 state/brief pair; no automatic phase spawn","bug_id":"BUG-0044","child_isolation_ref":"docs/engineering/state.md#bug-0044-sprintplan-20261025T200009Z","completed_phase":"sprint-plan","completed_phases":["intake","discovery","research","architecture","sprint-plan"],"decision_gate":false,"delivery_mode":"ultra_lean","effective_plan":["spec","plan","build+verify","ship"],"fresh_context_marker":"tl-BUG0044-sprintplan-20261025T200009Z-fresh","invocation_mode":"auto","memory_layer":"pack","model_id":"zelisko_llm/qwen3.8-27b","model_provenance":"provenance=host=opencode; fresh canonical phase child (tech-lead sprint-plan)","next_scheduled_phase":"execute","next_scheduled_role":"dev","orchestrator_run_id":"auto-20261025-bug0044","phase_boundary":"sprint-plan","phase_cursor":"plan/sprint-plan-pass","phase_id":"sprint-plan","proof_hash":"18e1db1cbe969cf77d340359c25520d9df0aa8e25472b97bdd621b43df9e8789","proof_issued_at":"2026-10-25T20:00:09Z","proof_ttl_seconds":3600,"record_key":"auto-20261025-bug0044|bug|BUG-0044|sprint-plan|rp-auto-20261025-bug0044-sprint-plan-tl-20261025T200009Z-BUG-0044","reinstatement_mode":"none","requested_start_from":"(none)","resolution_source":"resume_brief","resolution_status":"resolved","role":"tech-lead","runtime_proof_id":"rp-auto-20261025-bug0044-sprint-plan-tl-20261025T200009Z-BUG-0044","skipped_phases":[],"sprint_id":"S0186","stop_matrix_action":"STOP_AFTER_SPRINT_PLAN_PASS; validate_pair_then_parent_may_spawn_execute","stop_reason":"sprint_plan_complete_phase_boundary","story_id":"(none)","verdict":"SPRINT_PLAN_PASS","work_item_kind":"bug","writer_role":"tech-lead"}
+```
+
+---
+## Latest orchestration pointer — BUG-0044 architecture continuation pair (DEC-0153)
+
+- **Boundary:** completed **`architecture`** checkpoint (canonical mint **`2026-10-25T19:45:57Z`**); state-first — the matching checkpoint is appended at the bottom of `docs/engineering/state.md` (state record = the last ```json block, `Architecture checkpoint - BUG-0044 ... ARCHITECTURE_PASS`).
+- **`bug_id`:** **`BUG-0044`**; **`story_id`:** **`(none)`**; **`sprint_id`:** **`(none)`** — **OPEN/P1** (AC-1..AC-5 unchecked; no flip by this phase).
+- **`orchestrator_run_id`:** `auto-20261025-bug0044`
+- **Verdict:** **`ARCHITECTURE_PASS`**; `decision_gate=false`.
+- **STOP:** `STOP_AFTER_ARCHITECTURE_PASS; validate_pair_then_parent_may_spawn_sprint_plan`. This child does **NOT** spawn the next phase.
+- `intended_resume_phase`: **`sprint-plan`**; `next_scheduled_phase`: **`sprint-plan`**; `next_scheduled_role`: **`tech-lead`**.
+- `writer_role`: **`tech-lead`**; `role`: **`tech-lead`**; `reinstatement_mode`: **`none`**.
+- **Provenance (this write):** pointer + record prose written by the BUG-0044 architecture tech-lead child (fresh context); the JSON record below is **byte-identical** to the state-bottom record (state-first, DEC-0153). No proof re-minted; no stale-proof waiver. Companion **DEC-0156** + the 5 locked items (Lock 1–5) + `tests/bug0044_phase_boundary_pair_contract_test.py` surface are locked in the `# BUG-0044` architecture section for `/sprint-plan`.
+
+# Resume Brief — BUG-0044 architecture continuation pair (state-first, DEC-0153)
+
+- `record_key`: `auto-20261025-bug0044|bug|BUG-0044|architecture|rp-auto-20261025-bug0044-architecture-tl-20261025T194557Z-BUG-0044`
+- `completed_phase`: `architecture`; `writer_role`: `tech-lead`; `role`: `tech-lead`; `next_scheduled_phase`: `sprint-plan`; `next_scheduled_role`: `tech-lead`.
+- `fresh_context_marker`: `tl-BUG0044-architecture-20261025T194557Z-fresh`; `runtime_proof_id`: `rp-auto-20261025-bug0044-architecture-tl-20261025T194557Z-BUG-0044`; `proof_hash`: `2a4a13879d7007792866506c55db462204b2703a25c1b549a1c5d4691e7d3029`; `proof_issued_at`: `2026-10-25T19:45:57Z`; `proof_ttl_seconds`: 3600; expiry `2026-10-25T20:45:57Z`.
+- **Validation / ordering:** state record precedes this pointer (state-first, DEC-0153). JSON byte-identical to the `docs/engineering/state.md` architecture checkpoint record (SHA-256 `01b4834cac0ad2c02ca7ae794178195e861c32e073c8fa0304f07bbabfcf305d`, 1790 bytes).
+
+```json
+{"CROSS_MODEL_REVIEW":0,"RESUME_BRIEF_AUTO_REFRESH":0,"budget_scope":"OPEN/P1 bug BUG-0044; architecture-only; companion DEC-0156 + # BUG-0044 architecture section authored; no automatic phase spawn","bug_id":"BUG-0044","child_isolation_ref":"docs/engineering/state.md#bug-0044-architecture-20261025T194557Z","completed_phase":"architecture","completed_phases":["intake","discovery","research","architecture"],"decision_gate":false,"delivery_mode":"ultra_lean","effective_plan":["spec","plan","build+verify","ship"],"fresh_context_marker":"tl-BUG0044-architecture-20261025T194557Z-fresh","invocation_mode":"auto","memory_layer":"pack","model_id":"zelisko_llm/qwen3.8-27b","model_provenance":"provenance=host=opencode; fresh canonical phase child (tech-lead architecture)","next_scheduled_phase":"sprint-plan","next_scheduled_role":"tech-lead","orchestrator_run_id":"auto-20261025-bug0044","phase_boundary":"architecture","phase_cursor":"plan/architecture-pass","phase_id":"architecture","proof_hash":"2a4a13879d7007792866506c55db462204b2703a25c1b549a1c5d4691e7d3029","proof_issued_at":"2026-10-25T19:45:57Z","proof_ttl_seconds":3600,"record_key":"auto-20261025-bug0044|bug|BUG-0044|architecture|rp-auto-20261025-bug0044-architecture-tl-20261025T194557Z-BUG-0044","reinstatement_mode":"none","requested_start_from":"(none)","resolution_source":"resume_brief","resolution_status":"resolved","role":"tech-lead","runtime_proof_id":"rp-auto-20261025-bug0044-architecture-tl-20261025T194557Z-BUG-0044","skipped_phases":[],"sprint_id":"(none)","stop_matrix_action":"STOP_AFTER_ARCHITECTURE_PASS; validate_pair_then_parent_may_spawn_sprint_plan","stop_reason":"architecture_complete_phase_boundary","story_id":"(none)","verdict":"ARCHITECTURE_PASS","work_item_kind":"bug","writer_role":"tech-lead"}
+```
+
+---
+
+## Latest orchestration pointer — BUG-0044 research continuation pair (DEC-0153)
+
+- **Boundary:** completed **`research`** checkpoint (canonical mint **`2026-10-25T19:31:47Z`**); state-first — the matching checkpoint is appended at the bottom of `docs/engineering/state.md` (state record = the last ```json block, `Research checkpoint - BUG-0044 ... RESEARCH_PASS`).
+- **`bug_id`:** **`BUG-0044`**; **`story_id`:** **`(none)`**; **`sprint_id`:** **`(none)`** — **OPEN/P1** (AC-1..AC-5 unchecked; no flip by this phase).
+- **`orchestrator_run_id`:** `auto-20261025-bug0044`
+- **Verdict:** **`RESEARCH_PASS`**; `decision_gate=false`.
+- **STOP:** `STOP_AFTER_RESEARCH_PASS; validate_pair_then_parent_may_spawn_architecture`. This child does **NOT** spawn the next phase.
+- `intended_resume_phase`: **`architecture`**; `next_scheduled_phase`: **`architecture`**; `next_scheduled_role`: **`tech-lead`**.
+- `writer_role`: **`tech-lead`**; `role`: **`tech-lead`**; `reinstatement_mode`: **`none`**.
+- **Provenance (this write):** pointer + record prose written by the BUG-0044 research tech-lead child (fresh context); the JSON record below is **byte-identical** to the state-bottom record (state-first, DEC-0153). No proof re-minted; no stale-proof waiver. Companion **DEC-0156** + contract-test surface `tests/bug0044_phase_boundary_pair_contract_test.py` are locked in R-0176 for `/architecture`.
+
+# Resume Brief — BUG-0044 research continuation pair (state-first, DEC-0153)
+
+- `record_key`: `auto-20261025-bug0044|bug|BUG-0044|research|rp-auto-20261025-bug0044-research-tl-20261025T193147Z-BUG-0044`
+- `completed_phase`: `research`; `writer_role`: `tech-lead`; `role`: `tech-lead`; `next_scheduled_phase`: `architecture`; `next_scheduled_role`: `tech-lead`.
+- `fresh_context_marker`: `tl-BUG0044-research-20261025T193147Z-fresh`; `runtime_proof_id`: `rp-auto-20261025-bug0044-research-tl-20261025T193147Z-BUG-0044`; `proof_hash`: `02a8e0a67de51812732b79e18d8a5f930dfe19151757a1aaf26c31a8029ae7eb`; `proof_issued_at`: `2026-10-25T19:31:47Z`; `proof_ttl_seconds`: 3600; expiry `2026-10-25T20:31:47Z`.
+- **Validation / ordering:** state record precedes this pointer (state-first, DEC-0153). JSON byte-identical to the `docs/engineering/state.md` research checkpoint record (SHA-256 `d394425a0ce8b8819a264bc633a8b2c98f63133197ac1c6678fa211445198eb`, 1584 bytes).
+
+```json
+{"CROSS_MODEL_REVIEW":0,"RESUME_BRIEF_AUTO_REFRESH":0,"budget_scope":"OPEN/P1 bug BUG-0044; research-only; no automatic phase spawn","bug_id":"BUG-0044","child_isolation_ref":"docs/engineering/state.md#bug-0044-research-20261025T193147Z","completed_phase":"research","completed_phases":["intake","discovery","research"],"decision_gate":false,"delivery_mode":"ultra_lean","effective_plan":["spec","plan","build+verify","ship"],"fresh_context_marker":"tl-BUG0044-research-20261025T193147Z-fresh","memory_layer":"pack","model_id":"zelisko_llm/qwen3.8-27b","model_provenance":"fresh canonical phase child (tech-lead research)","next_scheduled_phase":"architecture","next_scheduled_role":"tech-lead","orchestrator_run_id":"auto-20261025-bug0044","phase_boundary":"research","phase_cursor":"spec/research-pass","phase_id":"research","proof_hash":"02a8e0a67de51812732b79e18d8a5f930dfe19151757a1aaf26c31a8029ae7eb","proof_issued_at":"2026-10-25T19:31:47Z","proof_ttl_seconds":3600,"record_key":"auto-20261025-bug0044|bug|BUG-0044|research|rp-auto-20261025-bug0044-research-tl-20261025T193147Z-BUG-0044","reinstatement_mode":"none","resolution_source":"research_backlog_block_and_pair_surface_confirmation","role":"tech-lead","runtime_proof_id":"rp-auto-20261025-bug0044-research-tl-20261025T193147Z-BUG-0044","skipped_phases":[],"sprint_id":"(none)","stop_matrix_action":"STOP_AFTER_RESEARCH_PASS; validate_pair_then_parent_may_spawn_architecture","stop_reason":"research_complete_phase_boundary","story_id":"(none)","verdict":"RESEARCH_PASS","work_item_kind":"bug","writer_role":"tech-lead"}
+```
+
+---
+
+## Latest orchestration pointer — BUG-0044 discovery continuation pair (DEC-0153)
+
+- **Boundary:** completed **`discovery`** checkpoint (canonical mint **`2026-10-25T14:50:00Z`**); state-first — the matching checkpoint is appended at the bottom of `docs/engineering/state.md` (state record = the last ```json block, `Discovery checkpoint - BUG-0044 ... DISCOVERY_PASS`).
+- **`bug_id`:** **`BUG-0044`**; **`story_id`:** **`(none)`**; **`sprint_id`:** **`(none)`** — **OPEN/P1** (AC-1..AC-5 unchecked; no flip by this phase).
+- **`orchestrator_run_id`:** `auto-20261025-bug0044`
+- **Verdict:** **`DISCOVERY_PASS`**; `decision_gate=false`.
+- **STOP:** `STOP_AFTER_DISCOVERY_PASS; validate_pair_then_parent_may_spawn_research`. This child does **NOT** spawn the next phase.
+- `intended_resume_phase`: **`research`**; `next_scheduled_phase`: **`research`**; `next_scheduled_role`: **`tech-lead`**.
+- `writer_role`: **`po`**; `role`: **`po`**; `reinstatement_mode`: **`none`**.
+- **Provenance (this write):** pointer + record prose written by the BUG-0044 discovery PO child (fresh context); the JSON record below is **byte-identical** to the state-bottom record (state-first, DEC-0153). No proof re-minted; no stale-proof waiver.
+
+# Resume Brief — BUG-0044 discovery continuation pair (state-first, DEC-0153)
+
+- `record_key`: `auto-20261025-bug0044|bug|BUG-0044|discovery|rp-auto-20261025-bug0044-discovery-po-20261025T145000Z-BUG-0044`
+- `completed_phase`: `discovery`; `writer_role`: `po`; `role`: `po`; `next_scheduled_phase`: `research`; `next_scheduled_role`: `tech-lead`.
+- `fresh_context_marker`: `po-BUG0044-discovery-20261025T145000Z-fresh`; `runtime_proof_id`: `rp-auto-20261025-bug0044-discovery-po-20261025T145000Z-BUG-0044`; `proof_hash`: `fe57b3631f9c8a8bf7cadcf110bc3105f41a7e3972be02f8e7632fbd5770de46`; `proof_issued_at`: `2026-10-25T14:50:00Z`; `proof_ttl_seconds`: 3600; expiry `2026-10-25T15:50:00Z`.
+- **Validation / ordering:** state record precedes this pointer (state-first, DEC-0153). JSON byte-identical to the `docs/engineering/state.md` discovery checkpoint record above it.
+
+```json
+{"record_key":"auto-20261025-bug0044|bug|BUG-0044|discovery|rp-auto-20261025-bug0044-discovery-po-20261025T145000Z-BUG-0044","orchestrator_run_id":"auto-20261025-bug0044","work_item_kind":"bug","story_id":"(none)","bug_id":"BUG-0044","sprint_id":"(none)","completed_phase":"discovery","writer_role":"po","role":"po","fresh_context_marker":"po-BUG0044-discovery-20261025T145000Z-fresh","resolution_source":"discovery_backlog_block_and_gap_confirmation","effective_plan":["spec","plan","build+verify","ship"],"skipped_phases":[],"completed_phases":["intake","discovery"],"next_scheduled_phase":"research","next_scheduled_role":"tech-lead","phase_cursor":"spec/discovery-pass","phase_boundary":"discovery","budget_scope":"OPEN/P1 bug BUG-0044; discovery-only; no automatic phase spawn","stop_reason":"discovery_complete_phase_boundary","runtime_proof_id":"rp-auto-20261025-bug0044-discovery-po-20261025T145000Z-BUG-0044","proof_hash":"fe57b3631f9c8a8bf7cadcf110bc3105f41a7e3972be02f8e7632fbd5770de46","proof_issued_at":"2026-10-25T14:50:00Z","proof_ttl_seconds":3600,"phase_id":"discovery","stop_matrix_action":"STOP_AFTER_DISCOVERY_PASS; validate_pair_then_parent_may_spawn_research","model_id":"zelisko_llm/qwen3.8-27b","model_provenance":"fresh canonical phase child (po discovery)","delivery_mode":"ultra_lean","reinstatement_mode":"none","memory_layer":"pack","decision_gate":false,"verdict":"DISCOVERY_PASS","child_isolation_ref":"docs/engineering/state.md#bug-0044-discovery-20261025T145000Z","RESUME_BRIEF_AUTO_REFRESH":0,"CROSS_MODEL_REVIEW":0}
+```
+
+---
+
+## Latest orchestration pointer — post-bug-intake (DEC-0069)
+
+- **Boundary**: successful **`/intake bug`** persistence (**`US-0045`**) — **`intake_boundary_utc=2026-10-25T14:26:05Z`**
+- **`bug_id`**: **`BUG-0044`** — must remain **`OPEN`** in **`docs/product/backlog.md`** (authority); this refresh is rejected if backlog shows **DONE**
+- **Intake evidence ref**: `handoffs/intake_evidence/BUG-0044-intake-20261025T142605Z.json`
+- **`orchestrator_run_id`**: `(unknown)` (boundary metadata when known; optional at intake)
+- **Contract**: default **`/auto`** continuation targets **`discovery`** for this OPEN bug (not a stale pre-intake **`intake`** resume target)
+
+## Current status
+
+- **Active bug**: **`BUG-0044`** — **OPEN** per **`docs/product/backlog.md`** at refresh time
+
+## Intended resume phase
+
+`discovery`
+
+## Resume target
+
+- bug_id=BUG-0044
+- story_id=(none)
+- sprint_id=(none)
+- boundary=post-bug-intake (**DEC-0069**)
+
+## Latest auto breadcrumb seed
+
+- requested_start_from=(none)
+- resolved_start_phase=discovery
+- resolution_source=resume_brief
+- resolution_status=resolved
+- stop_reason=intake_complete
+- stop_phase=intake
+- next_scheduled_phase=discovery
+- bug_id=BUG-0044
+- story_id=(none)
+- sprint_id=(none)
+- orchestrator_run_id=(unknown)
+- intake_boundary_utc=2026-10-25T14:26:05Z
+
+## Latest orchestration pointer — US-0164 closure continuation pair (DEC-0153) [RECONSTRUCTED 2026-10-25 post-clobber]
+
+- **Boundary:** completed **`closure`** checkpoint (canonical mint **`2026-10-25T14:08:09Z`**); state-first — the matching checkpoint is appended at the bottom of `docs/engineering/state.md` (state record L1191).
+- **`story_id`:** **`US-0164`**; **`sprint_id`:** **`S0185`**; **`bug_id`:** **`(none)`** — **OPEN/P1** at mint (AC-1..AC-9 unchecked; closure flips at L1191 closure record only).
+- **`orchestrator_run_id`:** `auto-20261025-us0164-closure`
+- **Verdict:** **`CLOSURE_PASS`**; `decision_gate=false`.
+- **STOP:** `STOP_AFTER_CLOSURE_PASS; validate_pair_then_parent_may_spawn_refresh_context`. This child does **NOT** spawn the next phase.
+- `intended_resume_phase`: **`refresh-context`**; `next_scheduled_phase`: **`refresh-context`**; `next_scheduled_role`: **`curator`**.
+- `writer_role`: **`release`**; `role`: **`release`**; `reinstatement_mode`: **`none`**.
+- **Provenance (reconstructed):** pointer + record prose reconstructed 2026-10-25 after the BUG-0043 resume-brief clobber; the JSON record below is **byte-exact** from `docs/engineering/state.md` L1191; narrative source = state.md checkpoint + the JSON record. No proof was re-minted; no stale-proof waiver.
+
+# Resume Brief — US-0164 closure continuation pair (state-first, DEC-0153) [RECONSTRUCTED 2026-10-25 post-clobber]
+
+- `record_key`: `auto-20261025-us0164-closure|story|US-0164|closure|rp-auto-20261025-us0164-closure-release-20261025T140809Z-US-0164`
+- `completed_phase`: `closure`; `writer_role`: `release`; `role`: `release`; `next_scheduled_phase`: `refresh-context`; `next_scheduled_role`: `curator`.
+- `fresh_context_marker`: `release-US0164-closure-20261025T140809Z-fresh`; `runtime_proof_id`: `rp-auto-20261025-us0164-closure-release-20261025T140809Z-US-0164`; `proof_hash`: `f6ce13cb70d944dc19e922e7016227c978286c2a869b7a96376ceb746f557db0`; `proof_issued_at`: `2026-10-25T14:08:09Z`; `proof_ttl_seconds`: 3600; expiry `2026-10-25T15:08:09Z`.
+- **Validation / ordering:** state record precedes this pointer (state-first, DEC-0153). JSON byte-identical to `docs/engineering/state.md` L1191.
+
+```json
+{"CROSS_MODEL_REVIEW":0,"RESUME_BRIEF_AUTO_REFRESH":0,"budget_scope":"DONE story US-0164; S0185; closure complete (CLOSURE_PASS; canonical flip applied US-0164 ONLY); next phase=refresh-context as curator; no phase spawn beyond parent-validated refresh-context","bug_id":"(none)","child_isolation_ref":"docs/engineering/state.md#us-0164-closure-20261025T140809Z","completed_phase":"closure","completed_phases":["intake","discovery","research","architecture","sprint-plan","execute","qa","verify-work","release","closure"],"decision_gate":false,"delivery_mode":"ultra_lean","effective_plan":["spec","plan","build+verify","ship"],"fresh_context_marker":"release-US0164-closure-20261025T140809Z-fresh","memory_layer":"pack","model_id":"zelisko_llm/qwen3.8-27b","model_provenance":"fresh canonical closure release phase child","next_scheduled_phase":"refresh-context","next_scheduled_role":"curator","orchestrator_run_id":"auto-20261025-us0164-closure","phase_boundary":"closure","phase_cursor":"ship/closure-pass","phase_id":"closure","proof_hash":"f6ce13cb70d944dc19e922e7016227c978286c2a869b7a96376ceb746f557db0","proof_issued_at":"2026-10-25T14:08:09Z","proof_ttl_seconds":3600,"record_key":"auto-20261025-us0164-closure|story|US-0164|closure|rp-auto-20261025-us0164-closure-release-20261025T140809Z-US-0164","reinstatement_mode":"none","resolution_source":"closure","role":"release","runtime_proof_id":"rp-auto-20261025-us0164-closure-release-20261025T140809Z-US-0164","skipped_phases":[],"sprint_id":"S0185","stop_matrix_action":"STOP_AFTER_CLOSURE_PASS; validate_pair_then_parent_may_spawn_refresh_context","stop_reason":"closure_complete_phase_boundary","story_id":"US-0164","verdict":"CLOSURE_PASS","work_item_kind":"story","writer_role":"release"}
+```
+
+---
+
+## Latest orchestration pointer — post-bug-intake (DEC-0069)
+
+- **Boundary**: successful **`/intake bug`** persistence (**`US-0045`**) — **`intake_boundary_utc=2026-10-25T14:00:00Z`**
+- **`bug_id`**: **`BUG-0043`** — must remain **`OPEN`** in **`docs/product/backlog.md`** (authority); this refresh is rejected if backlog shows **DONE**
+- **Intake evidence ref**: `handoffs/intake_evidence/BUG-0043-intake-20261025T140000Z.json`
+- **`orchestrator_run_id`**: `(unknown)` (boundary metadata when known; optional at intake)
+- **Contract**: default **`/auto`** continuation targets **`discovery`** for this OPEN bug (not a stale pre-intake **`intake`** resume target)
+
+## Current status
+
+- **Active bug**: **`BUG-0043`** — **OPEN** per **`docs/product/backlog.md`** at refresh time
+
+## Intended resume phase
+
+`discovery`
+
+## Resume target
+
+- bug_id=BUG-0043
+- story_id=(none)
+- sprint_id=(none)
+- boundary=post-bug-intake (**DEC-0069**)
+
+## Latest auto breadcrumb seed
+
+- requested_start_from=(none)
+- resolved_start_phase=discovery
+- resolution_source=resume_brief
+- resolution_status=resolved
+- stop_reason=intake_complete
+- stop_phase=intake
+- next_scheduled_phase=discovery
+- bug_id=BUG-0043
+- story_id=(none)
+- sprint_id=(none)
+- orchestrator_run_id=(unknown)
+- intake_boundary_utc=2026-10-25T14:00:00Z
+
+## Latest orchestration pointer — post-bug-intake (DEC-0069)
+
+- **Boundary**: successful **`/intake bug`** persistence (**`US-0045`**) — **`intake_boundary_utc=2026-10-25T14:00:00Z`**
+- **`bug_id`**: **`BUG-0042`** — must remain **`OPEN`** in **`docs/product/backlog.md`** (authority); this refresh is rejected if backlog shows **DONE**
+- **Intake evidence ref**: `handoffs/intake_evidence/BUG-0042-intake-20261025T140000Z.json`
+- **`orchestrator_run_id`**: `(unknown)` (boundary metadata when known; optional at intake)
+- **Contract**: default **`/auto`** continuation targets **`discovery`** for this OPEN bug (not a stale pre-intake **`intake`** resume target)
+
+## Current status
+
+- **Active bug**: **`BUG-0042`** — **OPEN** per **`docs/product/backlog.md`** at refresh time
+
+## Intended resume phase
+
+`discovery`
+
+## Resume target
+
+- bug_id=BUG-0042
+- story_id=(none)
+- sprint_id=(none)
+- boundary=post-bug-intake (**DEC-0069**)
+
+## Latest auto breadcrumb seed
+
+- requested_start_from=(none)
+- resolved_start_phase=discovery
+- resolution_source=resume_brief
+- resolution_status=resolved
+- stop_reason=intake_complete
+- stop_phase=intake
+- next_scheduled_phase=discovery
+- bug_id=BUG-0042
+- story_id=(none)
+- sprint_id=(none)
+- orchestrator_run_id=(unknown)
+- intake_boundary_utc=2026-10-25T14:00:00Z
+
+## Latest orchestration pointer — post-bug-intake (DEC-0069)
+
+- **Boundary**: successful **`/intake bug`** persistence (**`US-0045`**) — **`intake_boundary_utc=2026-10-25T14:00:00Z`**
+- **`bug_id`**: **`BUG-0041`** — must remain **`OPEN`** in **`docs/product/backlog.md`** (authority); this refresh is rejected if backlog shows **DONE**
+- **Intake evidence ref**: `handoffs/intake_evidence/BUG-0041-intake-20261025T140000Z.json`
+- **`orchestrator_run_id`**: `(unknown)` (boundary metadata when known; optional at intake)
+- **Contract**: default **`/auto`** continuation targets **`discovery`** for this OPEN bug (not a stale pre-intake **`intake`** resume target)
+
+## Current status
+
+- **Active bug**: **`BUG-0041`** — **OPEN** per **`docs/product/backlog.md`** at refresh time
+
+## Intended resume phase
+
+`discovery`
+
+## Resume target
+
+- bug_id=BUG-0041
+- story_id=(none)
+- sprint_id=(none)
+- boundary=post-bug-intake (**DEC-0069**)
+
+## Latest auto breadcrumb seed
+
+- requested_start_from=(none)
+- resolved_start_phase=discovery
+- resolution_source=resume_brief
+- resolution_status=resolved
+- stop_reason=intake_complete
+- stop_phase=intake
+- next_scheduled_phase=discovery
+- bug_id=BUG-0041
+- story_id=(none)
+- sprint_id=(none)
+- orchestrator_run_id=(unknown)
+- intake_boundary_utc=2026-10-25T14:00:00Z
+
+## Latest orchestration pointer — post-bug-intake (DEC-0069)
+
+- **Boundary**: successful **`/intake bug`** persistence (**`US-0045`**) — **`intake_boundary_utc=2026-10-25T14:00:00Z`**
+- **`bug_id`**: **`BUG-0040`** — must remain **`OPEN`** in **`docs/product/backlog.md`** (authority); this refresh is rejected if backlog shows **DONE**
+- **Intake evidence ref**: `handoffs/intake_evidence/BUG-0040-intake-20261025T140000Z.json`
+- **`orchestrator_run_id`**: `(unknown)` (boundary metadata when known; optional at intake)
+- **Contract**: default **`/auto`** continuation targets **`discovery`** for this OPEN bug (not a stale pre-intake **`intake`** resume target)
+
+## Current status
+
+- **Active bug**: **`BUG-0040`** — **OPEN** per **`docs/product/backlog.md`** at refresh time
+
+## Intended resume phase
+
+`discovery`
+
+## Resume target
+
+- bug_id=BUG-0040
+- story_id=(none)
+- sprint_id=(none)
+- boundary=post-bug-intake (**DEC-0069**)
+
+## Latest auto breadcrumb seed
+
+- requested_start_from=(none)
+- resolved_start_phase=discovery
+- resolution_source=resume_brief
+- resolution_status=resolved
+- stop_reason=intake_complete
+- stop_phase=intake
+- next_scheduled_phase=discovery
+- bug_id=BUG-0040
+- story_id=(none)
+- sprint_id=(none)
+- orchestrator_run_id=(unknown)
+- intake_boundary_utc=2026-10-25T14:00:00Z
+
+## Latest orchestration pointer — US-0164 release continuation pair (DEC-0153) [RECONSTRUCTED 2026-10-25 post-clobber]
+
+- **Boundary:** completed **`release`** checkpoint (canonical mint **`2026-10-25T13:55:59Z`**); state-first — the matching checkpoint is appended at the bottom of `docs/engineering/state.md` (state record L1162).
+- **`story_id`:** **`US-0164`**; **`sprint_id`:** **`S0185`**; **`bug_id`:** **`(none)`** — **OPEN/P1** at mint (AC-1..AC-9 unchecked; closure flips at L1162 closure record only).
+- **`orchestrator_run_id`:** `auto-20261025-us0164-release`
+- **Verdict:** **`RELEASE_PASS`**; `decision_gate=false`.
+- **STOP:** `STOP_AFTER_RELEASE_PASS; validate_pair_then_parent_may_spawn_closure`. This child does **NOT** spawn the next phase.
+- `intended_resume_phase`: **`closure`**; `next_scheduled_phase`: **`closure`**; `next_scheduled_role`: **`release`**.
+- `writer_role`: **`release`**; `role`: **`release`**; `reinstatement_mode`: **`none`**.
+- **Provenance (reconstructed):** pointer + record prose reconstructed 2026-10-25 after the BUG-0043 resume-brief clobber; the JSON record below is **byte-exact** from `docs/engineering/state.md` L1162; narrative source = state.md checkpoint + the JSON record. No proof was re-minted; no stale-proof waiver.
+
+# Resume Brief — US-0164 release continuation pair (state-first, DEC-0153) [RECONSTRUCTED 2026-10-25 post-clobber]
+
+- `record_key`: `auto-20261025-us0164-release|story|US-0164|release|rp-auto-20261025-us0164-release-release-20261025T135559Z-US-0164`
+- `completed_phase`: `release`; `writer_role`: `release`; `role`: `release`; `next_scheduled_phase`: `closure`; `next_scheduled_role`: `release`.
+- `fresh_context_marker`: `release-US0164-S0185-20261025T135559Z-fresh`; `runtime_proof_id`: `rp-auto-20261025-us0164-release-release-20261025T135559Z-US-0164`; `proof_hash`: `a42802783527f9846680e9a5e0a66b6484e78dbb8037eb25e42959eed0cc4ffc`; `proof_issued_at`: `2026-10-25T13:55:59Z`; `proof_ttl_seconds`: 3600; expiry `2026-10-25T14:55:59Z`.
+- **Validation / ordering:** state record precedes this pointer (state-first, DEC-0153). JSON byte-identical to `docs/engineering/state.md` L1162.
+
+```json
+{"CROSS_MODEL_REVIEW":0,"RESUME_BRIEF_AUTO_REFRESH":0,"budget_scope":"OPEN story US-0164; S0185; release gates complete retry #1 (RELEASE_PASS; prior RELEASE_UAT_INCOMPLETE remediated); next phase=closure as release; no AC tick; no status flip; publish NOT PERFORMED; no phase spawn beyond parent-validated closure","bug_id":"(none)","child_isolation_ref":"docs/engineering/state.md#us-0164-release-20261025T135559Z","completed_phase":"release","completed_phases":["intake","discovery","research","architecture","sprint-plan","execute","qa","verify-work","release"],"decision_gate":false,"delivery_mode":"ultra_lean","effective_plan":["spec","plan","build+verify","ship"],"fresh_context_marker":"release-US0164-S0185-20261025T135559Z-fresh","memory_layer":"pack","model_id":"zelisko_llm/qwen3.8-27b","model_provenance":"fresh canonical release phase child (retry #1)","next_scheduled_phase":"closure","next_scheduled_role":"release","orchestrator_run_id":"auto-20261025-us0164-release","phase_boundary":"release","phase_cursor":"ship/release-pass","phase_id":"release","proof_hash":"a42802783527f9846680e9a5e0a66b6484e78dbb8037eb25e42959eed0cc4ffc","proof_issued_at":"2026-10-25T13:55:59Z","proof_ttl_seconds":3600,"record_key":"auto-20261025-us0164-release|story|US-0164|release|rp-auto-20261025-us0164-release-release-20261025T135559Z-US-0164","reinstatement_mode":"none","resolution_source":"release","role":"release","runtime_proof_id":"rp-auto-20261025-us0164-release-release-20261025T135559Z-US-0164","skipped_phases":[],"sprint_id":"S0185","stop_matrix_action":"STOP_AFTER_RELEASE_PASS; validate_pair_then_parent_may_spawn_closure","stop_reason":"release_complete_phase_boundary","story_id":"US-0164","verdict":"RELEASE_PASS","work_item_kind":"story","writer_role":"release"}
+```
+
+---
+
+## Latest orchestration pointer — US-0164 verify-work TTL re-mint continuation pair (DEC-0153) [RECONSTRUCTED 2026-10-25 post-clobber]
+
+- **Boundary:** completed **`verify-work`** checkpoint (canonical mint **`2026-10-25T13:39:39Z`**); state-first — the matching checkpoint is appended at the bottom of `docs/engineering/state.md` (state record L1129).
+- **`story_id`:** **`US-0164`**; **`sprint_id`:** **`S0185`**; **`bug_id`:** **`(none)`** — **OPEN/P1** at mint (AC-1..AC-9 unchecked; closure flips at L1129 closure record only).
+- **`orchestrator_run_id`:** `repair-20261025-us0164-verifywork-uatreconcile`
+- **Verdict:** **`VERIFY_PASS`**; `decision_gate=false`.
+- **STOP:** `STOP_AFTER_VERIFY_PASS; validate_pair_then_parent_may_spawn_release`. This child does **NOT** spawn the next phase.
+- `intended_resume_phase`: **`release`**; `next_scheduled_phase`: **`release`**; `next_scheduled_role`: **`release`**.
+- `writer_role`: **`qa`**; `role`: **`qa`**; `reinstatement_mode`: **`continuation-pair-repair`**.
+- **Provenance (reconstructed):** pointer + record prose reconstructed 2026-10-25 after the BUG-0043 resume-brief clobber; the JSON record below is **byte-exact** from `docs/engineering/state.md` L1129; narrative source = state.md checkpoint + the JSON record. No proof was re-minted; no stale-proof waiver.
+
+# Resume Brief — US-0164 verify-work TTL re-mint continuation pair (state-first, DEC-0153) [RECONSTRUCTED 2026-10-25 post-clobber]
+
+- `record_key`: `repair-20261025-us0164-verifywork-uatreconcile|story|US-0164|verify-work|rp-repair-20261025-us0164-verifywork-uatreconcile-qa-20261025T133939Z-US-0164`
+- `completed_phase`: `verify-work`; `writer_role`: `qa`; `role`: `qa`; `next_scheduled_phase`: `release`; `next_scheduled_role`: `release`.
+- `fresh_context_marker`: `qa-US0164-vw-uatreconcile-20261025T1339-fresh`; `runtime_proof_id`: `rp-repair-20261025-us0164-verifywork-uatreconcile-qa-20261025T133939Z-US-0164`; `proof_hash`: `938d73aa0e7bbc1d0e4f52c0f5ed754739082a56b381518c4c0adaea61d6201e`; `proof_issued_at`: `2026-10-25T13:39:39Z`; `proof_ttl_seconds`: 3600; expiry `2026-10-25T14:39:39Z`.
+- **Validation / ordering:** state record precedes this pointer (state-first, DEC-0153). JSON byte-identical to `docs/engineering/state.md` L1129.
+
+```json
+{"CROSS_MODEL_REVIEW":0,"RESUME_BRIEF_AUTO_REFRESH":0,"budget_scope":"OPEN story US-0164; S0185; verify-work UAT lifecycle reconciliation (repair-only) + continuation-pair TTL re-mint at verify-work boundary; VERIFY_PASS retained; no AC tick; no status flip; no phase spawn beyond parent-validated release","bug_id":"(none)","child_isolation_ref":"docs/engineering/state.md#us-0164-vw-uatreconcile-20261025T133939Z","completed_phase":"verify-work","completed_phases":["intake","discovery","research","architecture","sprint-plan","execute","qa","verify-work"],"decision_gate":false,"delivery_mode":"repair-only","effective_plan":["spec","plan","build+verify","ship"],"fresh_context_marker":"qa-US0164-vw-uatreconcile-20261025T1339-fresh","memory_layer":"pack","model_id":"zelisko_llm/qwen3.8-27b","model_provenance":"fresh repair-only qa phase child","next_scheduled_phase":"release","next_scheduled_role":"release","orchestrator_run_id":"repair-20261025-us0164-verifywork-uatreconcile","phase_boundary":"verify-work","phase_cursor":"build+verify/verify-work-pass","phase_id":"verify-work","proof_hash":"938d73aa0e7bbc1d0e4f52c0f5ed754739082a56b381518c4c0adaea61d6201e","proof_issued_at":"2026-10-25T13:39:39Z","proof_ttl_seconds":3600,"record_key":"repair-20261025-us0164-verifywork-uatreconcile|story|US-0164|verify-work|rp-repair-20261025-us0164-verifywork-uatreconcile-qa-20261025T133939Z-US-0164","reinstatement_mode":"continuation-pair-repair","repair_of_record_key":"auto-20261025-us0164-verify-work|story|US-0164|verify-work|rp-auto-20261025-us0164-verify-work-qa-20261025T125600Z-US-0164","repair_predicate":"expired_ttl_only","repair_reason":"expired_ttl_only continuation-pair re-mint plus verify-work UAT lifecycle reconciliation (uat.json/uat.md moved qa_complete_verify_work_pending -> verify_work_complete_release_pending on existing 9/9-PASS evidence; no verify-work content, QA content, or dev content changed)","resolution_source":"verify-work","role":"qa","runtime_proof_id":"rp-repair-20261025-us0164-verifywork-uatreconcile-qa-20261025T133939Z-US-0164","skipped_phases":[],"sprint_id":"S0185","stop_matrix_action":"STOP_AFTER_VERIFY_PASS; validate_pair_then_parent_may_spawn_release","stop_reason":"verify_work_uat_reconciled_pair_reminted","story_id":"US-0164","verdict":"VERIFY_PASS","work_item_kind":"story","writer_role":"qa"}
+```
+
+---
+
+## Latest orchestration pointer — US-0164 verify-work continuation pair (DEC-0153) [RECONSTRUCTED 2026-10-25 post-clobber]
+
+- **Boundary:** completed **`verify-work`** checkpoint (canonical mint **`2026-10-25T12:56:00Z`**); state-first — the matching checkpoint is appended at the bottom of `docs/engineering/state.md` (state record L1095).
+- **`story_id`:** **`US-0164`**; **`sprint_id`:** **`S0185`**; **`bug_id`:** **`(none)`** — **OPEN/P1** at mint (AC-1..AC-9 unchecked; closure flips at L1095 closure record only).
+- **`orchestrator_run_id`:** `auto-20261025-us0164-verify-work`
+- **Verdict:** **`VERIFY_PASS`**; `decision_gate=false`.
+- **STOP:** `STOP_AFTER_VERIFY_PASS; validate_pair_then_parent_may_spawn_release`. This child does **NOT** spawn the next phase.
+- `intended_resume_phase`: **`release`**; `next_scheduled_phase`: **`release`**; `next_scheduled_role`: **`release`**.
+- `writer_role`: **`qa`**; `role`: **`qa`**; `reinstatement_mode`: **`none`**.
+- **Provenance (reconstructed):** pointer + record prose reconstructed 2026-10-25 after the BUG-0043 resume-brief clobber; the JSON record below is **byte-exact** from `docs/engineering/state.md` L1095; narrative source = state.md checkpoint + the JSON record. No proof was re-minted; no stale-proof waiver.
+
+# Resume Brief — US-0164 verify-work continuation pair (state-first, DEC-0153) [RECONSTRUCTED 2026-10-25 post-clobber]
+
+- `record_key`: `auto-20261025-us0164-verify-work|story|US-0164|verify-work|rp-auto-20261025-us0164-verify-work-qa-20261025T125600Z-US-0164`
+- `completed_phase`: `verify-work`; `writer_role`: `qa`; `role`: `qa`; `next_scheduled_phase`: `release`; `next_scheduled_role`: `release`.
+- `fresh_context_marker`: `qa-US0164-verifywork-20261025T125600Z-fresh`; `runtime_proof_id`: `rp-auto-20261025-us0164-verify-work-qa-20261025T125600Z-US-0164`; `proof_hash`: `1018b5b1e1c163771d7f416eba4fbe5129373f08cce018a0ac04656e310baccc`; `proof_issued_at`: `2026-10-25T12:56:00Z`; `proof_ttl_seconds`: 3600; expiry `2026-10-25T13:56:00Z`.
+- **Validation / ordering:** state record precedes this pointer (state-first, DEC-0153). JSON byte-identical to `docs/engineering/state.md` L1095.
+
+```json
+{"CROSS_MODEL_REVIEW":0,"RESUME_BRIEF_AUTO_REFRESH":0,"budget_scope":"OPEN story US-0164; S0185; verify-work re-verification complete (VERIFY_PASS); next phase=release; no AC tick; no status flip; no phase spawn beyond parent-validated release","bug_id":"(none)","child_isolation_ref":"docs/engineering/state.md#us-0164-verify-work-20261025T125600Z","completed_phase":"verify-work","completed_phases":["intake","discovery","research","architecture","sprint-plan","execute","qa","verify-work"],"decision_gate":false,"delivery_mode":"ultra_lean","effective_plan":["spec","plan","build+verify","ship"],"fresh_context_marker":"qa-US0164-verifywork-20261025T125600Z-fresh","memory_layer":"pack","model_id":"zelisko_llm/qwen3.8-27b","model_provenance":"fresh canonical verify-work QA phase child","next_scheduled_phase":"release","next_scheduled_role":"release","orchestrator_run_id":"auto-20261025-us0164-verify-work","phase_boundary":"verify-work","phase_cursor":"build+verify/verify-work-pass","phase_id":"verify-work","proof_hash":"1018b5b1e1c163771d7f416eba4fbe5129373f08cce018a0ac04656e310baccc","proof_issued_at":"2026-10-25T12:56:00Z","proof_ttl_seconds":3600,"record_key":"auto-20261025-us0164-verify-work|story|US-0164|verify-work|rp-auto-20261025-us0164-verify-work-qa-20261025T125600Z-US-0164","reinstatement_mode":"none","resolution_source":"verify-work","role":"qa","runtime_proof_id":"rp-auto-20261025-us0164-verify-work-qa-20261025T125600Z-US-0164","skipped_phases":[],"sprint_id":"S0185","stop_matrix_action":"STOP_AFTER_VERIFY_PASS; validate_pair_then_parent_may_spawn_release","stop_reason":"verify_work_complete_phase_boundary","story_id":"US-0164","verdict":"VERIFY_PASS","work_item_kind":"story","writer_role":"qa"}
+```
+
+---
+
+## Latest orchestration pointer — US-0164 qa TTL re-mint continuation pair (DEC-0153) [RECONSTRUCTED 2026-10-25 post-clobber]
+
+- **Boundary:** completed **`qa`** checkpoint (canonical mint **`2026-10-25T12:40:16Z`**); state-first — the matching checkpoint is appended at the bottom of `docs/engineering/state.md` (state record L1062).
+- **`story_id`:** **`US-0164`**; **`sprint_id`:** **`S0185`**; **`bug_id`:** **`(none)`** — **OPEN/P1** at mint (AC-1..AC-9 unchecked; closure flips at L1062 closure record only).
+- **`orchestrator_run_id`:** `repair-20261025-us0164-qa-ttl-repair`
+- **Verdict:** **`QA_PASS`**; `decision_gate=false`.
+- **STOP:** `STOP_AFTER_QA_PASS; validate_pair_then_parent_may_spawn_verify_work`. This child does **NOT** spawn the next phase.
+- `intended_resume_phase`: **`verify-work`**; `next_scheduled_phase`: **`verify-work`**; `next_scheduled_role`: **`qa`**.
+- `writer_role`: **`qa`**; `role`: **`qa`**; `reinstatement_mode`: **`continuation-pair-repair`**.
+- **Provenance (reconstructed):** pointer + record prose reconstructed 2026-10-25 after the BUG-0043 resume-brief clobber; the JSON record below is **byte-exact** from `docs/engineering/state.md` L1062; narrative source = state.md checkpoint + the JSON record. No proof was re-minted; no stale-proof waiver.
+
+# Resume Brief — US-0164 qa TTL re-mint continuation pair (state-first, DEC-0153) [RECONSTRUCTED 2026-10-25 post-clobber]
+
+- `record_key`: `repair-20261025-us0164-qa-ttl-repair|story|US-0164|qa|rp-repair-20261025-us0164-qa-ttl-repair-qa-20261025T124016Z-US-0164`
+- `completed_phase`: `qa`; `writer_role`: `qa`; `role`: `qa`; `next_scheduled_phase`: `verify-work`; `next_scheduled_role`: `qa`.
+- `fresh_context_marker`: `qa-US0164-qa-ttl-repair-20261025T124016Z-fresh`; `runtime_proof_id`: `rp-repair-20261025-us0164-qa-ttl-repair-qa-20261025T124016Z-US-0164`; `proof_hash`: `ef24a9759953412dec94a9f29afbabc76aeaefb1e7907ada9de52ce86fe5e031`; `proof_issued_at`: `2026-10-25T12:40:16Z`; `proof_ttl_seconds`: 3600; expiry `2026-10-25T13:40:16Z`.
+- **Validation / ordering:** state record precedes this pointer (state-first, DEC-0153). JSON byte-identical to `docs/engineering/state.md` L1062.
+
+```json
+{"CROSS_MODEL_REVIEW":0,"RESUME_BRIEF_AUTO_REFRESH":0,"budget_scope":"OPEN story US-0164; S0185; DEC-0153 continuation-pair TTL re-mint (repair-only) at qa boundary; QA_PASS retained; no AC tick; no status flip; no phase spawn beyond parent-validated verify-work","bug_id":"(none)","child_isolation_ref":"docs/engineering/state.md#us-0164-qa-ttl-repair-20261025T124016Z","completed_phase":"qa","completed_phases":["intake","discovery","research","architecture","sprint-plan","execute","qa"],"decision_gate":false,"delivery_mode":"repair-only","effective_plan":["spec","plan","build+verify","ship"],"fresh_context_marker":"qa-US0164-qa-ttl-repair-20261025T124016Z-fresh","memory_layer":"pack","model_id":"zelisko_llm/qwen3.8-27b","model_provenance":"fresh repair-only qa phase child","next_scheduled_phase":"verify-work","next_scheduled_role":"qa","orchestrator_run_id":"repair-20261025-us0164-qa-ttl-repair","phase_boundary":"qa","phase_cursor":"build+verify/qa-pass","phase_id":"qa","proof_hash":"ef24a9759953412dec94a9f29afbabc76aeaefb1e7907ada9de52ce86fe5e031","proof_issued_at":"2026-10-25T12:40:16Z","proof_ttl_seconds":3600,"record_key":"repair-20261025-us0164-qa-ttl-repair|story|US-0164|qa|rp-repair-20261025-us0164-qa-ttl-repair-qa-20261025T124016Z-US-0164","reinstatement_mode":"continuation-pair-repair","repair_of_record_key":"auto-20261025-us0164-qa|story|US-0164|qa|rp-auto-20261025-us0164-qa-qa-20261025T024500Z-US-0164","repair_predicate":"expired_ttl_only","repair_reason":"expired_ttl_only continuation-pair re-mint (prior QA proof rp-auto-20261025-us0164-qa-qa-20261025T024500Z-US-0164 expired at 2026-10-25T03:45:00Z; canonical tuple exact; strict hash MATCH; no QA content changed)","resolution_source":"qa","role":"qa","runtime_proof_id":"rp-repair-20261025-us0164-qa-ttl-repair-qa-20261025T124016Z-US-0164","skipped_phases":[],"sprint_id":"S0185","stop_matrix_action":"STOP_AFTER_QA_PASS; validate_pair_then_parent_may_spawn_verify_work","stop_reason":"qa_pass_pair_expired_ttl_reminted","story_id":"US-0164","verdict":"QA_PASS","work_item_kind":"story","writer_role":"qa"}
+```
+
+---
+
+## Latest orchestration pointer — US-0164 qa continuation pair (DEC-0153) [RECONSTRUCTED 2026-10-25 post-clobber]
+
+- **Boundary:** completed **`qa`** checkpoint (canonical mint **`2026-10-25T02:45:00Z`**); state-first — the matching checkpoint is appended at the bottom of `docs/engineering/state.md` (state record L1030).
+- **`story_id`:** **`US-0164`**; **`sprint_id`:** **`S0185`**; **`bug_id`:** **`(none)`** — **OPEN/P1** at mint (AC-1..AC-9 unchecked; closure flips at L1030 closure record only).
+- **`orchestrator_run_id`:** `auto-20261025-us0164-qa`
+- **Verdict:** **`QA_PASS`**; `decision_gate=false`.
+- **STOP:** `STOP_AFTER_QA_PASS; validate_pair_then_parent_may_spawn_verify_work`. This child does **NOT** spawn the next phase.
+- `intended_resume_phase`: **`verify-work`**; `next_scheduled_phase`: **`verify-work`**; `next_scheduled_role`: **`qa`**.
+- `writer_role`: **`qa`**; `role`: **`qa`**; `reinstatement_mode`: **`none`**.
+- **Provenance (reconstructed):** pointer + record prose reconstructed 2026-10-25 after the BUG-0043 resume-brief clobber; the JSON record below is **byte-exact** from `docs/engineering/state.md` L1030; narrative source = state.md checkpoint + the JSON record. No proof was re-minted; no stale-proof waiver.
+
+# Resume Brief — US-0164 qa continuation pair (state-first, DEC-0153) [RECONSTRUCTED 2026-10-25 post-clobber]
+
+- `record_key`: `auto-20261025-us0164-qa|story|US-0164|qa|rp-auto-20261025-us0164-qa-qa-20261025T024500Z-US-0164`
+- `completed_phase`: `qa`; `writer_role`: `qa`; `role`: `qa`; `next_scheduled_phase`: `verify-work`; `next_scheduled_role`: `qa`.
+- `fresh_context_marker`: `qa-US0164-qa-20261025T024500Z-fresh`; `runtime_proof_id`: `rp-auto-20261025-us0164-qa-qa-20261025T024500Z-US-0164`; `proof_hash`: `7b2c76e6b30af30489b528956ab699afb1b1656619176a327a98a31812a12df5`; `proof_issued_at`: `2026-10-25T02:45:00Z`; `proof_ttl_seconds`: 3600; expiry `2026-10-25T03:45:00Z`.
+- **Validation / ordering:** state record precedes this pointer (state-first, DEC-0153). JSON byte-identical to `docs/engineering/state.md` L1030.
+
+```json
+{"CROSS_MODEL_REVIEW":0,"RESUME_BRIEF_AUTO_REFRESH":0,"budget_scope":"OPEN story US-0164; S0185; qa decision-layer re-validation complete (QA_PASS); next phase=verify-work; no AC tick; no status flip; no phase spawn beyond parent-validated verify-work","bug_id":"(none)","child_isolation_ref":"docs/engineering/state.md#us-0164-qa-20261025T024500Z","completed_phase":"qa","completed_phases":["intake","discovery","research","architecture","sprint-plan","execute","qa"],"decision_gate":false,"delivery_mode":"ultra_lean","effective_plan":["spec","plan","build+verify","ship"],"fresh_context_marker":"qa-US0164-qa-20261025T024500Z-fresh","memory_layer":"pack","model_id":"zelisko_llm/qwen3.8-27b","model_provenance":"fresh canonical QA phase child","next_scheduled_phase":"verify-work","next_scheduled_role":"qa","orchestrator_run_id":"auto-20261025-us0164-qa","phase_boundary":"qa","phase_cursor":"build+verify/qa-pass","phase_id":"qa","proof_hash":"7b2c76e6b30af30489b528956ab699afb1b1656619176a327a98a31812a12df5","proof_issued_at":"2026-10-25T02:45:00Z","proof_ttl_seconds":3600,"record_key":"auto-20261025-us0164-qa|story|US-0164|qa|rp-auto-20261025-us0164-qa-qa-20261025T024500Z-US-0164","reinstatement_mode":"none","resolution_source":"qa","role":"qa","runtime_proof_id":"rp-auto-20261025-us0164-qa-qa-20261025T024500Z-US-0164","skipped_phases":[],"sprint_id":"S0185","stop_matrix_action":"STOP_AFTER_QA_PASS; validate_pair_then_parent_may_spawn_verify_work","stop_reason":"qa_complete_phase_boundary","story_id":"US-0164","verdict":"QA_PASS","work_item_kind":"story","writer_role":"qa"}
+```
+
+---
+
+## Latest orchestration pointer — US-0164 execute continuation pair (DEC-0153) [RECONSTRUCTED 2026-10-25 post-clobber]
+
+- **Boundary:** completed **`execute`** checkpoint (canonical mint **`2026-10-25T02:19:11Z`**); state-first — the matching checkpoint is appended at the bottom of `docs/engineering/state.md` (state record L1000).
+- **`story_id`:** **`US-0164`**; **`sprint_id`:** **`S0185`**; **`bug_id`:** **`(none)`** — **OPEN/P1** at mint (AC-1..AC-9 unchecked; closure flips at L1000 closure record only).
+- **`orchestrator_run_id`:** `auto-20261025-us0164-execute`
+- **Verdict:** **`EXECUTE_PASS`**; `decision_gate=false`.
+- **STOP:** `STOP_AFTER_EXECUTE_PASS; validate_pair_then_parent_may_spawn_qa`. This child does **NOT** spawn the next phase.
+- `intended_resume_phase`: **`qa`**; `next_scheduled_phase`: **`qa`**; `next_scheduled_role`: **`qa`**.
+- `writer_role`: **`dev`**; `role`: **`dev`**; `reinstatement_mode`: **`continuation`**.
+- **Provenance (reconstructed):** pointer + record prose reconstructed 2026-10-25 after the BUG-0043 resume-brief clobber; the JSON record below is **byte-exact** from `docs/engineering/state.md` L1000; narrative source = state.md checkpoint + the JSON record. No proof was re-minted; no stale-proof waiver.
+
+# Resume Brief — US-0164 execute continuation pair (state-first, DEC-0153) [RECONSTRUCTED 2026-10-25 post-clobber]
+
+- `record_key`: `auto-20261025-us0164-execute|story|US-0164|execute|rp-auto-20261025-us0164-execute-dev-20261025T021911Z-US-0164`
+- `completed_phase`: `execute`; `writer_role`: `dev`; `role`: `dev`; `next_scheduled_phase`: `qa`; `next_scheduled_role`: `qa`.
+- `fresh_context_marker`: `dev-US0164-execute-20261025T021911Z-fresh`; `runtime_proof_id`: `rp-auto-20261025-us0164-execute-dev-20261025T021911Z-US-0164`; `proof_hash`: `c9513bc6db7583eb02293d0ca552cd6121e53d9e659baa490a30d7f49f3abfd1`; `proof_issued_at`: `2026-10-25T02:19:11Z`; `proof_ttl_seconds`: 3600; expiry `2026-10-25T03:19:11Z`.
+- **Validation / ordering:** state record precedes this pointer (state-first, DEC-0153). JSON byte-identical to `docs/engineering/state.md` L1000.
+
+```json
+{"CROSS_MODEL_REVIEW":0,"RESUME_BRIEF_AUTO_REFRESH":0,"budget_scope":"OPEN story US-0164; S0185; execute decision-layer delivery complete; next phase=qa; no AC tick; no status flip; no phase spawn beyond parent-validated qa; run_driver stateful provider-switch ledger row deferred (opt-in, default-off)","bug_id":"(none)","child_isolation_ref":"docs/engineering/state.md#us-0164-execute-20261025T021911Z","completed_phase":"execute","completed_phases":["intake","discovery","research","architecture","sprint-plan","execute"],"decision_gate":false,"delivery_mode":"execute","effective_plan":["spec","plan","build+verify","ship"],"fresh_context_marker":"dev-US0164-execute-20261025T021911Z-fresh","memory_layer":"pack","model_id":"zelisko_llm/qwen3.8-27b","model_provenance":"fresh execute dev phase child","next_scheduled_phase":"qa","next_scheduled_role":"qa","orchestrator_run_id":"auto-20261025-us0164-execute","phase_boundary":"execute","phase_cursor":"build+verify/execute-pass","phase_id":"execute","proof_hash":"c9513bc6db7583eb02293d0ca552cd6121e53d9e659baa490a30d7f49f3abfd1","proof_issued_at":"2026-10-25T02:19:11Z","proof_ttl_seconds":3600,"record_key":"auto-20261025-us0164-execute|story|US-0164|execute|rp-auto-20261025-us0164-execute-dev-20261025T021911Z-US-0164","reinstatement_mode":"continuation","resolution_source":"execute_dev_completion","role":"dev","runtime_proof_id":"rp-auto-20261025-us0164-execute-dev-20261025T021911Z-US-0164","skipped_phases":[],"sprint_id":"S0185","stop_matrix_action":"STOP_AFTER_EXECUTE_PASS; validate_pair_then_parent_may_spawn_qa","stop_reason":"execute_complete_phase_boundary","story_id":"US-0164","verdict":"EXECUTE_PASS","work_item_kind":"story","writer_role":"dev"}
+```
+
+---
+
+## Latest orchestration pointer — US-0164 sprint-plan TTL re-mint continuation pair (DEC-0153) [RECONSTRUCTED 2026-10-25 post-clobber]
+
+- **Boundary:** completed **`sprint-plan`** checkpoint (canonical mint **`2026-10-25T00:47:39Z`**); state-first — the matching checkpoint is appended at the bottom of `docs/engineering/state.md` (state record L971).
+- **`story_id`:** **`US-0164`**; **`sprint_id`:** **`S0185`**; **`bug_id`:** **`(none)`** — **OPEN/P1** at mint (AC-1..AC-9 unchecked; closure flips at L971 closure record only).
+- **`orchestrator_run_id`:** `repair-20261025-us0164-sprintplan-ttl-repair`
+- **Verdict:** **`SPRINT_PLAN_PASS`**; `decision_gate=false`.
+- **STOP:** `STOP_AFTER_SPRINT_PLAN_PASS; validate_pair_then_parent_may_spawn_execute`. This child does **NOT** spawn the next phase.
+- `intended_resume_phase`: **`execute`**; `next_scheduled_phase`: **`execute`**; `next_scheduled_role`: **`dev`**.
+- `writer_role`: **`tech-lead`**; `role`: **`tech-lead`**; `reinstatement_mode`: **`continuation-pair-repair`**.
+- **Provenance (reconstructed):** pointer + record prose reconstructed 2026-10-25 after the BUG-0043 resume-brief clobber; the JSON record below is **byte-exact** from `docs/engineering/state.md` L971; narrative source = state.md checkpoint + the JSON record. No proof was re-minted; no stale-proof waiver.
+
+# Resume Brief — US-0164 sprint-plan TTL re-mint continuation pair (state-first, DEC-0153) [RECONSTRUCTED 2026-10-25 post-clobber]
+
+- `record_key`: `repair-20261025-us0164-sprintplan-ttl-repair|story|US-0164|sprint-plan|rp-repair-20261025-us0164-sprintplan-ttl-repair-techlead-20261025T004739Z-US-0164`
+- `completed_phase`: `sprint-plan`; `writer_role`: `tech-lead`; `role`: `tech-lead`; `next_scheduled_phase`: `execute`; `next_scheduled_role`: `dev`.
+- `fresh_context_marker`: `tl-US0164-sprintplan-ttl-repair-20261025T004739Z-fresh`; `runtime_proof_id`: `rp-repair-20261025-us0164-sprintplan-ttl-repair-techlead-20261025T004739Z-US-0164`; `proof_hash`: `5cacf361dc0a6191f9749191af615831785e9f4c08d1726ab9b02377f84cc89b`; `proof_issued_at`: `2026-10-25T00:47:39Z`; `proof_ttl_seconds`: 3600; expiry `2026-10-25T01:47:39Z`.
+- **Validation / ordering:** state record precedes this pointer (state-first, DEC-0153). JSON byte-identical to `docs/engineering/state.md` L971.
+
+```json
+{"CROSS_MODEL_REVIEW":0,"RESUME_BRIEF_AUTO_REFRESH":0,"budget_scope":"OPEN story US-0164; S0185; DEC-0153 continuation-pair TTL re-mint (repair-only) at sprint-plan boundary; no AC tick; no status flip; no phase spawn beyond parent-validated execute","bug_id":"(none)","child_isolation_ref":"docs/engineering/state.md#us-0164-sprint-plan-ttl-repair-20261025T004739Z","completed_phase":"sprint-plan","completed_phases":["intake","discovery","research","architecture","sprint-plan"],"decision_gate":false,"delivery_mode":"repair-only","effective_plan":["spec","plan","build+verify","ship"],"fresh_context_marker":"tl-US0164-sprintplan-ttl-repair-20261025T004739Z-fresh","memory_layer":"pack","model_id":"zelisko_llm/qwen3.8-27b","model_provenance":"fresh repair-only tech-lead phase child","next_scheduled_phase":"execute","next_scheduled_role":"dev","orchestrator_run_id":"repair-20261025-us0164-sprintplan-ttl-repair","phase_boundary":"sprint-plan","phase_cursor":"plan/sprint-plan-pass","phase_id":"sprint-plan","proof_hash":"5cacf361dc0a6191f9749191af615831785e9f4c08d1726ab9b02377f84cc89b","proof_issued_at":"2026-10-25T00:47:39Z","proof_ttl_seconds":3600,"record_key":"repair-20261025-us0164-sprintplan-ttl-repair|story|US-0164|sprint-plan|rp-repair-20261025-us0164-sprintplan-ttl-repair-techlead-20261025T004739Z-US-0164","reinstatement_mode":"continuation-pair-repair","repair_of_record_key":"repair-20261025-us0164-sprintplan-pair-repair|story|US-0164|sprint-plan|rp-repair-20261025-us0164-sprintplan-pair-repair-techlead-20261024T231907Z-US-0164","repair_predicate":"expired_ttl_only","repair_reason":"expired_ttl_only continuation-pair re-mint (prior repair proof rp-repair-20261025-us0164-sprintplan-pair-repair-techlead-20261024T231907Z-US-0164 expired at 2026-10-25T00:19:07Z; canonical tuple exact; strict hash MATCH; no phase content changed)","resolution_source":"sprintplan_handoff_and_stale_pair_repair","role":"tech-lead","runtime_proof_id":"rp-repair-20261025-us0164-sprintplan-ttl-repair-techlead-20261025T004739Z-US-0164","skipped_phases":[],"sprint_id":"S0185","stop_matrix_action":"STOP_AFTER_SPRINT_PLAN_PASS; validate_pair_then_parent_may_spawn_execute","stop_reason":"sprint_plan_pass_pair_expired_ttl_reminted","story_id":"US-0164","verdict":"SPRINT_PLAN_PASS","work_item_kind":"story","writer_role":"tech-lead"}
+```
+
+---
+
+## Latest orchestration pointer — US-0164 sprint-plan continuation-pair repair (DEC-0153) [RECONSTRUCTED 2026-10-25 post-clobber]
+
+- **Boundary:** completed **`sprint-plan`** checkpoint (canonical mint **`2026-10-24T23:19:07Z`**); state-first — the matching checkpoint is appended at the bottom of `docs/engineering/state.md` (state record L940).
+- **`story_id`:** **`US-0164`**; **`sprint_id`:** **`S0185`**; **`bug_id`:** **`(none)`** — **OPEN/P1** at mint (AC-1..AC-9 unchecked; closure flips at L940 closure record only).
+- **`orchestrator_run_id`:** `repair-20261025-us0164-sprintplan-pair-repair`
+- **Verdict:** **`SPRINT_PLAN_PASS`**; `decision_gate=false`.
+- **STOP:** `STOP_AFTER_SPRINT_PLAN_PASS; validate_pair_then_parent_may_spawn_execute`. This child does **NOT** spawn the next phase.
+- `intended_resume_phase`: **`execute`**; `next_scheduled_phase`: **`execute`**; `next_scheduled_role`: **`dev`**.
+- `writer_role`: **`tech-lead`**; `role`: **`tech-lead`**; `reinstatement_mode`: **`continuation-pair-repair`**.
+- **Provenance (reconstructed):** pointer + record prose reconstructed 2026-10-25 after the BUG-0043 resume-brief clobber; the JSON record below is **byte-exact** from `docs/engineering/state.md` L940; narrative source = state.md checkpoint + the JSON record. No proof was re-minted; no stale-proof waiver.
+
+# Resume Brief — US-0164 sprint-plan continuation-pair repair (state-first, DEC-0153) [RECONSTRUCTED 2026-10-25 post-clobber]
+
+- `record_key`: `repair-20261025-us0164-sprintplan-pair-repair|story|US-0164|sprint-plan|rp-repair-20261025-us0164-sprintplan-pair-repair-techlead-20261024T231907Z-US-0164`
+- `completed_phase`: `sprint-plan`; `writer_role`: `tech-lead`; `role`: `tech-lead`; `next_scheduled_phase`: `execute`; `next_scheduled_role`: `dev`.
+- `fresh_context_marker`: `tl-US0164-sprintplan-repair-20261024T231907Z-fresh`; `runtime_proof_id`: `rp-repair-20261025-us0164-sprintplan-pair-repair-techlead-20261024T231907Z-US-0164`; `proof_hash`: `2f24df8d637ddc4a17ebee49904591fed7baf529ddd99ec739809bbe16234a81`; `proof_issued_at`: `2026-10-24T23:19:07Z`; `proof_ttl_seconds`: 3600; expiry `2026-10-25T00:19:07Z`.
+- **Validation / ordering:** state record precedes this pointer (state-first, DEC-0153). JSON byte-identical to `docs/engineering/state.md` L940.
+
+```json
+{"CROSS_MODEL_REVIEW":0,"RESUME_BRIEF_AUTO_REFRESH":0,"budget_scope":"OPEN story US-0164; S0185; DEC-0153 continuation-pair repair-only at sprint-plan boundary; no automatic phase spawn beyond parent-validated execute; no AC tick; no status flip","bug_id":"(none)","child_isolation_ref":"docs/engineering/state.md#us-0164-sprint-plan-continuation-pair-repair-20261024T231907Z","completed_phase":"sprint-plan","completed_phases":["intake","discovery","research","architecture","sprint-plan"],"decision_gate":false,"delivery_mode":"repair-only","effective_plan":["spec","plan","build+verify","ship"],"fresh_context_marker":"tl-US0164-sprintplan-repair-20261024T231907Z-fresh","memory_layer":"pack","model_id":"zelisko_llm/qwen3.8-27b","model_provenance":"fresh repair-only tech-lead phase child","next_scheduled_phase":"execute","next_scheduled_role":"dev","orchestrator_run_id":"repair-20261025-us0164-sprintplan-pair-repair","phase_boundary":"sprint-plan","phase_cursor":"plan/sprint-plan-pass","phase_id":"sprint-plan","proof_hash":"2f24df8d637ddc4a17ebee49904591fed7baf529ddd99ec739809bbe16234a81","proof_issued_at":"2026-10-24T23:19:07Z","proof_ttl_seconds":3600,"record_key":"repair-20261025-us0164-sprintplan-pair-repair|story|US-0164|sprint-plan|rp-repair-20261025-us0164-sprintplan-pair-repair-techlead-20261024T231907Z-US-0164","reinstatement_mode":"continuation-pair-repair","repair_of_record_key":"auto-20261024-us0164|story|US-0164|sprint-plan|rp-auto-20261024-us0164-sprint-plan-20261024T224208Z-US-0164","repair_reason":"DEC-0153 continuation pair missing at sprint-plan boundary (state+brief); sprint-plan was authored without the canonical pair; repair mints fresh proof + fresh marker; no phase content changed","resolution_source":"sprintplan_handoff_and_stale_pair_repair","role":"tech-lead","runtime_proof_id":"rp-repair-20261025-us0164-sprintplan-pair-repair-techlead-20261024T231907Z-US-0164","skipped_phases":[],"sprint_id":"S0185","stop_matrix_action":"STOP_AFTER_SPRINT_PLAN_PASS; validate_pair_then_parent_may_spawn_execute","stop_reason":"sprint_plan_complete_phase_boundary","story_id":"US-0164","verdict":"SPRINT_PLAN_PASS","work_item_kind":"story","writer_role":"tech-lead"}
+```
+
+---
+
+## Latest orchestration pointer — BUG-0026 refresh-context continuation pair (DEC-0153) [RECONSTRUCTED 2026-10-25 post-clobber]
+
+- **Boundary:** completed **`refresh-context`** checkpoint (canonical mint **`2026-10-24T10:37:40Z`**); state-first — the matching checkpoint is appended at the bottom of `docs/engineering/state.md` (state record L909).
+- **`bug_id`:** **`BUG-0026`**; **`sprint_id`:** **`S0177`**; **`story_id`:** **`(none)`** — **DONE** at mint (canonical flip intact; not reopened). Segment terminal.
+- **`orchestrator_run_id`:** `auto-20261023-bug0026-refresh`
+- **Verdict:** **`REFRESH_CONTEXT_PASS`**; `decision_gate=false`.
+- **STOP:** `STOP_AFTER_REFRESH_CONTEXT_PASS; segment_terminal_no_further_spawns`. This child does **NOT** spawn the next phase.
+- `intended_resume_phase`: **`none`**; `next_scheduled_phase`: **`none`**; `next_scheduled_role`: **`none`**.
+- `writer_role`: **`curator`**; `role`: **`curator`**; `reinstatement_mode`: **`none`**.
+- **Provenance (reconstructed):** pointer + record prose reconstructed 2026-10-25 after the BUG-0043 resume-brief clobber; the JSON record below is **byte-exact** from `docs/engineering/state.md` L909; narrative source = state.md checkpoint + the JSON record. No proof was re-minted; no stale-proof waiver.
+
+# Resume Brief — BUG-0026 refresh-context continuation pair (state-first, DEC-0153) [RECONSTRUCTED 2026-10-25 post-clobber]
+
+- `record_key`: `auto-20261023-bug0026-refresh|bug|BUG-0026|refresh-context|rp-auto-20261023-bug0026-refresh-curator-20261024T103740Z-BUG-0026`
+- `completed_phase`: `refresh-context`; `writer_role`: `curator`; `role`: `curator`; `next_scheduled_phase`: `none`; `next_scheduled_role`: `none`.
+- `fresh_context_marker`: `curator-BUG0026-refresh-20261024T103740Z-fresh`; `runtime_proof_id`: `rp-auto-20261023-bug0026-refresh-curator-20261024T103740Z-BUG-0026`; `proof_hash`: `9a0db980a41b38acfc56c069f8f5b79da921bc5f0da4b8026a8c8e88ab1a04dc`; `proof_issued_at`: `2026-10-24T10:37:40Z`; `proof_ttl_seconds`: 3600; expiry `2026-10-24T11:37:40Z`.
+- **Validation / ordering:** state record precedes this pointer (state-first, DEC-0153). JSON byte-identical to `docs/engineering/state.md` L909.
+
+```json
+{"CROSS_MODEL_REVIEW":0,"RESUME_BRIEF_AUTO_REFRESH":0,"budget_scope":"DONE bug BUG-0026; S0177 refresh-context (run auto-20261023-bug0026-refresh); REFRESH_CONTEXT_PASS; segment terminal; BUG-0026 DONE; no further phases scheduled; no npm publish; no git push; no republish; no DEC; no automatic phase spawn","bug_id":"BUG-0026","child_isolation_ref":"docs/engineering/state.md#bug-0026-refresh-20261024T103740Z","completed_phase":"refresh-context","completed_phases":["intake","discovery","research","architecture","sprint-plan","execute","qa","verify-work","release","closure","refresh-context"],"decision_gate":false,"delivery_mode":"ultra_lean","effective_plan":["spec","plan","build+verify","ship"],"fresh_context_marker":"curator-BUG0026-refresh-20261024T103740Z-fresh","memory_layer":"pack","model_id":"zelisko_llm/qwen3.8-27b","model_provenance":"fresh canonical terminal refresh-context curator phase child (DEC-0052 alternate)","next_scheduled_phase":"none","next_scheduled_role":"none","orchestrator_run_id":"auto-20261023-bug0026-refresh","phase_boundary":"refresh-context","phase_cursor":"ship/segment-complete","phase_id":"refresh-context","proof_hash":"9a0db980a41b38acfc56c069f8f5b79da921bc5f0da4b8026a8c8e88ab1a04dc","proof_issued_at":"2026-10-24T10:37:40Z","proof_ttl_seconds":3600,"record_key":"auto-20261023-bug0026-refresh|bug|BUG-0026|refresh-context|rp-auto-20261023-bug0026-refresh-curator-20261024T103740Z-BUG-0026","reinstatement_mode":"none","research_id":"R-0167","resolution_source":"resume_brief","role":"curator","runtime_proof_id":"rp-auto-20261023-bug0026-refresh-curator-20261024T103740Z-BUG-0026","skipped_phases":["plan-verify"],"sprint_id":"S0177","stop_matrix_action":"STOP_AFTER_REFRESH_CONTEXT_PASS; segment_terminal_no_further_spawns","stop_reason":"refresh_context_complete_segment_terminal","story_id":"(none)","verdict":"REFRESH_CONTEXT_PASS","work_item_kind":"bug","writer_role":"curator"}
+```
+
+---
+
+## Latest orchestration pointer — post-bug-intake (DEC-0069)
+
+- **Boundary**: successful **`/intake bug`** persistence (**`US-0045`**) — **`intake_boundary_utc=2026-10-24T00:00:00Z`**
+- **`bug_id`**: **`BUG-0039`** — must remain **`OPEN`** in **`docs/product/backlog.md`** (authority); this refresh is rejected if backlog shows **DONE**
+- **Intake evidence ref**: `handoffs/intake_evidence/BUG-0039-intake-20261024T000000Z.json`
+- **`orchestrator_run_id`**: `(unknown)` (boundary metadata when known; optional at intake)
+- **Contract**: default **`/auto`** continuation targets **`discovery`** for this OPEN bug (not a stale pre-intake **`intake`** resume target)
+
+## Current status
+
+- **Active bug**: **`BUG-0039`** — **OPEN** per **`docs/product/backlog.md`** at refresh time
+
+## Intended resume phase
+
+`discovery`
+
+## Resume target
+
+- bug_id=BUG-0039
+- story_id=(none)
+- sprint_id=(none)
+- boundary=post-bug-intake (**DEC-0069**)
+
+## Latest auto breadcrumb seed
+
+- requested_start_from=(none)
+- resolved_start_phase=discovery
+- resolution_source=resume_brief
+- resolution_status=resolved
+- stop_reason=intake_complete
+- stop_phase=intake
+- next_scheduled_phase=discovery
+- bug_id=BUG-0039
+- story_id=(none)
+- sprint_id=(none)
+- orchestrator_run_id=(unknown)
+- intake_boundary_utc=2026-10-24T00:00:00Z
+
 ## Latest orchestration pointer — BUG-0037 refresh-context terminal continuation pair (DEC-0153)
 
 - **Boundary:** completed refresh-context checkpoint (SEGMENT TERMINAL) — **`refresh_boundary_utc=2026-10-21T20:52:50Z`**; state-first checkpoint appended at the bottom of `docs/engineering/state.md` before this prepend (state record: last `json` block of `docs/engineering/state.md`, post-rollover).
@@ -105997,11 +106698,3 @@ sovereign-critic (sprint-plan) then /execute
 
 
 ```
-
-
-
-
-
-
-
-

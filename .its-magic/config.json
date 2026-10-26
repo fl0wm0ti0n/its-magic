@@ -17,7 +17,7 @@
     // AUTO_IMPLEMENTATION_LOOP: 0|1 (auto cycle execute->qa->execute)
     "AUTO_IMPLEMENTATION_LOOP": "1",
     // AUTO_LOOP_MAX_CYCLES: integer >= 1 (safety guard). Under /auto this counts
-    "AUTO_LOOP_MAX_CYCLES": "10000",
+    "AUTO_LOOP_MAX_CYCLES": "100",
     // AUTO_PAUSE_REQUEST: 0|1 (request graceful stop at next safe boundary)
     "AUTO_PAUSE_REQUEST": "0",
     // AUTO_PAUSE_POLICY: after_task|after_phase (safe stop boundary)
@@ -41,7 +41,7 @@
     // AUTO_BACKLOG_DRAIN: 0|1 (continue across multiple stories when enabled)
     "AUTO_BACKLOG_DRAIN": "1",
     // AUTO_BACKLOG_MAX_STORIES: integer >= 1 (max stories per auto run when drain enabled)
-    "AUTO_BACKLOG_MAX_STORIES": "10000",
+    "AUTO_BACKLOG_MAX_STORIES": "100",
     // AUTO_BACKLOG_ON_BLOCK: stop|skip (behavior when a story blocks)
     "AUTO_BACKLOG_ON_BLOCK": "skip",
     // AUTO_STORY_SELECTION: priority_then_backlog_order
@@ -49,7 +49,7 @@
     // AUTO_EXECUTE_BULK: 0|1 (explicit bulk execute orchestration mode)
     "AUTO_EXECUTE_BULK": "1",
     // AUTO_EXECUTE_MAX_ITEMS: integer >= 1 (max planned items per bulk execute run)
-    "AUTO_EXECUTE_MAX_ITEMS": "10000",
+    "AUTO_EXECUTE_MAX_ITEMS": "1000",
     // AUTO_EXECUTE_ON_BLOCK: stop|skip (behavior when a planned item blocks)
     "AUTO_EXECUTE_ON_BLOCK": "skip",
     // AUTO_EXECUTE_SELECTION: planned_then_priority
@@ -143,7 +143,7 @@
     // INTAKE_GUIDED_MODE: 0|1 (guided intake follow-up/options/research behavior)
     "INTAKE_GUIDED_MODE": "1",
     // INTAKE_SUBAGENT_FALLBACK: deny|allow (deny by default; when deny, missing
-    "INTAKE_SUBAGENT_FALLBACK": "allow",
+    "INTAKE_SUBAGENT_FALLBACK": "deny",
     // INTAKE_WORK_ITEM_KIND: story|bug (default story; bug selects BUG-#### path per DEC-0061 / US-0079)
     "INTAKE_WORK_ITEM_KIND": "story",
     // ID_NAMESPACE_BOOTSTRAP: 0|1 (optional fresh-project ID bootstrap mode; when 1, allow first IDs to start at 0001 only if deterministic freshness checks pass)
@@ -321,7 +321,7 @@
     // ARCH_LINKAGE_AUTO_REPAIR: 0|1 (default=0) -- opt-in H1-stub restore; not in AUTONOMY_PRESET
     "ARCH_LINKAGE_AUTO_REPAIR": "1",
     // INTAKE_AUTONOMY_MODE: 0|1 (default=0)
-    "INTAKE_AUTONOMY_MODE": "1",
+    "INTAKE_AUTONOMY_MODE": "0",
     // INTAKE_MINIMAL_PACK: 0|1 (default=0)
     "INTAKE_MINIMAL_PACK": "1",
     // INTAKE_ASSUME_STACK_CONTEXT: 0|1 (default=0)
